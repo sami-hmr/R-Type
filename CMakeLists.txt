@@ -1,67 +1,57 @@
 cmake_minimum_required(VERSION 3.14)
 
-include(cmake/prelude.cmake)
-include(cmake/variables.cmake)
+set(PROJECT_NAME rtype)
 
-project(
-    r-type
-    VERSION 0.1.0
-    DESCRIPTION "esc game engine"
-    HOMEPAGE_URL "https://example.com/"
-    LANGUAGES CXX
+project(${PROJECT_NAME})
+
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/plugins)
+set(CMAKE_SHARED_LIBRARY_PREFIX "")
+set(INCLUDES_DIRECTORY ${CMAKE_SOURCE_DIR}/include)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -fPIC -O3")
+
+add_executable(${PROJECT_NAME}
+    src/main.cpp
 )
 
-include(cmake/project-is-top-level.cmake)
+include(FetchContent)
 
-# ---- Declare library ----
-
-add_library(
-    r-type_lib OBJECT
-    source/lib.cpp
+FetchContent_Declare(
+    parser
+  GIT_REPOSITORY https://github.com/abeldaverio/cpp-parsing-library
+  GIT_TAG        main
 )
 
-target_include_directories(
-    r-type_lib ${warning_guard}
-    PUBLIC
-    "\$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/source>"
+FetchContent_MakeAvailable(parser)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE parser)
+
+target_include_directories(${PROJECT_NAME}
+    PRIVATE
+        ${INCLUDES_DIRECTORY}
+        ${parser_SOURCE_DIR}/include
 )
 
-target_compile_features(r-type_lib PUBLIC cxx_std_17)
+add_custom_target(re
+    COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target clean
+    COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR}
+    COMMENT "Rebuilding the project"
+)
+set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g3")
 
-find_package(fmt REQUIRED)
-target_link_libraries(r-type_lib PRIVATE fmt::fmt)
+add_custom_target(debug
+    COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target clean
+    COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --config Debug
+    COMMENT "Rebuilding the project in Debug mode"
+)
 
-# ---- Declare executable ----
+add_custom_target(doc
+    COMMAND mkdir -p ${CMAKE_SOURCE_DIR}/doc
+    COMMAND doxygen ${CMAKE_SOURCE_DIR}/doxygen_config.txt
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    COMMENT "Generating documentation with Doxygen in doc folder"
+)
 
-add_executable(r-type_exe source/main.cpp)
-add_executable(r-type::exe ALIAS r-type_exe)
-
-set_property(TARGET r-type_exe PROPERTY OUTPUT_NAME r-type)
-
-target_compile_features(r-type_exe PRIVATE cxx_std_17)
-
-target_link_libraries(r-type_exe PRIVATE r-type_lib)
-
-# Fix linking issue with clang
-if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  target_link_libraries(r-type_exe PRIVATE stdc++)
-endif()
-
-# ---- Install rules ----
-
-if(NOT CMAKE_SKIP_INSTALL_RULES)
-    include(cmake/install-rules.cmake)
-endif()
-
-# ---- Developer mode ----
-
-if(NOT r-type_DEVELOPER_MODE)
-    return()
-elseif(NOT PROJECT_IS_TOP_LEVEL)
-    message(
-      AUTHOR_WARNING
-      "Developer mode is intended for developers of r-type"
-  )
-endif()
-
-include(cmake/dev-mode.cmake)
+add_subdirectory(plugins)
