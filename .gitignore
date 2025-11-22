@@ -9,3 +9,5 @@ prefix/
 CMakeLists.txt.user
 compile_commands.json
 compile_flags.txt
+activate.fish
+*.so
