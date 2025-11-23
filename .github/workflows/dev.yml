@@ -26,8 +26,15 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install dependencies
-      run: sudo apt-get update -q && sudo apt-get install -y -q libconfig++-dev
+    - name: Install GCC 13 with C++23 support
+      run: |
+        sudo apt-get update -q
+        sudo apt-get install -y -q gcc-13 g++-13 libconfig++-dev
+        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 100
+        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 100
+
+    - name: Verify C++ compiler version
+      run: g++ --version
 
     - name: Configure
       run: cmake --preset=dev
@@ -46,8 +53,15 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install dependencies
-      run: sudo apt-get update -q && sudo apt-get install -y -q lcov libconfig++-dev
+    - name: Install GCC 13 with C++23 support
+      run: |
+        sudo apt-get update -q
+        sudo apt-get install -y -q gcc-13 g++-13 lcov libconfig++-dev
+        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 100
+        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 100
+
+    - name: Verify C++ compiler version
+      run: g++ --version
 
     - name: Configure
       run: cmake --preset=dev
