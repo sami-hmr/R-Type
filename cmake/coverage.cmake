@@ -4,13 +4,15 @@ set(
     COVERAGE_TRACE_COMMAND
     lcov -c -q
     -o "${PROJECT_BINARY_DIR}/coverage.info"
-    -d "${PROJECT_BINARY_DIR}/CMakeFiles/r-type_exe.dir"
-    -d "${PROJECT_BINARY_DIR}/plugins"
+    -d "${PROJECT_BINARY_DIR}"
     --include "${PROJECT_SOURCE_DIR}/src/*"
     --include "${PROJECT_SOURCE_DIR}/include/*"
     --include "${PROJECT_SOURCE_DIR}/plugins/*"
+    --include "${PROJECT_SOURCE_DIR}/test/*"
     --ignore-errors source
     --ignore-errors inconsistent
+    --ignore-errors empty
+    --ignore-errors unused
     CACHE STRING
     "; separated command to generate a trace for the 'coverage' target"
 )
