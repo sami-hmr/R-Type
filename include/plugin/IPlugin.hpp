@@ -1,13 +1,16 @@
 #pragma once
 
-#include "ecs/Registery.hpp"
-#include "Json/JsonParser.hpp"
 #include <string>
 
-class IPlugin {
-    public:
-    virtual ~IPlugin() = default;
+#include "Json/JsonParser.hpp"
+#include "ecs/Registery.hpp"
 
-    virtual void setComponent(Registery::Entity entity,
-        std::string const &key, JsonVariant const&) = 0;
+class IPlugin
+{
+public:
+  virtual ~IPlugin() = default;
+
+  virtual void setComponent(Registery::Entity entity,
+                            std::string const& key,
+                            JsonVariant const&) = 0;
 };

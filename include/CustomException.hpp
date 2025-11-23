@@ -11,16 +11,18 @@
 #include <exception>
 #include <string>
 
-class CustomException : public std::exception {
-   public:
-    CustomException(std::string message) : message_(message) {
-    }
-    const char *what() const noexcept override {
-        return message_.c_str();
-    }
+class CustomException : public std::exception
+{
+public:
+  CustomException(std::string message)
+      : message_(message)
+  {
+  }
 
-   private:
-    std::string message_;
+  const char* what() const noexcept override { return message_.c_str(); }
+
+private:
+  std::string message_;
 };
 
 #endif
