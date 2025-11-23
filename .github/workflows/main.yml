@@ -26,12 +26,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install GCC 13 with C++23 support
+    - name: Install GCC 11 with C++20 support
       run: |
         sudo apt-get update -q
-        sudo apt-get install -y -q gcc-13 g++-13 libconfig++-dev
-        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 100
-        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 100
+        sudo apt-get install -y -q gcc-11 g++-11 libconfig++-dev
+        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 100
+        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-11 100
 
     - name: Verify C++ compiler version
       run: g++ --version
@@ -53,12 +53,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install GCC 13 with C++23 support
+    - name: Install GCC 11 with C++20 support
       run: |
         sudo apt-get update -q
-        sudo apt-get install -y -q gcc-13 g++-13 lcov libconfig++-dev
-        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 100
-        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 100
+        sudo apt-get install -y -q gcc-11 g++-11 lcov libconfig++-dev
+        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 100
+        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-11 100
 
     - name: Verify C++ compiler version
       run: g++ --version
