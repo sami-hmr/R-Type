@@ -48,6 +48,7 @@ protected:
 };
 
 #define COMP_INIT(comp_name, method_name) \
-  {#comp_name, \
-   [this](size_t entity, JsonVariant config) \
-   { this->method_name(entity, config); }}
+  { \
+    #comp_name, [this](size_t entity, JsonVariant config) \
+    { this->method_name(entity, config); } \
+  }
