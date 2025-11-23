@@ -5,9 +5,10 @@
 build/
 cmake-build-*/
 prefix/
-.clangd
 CMakeLists.txt.user
 compile_commands.json
 compile_flags.txt
 activate.fish
 *.so
+r-type
+r-type_test

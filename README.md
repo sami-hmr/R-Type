@@ -1,50 +1,92 @@
 # r-type
 
-This is the r-type project - an ECS (Entity Component System) game engine.
+An ECS (Entity Component System) game engine implementation.
 
-## Project Structure
+## Building the Project
 
-This project uses a library + executable architecture:
-- **r-type_lib** - Main library containing the game engine code
-- **r-type_exe** - Executable wrapper that uses the library
-
-## Quick Start
-
-### Building the Project
+### Quick Start
 
 ```bash
-cmake --preset=dev          # Configure with dev preset
-cmake --build --preset=dev  # Build everything
-./build/dev/r-type          # Run the executable
+cmake --preset=dev
+cmake --build build
+./r-type
 ```
+
+### Available Presets
+
+- `dev` - Development build with tests and coverage enabled
+- `docs` - Generate documentation
+- `release` - Optimized release build
+- `clang-tidy` - Development build with static analysis
 
 ### Building Specific Targets
 
 ```bash
-# Build only the library
-cmake --build --preset=dev --target r-type_lib
-
 # Build only the executable
-cmake --build --preset=dev --target r-type_exe
+cmake --build build --target r-type_exe
+
+# Check code formatting
+cmake --build build --target format-check
+
+# Fix code formatting
+cmake --build build --target format-fix
 ```
 
-### Release Build
+## Running Tests
 
 ```bash
-cmake -S . -B build -D CMAKE_BUILD_TYPE=Release
-cmake --build build --config Release
-cmake --install build --config Release
+ctest --test-dir build --output-on-failure
 ```
 
-# Building and installing
+## Generating Documentation
 
-See the [BUILDING](BUILDING.md) document.
+```bash
+cmake --preset=docs
+cmake --build build --target docs
+# Open build/docs/html/index.html
+```
 
-# Contributing
+## Documentation Coverage
 
-See the [CONTRIBUTING](CONTRIBUTING.md) document.
+Check how much of your code is documented:
 
-# Licensing
+```bash
+cmake --preset=docs
+cmake --build build --target docs-coverage
+```
+
+Or generate an HTML report:
+
+```bash
+cmake --preset=docs
+cmake --build build --target docs-coverage-html
+# Open build/doc-coverage/index.html
+```
+
+## Coverage Reports
+
+```bash
+cmake --preset=dev
+cmake --build build
+ctest --test-dir build
+cmake --build build --target coverage
+# Open build/coverage_html/index.html
+```
+
+## Development Environment
+
+Source the activate.sh script for convenient aliases:
+
+```bash
+source activate.sh
+show-aliases  # Display available commands
+```
+
+For detailed build instructions, see [BUILDING.md](BUILDING.md).
+
+For development guidelines, see [HACKING.md](HACKING.md).
+
+## License
 
 [MIT License](LICENSE)
 

@@ -7,7 +7,7 @@ PROJECT_NAME = "@PROJECT_NAME@"
 PROJECT_NUMBER = "@PROJECT_VERSION@"
 
 # Add sources
-INPUT = "@PROJECT_SOURCE_DIR@/README.md" "@PROJECT_SOURCE_DIR@/include" "@PROJECT_SOURCE_DIR@/source" "@PROJECT_SOURCE_DIR@/docs/pages"
+INPUT = "@PROJECT_SOURCE_DIR@/README.md" "@PROJECT_SOURCE_DIR@/include" "@PROJECT_SOURCE_DIR@/src" "@PROJECT_SOURCE_DIR@/docs/pages"
 EXTRACT_ALL = YES
 RECURSIVE = YES
 OUTPUT_DIRECTORY = "@DOXYGEN_OUTPUT_DIRECTORY@"
@@ -15,18 +15,19 @@ OUTPUT_DIRECTORY = "@DOXYGEN_OUTPUT_DIRECTORY@"
 # Use the README as a main page
 USE_MDFILE_AS_MAINPAGE = "@PROJECT_SOURCE_DIR@/README.md"
 
-# set relative include paths
+# Set relative include paths
 FULL_PATH_NAMES = YES
-STRIP_FROM_PATH = "@PROJECT_SOURCE_DIR@/include" "@PROJECT_SOURCE_DIR@"
+STRIP_FROM_PATH = "@PROJECT_SOURCE_DIR@"
 STRIP_FROM_INC_PATH =
 
-# We use m.css to generate the html documentation, so we only need XML output
+# Generate HTML documentation
+GENERATE_HTML = YES
 GENERATE_XML = YES
-GENERATE_HTML = NO
 GENERATE_LATEX = NO
-XML_PROGRAMLISTING = NO
+XML_PROGRAMLISTING = YES
 CREATE_SUBDIRS = NO
+HTML_OUTPUT = html
 
 # Include all directories, files and namespaces in the documentation
-# Disable to include only explicitly documented objects
-M_SHOW_UNDOCUMENTED = YES
+SHOW_FILES = YES
+SHOW_NAMESPACES = YES

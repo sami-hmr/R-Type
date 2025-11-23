@@ -1,0 +1,100 @@
+name: CI - Production Branch
+
+on:
+  push:
+    branches:
+    - dev
+
+  pull_request:
+    branches:
+    - dev
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Lint with clang-format
+      run: cmake -D FORMAT_COMMAND=clang-format-18 -P cmake/lint.cmake
+
+  build-and-test:
+    needs: [lint]
+    runs-on: ubuntu-24.04
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: sudo apt-get update -q && sudo apt-get install -y -q libconfig++-dev
+
+    - name: Configure
+      run: cmake --preset=dev
+
+    - name: Build
+      run: cmake --build build -j 2
+
+    - name: Test
+      working-directory: build
+      run: ctest --output-on-failure --no-tests=error -j 2
+
+  coverage:
+    needs: [lint]
+    runs-on: ubuntu-24.04
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: sudo apt-get update -q && sudo apt-get install -y -q lcov libconfig++-dev
+
+    - name: Configure
+      run: cmake --preset=dev
+
+    - name: Build
+      run: cmake --build build -j 2
+
+    - name: Test
+      working-directory: build
+      run: ctest --output-on-failure --no-tests=error -j 2
+
+    - name: Generate coverage report
+      run: cmake --build build --target coverage
+
+    - name: Upload coverage to codecov
+      uses: codecov/codecov-action@v4
+      with:
+        file: build/coverage.info
+        token: ${{ secrets.CODECOV_TOKEN }}
+      continue-on-error: true
+
+  docs:
+    needs: [build-and-test]
+    runs-on: ubuntu-24.04
+
+    if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
+
+    permissions:
+      contents: write
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Doxygen
+      run: sudo apt-get update -q && sudo apt-get install -y -q doxygen
+
+    - name: Configure
+      run: cmake --preset=docs
+
+    - name: Build docs
+      run: cmake --build build --target docs
+
+    - name: Deploy docs to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: build/docs/html
+      continue-on-error: true
+
+

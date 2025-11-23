@@ -1,10 +1,1 @@
-{
-  "entities": [
-    {
-      "moving:position": {
-        "x": 4.4,
-        "y": 2.7
-      }
-    }
-  ]
-}
+{ "entities": [{ "moving:position": { "x": 4.4, "y": 2.7 } }] }
