@@ -10,7 +10,7 @@ class IPlugin
 public:
   virtual ~IPlugin() = default;
 
-  virtual void setComponent(Registery::Entity entity,
+  virtual void set_component(Registery::Entity entity,
                             std::string const& key,
                             JsonVariant const&) = 0;
 };

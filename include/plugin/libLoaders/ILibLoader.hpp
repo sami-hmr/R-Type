@@ -1,14 +1,5 @@
-/*
-** EPITECH PROJECT, 2025
-** raytracer
-** File description:
-** interface for plugin loader
-*/
-
-#ifndef LIB_LOADER_HPP
-#define LIB_LOADER_HPP
-
-#include <memory>
+#pragma once
+#include <string>
 
 #include "CustomException.hpp"
 #include "ecs/Registery.hpp"
@@ -19,7 +10,7 @@ class EntityLoader;
 class NotExistingLib : public CustomException
 {
 public:
-  NotExistingLib(std::string message)
+  explicit NotExistingLib(const std::string& message)
       : CustomException(message)
   {
   }
@@ -28,7 +19,7 @@ public:
 class LoaderNotExistingFunction : public CustomException
 {
 public:
-  LoaderNotExistingFunction(std::string message)
+  explicit LoaderNotExistingFunction(const std::string& message)
       : CustomException(message)
   {
   }
@@ -37,7 +28,7 @@ public:
 class LoaderException : public CustomException
 {
 public:
-  LoaderException(std::string message)
+  explicit LoaderException(const std::string& message)
       : CustomException(message)
   {
   }
@@ -51,9 +42,7 @@ class LibLoader
 {
 public:
   virtual ~LibLoader() = default;
-  virtual std::unique_ptr<Module> getInstance(const std::string entryPoint,
+  virtual std::unique_ptr<Module> get_instance(const std::string &entry_point,
                                               Registery& r,
                                               EntityLoader& e) = 0;
 };
-
-#endif
