@@ -15,6 +15,7 @@ class Registery
 {
 public:
   using Entity = std::size_t;
+  using HandlerId = std::size_t;
 
   template<class Component>
   SparseArray<Component>& register_component()
@@ -98,10 +99,74 @@ public:
     }
   }
 
+  template<typename EventType>
+  HandlerId on(std::function<void(const EventType&)> handler)
+  {
+    std::type_index type_id(typeid(EventType));
+
+    HandlerId handler_id = _next_handler_id++;
+
+    if (!_event_handlers.contains(type_id)) {
+      _event_handlers[type_id] =
+          std::unordered_map<HandlerId,
+                             std::function<void(const EventType&)>>();
+    }
+
+    auto& handlers = std::any_cast<
+        std::unordered_map<HandlerId, std::function<void(const EventType&)>>&>(
+        _event_handlers[type_id]);
+
+    handlers[handler_id] = std::move(handler);
+
+    return handler_id;
+  }
+
+  template<typename EventType>
+  bool off(HandlerId handler_id)
+  {
+    std::type_index type_id(typeid(EventType));
+    if (!_event_handlers.contains(type_id)) {
+      return false;
+    }
+
+    auto& handlers = std::any_cast<
+        std::unordered_map<HandlerId, std::function<void(const EventType&)>>&>(
+        _event_handlers[type_id]);
+
+    return handlers.erase(handler_id) > 0;
+  }
+
+  template<typename EventType>
+  void off_all()
+  {
+    std::type_index type_id(typeid(EventType));
+    _event_handlers.erase(type_id);
+  }
+
+  template<typename EventType, typename... Args>
+  void emit(Args&&... args)
+  {
+    std::type_index type_id(typeid(EventType));
+    if (!_event_handlers.contains(type_id)) {
+      return;
+    }
+
+    EventType event(std::forward<Args>(args)...);
+    auto const& handlers = std::any_cast<
+        std::unordered_map<HandlerId, std::function<void(const EventType&)>>&>(
+        _event_handlers.at(type_id));
+
+    for (auto const& [id, handler] : handlers) {
+      handler(event);
+    }
+  }
+
 private:
   std::unordered_map<std::type_index, std::any> _components;
+  std::unordered_map<std::type_index, std::any> _event_handlers;
   std::vector<std::function<void()>> _frequent_systems;
   std::vector<std::function<void(Entity const&)>> _delete_functions;
   std::queue<Entity> _dead_entites;
   std::size_t _max = 0;
+  HandlerId _next_handler_id = 0;
 };
