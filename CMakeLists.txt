@@ -10,11 +10,7 @@ project(
     LANGUAGES CXX
 )
 
-# ==============================================================================
-# C++ Standard Configuration
-# ==============================================================================
-# To switch to C++23 once the parser library supports it, change 20 to 23 below
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/plugins)
@@ -51,7 +47,7 @@ add_executable(r-type::exe ALIAS r-type_exe)
 
 set_property(TARGET r-type_exe PROPERTY OUTPUT_NAME r-type)
 
-target_compile_features(r-type_exe PRIVATE cxx_std_20)
+target_compile_features(r-type_exe PRIVATE cxx_std_23)
 
 target_include_directories(r-type_exe
     PRIVATE

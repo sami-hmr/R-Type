@@ -26,6 +26,6 @@ target_link_libraries(
     r-type_test PRIVATE
     Catch2::Catch2WithMain
 )
-target_compile_features(r-type_test PRIVATE cxx_std_20)
+target_compile_features(r-type_test PRIVATE cxx_std_23)
 
 catch_discover_tests(r-type_test)
