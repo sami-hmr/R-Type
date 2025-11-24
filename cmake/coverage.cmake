@@ -12,7 +12,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         COMMAND ${CMAKE_COMMAND} -E echo "Searching for profraw files..."
         COMMAND find . -name "*.profraw" -type f
         COMMAND ${CMAKE_COMMAND} -E echo "Merging profraw files..."
-        COMMAND llvm-profdata merge -sparse default.profraw -o coverage.profdata
+        COMMAND bash -c "llvm-profdata merge -sparse $$(find . -name '*.profraw' -type f) -o coverage.profdata"
         COMMAND ${CMAKE_COMMAND} -E echo "Checking if coverage.profdata was created..."
         COMMAND test -f coverage.profdata && ${CMAKE_COMMAND} -E echo "coverage.profdata exists"
         COMMAND ${CMAKE_COMMAND} -E echo "Generating lcov format coverage..."

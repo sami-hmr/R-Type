@@ -102,6 +102,8 @@ jobs:
         path: |
           build
           !build/coverage.info
+          !build/**/*.profraw
+          !build/coverage.profdata
         key: ${{ runner.os }}-cmake-coverage-${{ hashFiles('**/CMakeLists.txt', 'cmake/**') }}
         restore-keys: |
           ${{ runner.os }}-cmake-coverage-
@@ -122,6 +124,10 @@ jobs:
 
     - name: Build
       run: cmake --build build -j 2
+
+    - name: Clean old profraw files
+      working-directory: build
+      run: find . -name "*.profraw" -type f -delete || true
 
     - name: Test
       working-directory: build
