@@ -3,20 +3,14 @@
 #include <cerrno>
 #include <filesystem>
 #include <fstream>
-#include <functional>
 #include <iostream>
-#include <map>
-#include <memory>
 #include <stdexcept>
-#include <unordered_map>
+#include <string>
 #include <variant>
 
-#include "IPlugin.hpp"
 #include "Json/JsonParser.hpp"
 #include "ParserTypes.hpp"
 #include "ecs/Registery.hpp"
-#include "libLoaders/ILibLoader.hpp"
-#include "libLoaders/LDLoader.hpp"
 #include "plugin/libLoaders/LDLoader.hpp"
 
 class EntityLoader
@@ -46,8 +40,8 @@ public:
   {
     std::ifstream infi(filepath);
     if (infi.fail()) {
-      std::cerr << "failed to open file \"" << filepath
-                << "\": " << errno << '\n';
+      std::cerr << "failed to open file \"" << filepath << "\": " << errno
+                << '\n';
     }
     std::string str((std::istreambuf_iterator<char>(infi)),
                     std::istreambuf_iterator<char>());
@@ -75,22 +69,23 @@ public:
 
   void load_entity(JsonObject const& config)
   {
-    Registery::entity new_entity = this->_registery.get().spawn_entity();
+    Registery::Entity new_entity = this->_registery.get().spawn_entity();
     for (auto const& [key, sub_config] : config) {
       std::string plugin = key.substr(0, key.find(':'));
       std::string comp = key.substr(key.find(':') + 1);
       try {
         if (!this->_loaders.contains(plugin)) {
-            this->get_loader(plugin);
+          this->get_loader(plugin);
         }
       } catch (NotExistingLib const& e) {
         std::cerr << e.what() << '\n';
       }
       try {
         if (!this->_plugins.contains(plugin)) {
-          this->_plugins.emplace(plugin,
-                                 this->_loaders.at(plugin)->get_instance(
-                                     "entry_point", this->_registery.get(), *this));
+          this->_plugins.emplace(
+              plugin,
+              this->_loaders.at(plugin)->get_instance(
+                  "entry_point", this->_registery.get(), *this));
         }
       } catch (LoaderException const& e) {
         std::cerr << e.what() << '\n';
@@ -101,16 +96,18 @@ public:
   }
 
 private:
+  void get_loader(std::string const& plugin)
+  {
+    this->_loaders.insert_or_assign(plugin,
+                                    std::make_unique<
+#if __linux__
+                                        DlLoader
+#endif
+                                        <IPlugin>>("plugins/" + plugin));
+  }
 
-    void get_loader(std::string const &plugin) {
-        this->_loaders.insert_or_assign(plugin, std::make_unique<
-        #if __linux__
-            DlLoader
-        #endif
-            <IPlugin>>("plugins/" + plugin));
-    }
-
-  std::unordered_map<std::string, std::unique_ptr<LibLoader<IPlugin>>> _loaders;
-  std::unordered_map<std::string, std::unique_ptr<IPlugin>> _plugins;
+  std::unordered_map<std::string, std::unique_ptr<LibLoader<IPlugin>>>
+      _loaders {};
+  std::unordered_map<std::string, std::unique_ptr<IPlugin>> _plugins {};
   std::reference_wrapper<Registery> _registery;
 };

@@ -1,5 +1,5 @@
 #pragma once
-#include <memory>
+#include <string>
 
 #include "CustomException.hpp"
 #include "ecs/Registery.hpp"

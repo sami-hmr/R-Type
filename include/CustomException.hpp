@@ -10,6 +10,7 @@
 
 #include <exception>
 #include <string>
+#include <utility>
 
 class CustomException : public std::exception
 {
