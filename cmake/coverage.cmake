@@ -10,15 +10,15 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_custom_target(
         coverage
         COMMAND ${CMAKE_COMMAND} -E echo "Searching for profraw files..."
-        COMMAND find "${PROJECT_BINARY_DIR}" -name "*.profraw" -type f
+        COMMAND find . -name "*.profraw" -type f
         COMMAND ${CMAKE_COMMAND} -E echo "Merging profraw files..."
-        COMMAND llvm-profdata merge -sparse "${PROJECT_BINARY_DIR}/default.profraw" -o "${PROJECT_BINARY_DIR}/coverage.profdata"
+        COMMAND llvm-profdata merge -sparse default.profraw -o coverage.profdata
         COMMAND ${CMAKE_COMMAND} -E echo "Checking if coverage.profdata was created..."
-        COMMAND test -f "${PROJECT_BINARY_DIR}/coverage.profdata" && ${CMAKE_COMMAND} -E echo "coverage.profdata exists"
+        COMMAND test -f coverage.profdata && ${CMAKE_COMMAND} -E echo "coverage.profdata exists"
         COMMAND ${CMAKE_COMMAND} -E echo "Generating lcov format coverage..."
-        COMMAND llvm-cov export -format=lcov -instr-profile="${PROJECT_BINARY_DIR}/coverage.profdata" "${TEST_EXECUTABLE}" -o "${PROJECT_BINARY_DIR}/coverage.info"
+        COMMAND bash -c "llvm-cov export -format=lcov -instr-profile=coverage.profdata ${TEST_EXECUTABLE} > coverage.info"
         COMMAND ${CMAKE_COMMAND} -E echo "Generating HTML coverage report..."
-        COMMAND llvm-cov show -format=html -instr-profile="${PROJECT_BINARY_DIR}/coverage.profdata" "${TEST_EXECUTABLE}" -output-dir="${PROJECT_BINARY_DIR}/coverage_html"
+        COMMAND llvm-cov show -format=html -instr-profile=coverage.profdata "${TEST_EXECUTABLE}" -output-dir=coverage_html
         COMMAND ${CMAKE_COMMAND} -E echo "Coverage report generated successfully!"
         WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
         COMMENT "Generating coverage report"
