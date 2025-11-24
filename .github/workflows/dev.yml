@@ -127,13 +127,13 @@ jobs:
 
     - name: Clean old profraw files
       working-directory: build
-      run: find . -name "*.profraw" -type f -delete || true
+      run: find . -name "*.profraw" -type f -delete 2>/dev/null || true
 
     - name: Test
       working-directory: build
       run: ctest --output-on-failure --no-tests=error -j 2
       env:
-        LLVM_PROFILE_FILE: "${{ github.workspace }}/build/default.profraw"
+        LLVM_PROFILE_FILE: "default.profraw"
 
     - name: Generate coverage report
       working-directory: build

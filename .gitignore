@@ -12,4 +12,7 @@ activate.fish
 *.so*
 r-type
 r-type_test
-default.profraw
+**/*.profraw
+coverage.profdata
+coverage.info
+coverage_html/

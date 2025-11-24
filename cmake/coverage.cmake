@@ -1,4 +1,4 @@
-# ---- Variables ----
+# ---- Coverage Configuration ----
 
 # Detect compiler and set appropriate coverage tools
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -6,20 +6,10 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     # The test executable is in CMAKE_SOURCE_DIR due to CMAKE_RUNTIME_OUTPUT_DIRECTORY setting
     set(TEST_EXECUTABLE "${CMAKE_SOURCE_DIR}/r-type_test")
     
-    # Custom target with proper shell commands
+    # Custom target that calls the coverage script
     add_custom_target(
         coverage
-        COMMAND ${CMAKE_COMMAND} -E echo "Searching for profraw files..."
-        COMMAND find . -name "*.profraw" -type f
-        COMMAND ${CMAKE_COMMAND} -E echo "Merging profraw files..."
-        COMMAND bash -c "llvm-profdata merge -sparse $$(find . -name '*.profraw' -type f) -o coverage.profdata"
-        COMMAND ${CMAKE_COMMAND} -E echo "Checking if coverage.profdata was created..."
-        COMMAND test -f coverage.profdata && ${CMAKE_COMMAND} -E echo "coverage.profdata exists"
-        COMMAND ${CMAKE_COMMAND} -E echo "Generating lcov format coverage..."
-        COMMAND bash -c "llvm-cov export -format=lcov -instr-profile=coverage.profdata ${TEST_EXECUTABLE} -ignore-filename-regex='.*/_deps/.*' -ignore-filename-regex='.*/test/.*' > coverage.info"
-        COMMAND ${CMAKE_COMMAND} -E echo "Generating HTML coverage report..."
-        COMMAND llvm-cov show -format=html -instr-profile=coverage.profdata "${TEST_EXECUTABLE}" -ignore-filename-regex='.*/_deps/.*' -ignore-filename-regex='.*/test/.*' -output-dir=coverage_html
-        COMMAND ${CMAKE_COMMAND} -E echo "Coverage report generated successfully!"
+        COMMAND bash "${CMAKE_SOURCE_DIR}/cmake/generate_coverage.sh" "${PROJECT_BINARY_DIR}" "${TEST_EXECUTABLE}"
         WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
         COMMENT "Generating coverage report"
     )
