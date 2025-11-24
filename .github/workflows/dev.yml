@@ -96,13 +96,20 @@ jobs:
     - name: Verify C++ compiler version
       run: clang++ --version
 
-    - name: Cache CMake build directory (exclude profraw)
+    - name: Cache CMake build files (exclude test directory)
       uses: actions/cache@v4
       with:
-        path: build
-        key: ${{ runner.os }}-cmake-coverage-v2-${{ hashFiles('**/CMakeLists.txt', 'cmake/**') }}
+        path: |
+          build/CMakeCache.txt
+          build/CMakeFiles
+          build/cmake_install.cmake
+          build/Makefile
+          build/compile_commands.json
+          build/*.cmake
+          build/r-type_exe
+        key: ${{ runner.os }}-cmake-coverage-v3-${{ hashFiles('**/CMakeLists.txt', 'cmake/**') }}
         restore-keys: |
-          ${{ runner.os }}-cmake-coverage-v2-
+          ${{ runner.os }}-cmake-coverage-v3-
 
     - name: Cache FetchContent dependencies
       uses: actions/cache@v4
@@ -121,7 +128,7 @@ jobs:
     - name: Build
       run: cmake --build build -j 2
 
-    - name: Clean profraw files and test artifacts
+    - name: Clean profraw files and coverage artifacts
       working-directory: build
       run: |
         find . -type f -name "*.profraw" -delete 2>/dev/null || true
