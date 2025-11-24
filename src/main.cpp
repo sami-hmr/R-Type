@@ -5,7 +5,7 @@
 
 int true_main(Registery &r, EntityLoader &e) {
     e.load("game_config");
-    r.runSystems();
+    r.run_systems();
     return 0;
 }
 

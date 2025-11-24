@@ -3,6 +3,7 @@
 # misc-non-private-member-variables-in-classes: the options don't do anything
 # modernize-use-nodiscard: too aggressive, attribute is situationally useful
 Checks: "*,\
+  -modernize-use-trailing-return-type,\
   -google-readability-todo,\
   -altera-*,\
   -fuchsia-*,\

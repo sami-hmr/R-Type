@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cerrno>
-#include <cstring>
 #include <filesystem>
 #include <fstream>
 #include <functional>
@@ -17,13 +16,14 @@
 #include "ParserTypes.hpp"
 #include "ecs/Registery.hpp"
 #include "libLoaders/ILibLoader.hpp"
+#include "libLoaders/LDLoader.hpp"
 #include "plugin/libLoaders/LDLoader.hpp"
 
 class EntityLoader
 {
 public:
-  EntityLoader(Registery& registery)
-      : registery_(registery)
+  explicit EntityLoader(Registery& registery)
+      : _registery(registery)
   {
   }
 
@@ -38,7 +38,7 @@ public:
         }
       }
     } catch (std::filesystem::filesystem_error const& e) {
-      std::cerr << "failed to read directory: " << e.what() << std::endl;
+      std::cerr << "failed to read directory: " << e.what() << '\n';
     }
   }
 
@@ -47,7 +47,7 @@ public:
     std::ifstream infi(filepath);
     if (infi.fail()) {
       std::cerr << "failed to open file \"" << filepath
-                << "\": " << std::strerror(errno) << std::endl;
+                << "\": " << errno << '\n';
     }
     std::string str((std::istreambuf_iterator<char>(infi)),
                     std::istreambuf_iterator<char>());
@@ -61,50 +61,56 @@ public:
       try {
         JsonArray const& array = std::get<JsonArray>(r.at("entities").value);
         for (auto const& it : array) {
-          this->loadEntity(std::get<JsonObject>(it.value));
+          this->load_entity(std::get<JsonObject>(it.value));
         }
       } catch (std::out_of_range&) {
         std::cerr << "Parsing \"" << filepath
-                  << "\": missing \"entities\" field" << std::endl;
+                  << R"(": missing "entities" field)" << '\n';
       } catch (std::bad_variant_access&) {
         std::cerr << "Parsing \"" << filepath
-                  << "\": invalid \"entities\" value" << std::endl;
+                  << R"(": invalid "entities" value)" << '\n';
       }
     }
   }
 
-  void loadEntity(JsonObject const& config)
+  void load_entity(JsonObject const& config)
   {
-    Registery::Entity new_entity = this->registery_.get().spawn_entity();
+    Registery::entity new_entity = this->_registery.get().spawn_entity();
     for (auto const& [key, sub_config] : config) {
-      std::string plugin = key.substr(0, key.find(":"));
-      std::string comp = key.substr(key.find(":") + 1);
+      std::string plugin = key.substr(0, key.find(':'));
+      std::string comp = key.substr(key.find(':') + 1);
       try {
-        if (!this->loaders_.contains(plugin)) {
-#if __linux__
-          this->loaders_.emplace(
-              plugin, std::make_unique<DlLoader<IPlugin>>("plugins/" + plugin));
-#endif
+        if (!this->_loaders.contains(plugin)) {
+            this->get_loader(plugin);
         }
       } catch (NotExistingLib const& e) {
-        std::cerr << e.what() << std::endl;
+        std::cerr << e.what() << '\n';
       }
       try {
-        if (!this->plugins_.contains(plugin)) {
-          this->plugins_.emplace(plugin,
-                                 this->loaders_.at(plugin)->getInstance(
-                                     "entry_point", this->registery_, *this));
+        if (!this->_plugins.contains(plugin)) {
+          this->_plugins.emplace(plugin,
+                                 this->_loaders.at(plugin)->get_instance(
+                                     "entry_point", this->_registery.get(), *this));
         }
       } catch (LoaderException const& e) {
-        std::cerr << e.what() << std::endl;
+        std::cerr << e.what() << '\n';
       }
-      this->plugins_.at(plugin)->setComponent(
+      this->_plugins.at(plugin)->set_component(
           new_entity, comp, sub_config.value);
     }
   }
 
-public:  // private:
-  std::unordered_map<std::string, std::unique_ptr<LibLoader<IPlugin>>> loaders_;
-  std::unordered_map<std::string, std::unique_ptr<IPlugin>> plugins_;
-  std::reference_wrapper<Registery> registery_;
+private:
+
+    void get_loader(std::string const &plugin) {
+        this->_loaders.insert_or_assign(plugin, std::make_unique<
+        #if __linux__
+            DlLoader
+        #endif
+            <IPlugin>>("plugins/" + plugin));
+    }
+
+  std::unordered_map<std::string, std::unique_ptr<LibLoader<IPlugin>>> _loaders;
+  std::unordered_map<std::string, std::unique_ptr<IPlugin>> _plugins;
+  std::reference_wrapper<Registery> _registery;
 };
