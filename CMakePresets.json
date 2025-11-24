@@ -19,9 +19,9 @@
         "BUILD_TESTING": "ON",
         "ENABLE_COVERAGE": "ON",
         "BUILD_DOCS": "OFF",
-        "CMAKE_CXX_FLAGS": "-Og -g --coverage",
-        "CMAKE_EXE_LINKER_FLAGS": "--coverage",
-        "CMAKE_SHARED_LINKER_FLAGS": "--coverage"
+        "CMAKE_CXX_FLAGS": "-Og -g -fprofile-instr-generate -fcoverage-mapping",
+        "CMAKE_EXE_LINKER_FLAGS": "-fprofile-instr-generate",
+        "CMAKE_SHARED_LINKER_FLAGS": "-fprofile-instr-generate"
       }
     },
     {

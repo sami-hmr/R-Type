@@ -82,9 +82,11 @@ jobs:
     - name: Install Clang 18 with C++23 support
       run: |
         sudo apt-get update -q
-        sudo apt-get install -y -q clang-18 libc++-18-dev libc++abi-18-dev lcov ccache
+        sudo apt-get install -y -q clang-18 llvm-18 libc++-18-dev libc++abi-18-dev ccache
         sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
         sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
+        sudo update-alternatives --install /usr/bin/llvm-profdata llvm-profdata /usr/bin/llvm-profdata-18 100
+        sudo update-alternatives --install /usr/bin/llvm-cov llvm-cov /usr/bin/llvm-cov-18 100
 
     - name: Setup ccache
       uses: hendrikmuhs/ccache-action@v1.2
@@ -124,9 +126,12 @@ jobs:
     - name: Test
       working-directory: build
       run: ctest --output-on-failure --no-tests=error -j 2
+      env:
+        LLVM_PROFILE_FILE: "default.profraw"
 
     - name: Generate coverage report
-      run: cmake --build build --target coverage
+      working-directory: build
+      run: cmake --build . --target coverage
 
     - name: Upload coverage to codecov
       uses: codecov/codecov-action@v4
