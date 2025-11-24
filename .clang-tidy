@@ -11,6 +11,14 @@ Checks: "*,\
   -llvm-include-order,\
   -llvmlibc-*,\
   -modernize-use-nodiscard,\
+  -modernize-use-trailing-return-type,\
+  -readability-identifier-length,\
+  -readability-uppercase-literal-suffix,\
+  -google-explicit-constructor,\
+  -hicpp-explicit-conversions,\
+  -hicpp-uppercase-literal-suffix,\
+  -cppcoreguidelines-avoid-do-while,\
+  -misc-use-anonymous-namespace,\
   -misc-non-private-member-variables-in-classes"
 WarningsAsErrors: ''
 CheckOptions:
@@ -47,11 +55,11 @@ CheckOptions:
     value: 'true'
 # These seem to be the most common identifier styles
   - key: 'readability-identifier-naming.AbstractClassCase'
-    value: 'lower_case'
+    value: 'CamelCase'
   - key: 'readability-identifier-naming.ClassCase'
-    value: 'lower_case'
+    value: 'CamelCase'
   - key: 'readability-identifier-naming.ClassConstantCase'
-    value: 'lower_case'
+    value: 'CamelCase'
   - key: 'readability-identifier-naming.ClassMemberCase'
     value: 'lower_case'
   - key: 'readability-identifier-naming.ClassMethodCase'
@@ -113,13 +121,13 @@ CheckOptions:
   - key: 'readability-identifier-naming.PrivateMemberCase'
     value: 'lower_case'
   - key: 'readability-identifier-naming.PrivateMemberPrefix'
-    value: 'm_'
+    value: '_'
   - key: 'readability-identifier-naming.PrivateMethodCase'
     value: 'lower_case'
   - key: 'readability-identifier-naming.ProtectedMemberCase'
     value: 'lower_case'
   - key: 'readability-identifier-naming.ProtectedMemberPrefix'
-    value: 'm_'
+    value: '_'
   - key: 'readability-identifier-naming.ProtectedMethodCase'
     value: 'lower_case'
   - key: 'readability-identifier-naming.PublicMemberCase'
@@ -133,7 +141,7 @@ CheckOptions:
   - key: 'readability-identifier-naming.StaticVariableCase'
     value: 'lower_case'
   - key: 'readability-identifier-naming.StructCase'
-    value: 'lower_case'
+    value: 'CamelCase'
   - key: 'readability-identifier-naming.TemplateParameterCase'
     value: 'CamelCase'
   - key: 'readability-identifier-naming.TemplateTemplateParameterCase'

@@ -1,28 +1,24 @@
-include(cmake/folders.cmake)
+# ---- Testing with CTest ----
 
 include(CTest)
 if(BUILD_TESTING)
   add_subdirectory(test)
 endif()
 
-add_custom_target(
-    run-exe
-    COMMAND r-type_exe
-    VERBATIM
-)
-add_dependencies(run-exe r-type_exe)
+# ---- Coverage ----
 
-option(BUILD_MCSS_DOCS "Build documentation using Doxygen and m.css" OFF)
-if(BUILD_MCSS_DOCS)
-  include(cmake/docs.cmake)
-endif()
-
-option(ENABLE_COVERAGE "Enable coverage support separate from CTest's" OFF)
+option(ENABLE_COVERAGE "Enable coverage support" OFF)
 if(ENABLE_COVERAGE)
   include(cmake/coverage.cmake)
 endif()
 
-include(cmake/lint-targets.cmake)
-include(cmake/spell-targets.cmake)
+# ---- Documentation ----
 
-add_folders(Project)
+option(BUILD_DOCS "Build documentation using Doxygen" OFF)
+if(BUILD_DOCS)
+  include(cmake/docs.cmake)
+endif()
+
+# ---- Linting with clang-format ----
+
+include(cmake/lint-targets.cmake)

@@ -1,22 +1,6 @@
 # ---- Dependencies ----
 
-set(extract_timestamps "")
-if(CMAKE_VERSION VERSION_GREATER_EQUAL "3.24")
-  set(extract_timestamps DOWNLOAD_EXTRACT_TIMESTAMP YES)
-endif()
-
-include(FetchContent)
-FetchContent_Declare(
-    mcss URL
-    https://github.com/friendlyanon/m.css/releases/download/release-1/mcss.zip
-    URL_MD5 00cd2757ebafb9bcba7f5d399b3bec7f
-    SOURCE_DIR "${PROJECT_BINARY_DIR}/mcss"
-    UPDATE_DISCONNECTED YES
-    ${extract_timestamps}
-)
-FetchContent_MakeAvailable(mcss)
-
-find_package(Python3 3.6 REQUIRED)
+find_package(Doxygen REQUIRED)
 
 # ---- Declare documentation target ----
 
@@ -27,20 +11,58 @@ set(
 
 set(working_dir "${PROJECT_BINARY_DIR}/docs")
 
-foreach(file IN ITEMS Doxyfile conf.py)
-  configure_file("docs/${file}.in" "${working_dir}/${file}" @ONLY)
-endforeach()
-
-set(mcss_script "${mcss_SOURCE_DIR}/documentation/doxygen.py")
-set(config "${working_dir}/conf.py")
+configure_file("docs/Doxyfile.in" "${working_dir}/Doxyfile" @ONLY)
 
 add_custom_target(
     docs
     COMMAND "${CMAKE_COMMAND}" -E remove_directory
     "${DOXYGEN_OUTPUT_DIRECTORY}/html"
     "${DOXYGEN_OUTPUT_DIRECTORY}/xml"
-    COMMAND "${Python3_EXECUTABLE}" "${mcss_script}" "${config}"
-    COMMENT "Building documentation using Doxygen and m.css"
+    COMMAND "${DOXYGEN_EXECUTABLE}" "${working_dir}/Doxyfile"
+    COMMENT "Building documentation using Doxygen"
     WORKING_DIRECTORY "${working_dir}"
     VERBATIM
 )
+
+# ---- Documentation coverage target ----
+
+find_program(PYTHON3_EXECUTABLE python3)
+
+if(PYTHON3_EXECUTABLE)
+    add_custom_target(
+        docs-coverage
+        COMMAND "${PYTHON3_EXECUTABLE}" -m coverxygen
+        --xml-dir "${DOXYGEN_OUTPUT_DIRECTORY}/xml"
+        --src-dir "${PROJECT_SOURCE_DIR}"
+        --output -
+        --format summary
+        --exclude ".*/pages/.*"
+        --exclude ".*\\.md$"
+        COMMENT "Generating documentation coverage report"
+        DEPENDS docs
+        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+        VERBATIM
+    )
+
+    add_custom_target(
+        docs-coverage-html
+        COMMAND "${PYTHON3_EXECUTABLE}" -m coverxygen
+        --xml-dir "${DOXYGEN_OUTPUT_DIRECTORY}/xml"
+        --src-dir "${PROJECT_SOURCE_DIR}"
+        --output "${PROJECT_BINARY_DIR}/doc-coverage.info"
+        --format lcov
+        --exclude ".*/pages/.*"
+        --exclude ".*\\.md$"
+        COMMAND genhtml --no-function-coverage --no-branch-coverage
+        --ignore-errors source
+        --filter missing
+        "${PROJECT_BINARY_DIR}/doc-coverage.info"
+        -o "${PROJECT_BINARY_DIR}/doc-coverage"
+        COMMENT "Generating HTML documentation coverage report"
+        DEPENDS docs
+        WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}"
+        VERBATIM
+    )
+else()
+    message(WARNING "Python3 not found, documentation coverage targets will not be available")
+endif()

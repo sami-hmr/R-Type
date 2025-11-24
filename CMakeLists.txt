@@ -1,67 +1,63 @@
 cmake_minimum_required(VERSION 3.14)
 
 include(cmake/prelude.cmake)
-include(cmake/variables.cmake)
 
 project(
     r-type
     VERSION 0.1.0
-    DESCRIPTION "esc game engine"
+    DESCRIPTION "ecs game engine"
     HOMEPAGE_URL "https://example.com/"
     LANGUAGES CXX
 )
 
-include(cmake/project-is-top-level.cmake)
+set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/plugins)
+set(CMAKE_SHARED_LIBRARY_PREFIX "")
 
-# ---- Declare library ----
+# ---- Developer mode variable ----
 
-add_library(
-    r-type_lib OBJECT
-    source/lib.cpp
+if(PROJECT_IS_TOP_LEVEL)
+    option(r-type_DEVELOPER_MODE "Enable developer mode" OFF)
+endif()
+
+include(FetchContent)
+
+FetchContent_Declare(
+    parser
+  GIT_REPOSITORY https://github.com/abeldaverio/cpp-parsing-library
+  GIT_TAG        main
 )
 
-target_include_directories(
-    r-type_lib ${warning_guard}
-    PUBLIC
-    "\$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/source>"
-)
+FetchContent_MakeAvailable(parser)
 
-target_compile_features(r-type_lib PUBLIC cxx_std_17)
-
-find_package(fmt REQUIRED)
-target_link_libraries(r-type_lib PRIVATE fmt::fmt)
+add_subdirectory(plugins)
 
 # ---- Declare executable ----
 
-add_executable(r-type_exe source/main.cpp)
+add_executable(r-type_exe src/main.cpp)
 add_executable(r-type::exe ALIAS r-type_exe)
 
 set_property(TARGET r-type_exe PROPERTY OUTPUT_NAME r-type)
 
-target_compile_features(r-type_exe PRIVATE cxx_std_17)
+target_compile_features(r-type_exe PRIVATE cxx_std_23)
 
-target_link_libraries(r-type_exe PRIVATE r-type_lib)
+target_include_directories(r-type_exe
+    PRIVATE
+        include
+        ${parser_SOURCE_DIR}/include
+)
+
+target_link_libraries(r-type_exe PRIVATE parser)
 
 # Fix linking issue with clang
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-  target_link_libraries(r-type_exe PRIVATE stdc++)
-endif()
-
-# ---- Install rules ----
-
-if(NOT CMAKE_SKIP_INSTALL_RULES)
-    include(cmake/install-rules.cmake)
+    target_link_libraries(r-type_exe PRIVATE stdc++)
 endif()
 
 # ---- Developer mode ----
 
-if(NOT r-type_DEVELOPER_MODE)
-    return()
-elseif(NOT PROJECT_IS_TOP_LEVEL)
-    message(
-      AUTHOR_WARNING
-      "Developer mode is intended for developers of r-type"
-  )
+if(r-type_DEVELOPER_MODE)
+    include(cmake/dev-mode.cmake)
 endif()
-
-include(cmake/dev-mode.cmake)

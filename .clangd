@@ -1,0 +1,6 @@
+CompileFlags:
+  CompilationDatabase: build
+  Add: [-I./include, -I./build/_deps/parser-src/include]
+  Remove: [-fkeep-inline-functions, -fkeep-static-functions]
+
+
