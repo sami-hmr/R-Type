@@ -26,18 +26,18 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install GCC 13 with C++23 support
+    - name: Install Clang 18 with C++23 support
       run: |
         sudo apt-get update -q
-        sudo apt-get install -y -q gcc-13 g++-13 libconfig++-dev
-        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 100
-        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 100
+        sudo apt-get install -y -q clang-18 libc++-18-dev libc++abi-18-dev libconfig++-dev
+        sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
+        sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
 
     - name: Verify C++ compiler version
-      run: g++ --version
+      run: clang++ --version
 
     - name: Configure
-      run: cmake --preset=dev
+      run: CC=clang-18 CXX=clang++-18 cmake --preset=dev
 
     - name: Build
       run: cmake --build build -j 2
@@ -53,18 +53,18 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install GCC 13 with C++23 support
+    - name: Install Clang 18 with C++23 support
       run: |
         sudo apt-get update -q
-        sudo apt-get install -y -q gcc-13 g++-13 lcov libconfig++-dev
-        sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 100
-        sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-13 100
+        sudo apt-get install -y -q clang-18 libc++-18-dev libc++abi-18-dev lcov libconfig++-dev
+        sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
+        sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
 
     - name: Verify C++ compiler version
-      run: g++ --version
+      run: clang++ --version
 
     - name: Configure
-      run: cmake --preset=dev
+      run: CC=clang-18 CXX=clang++-18 cmake --preset=dev
 
     - name: Build
       run: cmake --build build -j 2
