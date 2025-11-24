@@ -29,15 +29,41 @@ jobs:
     - name: Install Clang 18 with C++23 support
       run: |
         sudo apt-get update -q
-        sudo apt-get install -y -q clang-18 libc++-18-dev libc++abi-18-dev
+        sudo apt-get install -y -q clang-18 libc++-18-dev libc++abi-18-dev ccache
         sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
         sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
+
+    - name: Setup ccache
+      uses: hendrikmuhs/ccache-action@v1.2
+      with:
+        key: ${{ github.job }}-${{ matrix.os }}
 
     - name: Verify C++ compiler version
       run: clang++ --version
 
+    - name: Cache CMake build directory
+      uses: actions/cache@v4
+      with:
+        path: |
+          build
+          !build/coverage.info
+        key: ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', 'cmake/**') }}
+        restore-keys: |
+          ${{ runner.os }}-cmake-build-
+
+    - name: Cache FetchContent dependencies
+      uses: actions/cache@v4
+      with:
+        path: build/_deps
+        key: ${{ runner.os }}-fetchcontent-${{ hashFiles('**/CMakeLists.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-fetchcontent-
+
     - name: Configure
       run: CC=clang-18 CXX=clang++-18 cmake --preset=dev
+      env:
+        CMAKE_C_COMPILER_LAUNCHER: ccache
+        CMAKE_CXX_COMPILER_LAUNCHER: ccache
 
     - name: Build
       run: cmake --build build -j 2
@@ -56,15 +82,41 @@ jobs:
     - name: Install Clang 18 with C++23 support
       run: |
         sudo apt-get update -q
-        sudo apt-get install -y -q clang-18 libc++-18-dev libc++abi-18-dev lcov
+        sudo apt-get install -y -q clang-18 libc++-18-dev libc++abi-18-dev lcov ccache
         sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
         sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
+
+    - name: Setup ccache
+      uses: hendrikmuhs/ccache-action@v1.2
+      with:
+        key: ${{ github.job }}-${{ matrix.os }}
 
     - name: Verify C++ compiler version
       run: clang++ --version
 
+    - name: Cache CMake build directory
+      uses: actions/cache@v4
+      with:
+        path: |
+          build
+          !build/coverage.info
+        key: ${{ runner.os }}-cmake-coverage-${{ hashFiles('**/CMakeLists.txt', 'cmake/**') }}
+        restore-keys: |
+          ${{ runner.os }}-cmake-coverage-
+
+    - name: Cache FetchContent dependencies
+      uses: actions/cache@v4
+      with:
+        path: build/_deps
+        key: ${{ runner.os }}-fetchcontent-${{ hashFiles('**/CMakeLists.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-fetchcontent-
+
     - name: Configure
       run: CC=clang-18 CXX=clang++-18 cmake --preset=dev
+      env:
+        CMAKE_C_COMPILER_LAUNCHER: ccache
+        CMAKE_CXX_COMPILER_LAUNCHER: ccache
 
     - name: Build
       run: cmake --build build -j 2
@@ -98,12 +150,36 @@ jobs:
     - name: Install Clang 18 and Doxygen
       run: |
         sudo apt-get update -q
-        sudo apt-get install -y -q clang-18 libc++-18-dev libc++abi-18-dev doxygen
+        sudo apt-get install -y -q clang-18 libc++-18-dev libc++abi-18-dev doxygen ccache
         sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
         sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
 
+    - name: Setup ccache
+      uses: hendrikmuhs/ccache-action@v1.2
+      with:
+        key: ${{ github.job }}-${{ matrix.os }}
+
+    - name: Cache CMake build directory
+      uses: actions/cache@v4
+      with:
+        path: build
+        key: ${{ runner.os }}-cmake-docs-${{ hashFiles('**/CMakeLists.txt', 'cmake/**') }}
+        restore-keys: |
+          ${{ runner.os }}-cmake-docs-
+
+    - name: Cache FetchContent dependencies
+      uses: actions/cache@v4
+      with:
+        path: build/_deps
+        key: ${{ runner.os }}-fetchcontent-${{ hashFiles('**/CMakeLists.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-fetchcontent-
+
     - name: Configure
       run: CC=clang-18 CXX=clang++-18 cmake --preset=docs
+      env:
+        CMAKE_C_COMPILER_LAUNCHER: ccache
+        CMAKE_CXX_COMPILER_LAUNCHER: ccache
 
     - name: Build docs
       run: cmake --build build --target docs
