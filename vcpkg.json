@@ -6,6 +6,10 @@
     {
       "name": "fmt",
       "version>=": "11.0.2#1"
+    },
+    {
+      "name": "sfml",
+      "version>=": "3.0.2"
     }
   ],
   "features": {

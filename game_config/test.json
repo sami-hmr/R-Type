@@ -1,1 +1,12 @@
-{ "entities": [{ "moving:position": { "x": 4.4, "y": 2.7 } }] }
+{
+  "entities": [
+    {
+      "sfml_plugin:position": { "x": 100.0, "y": 100.0 },
+      "sfml_plugin:sprite": { "texture": "assets/spaceship.png" }
+    },
+    {
+      "sfml_plugin:position": { "x": 200.0, "y": 150.0 },
+      "sfml_plugin:sprite": { "texture": "assets/enemy.png" }
+    }
+  ]
+}
