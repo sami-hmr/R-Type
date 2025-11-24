@@ -3,12 +3,15 @@
 # Detect compiler and set appropriate coverage tools
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     # Use llvm-cov for Clang
+    # Find all profraw files and merge them
     set(
         COVERAGE_TRACE_COMMAND
-        llvm-profdata merge -sparse default.profraw -o coverage.profdata
+        ${CMAKE_COMMAND} -E echo "Searching for profraw files..."
+        COMMAND find "${PROJECT_BINARY_DIR}" -name "*.profraw" -type f
+        COMMAND llvm-profdata merge -sparse "${PROJECT_BINARY_DIR}/test/default.profraw" -o "${PROJECT_BINARY_DIR}/coverage.profdata"
         COMMAND llvm-cov export
         -format=lcov
-        -instr-profile=coverage.profdata
+        -instr-profile="${PROJECT_BINARY_DIR}/coverage.profdata"
         "${PROJECT_BINARY_DIR}/test/r-type_test"
         > "${PROJECT_BINARY_DIR}/coverage.info"
         CACHE STRING
@@ -19,7 +22,7 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         COVERAGE_HTML_COMMAND
         llvm-cov show
         -format=html
-        -instr-profile=coverage.profdata
+        -instr-profile="${PROJECT_BINARY_DIR}/coverage.profdata"
         "${PROJECT_BINARY_DIR}/test/r-type_test"
         -output-dir="${PROJECT_BINARY_DIR}/coverage_html"
         CACHE STRING

@@ -11,6 +11,8 @@ Checks: "*,\
   -llvm-include-order,\
   -llvmlibc-*,\
   -modernize-use-nodiscard,\
+  -modernize-use-trailing-return-type,\
+  -readability-identifier-length,\
   -misc-non-private-member-variables-in-classes"
 WarningsAsErrors: ''
 CheckOptions:

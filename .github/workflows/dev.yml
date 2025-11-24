@@ -127,7 +127,7 @@ jobs:
       working-directory: build
       run: ctest --output-on-failure --no-tests=error -j 2
       env:
-        LLVM_PROFILE_FILE: "default.profraw"
+        LLVM_PROFILE_FILE: "test/default.profraw"
 
     - name: Generate coverage report
       working-directory: build
