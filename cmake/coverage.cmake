@@ -12,14 +12,16 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         COMMAND ${CMAKE_COMMAND} -E echo "Searching for profraw files..."
         COMMAND find "${PROJECT_BINARY_DIR}" -name "*.profraw" -type f
         COMMAND ${CMAKE_COMMAND} -E echo "Merging profraw files..."
-        COMMAND llvm-profdata merge -sparse "${PROJECT_BINARY_DIR}/test/default.profraw" -o "${PROJECT_BINARY_DIR}/coverage.profdata"
+        COMMAND ${CMAKE_COMMAND} -E echo "Running: llvm-profdata merge -sparse ${PROJECT_BINARY_DIR}/default.profraw -o ${PROJECT_BINARY_DIR}/coverage.profdata"
+        COMMAND llvm-profdata merge -sparse "${PROJECT_BINARY_DIR}/default.profraw" -o "${PROJECT_BINARY_DIR}/coverage.profdata" || (echo "llvm-profdata merge failed!" && exit 1)
+        COMMAND ${CMAKE_COMMAND} -E echo "Checking if coverage.profdata was created..."
+        COMMAND test -f "${PROJECT_BINARY_DIR}/coverage.profdata" && echo "coverage.profdata exists" || (echo "coverage.profdata NOT found!" && exit 1)
         COMMAND ${CMAKE_COMMAND} -E echo "Generating lcov format coverage..."
-        COMMAND sh -c "llvm-cov export -format=lcov -instr-profile=${PROJECT_BINARY_DIR}/coverage.profdata ${TEST_EXECUTABLE} > ${PROJECT_BINARY_DIR}/coverage.info"
+        COMMAND sh -c "llvm-cov export -format=lcov -instr-profile=${PROJECT_BINARY_DIR}/coverage.profdata ${TEST_EXECUTABLE} > ${PROJECT_BINARY_DIR}/coverage.info || (echo 'llvm-cov export failed!' && exit 1)"
         COMMAND ${CMAKE_COMMAND} -E echo "Generating HTML coverage report..."
-        COMMAND llvm-cov show -format=html -instr-profile="${PROJECT_BINARY_DIR}/coverage.profdata" "${TEST_EXECUTABLE}" -output-dir="${PROJECT_BINARY_DIR}/coverage_html"
+        COMMAND llvm-cov show -format=html -instr-profile="${PROJECT_BINARY_DIR}/coverage.profdata" "${TEST_EXECUTABLE}" -output-dir="${PROJECT_BINARY_DIR}/coverage_html" || echo "HTML generation failed but continuing..."
         COMMAND ${CMAKE_COMMAND} -E echo "Coverage report generated successfully!"
         COMMENT "Generating coverage report"
-        VERBATIM
     )
 else()
     # Use lcov/gcov for GCC
