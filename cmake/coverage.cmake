@@ -16,9 +16,9 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         COMMAND ${CMAKE_COMMAND} -E echo "Checking if coverage.profdata was created..."
         COMMAND test -f coverage.profdata && ${CMAKE_COMMAND} -E echo "coverage.profdata exists"
         COMMAND ${CMAKE_COMMAND} -E echo "Generating lcov format coverage..."
-        COMMAND bash -c "llvm-cov export -format=lcov -instr-profile=coverage.profdata ${TEST_EXECUTABLE} > coverage.info"
+        COMMAND bash -c "llvm-cov export -format=lcov -instr-profile=coverage.profdata ${TEST_EXECUTABLE} -ignore-filename-regex='.*/_deps/.*' -ignore-filename-regex='.*/test/.*' > coverage.info"
         COMMAND ${CMAKE_COMMAND} -E echo "Generating HTML coverage report..."
-        COMMAND llvm-cov show -format=html -instr-profile=coverage.profdata "${TEST_EXECUTABLE}" -output-dir=coverage_html
+        COMMAND llvm-cov show -format=html -instr-profile=coverage.profdata "${TEST_EXECUTABLE}" -ignore-filename-regex='.*/_deps/.*' -ignore-filename-regex='.*/test/.*' -output-dir=coverage_html
         COMMAND ${CMAKE_COMMAND} -E echo "Coverage report generated successfully!"
         WORKING_DIRECTORY "${PROJECT_BINARY_DIR}"
         COMMENT "Generating coverage report"
@@ -33,7 +33,8 @@ else()
         --include "${PROJECT_SOURCE_DIR}/src/*"
         --include "${PROJECT_SOURCE_DIR}/include/*"
         --include "${PROJECT_SOURCE_DIR}/plugins/*"
-        --include "${PROJECT_SOURCE_DIR}/test/*"
+        --exclude "${PROJECT_BINARY_DIR}/_deps/*"
+        --exclude "${PROJECT_SOURCE_DIR}/test/*"
         --ignore-errors source
         --ignore-errors inconsistent
         --ignore-errors empty

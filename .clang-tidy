@@ -13,6 +13,12 @@ Checks: "*,\
   -modernize-use-nodiscard,\
   -modernize-use-trailing-return-type,\
   -readability-identifier-length,\
+  -readability-uppercase-literal-suffix,\
+  -google-explicit-constructor,\
+  -hicpp-explicit-conversions,\
+  -hicpp-uppercase-literal-suffix,\
+  -cppcoreguidelines-avoid-do-while,\
+  -misc-use-anonymous-namespace,\
   -misc-non-private-member-variables-in-classes"
 WarningsAsErrors: ''
 CheckOptions:
@@ -135,7 +141,7 @@ CheckOptions:
   - key: 'readability-identifier-naming.StaticVariableCase'
     value: 'lower_case'
   - key: 'readability-identifier-naming.StructCase'
-    value: 'lower_case'
+    value: 'CamelCase'
   - key: 'readability-identifier-naming.TemplateParameterCase'
     value: 'CamelCase'
   - key: 'readability-identifier-naming.TemplateTemplateParameterCase'
