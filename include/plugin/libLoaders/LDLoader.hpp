@@ -14,8 +14,6 @@
 #include <dlfcn.h>
 #include <unistd.h>
 
-#include <libconfig.h++>
-
 #include "ecs/Registery.hpp"
 #include "plugin/IPlugin.hpp"
 #include "plugin/libLoaders/ILibLoader.hpp"

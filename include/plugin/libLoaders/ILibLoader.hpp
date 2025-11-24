@@ -10,8 +10,6 @@
 
 #include <memory>
 
-#include <libconfig.h++>
-
 #include "CustomException.hpp"
 #include "ecs/Registery.hpp"
 #include "plugin/IPlugin.hpp"

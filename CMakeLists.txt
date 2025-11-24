@@ -30,13 +30,7 @@ FetchContent_Declare(
   GIT_TAG        main
 )
 
-FetchContent_Declare(
-    libconfig
-  GIT_REPOSITORY https://github.com/hyperrealm/libconfig
-  GIT_TAG        v1.8.1
-)
-
-FetchContent_MakeAvailable(parser libconfig)
+FetchContent_MakeAvailable(parser)
 
 add_subdirectory(plugins)
 
@@ -55,7 +49,7 @@ target_include_directories(r-type_exe
         ${parser_SOURCE_DIR}/include
 )
 
-target_link_libraries(r-type_exe PRIVATE parser config++)
+target_link_libraries(r-type_exe PRIVATE parser)
 
 # Fix linking issue with clang
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
