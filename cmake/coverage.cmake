@@ -3,30 +3,19 @@
 # Detect compiler and set appropriate coverage tools
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     # Use llvm-cov for Clang
-    # Find all profraw files and merge them
-    set(
-        COVERAGE_TRACE_COMMAND
-        ${CMAKE_COMMAND} -E echo "Searching for profraw files..."
+    # Custom target with proper shell commands
+    add_custom_target(
+        coverage
+        COMMAND ${CMAKE_COMMAND} -E echo "Searching for profraw files..."
         COMMAND find "${PROJECT_BINARY_DIR}" -name "*.profraw" -type f
+        COMMAND ${CMAKE_COMMAND} -E echo "Merging profraw files..."
         COMMAND llvm-profdata merge -sparse "${PROJECT_BINARY_DIR}/test/default.profraw" -o "${PROJECT_BINARY_DIR}/coverage.profdata"
-        COMMAND llvm-cov export
-        -format=lcov
-        -instr-profile="${PROJECT_BINARY_DIR}/coverage.profdata"
-        "${PROJECT_BINARY_DIR}/test/r-type_test"
-        > "${PROJECT_BINARY_DIR}/coverage.info"
-        CACHE STRING
-        "; separated command to generate a trace for the 'coverage' target"
-    )
-    
-    set(
-        COVERAGE_HTML_COMMAND
-        llvm-cov show
-        -format=html
-        -instr-profile="${PROJECT_BINARY_DIR}/coverage.profdata"
-        "${PROJECT_BINARY_DIR}/test/r-type_test"
-        -output-dir="${PROJECT_BINARY_DIR}/coverage_html"
-        CACHE STRING
-        "; separated command to generate an HTML report for the 'coverage' target"
+        COMMAND ${CMAKE_COMMAND} -E echo "Generating lcov format coverage..."
+        COMMAND sh -c "llvm-cov export -format=lcov -instr-profile=${PROJECT_BINARY_DIR}/coverage.profdata ${PROJECT_BINARY_DIR}/test/r-type_test > ${PROJECT_BINARY_DIR}/coverage.info"
+        COMMAND ${CMAKE_COMMAND} -E echo "Generating HTML coverage report..."
+        COMMAND llvm-cov show -format=html -instr-profile="${PROJECT_BINARY_DIR}/coverage.profdata" "${PROJECT_BINARY_DIR}/test/r-type_test" -output-dir="${PROJECT_BINARY_DIR}/coverage_html"
+        COMMENT "Generating coverage report"
+        VERBATIM
     )
 else()
     # Use lcov/gcov for GCC
@@ -58,14 +47,13 @@ else()
         CACHE STRING
         "; separated command to generate an HTML report for the 'coverage' target"
     )
+
+    # ---- Coverage target ----
+    add_custom_target(
+        coverage
+        COMMAND ${COVERAGE_TRACE_COMMAND}
+        COMMAND ${COVERAGE_HTML_COMMAND}
+        COMMENT "Generating coverage report"
+        VERBATIM
+    )
 endif()
-
-# ---- Coverage target ----
-
-add_custom_target(
-    coverage
-    COMMAND ${COVERAGE_TRACE_COMMAND}
-    COMMAND ${COVERAGE_HTML_COMMAND}
-    COMMENT "Generating coverage report"
-    VERBATIM
-)
