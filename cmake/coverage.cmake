@@ -3,6 +3,9 @@
 # Detect compiler and set appropriate coverage tools
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     # Use llvm-cov for Clang
+    # The test executable is in CMAKE_SOURCE_DIR due to CMAKE_RUNTIME_OUTPUT_DIRECTORY setting
+    set(TEST_EXECUTABLE "${CMAKE_SOURCE_DIR}/r-type_test")
+    
     # Custom target with proper shell commands
     add_custom_target(
         coverage
@@ -11,9 +14,10 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
         COMMAND ${CMAKE_COMMAND} -E echo "Merging profraw files..."
         COMMAND llvm-profdata merge -sparse "${PROJECT_BINARY_DIR}/test/default.profraw" -o "${PROJECT_BINARY_DIR}/coverage.profdata"
         COMMAND ${CMAKE_COMMAND} -E echo "Generating lcov format coverage..."
-        COMMAND sh -c "llvm-cov export -format=lcov -instr-profile=${PROJECT_BINARY_DIR}/coverage.profdata ${PROJECT_BINARY_DIR}/test/r-type_test > ${PROJECT_BINARY_DIR}/coverage.info"
+        COMMAND sh -c "llvm-cov export -format=lcov -instr-profile=${PROJECT_BINARY_DIR}/coverage.profdata ${TEST_EXECUTABLE} > ${PROJECT_BINARY_DIR}/coverage.info"
         COMMAND ${CMAKE_COMMAND} -E echo "Generating HTML coverage report..."
-        COMMAND llvm-cov show -format=html -instr-profile="${PROJECT_BINARY_DIR}/coverage.profdata" "${PROJECT_BINARY_DIR}/test/r-type_test" -output-dir="${PROJECT_BINARY_DIR}/coverage_html"
+        COMMAND llvm-cov show -format=html -instr-profile="${PROJECT_BINARY_DIR}/coverage.profdata" "${TEST_EXECUTABLE}" -output-dir="${PROJECT_BINARY_DIR}/coverage_html"
+        COMMAND ${CMAKE_COMMAND} -E echo "Coverage report generated successfully!"
         COMMENT "Generating coverage report"
         VERBATIM
     )
