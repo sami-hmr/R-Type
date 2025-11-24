@@ -100,9 +100,9 @@ jobs:
       uses: actions/cache@v4
       with:
         path: build
-        key: ${{ runner.os }}-cmake-coverage-${{ hashFiles('**/CMakeLists.txt', 'cmake/**') }}
+        key: ${{ runner.os }}-cmake-coverage-v2-${{ hashFiles('**/CMakeLists.txt', 'cmake/**') }}
         restore-keys: |
-          ${{ runner.os }}-cmake-coverage-
+          ${{ runner.os }}-cmake-coverage-v2-
 
     - name: Cache FetchContent dependencies
       uses: actions/cache@v4
@@ -121,9 +121,13 @@ jobs:
     - name: Build
       run: cmake --build build -j 2
 
-    - name: Clean profraw files before tests
+    - name: Clean profraw files and test artifacts
       working-directory: build
-      run: find . -type f -name "*.profraw" -delete 2>/dev/null; rm -f *.profdata 2>/dev/null; true
+      run: |
+        find . -type f -name "*.profraw" -delete 2>/dev/null || true
+        rm -f *.profdata coverage.info 2>/dev/null || true
+        rm -rf coverage_html 2>/dev/null || true
+        echo "Cleaned coverage artifacts"
 
     - name: Test
       working-directory: build

@@ -29,4 +29,10 @@ target_link_libraries(
 target_compile_features(r-type_test PRIVATE cxx_std_23)
 target_include_directories(r-type_test PRIVATE ${CMAKE_SOURCE_DIR}/include)
 
+# Apply coverage flags if enabled
+if(ENABLE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    target_compile_options(r-type_test PRIVATE -fprofile-instr-generate -fcoverage-mapping)
+    target_link_options(r-type_test PRIVATE -fprofile-instr-generate)
+endif()
+
 catch_discover_tests(r-type_test)
