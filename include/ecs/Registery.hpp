@@ -80,12 +80,6 @@ public:
     this->get_components<Component>().erase(from);
   }
 
-  template<class... Components, typename Function>
-  void add_system(Function&& f)
-  {
-    this->_frequent_systems.push_back(
-        [this, f]() { f(*this, this->get_components<Components>()...); });
-  }
 
   template<class... Components, typename Function>
   void add_system(Function const& f)

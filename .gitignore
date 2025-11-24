@@ -16,3 +16,4 @@ r-type_test
 coverage.profdata
 coverage.info
 coverage_html/
+.clangd

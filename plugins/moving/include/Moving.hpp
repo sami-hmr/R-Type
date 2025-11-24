@@ -20,8 +20,8 @@ class Moving: public APlugin {
     Moving(Registery &r, EntityLoader &l): APlugin(r, l, {
         COMP_INIT(position, init_pos)
     }) {
-        this->registery_.get().registerComponent<position>();
-        this->registery_.get().addSystem<position>([](Registery &, SparseArray<position>s) {
+        this->_registery.get().register_component<position>();
+        this->_registery.get().add_system<position>([](Registery &, SparseArray<position>s) {
             for (auto &&[position] : Zipper(s)) {
                 std::cout << position.x << "  " << position.y << std::endl;
             }
@@ -29,12 +29,12 @@ class Moving: public APlugin {
     }
     private:
 
-    void init_pos(Registery::Entity const entity, JsonVariant const &config) {
+    void init_pos(Registery::entity const entity, JsonVariant const &config) {
         try {
             JsonObject obj = std::get<JsonObject>(config);
             double x = std::get<double>(obj.at("x").value);
             double y = std::get<double>(obj.at("y").value);
-            this->registery_.get().emplace_component<position>(entity, x, y);
+            this->_registery.get().emplace_component<position>(entity, x, y);
         } catch (std::bad_variant_access const &) {
             std::cerr << "Error loading position component: unexpected value type" << std::endl;
         } catch (std::out_of_range const &) {
