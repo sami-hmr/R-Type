@@ -279,7 +279,7 @@ TEST_CASE("Registery - add_system and runSystems", "[registery]")
 
   int systemRuns = 0;
 
-  reg.add_system<Position>(
+  reg.addSystem<Position>(
       [&systemRuns](Registery& r, SparseArray<Position>& positions)
       { systemRuns++; });
 

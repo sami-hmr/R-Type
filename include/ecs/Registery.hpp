@@ -89,13 +89,6 @@ public:
         [this, f]() { f(*this, this->getComponents<Components>()...); });
   }
 
-  template<class... Components, typename Function>
-  void add_system(Function const& f)
-  {
-    this->frequent_systems_.push_back(
-        [this, f]() { f(*this, this->getComponents<Components>()...); });
-  }
-
   void runSystems()
   {
     for (auto const& f : this->frequent_systems_) {
