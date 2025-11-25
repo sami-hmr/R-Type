@@ -108,15 +108,14 @@ public:
 
     if (!_event_handlers.contains(type_id)) {
       _event_handlers[type_id] =
-          std::unordered_map<HandlerId,
-                             std::function<void(const EventType&)>>();
+          SparseArray<std::function<void(const EventType&)>>();
     }
 
-    auto& handlers = std::any_cast<
-        std::unordered_map<HandlerId, std::function<void(const EventType&)>>&>(
-        _event_handlers[type_id]);
+    auto& handlers =
+        std::any_cast<SparseArray<std::function<void(const EventType&)>>&>(
+            _event_handlers[type_id]);
 
-    handlers[handler_id] = std::move(handler);
+    handlers.insert_at(handler_id, std::move(handler));
 
     return handler_id;
   }
@@ -129,11 +128,16 @@ public:
       return false;
     }
 
-    auto& handlers = std::any_cast<
-        std::unordered_map<HandlerId, std::function<void(const EventType&)>>&>(
-        _event_handlers[type_id]);
+    auto& handlers =
+        std::any_cast<SparseArray<std::function<void(const EventType&)>>&>(
+            _event_handlers[type_id]);
 
-    return handlers.erase(handler_id) > 0;
+    if (handler_id >= handlers.size() || !handlers[handler_id].has_value()) {
+      return false;
+    }
+
+    handlers.erase(handler_id);
+    return true;
   }
 
   template<typename EventType>
@@ -152,12 +156,15 @@ public:
     }
 
     EventType event(std::forward<Args>(args)...);
-    auto const& handlers = std::any_cast<
-        std::unordered_map<HandlerId, std::function<void(const EventType&)>>&>(
-        _event_handlers.at(type_id));
 
-    for (auto const& [id, handler] : handlers) {
-      handler(event);
+    auto handlers_copy =
+        std::any_cast<SparseArray<std::function<void(const EventType&)>>>(
+            _event_handlers.at(type_id));
+
+    for (auto const& handler_opt : handlers_copy) {
+      if (handler_opt.has_value()) {
+        handler_opt.value()(event);
+      }
     }
   }
 
