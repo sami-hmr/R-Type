@@ -8,6 +8,10 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Drawable.hpp>
+#include <SFML/Graphics/Font.hpp>
+#include <SFML/Window.hpp>
+#include <SFML/Graphics/Text.hpp>
 
 #include "Json/JsonParser.hpp"
 #include "ecs/Registery.hpp"
@@ -27,6 +31,11 @@ struct Position
   float y;
 };
 
+struct Drawable
+{
+  Drawable() = default;
+};
+
 struct Sprite
 {
   Sprite(std::string texture_path)
@@ -34,56 +43,48 @@ struct Sprite
   {
   }
 
-  Sprite(Sprite const& other)
-
-      = default;
-
-  Sprite(Sprite&& other) noexcept
-      : texture_path(std::move(other.texture_path))
-      , texture(std::move(other.texture))
-      , sfml_sprite(std::move(other.sfml_sprite))
-  {
-  }
-
-  Sprite& operator=(Sprite const& other)
-  {
-    if (this != &other) {
-      texture_path = other.texture_path;
-      texture = other.texture;
-      sfml_sprite = other.sfml_sprite;
-    }
-    return *this;
-  }
-
-  Sprite& operator=(Sprite&& other) noexcept
-  {
-    if (this != &other) {
-      texture_path = std::move(other.texture_path);
-      texture = std::move(other.texture);
-      sfml_sprite = std::move(other.sfml_sprite);
-    }
-    return *this;
-  }
-
   std::string texture_path;
-  std::shared_ptr<sf::Texture> texture;
-  std::shared_ptr<sf::Sprite> sfml_sprite;
 };
 
-class SfmlRenderer : public APlugin
+struct Text
+{
+  Text(std::string const& font_path)
+      : font_path(font_path)
+  {
+  }
+
+  std::string font_path;
+};
+
+class SFMLRenderer : public APlugin
 {
 public:
-  SfmlRenderer(Registery& r, EntityLoader& l);
-  ~SfmlRenderer() override;
+  SFMLRenderer(Registery& r, EntityLoader& l);
+  ~SFMLRenderer() override;
+
+  static constexpr sf::Vector2u window_size = {1800, 1600};
+  static constexpr std::size_t window_rate = 60;
 
 private:
-  void init_position(Registery::Entity entity, JsonVariant const& config);
-  void init_sprite(Registery::Entity entity, JsonVariant const& config);
+  std::shared_ptr<sf::Texture> load_texture(std::string const& path);
+  std::shared_ptr<sf::Font> load_font(std::string const& path);
 
-  void render_system(Registery& r,
-                     const SparseArray<Position>& positions,
-                     const SparseArray<Sprite>& sprites);
+  void init_drawable(Registery::Entity const entity, JsonVariant const& config);
+  void init_sprite(Registery::Entity const entity, JsonVariant const& config);
+  void init_text(Registery::Entity const entity, JsonVariant const& config);
+
+  void handle_window();
+  void render_sprites(Registery& r,
+                     SparseArray<Position> positions,
+                     SparseArray<Drawable> drawable,
+                     SparseArray<Sprite> sprites);
+  void render_text(Registery& r,
+                  SparseArray<Position> positions,
+                  SparseArray<Drawable> drawable,
+                  SparseArray<Text> texts);
 
   std::unique_ptr<sf::RenderWindow> _window;
-  const std::vector<std::string> depends_on;
+  std::unordered_map<std::string, std::shared_ptr<sf::Texture>> _textures;
+  std::unordered_map<std::string, std::shared_ptr<sf::Font>> _fonts;
+  const std::vector<std::string> _depends_on = {"Moving"};
 };

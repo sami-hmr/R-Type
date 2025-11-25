@@ -1,102 +1,138 @@
 
 #include <iostream>
 #include <memory>
-#include <optional>
 #include <stdexcept>
-#include <string>
 #include <variant>
 
 #include "SFMLRenderer.hpp"
 
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/Sprite.hpp>
-#include <SFML/Graphics/Texture.hpp>
-#include <SFML/Window/VideoMode.hpp>
-
 #include "Json/JsonParser.hpp"
 #include "ecs/Registery.hpp"
-#include "ecs/SparseArray.hpp"
 #include "ecs/zipper/Zipper.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 
-SfmlRenderer::SfmlRenderer(Registery& r, EntityLoader& l)
-    : APlugin(
-          r,
-          l,
-          {COMP_INIT(position, init_position), COMP_INIT(sprite, init_sprite)})
+SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
+    : APlugin(r,
+              l,
+              {COMP_INIT(Drawable, init_drawable),
+               COMP_INIT(Sprite, init_sprite),
+               COMP_INIT(Text, init_text)})
 {
-  _window = std::make_unique<sf::RenderWindow>(
-      sf::VideoMode(sf::Vector2u(1800, 1600)), "R-Type - SFML Renderer");
-  _window->setFramerateLimit(60);
+  _window = std::make_unique<sf::RenderWindow>(sf::VideoMode(window_size),
+                                               "R-Type - SFML Renderer");
+  _window->setFramerateLimit(window_rate);
 
-  _registery.get().register_component<Position>();
+  _registery.get().register_component<Drawable>();
   _registery.get().register_component<Sprite>();
+  _registery.get().register_component<Text>();
 
-  _registery.get().add_system<Position, Sprite>(
+  _registery.get().add_system<Position, Drawable, Sprite>(
       [this](Registery& r,
-             const SparseArray<Position>& pos,
-             const SparseArray<Sprite>& spr)
-      { this->render_system(r, pos, spr); });
+             SparseArray<Position> pos,
+             SparseArray<Drawable> draw,
+             SparseArray<Sprite> spr)
+      {
+        this->handle_window();
+        this->render_sprites(r, pos, draw, spr);
+        _window->display();
+      });
+  _registery.get().add_system<Position, Drawable, Text>(
+      [this](Registery& r,
+             SparseArray<Position> pos,
+             SparseArray<Drawable> draw,
+             SparseArray<Text> txt)
+      {
+        this->handle_window();
+        this->render_text(r, pos, draw, txt);
+        _window->display();
+      });
 }
 
-SfmlRenderer::~SfmlRenderer()
+SFMLRenderer::~SFMLRenderer()
 {
   if (_window && _window->isOpen()) {
     _window->close();
   }
 }
 
-void SfmlRenderer::init_position(Registery::Entity const entity,
+std::shared_ptr<sf::Texture> SFMLRenderer::load_texture(std::string const& path)
+{
+  auto it = _textures.find(path);
+  if (it != _textures.end()) {
+    return it->second;
+  }
+
+  auto texture = std::make_shared<sf::Texture>();
+  if (!texture->loadFromFile(path)) {
+    std::cerr << "Failed to load texture: " << path << '\n';
+    return nullptr;
+  }
+  _textures[path] = texture;
+  return texture;
+}
+
+std::shared_ptr<sf::Font> SFMLRenderer::load_font(std::string const& path)
+{
+  auto it = _fonts.find(path);
+  if (it != _fonts.end()) {
+    return it->second;
+  }
+
+  auto font = std::make_shared<sf::Font>();
+  if (!font->openFromFile(path)) {
+    std::cerr << "Failed to load font: " << path << '\n';
+    return nullptr;
+  }
+  _fonts[path] = font;
+  return font;
+}
+
+void SFMLRenderer::init_drawable(Registery::Entity const entity,
                                  JsonVariant const& config)
 {
   try {
     JsonObject obj = std::get<JsonObject>(config);
-    auto x = static_cast<float>(std::get<double>(obj.at("x").value));
-    auto y = static_cast<float>(std::get<double>(obj.at("y").value));
-    this->_registery.get().emplace_component<Position>(entity, x, y);
+    _registery.get().emplace_component<Drawable>(entity);
   } catch (std::bad_variant_access const&) {
-    std::cerr << "Error loading position component: unexpected value type"
-              << '\n';
+    std::cerr << "Error loading sprite component: unexpected value type\n";
   } catch (std::out_of_range const&) {
-    std::cerr << "Error loading position component: missing value in JsonObject"
-              << '\n';
+    std::cerr
+        << "Error loading sprite component: missing value in JsonObject\n";
   }
 }
 
-void SfmlRenderer::init_sprite(Registery::Entity const entity,
+void SFMLRenderer::init_sprite(Registery::Entity const entity,
                                JsonVariant const& config)
 {
   try {
     JsonObject obj = std::get<JsonObject>(config);
-    std::string const texture_path =
-        std::get<std::string>(obj.at("texture").value);
-
-    std::cout << "Loading sprite with texture: " << texture_path << '\n';
-
+    std::string texture_path = std::get<std::string>(obj.at("texture").value);
     auto spr = _registery.get().emplace_component<Sprite>(entity, texture_path);
-    if (spr) {
-      spr->texture = std::make_shared<sf::Texture>();
-      if (!spr->texture->loadFromFile(texture_path)) {
-        std::cerr << "Failed to load texture: " << texture_path << '\n';
-        return;
-      }
-      std::cout << "Texture loaded successfully: " << texture_path << '\n';
-      spr->sfml_sprite = std::make_shared<sf::Sprite>(*spr->texture);
-      std::cout << "Sprite created successfully\n";
-    }
   } catch (std::bad_variant_access const&) {
-    std::cerr << "Error loading sprite component: unexpected value type"
-              << '\n';
+    std::cerr << "Error loading sprite component: unexpected value type\n";
   } catch (std::out_of_range const&) {
-    std::cerr << "Error loading sprite component: missing value in JsonObject"
-              << '\n';
+    std::cerr
+        << "Error loading sprite component: missing value in JsonObject\n";
   }
 }
 
-void SfmlRenderer::render_system(Registery& /*r*/,
-                                 const SparseArray<Position>& positions,
-                                 const SparseArray<Sprite>& sprites)
+void SFMLRenderer::init_text(Registery::Entity const entity,
+                             JsonVariant const& config)
+{
+  try {
+    JsonObject obj = std::get<JsonObject>(config);
+    std::string font_path = std::get<std::string>(obj.at("font").value);
+    auto txt = _registery.get().emplace_component<Text>(entity, font_path);
+  } catch (std::bad_variant_access const&) {
+    std::cerr << "Error loading sprite component: unexpected value type\n";
+  } catch (std::out_of_range const&) {
+    std::cerr
+        << "Error loading sprite component: missing value in JsonObject\n";
+  }
+}
+
+void SFMLRenderer::handle_window()
 {
   if (!_window || !_window->isOpen()) {
     return;
@@ -109,24 +145,38 @@ void SfmlRenderer::render_system(Registery& /*r*/,
   }
 
   _window->clear(sf::Color::Black);
+}
 
-  for (auto&& [pos, spr] : Zipper(positions, sprites)) {
-    if (spr.sfml_sprite && spr.texture) {
-      spr.sfml_sprite->setPosition(sf::Vector2f(pos.x, pos.y));
-      _window->draw(*spr.sfml_sprite);
-      std::cout << "Drawing sprite at (" << pos.x << ", " << pos.y << ")\n";
-    } else {
-      std::cout << "Sprite or texture is null\n";
-    }
+void SFMLRenderer::render_sprites(Registery& r,
+                                  SparseArray<Position> positions,
+                                  SparseArray<Drawable> drawable,
+                                  SparseArray<Sprite> sprites)
+{
+  for (auto&& [pos, draw, spr] : Zipper(positions, drawable, sprites)) {
+    auto texture = load_texture(spr.texture_path);
+    sf::Sprite sprite(*texture);
+    sprite.setPosition(sf::Vector2f(pos.x, pos.y));
+    _window->draw(sprite);
   }
+}
 
-  _window->display();
+void SFMLRenderer::render_text(Registery& r,
+                               SparseArray<Position> positions,
+                               SparseArray<Drawable> drawable,
+                               SparseArray<Text> texts)
+{
+  for (auto&& [pos, draw, txt] : Zipper(positions, drawable, texts)) {
+    auto font = load_font(txt.font_path);
+    sf::Text text(*font);
+    text.setPosition(sf::Vector2f(pos.x, pos.y));
+    _window->draw(text);
+  }
 }
 
 extern "C"
 {
 void* entry_point(Registery& r, EntityLoader& e)
 {
-  return new SfmlRenderer(r, e);
+  return new SFMLRenderer(r, e);
 }
 }
