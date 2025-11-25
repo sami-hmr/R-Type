@@ -5,8 +5,10 @@
 #include <variant>
 
 #include "SFMLRenderer.hpp"
+
 #include <SFML/Graphics/Sprite.hpp>
 
+#include "Events.hpp"
 #include "Json/JsonParser.hpp"
 #include "ecs/Registery.hpp"
 #include "ecs/zipper/Zipper.hpp"
@@ -16,7 +18,7 @@
 SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
     : APlugin(r,
               l,
-              {depends_on},
+              {},
               {COMP_INIT(Drawable, init_drawable),
                COMP_INIT(Sprite, init_sprite),
                COMP_INIT(Text, init_text)})
@@ -67,7 +69,7 @@ std::shared_ptr<sf::Texture> SFMLRenderer::load_texture(std::string const& path)
 
   auto texture = std::make_shared<sf::Texture>();
   if (!texture->loadFromFile(path)) {
-    std::cerr << "Failed to load texture: " << path << '\n';
+    LOGGER("SFML", LogLevel::ERROR, "Failed to load texture: " + path)
     return nullptr;
   }
   _textures[path] = texture;
@@ -83,7 +85,7 @@ std::shared_ptr<sf::Font> SFMLRenderer::load_font(std::string const& path)
 
   auto font = std::make_shared<sf::Font>();
   if (!font->openFromFile(path)) {
-    std::cerr << "Failed to load font: " << path << '\n';
+    LOGGER("SFML", LogLevel::ERROR, "Failed to font texture: " + path)
     return nullptr;
   }
   _fonts[path] = font;
@@ -97,10 +99,13 @@ void SFMLRenderer::init_drawable(Registery::Entity const entity,
     JsonObject obj = std::get<JsonObject>(config);
     _registery.get().emplace_component<Drawable>(entity);
   } catch (std::bad_variant_access const&) {
-    std::cerr << "Error loading sprite component: unexpected value type\n";
+    LOGGER("SFML",
+           LogLevel::ERROR,
+           "Error loading drawable component: unexpected value type")
   } catch (std::out_of_range const&) {
-    std::cerr
-        << "Error loading sprite component: missing value in JsonObject\n";
+    LOGGER("SFML",
+           LogLevel::ERROR,
+           "Error loading drawable component: missing value in JsonObject")
   }
 }
 
@@ -113,10 +118,13 @@ void SFMLRenderer::init_sprite(Registery::Entity const entity,
     _registery.get().emplace_component<Sprite>(entity, texture_path);
 
   } catch (std::bad_variant_access const&) {
-    std::cerr << "Error loading sprite component: unexpected value type\n";
+    LOGGER("SFML",
+           LogLevel::ERROR,
+           "Error loading sprite component: unexpected value type")
   } catch (std::out_of_range const&) {
-    std::cerr
-        << "Error loading sprite component: missing value in JsonObject\n";
+    LOGGER("SFML",
+           LogLevel::ERROR,
+           "Error loading sprite component: missing value in JsonObject")
   }
 }
 
@@ -128,10 +136,13 @@ void SFMLRenderer::init_text(Registery::Entity const entity,
     std::string font_path = std::get<std::string>(obj.at("font").value);
     auto txt = _registery.get().emplace_component<Text>(entity, font_path);
   } catch (std::bad_variant_access const&) {
-    std::cerr << "Error loading sprite component: unexpected value type\n";
+    LOGGER("SFML",
+           LogLevel::ERROR,
+           "Error loading text component: unexpected value type")
   } catch (std::out_of_range const&) {
-    std::cerr
-        << "Error loading sprite component: missing value in JsonObject\n";
+    LOGGER("SFML",
+           LogLevel::ERROR,
+           "Error loading text component: missing value in JsonObject")
   }
 }
 
@@ -144,6 +155,7 @@ void SFMLRenderer::handle_window()
   while (const std::optional event = _window->pollEvent()) {
     if (event->is<sf::Event::Closed>()) {
       _window->close();
+      _registery.get().emit<ShutdownEvent>("Window closed", 0);
     }
   }
 

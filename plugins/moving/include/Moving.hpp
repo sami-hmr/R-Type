@@ -1,11 +1,12 @@
 #pragma once
 
-#include <iostream>
+#include <format>
 #include <stdexcept>
 #include <string>
 #include <variant>
 #include <vector>
 
+#include "Events.hpp"
 #include "Json/JsonParser.hpp"
 #include "ecs/Registery.hpp"
 #include "ecs/SparseArray.hpp"
@@ -18,19 +19,16 @@ class Moving : public APlugin
 {
 public:
   Moving(Registery& r, EntityLoader& l)
-      : APlugin(
-          r,
-          l,
-          {},
-          {COMP_INIT(Position, init_pos)}
-      )
+      : APlugin(r, l, {}, {COMP_INIT(Position, init_pos)})
   {
     this->_registery.get().register_component<Position>();
     this->_registery.get().add_system<Position>(
-        [](Registery&, const SparseArray<Position>& s)
+        [this](Registery&, const SparseArray<Position>& s)
         {
           for (auto&& [position] : Zipper(s)) {
-            std::cout << position.x << "  " << position.y << '\n';
+            LOGGER("SFML",
+                   LogLevel::INFO,
+                   std::format("x: {}, y: {}", position.x, position.y))
           }
         });
   }

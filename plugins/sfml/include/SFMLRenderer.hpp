@@ -71,5 +71,5 @@ private:
   std::unordered_map<std::string, std::shared_ptr<sf::Texture>> _textures;
   std::unordered_map<std::string, std::shared_ptr<sf::Font>> _fonts;
   std::optional<sf::Sprite> _sprite;
-  const std::vector<std::string> depends_on = {"Moving"};
+  const std::vector<std::string> depends_on = {"moving"};
 };
