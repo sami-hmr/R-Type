@@ -39,17 +39,17 @@ public:
     }
   }
 
-  std::unique_ptr<Module> get_instance(const std::string &entry_point,
-                                      Registery& r,
-                                      EntityLoader& e) override
+  std::unique_ptr<Module> get_instance(const std::string& entry_point,
+                                       Registery& r,
+                                       EntityLoader& e) override
   {
-    auto *function = (IPlugin* (*)(Registery&, EntityLoader&))
-        (dlsym(this->_lib, entry_point.c_str()));
+    auto* function = (IPlugin * (*)(Registery&, EntityLoader&))(
+        dlsym(this->_lib, entry_point.c_str()));
 
     if (function == nullptr) {
       throw LoaderException("not a rtype Plugin lib");
     }
-    auto *instance = dynamic_cast<Module*>(function(r, e));
+    auto* instance = dynamic_cast<Module*>(function(r, e));
     if (instance == nullptr) {
       throw LoaderException("wrong plugin type");
     }
