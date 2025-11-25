@@ -31,26 +31,26 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
   _registery.get().register_component<Sprite>();
   _registery.get().register_component<Text>();
 
+  _registery.get().add_system<>(
+      [this](Registery&)
+      {
+        _window->clear(sf::Color::Black);
+        ;
+      });
   _registery.get().add_system<Position, Drawable, Sprite>(
       [this](Registery& r,
              SparseArray<Position> pos,
              SparseArray<Drawable> draw,
              SparseArray<Sprite> spr)
-      {
-        this->handle_window();
-        this->render_sprites(r, pos, draw, spr);
-        _window->display();
-      });
+      { this->render_sprites(r, pos, draw, spr); });
+
   _registery.get().add_system<Position, Drawable, Text>(
       [this](Registery& r,
              SparseArray<Position> pos,
              SparseArray<Drawable> draw,
-             SparseArray<Text> txt)
-      {
-        this->handle_window();
-        this->render_text(r, pos, draw, txt);
-        _window->display();
-      });
+             SparseArray<Text> txt) { this->render_text(r, pos, draw, txt); });
+
+  _registery.get().add_system<>([this](Registery&) { this->handle_window(); });
 }
 
 SFMLRenderer::~SFMLRenderer()
@@ -101,7 +101,7 @@ void SFMLRenderer::init_drawable(Registery::Entity const entity,
   } catch (std::bad_variant_access const&) {
     LOGGER("SFML",
            LogLevel::ERROR,
-           "Error loading drawable component: unexpected value type")
+           "Error loading sprite component: unexpected value type")
   } catch (std::out_of_range const&) {
     LOGGER("SFML",
            LogLevel::ERROR,
@@ -159,10 +159,10 @@ void SFMLRenderer::handle_window()
     }
   }
 
-  _window->clear(sf::Color::Black);
+  _window->display();
 }
 
-void SFMLRenderer::render_sprites(Registery& r,
+void SFMLRenderer::render_sprites(Registery& /*unused*/,
                                   SparseArray<Position> positions,
                                   SparseArray<Drawable> drawable,
                                   SparseArray<Sprite> sprites)
@@ -179,7 +179,7 @@ void SFMLRenderer::render_sprites(Registery& r,
   }
 }
 
-void SFMLRenderer::render_text(Registery& r,
+void SFMLRenderer::render_text(Registery& /*unused*/,
                                SparseArray<Position> positions,
                                SparseArray<Drawable> drawable,
                                SparseArray<Text> texts)

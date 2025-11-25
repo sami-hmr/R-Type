@@ -9,13 +9,12 @@
 
 struct Position
 {
-  Position(float x, float y)
-      : x(x)
-      , y(y)
-  {
-  }
-
   double x;
   double y;
 };
 
+struct Velocity
+{
+  double x;
+  double y;
+};
