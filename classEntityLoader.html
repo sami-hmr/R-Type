@@ -71,7 +71,6 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="classEntityLoader-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">EntityLoader Class Reference</div></div>
 </div><!--header-->
@@ -87,17 +86,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a4eb651a466d648d7fa65478fd4c57441"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6734eed960d50265902d05cdb65cf6a7" id="r_a6734eed960d50265902d05cdb65cf6a7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEntityLoader.html#a6734eed960d50265902d05cdb65cf6a7">load_file</a> (std::string const &amp;filepath)</td></tr>
 <tr class="separator:a6734eed960d50265902d05cdb65cf6a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7e04e65897ef64e28c7fb473739abb2b" id="r_a7e04e65897ef64e28c7fb473739abb2b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEntityLoader.html#a7e04e65897ef64e28c7fb473739abb2b">loadEntity</a> (JsonObject const &amp;config)</td></tr>
-<tr class="separator:a7e04e65897ef64e28c7fb473739abb2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a41f6d6719204e616d06b6832f1ca1aa2" id="r_a41f6d6719204e616d06b6832f1ca1aa2"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; std::string, std::unique_ptr&lt; <a class="el" href="classLibLoader.html">LibLoader</a>&lt; <a class="el" href="classIPlugin.html">IPlugin</a> &gt; &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEntityLoader.html#a41f6d6719204e616d06b6832f1ca1aa2">loaders_</a></td></tr>
-<tr class="separator:a41f6d6719204e616d06b6832f1ca1aa2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad4cb35eabef360f24b35c6fb2d588dab" id="r_ad4cb35eabef360f24b35c6fb2d588dab"><td class="memItemLeft" align="right" valign="top">std::unordered_map&lt; std::string, std::unique_ptr&lt; <a class="el" href="classIPlugin.html">IPlugin</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEntityLoader.html#ad4cb35eabef360f24b35c6fb2d588dab">plugins_</a></td></tr>
-<tr class="separator:ad4cb35eabef360f24b35c6fb2d588dab"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aae038efc24874a013be1c987214f09e3" id="r_aae038efc24874a013be1c987214f09e3"><td class="memItemLeft" align="right" valign="top">std::reference_wrapper&lt; <a class="el" href="classRegistery.html">Registery</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEntityLoader.html#aae038efc24874a013be1c987214f09e3">registery_</a></td></tr>
-<tr class="separator:aae038efc24874a013be1c987214f09e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf09ba48ab8c77b5198d47ade3cb159a" id="r_aaf09ba48ab8c77b5198d47ade3cb159a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEntityLoader.html#aaf09ba48ab8c77b5198d47ade3cb159a">load_entity</a> (JsonObject const &amp;config)</td></tr>
+<tr class="separator:aaf09ba48ab8c77b5198d47ade3cb159a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5bcf31a4b583b9659dd5f3432ac4bea7" id="r_a5bcf31a4b583b9659dd5f3432ac4bea7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classEntityLoader.html#a5bcf31a4b583b9659dd5f3432ac4bea7">load_plugin</a> (std::string const &amp;plugin)</td></tr>
+<tr class="separator:a5bcf31a4b583b9659dd5f3432ac4bea7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ae7a9c9bf8cc6b111ea95ba6f0decbd58" name="ae7a9c9bf8cc6b111ea95ba6f0decbd58"></a>
@@ -119,7 +111,7 @@ Public Attributes</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -132,9 +124,6 @@ Public Attributes</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void EntityLoader::load </td>
@@ -144,11 +133,24 @@ Public Attributes</h2></td></tr>
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aaf09ba48ab8c77b5198d47ade3cb159a" name="aaf09ba48ab8c77b5198d47ade3cb159a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaf09ba48ab8c77b5198d47ade3cb159a">&#9670;&#160;</a></span>load_entity()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void EntityLoader::load_entity </td>
+          <td>(</td>
+          <td class="paramtype">JsonObject const &amp;&#160;</td>
+          <td class="paramname"><em>config</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
 </div><div class="memdoc">
 
 </div>
@@ -158,9 +160,6 @@ Public Attributes</h2></td></tr>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">void EntityLoader::load_file </td>
@@ -170,86 +169,31 @@ Public Attributes</h2></td></tr>
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a7e04e65897ef64e28c7fb473739abb2b" name="a7e04e65897ef64e28c7fb473739abb2b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7e04e65897ef64e28c7fb473739abb2b">&#9670;&#160;</a></span>loadEntity()</h2>
+<a id="a5bcf31a4b583b9659dd5f3432ac4bea7" name="a5bcf31a4b583b9659dd5f3432ac4bea7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5bcf31a4b583b9659dd5f3432ac4bea7">&#9670;&#160;</a></span>load_plugin()</h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void EntityLoader::loadEntity </td>
+          <td class="memname">void EntityLoader::load_plugin </td>
           <td>(</td>
-          <td class="paramtype">JsonObject const &amp;&#160;</td>
-          <td class="paramname"><em>config</em></td><td>)</td>
+          <td class="paramtype">std::string const &amp;&#160;</td>
+          <td class="paramname"><em>plugin</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="a41f6d6719204e616d06b6832f1ca1aa2" name="a41f6d6719204e616d06b6832f1ca1aa2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a41f6d6719204e616d06b6832f1ca1aa2">&#9670;&#160;</a></span>loaders_</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::unordered_map&lt;std::string, std::unique_ptr&lt;<a class="el" href="classLibLoader.html">LibLoader</a>&lt;<a class="el" href="classIPlugin.html">IPlugin</a>&gt; &gt; &gt; EntityLoader::loaders_</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ad4cb35eabef360f24b35c6fb2d588dab" name="ad4cb35eabef360f24b35c6fb2d588dab"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad4cb35eabef360f24b35c6fb2d588dab">&#9670;&#160;</a></span>plugins_</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::unordered_map&lt;std::string, std::unique_ptr&lt;<a class="el" href="classIPlugin.html">IPlugin</a>&gt; &gt; EntityLoader::plugins_</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aae038efc24874a013be1c987214f09e3" name="aae038efc24874a013be1c987214f09e3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aae038efc24874a013be1c987214f09e3">&#9670;&#160;</a></span>registery_</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::reference_wrapper&lt;<a class="el" href="classRegistery.html">Registery</a>&gt; EntityLoader::registery_</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<hr/>The documentation for this class was generated from the following files:<ul>
 <li>include/plugin/<a class="el" href="EntityLoader_8hpp_source.html">EntityLoader.hpp</a></li>
+<li>src/plugins/<a class="el" href="EntityLoader_8cpp.html">EntityLoader.cpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

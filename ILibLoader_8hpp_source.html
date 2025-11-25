@@ -81,95 +81,46 @@ $(document).ready(function() { init_codefold(0); });
   <div class="headertitle"><div class="title">ILibLoader.hpp</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="ILibLoader_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="comment">/*</span></div>
-<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="comment">** EPITECH PROJECT, 2025</span></div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="comment">** raytracer</span></div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="comment">** File description:</span></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="comment">** interface for plugin loader</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="comment">*/</span></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#ifndef LIB_LOADER_HPP</span></div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#define LIB_LOADER_HPP</span></div>
+<a href="ILibLoader_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#pragma once</span></div>
+<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span><span class="preprocessor">#include &lt;memory&gt;</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="CustomException_8hpp.html">CustomException.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="Registery_8hpp.html">ecs/Registery.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;<a class="code" href="IPlugin_8hpp.html">plugin/IPlugin.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="keyword">class </span><a class="code hl_class" href="classEntityLoader.html">EntityLoader</a>;</div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &lt;memory&gt;</span></div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &quot;<a class="code" href="CustomException_8hpp.html">CustomException.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#include &quot;<a class="code" href="Registery_8hpp.html">ecs/Registery.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#include &quot;<a class="code" href="IPlugin_8hpp.html">plugin/IPlugin.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span> </div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><a class="code hl_define" href="CustomException_8hpp.html#a139a34206903033df17b51054eebdf86">CUSTOM_EXCEPTION</a>(NotExistingLib)</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><a class="code hl_define" href="CustomException_8hpp.html#a139a34206903033df17b51054eebdf86">CUSTOM_EXCEPTION</a>(LoaderNotExistingFunction)</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><a class="code hl_define" href="CustomException_8hpp.html#a139a34206903033df17b51054eebdf86">CUSTOM_EXCEPTION</a>(LoaderException)</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="keyword">class </span><a class="code hl_class" href="classEntityLoader.html">EntityLoader</a>;</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
-<div class="foldopen" id="foldopen00019" data-start="{" data-end="};">
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno"><a class="line" href="classNotExistingLib.html">   19</a></span><span class="keyword">class </span><a class="code hl_class" href="classNotExistingLib.html">NotExistingLib</a> : <span class="keyword">public</span> <a class="code hl_class" href="classCustomException.html">CustomException</a></div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>{</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="keyword">public</span>:</div>
-<div class="foldopen" id="foldopen00022" data-start="{" data-end="}">
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno"><a class="line" href="classNotExistingLib.html#a5216aee8351e8ac9e9f31858ba9b1166">   22</a></span>  <a class="code hl_function" href="classNotExistingLib.html#a5216aee8351e8ac9e9f31858ba9b1166">NotExistingLib</a>(std::string message)</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>      : <a class="code hl_class" href="classCustomException.html">CustomException</a>(message)</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>  {</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>  }</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Module&gt;</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno"><a class="line" href="conceptlib.html">   18</a></span><span class="keyword">concept </span><a class="code hl_concept" href="conceptlib.html">lib</a> = std::is_base_of_v&lt;IPlugin, Module&gt;;</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keyword">template</span>&lt;lib Module&gt;</div>
+<div class="foldopen" id="foldopen00021" data-start="{" data-end="};">
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno"><a class="line" href="classLibLoader.html">   21</a></span><span class="keyword">class </span><a class="code hl_class" href="classLibLoader.html">LibLoader</a></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>{</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno"><a class="line" href="classLibLoader.html#af2ffd747bf00c84d8e58b9872db7f322">   24</a></span>  <span class="keyword">virtual</span> <a class="code hl_function" href="classLibLoader.html#af2ffd747bf00c84d8e58b9872db7f322">~LibLoader</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno"><a class="line" href="classLibLoader.html#a9f4c3852ac286e921ede7755c64f725b">   25</a></span>  <span class="keyword">virtual</span> std::unique_ptr&lt;Module&gt; <a class="code hl_function" href="classLibLoader.html#a9f4c3852ac286e921ede7755c64f725b">get_instance</a>(<span class="keyword">const</span> std::string&amp; entry_point,</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>                                               <a class="code hl_class" href="classRegistery.html">Registery</a>&amp; r,</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>                                               <a class="code hl_class" href="classEntityLoader.html">EntityLoader</a>&amp; e) = 0;</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>};</div>
 </div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>};</div>
-</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
-<div class="foldopen" id="foldopen00028" data-start="{" data-end="};">
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="classLoaderNotExistingFunction.html">   28</a></span><span class="keyword">class </span><a class="code hl_class" href="classLoaderNotExistingFunction.html">LoaderNotExistingFunction</a> : <span class="keyword">public</span> <a class="code hl_class" href="classCustomException.html">CustomException</a></div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>{</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keyword">public</span>:</div>
-<div class="foldopen" id="foldopen00031" data-start="{" data-end="}">
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno"><a class="line" href="classLoaderNotExistingFunction.html#abc28891a1c4008c46d1455fcce16dc96">   31</a></span>  <a class="code hl_function" href="classLoaderNotExistingFunction.html#abc28891a1c4008c46d1455fcce16dc96">LoaderNotExistingFunction</a>(std::string message)</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>      : <a class="code hl_class" href="classCustomException.html">CustomException</a>(message)</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>  {</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>  }</div>
-</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>};</div>
-</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
-<div class="foldopen" id="foldopen00037" data-start="{" data-end="};">
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno"><a class="line" href="classLoaderException.html">   37</a></span><span class="keyword">class </span><a class="code hl_class" href="classLoaderException.html">LoaderException</a> : <span class="keyword">public</span> <a class="code hl_class" href="classCustomException.html">CustomException</a></div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>{</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="keyword">public</span>:</div>
-<div class="foldopen" id="foldopen00040" data-start="{" data-end="}">
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno"><a class="line" href="classLoaderException.html#a1d38fc3182d537addbe19e1801051e4a">   40</a></span>  <a class="code hl_function" href="classLoaderException.html#a1d38fc3182d537addbe19e1801051e4a">LoaderException</a>(std::string message)</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>      : <a class="code hl_class" href="classCustomException.html">CustomException</a>(message)</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>  {</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>  }</div>
-</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>};</div>
-</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Module&gt;</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno"><a class="line" href="conceptlib.html">   47</a></span><span class="keyword">concept </span><a class="code hl_concept" href="conceptlib.html">lib</a> = std::is_base_of&lt;IPlugin, Module&gt;::value;</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="keyword">template</span>&lt;lib Module&gt;</div>
-<div class="foldopen" id="foldopen00050" data-start="{" data-end="};">
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno"><a class="line" href="classLibLoader.html">   50</a></span><span class="keyword">class </span><a class="code hl_class" href="classLibLoader.html">LibLoader</a></div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>{</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno"><a class="line" href="classLibLoader.html#af2ffd747bf00c84d8e58b9872db7f322">   53</a></span>  <span class="keyword">virtual</span> <a class="code hl_function" href="classLibLoader.html#af2ffd747bf00c84d8e58b9872db7f322">~LibLoader</a>() = <span class="keywordflow">default</span>;</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno"><a class="line" href="classLibLoader.html#ad18549ee8623c14243a5d22435fd6ced">   54</a></span>  <span class="keyword">virtual</span> std::unique_ptr&lt;Module&gt; <a class="code hl_function" href="classLibLoader.html#ad18549ee8623c14243a5d22435fd6ced">getInstance</a>(<span class="keyword">const</span> std::string entryPoint,</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>                                              <a class="code hl_class" href="classRegistery.html">Registery</a>&amp; r,</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>                                              <a class="code hl_class" href="classEntityLoader.html">EntityLoader</a>&amp; e) = 0;</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>};</div>
-</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aCustomException_8hpp_html"><div class="ttname"><a href="CustomException_8hpp.html">CustomException.hpp</a></div></div>
+<div class="ttc" id="aCustomException_8hpp_html_a139a34206903033df17b51054eebdf86"><div class="ttname"><a href="CustomException_8hpp.html#a139a34206903033df17b51054eebdf86">CUSTOM_EXCEPTION</a></div><div class="ttdeci">#define CUSTOM_EXCEPTION(name)</div><div class="ttdef"><b>Definition</b> CustomException.hpp:34</div></div>
 <div class="ttc" id="aIPlugin_8hpp_html"><div class="ttname"><a href="IPlugin_8hpp.html">IPlugin.hpp</a></div></div>
 <div class="ttc" id="aRegistery_8hpp_html"><div class="ttname"><a href="Registery_8hpp.html">Registery.hpp</a></div></div>
-<div class="ttc" id="aclassCustomException_html"><div class="ttname"><a href="classCustomException.html">CustomException</a></div><div class="ttdef"><b>Definition</b> CustomException.hpp:15</div></div>
-<div class="ttc" id="aclassEntityLoader_html"><div class="ttname"><a href="classEntityLoader.html">EntityLoader</a></div><div class="ttdef"><b>Definition</b> EntityLoader.hpp:23</div></div>
-<div class="ttc" id="aclassLibLoader_html"><div class="ttname"><a href="classLibLoader.html">LibLoader</a></div><div class="ttdef"><b>Definition</b> ILibLoader.hpp:51</div></div>
-<div class="ttc" id="aclassLibLoader_html_ad18549ee8623c14243a5d22435fd6ced"><div class="ttname"><a href="classLibLoader.html#ad18549ee8623c14243a5d22435fd6ced">LibLoader::getInstance</a></div><div class="ttdeci">virtual std::unique_ptr&lt; Module &gt; getInstance(const std::string entryPoint, Registery &amp;r, EntityLoader &amp;e)=0</div></div>
+<div class="ttc" id="aclassEntityLoader_html"><div class="ttname"><a href="classEntityLoader.html">EntityLoader</a></div><div class="ttdef"><b>Definition</b> EntityLoader.hpp:13</div></div>
+<div class="ttc" id="aclassLibLoader_html"><div class="ttname"><a href="classLibLoader.html">LibLoader</a></div><div class="ttdef"><b>Definition</b> ILibLoader.hpp:22</div></div>
+<div class="ttc" id="aclassLibLoader_html_a9f4c3852ac286e921ede7755c64f725b"><div class="ttname"><a href="classLibLoader.html#a9f4c3852ac286e921ede7755c64f725b">LibLoader::get_instance</a></div><div class="ttdeci">virtual std::unique_ptr&lt; Module &gt; get_instance(const std::string &amp;entry_point, Registery &amp;r, EntityLoader &amp;e)=0</div></div>
 <div class="ttc" id="aclassLibLoader_html_af2ffd747bf00c84d8e58b9872db7f322"><div class="ttname"><a href="classLibLoader.html#af2ffd747bf00c84d8e58b9872db7f322">LibLoader::~LibLoader</a></div><div class="ttdeci">virtual ~LibLoader()=default</div></div>
-<div class="ttc" id="aclassLoaderException_html"><div class="ttname"><a href="classLoaderException.html">LoaderException</a></div><div class="ttdef"><b>Definition</b> ILibLoader.hpp:38</div></div>
-<div class="ttc" id="aclassLoaderException_html_a1d38fc3182d537addbe19e1801051e4a"><div class="ttname"><a href="classLoaderException.html#a1d38fc3182d537addbe19e1801051e4a">LoaderException::LoaderException</a></div><div class="ttdeci">LoaderException(std::string message)</div><div class="ttdef"><b>Definition</b> ILibLoader.hpp:40</div></div>
-<div class="ttc" id="aclassLoaderNotExistingFunction_html"><div class="ttname"><a href="classLoaderNotExistingFunction.html">LoaderNotExistingFunction</a></div><div class="ttdef"><b>Definition</b> ILibLoader.hpp:29</div></div>
-<div class="ttc" id="aclassLoaderNotExistingFunction_html_abc28891a1c4008c46d1455fcce16dc96"><div class="ttname"><a href="classLoaderNotExistingFunction.html#abc28891a1c4008c46d1455fcce16dc96">LoaderNotExistingFunction::LoaderNotExistingFunction</a></div><div class="ttdeci">LoaderNotExistingFunction(std::string message)</div><div class="ttdef"><b>Definition</b> ILibLoader.hpp:31</div></div>
-<div class="ttc" id="aclassNotExistingLib_html"><div class="ttname"><a href="classNotExistingLib.html">NotExistingLib</a></div><div class="ttdef"><b>Definition</b> ILibLoader.hpp:20</div></div>
-<div class="ttc" id="aclassNotExistingLib_html_a5216aee8351e8ac9e9f31858ba9b1166"><div class="ttname"><a href="classNotExistingLib.html#a5216aee8351e8ac9e9f31858ba9b1166">NotExistingLib::NotExistingLib</a></div><div class="ttdeci">NotExistingLib(std::string message)</div><div class="ttdef"><b>Definition</b> ILibLoader.hpp:22</div></div>
-<div class="ttc" id="aclassRegistery_html"><div class="ttname"><a href="classRegistery.html">Registery</a></div><div class="ttdef"><b>Definition</b> Registery.hpp:15</div></div>
-<div class="ttc" id="aconceptlib_html"><div class="ttname"><a href="conceptlib.html">lib</a></div><div class="ttdef"><b>Definition</b> ILibLoader.hpp:47</div></div>
+<div class="ttc" id="aclassRegistery_html"><div class="ttname"><a href="classRegistery.html">Registery</a></div><div class="ttdef"><b>Definition</b> Registery.hpp:17</div></div>
+<div class="ttc" id="aconceptlib_html"><div class="ttname"><a href="conceptlib.html">lib</a></div><div class="ttdef"><b>Definition</b> ILibLoader.hpp:18</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

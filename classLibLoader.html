@@ -87,8 +87,8 @@ Inheritance diagram for LibLoader&lt; Module &gt;:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:af2ffd747bf00c84d8e58b9872db7f322" id="r_af2ffd747bf00c84d8e58b9872db7f322"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLibLoader.html#af2ffd747bf00c84d8e58b9872db7f322">~LibLoader</a> ()=default</td></tr>
 <tr class="separator:af2ffd747bf00c84d8e58b9872db7f322"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad18549ee8623c14243a5d22435fd6ced" id="r_ad18549ee8623c14243a5d22435fd6ced"><td class="memItemLeft" align="right" valign="top">virtual std::unique_ptr&lt; Module &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLibLoader.html#ad18549ee8623c14243a5d22435fd6ced">getInstance</a> (const std::string entryPoint, <a class="el" href="classRegistery.html">Registery</a> &amp;r, <a class="el" href="classEntityLoader.html">EntityLoader</a> &amp;e)=0</td></tr>
-<tr class="separator:ad18549ee8623c14243a5d22435fd6ced"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f4c3852ac286e921ede7755c64f725b" id="r_a9f4c3852ac286e921ede7755c64f725b"><td class="memItemLeft" align="right" valign="top">virtual std::unique_ptr&lt; Module &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLibLoader.html#a9f4c3852ac286e921ede7755c64f725b">get_instance</a> (const std::string &amp;entry_point, <a class="el" href="classRegistery.html">Registery</a> &amp;r, <a class="el" href="classEntityLoader.html">EntityLoader</a> &amp;e)=0</td></tr>
+<tr class="separator:a9f4c3852ac286e921ede7755c64f725b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="af2ffd747bf00c84d8e58b9872db7f322" name="af2ffd747bf00c84d8e58b9872db7f322"></a>
@@ -119,8 +119,8 @@ template&lt;<a class="el" href="conceptlib.html">lib</a> Module&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ad18549ee8623c14243a5d22435fd6ced" name="ad18549ee8623c14243a5d22435fd6ced"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad18549ee8623c14243a5d22435fd6ced">&#9670;&#160;</a></span>getInstance()</h2>
+<a id="a9f4c3852ac286e921ede7755c64f725b" name="a9f4c3852ac286e921ede7755c64f725b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f4c3852ac286e921ede7755c64f725b">&#9670;&#160;</a></span>get_instance()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -131,10 +131,10 @@ template&lt;<a class="el" href="conceptlib.html">lib</a> Module&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual std::unique_ptr&lt; Module &gt; <a class="el" href="classLibLoader.html">LibLoader</a>&lt; Module &gt;::getInstance </td>
+          <td class="memname">virtual std::unique_ptr&lt; Module &gt; <a class="el" href="classLibLoader.html">LibLoader</a>&lt; Module &gt;::get_instance </td>
           <td>(</td>
-          <td class="paramtype">const std::string&#160;</td>
-          <td class="paramname"><em>entryPoint</em>, </td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>entry_point</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -161,7 +161,7 @@ template&lt;<a class="el" href="conceptlib.html">lib</a> Module&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="classDlLoader.html#a5b99c8e380a758f58da0fdb8e6b55b5b">DlLoader&lt; Module &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classDlLoader.html#acee33e90725cacbf22aed36b81c97127">DlLoader&lt; Module &gt;</a>.</p>
 
 </div>
 </div>

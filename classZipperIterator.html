@@ -84,40 +84,42 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a4966a296fb4bfb03d907af24f2374f53" id="r_a4966a296fb4bfb03d907af24f2374f53"><td class="memTemplParams" colspan="2">template&lt;class Container &gt; </td></tr>
-<tr class="memitem:a4966a296fb4bfb03d907af24f2374f53"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#a4966a296fb4bfb03d907af24f2374f53">iterator</a> = std::conditional_t&lt; std::is_const_v&lt; Container &gt;, typename Container::cit, typename Container::it &gt;</td></tr>
-<tr class="separator:a4966a296fb4bfb03d907af24f2374f53"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2fda8416e2c0c68d03dc094d45719ece" id="r_a2fda8416e2c0c68d03dc094d45719ece"><td class="memTemplParams" colspan="2">template&lt;class Container &gt; </td></tr>
-<tr class="memitem:a2fda8416e2c0c68d03dc094d45719ece"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#a2fda8416e2c0c68d03dc094d45719ece">it_ref</a> = typename <a class="el" href="classZipperIterator.html#a4966a296fb4bfb03d907af24f2374f53">iterator</a>&lt; Container &gt;<a class="el" href="classZipperIterator.html#aaa77d3711afd8b1b06ac5804bd1d89e2">::reference</a></td></tr>
-<tr class="separator:a2fda8416e2c0c68d03dc094d45719ece"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a08aa8f36129bb098a235e6777e91d00b" id="r_a08aa8f36129bb098a235e6777e91d00b"><td class="memTemplParams" colspan="2">template&lt;class Container &gt; </td></tr>
-<tr class="memitem:a08aa8f36129bb098a235e6777e91d00b"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#a08aa8f36129bb098a235e6777e91d00b">value</a> = std::conditional_t&lt; std::is_const_v&lt; Container &gt;, typename Container::true_cref, typename Container::true_ref &gt;</td></tr>
-<tr class="separator:a08aa8f36129bb098a235e6777e91d00b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1f3733a8f82064fcaf954c54d98e2d79" id="r_a1f3733a8f82064fcaf954c54d98e2d79"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#a1f3733a8f82064fcaf954c54d98e2d79">value_type</a> = std::tuple&lt; <a class="el" href="classZipperIterator.html#a08aa8f36129bb098a235e6777e91d00b">value</a>&lt; Containers &gt;... &gt;</td></tr>
-<tr class="separator:a1f3733a8f82064fcaf954c54d98e2d79"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa77d3711afd8b1b06ac5804bd1d89e2" id="r_aaa77d3711afd8b1b06ac5804bd1d89e2"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#aaa77d3711afd8b1b06ac5804bd1d89e2">reference</a> = <a class="el" href="classZipperIterator.html#a1f3733a8f82064fcaf954c54d98e2d79">value_type</a></td></tr>
-<tr class="separator:aaa77d3711afd8b1b06ac5804bd1d89e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a12092b3213da88e85ad8c148d0de8f90" id="r_a12092b3213da88e85ad8c148d0de8f90"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#a12092b3213da88e85ad8c148d0de8f90">pointer</a> = void</td></tr>
-<tr class="separator:a12092b3213da88e85ad8c148d0de8f90"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a923995cc05887e58e5d2d5a8af92b28f" id="r_a923995cc05887e58e5d2d5a8af92b28f"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#a923995cc05887e58e5d2d5a8af92b28f">difference_type</a> = std::size_t</td></tr>
-<tr class="separator:a923995cc05887e58e5d2d5a8af92b28f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8396fa1ed32b0519b1f88408da07dada" id="r_a8396fa1ed32b0519b1f88408da07dada"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#a8396fa1ed32b0519b1f88408da07dada">iterator_tuple</a> = std::tuple&lt; <a class="el" href="classZipperIterator.html#a4966a296fb4bfb03d907af24f2374f53">iterator</a>&lt; Containers &gt;... &gt;</td></tr>
-<tr class="separator:a8396fa1ed32b0519b1f88408da07dada"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6630fc8ecb3ce8676910bc1b55d02d47" id="r_a6630fc8ecb3ce8676910bc1b55d02d47"><td class="memTemplParams" colspan="2">template&lt;class Container &gt; </td></tr>
+<tr class="memitem:a6630fc8ecb3ce8676910bc1b55d02d47"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#a6630fc8ecb3ce8676910bc1b55d02d47">Iterator</a> = std::conditional_t&lt; std::is_const_v&lt; Container &gt;, typename Container::cit, typename Container::it &gt;</td></tr>
+<tr class="separator:a6630fc8ecb3ce8676910bc1b55d02d47"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac8455465b7b0c07193d2b6d54a084f8c" id="r_ac8455465b7b0c07193d2b6d54a084f8c"><td class="memTemplParams" colspan="2">template&lt;class Container &gt; </td></tr>
+<tr class="memitem:ac8455465b7b0c07193d2b6d54a084f8c"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#ac8455465b7b0c07193d2b6d54a084f8c">ItRef</a> = typename <a class="el" href="classZipperIterator.html#a6630fc8ecb3ce8676910bc1b55d02d47">Iterator</a>&lt; Container &gt;::reference</td></tr>
+<tr class="separator:ac8455465b7b0c07193d2b6d54a084f8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c9c5a30827f06902c5b9f5d9d79f9e4" id="r_a7c9c5a30827f06902c5b9f5d9d79f9e4"><td class="memTemplParams" colspan="2">template&lt;class Container &gt; </td></tr>
+<tr class="memitem:a7c9c5a30827f06902c5b9f5d9d79f9e4"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#a7c9c5a30827f06902c5b9f5d9d79f9e4">Value</a> = std::conditional_t&lt; std::is_const_v&lt; Container &gt;, typename Container::true_cref, typename Container::true_ref &gt;</td></tr>
+<tr class="separator:a7c9c5a30827f06902c5b9f5d9d79f9e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afc671d9fddbb3e2f99d663d55eeaadd3" id="r_afc671d9fddbb3e2f99d663d55eeaadd3"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#afc671d9fddbb3e2f99d663d55eeaadd3">ValueType</a> = std::tuple&lt; <a class="el" href="classZipperIterator.html#a7c9c5a30827f06902c5b9f5d9d79f9e4">Value</a>&lt; Containers &gt;... &gt;</td></tr>
+<tr class="separator:afc671d9fddbb3e2f99d663d55eeaadd3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ccb9525d653523b22e241341c467938" id="r_a0ccb9525d653523b22e241341c467938"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#a0ccb9525d653523b22e241341c467938">Reference</a> = <a class="el" href="classZipperIterator.html#afc671d9fddbb3e2f99d663d55eeaadd3">ValueType</a></td></tr>
+<tr class="separator:a0ccb9525d653523b22e241341c467938"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7d03b9f79a6daa24688811ceac6740c" id="r_ae7d03b9f79a6daa24688811ceac6740c"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#ae7d03b9f79a6daa24688811ceac6740c">Pointer</a> = void</td></tr>
+<tr class="separator:ae7d03b9f79a6daa24688811ceac6740c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3b81029f6950e95745aa537b1d85718d" id="r_a3b81029f6950e95745aa537b1d85718d"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#a3b81029f6950e95745aa537b1d85718d">DifferenceType</a> = std::size_t</td></tr>
+<tr class="separator:a3b81029f6950e95745aa537b1d85718d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a159370fb145383b782b2d34d8cad2edd" id="r_a159370fb145383b782b2d34d8cad2edd"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#a159370fb145383b782b2d34d8cad2edd">IteratorTuple</a> = std::tuple&lt; <a class="el" href="classZipperIterator.html#a6630fc8ecb3ce8676910bc1b55d02d47">Iterator</a>&lt; Containers &gt;... &gt;</td></tr>
+<tr class="separator:a159370fb145383b782b2d34d8cad2edd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a19a8d3ec6b0b7927f725d1925268b0e3" id="r_a19a8d3ec6b0b7927f725d1925268b0e3"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#a19a8d3ec6b0b7927f725d1925268b0e3">iterator_tuple</a> = <a class="el" href="classZipperIterator.html#a159370fb145383b782b2d34d8cad2edd">IteratorTuple</a></td></tr>
+<tr class="separator:a19a8d3ec6b0b7927f725d1925268b0e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a815fa558377eb45eccc2f50295d2b5ff" id="r_a815fa558377eb45eccc2f50295d2b5ff"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#a815fa558377eb45eccc2f50295d2b5ff">ZipperIterator</a> (<a class="el" href="classZipperIterator.html#a8396fa1ed32b0519b1f88408da07dada">iterator_tuple</a> const &amp;it_tuple, std::size_t max, std::size_t index=0)</td></tr>
-<tr class="separator:a815fa558377eb45eccc2f50295d2b5ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a654415ccf6c6ba90192c1102e33c892d" id="r_a654415ccf6c6ba90192c1102e33c892d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#a654415ccf6c6ba90192c1102e33c892d">ZipperIterator</a> (<a class="el" href="classZipperIterator.html#a159370fb145383b782b2d34d8cad2edd">IteratorTuple</a> const &amp;it_tuple, std::size_t max, std::size_t index=0)</td></tr>
+<tr class="separator:a654415ccf6c6ba90192c1102e33c892d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeaeb88f16b3f30a79b771342d50fb6eb" id="r_aeaeb88f16b3f30a79b771342d50fb6eb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#aeaeb88f16b3f30a79b771342d50fb6eb">ZipperIterator</a> (<a class="el" href="classZipperIterator.html">ZipperIterator</a> const &amp;z)</td></tr>
 <tr class="separator:aeaeb88f16b3f30a79b771342d50fb6eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac74079eeca34baddc423a9c366cbe6ef" id="r_ac74079eeca34baddc423a9c366cbe6ef"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classZipperIterator.html">ZipperIterator</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#ac74079eeca34baddc423a9c366cbe6ef">operator++</a> ()</td></tr>
 <tr class="separator:ac74079eeca34baddc423a9c366cbe6ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:add1e6b3fc5e8363700367aee1e723c4e" id="r_add1e6b3fc5e8363700367aee1e723c4e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classZipperIterator.html">ZipperIterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#add1e6b3fc5e8363700367aee1e723c4e">operator++</a> (int)</td></tr>
 <tr class="separator:add1e6b3fc5e8363700367aee1e723c4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afd6f5b26dbf41bd6f665e5bccddbf3d5" id="r_afd6f5b26dbf41bd6f665e5bccddbf3d5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classZipperIterator.html#a1f3733a8f82064fcaf954c54d98e2d79">value_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#afd6f5b26dbf41bd6f665e5bccddbf3d5">operator*</a> ()</td></tr>
-<tr class="separator:afd6f5b26dbf41bd6f665e5bccddbf3d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a63a1a0b1886b6c5c0a5b37e334889356" id="r_a63a1a0b1886b6c5c0a5b37e334889356"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classZipperIterator.html#a1f3733a8f82064fcaf954c54d98e2d79">value_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#a63a1a0b1886b6c5c0a5b37e334889356">operator-&gt;</a> ()</td></tr>
-<tr class="separator:a63a1a0b1886b6c5c0a5b37e334889356"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1a73228f25467ba6e014e486a2179918" id="r_a1a73228f25467ba6e014e486a2179918"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classZipperIterator.html#afc671d9fddbb3e2f99d663d55eeaadd3">ValueType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#a1a73228f25467ba6e014e486a2179918">operator*</a> ()</td></tr>
+<tr class="separator:a1a73228f25467ba6e014e486a2179918"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a89d427ea7ad42210b45aca3db519e9bc" id="r_a89d427ea7ad42210b45aca3db519e9bc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classZipperIterator.html#afc671d9fddbb3e2f99d663d55eeaadd3">ValueType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#a89d427ea7ad42210b45aca3db519e9bc">operator-&gt;</a> ()</td></tr>
+<tr class="separator:a89d427ea7ad42210b45aca3db519e9bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a277536cd3a45d8ccb85e60d6db8d2fbc" id="r_a277536cd3a45d8ccb85e60d6db8d2fbc"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#a277536cd3a45d8ccb85e60d6db8d2fbc">operator==</a> (<a class="el" href="classZipperIterator.html">ZipperIterator</a> const &amp;rhs)</td></tr>
 <tr class="separator:a277536cd3a45d8ccb85e60d6db8d2fbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aedace61bf86b8fc58f9f3887a5fcb6a9" id="r_aedace61bf86b8fc58f9f3887a5fcb6a9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#aedace61bf86b8fc58f9f3887a5fcb6a9">operator!=</a> (<a class="el" href="classZipperIterator.html">ZipperIterator</a> const &amp;rhs)</td></tr>
@@ -125,13 +127,13 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
-<tr class="memitem:aeefe2c91d08cff6112b1b11300643316" id="r_aeefe2c91d08cff6112b1b11300643316"><td class="memItemLeft" align="right" valign="top">static constexpr std::index_sequence_for&lt; Containers... &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#aeefe2c91d08cff6112b1b11300643316">_seq</a> {}</td></tr>
-<tr class="separator:aeefe2c91d08cff6112b1b11300643316"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac85661691753f0dbe1f9dd096e1558fa" id="r_ac85661691753f0dbe1f9dd096e1558fa"><td class="memItemLeft" align="right" valign="top">static constexpr std::index_sequence_for&lt; Containers... &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#ac85661691753f0dbe1f9dd096e1558fa">seq</a> {}</td></tr>
+<tr class="separator:ac85661691753f0dbe1f9dd096e1558fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:a0932440174e8772face207a73ae57708" id="r_a0932440174e8772face207a73ae57708"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#a0932440174e8772face207a73ae57708">idx_</a></td></tr>
-<tr class="separator:a0932440174e8772face207a73ae57708"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4052f91ff1063e0c131618379188fcc9" id="r_a4052f91ff1063e0c131618379188fcc9"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#a4052f91ff1063e0c131618379188fcc9">_idx</a></td></tr>
+<tr class="separator:a4052f91ff1063e0c131618379188fcc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="friends" name="friends"></a>
 Friends</h2></td></tr>
@@ -139,8 +141,8 @@ Friends</h2></td></tr>
 <tr class="separator:ae378fe77ced59497cdab33e08a37ddc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a923995cc05887e58e5d2d5a8af92b28f" name="a923995cc05887e58e5d2d5a8af92b28f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a923995cc05887e58e5d2d5a8af92b28f">&#9670;&#160;</a></span>difference_type</h2>
+<a id="a3b81029f6950e95745aa537b1d85718d" name="a3b81029f6950e95745aa537b1d85718d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3b81029f6950e95745aa537b1d85718d">&#9670;&#160;</a></span>DifferenceType</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -148,15 +150,15 @@ Friends</h2></td></tr>
 template&lt;class... Containers&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="classZipperIterator.html">ZipperIterator</a>&lt; Containers &gt;::difference_type =  std::size_t</td>
+          <td class="memname">using <a class="el" href="classZipperIterator.html">ZipperIterator</a>&lt; Containers &gt;::DifferenceType =  std::size_t</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a2fda8416e2c0c68d03dc094d45719ece" name="a2fda8416e2c0c68d03dc094d45719ece"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2fda8416e2c0c68d03dc094d45719ece">&#9670;&#160;</a></span>it_ref</h2>
+<a id="a6630fc8ecb3ce8676910bc1b55d02d47" name="a6630fc8ecb3ce8676910bc1b55d02d47"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6630fc8ecb3ce8676910bc1b55d02d47">&#9670;&#160;</a></span>Iterator</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -166,15 +168,47 @@ template&lt;class... Containers&gt; </div>
 template&lt;class Container &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="classZipperIterator.html">ZipperIterator</a>&lt; Containers &gt;::it_ref =  typename <a class="el" href="classZipperIterator.html#a4966a296fb4bfb03d907af24f2374f53">iterator</a>&lt;Container&gt;<a class="el" href="classZipperIterator.html#aaa77d3711afd8b1b06ac5804bd1d89e2">::reference</a></td>
+          <td class="memname">using <a class="el" href="classZipperIterator.html">ZipperIterator</a>&lt; Containers &gt;::Iterator =  std::conditional_t&lt;std::is_const_v&lt;Container&gt;, typename Container::cit, typename Container::it&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a4966a296fb4bfb03d907af24f2374f53" name="a4966a296fb4bfb03d907af24f2374f53"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4966a296fb4bfb03d907af24f2374f53">&#9670;&#160;</a></span>iterator</h2>
+<a id="a19a8d3ec6b0b7927f725d1925268b0e3" name="a19a8d3ec6b0b7927f725d1925268b0e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a19a8d3ec6b0b7927f725d1925268b0e3">&#9670;&#160;</a></span>iterator_tuple</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class... Containers&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="classZipperIterator.html">ZipperIterator</a>&lt; Containers &gt;::iterator_tuple =  <a class="el" href="classZipperIterator.html#a159370fb145383b782b2d34d8cad2edd">IteratorTuple</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a159370fb145383b782b2d34d8cad2edd" name="a159370fb145383b782b2d34d8cad2edd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a159370fb145383b782b2d34d8cad2edd">&#9670;&#160;</a></span>IteratorTuple</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class... Containers&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="classZipperIterator.html">ZipperIterator</a>&lt; Containers &gt;::IteratorTuple =  std::tuple&lt;<a class="el" href="classZipperIterator.html#a6630fc8ecb3ce8676910bc1b55d02d47">Iterator</a>&lt;Containers&gt;...&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac8455465b7b0c07193d2b6d54a084f8c" name="ac8455465b7b0c07193d2b6d54a084f8c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac8455465b7b0c07193d2b6d54a084f8c">&#9670;&#160;</a></span>ItRef</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -184,15 +218,15 @@ template&lt;class... Containers&gt; </div>
 template&lt;class Container &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="classZipperIterator.html">ZipperIterator</a>&lt; Containers &gt;::iterator =  std::conditional_t&lt;std::is_const_v&lt;Container&gt;, typename Container::cit, typename Container::it&gt;</td>
+          <td class="memname">using <a class="el" href="classZipperIterator.html">ZipperIterator</a>&lt; Containers &gt;::ItRef =  typename <a class="el" href="classZipperIterator.html#a6630fc8ecb3ce8676910bc1b55d02d47">Iterator</a>&lt;Container&gt;::reference</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a8396fa1ed32b0519b1f88408da07dada" name="a8396fa1ed32b0519b1f88408da07dada"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8396fa1ed32b0519b1f88408da07dada">&#9670;&#160;</a></span>iterator_tuple</h2>
+<a id="ae7d03b9f79a6daa24688811ceac6740c" name="ae7d03b9f79a6daa24688811ceac6740c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae7d03b9f79a6daa24688811ceac6740c">&#9670;&#160;</a></span>Pointer</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -200,15 +234,15 @@ template&lt;class Container &gt; </div>
 template&lt;class... Containers&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="classZipperIterator.html">ZipperIterator</a>&lt; Containers &gt;::iterator_tuple =  std::tuple&lt;<a class="el" href="classZipperIterator.html#a4966a296fb4bfb03d907af24f2374f53">iterator</a>&lt;Containers&gt;...&gt;</td>
+          <td class="memname">using <a class="el" href="classZipperIterator.html">ZipperIterator</a>&lt; Containers &gt;::Pointer =  void</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a12092b3213da88e85ad8c148d0de8f90" name="a12092b3213da88e85ad8c148d0de8f90"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a12092b3213da88e85ad8c148d0de8f90">&#9670;&#160;</a></span>pointer</h2>
+<a id="a0ccb9525d653523b22e241341c467938" name="a0ccb9525d653523b22e241341c467938"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ccb9525d653523b22e241341c467938">&#9670;&#160;</a></span>Reference</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -216,31 +250,15 @@ template&lt;class... Containers&gt; </div>
 template&lt;class... Containers&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="classZipperIterator.html">ZipperIterator</a>&lt; Containers &gt;::pointer =  void</td>
+          <td class="memname">using <a class="el" href="classZipperIterator.html">ZipperIterator</a>&lt; Containers &gt;::Reference =  <a class="el" href="classZipperIterator.html#afc671d9fddbb3e2f99d663d55eeaadd3">ValueType</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="aaa77d3711afd8b1b06ac5804bd1d89e2" name="aaa77d3711afd8b1b06ac5804bd1d89e2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaa77d3711afd8b1b06ac5804bd1d89e2">&#9670;&#160;</a></span>reference</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;class... Containers&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="classZipperIterator.html">ZipperIterator</a>&lt; Containers &gt;::reference =  <a class="el" href="classZipperIterator.html#a1f3733a8f82064fcaf954c54d98e2d79">value_type</a></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a08aa8f36129bb098a235e6777e91d00b" name="a08aa8f36129bb098a235e6777e91d00b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a08aa8f36129bb098a235e6777e91d00b">&#9670;&#160;</a></span>value</h2>
+<a id="a7c9c5a30827f06902c5b9f5d9d79f9e4" name="a7c9c5a30827f06902c5b9f5d9d79f9e4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7c9c5a30827f06902c5b9f5d9d79f9e4">&#9670;&#160;</a></span>Value</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -250,15 +268,15 @@ template&lt;class... Containers&gt; </div>
 template&lt;class Container &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="classZipperIterator.html">ZipperIterator</a>&lt; Containers &gt;::value =  std::conditional_t&lt;std::is_const_v&lt;Container&gt;, typename Container::true_cref, typename Container::true_ref&gt;</td>
+          <td class="memname">using <a class="el" href="classZipperIterator.html">ZipperIterator</a>&lt; Containers &gt;::Value =  std::conditional_t&lt;std::is_const_v&lt;Container&gt;, typename Container::true_cref, typename Container::true_ref&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a1f3733a8f82064fcaf954c54d98e2d79" name="a1f3733a8f82064fcaf954c54d98e2d79"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1f3733a8f82064fcaf954c54d98e2d79">&#9670;&#160;</a></span>value_type</h2>
+<a id="afc671d9fddbb3e2f99d663d55eeaadd3" name="afc671d9fddbb3e2f99d663d55eeaadd3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afc671d9fddbb3e2f99d663d55eeaadd3">&#9670;&#160;</a></span>ValueType</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -266,7 +284,7 @@ template&lt;class Container &gt; </div>
 template&lt;class... Containers&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="classZipperIterator.html">ZipperIterator</a>&lt; Containers &gt;::value_type =  std::tuple&lt;<a class="el" href="classZipperIterator.html#a08aa8f36129bb098a235e6777e91d00b">value</a>&lt;Containers&gt;...&gt;</td>
+          <td class="memname">using <a class="el" href="classZipperIterator.html">ZipperIterator</a>&lt; Containers &gt;::ValueType =  std::tuple&lt;<a class="el" href="classZipperIterator.html#a7c9c5a30827f06902c5b9f5d9d79f9e4">Value</a>&lt;Containers&gt;...&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -274,8 +292,8 @@ template&lt;class... Containers&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a815fa558377eb45eccc2f50295d2b5ff" name="a815fa558377eb45eccc2f50295d2b5ff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a815fa558377eb45eccc2f50295d2b5ff">&#9670;&#160;</a></span>ZipperIterator() <span class="overload">[1/2]</span></h2>
+<a id="a654415ccf6c6ba90192c1102e33c892d" name="a654415ccf6c6ba90192c1102e33c892d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a654415ccf6c6ba90192c1102e33c892d">&#9670;&#160;</a></span>ZipperIterator() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -288,7 +306,7 @@ template&lt;class... Containers&gt; </div>
         <tr>
           <td class="memname"><a class="el" href="classZipperIterator.html">ZipperIterator</a>&lt; Containers &gt;<a class="el" href="classZipperIterator.html">::ZipperIterator</a> </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classZipperIterator.html#a8396fa1ed32b0519b1f88408da07dada">iterator_tuple</a> const &amp;&#160;</td>
+          <td class="paramtype"><a class="el" href="classZipperIterator.html#a159370fb145383b782b2d34d8cad2edd">IteratorTuple</a> const &amp;&#160;</td>
           <td class="paramname"><em>it_tuple</em>, </td>
         </tr>
         <tr>
@@ -375,8 +393,8 @@ template&lt;class... Containers&gt; </div>
 
 </div>
 </div>
-<a id="afd6f5b26dbf41bd6f665e5bccddbf3d5" name="afd6f5b26dbf41bd6f665e5bccddbf3d5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afd6f5b26dbf41bd6f665e5bccddbf3d5">&#9670;&#160;</a></span>operator*()</h2>
+<a id="a1a73228f25467ba6e014e486a2179918" name="a1a73228f25467ba6e014e486a2179918"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1a73228f25467ba6e014e486a2179918">&#9670;&#160;</a></span>operator*()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -387,7 +405,7 @@ template&lt;class... Containers&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classZipperIterator.html#a1f3733a8f82064fcaf954c54d98e2d79">value_type</a> <a class="el" href="classZipperIterator.html">ZipperIterator</a>&lt; Containers &gt;::operator* </td>
+          <td class="memname"><a class="el" href="classZipperIterator.html#afc671d9fddbb3e2f99d663d55eeaadd3">ValueType</a> <a class="el" href="classZipperIterator.html">ZipperIterator</a>&lt; Containers &gt;::operator* </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -457,8 +475,8 @@ template&lt;class... Containers&gt; </div>
 
 </div>
 </div>
-<a id="a63a1a0b1886b6c5c0a5b37e334889356" name="a63a1a0b1886b6c5c0a5b37e334889356"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a63a1a0b1886b6c5c0a5b37e334889356">&#9670;&#160;</a></span>operator-&gt;()</h2>
+<a id="a89d427ea7ad42210b45aca3db519e9bc" name="a89d427ea7ad42210b45aca3db519e9bc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a89d427ea7ad42210b45aca3db519e9bc">&#9670;&#160;</a></span>operator-&gt;()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -469,7 +487,7 @@ template&lt;class... Containers&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classZipperIterator.html#a1f3733a8f82064fcaf954c54d98e2d79">value_type</a> <a class="el" href="classZipperIterator.html">ZipperIterator</a>&lt; Containers &gt;::operator-&gt; </td>
+          <td class="memname"><a class="el" href="classZipperIterator.html#afc671d9fddbb3e2f99d663d55eeaadd3">ValueType</a> <a class="el" href="classZipperIterator.html">ZipperIterator</a>&lt; Containers &gt;::operator-&gt; </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -538,8 +556,8 @@ template&lt;class... Containers&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="aeefe2c91d08cff6112b1b11300643316" name="aeefe2c91d08cff6112b1b11300643316"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aeefe2c91d08cff6112b1b11300643316">&#9670;&#160;</a></span>_seq</h2>
+<a id="a4052f91ff1063e0c131618379188fcc9" name="a4052f91ff1063e0c131618379188fcc9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4052f91ff1063e0c131618379188fcc9">&#9670;&#160;</a></span>_idx</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -550,20 +568,20 @@ template&lt;class... Containers&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">constexpr std::index_sequence_for&lt;Containers...&gt; <a class="el" href="classZipperIterator.html">ZipperIterator</a>&lt; Containers &gt;::_seq {}</td>
+          <td class="memname">std::size_t <a class="el" href="classZipperIterator.html">ZipperIterator</a>&lt; Containers &gt;::_idx</td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">constexpr</span></span>  </td>
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a0932440174e8772face207a73ae57708" name="a0932440174e8772face207a73ae57708"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0932440174e8772face207a73ae57708">&#9670;&#160;</a></span>idx_</h2>
+<a id="ac85661691753f0dbe1f9dd096e1558fa" name="ac85661691753f0dbe1f9dd096e1558fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac85661691753f0dbe1f9dd096e1558fa">&#9670;&#160;</a></span>seq</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -574,12 +592,12 @@ template&lt;class... Containers&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::size_t <a class="el" href="classZipperIterator.html">ZipperIterator</a>&lt; Containers &gt;::idx_</td>
+          <td class="memname">constexpr std::index_sequence_for&lt;Containers...&gt; <a class="el" href="classZipperIterator.html">ZipperIterator</a>&lt; Containers &gt;::seq {}</td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">constexpr</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">

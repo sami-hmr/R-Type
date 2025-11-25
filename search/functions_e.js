@@ -1,4 +1,7 @@
 var searchData=
 [
-  ['true_5fmain_0',['true_main',['../main_8cpp.html#a886a34909c8dbac819266317ffa318e1',1,'main.cpp']]]
+  ['zipper_0',['Zipper',['../classZipper.html#ae5b1ea13effacf164e44b80b2001ac8a',1,'Zipper']]],
+  ['zipperindex_1',['ZipperIndex',['../classZipperIndex.html#ac7262442a1034493b939e18ab0d020fd',1,'ZipperIndex']]],
+  ['zipperindexiterator_2',['ZipperIndexIterator',['../classZipperIndexIterator.html#ad220aa40318773220da4781d7f96da51',1,'ZipperIndexIterator']]],
+  ['zipperiterator_3',['zipperiterator',['../classZipperIterator.html#a654415ccf6c6ba90192c1102e33c892d',1,'ZipperIterator::ZipperIterator(IteratorTuple const &amp;it_tuple, std::size_t max, std::size_t index=0)'],['../classZipperIterator.html#aeaeb88f16b3f30a79b771342d50fb6eb',1,'ZipperIterator::ZipperIterator(ZipperIterator const &amp;z)']]]
 ];

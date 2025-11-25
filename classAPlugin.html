@@ -91,28 +91,26 @@ Collaboration diagram for APlugin:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a9f249933208731257f83fb665f9e0a77" id="r_a9f249933208731257f83fb665f9e0a77"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAPlugin.html#a9f249933208731257f83fb665f9e0a77">APlugin</a> (<a class="el" href="classRegistery.html">Registery</a> &amp;registery, <a class="el" href="classEntityLoader.html">EntityLoader</a> &amp;loader, std::unordered_map&lt; std::string, std::function&lt; void(<a class="el" href="classRegistery.html#abe695f51c5aacdaa17f92e6b98879903">Registery::Entity</a>, JsonVariant const &amp;)&gt; &gt; components)</td></tr>
-<tr class="separator:a9f249933208731257f83fb665f9e0a77"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4b132ba161e8243552367184176b83b4" id="r_a4b132ba161e8243552367184176b83b4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAPlugin.html#a4b132ba161e8243552367184176b83b4">setComponent</a> (<a class="el" href="classRegistery.html#abe695f51c5aacdaa17f92e6b98879903">Registery::Entity</a> entity, std::string const &amp;key, JsonVariant const &amp;config) override</td></tr>
-<tr class="separator:a4b132ba161e8243552367184176b83b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aafcb301ce4873833060035e758ae7f7c" id="r_aafcb301ce4873833060035e758ae7f7c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAPlugin.html#aafcb301ce4873833060035e758ae7f7c">APlugin</a> (<a class="el" href="classRegistery.html">Registery</a> &amp;registery, <a class="el" href="classEntityLoader.html">EntityLoader</a> &amp;loader, std::vector&lt; std::string &gt; const &amp;depends_on, std::unordered_map&lt; std::string, std::function&lt; void(<a class="el" href="classRegistery.html#abe695f51c5aacdaa17f92e6b98879903">Registery::Entity</a>, JsonVariant const &amp;)&gt; &gt; <a class="el" href="classAPlugin.html#a59437586a89e238e4df6ac075119b47b">components</a>)</td></tr>
+<tr class="separator:aafcb301ce4873833060035e758ae7f7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f299fc87cf1d230a9d9061420343ee5" id="r_a6f299fc87cf1d230a9d9061420343ee5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAPlugin.html#a6f299fc87cf1d230a9d9061420343ee5">set_component</a> (<a class="el" href="classRegistery.html#abe695f51c5aacdaa17f92e6b98879903">Registery::Entity</a> entity, std::string const &amp;key, JsonVariant const &amp;config) override</td></tr>
+<tr class="separator:a6f299fc87cf1d230a9d9061420343ee5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classIPlugin"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classIPlugin')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classIPlugin.html">IPlugin</a></td></tr>
 <tr class="memitem:a47e41e0790e8da744a21e4fdc28afba3 inherit pub_methods_classIPlugin" id="r_a47e41e0790e8da744a21e4fdc28afba3"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classIPlugin.html#a47e41e0790e8da744a21e4fdc28afba3">~IPlugin</a> ()=default</td></tr>
 <tr class="separator:a47e41e0790e8da744a21e4fdc28afba3 inherit pub_methods_classIPlugin"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-attribs" name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
-<tr class="memitem:a9fe44f347154e3bd262d7fc932599ba2" id="r_a9fe44f347154e3bd262d7fc932599ba2"><td class="memItemLeft" align="right" valign="top">const std::unordered_map&lt; std::string, std::function&lt; void(<a class="el" href="classRegistery.html#abe695f51c5aacdaa17f92e6b98879903">Registery::Entity</a>, JsonVariant const  &amp;)&gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAPlugin.html#a9fe44f347154e3bd262d7fc932599ba2">components_</a></td></tr>
-<tr class="separator:a9fe44f347154e3bd262d7fc932599ba2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a82833ba82e740295914a454c24a55eb6" id="r_a82833ba82e740295914a454c24a55eb6"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAPlugin.html#a82833ba82e740295914a454c24a55eb6">depends_on_</a></td></tr>
-<tr class="separator:a82833ba82e740295914a454c24a55eb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4f604714929574c7e7cf25a94ef26347" id="r_a4f604714929574c7e7cf25a94ef26347"><td class="memItemLeft" align="right" valign="top">std::reference_wrapper&lt; <a class="el" href="classRegistery.html">Registery</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAPlugin.html#a4f604714929574c7e7cf25a94ef26347">registery_</a></td></tr>
-<tr class="separator:a4f604714929574c7e7cf25a94ef26347"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a10cb3d238ec43b7b86399b27b6cfaae0" id="r_a10cb3d238ec43b7b86399b27b6cfaae0"><td class="memItemLeft" align="right" valign="top">std::reference_wrapper&lt; <a class="el" href="classEntityLoader.html">EntityLoader</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAPlugin.html#a10cb3d238ec43b7b86399b27b6cfaae0">loader_</a></td></tr>
-<tr class="separator:a10cb3d238ec43b7b86399b27b6cfaae0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a59437586a89e238e4df6ac075119b47b" id="r_a59437586a89e238e4df6ac075119b47b"><td class="memItemLeft" align="right" valign="top">const std::unordered_map&lt; std::string, std::function&lt; void(<a class="el" href="classRegistery.html#abe695f51c5aacdaa17f92e6b98879903">Registery::Entity</a>, JsonVariant const  &amp;)&gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAPlugin.html#a59437586a89e238e4df6ac075119b47b">components</a></td></tr>
+<tr class="separator:a59437586a89e238e4df6ac075119b47b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa0b53e23cda9afaff793448eead3a7c9" id="r_aa0b53e23cda9afaff793448eead3a7c9"><td class="memItemLeft" align="right" valign="top">std::reference_wrapper&lt; <a class="el" href="classRegistery.html">Registery</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAPlugin.html#aa0b53e23cda9afaff793448eead3a7c9">_registery</a></td></tr>
+<tr class="separator:aa0b53e23cda9afaff793448eead3a7c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a74554e7b223c691ea9a331e7e31b0a4d" id="r_a74554e7b223c691ea9a331e7e31b0a4d"><td class="memItemLeft" align="right" valign="top">std::reference_wrapper&lt; <a class="el" href="classEntityLoader.html">EntityLoader</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAPlugin.html#a74554e7b223c691ea9a331e7e31b0a4d">_loader</a></td></tr>
+<tr class="separator:a74554e7b223c691ea9a331e7e31b0a4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a9f249933208731257f83fb665f9e0a77" name="a9f249933208731257f83fb665f9e0a77"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9f249933208731257f83fb665f9e0a77">&#9670;&#160;</a></span>APlugin()</h2>
+<a id="aafcb301ce4873833060035e758ae7f7c" name="aafcb301ce4873833060035e758ae7f7c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aafcb301ce4873833060035e758ae7f7c">&#9670;&#160;</a></span>APlugin()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -131,6 +129,12 @@ Protected Attributes</h2></td></tr>
           <td></td>
           <td class="paramtype"><a class="el" href="classEntityLoader.html">EntityLoader</a> &amp;&#160;</td>
           <td class="paramname"><em>loader</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::vector&lt; std::string &gt; const &amp;&#160;</td>
+          <td class="paramname"><em>depends_on</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -154,8 +158,8 @@ Protected Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a4b132ba161e8243552367184176b83b4" name="a4b132ba161e8243552367184176b83b4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4b132ba161e8243552367184176b83b4">&#9670;&#160;</a></span>setComponent()</h2>
+<a id="a6f299fc87cf1d230a9d9061420343ee5" name="a6f299fc87cf1d230a9d9061420343ee5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6f299fc87cf1d230a9d9061420343ee5">&#9670;&#160;</a></span>set_component()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -164,7 +168,7 @@ Protected Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void APlugin::setComponent </td>
+          <td class="memname">void APlugin::set_component </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classRegistery.html#abe695f51c5aacdaa17f92e6b98879903">Registery::Entity</a>&#160;</td>
           <td class="paramname"><em>entity</em>, </td>
@@ -194,13 +198,13 @@ Protected Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="classIPlugin.html#a16bec98a391e5b48b92cb640cfb24da4">IPlugin</a>.</p>
+<p>Implements <a class="el" href="classIPlugin.html#a999b3bc6ceb9dc25bd36687a164702cb">IPlugin</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a9fe44f347154e3bd262d7fc932599ba2" name="a9fe44f347154e3bd262d7fc932599ba2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9fe44f347154e3bd262d7fc932599ba2">&#9670;&#160;</a></span>components_</h2>
+<a id="a74554e7b223c691ea9a331e7e31b0a4d" name="a74554e7b223c691ea9a331e7e31b0a4d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a74554e7b223c691ea9a331e7e31b0a4d">&#9670;&#160;</a></span>_loader</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -209,7 +213,7 @@ Protected Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const std::unordered_map&lt; std::string, std::function&lt;void(<a class="el" href="classRegistery.html#abe695f51c5aacdaa17f92e6b98879903">Registery::Entity</a>, JsonVariant const&amp;)&gt; &gt; APlugin::components_</td>
+          <td class="memname">std::reference_wrapper&lt;<a class="el" href="classEntityLoader.html">EntityLoader</a>&gt; APlugin::_loader</td>
         </tr>
       </table>
   </td>
@@ -221,8 +225,8 @@ Protected Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a82833ba82e740295914a454c24a55eb6" name="a82833ba82e740295914a454c24a55eb6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a82833ba82e740295914a454c24a55eb6">&#9670;&#160;</a></span>depends_on_</h2>
+<a id="aa0b53e23cda9afaff793448eead3a7c9" name="aa0b53e23cda9afaff793448eead3a7c9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa0b53e23cda9afaff793448eead3a7c9">&#9670;&#160;</a></span>_registery</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -231,7 +235,7 @@ Protected Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;std::string&gt; APlugin::depends_on_</td>
+          <td class="memname">std::reference_wrapper&lt;<a class="el" href="classRegistery.html">Registery</a>&gt; APlugin::_registery</td>
         </tr>
       </table>
   </td>
@@ -243,8 +247,8 @@ Protected Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a10cb3d238ec43b7b86399b27b6cfaae0" name="a10cb3d238ec43b7b86399b27b6cfaae0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a10cb3d238ec43b7b86399b27b6cfaae0">&#9670;&#160;</a></span>loader_</h2>
+<a id="a59437586a89e238e4df6ac075119b47b" name="a59437586a89e238e4df6ac075119b47b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a59437586a89e238e4df6ac075119b47b">&#9670;&#160;</a></span>components</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -253,29 +257,7 @@ Protected Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::reference_wrapper&lt;<a class="el" href="classEntityLoader.html">EntityLoader</a>&gt; APlugin::loader_</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a4f604714929574c7e7cf25a94ef26347" name="a4f604714929574c7e7cf25a94ef26347"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4f604714929574c7e7cf25a94ef26347">&#9670;&#160;</a></span>registery_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::reference_wrapper&lt;<a class="el" href="classRegistery.html">Registery</a>&gt; APlugin::registery_</td>
+          <td class="memname">const std::unordered_map&lt; std::string, std::function&lt;void(<a class="el" href="classRegistery.html#abe695f51c5aacdaa17f92e6b98879903">Registery::Entity</a>, JsonVariant const&amp;)&gt; &gt; APlugin::components</td>
         </tr>
       </table>
   </td>

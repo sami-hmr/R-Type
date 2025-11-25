@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['plugins_5f_0',['plugins_',['../classEntityLoader.html#ad4cb35eabef360f24b35c6fb2d588dab',1,'EntityLoader']]]
+  ['trigger_0',['trigger',['../structCleanupEvent.html#a79eaf3fb1b3b957e2ee709e73cee0fa1',1,'CleanupEvent']]]
 ];

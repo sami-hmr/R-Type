@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['depends_5fon_5f_0',['depends_on_',['../classAPlugin.html#a82833ba82e740295914a454c24a55eb6',1,'APlugin']]]
+  ['exit_5fcode_0',['exit_code',['../structShutdownEvent.html#aad2c5c28e889fcba4e43dda2392594a9',1,'ShutdownEvent']]]
 ];

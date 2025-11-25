@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['begin_0',['begin',['../classZipper.html#a180a2f7af8e03b6e8ec0d4485a6b70f3',1,'Zipper::begin()'],['../classZipperIndex.html#a29ee2d3860b8a85569bb14551d1a892e',1,'ZipperIndex::begin()']]]
+  ['begin_0',['begin',['../classZipper.html#a608fd13315c16b9dd38509f4dd8d3490',1,'Zipper::begin()'],['../classZipperIndex.html#ab466cecb5f554faf3797b5533ccd28c5',1,'ZipperIndex::begin()']]]
 ];

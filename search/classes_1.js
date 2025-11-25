@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['customexception_0',['CustomException',['../classCustomException.html',1,'']]]
+  ['cleanupevent_0',['CleanupEvent',['../structCleanupEvent.html',1,'']]],
+  ['customexception_1',['CustomException',['../classCustomException.html',1,'']]]
 ];

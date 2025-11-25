@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['idx_5f_0',['idx_',['../classZipperIterator.html#a0932440174e8772face207a73ae57708',1,'ZipperIterator']]]
+  ['reason_0',['reason',['../structShutdownEvent.html#ab83b3fd34b97135976a946d366a5f34f',1,'ShutdownEvent']]]
 ];
