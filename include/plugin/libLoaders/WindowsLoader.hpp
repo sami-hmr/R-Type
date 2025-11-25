@@ -35,7 +35,7 @@
 //     ~WindowsLoader() override {
 //     }
 
-//     std::unique_ptr<Module> getInstance(
+//     std::unique_ptr<Module> get_instance(
 //         const std::string entryPoint,
 //         const libconfig::Setting &settings) override {
 //         IPlugin *(*function)(const libconfig::Setting &) =

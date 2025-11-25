@@ -10,19 +10,20 @@
 
 #include <exception>
 #include <string>
+#include <utility>
 
 class CustomException : public std::exception
 {
 public:
-  CustomException(std::string message)
-      : message_(message)
-  {
-  }
+  explicit CustomException(std::string const &message)
+      : _message(message) {}
+  explicit CustomException(std::string &&message)
+      : _message(std::move(message)) {}
 
-  const char* what() const noexcept override { return message_.c_str(); }
+  const char* what() const noexcept override { return _message.c_str(); }
 
 private:
-  std::string message_;
+  std::string _message;
 };
 
 #endif

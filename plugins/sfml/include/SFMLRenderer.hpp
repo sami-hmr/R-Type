@@ -1,20 +1,23 @@
 #pragma once
 
-#include <iostream>
 #include <memory>
+#include <string>
+#include <utility>
+#include <vector>
 
-#include <SFML/Graphics.hpp>
-#include <SFML/Window.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Texture.hpp>
 
 #include "Json/JsonParser.hpp"
 #include "ecs/Registery.hpp"
 #include "ecs/SparseArray.hpp"
-#include "ecs/zipper/Zipper.hpp"
 #include "plugin/APlugin.hpp"
+#include "plugin/EntityLoader.hpp"
 
-struct position
+struct Position
 {
-  position(float x, float y)
+  Position(float x, float y)
       : x(x)
       , y(y)
   {
@@ -24,28 +27,25 @@ struct position
   float y;
 };
 
-struct sprite
+struct Sprite
 {
-  sprite(std::string const& texture_path)
-      : texture_path(texture_path)
+  Sprite(std::string texture_path)
+      : texture_path(std::move(texture_path))
   {
   }
 
-  sprite(sprite const& other)
-      : texture_path(other.texture_path)
-      , texture(other.texture)
-      , sfml_sprite(other.sfml_sprite)
-  {
-  }
+  Sprite(Sprite const& other)
 
-  sprite(sprite&& other) noexcept
+      = default;
+
+  Sprite(Sprite&& other) noexcept
       : texture_path(std::move(other.texture_path))
       , texture(std::move(other.texture))
       , sfml_sprite(std::move(other.sfml_sprite))
   {
   }
 
-  sprite& operator=(sprite const& other)
+  Sprite& operator=(Sprite const& other)
   {
     if (this != &other) {
       texture_path = other.texture_path;
@@ -55,7 +55,7 @@ struct sprite
     return *this;
   }
 
-  sprite& operator=(sprite&& other) noexcept
+  Sprite& operator=(Sprite&& other) noexcept
   {
     if (this != &other) {
       texture_path = std::move(other.texture_path);
@@ -70,20 +70,20 @@ struct sprite
   std::shared_ptr<sf::Sprite> sfml_sprite;
 };
 
-class sfml_renderer : public APlugin
+class SfmlRenderer : public APlugin
 {
 public:
-  sfml_renderer(Registery& r, EntityLoader& l);
-  ~sfml_renderer() override;
+  SfmlRenderer(Registery& r, EntityLoader& l);
+  ~SfmlRenderer() override;
 
 private:
-  void init_position(Registery::Entity const entity, JsonVariant const& config);
-  void init_sprite(Registery::Entity const entity, JsonVariant const& config);
+  void init_position(Registery::Entity entity, JsonVariant const& config);
+  void init_sprite(Registery::Entity entity, JsonVariant const& config);
 
   void render_system(Registery& r,
-                     SparseArray<position> positions,
-                     SparseArray<sprite> sprites);
+                     const SparseArray<Position>& positions,
+                     const SparseArray<Sprite>& sprites);
 
-  std::unique_ptr<sf::RenderWindow> window_;
-  const std::vector<std::string> depends_on_ = {};
+  std::unique_ptr<sf::RenderWindow> _window;
+  const std::vector<std::string> depends_on;
 };

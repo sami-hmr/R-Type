@@ -1,3 +1,6 @@
+#include <optional>
+#include <stdexcept>
+
 #include <catch2/catch_test_macros.hpp>
 
 #include "ecs/Registery.hpp"
@@ -24,9 +27,9 @@ struct Velocity
 struct Health
 {
   int hp;
-  static const int DefaultHp = 100;
+  static const int default_hp = 100;
 
-  Health(int hp = DefaultHp)
+  Health(int hp = default_hp)
       : hp(hp)
   {
   }
@@ -36,19 +39,19 @@ struct Health
 
 TEST_CASE("SparseArray - Basic construction", "[sparse_array]")
 {
-  SparseArray<Position> arr;
-  REQUIRE(arr.size() == 0);
+  SparseArray<Position> const arr;
+  REQUIRE(arr.empty());
   REQUIRE(arr.empty());
 }
 
 TEST_CASE("SparseArray - insert_at with value", "[sparse_array]")
 {
   SparseArray<Position> arr;
-  Position pos(10.0f, 20.0f);
+  Position const pos(10.0f, 20.0f);
 
   auto& ref = arr.insert_at(0, pos);
 
-  REQUIRE(arr.size() >= 1);
+  REQUIRE(!arr.empty());
   REQUIRE(ref.has_value());
   REQUIRE(ref->x == 10.0f);
   REQUIRE(ref->y == 20.0f);
@@ -60,7 +63,7 @@ TEST_CASE("SparseArray - insert_at with rvalue", "[sparse_array]")
 
   auto& ref = arr.insert_at(0, Position(5.0f, 15.0f));
 
-  REQUIRE(arr.size() >= 1);
+  REQUIRE(!arr.empty());
   REQUIRE(ref.has_value());
   REQUIRE(ref->x == 5.0f);
   REQUIRE(ref->y == 15.0f);
@@ -72,7 +75,7 @@ TEST_CASE("SparseArray - insert_at with parameters", "[sparse_array]")
 
   auto& ref = arr.insert_at(0, 100.0f, 200.0f);
 
-  REQUIRE(arr.size() >= 1);
+  REQUIRE(!arr.empty());
   REQUIRE(ref.has_value());
   REQUIRE(ref->x == 100.0f);
   REQUIRE(ref->y == 200.0f);
@@ -114,7 +117,7 @@ TEST_CASE("SparseArray - erase out of bounds is safe", "[sparse_array]")
 TEST_CASE("SparseArray - get_index finds element", "[sparse_array]")
 {
   SparseArray<Position> arr;
-  Position pos(10.0f, 20.0f);
+  Position const pos(10.0f, 20.0f);
   arr.insert_at(3, pos);
 
   auto index = arr.get_index(arr[3]);
@@ -127,9 +130,9 @@ TEST_CASE("SparseArray - get_index throws when not found", "[sparse_array]")
   SparseArray<Position> arr;
   arr.insert_at(0, Position(10.0f, 20.0f));
 
-  std::optional<Position> nonExistent = Position(99.0f, 99.0f);
+  std::optional<Position> const non_existent = Position(99.0f, 99.0f);
 
-  REQUIRE_THROWS_AS(arr.get_index(nonExistent), std::out_of_range);
+  REQUIRE_THROWS_AS(arr.get_index(non_existent), std::out_of_range);
 }
 
 // ==================== Registery Tests ====================
@@ -152,26 +155,26 @@ TEST_CASE("Registery - registerComponent creates component storage",
 {
   Registery reg;
 
-  auto& positions = reg.registerComponent<Position>();
+  auto& positions = reg.register_component<Position>();
 
-  REQUIRE(positions.size() == 0);
+  REQUIRE(positions.empty());
 }
 
 TEST_CASE("Registery - getComponents retrieves registered components",
           "[registery]")
 {
   Registery reg;
-  reg.registerComponent<Position>();
+  reg.register_component<Position>();
 
-  auto& positions = reg.getComponents<Position>();
+  auto& positions = reg.get_components<Position>();
 
-  REQUIRE(positions.size() == 0);
+  REQUIRE(positions.empty());
 }
 
 TEST_CASE("Registery - add_component adds component to entity", "[registery]")
 {
   Registery reg;
-  reg.registerComponent<Position>();
+  reg.register_component<Position>();
 
   auto entity = reg.spawn_entity();
   auto& comp = reg.add_component(entity, Position(50.0f, 75.0f));
@@ -184,7 +187,7 @@ TEST_CASE("Registery - add_component adds component to entity", "[registery]")
 TEST_CASE("Registery - emplace_component constructs in place", "[registery]")
 {
   Registery reg;
-  reg.registerComponent<Position>();
+  reg.register_component<Position>();
 
   auto entity = reg.spawn_entity();
   auto& comp = reg.emplace_component<Position>(entity, 10.0f, 20.0f);
@@ -198,15 +201,15 @@ TEST_CASE("Registery - removeComponent removes component from entity",
           "[registery]")
 {
   Registery reg;
-  reg.registerComponent<Position>();
+  reg.register_component<Position>();
 
   auto entity = reg.spawn_entity();
   reg.add_component(entity, Position(10.0f, 20.0f));
 
-  auto& positions = reg.getComponents<Position>();
+  auto& positions = reg.get_components<Position>();
   REQUIRE(positions[entity].has_value());
 
-  reg.removeComponent<Position>(entity);
+  reg.remove_component<Position>(entity);
 
   REQUIRE(!positions[entity].has_value());
 }
@@ -214,15 +217,15 @@ TEST_CASE("Registery - removeComponent removes component from entity",
 TEST_CASE("Registery - kill_entity removes all components", "[registery]")
 {
   Registery reg;
-  reg.registerComponent<Position>();
-  reg.registerComponent<Velocity>();
+  reg.register_component<Position>();
+  reg.register_component<Velocity>();
 
   auto entity = reg.spawn_entity();
   reg.add_component(entity, Position(10.0f, 20.0f));
   reg.add_component(entity, Velocity(1.0f, 2.0f));
 
-  auto& positions = reg.getComponents<Position>();
-  auto& velocities = reg.getComponents<Velocity>();
+  auto& positions = reg.get_components<Position>();
+  auto& velocities = reg.get_components<Velocity>();
 
   REQUIRE(positions[entity].has_value());
   REQUIRE(velocities[entity].has_value());
@@ -250,18 +253,18 @@ TEST_CASE("Registery - kill_entity recycles entity IDs", "[registery]")
 TEST_CASE("Registery - multiple components per entity", "[registery]")
 {
   Registery reg;
-  reg.registerComponent<Position>();
-  reg.registerComponent<Velocity>();
-  reg.registerComponent<Health>();
+  reg.register_component<Position>();
+  reg.register_component<Velocity>();
+  reg.register_component<Health>();
 
   auto entity = reg.spawn_entity();
   reg.add_component(entity, Position(10.0f, 20.0f));
   reg.add_component(entity, Velocity(1.0f, 2.0f));
   reg.add_component(entity, Health(100));
 
-  auto& positions = reg.getComponents<Position>();
-  auto& velocities = reg.getComponents<Velocity>();
-  auto& healths = reg.getComponents<Health>();
+  auto& positions = reg.get_components<Position>();
+  auto& velocities = reg.get_components<Velocity>();
+  auto& healths = reg.get_components<Health>();
 
   REQUIRE(positions[entity].has_value());
   REQUIRE(velocities[entity].has_value());
@@ -272,24 +275,24 @@ TEST_CASE("Registery - multiple components per entity", "[registery]")
 TEST_CASE("Registery - add_system and runSystems", "[registery]")
 {
   Registery reg;
-  reg.registerComponent<Position>();
+  reg.register_component<Position>();
 
   auto entity = reg.spawn_entity();
   reg.add_component(entity, Position(0.0f, 0.0f));
 
-  int systemRuns = 0;
+  int system_runs = 0;
 
-  reg.addSystem<Position>(
-      [&systemRuns](Registery& r, SparseArray<Position>& positions)
-      { systemRuns++; });
+  reg.add_system<Position>(
+      [&system_runs](Registery& /*r*/, SparseArray<Position>& /*positions*/)
+      { system_runs++; });
 
-  reg.runSystems();
+  reg.run_systems();
 
-  REQUIRE(systemRuns == 1);
+  REQUIRE(system_runs == 1);
 
-  reg.runSystems();
+  reg.run_systems();
 
-  REQUIRE(systemRuns == 2);
+  REQUIRE(system_runs == 2);
 }
 
 TEST_CASE("Dummy test", "[dummy]")

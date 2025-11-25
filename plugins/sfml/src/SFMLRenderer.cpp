@@ -1,45 +1,60 @@
+
 #include <iostream>
+#include <memory>
+#include <optional>
 #include <stdexcept>
+#include <string>
 #include <variant>
 
 #include "SFMLRenderer.hpp"
 
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Window/VideoMode.hpp>
+
+#include "Json/JsonParser.hpp"
 #include "ecs/Registery.hpp"
+#include "ecs/SparseArray.hpp"
+#include "ecs/zipper/Zipper.hpp"
+#include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 
-sfml_renderer::sfml_renderer(Registery& r, EntityLoader& l)
+SfmlRenderer::SfmlRenderer(Registery& r, EntityLoader& l)
     : APlugin(
           r,
           l,
           {COMP_INIT(position, init_position), COMP_INIT(sprite, init_sprite)})
 {
-  window_ = std::make_unique<sf::RenderWindow>(
+  _window = std::make_unique<sf::RenderWindow>(
       sf::VideoMode(sf::Vector2u(1800, 1600)), "R-Type - SFML Renderer");
-  window_->setFramerateLimit(60);
+  _window->setFramerateLimit(60);
 
-  registery_.get().registerComponent<position>();
-  registery_.get().registerComponent<sprite>();
+  _registery.get().register_component<Position>();
+  _registery.get().register_component<Sprite>();
 
-  registery_.get().addSystem<position, sprite>(
-      [this](Registery& r, SparseArray<position> pos, SparseArray<sprite> spr)
+  _registery.get().add_system<Position, Sprite>(
+      [this](Registery& r,
+             const SparseArray<Position>& pos,
+             const SparseArray<Sprite>& spr)
       { this->render_system(r, pos, spr); });
 }
 
-sfml_renderer::~sfml_renderer()
+SfmlRenderer::~SfmlRenderer()
 {
-  if (window_ && window_->isOpen()) {
-    window_->close();
+  if (_window && _window->isOpen()) {
+    _window->close();
   }
 }
 
-void sfml_renderer::init_position(Registery::Entity const entity,
-                                  JsonVariant const& config)
+void SfmlRenderer::init_position(Registery::Entity const entity,
+                                 JsonVariant const& config)
 {
   try {
     JsonObject obj = std::get<JsonObject>(config);
-    float x = static_cast<float>(std::get<double>(obj.at("x").value));
-    float y = static_cast<float>(std::get<double>(obj.at("y").value));
-    registery_.get().emplace_component<position>(entity, x, y);
+    auto x = static_cast<float>(std::get<double>(obj.at("x").value));
+    auto y = static_cast<float>(std::get<double>(obj.at("y").value));
+    this->_registery.get().emplace_component<Position>(entity, x, y);
   } catch (std::bad_variant_access const&) {
     std::cerr << "Error loading position component: unexpected value type"
               << '\n';
@@ -49,16 +64,17 @@ void sfml_renderer::init_position(Registery::Entity const entity,
   }
 }
 
-void sfml_renderer::init_sprite(Registery::Entity const entity,
-                                JsonVariant const& config)
+void SfmlRenderer::init_sprite(Registery::Entity const entity,
+                               JsonVariant const& config)
 {
   try {
     JsonObject obj = std::get<JsonObject>(config);
-    std::string texture_path = std::get<std::string>(obj.at("texture").value);
+    std::string const texture_path =
+        std::get<std::string>(obj.at("texture").value);
 
     std::cout << "Loading sprite with texture: " << texture_path << '\n';
 
-    auto spr = registery_.get().emplace_component<sprite>(entity, texture_path);
+    auto spr = _registery.get().emplace_component<Sprite>(entity, texture_path);
     if (spr) {
       spr->texture = std::make_shared<sf::Texture>();
       if (!spr->texture->loadFromFile(texture_path)) {
@@ -78,39 +94,39 @@ void sfml_renderer::init_sprite(Registery::Entity const entity,
   }
 }
 
-void sfml_renderer::render_system(Registery& r,
-                                  SparseArray<position> positions,
-                                  SparseArray<sprite> sprites)
+void SfmlRenderer::render_system(Registery& /*r*/,
+                                 const SparseArray<Position>& positions,
+                                 const SparseArray<Sprite>& sprites)
 {
-  if (!window_ || !window_->isOpen()) {
+  if (!_window || !_window->isOpen()) {
     return;
   }
 
-  while (const std::optional event = window_->pollEvent()) {
+  while (const std::optional event = _window->pollEvent()) {
     if (event->is<sf::Event::Closed>()) {
-      window_->close();
+      _window->close();
     }
   }
 
-  window_->clear(sf::Color::Black);
+  _window->clear(sf::Color::Black);
 
   for (auto&& [pos, spr] : Zipper(positions, sprites)) {
     if (spr.sfml_sprite && spr.texture) {
       spr.sfml_sprite->setPosition(sf::Vector2f(pos.x, pos.y));
-      window_->draw(*spr.sfml_sprite);
+      _window->draw(*spr.sfml_sprite);
       std::cout << "Drawing sprite at (" << pos.x << ", " << pos.y << ")\n";
     } else {
       std::cout << "Sprite or texture is null\n";
     }
   }
 
-  window_->display();
+  _window->display();
 }
 
 extern "C"
 {
 void* entry_point(Registery& r, EntityLoader& e)
 {
-  return new sfml_renderer(r, e);
+  return new SfmlRenderer(r, e);
 }
 }

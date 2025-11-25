@@ -4,12 +4,12 @@
 #include "plugin/EntityLoader.hpp"
 #include "plugin/libLoaders/ILibLoader.hpp"
 
-int true_main(Registery& r, EntityLoader& e)
+static int true_main(Registery& r, EntityLoader& e)
 {
   e.load("game_config");
 
   while (true) {
-    r.runSystems();
+    r.run_systems();
   }
   return 0;
 }

@@ -3,6 +3,7 @@
 # misc-non-private-member-variables-in-classes: the options don't do anything
 # modernize-use-nodiscard: too aggressive, attribute is situationally useful
 Checks: "*,\
+  -modernize-use-trailing-return-type,\
   -google-readability-todo,\
   -altera-*,\
   -fuchsia-*,\
@@ -19,6 +20,9 @@ Checks: "*,\
   -hicpp-uppercase-literal-suffix,\
   -cppcoreguidelines-avoid-do-while,\
   -misc-use-anonymous-namespace,\
+  -cppcoreguidelines-non-private-member-variables-in-classes,\
+  -cppcoreguidelines-avoid-const-or-ref-data-members,\
+  -portability-avoid-pragma-once,\
   -misc-non-private-member-variables-in-classes"
 WarningsAsErrors: ''
 CheckOptions:
@@ -59,15 +63,15 @@ CheckOptions:
   - key: 'readability-identifier-naming.ClassCase'
     value: 'CamelCase'
   - key: 'readability-identifier-naming.ClassConstantCase'
-    value: 'CamelCase'
+    value: 'lower_case'
   - key: 'readability-identifier-naming.ClassMemberCase'
-    value: 'CamelCase'
+    value: 'lower_case'
   - key: 'readability-identifier-naming.ClassMethodCase'
-    value: 'camelBack'
+    value: 'lower_case'
   - key: 'readability-identifier-naming.ConstantCase'
-    value: 'CamelCase'
+    value: 'lower_case'
   - key: 'readability-identifier-naming.ConstantMemberCase'
-    value: 'CamelCase'
+    value: 'lower_case'
   - key: 'readability-identifier-naming.ConstantParameterCase'
     value: 'lower_case'
   - key: 'readability-identifier-naming.ConstantPointerParameterCase'
@@ -109,7 +113,7 @@ CheckOptions:
   - key: 'readability-identifier-naming.MemberCase'
     value: 'lower_case'
   - key: 'readability-identifier-naming.MethodCase'
-    value: 'camelBack'
+    value: 'lower_case'
   - key: 'readability-identifier-naming.NamespaceCase'
     value: 'CamelCase'
   - key: 'readability-identifier-naming.ParameterCase'
@@ -119,25 +123,25 @@ CheckOptions:
   - key: 'readability-identifier-naming.PointerParameterCase'
     value: 'lower_case'
   - key: 'readability-identifier-naming.PrivateMemberCase'
-    value: 'CamelCase'
+    value: 'lower_case'
   - key: 'readability-identifier-naming.PrivateMemberPrefix'
     value: '_'
   - key: 'readability-identifier-naming.PrivateMethodCase'
-    value: 'camelBack'
+    value: 'lower_case'
   - key: 'readability-identifier-naming.ProtectedMemberCase'
-    value: 'CamelCase'
+    value: 'lower_case'
   - key: 'readability-identifier-naming.ProtectedMemberPrefix'
     value: '_'
   - key: 'readability-identifier-naming.ProtectedMethodCase'
-    value: 'camelBack'
+    value: 'lower_case'
   - key: 'readability-identifier-naming.PublicMemberCase'
-    value: 'CamelCase'
+    value: 'lower_case'
   - key: 'readability-identifier-naming.PublicMethodCase'
-    value: 'camelBack'
+    value: 'lower_case'
   - key: 'readability-identifier-naming.ScopedEnumConstantCase'
     value: 'CamelCase'
   - key: 'readability-identifier-naming.StaticConstantCase'
-    value: 'CamelCase'
+    value: 'UPPER_CASE'
   - key: 'readability-identifier-naming.StaticVariableCase'
     value: 'lower_case'
   - key: 'readability-identifier-naming.StructCase'
@@ -159,5 +163,5 @@ CheckOptions:
   - key: 'readability-identifier-naming.VariableCase'
     value: 'lower_case'
   - key: 'readability-identifier-naming.VirtualMethodCase'
-    value: 'camelBack'
+    value: 'lower_case'
 ...

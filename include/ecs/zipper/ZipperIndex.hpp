@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <cstddef>
 #include <tuple>
 
 #include "Zipper.hpp"
@@ -9,20 +10,20 @@ template<class... Containers>
 class ZipperIndexIterator
 {
 public:
-  using base = ZipperIterator<Containers...>;
+  using Base = ZipperIterator<Containers...>;
   template<class Container>
-  using value = base::template value<Container>;
-  using value_type = std::tuple<std::size_t, value<Containers>...>;
+  using Value = Base::template value<Container>;
+  using ValueType = std::tuple<std::size_t, Value<Containers>...>;
 
   template<class... Args>
   ZipperIndexIterator(Args&&... args)
-      : base_(args...)
+      : _base(args...)
   {
   }
 
   ZipperIndexIterator& operator++()
   {
-    ++this->base_;
+    ++this->_base;
     return *this;
   }
 
@@ -33,63 +34,63 @@ public:
     return tmp;
   }
 
-  value_type operator*()
+  ValueType operator*()
   {
-    return std::tuple_cat(std::make_tuple(this->base_.idx_), *this->base_);
+    return std::tuple_cat(std::make_tuple(this->_base.idx_), *this->_base);
   }
 
-  value_type operator->() { return *(*this); }
+  ValueType operator->() { return *(*this); }
 
   bool operator==(ZipperIndexIterator const& rhs)
   {
-    return this->base_.idx_ == rhs.base_.idx_;
+    return this->_base.idx_ == rhs._base.idx_;
   }
 
   bool operator!=(ZipperIndexIterator const& rhs) { return !(*this == rhs); }
 
 private:
-  base base_;
+  Base _base;
 };
 
 template<class... Containers>
 class ZipperIndex
 {
 public:
-  using iterator = ZipperIndexIterator<Containers...>;
-  using iterator_tuple = typename iterator::base::iterator_tuple;
+  using Iterator = ZipperIndexIterator<Containers...>;
+  using IteratorTuple = typename Iterator::base::iterator_tuple;
 
   ZipperIndex(Containers&... cs)
-      : _size(compute_size_(cs...))
+      : _size(compute_size(cs...))
       , _begin(std::make_tuple(cs.begin()...))
-      , _end(compute_end_(cs...))
+      , _end(compute_end(cs...))
   {
   }
 
-  iterator begin()
+  Iterator begin()
   {
     return ZipperIndexIterator<Containers...>(this->_begin, this->_size);
   }
 
-  iterator end()
+  Iterator end()
   {
     return ZipperIndexIterator<Containers...>(
         this->_end, this->_size, this->_size);
   }
 
 private:
-  static std::size_t compute_size_(Containers&... containers)
+  static std::size_t compute_size(Containers&... containers)
   {
     return std::min(containers.size()...);
   }
 
-  static iterator_tuple compute_end_(Containers&... containers)
+  static IteratorTuple compute_end(Containers&... containers)
   {
     return std::make_tuple(containers.begin()
-                           + compute_size_(containers...)...);
+                           + compute_size(containers...)...);
   }
 
-private:
+
   std::size_t _size;
-  iterator_tuple _begin;
-  iterator_tuple _end;
+  IteratorTuple _begin;
+  IteratorTuple _end;
 };
