@@ -32,7 +32,7 @@ public:
       : APlugin(
           r,
           l,
-          {}, // depends on
+          {"moving"}, // depends on
           {COMP_INIT(position, init_pos)} // componend loader
       )
   {
