@@ -9,7 +9,7 @@
 #include "plugin/EntityLoader.hpp"
 
 Logger::Logger(Registery& r, EntityLoader& l)
-    : APlugin(r, l, {COMP_INIT(log, init_log)})
+    : APlugin(r, l, {}, {COMP_INIT(log, init_log)})
 {
   _log_file.open("rtype.log", std::ios::app);
   if (!_log_file.is_open()) {

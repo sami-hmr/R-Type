@@ -9,7 +9,7 @@
 #include "plugin/EntityLoader.hpp"
 
 Health::Health(Registery& r, EntityLoader& l)
-    : APlugin(r, l, {COMP_INIT(health, init_health)})
+    : APlugin(r, l, {}, {COMP_INIT(health, init_health)})
 {
   this->_registery.get().register_component<HealthComponent>();
 
