@@ -1,14 +1,14 @@
 {
   "entities": [
     {
-      "moving:position": { "x": 100.0, "y": 100.0 },
-      "sfml:drawable": {},
-      "sfml:sprite": { "texture": "assets/spaceship.png" }
+      "moving:Position": { "x": 100.0, "y": 100.0 },
+      "sfml:Drawable": {},
+      "sfml:Sprite": { "texture": "assets/spaceship.png" }
     },
     {
-      "moving:position": { "x": 200.0, "y": 150.0 },
-      "sfml:drawable": {},
-      "sfml:sprite": { "texture": "assets/enemy.png" }
+      "moving:Position": { "x": 200.0, "y": 150.0 },
+      "sfml:Drawable": {},
+      "sfml:Sprite": { "texture": "assets/enemy.png" }
     }
   ]
 }

@@ -12,18 +12,7 @@
 #include "ecs/zipper/Zipper.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
-
-struct Position
-{
-  Position(float x, float y)
-      : x(x)
-      , y(y)
-  {
-  }
-
-  double x;
-  double y;
-};
+#include "plugin/components/Position.hpp"
 
 class Moving : public APlugin
 {
@@ -32,8 +21,8 @@ public:
       : APlugin(
           r,
           l,
-          {}, // depends on
-          {COMP_INIT(position, init_pos)} // componend loader
+          {},
+          {COMP_INIT(Position, init_pos)}
       )
   {
     this->_registery.get().register_component<Position>();

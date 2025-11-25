@@ -5,6 +5,7 @@
 #include <variant>
 
 #include "SFMLRenderer.hpp"
+#include <SFML/Graphics/Sprite.hpp>
 
 #include "Json/JsonParser.hpp"
 #include "ecs/Registery.hpp"
@@ -15,7 +16,7 @@
 SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
     : APlugin(r,
               l,
-              {},
+              {depends_on},
               {COMP_INIT(Drawable, init_drawable),
                COMP_INIT(Sprite, init_sprite),
                COMP_INIT(Text, init_text)})
@@ -109,7 +110,8 @@ void SFMLRenderer::init_sprite(Registery::Entity const entity,
   try {
     JsonObject obj = std::get<JsonObject>(config);
     std::string texture_path = std::get<std::string>(obj.at("texture").value);
-    auto spr = _registery.get().emplace_component<Sprite>(entity, texture_path);
+    _registery.get().emplace_component<Sprite>(entity, texture_path);
+
   } catch (std::bad_variant_access const&) {
     std::cerr << "Error loading sprite component: unexpected value type\n";
   } catch (std::out_of_range const&) {
@@ -155,9 +157,13 @@ void SFMLRenderer::render_sprites(Registery& r,
 {
   for (auto&& [pos, draw, spr] : Zipper(positions, drawable, sprites)) {
     auto texture = load_texture(spr.texture_path);
-    sf::Sprite sprite(*texture);
-    sprite.setPosition(sf::Vector2f(pos.x, pos.y));
-    _window->draw(sprite);
+
+    if (!_sprite.has_value()) {
+      _sprite.emplace(*texture);
+    }
+    _sprite->setPosition(sf::Vector2f(pos.x, pos.y));
+    _sprite->setTexture(*texture);
+    _window->draw(*_sprite);
   }
 }
 

@@ -18,12 +18,7 @@
 #include "ecs/SparseArray.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
-
-struct Position
-{
-  float x;
-  float y;
-};
+#include "plugin/components/Position.hpp"
 
 struct Drawable
 {
@@ -75,5 +70,6 @@ private:
   std::unique_ptr<sf::RenderWindow> _window;
   std::unordered_map<std::string, std::shared_ptr<sf::Texture>> _textures;
   std::unordered_map<std::string, std::shared_ptr<sf::Font>> _fonts;
+  std::optional<sf::Sprite> _sprite;
   const std::vector<std::string> depends_on = {"Moving"};
 };
