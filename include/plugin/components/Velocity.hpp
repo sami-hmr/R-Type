@@ -2,12 +2,12 @@
 ** EPITECH PROJECT, 2025
 ** R-Type
 ** File description:
-** Position
+** Velocity
 */
 
 #pragma once
 
-struct Position
+struct Velocity
 {
   double x;
   double y;

@@ -2,13 +2,12 @@
 ** EPITECH PROJECT, 2025
 ** R-Type
 ** File description:
-** Position
+** Drawable
 */
 
 #pragma once
 
-struct Position
+struct Drawable
 {
-  double x;
-  double y;
+  Drawable() = default;
 };

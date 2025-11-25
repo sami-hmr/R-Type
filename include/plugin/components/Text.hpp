@@ -2,13 +2,13 @@
 ** EPITECH PROJECT, 2025
 ** R-Type
 ** File description:
-** Position
+** Text
 */
 
 #pragma once
+#include <string>
 
-struct Position
+struct Text
 {
-  double x;
-  double y;
+  std::string font_path;
 };

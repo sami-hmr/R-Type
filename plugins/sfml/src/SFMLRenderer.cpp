@@ -186,9 +186,12 @@ void SFMLRenderer::render_text(Registery& /*unused*/,
 {
   for (auto&& [pos, draw, txt] : Zipper(positions, drawable, texts)) {
     auto font = load_font(txt.font_path);
-    sf::Text text(*font);
-    text.setPosition(sf::Vector2f(pos.x, pos.y));
-    _window->draw(text);
+    if (!_text.has_value()) {
+      _text.emplace(*font);
+    }
+    _text->setFont(*font);
+    _text->setPosition(sf::Vector2f(pos.x, pos.y));
+    _window->draw(*_text);
   }
 }
 
