@@ -1,9 +1,11 @@
 #pragma once
 
+#include <algorithm>
 #include <any>
 #include <cstddef>
 #include <functional>
 #include <queue>
+#include <random>
 #include <typeindex>
 #include <unordered_map>
 #include <utility>
@@ -104,18 +106,19 @@ public:
   {
     std::type_index type_id(typeid(EventType));
 
-    HandlerId handler_id = _next_handler_id++;
+    HandlerId handler_id = generate_uuid();
 
     if (!_event_handlers.contains(type_id)) {
       _event_handlers[type_id] =
-          SparseArray<std::function<void(const EventType&)>>();
+          std::unordered_map<HandlerId,
+                             std::function<void(const EventType&)>>();
     }
 
-    auto& handlers =
-        std::any_cast<SparseArray<std::function<void(const EventType&)>>&>(
-            _event_handlers[type_id]);
+    auto& handlers = std::any_cast<
+        std::unordered_map<HandlerId, std::function<void(const EventType&)>>&>(
+        _event_handlers[type_id]);
 
-    handlers.insert_at(handler_id, std::move(handler));
+    handlers[handler_id] = std::move(handler);
 
     return handler_id;
   }
@@ -128,11 +131,11 @@ public:
       return false;
     }
 
-    auto& handlers =
-        std::any_cast<SparseArray<std::function<void(const EventType&)>>&>(
-            _event_handlers[type_id]);
+    auto& handlers = std::any_cast<
+        std::unordered_map<HandlerId, std::function<void(const EventType&)>>&>(
+        _event_handlers[type_id]);
 
-    if (handler_id >= handlers.size() || !handlers[handler_id].has_value()) {
+    if (!handlers.contains(handler_id)) {
       return false;
     }
 
@@ -157,23 +160,28 @@ public:
 
     EventType event(std::forward<Args>(args)...);
 
-    auto handlers_copy =
-        std::any_cast<SparseArray<std::function<void(const EventType&)>>>(
-            _event_handlers.at(type_id));
+    auto handlers_copy = std::any_cast<
+        std::unordered_map<HandlerId, std::function<void(const EventType&)>>>(
+        _event_handlers.at(type_id));
 
-    for (auto const& handler_opt : handlers_copy) {
-      if (handler_opt.has_value()) {
-        handler_opt.value()(event);
-      }
+    for (auto const& [id, handler] : handlers_copy) {
+      handler(event);
     }
   }
 
 private:
+  static HandlerId generate_uuid()
+  {
+    static std::random_device rd;
+    static std::mt19937_64 gen(rd());
+    static std::uniform_int_distribution<HandlerId> dis;
+    return dis(gen);
+  }
+
   std::unordered_map<std::type_index, std::any> _components;
   std::unordered_map<std::type_index, std::any> _event_handlers;
   std::vector<std::function<void()>> _frequent_systems;
   std::vector<std::function<void(Entity const&)>> _delete_functions;
   std::queue<Entity> _dead_entites;
   std::size_t _max = 0;
-  HandlerId _next_handler_id = 0;
 };

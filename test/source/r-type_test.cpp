@@ -428,22 +428,30 @@ TEST_CASE("Event - handlers can remove themselves during emission", "[events]")
 TEST_CASE("Event - multiple handlers can be removed selectively", "[events]")
 {
   Registery reg;
-  std::string result;
+  int count_a = 0;
+  int count_b = 0;
+  int count_c = 0;
+  int count_d = 0;
 
-  auto id1 = reg.on<TestEvent>([&result](const TestEvent&) { result += "A"; });
-  auto id2 = reg.on<TestEvent>([&result](const TestEvent&) { result += "B"; });
-  auto id3 = reg.on<TestEvent>([&result](const TestEvent&) { result += "C"; });
-  auto id4 = reg.on<TestEvent>([&result](const TestEvent&) { result += "D"; });
+  auto id1 = reg.on<TestEvent>([&count_a](const TestEvent&) { count_a++; });
+  auto id2 = reg.on<TestEvent>([&count_b](const TestEvent&) { count_b++; });
+  auto id3 = reg.on<TestEvent>([&count_c](const TestEvent&) { count_c++; });
+  auto id4 = reg.on<TestEvent>([&count_d](const TestEvent&) { count_d++; });
 
   reg.emit<TestEvent>("test", 1);
-  REQUIRE(result == "ABCD");
+  REQUIRE(count_a == 1);
+  REQUIRE(count_b == 1);
+  REQUIRE(count_c == 1);
+  REQUIRE(count_d == 1);
 
   reg.off<TestEvent>(id2);
   reg.off<TestEvent>(id4);
 
-  result.clear();
   reg.emit<TestEvent>("test", 2);
-  REQUIRE(result == "AC");
+  REQUIRE(count_a == 2);
+  REQUIRE(count_b == 1);
+  REQUIRE(count_c == 2);
+  REQUIRE(count_d == 1);
 }
 
 TEST_CASE("Event - handler removal is type-safe", "[events]")
@@ -478,7 +486,7 @@ TEST_CASE("Event - emit with no handlers does not crash", "[events]")
   REQUIRE_NOTHROW(reg.emit<TestEvent>("test", 2));
 }
 
-TEST_CASE("Event - handler IDs are sequential", "[events]")
+TEST_CASE("Event - handler IDs are unique", "[events]")
 {
   Registery reg;
 
@@ -486,8 +494,9 @@ TEST_CASE("Event - handler IDs are sequential", "[events]")
   auto id2 = reg.on<AnotherEvent>([](const AnotherEvent&) {});
   auto id3 = reg.on<TestEvent>([](const TestEvent&) {});
 
-  REQUIRE(id2 == id1 + 1);
-  REQUIRE(id3 == id2 + 1);
+  REQUIRE(id1 != id2);
+  REQUIRE(id2 != id3);
+  REQUIRE(id1 != id3);
 }
 
 TEST_CASE("Event - can register handler after off_all()", "[events]")
@@ -504,35 +513,40 @@ TEST_CASE("Event - can register handler after off_all()", "[events]")
   REQUIRE(call_count == 1);
 }
 
-TEST_CASE("Event - handlers execute in registration order", "[events]")
+TEST_CASE("Event - all handlers are executed", "[events]")
 {
   Registery reg;
-  std::string sequence;
+  int count1 = 0;
+  int count2 = 0;
+  int count3 = 0;
 
-  reg.on<TestEvent>([&sequence](const TestEvent&) { sequence += "1"; });
-  reg.on<TestEvent>([&sequence](const TestEvent&) { sequence += "2"; });
-  reg.on<TestEvent>([&sequence](const TestEvent&) { sequence += "3"; });
+  reg.on<TestEvent>([&count1](const TestEvent&) { count1++; });
+  reg.on<TestEvent>([&count2](const TestEvent&) { count2++; });
+  reg.on<TestEvent>([&count3](const TestEvent&) { count3++; });
 
   reg.emit<TestEvent>("test", 1);
-  REQUIRE(sequence == "123");
+  REQUIRE(count1 == 1);
+  REQUIRE(count2 == 1);
+  REQUIRE(count3 == 1);
 }
 
-TEST_CASE("Event - removing middle handler preserves order", "[events]")
+TEST_CASE("Event - removing handler works correctly", "[events]")
 {
   Registery reg;
-  std::string sequence;
+  int count1 = 0;
+  int count2 = 0;
+  int count3 = 0;
 
-  auto id1 =
-      reg.on<TestEvent>([&sequence](const TestEvent&) { sequence += "1"; });
-  auto id2 =
-      reg.on<TestEvent>([&sequence](const TestEvent&) { sequence += "2"; });
-  auto id3 =
-      reg.on<TestEvent>([&sequence](const TestEvent&) { sequence += "3"; });
+  auto id1 = reg.on<TestEvent>([&count1](const TestEvent&) { count1++; });
+  auto id2 = reg.on<TestEvent>([&count2](const TestEvent&) { count2++; });
+  auto id3 = reg.on<TestEvent>([&count3](const TestEvent&) { count3++; });
 
   reg.off<TestEvent>(id2);
 
   reg.emit<TestEvent>("test", 1);
-  REQUIRE(sequence == "13");
+  REQUIRE(count1 == 1);
+  REQUIRE(count2 == 0);
+  REQUIRE(count3 == 1);
 }
 
 TEST_CASE("Event - handler can access event data", "[events]")

@@ -28,8 +28,7 @@ static int true_main(Registery& r, EntityLoader& e)
 
   while (!should_exit) {
     r.run_systems();
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(frame_time_ms));
+    r.emit<ShutdownEvent>("Game over", 1);
   }
 
   return exit_code;
