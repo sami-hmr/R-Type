@@ -85,10 +85,8 @@ private:
 
   static IteratorTuple compute_end(Containers&... containers)
   {
-    return std::make_tuple(containers.begin()
-                           + compute_size(containers...)...);
+    return std::make_tuple(containers.begin() + compute_size(containers...)...);
   }
-
 
   std::size_t _size;
   IteratorTuple _begin;

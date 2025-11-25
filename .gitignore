@@ -17,3 +17,5 @@ coverage.profdata
 coverage.info
 coverage_html/
 .clangd
+rtype.log
+vcpkg
