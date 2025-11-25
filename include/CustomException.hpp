@@ -26,4 +26,7 @@ private:
   std::string _message;
 };
 
+#define CUSTOM_EXCEPTION(name) \
+    class name : public CustomException{ public: explicit name(const std::string& message) : CustomException(message){} };
+
 #endif
