@@ -5,13 +5,13 @@
 #include <utility>
 #include <vector>
 
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Graphics/Sprite.hpp>
-#include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Font.hpp>
-#include <SFML/Window.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Window.hpp>
 
 #include "Json/JsonParser.hpp"
 #include "ecs/Registery.hpp"
@@ -21,12 +21,6 @@
 
 struct Position
 {
-  Position(float x, float y)
-      : x(x)
-      , y(y)
-  {
-  }
-
   float x;
   float y;
 };
@@ -48,11 +42,6 @@ struct Sprite
 
 struct Text
 {
-  Text(std::string const& font_path)
-      : font_path(font_path)
-  {
-  }
-
   std::string font_path;
 };
 
@@ -75,16 +64,16 @@ private:
 
   void handle_window();
   void render_sprites(Registery& r,
-                     SparseArray<Position> positions,
-                     SparseArray<Drawable> drawable,
-                     SparseArray<Sprite> sprites);
+                      SparseArray<Position> positions,
+                      SparseArray<Drawable> drawable,
+                      SparseArray<Sprite> sprites);
   void render_text(Registery& r,
-                  SparseArray<Position> positions,
-                  SparseArray<Drawable> drawable,
-                  SparseArray<Text> texts);
+                   SparseArray<Position> positions,
+                   SparseArray<Drawable> drawable,
+                   SparseArray<Text> texts);
 
   std::unique_ptr<sf::RenderWindow> _window;
   std::unordered_map<std::string, std::shared_ptr<sf::Texture>> _textures;
   std::unordered_map<std::string, std::shared_ptr<sf::Font>> _fonts;
-  const std::vector<std::string> _depends_on = {"Moving"};
+  const std::vector<std::string> depends_on = {"Moving"};
 };

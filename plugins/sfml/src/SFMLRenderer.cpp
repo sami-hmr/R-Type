@@ -15,6 +15,7 @@
 SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
     : APlugin(r,
               l,
+              {},
               {COMP_INIT(Drawable, init_drawable),
                COMP_INIT(Sprite, init_sprite),
                COMP_INIT(Text, init_text)})
