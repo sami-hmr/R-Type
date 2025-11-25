@@ -1,7 +1,5 @@
-#include <chrono>
 #include <iostream>
 #include <optional>
-#include <thread>
 
 #include "Events.hpp"
 #include "ecs/Registery.hpp"
@@ -26,10 +24,10 @@ static int true_main(Registery& r, EntityLoader& e)
 
   e.load("game_config");
 
-  while (!should_exit) {
-    r.run_systems();
-    r.emit<ShutdownEvent>("Game over", 1);
-  }
+    while (!should_exit) {
+        r.run_systems();
+        r.emit<ShutdownEvent>("Game over", 1);
+    }
 
   return exit_code;
 }

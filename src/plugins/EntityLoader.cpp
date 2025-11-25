@@ -1,3 +1,4 @@
+#include <cstddef>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -63,7 +64,8 @@ void EntityLoader::load_plugin(std::string const &plugin)
     this->get_loader(plugin);
     if (!this->_plugins.contains(plugin)) {
       try {
-        this->_plugins.emplace(
+        this->_plugins[plugin];
+        this->_plugins.insert_or_assign(
             plugin,
             this->_loaders.at(plugin)->get_instance(
                 "entry_point", this->_registery.get(), *this));
@@ -97,6 +99,7 @@ void EntityLoader::get_loader(std::string const &plugin)
 {
   try {
     if (!this->_loaders.contains(plugin)) {
+      this->_loaders[plugin];
       this->_loaders.insert_or_assign(plugin,
                                       std::make_unique<
 #if __linux__
