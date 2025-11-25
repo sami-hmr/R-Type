@@ -1,4 +1,5 @@
 #pragma once
+#include <memory>
 #include <string>
 
 #include "CustomException.hpp"
@@ -7,35 +8,14 @@
 
 class EntityLoader;
 
-class NotExistingLib : public CustomException
-{
-public:
-  explicit NotExistingLib(const std::string& message)
-      : CustomException(message)
-  {
-  }
-};
 
-class LoaderNotExistingFunction : public CustomException
-{
-public:
-  explicit LoaderNotExistingFunction(const std::string& message)
-      : CustomException(message)
-  {
-  }
-};
+CUSTOM_EXCEPTION(NotExistingLib)
+CUSTOM_EXCEPTION(LoaderNotExistingFunction)
+CUSTOM_EXCEPTION(LoaderException)
 
-class LoaderException : public CustomException
-{
-public:
-  explicit LoaderException(const std::string& message)
-      : CustomException(message)
-  {
-  }
-};
 
 template<typename Module>
-concept lib = std::is_base_of<IPlugin, Module>::value;
+concept lib = std::is_base_of_v<IPlugin, Module>;
 
 template<lib Module>
 class LibLoader

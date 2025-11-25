@@ -36,7 +36,10 @@ add_subdirectory(plugins)
 
 # ---- Declare executable ----
 
-add_executable(r-type_exe src/main.cpp)
+add_executable(r-type_exe
+    src/main.cpp
+    src/plugins/EntityLoader.cpp
+)
 add_executable(r-type::exe ALIAS r-type_exe)
 
 set_property(TARGET r-type_exe PROPERTY OUTPUT_NAME r-type)
