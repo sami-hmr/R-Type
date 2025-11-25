@@ -1,9 +1,8 @@
 cmake_minimum_required(VERSION 3.14)
 
-set(LIB_NAME sfml_plugin)
+set(LIB_NAME sfml)
 
-# Find SFML package
-find_package(SFML COMPONENTS Graphics Window System REQUIRED)
+find_package(SFML 3 COMPONENTS Graphics Window REQUIRED)
 
 add_library(${LIB_NAME} SHARED
     src/SFMLRenderer.cpp
@@ -14,12 +13,11 @@ target_compile_features(${LIB_NAME} PRIVATE cxx_std_23)
 target_include_directories(${LIB_NAME}
     PRIVATE
         ${CMAKE_SOURCE_DIR}/include
+        ${parser_SOURCE_DIR}/include
         include
 )
 
-target_link_libraries(${LIB_NAME}
-    PRIVATE
-        SFML::Graphics
-        SFML::Window
-        SFML::System
+target_link_libraries(${LIB_NAME} PRIVATE 
+    SFML::Graphics
+    SFML::Window
 )
