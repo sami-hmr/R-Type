@@ -1,6 +1,7 @@
 # ---- Testing with CTest ----
 
 include(CTest)
+option(BUILD_TESTING "Enable tests support" OFF)
 if(BUILD_TESTING)
   add_subdirectory(test)
 endif()

@@ -18,3 +18,4 @@ coverage.info
 coverage_html/
 .clangd
 rtype.log
+.cache
