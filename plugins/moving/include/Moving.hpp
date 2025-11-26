@@ -58,6 +58,13 @@ public:
               std::cout << "first\n";
           }
         }, 2);
+    this->_registery.get().add_system<Position>(
+        [](Registery&, const SparseArray<Position>& s)
+        {
+          for (auto&& [position] : Zipper(s)) {
+              std::cout << "middle2\n";
+          }
+        }, 1);
   }
 
 private:
