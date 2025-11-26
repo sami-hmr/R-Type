@@ -50,7 +50,8 @@
         "CMAKE_CXX_STANDARD": "23",
         "CMAKE_CXX_STANDARD_REQUIRED": "ON",
         "r-type_DEVELOPER_MODE": "ON",
-        "BUILD_DOCS": "ON"
+        "BUILD_DOCS": "ON",
+        "BUILD_TESTING": "OFF"
       }
     },
     {
