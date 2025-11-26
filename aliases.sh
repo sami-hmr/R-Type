@@ -8,11 +8,11 @@ alias docs-run='cmake --build build/docs --target docs-run'
 alias docs-all='docs-config && docs-build && docs-run'
 
 alias tests-config='cmake --preset=tests'
-alias tests-build='cmake --build build --preset=tests-build -j'
+alias tests-build='cmake --build build/tests --preset=tests-build -j'
 alias tests-run='ctest --preset=dev-test'
 alias tests-all='tests-config && tests-build && tests-run'
 
-alias coverage='tests-all && cmake --build build/tests --target coverage && xdg-open build/coverage_html/index.html'
+alias coverage='tests-all && cmake --build build/tests --target coverage && xdg-open build/tests/coverage_html/index.html'
 
 alias rel-config='cmake --preset=release'
 alias rel-build='cmake --build build/release --preset=release-build -j'
