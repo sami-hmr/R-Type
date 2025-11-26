@@ -9,8 +9,23 @@
     {
       "name": "dev",
       "displayName": "Development",
-      "description": "Development build with tests and coverage",
+      "description": "Development build",
       "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_STANDARD": "23",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "r-type_DEVELOPER_MODE": "ON",
+        "BUILD_TESTING": "OFF"
+      }
+    },
+    {
+      "name": "tests",
+      "displayName": "Development",
+      "description": "Development build with tests and coverage",
+      "binaryDir": "${sourceDir}/build/tests",
       "cacheVariables": {
         "CMAKE_C_COMPILER": "clang",
         "CMAKE_CXX_COMPILER": "clang++",
@@ -20,17 +35,14 @@
         "r-type_DEVELOPER_MODE": "ON",
         "BUILD_TESTING": "ON",
         "ENABLE_COVERAGE": "ON",
-        "BUILD_DOCS": "OFF",
-        "CMAKE_CXX_FLAGS": "-Og -g -fprofile-instr-generate -fcoverage-mapping",
-        "CMAKE_EXE_LINKER_FLAGS": "-fprofile-instr-generate",
-        "CMAKE_SHARED_LINKER_FLAGS": "-fprofile-instr-generate"
+        "CMAKE_CXX_FLAGS": "-O0 -g --coverage -fPIC"
       }
     },
     {
       "name": "docs",
       "displayName": "Documentation",
       "description": "Build with documentation generation enabled",
-      "binaryDir": "${sourceDir}/build",
+      "binaryDir": "${sourceDir}/build/docs",
       "cacheVariables": {
         "CMAKE_C_COMPILER": "clang",
         "CMAKE_CXX_COMPILER": "clang++",
@@ -38,8 +50,8 @@
         "CMAKE_CXX_STANDARD": "23",
         "CMAKE_CXX_STANDARD_REQUIRED": "ON",
         "r-type_DEVELOPER_MODE": "ON",
-        "BUILD_TESTING": "OFF",
-        "BUILD_DOCS": "ON"
+        "BUILD_DOCS": "ON",
+        "BUILD_TESTING": "OFF"
       }
     },
     {
@@ -72,6 +84,10 @@
       "configurePreset": "dev"
     },
     {
+      "name": "tests-build",
+      "configurePreset": "tests"
+    },
+    {
       "name": "docs-build",
       "configurePreset": "docs"
     },
@@ -83,7 +99,7 @@
   "testPresets": [
     {
       "name": "dev-test",
-      "configurePreset": "dev",
+      "configurePreset": "tests",
       "output": {
         "outputOnFailure": true
       }

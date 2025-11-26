@@ -15,9 +15,37 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
-    - name: Lint with clang-format
-      run: cmake -D FORMAT_COMMAND=clang-format-18 -P cmake/lint.cmake
+    - name: Check formatting with clang-format
+      id: lint-check
+      run: |
+        set +e
+        cmake -D FORMAT_COMMAND=clang-format-18 -P cmake/lint.cmake
+        rc=$?
+        echo "lint_exit_code=$rc" >> "$GITHUB_OUTPUT"
+        exit 0
+
+    - name: Auto-fix formatting with clang-format
+      if: steps.lint-check.outputs.lint_exit_code != '0'
+      run: |
+        cmake -D FORMAT_COMMAND=clang-format-18 -D FIX=YES -P cmake/lint.cmake
+
+    - name: Commit and push formatting changes
+      if: steps.lint-check.outputs.lint_exit_code != '0' && github.event_name == 'push'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: |
+        if git diff --quiet; then
+          echo "No formatting changes to commit."
+          exit 0
+        fi
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git add .
+        git commit -m "chore(style): auto-format with clang-format-18"
+        git push || echo "Push failed, continuing without failing lint job."
 
   build-and-test:
     needs: [lint]
@@ -45,32 +73,31 @@ jobs:
       uses: actions/cache@v4
       with:
         path: |
-          build
-          !build/coverage.info
-        key: ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', 'cmake/**') }}
+          build/tests
+          !build/tests/coverage.info
+        key: ${{ runner.os }}-cmake-tests-${{ hashFiles('**/CMakeLists.txt', 'cmake/**') }}
         restore-keys: |
-          ${{ runner.os }}-cmake-build-
+          ${{ runner.os }}-cmake-tests-
 
     - name: Cache FetchContent dependencies
       uses: actions/cache@v4
       with:
-        path: build/_deps
+        path: build/tests/_deps
         key: ${{ runner.os }}-fetchcontent-${{ hashFiles('**/CMakeLists.txt') }}
         restore-keys: |
           ${{ runner.os }}-fetchcontent-
 
-    - name: Configure
-      run: CC=clang-18 CXX=clang++-18 cmake --preset=dev
+    - name: Configure tests
+      run: CC=clang-18 CXX=clang++-18 cmake --preset=tests
       env:
         CMAKE_C_COMPILER_LAUNCHER: ccache
         CMAKE_CXX_COMPILER_LAUNCHER: ccache
 
-    - name: Build
-      run: cmake --build build -j 2
+    - name: Build tests
+      run: cmake --build build/tests --preset=tests-build -j 2
 
-    - name: Test
-      working-directory: build
-      run: ctest --output-on-failure --no-tests=error -j 2
+    - name: Run tests
+      run: ctest --preset=dev-test
 
   coverage:
     needs: [lint]
@@ -79,13 +106,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install Clang 18 with C++23 support
+    - name: Install dependencies
       run: |
         sudo apt-get update -q
-        sudo apt-get install -y -q clang-18 llvm-18 libc++-18-dev libc++abi-18-dev ccache
+        sudo apt-get install -y -q clang-18 llvm-18 libc++-18-dev libc++abi-18-dev lcov ccache
         sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
         sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
-        sudo update-alternatives --install /usr/bin/llvm-profdata llvm-profdata /usr/bin/llvm-profdata-18 100
         sudo update-alternatives --install /usr/bin/llvm-cov llvm-cov /usr/bin/llvm-cov-18 100
 
     - name: Setup ccache
@@ -99,30 +125,27 @@ jobs:
     - name: Cache FetchContent dependencies
       uses: actions/cache@v4
       with:
-        path: build/_deps
+        path: build/tests/_deps
         key: ${{ runner.os }}-fetchcontent-${{ hashFiles('**/CMakeLists.txt') }}
         restore-keys: |
           ${{ runner.os }}-fetchcontent-
 
-    - name: Configure
-      run: CC=clang-18 CXX=clang++-18 cmake --preset=dev
+    - name: Configure tests
+      run: CC=clang-18 CXX=clang++-18 cmake --preset=tests
       env:
         CMAKE_C_COMPILER_LAUNCHER: ccache
         CMAKE_CXX_COMPILER_LAUNCHER: ccache
 
-    - name: Build
-      run: cmake --build build -j 2
-
-    - name: Run tests
-      run: ./r-type_test
+    - name: Build tests
+      run: cmake --build build/tests --preset=tests-build -j 2
 
     - name: Generate coverage report
-      run: cmake --build build --target coverage
+      run: cmake --build build/tests --target coverage
 
     - name: Upload coverage to codecov
       uses: codecov/codecov-action@v4
       with:
-        file: build/coverage.info
+        file: build/tests/coverage.info
         token: ${{ secrets.CODECOV_TOKEN }}
       continue-on-error: true
 

@@ -17,8 +17,13 @@ coverage.profdata
 coverage.info
 coverage_html/
 .clangd
+<<<<<<< HEAD
 
 # Documentation files
 docs/html/
 docs/xml/
 docs/Doxyfile
+=======
+rtype.log
+.cache
+>>>>>>> ef25cd35df01b6bce91155dabb824c7410b4540a

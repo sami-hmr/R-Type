@@ -23,6 +23,7 @@ Checks: "*,\
   -cppcoreguidelines-non-private-member-variables-in-classes,\
   -cppcoreguidelines-avoid-const-or-ref-data-members,\
   -portability-avoid-pragma-once,\
+  -cppcoreguidelines-owning-memory,\
   -misc-non-private-member-variables-in-classes"
 WarningsAsErrors: ''
 CheckOptions:

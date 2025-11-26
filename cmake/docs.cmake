@@ -14,7 +14,7 @@ set(working_dir "${PROJECT_BINARY_DIR}/docs")
 configure_file("docs/Doxyfile.in" "${working_dir}/Doxyfile" @ONLY)
 
 add_custom_target(
-    docs
+    docs-run
     COMMAND "${CMAKE_COMMAND}" -E remove_directory
     "${DOXYGEN_OUTPUT_DIRECTORY}/html"
     "${DOXYGEN_OUTPUT_DIRECTORY}/xml"

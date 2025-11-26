@@ -1,7 +1,5 @@
-# Parent project does not export its library target, so this CML implicitly
-# depends on being added from it, i.e. the testing is done only from the build
-# tree and is not feasible from an install location
 
+cmake_minimum_required(VERSION 3.14)
 project(r-typeTests LANGUAGES CXX)
 
 # ---- Dependencies ----
@@ -24,6 +22,7 @@ include(Catch)
 add_executable(r-type_test source/r-type_test.cpp)
 target_link_libraries(
     r-type_test PRIVATE
+    r-type_core
     Catch2::Catch2WithMain
 )
 target_compile_features(r-type_test PRIVATE cxx_std_23)
