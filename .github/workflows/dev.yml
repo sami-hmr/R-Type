@@ -73,32 +73,31 @@ jobs:
       uses: actions/cache@v4
       with:
         path: |
-          build
-          !build/coverage.info
-        key: ${{ runner.os }}-cmake-build-${{ hashFiles('**/CMakeLists.txt', 'cmake/**') }}
+          build/tests
+          !build/tests/coverage.info
+        key: ${{ runner.os }}-cmake-tests-${{ hashFiles('**/CMakeLists.txt', 'cmake/**') }}
         restore-keys: |
-          ${{ runner.os }}-cmake-build-
+          ${{ runner.os }}-cmake-tests-
 
     - name: Cache FetchContent dependencies
       uses: actions/cache@v4
       with:
-        path: build/_deps
+        path: build/tests/_deps
         key: ${{ runner.os }}-fetchcontent-${{ hashFiles('**/CMakeLists.txt') }}
         restore-keys: |
           ${{ runner.os }}-fetchcontent-
 
-    - name: Configure
-      run: CC=clang-18 CXX=clang++-18 cmake --preset=dev
+    - name: Configure tests
+      run: CC=clang-18 CXX=clang++-18 cmake --preset=tests
       env:
         CMAKE_C_COMPILER_LAUNCHER: ccache
         CMAKE_CXX_COMPILER_LAUNCHER: ccache
 
-    - name: Build
-      run: cmake --build build -j 2
+    - name: Build tests
+      run: cmake --build build/tests --preset=tests-build -j 2
 
-    - name: Test
-      working-directory: build
-      run: ctest --output-on-failure --no-tests=error -j 2
+    - name: Run tests
+      run: ctest --preset=dev-test
 
   coverage:
     needs: [lint]
