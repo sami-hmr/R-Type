@@ -17,16 +17,16 @@ public:
 
   template<class Container>
   using Iterator = std::conditional_t<std::is_const_v<Container>,
-                                      typename Container::cit,
-                                      typename Container::it>;
+                                      typename Container::Cit,
+                                      typename Container::It>;
 
   template<class Container>
   using ItRef = typename Iterator<Container>::reference;
 
   template<class Container>
   using Value = std::conditional_t<std::is_const_v<Container>,
-                                   typename Container::true_cref,
-                                   typename Container::true_ref>;
+                                   typename Container::TrueCref,
+                                   typename Container::TrueRef>;
 
   using ValueType = std::tuple<Value<Containers>...>;
 

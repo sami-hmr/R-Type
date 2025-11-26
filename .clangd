@@ -1,6 +1,0 @@
-CompileFlags:
-  CompilationDatabase: build
-  Add: [-I/home/lukeskieur/Documents/epitech/tek3/R-type/rtype/include, -I/home/lukeskieur/Documents/epitech/tek3/R-type/rtype/build/_deps/parser-src/include]
-  Remove: [-fkeep-inline-functions, -fkeep-static-functions]
-
-

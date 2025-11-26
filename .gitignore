@@ -22,3 +22,6 @@ coverage_html/
 docs/html/
 docs/xml/
 docs/Doxyfile
+
+rtype.log
+.cache

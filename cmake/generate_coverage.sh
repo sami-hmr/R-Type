@@ -37,7 +37,7 @@ echo "coverage.profdata exists"
 echo "Generating lcov format coverage..."
 llvm-cov export -format=lcov -instr-profile=coverage.profdata "$TEST_EXECUTABLE" \
     -ignore-filename-regex='.*/_deps/.*' \
-    -ignore-filename-regex='.*/test/.*' > coverage.info
+    -ignore-filename-regex='.*/test/.*' >coverage.info
 
 echo "Generating HTML coverage report..."
 llvm-cov show -format=html -instr-profile=coverage.profdata "$TEST_EXECUTABLE" \

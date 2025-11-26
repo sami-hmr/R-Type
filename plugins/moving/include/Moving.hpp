@@ -29,16 +29,35 @@ class Moving : public APlugin
 {
 public:
   Moving(Registery& r, EntityLoader& l)
-      : APlugin(r, l, {COMP_INIT(position, init_pos)})
+      : APlugin(
+          r,
+          l,
+          {"health"}, // depends on
+          {COMP_INIT(position, init_pos)} // componend loader
+      )
   {
     this->_registery.get().register_component<Position>();
     this->_registery.get().add_system<Position>(
         [](Registery&, const SparseArray<Position>& s)
         {
           for (auto&& [position] : Zipper(s)) {
-            std::cout << position.x << "  " << position.y << '\n';
+            std::cout << "last\n";
           }
-        });
+        }, 0);
+    this->_registery.get().add_system<Position>(
+        [](Registery&, const SparseArray<Position>& s)
+        {
+          for (auto&& [position] : Zipper(s)) {
+            std::cout << "middle\n";
+          }
+        }, 1);
+    this->_registery.get().add_system<Position>(
+        [](Registery&, const SparseArray<Position>& s)
+        {
+          for (auto&& [position] : Zipper(s)) {
+              std::cout << "first\n";
+          }
+        }, 2);
   }
 
 private:
@@ -50,12 +69,9 @@ private:
       double y = std::get<double>(obj.at("y").value);
       this->_registery.get().emplace_component<Position>(entity, x, y);
     } catch (std::bad_variant_access const&) {
-      std::cerr << "Error loading position component: unexpected value type"
-                << '\n';
+      throw BadComponentDefinition("expected JsonObject");
     } catch (std::out_of_range const&) {
-      std::cerr
-          << "Error loading position component: missing value in JsonObject"
-          << '\n';
+      throw UndefinedComponentValue(R"(expected "x": double and "y": double )");
     }
   }
 

@@ -1,15 +1,18 @@
 #pragma once
 
+#include <algorithm>
 #include <any>
 #include <cstddef>
 #include <functional>
 #include <queue>
+#include <random>
 #include <typeindex>
 #include <unordered_map>
 #include <utility>
 #include <vector>
 
 #include "SparseArray.hpp"
+#include "Systems.hpp"
 
 /**
  * @brief The Registery class is the core of the ECS (Entity-Component-System) architecture.
@@ -24,6 +27,7 @@ public:
    * 
    */
   using Entity = std::size_t;
+  using HandlerId = std::size_t;
 
   /**
    * @brief Registers a component type in the registry.
@@ -153,10 +157,14 @@ public:
    * @param f The function representing the system.
    */
   template<class... Components, typename Function>
-  void add_system(Function const& f)
+  void add_system(Function &&f, std::size_t priority = 0)
   {
-    this->_frequent_systems.push_back(
-        [this, f]() { f(*this, this->get_components<Components>()...); });
+    System<> sys(
+        [this, f = std::forward<Function>(f)]() { f(*this, this->get_components<Components>()...); },
+        priority
+    );
+    auto it = std::upper_bound(this->_frequent_systems.begin(), this->_frequent_systems.end(), sys);
+    this->_frequent_systems.insert(it, std::move(sys));
   }
 
   /**
@@ -170,10 +178,87 @@ public:
     }
   }
 
+  template<typename EventType>
+  HandlerId on(std::function<void(const EventType&)> handler)
+  {
+    std::type_index type_id(typeid(EventType));
+
+    HandlerId handler_id = generate_uuid();
+
+    if (!_event_handlers.contains(type_id)) {
+      _event_handlers[type_id] =
+          std::unordered_map<HandlerId,
+                             std::function<void(const EventType&)>>();
+    }
+
+    auto& handlers = std::any_cast<
+        std::unordered_map<HandlerId, std::function<void(const EventType&)>>&>(
+        _event_handlers[type_id]);
+
+    handlers[handler_id] = std::move(handler);
+
+    return handler_id;
+  }
+
+  template<typename EventType>
+  bool off(HandlerId handler_id)
+  {
+    std::type_index type_id(typeid(EventType));
+    if (!_event_handlers.contains(type_id)) {
+      return false;
+    }
+
+    auto& handlers = std::any_cast<
+        std::unordered_map<HandlerId, std::function<void(const EventType&)>>&>(
+        _event_handlers[type_id]);
+
+    if (!handlers.contains(handler_id)) {
+      return false;
+    }
+
+    handlers.erase(handler_id);
+    return true;
+  }
+
+  template<typename EventType>
+  void off_all()
+  {
+    std::type_index type_id(typeid(EventType));
+    _event_handlers.erase(type_id);
+  }
+
+  template<typename EventType, typename... Args>
+  void emit(Args&&... args)
+  {
+    std::type_index type_id(typeid(EventType));
+    if (!_event_handlers.contains(type_id)) {
+      return;
+    }
+
+    EventType event(std::forward<Args>(args)...);
+
+    auto handlers_copy = std::any_cast<
+        std::unordered_map<HandlerId, std::function<void(const EventType&)>>>(
+        _event_handlers.at(type_id));
+
+    for (auto const& [id, handler] : handlers_copy) {
+      handler(event);
+    }
+  }
+
 private:
-  std::unordered_map<std::type_index, std::any> _components; /**< Stores components indexed by their type */
-  std::vector<std::function<void()>> _frequent_systems; /**< Stores systems to be run frequently */
-  std::vector<std::function<void(Entity const&)>> _delete_functions; /**< Stores functions to delete components when an entity is killed */
-  std::queue<Entity> _dead_entites; /**< Stores IDs of entities that have been killed and can be reused */
-  std::size_t _max = 0; /**< Tracks the maximum entity ID assigned so far */
+  static HandlerId generate_uuid()
+  {
+    static std::random_device rd;
+    static std::mt19937_64 gen(rd());
+    static std::uniform_int_distribution<HandlerId> dis;
+    return dis(gen);
+  }
+
+  std::unordered_map<std::type_index, std::any> _components;
+  std::unordered_map<std::type_index, std::any> _event_handlers;
+  std::vector<System<>> _frequent_systems;
+  std::vector<std::function<void(Entity const&)>> _delete_functions;
+  std::queue<Entity> _dead_entites;
+  std::size_t _max = 0;
 };
