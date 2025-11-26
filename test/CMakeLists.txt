@@ -22,6 +22,7 @@ include(Catch)
 add_executable(r-type_test source/r-type_test.cpp)
 target_link_libraries(
     r-type_test PRIVATE
+    r-type_core
     Catch2::Catch2WithMain
 )
 target_compile_features(r-type_test PRIVATE cxx_std_23)
