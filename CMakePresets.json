@@ -30,6 +30,7 @@
     {
       "name": "tests",
       "displayName": "Development",
+      "inherits": "vcpkg",
       "description": "Development build with tests and coverage",
       "binaryDir": "${sourceDir}/build/tests",
       "cacheVariables": {
@@ -41,7 +42,8 @@
         "r-type_DEVELOPER_MODE": "ON",
         "BUILD_TESTING": "ON",
         "ENABLE_COVERAGE": "ON",
-        "CMAKE_CXX_FLAGS": "-O0 -g --coverage -fPIC"
+        "CMAKE_CXX_FLAGS": "-O0 -g --coverage -fPIC",
+        "VCPKG_MANIFEST_FEATURES": "tests"
       }
     },
     {

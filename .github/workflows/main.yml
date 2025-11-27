@@ -53,13 +53,21 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        submodules: true
 
     - name: Install Clang 18 with C++23 support
       run: |
         sudo apt-get update -q
-        sudo apt-get install -y -q clang-18 libc++-18-dev libc++abi-18-dev ccache
+        sudo apt-get install -y -q clang-18 libc++-18-dev libc++abi-18-dev ccache curl zip unzip tar pkg-config
         sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
         sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
+
+    - name: Setup vcpkg
+      uses: lukka/run-vcpkg@v11
+      with:
+        vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+        vcpkgGitCommitId: 'd7112d1a4fb50410d3639f5f586972591d848beb'
 
     - name: Setup ccache
       uses: hendrikmuhs/ccache-action@v1.2
@@ -79,14 +87,6 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-cmake-tests-
 
-    - name: Cache FetchContent dependencies
-      uses: actions/cache@v4
-      with:
-        path: build/tests/_deps
-        key: ${{ runner.os }}-fetchcontent-${{ hashFiles('**/CMakeLists.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-fetchcontent-
-
     - name: Configure tests
       run: CC=clang-18 CXX=clang++-18 cmake --preset=tests
       env:
@@ -105,14 +105,22 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        submodules: true
 
     - name: Install dependencies
       run: |
         sudo apt-get update -q
-        sudo apt-get install -y -q clang-18 llvm-18 libc++-18-dev libc++abi-18-dev lcov ccache
+        sudo apt-get install -y -q clang-18 llvm-18 libc++-18-dev libc++abi-18-dev lcov ccache curl zip unzip tar pkg-config
         sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
         sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
         sudo update-alternatives --install /usr/bin/llvm-cov llvm-cov /usr/bin/llvm-cov-18 100
+
+    - name: Setup vcpkg
+      uses: lukka/run-vcpkg@v11
+      with:
+        vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+        vcpkgGitCommitId: 'd7112d1a4fb50410d3639f5f586972591d848beb'
 
     - name: Setup ccache
       uses: hendrikmuhs/ccache-action@v1.2
@@ -121,14 +129,6 @@ jobs:
 
     - name: Verify C++ compiler version
       run: clang++ --version
-
-    - name: Cache FetchContent dependencies
-      uses: actions/cache@v4
-      with:
-        path: build/tests/_deps
-        key: ${{ runner.os }}-fetchcontent-${{ hashFiles('**/CMakeLists.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-fetchcontent-
 
     - name: Configure tests
       run: CC=clang-18 CXX=clang++-18 cmake --preset=tests
@@ -160,13 +160,21 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+      with:
+        submodules: true
 
     - name: Install Clang 18 and Doxygen
       run: |
         sudo apt-get update -q
-        sudo apt-get install -y -q clang-18 libc++-18-dev libc++abi-18-dev doxygen ccache
+        sudo apt-get install -y -q clang-18 libc++-18-dev libc++abi-18-dev doxygen ccache curl zip unzip tar pkg-config
         sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
         sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
+
+    - name: Setup vcpkg
+      uses: lukka/run-vcpkg@v11
+      with:
+        vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+        vcpkgGitCommitId: 'd7112d1a4fb50410d3639f5f586972591d848beb'
 
     - name: Setup ccache
       uses: hendrikmuhs/ccache-action@v1.2
@@ -180,14 +188,6 @@ jobs:
         key: ${{ runner.os }}-cmake-docs-${{ hashFiles('**/CMakeLists.txt', 'cmake/**') }}
         restore-keys: |
           ${{ runner.os }}-cmake-docs-
-
-    - name: Cache FetchContent dependencies
-      uses: actions/cache@v4
-      with:
-        path: build/_deps
-        key: ${{ runner.os }}-fetchcontent-${{ hashFiles('**/CMakeLists.txt') }}
-        restore-keys: |
-          ${{ runner.os }}-fetchcontent-
 
     - name: Configure
       run: CC=clang-18 CXX=clang++-18 cmake --preset=docs
