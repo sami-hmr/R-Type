@@ -1,30 +1,15 @@
 #pragma once
 
-#include <cstdint>
 #include <fstream>
 #include <string>
 #include <utility>
 #include <vector>
 
+#include "Events.hpp"
 #include "Json/JsonParser.hpp"
 #include "ecs/Registery.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
-
-enum class LogLevel : std::uint8_t
-{
-  DEBUG,
-  INFO,
-  WARNING,
-  ERROR
-};
-
-struct LogEvent
-{
-  std::string name;
-  LogLevel level;
-  std::string message;
-};
 
 struct LogComponent
 {

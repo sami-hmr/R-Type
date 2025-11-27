@@ -64,13 +64,34 @@ void Logger::on_log_event(const LogEvent& event)
   std::string timestamp = get_timestamp();
   std::string level_str = level_to_string(event.level);
 
-  std::string message = std::format(
+  std::string log_message = std::format(
       "[{}] [{}] [{}] {}\n", timestamp, level_str, event.name, event.message);
 
-  std::cout << message;
+  std::string color_code;
+  std::string reset_code = "\033[0m";
+
+  switch (event.level) {
+    case LogLevel::DEBUG:
+      color_code = "\033[36m";
+      break;
+    case LogLevel::INFO:
+      color_code = "\033[32m";
+      break;
+    case LogLevel::WARNING:
+      color_code = "\033[33m";
+      break;
+    case LogLevel::ERROR:
+      color_code = "\033[31m";
+      break;
+    default:
+      color_code = "";
+      reset_code = "";
+  }
+
+  std::cout << color_code << log_message << reset_code;
 
   if (_log_file.is_open()) {
-    _log_file << message;
+    _log_file << log_message;
     _log_file.flush();
   }
 }
