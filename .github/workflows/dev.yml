@@ -56,10 +56,13 @@ jobs:
       with:
         submodules: true
 
+    - name: Install latest CMake and Ninja
+      uses: lukka/get-cmake@latest
+
     - name: Install Clang 18 with C++23 support
       run: |
         sudo apt-get update -q
-        sudo apt-get install -y -q clang-18 libc++-18-dev libc++abi-18-dev ccache curl zip unzip tar pkg-config
+        sudo apt-get install -y -q clang-18 libc++-18-dev libc++abi-18-dev ccache
         sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
         sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
 
@@ -72,32 +75,22 @@ jobs:
     - name: Setup ccache
       uses: hendrikmuhs/ccache-action@v1.2
       with:
-        key: ${{ github.job }}-${{ matrix.os }}
+        key: ${{ github.job }}-${{ runner.os }}
 
     - name: Verify C++ compiler version
       run: clang++ --version
 
-    - name: Cache CMake build directory
-      uses: actions/cache@v4
+    - name: Run CMake with preset (configure, build, and test)
+      uses: lukka/run-cmake@v10
       with:
-        path: |
-          build/tests
-          !build/tests/coverage.info
-        key: ${{ runner.os }}-cmake-tests-${{ hashFiles('**/CMakeLists.txt', 'cmake/**') }}
-        restore-keys: |
-          ${{ runner.os }}-cmake-tests-
-
-    - name: Configure tests
-      run: CC=clang-18 CXX=clang++-18 cmake --preset=tests
+        configurePreset: 'tests'
+        buildPreset: 'tests-build'
+        testPreset: 'dev-test'
       env:
+        CC: clang-18
+        CXX: clang++-18
         CMAKE_C_COMPILER_LAUNCHER: ccache
         CMAKE_CXX_COMPILER_LAUNCHER: ccache
-
-    - name: Build tests
-      run: cmake --build build/tests --preset=tests-build -j 2
-
-    - name: Run tests
-      run: ctest --preset=dev-test
 
   coverage:
     needs: [lint]
@@ -108,10 +101,13 @@ jobs:
       with:
         submodules: true
 
+    - name: Install latest CMake and Ninja
+      uses: lukka/get-cmake@latest
+
     - name: Install dependencies
       run: |
         sudo apt-get update -q
-        sudo apt-get install -y -q clang-18 llvm-18 libc++-18-dev libc++abi-18-dev lcov ccache curl zip unzip tar pkg-config
+        sudo apt-get install -y -q clang-18 llvm-18 libc++-18-dev libc++abi-18-dev lcov ccache
         sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
         sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
         sudo update-alternatives --install /usr/bin/llvm-cov llvm-cov /usr/bin/llvm-cov-18 100
@@ -125,19 +121,21 @@ jobs:
     - name: Setup ccache
       uses: hendrikmuhs/ccache-action@v1.2
       with:
-        key: ${{ github.job }}-${{ matrix.os }}
+        key: ${{ github.job }}-${{ runner.os }}
 
     - name: Verify C++ compiler version
       run: clang++ --version
 
-    - name: Configure tests
-      run: CC=clang-18 CXX=clang++-18 cmake --preset=tests
+    - name: Run CMake with preset (configure and build)
+      uses: lukka/run-cmake@v10
+      with:
+        configurePreset: 'tests'
+        buildPreset: 'tests-build'
       env:
+        CC: clang-18
+        CXX: clang++-18
         CMAKE_C_COMPILER_LAUNCHER: ccache
         CMAKE_CXX_COMPILER_LAUNCHER: ccache
-
-    - name: Build tests
-      run: cmake --build build/tests --preset=tests-build -j 2
 
     - name: Generate coverage report
       run: cmake --build build/tests --target coverage
