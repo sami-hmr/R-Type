@@ -13,6 +13,7 @@
 #include <chrono>
 
 #include "SparseArray.hpp"
+#include "ecs/Systems.hpp"
 
 class Registery
 {
@@ -89,10 +90,14 @@ public:
   }
 
   template<class... Components, typename Function>
-  void add_system(Function const& f)
+  void add_system(Function&& f, std::size_t priority = 0)
   {
-    this->_frequent_systems.push_back(
-        [this, f]() { f(*this, this->get_components<Components>()...); });
+    System<> sys([this, f = std::forward<Function>(f)]()
+                 { f(*this, this->get_components<Components>()...); },
+                 priority);
+    auto it = std::upper_bound(
+        this->_frequent_systems.begin(), this->_frequent_systems.end(), sys);
+    this->_frequent_systems.insert(it, std::move(sys));
   }
 
   void run_systems()
@@ -110,9 +115,10 @@ public:
     HandlerId handler_id = generate_uuid();
 
     if (!_event_handlers.contains(type_id)) {
-      _event_handlers[type_id] =
+      _event_handlers.insert_or_assign(
+          type_id,
           std::unordered_map<HandlerId,
-                             std::function<void(const EventType&)>>();
+                             std::function<void(const EventType&)>>());
     }
 
     auto& handlers = std::any_cast<
@@ -181,7 +187,7 @@ private:
 
   std::unordered_map<std::type_index, std::any> _components;
   std::unordered_map<std::type_index, std::any> _event_handlers;
-  std::vector<std::function<void()>> _frequent_systems;
+  std::vector<System<>> _frequent_systems;
   std::vector<std::function<void(Entity const&)>> _delete_functions;
   std::queue<Entity> _dead_entites;
   std::size_t _max = 0;
