@@ -18,7 +18,7 @@
 SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
     : APlugin(r,
               l,
-              {},
+              {"moving"},
               {COMP_INIT(Drawable, init_drawable),
                COMP_INIT(Sprite, init_sprite),
                COMP_INIT(Text, init_text)})
@@ -31,12 +31,8 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
   _registery.get().register_component<Sprite>();
   _registery.get().register_component<Text>();
 
-  _registery.get().add_system<>(
-      [this](Registery&)
-      {
-        _window->clear(sf::Color::Black);
-        ;
-      });
+  _registery.get().add_system<>([this](Registery&)
+                                { _window->clear(sf::Color::Black); });
   _registery.get().add_system<Position, Drawable, Sprite>(
       [this](Registery& r,
              SparseArray<Position> pos,
