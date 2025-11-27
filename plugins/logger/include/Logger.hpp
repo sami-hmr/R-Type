@@ -11,6 +11,9 @@
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 
+/**
+ * @brief Severity levels for logging.
+ */
 enum class LogLevel : std::uint8_t
 {
   DEBUG,
@@ -19,6 +22,9 @@ enum class LogLevel : std::uint8_t
   ERROR
 };
 
+/**
+ * @brief Event carrying log message data.
+ */
 struct LogEvent
 {
   std::string name;
@@ -26,6 +32,9 @@ struct LogEvent
   std::string message;
 };
 
+/**
+ * @brief Component that marks an entity as loggable.
+ */
 struct LogComponent
 {
   LogComponent(std::string name, LogLevel level = LogLevel::INFO)
@@ -38,6 +47,9 @@ struct LogComponent
   LogLevel level;
 };
 
+/**
+ * @brief Plugin that handles logging operations to file.
+ */
 class Logger : public APlugin
 {
 public:

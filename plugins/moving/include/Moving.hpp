@@ -13,6 +13,9 @@
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 
+/**
+ * @brief Component representing 2D position.
+ */
 struct Position
 {
   Position(float x, float y)
@@ -25,16 +28,18 @@ struct Position
   double y;
 };
 
+/**
+ * @brief Plugin managing position components and movement systems.
+ */
 class Moving : public APlugin
 {
 public:
   Moving(Registery& r, EntityLoader& l)
-      : APlugin(
-          r,
-          l,
-          {"health"}, // depends on
-          {COMP_INIT(position, init_pos)} // componend loader
-      )
+      : APlugin(r,
+                l,
+                {"health"},  // depends on
+                {COMP_INIT(position, init_pos)}  // componend loader
+        )
   {
     this->_registery.get().register_component<Position>();
     this->_registery.get().add_system<Position>(
@@ -43,28 +48,32 @@ public:
           for (auto&& [position] : Zipper(s)) {
             std::cout << "last\n";
           }
-        }, 0);
+        },
+        0);
     this->_registery.get().add_system<Position>(
         [](Registery&, const SparseArray<Position>& s)
         {
           for (auto&& [position] : Zipper(s)) {
             std::cout << "middle\n";
           }
-        }, 1);
+        },
+        1);
     this->_registery.get().add_system<Position>(
         [](Registery&, const SparseArray<Position>& s)
         {
           for (auto&& [position] : Zipper(s)) {
-              std::cout << "first\n";
+            std::cout << "first\n";
           }
-        }, 2);
+        },
+        2);
     this->_registery.get().add_system<Position>(
         [](Registery&, const SparseArray<Position>& s)
         {
           for (auto&& [position] : Zipper(s)) {
-              std::cout << "middle2\n";
+            std::cout << "middle2\n";
           }
-        }, 1);
+        },
+        1);
   }
 
 private:

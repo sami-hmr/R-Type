@@ -12,6 +12,9 @@
 #include <string>
 #include <utility>
 
+/**
+ * @brief Base exception class with custom message support.
+ */
 class CustomException : public std::exception
 {
 public:
@@ -31,7 +34,17 @@ private:
   std::string _message;
 };
 
+/**
+ * @brief Macro to define custom exception types quickly.
+ */
 #define CUSTOM_EXCEPTION(name) \
-    class name : public CustomException{ public: explicit name(const std::string& message) : CustomException(message){} };
+  class name : public CustomException \
+  { \
+  public: \
+    explicit name(const std::string& message) \
+        : CustomException(message) \
+    { \
+    } \
+  };
 
 #endif

@@ -9,6 +9,13 @@
 template<class... Containers>
 class ZipperIndexIterator;
 
+/**
+ * @brief Iterator for simultaneously traversing multiple containers.
+ *
+ * Skips elements where any container has no value at the current index.
+ *
+ * @tparam Containers The container types to zip together.
+ */
 template<class... Containers>
 class ZipperIterator
 {
@@ -38,6 +45,9 @@ public:
   using iterator_tuple = IteratorTuple;
   static constexpr std::index_sequence_for<Containers...> seq {};
 
+  /**
+   * @brief Constructs an iterator at the given position.
+   */
   ZipperIterator(IteratorTuple const& it_tuple,
                  std::size_t max,
                  std::size_t index = 0)
@@ -57,6 +67,9 @@ public:
   {
   }
 
+  /**
+   * @brief Advances the iterator to the next valid element.
+   */
   ZipperIterator& operator++()
   {
     do {
@@ -72,6 +85,9 @@ public:
     return tmp;
   }
 
+  /**
+   * @brief Dereferences the iterator to get the current values.
+   */
   ValueType operator*() { return this->to_value(seq); }
 
   ValueType operator->() { return *(*this); }
@@ -107,6 +123,14 @@ protected:
   std::size_t _idx;
 };
 
+/**
+ * @brief Provides range-based iteration over multiple containers
+ * simultaneously.
+ *
+ * Only yields tuples where all containers have values at the same index.
+ *
+ * @tparam Containers The container types to zip together.
+ */
 template<class... Containers>
 class Zipper
 {

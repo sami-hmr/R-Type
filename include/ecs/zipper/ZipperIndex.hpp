@@ -6,6 +6,11 @@
 
 #include "Zipper.hpp"
 
+/**
+ * @brief Iterator that includes the index alongside zipped container values.
+ *
+ * @tparam Containers The container types being iterated.
+ */
 template<class... Containers>
 class ZipperIndexIterator
 {
@@ -34,6 +39,9 @@ public:
     return tmp;
   }
 
+  /**
+   * @brief Returns the current index and values as a tuple.
+   */
   ValueType operator*()
   {
     return std::tuple_cat(std::make_tuple(this->_base.idx_), *this->_base);
@@ -52,6 +60,13 @@ private:
   Base _base;
 };
 
+/**
+ * @brief Provides indexed iteration over multiple containers.
+ *
+ * Similar to Zipper but includes the index in the tuple.
+ *
+ * @tparam Containers The container types to zip together.
+ */
 template<class... Containers>
 class ZipperIndex
 {

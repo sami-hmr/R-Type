@@ -184,6 +184,13 @@ public:
     }
   }
 
+  /**
+   * @brief Registers a handler for a specific event type.
+   *
+   * @tparam EventType The event type to listen for.
+   * @param handler Callback function to invoke when the event occurs.
+   * @return HandlerId Unique identifier for this handler.
+   */
   template<typename EventType>
   HandlerId on(std::function<void(const EventType&)> handler)
   {
@@ -207,6 +214,13 @@ public:
     return handler_id;
   }
 
+  /**
+   * @brief Unregisters a specific event handler.
+   *
+   * @tparam EventType The event type the handler was registered for.
+   * @param handler_id The handler identifier to remove.
+   * @return bool True if the handler was found and removed.
+   */
   template<typename EventType>
   bool off(HandlerId handler_id)
   {
@@ -227,6 +241,11 @@ public:
     return true;
   }
 
+  /**
+   * @brief Removes all handlers for a specific event type.
+   *
+   * @tparam EventType The event type to clear handlers for.
+   */
   template<typename EventType>
   void off_all()
   {
@@ -234,6 +253,13 @@ public:
     _event_handlers.erase(type_id);
   }
 
+  /**
+   * @brief Emits an event to all registered handlers.
+   *
+   * @tparam EventType The type of event to emit.
+   * @tparam Args Constructor arguments for the event.
+   * @param args Arguments forwarded to the event constructor.
+   */
   template<typename EventType, typename... Args>
   void emit(Args&&... args)
   {
