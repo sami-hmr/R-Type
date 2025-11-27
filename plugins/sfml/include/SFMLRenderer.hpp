@@ -41,7 +41,7 @@ private:
   void init_sprite(Registery::Entity const entity, JsonVariant const& config);
   void init_text(Registery::Entity const entity, JsonVariant const& config);
 
-  void handle_window();
+  void handle_events();
   void render_sprites(Registery& r,
                       SparseArray<Position> positions,
                       SparseArray<Drawable> drawable,

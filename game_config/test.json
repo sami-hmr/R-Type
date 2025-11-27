@@ -9,7 +9,11 @@
       "moving:Position": { "x": 200.0, "y": 150.0 },
       "moving:Velocity": { "x": 1.0, "y": 1.0 },
       "sfml:Drawable": {},
-      "sfml:Sprite": { "texture": "assets/enemy.png" }
+      "sfml:Sprite": { "texture": "assets/enemy.png" },
+      "logger:log": {
+        "name": "",
+        "level": "DEBUG"
+      }
     }
   ]
 }
