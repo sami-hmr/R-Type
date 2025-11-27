@@ -8,6 +8,7 @@
 #include "Logger.hpp"
 #include "algorithm/QuadTreeCollision.hpp"
 #include "ecs/Registery.hpp"
+#include "ecs/zipper/ZipperIndex.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Collidable.hpp"
 
@@ -58,9 +59,22 @@ void Collision::collision_system(Registery& /*r*/,
     return;
   }
 
-  _collision_algo->update(positions, collidables);
+  std::vector<ICollisionAlgorithm::CollisionEntity> entities;
 
-  auto collisions = _collision_algo->detect_collisions(positions, collidables);
+  size_t max_size = std::min(positions.size(), collidables.size());
+  for (size_t i = 0; i < max_size; ++i) {
+    if (positions[i] && collidables[i]) {
+      entities.push_back(ICollisionAlgorithm::CollisionEntity {
+          .entity_id = i,
+          .bounds = Rect {.x = positions[i]->x,
+                          .y = positions[i]->y,
+                          .width = collidables[i]->width,
+                          .height = collidables[i]->height}});
+    }
+  }
+
+  _collision_algo->update(entities);
+  auto collisions = _collision_algo->detect_collisions(entities);
 
   for (auto const& collision : collisions) {
     std::cout << "Collision: entity " << collision.entity_a << " <-> entity "

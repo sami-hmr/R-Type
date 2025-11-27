@@ -4,7 +4,8 @@ set(LIB_NAME collision)
 
 add_library(${LIB_NAME} SHARED
     src/Collision.cpp
-    src/QuadTreeCollision.cpp
+    src/algorithm/QuadTreeCollision.cpp
+    src/algorithm/QuadTreeNode.cpp
 )
 
 target_compile_features(${LIB_NAME} PRIVATE cxx_std_23)
