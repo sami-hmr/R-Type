@@ -59,10 +59,13 @@ jobs:
     - name: Install latest CMake and Ninja
       uses: lukka/get-cmake@latest
 
-    - name: Install Clang 18 with C++23 support
+    - name: Install Clang 18 and dependencies
       run: |
         sudo apt-get update -q
-        sudo apt-get install -y -q clang-18 libc++-18-dev libc++abi-18-dev ccache
+        sudo apt-get install -y -q \
+          clang-18 libc++-18-dev libc++abi-18-dev ccache \
+          libx11-dev libxrandr-dev libxcursor-dev libxi-dev \
+          libudev-dev libgl1-mesa-dev
         sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
         sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
 
@@ -107,7 +110,10 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update -q
-        sudo apt-get install -y -q clang-18 llvm-18 libc++-18-dev libc++abi-18-dev lcov ccache
+        sudo apt-get install -y -q \
+          clang-18 llvm-18 libc++-18-dev libc++abi-18-dev lcov ccache \
+          libx11-dev libxrandr-dev libxcursor-dev libxi-dev \
+          libudev-dev libgl1-mesa-dev
         sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
         sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
         sudo update-alternatives --install /usr/bin/llvm-cov llvm-cov /usr/bin/llvm-cov-18 100
