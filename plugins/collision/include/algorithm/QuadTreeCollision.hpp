@@ -1,28 +1,22 @@
 #pragma once
 
-#include "QuadTreeNode.hpp"
 #include "ICollisionAlgorithm.hpp"
+#include "QuadTreeNode.hpp"
 
 class QuadTreeCollision : public ICollisionAlgorithm
 {
 public:
-  QuadTreeCollision();
-  QuadTreeCollision(double world_width, double world_height);
-  ~QuadTreeCollision() override = default;
+  QuadTreeCollision(double width, double height)
+      : _root(0, Rect {.x = 0.0, .y = 0.0, .width = width, .height = height})
+  {
+  }
 
+  void update(std::vector<CollisionEntity> const& entities) override;
   std::vector<CollisionPair> detect_collisions(
-      SparseArray<Position> const& positions,
-      SparseArray<Collidable> const& collidables) override;
+      std::vector<CollisionEntity> const& entities) override;
 
-  void update(SparseArray<Position> const& positions,
-              SparseArray<Collidable> const& collidables) override;
-
-  void set_world_bounds(double width, double height);
+  std::string get_name() const override { return "QuadTree"; }
 
 private:
-  bool check_collision(QuadTreeEntity const& a, QuadTreeEntity const& b) const;
-
-  std::unique_ptr<QuadTreeNode> _root;
-  double _world_width;
-  double _world_height;
+  QuadTreeNode _root;
 };
