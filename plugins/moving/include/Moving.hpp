@@ -32,7 +32,7 @@ public:
       : APlugin(
           r,
           l,
-          {}, // depends on
+          {"health"}, // depends on
           {COMP_INIT(position, init_pos)} // componend loader
       )
   {
@@ -41,9 +41,30 @@ public:
         [](Registery&, const SparseArray<Position>& s)
         {
           for (auto&& [position] : Zipper(s)) {
-            std::cout << position.x << "  " << position.y << '\n';
+            std::cout << "last\n";
           }
-        });
+        }, 0);
+    this->_registery.get().add_system<Position>(
+        [](Registery&, const SparseArray<Position>& s)
+        {
+          for (auto&& [position] : Zipper(s)) {
+            std::cout << "middle\n";
+          }
+        }, 1);
+    this->_registery.get().add_system<Position>(
+        [](Registery&, const SparseArray<Position>& s)
+        {
+          for (auto&& [position] : Zipper(s)) {
+              std::cout << "first\n";
+          }
+        }, 2);
+    this->_registery.get().add_system<Position>(
+        [](Registery&, const SparseArray<Position>& s)
+        {
+          for (auto&& [position] : Zipper(s)) {
+              std::cout << "middle2\n";
+          }
+        }, 1);
   }
 
 private:
