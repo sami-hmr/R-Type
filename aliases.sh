@@ -31,7 +31,7 @@ alias rel-all='rel-config && rel-build'
 alias format-check='cmake --build build --target format-check'
 alias format-fix='cmake --build build --target format-fix'
 
-alias vcpkg-init='git clone git@github.com:microsoft/vcpkg.git && cd vcpkg ./bootstrap-vcpkg.sh'
+alias vcpkg-init='git clone git@github.com:microsoft/vcpkg.git && cd ./vcpkg/ && ./bootstrap-vcpkg.sh && cd -'
 
 export VCPKG_ROOT="$(pwd)/vcpkg"
 export PATH="$VCPKG_ROOT:$PATH"
