@@ -4,6 +4,7 @@
 #include <map>
 #include <optional>
 #include <string>
+#include "ecs/Registery.hpp"
 
 struct ShutdownEvent
 {
@@ -58,4 +59,9 @@ struct KeyPressed
 {
   std::map<Key, bool> key_pressed;
   std::optional<std::string> key_unicode;
+};
+
+struct CollisionEvent {
+  Registery::Entity a;
+  Registery::Entity b;
 };

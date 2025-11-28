@@ -5,6 +5,7 @@
 
 #include "Collision.hpp"
 
+#include "Events.hpp"
 #include "Logger.hpp"
 #include "algorithm/QuadTreeCollision.hpp"
 #include "ecs/Registery.hpp"
@@ -77,8 +78,7 @@ void Collision::collision_system(Registery& /*r*/,
   auto collisions = _collision_algo->detect_collisions(entities);
 
   for (auto const& collision : collisions) {
-    std::cout << "Collision: entity " << collision.entity_a << " <-> entity "
-              << collision.entity_b << "\n";
+    this->_registery.get().emit<CollisionEvent>(collision.entity_a, collision.entity_b);
   }
 }
 
