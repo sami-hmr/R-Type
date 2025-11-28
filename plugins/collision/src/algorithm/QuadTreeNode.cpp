@@ -5,11 +5,9 @@ void QuadTreeNode::clear()
   _entities.clear();
 
   for (auto & node : _nodes) {
-    if (node) {
-      node->clear();
-      node.reset();
-    }
+    node.clear();
   }
+  _nodes.clear();
 }
 
 void QuadTreeNode::split()
@@ -17,19 +15,21 @@ void QuadTreeNode::split()
   double sub_width = bounds.width / 2.0;
   double sub_height = bounds.height / 2.0;
 
-  _nodes[0] = std::make_unique<QuadTreeNode>(
+  _nodes.reserve(4);
+
+  _nodes.emplace_back(
       _level + 1, 
       Rect{.x=bounds.x, .y=bounds.y, .width=sub_width, .height=sub_height});
 
-  _nodes[1] = std::make_unique<QuadTreeNode>(
+  _nodes.emplace_back(
       _level + 1, 
       Rect{.x=bounds.x + sub_width, .y=bounds.y, .width=sub_width, .height=sub_height});
 
-  _nodes[2] = std::make_unique<QuadTreeNode>(
+  _nodes.emplace_back(
       _level + 1, 
       Rect{.x=bounds.x, .y=bounds.y + sub_height, .width=sub_width, .height=sub_height});
 
-  _nodes[3] = std::make_unique<QuadTreeNode>(
+  _nodes.emplace_back(
       _level + 1, 
       Rect{.x=bounds.x + sub_width, .y=bounds.y + sub_height, .width=sub_width, .height=sub_height});
 }
@@ -67,24 +67,24 @@ int QuadTreeNode::get_index(Rect const& rect) const
 
 void QuadTreeNode::insert(ICollisionAlgorithm::CollisionEntity const& entity)
 {
-    if (_nodes[0] != nullptr) {
+    if (!_nodes.empty()) {
         int index = get_index(entity.bounds);
         if (index != -1) {
-            _nodes[index]->insert(entity);
+            _nodes[index].insert(entity);
             return;
         }
     }
 
     _entities.push_back(entity);
     if (_entities.size() > max_entities && _level < max_levels) {
-        if (_nodes[0] == nullptr) {
+        if (_nodes.empty()) {
             split();
         }
         auto it = _entities.begin();
         while (it != _entities.end()) {
             int index = get_index(it->bounds);
             if (index != -1) {
-                _nodes[index]->insert(*it);
+                _nodes[index].insert(*it);
                 it = _entities.erase(it);
             } else {
                 ++it;
@@ -99,8 +99,8 @@ std::vector<ICollisionAlgorithm::CollisionEntity> QuadTreeNode::retrieve(
 {
     int index = get_index(rect);
 
-    if (index != -1 && _nodes[0] != nullptr) {
-        _nodes[index]->retrieve(return_entities, rect);
+    if (index != -1 && !_nodes.empty()) {
+        _nodes[index].retrieve(return_entities, rect);
     }
 
     return_entities.insert(
@@ -109,9 +109,9 @@ std::vector<ICollisionAlgorithm::CollisionEntity> QuadTreeNode::retrieve(
         _entities.end()
     );
 
-    if (index == -1 && _nodes[0] != nullptr) {
+    if (index == -1 && !_nodes.empty()) {
         for (const auto & node : _nodes) {
-            node->retrieve(return_entities, rect);
+            node.retrieve(return_entities, rect);
         }
     }  
     return return_entities;
