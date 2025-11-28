@@ -190,7 +190,7 @@ void SFMLRenderer::render_sprites(Registery &/*unused*/,
                                   SparseArray<Sprite> sprites)
 {
   for (auto&& [pos, draw, spr] : Zipper(positions, drawable, sprites)) {
-    sf::Texture& texture = load_texture(spr.texture_path);
+    sf::Texture &texture = load_texture(spr.texture_path);
 
     if (!_sprite.has_value()) {
       _sprite.emplace(texture);
@@ -207,7 +207,7 @@ void SFMLRenderer::render_text(Registery &/*unused*/,
                                SparseArray<Text> texts)
 {
   for (auto&& [pos, draw, txt] : Zipper(positions, drawable, texts)) {
-    sf::Font& font = load_font(txt.font_path);
+    sf::Font &font = load_font(txt.font_path);
     if (!_text.has_value()) {
       _text.emplace(font);
     }
