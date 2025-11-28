@@ -12,6 +12,7 @@
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Clock.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <SFML/Window.hpp>
 
 #include "Json/JsonParser.hpp"
@@ -31,15 +32,17 @@ public:
   ~SFMLRenderer() override;
 
   static constexpr sf::Vector2u window_size = {1800, 1600};
-  static constexpr std::size_t window_rate = 60;
+  static const std::size_t window_rate = 60;
+  static constexpr sf::Vector2u placeholder_size = {50, 50};
+  static constexpr std::string placeholder_texture = "placeholder ";
 
 private:
-  std::shared_ptr<sf::Texture> load_texture(std::string const& path);
-  std::shared_ptr<sf::Font> load_font(std::string const& path);
+  sf::Texture &load_texture(std::string const& path);
+  sf::Font &load_font(std::string const& path);
 
-  void init_drawable(Registery::Entity const entity, JsonVariant const& config);
-  void init_sprite(Registery::Entity const entity, JsonVariant const& config);
-  void init_text(Registery::Entity const entity, JsonVariant const& config);
+  void init_drawable(Registery::Entity const entity, JsonVariant const &config);
+  void init_sprite(Registery::Entity const entity, JsonVariant const &config);
+  void init_text(Registery::Entity const entity, JsonVariant const &config);
 
   void handle_window();
   void render_sprites(Registery& r,
@@ -51,11 +54,11 @@ private:
                    SparseArray<Drawable> drawable,
                    SparseArray<Text> texts);
 
-  std::unique_ptr<sf::RenderWindow> _window;
+  sf::RenderWindow _window;
   std::chrono::time_point<std::chrono::high_resolution_clock> _last_update;
 
-  std::unordered_map<std::string, std::shared_ptr<sf::Texture>> _textures;
-  std::unordered_map<std::string, std::shared_ptr<sf::Font>> _fonts;
+  std::unordered_map<std::string, sf::Texture> _textures;
+  std::unordered_map<std::string, sf::Font> _fonts;
 
   std::optional<sf::Sprite> _sprite;
   std::optional<sf::Text> _text;
