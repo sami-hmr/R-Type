@@ -26,8 +26,8 @@ public:
             {},
             {COMP_INIT(Position, init_pos), COMP_INIT(Velocity, init_velocity)})
   {
-    this->_registery.get().register_component<Position>();
-    this->_registery.get().register_component<Velocity>();
+    this->_registery.get().register_component<Position>("moving:Position");
+    this->_registery.get().register_component<Velocity>("moving:Velocity");
     this->_registery.get().add_system<Position, Velocity>(
         [this](Registery& r,
                SparseArray<Position>& pos,
@@ -36,8 +36,8 @@ public:
   }
 
 private:
-  void init_pos(Registery::Entity const entity, JsonVariant const& config);
-  void init_velocity(Registery::Entity const entity, JsonVariant const& config);
+  void init_pos(Registery::Entity const &entity, JsonVariant const& config);
+  void init_velocity(Registery::Entity const &entity, JsonVariant const& config);
 
   void moving_system(Registery&,
                      SparseArray<Position>& positions,

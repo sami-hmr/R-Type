@@ -30,9 +30,9 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
                                                "R-Type - SFML Renderer");
   _window->setFramerateLimit(window_rate);
 
-  _registery.get().register_component<Drawable>();
-  _registery.get().register_component<Sprite>();
-  _registery.get().register_component<Text>();
+  _registery.get().register_component<Drawable>("sfml:Drawable");
+  _registery.get().register_component<Sprite>("sfml:Sprite");
+  _registery.get().register_component<Text>("sfml:Text");
 
   _registery.get().add_system<>([this](Registery&)
                                 { _window->clear(sf::Color::Black); });

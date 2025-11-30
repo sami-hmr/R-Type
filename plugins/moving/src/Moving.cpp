@@ -17,7 +17,7 @@ void Moving::moving_system(Registery&,
   }
 }
 
-void Moving::init_pos(Registery::Entity const entity, JsonVariant const& config)
+void Moving::init_pos(Registery::Entity const &entity, JsonVariant const& config)
 {
   try {
     JsonObject obj = std::get<JsonObject>(config);
@@ -31,7 +31,7 @@ void Moving::init_pos(Registery::Entity const entity, JsonVariant const& config)
   }
 }
 
-void Moving::init_velocity(Registery::Entity const entity, JsonVariant const& config)
+void Moving::init_velocity(Registery::Entity const &entity, JsonVariant const& config)
 {
   try {
     JsonObject obj = std::get<JsonObject>(config);

@@ -8,11 +8,11 @@
 #include <asio.hpp>
 #include <asio/impl/read.hpp>
 #include <asio/ip/udp.hpp>
+#include "plugin/Byte.hpp"
 
 template<std::size_t Size = 256>
 class CircularBuffer {
     public:
-    using Byte = unsigned char;
     using Package = std::vector<Byte>;
     using Eof = std::vector<Byte> const &;
 

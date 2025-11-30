@@ -16,7 +16,7 @@ Logger::Logger(Registery& r, EntityLoader& l)
     std::cerr << "Failed to open log file\n";
   }
 
-  this->_registery.get().register_component<LogComponent>();
+  this->_registery.get().register_component<LogComponent>("logger:log");
 
   this->_registery.get().on<LogEvent>([this](const LogEvent& event)
                                       { this->on_log_event(event); });

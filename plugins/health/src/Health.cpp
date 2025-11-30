@@ -11,7 +11,7 @@
 Health::Health(Registery& r, EntityLoader& l)
     : APlugin(r, l, {"moving"}, {COMP_INIT(health, init_health)})
 {
-  this->_registery.get().register_component<HealthComponent>();
+  this->_registery.get().register_component<HealthComponent>("health:health");
 
   this->_registery.get().on<DamageEvent>([this](const DamageEvent& event)
                                          { this->on_damage(event); });

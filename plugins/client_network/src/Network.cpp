@@ -16,6 +16,7 @@ void NetworkClient::reading_thread(ClientConnection const &con) {
     asio::ip::tcp::endpoint ep(asio::ip::address::from_string(con.host), con.port);
     std::array<char, 128> buf;
 
+    //this->_registery.get().
     asio::ip::tcp::socket socket(this->_io_c);
     LOGGER("network", LogLevel::DEBUG, "try connect");
     socket.connect(ep);

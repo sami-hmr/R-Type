@@ -10,10 +10,11 @@
 #include <unordered_map>
 #include <utility>
 #include <vector>
-#include <chrono>
 
 #include "SparseArray.hpp"
+#include "TwoWayMap.hpp"
 #include "ecs/Systems.hpp"
+#include "plugin/Byte.hpp"
 
 class Registery
 {
@@ -22,13 +23,35 @@ public:
   using HandlerId = std::size_t;
 
   template<class Component>
-  SparseArray<Component>& register_component()
+  SparseArray<Component>& register_component(
+      std::string const& string_id,
+      std::function<void(Entity const&,
+                         SparseArray<Component>&,
+                         ByteArray const&)> emplace_function =
+          [](Entity const& e,
+             SparseArray<Component>& comp,
+             ByteArray const& bytes)
+      {
+        if (sizeof(Component) <= bytes.size()) {
+          comp.insert_at(e, *reinterpret_cast<Component const*>(bytes.data()));
+        } else {
+          std::cerr << "error loading comp, sizeof = " << sizeof(Component)
+                    << ", size = " << bytes.size() << '\n';
+        }
+      })
   {
-    this->_components.insert_or_assign(std::type_index(typeid(Component)),
-                                       SparseArray<Component>());
+    std::type_index ti(typeid(Component));
+
+    this->_components.insert_or_assign(ti, SparseArray<Component>());
     SparseArray<Component>& comp = this->get_components<Component>();
-    this->_delete_functions.push_back([&comp](Entity const& e)
-                                      { comp.erase(e); });
+
+    this->_delete_functions.insert_or_assign(
+        ti, [&comp](Entity const& e) { comp.erase(e); });
+    this->_emplace_functions.insert_or_assign(
+        ti,
+        [&comp, emplace_function](Entity const& e, ByteArray const& bytes)
+        { emplace_function(e, comp, bytes); });
+    this->_index_getter.insert(ti, string_id);
     return comp;
   }
 
@@ -61,7 +84,7 @@ public:
 
   void kill_entity(Entity const& e)
   {
-    for (auto const& f : this->_delete_functions) {
+    for (auto const& [_, f] : this->_delete_functions) {
       f(e);
     }
     this->_dead_entites.push(e);
@@ -81,6 +104,13 @@ public:
   {
     return this->get_components<Component>().insert_at(
         to, std::forward<Params>(p)...);
+  }
+
+  void emplace_component(Entity const& to,
+                         std::string const &string_id,
+                         ByteArray const& bytes)
+  {
+    this->_emplace_functions.at(this->_index_getter.at(string_id))(to, bytes);
   }
 
   template<typename Component>
@@ -186,9 +216,15 @@ private:
   }
 
   std::unordered_map<std::type_index, std::any> _components;
+  std::unordered_map<std::type_index, std::function<void(Entity const&)>>
+      _delete_functions;
+  std::unordered_map<std::type_index,
+                     std::function<void(Entity const&, ByteArray const&)>>
+      _emplace_functions;
+  TwoWayMap<std::type_index, std::string> _index_getter;
+
   std::unordered_map<std::type_index, std::any> _event_handlers;
   std::vector<System<>> _frequent_systems;
-  std::vector<std::function<void(Entity const&)>> _delete_functions;
   std::queue<Entity> _dead_entites;
   std::size_t _max = 0;
 };
