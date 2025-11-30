@@ -25,12 +25,13 @@ public:
 
 private:
   void init_collision(Registery::Entity const entity,
-                     JsonVariant const& config);
+                      JsonVariant const& config);
+  void init_team(Registery::Entity const entity, JsonVariant const& config);
 
   void collision_system(Registery& r,
-                       SparseArray<Position> positions,
-                       SparseArray<Collidable> collidables);
+                        const SparseArray<Position>& positions,
+                        const SparseArray<Collidable>& collidables);
+  void on_collision(const CollisionEvent& c);
 
   std::unique_ptr<ICollisionAlgorithm> _collision_algo;
-  const std::vector<std::string> depends_on = {"moving"};
 };

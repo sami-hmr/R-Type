@@ -12,11 +12,19 @@
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Collidable.hpp"
+#include "plugin/components/Position.hpp"
+#include "plugin/components/Team.hpp"
+#include "plugin/components/Velocity.hpp"
 
 Collision::Collision(Registery& r, EntityLoader& l)
-    : APlugin(r, l, {}, {COMP_INIT(Collidable, init_collision)})
+    : APlugin(
+          r,
+          l,
+          {"moving"},
+          {COMP_INIT(Collidable, init_collision), COMP_INIT(Team, init_team)})
 {
   _registery.get().register_component<Collidable>();
+  _registery.get().register_component<Team>();
 
   _collision_algo = std::make_unique<QuadTreeCollision>(1920.0, 1080.0);
 
@@ -25,9 +33,14 @@ Collision::Collision(Registery& r, EntityLoader& l)
   }
 
   _registery.get().add_system<Position, Collidable>(
-      [this](
-          Registery& r, SparseArray<Position> pos, SparseArray<Collidable> col)
-      { this->collision_system(r, pos, col); });
+      [this](Registery& r,
+             const SparseArray<Position>& pos,
+             const SparseArray<Collidable>& col)
+      { this->collision_system(r, pos, col); },
+      1);
+
+  this->_registery.get().on<CollisionEvent>([this](const CollisionEvent& c)
+                                            { this->on_collision(c); });
 }
 
 void Collision::set_algorithm(std::unique_ptr<ICollisionAlgorithm> algo)
@@ -43,18 +56,51 @@ void Collision::init_collision(Registery::Entity const entity,
     double width = std::get<double>(obj.at("width").value);
     double height = std::get<double>(obj.at("height").value);
 
-    this->_registery.get().emplace_component<Collidable>(entity, width, height);
+    CollisionType type = CollisionType::Solid;
+    std::string type_str =
+        std::get<std::string>(obj.at("collision_type").value);
+    if (type_str == "Trigger" || type_str == "trigger") {
+      type = CollisionType::Trigger;
+    } else if (type_str == "Solid" || type_str == "solid") {
+      type = CollisionType::Solid;
+    }
+
+    this->_registery.get().emplace_component<Collidable>(
+        entity, width, height, type, true);
   } catch (std::bad_variant_access const&) {
-    throw BadComponentDefinition("expected JsonObject");
+    LOGGER("Collision",
+           LogLevel::ERROR,
+           "Error loading Collision component: unexpected value type")
   } catch (std::out_of_range const&) {
-    throw UndefinedComponentValue(
-        R"(expected "width": double and "height": double)");
+    LOGGER("Collision",
+           LogLevel::ERROR,
+           "Error loading Collision component: (expected width: double and "
+           "height: double )")
+  }
+}
+
+void Collision::init_team(Registery::Entity const entity,
+                          JsonVariant const& config)
+{
+  try {
+    JsonObject obj = std::get<JsonObject>(config);
+    std::string name = std::get<std::string>(obj.at("name").value);
+
+    this->_registery.get().emplace_component<Team>(entity, name);
+  } catch (std::bad_variant_access const&) {
+    LOGGER("Collision",
+           LogLevel::ERROR,
+           "Error loading Team component: unexpected value type")
+  } catch (std::out_of_range const&) {
+    LOGGER("Collision",
+           LogLevel::ERROR,
+           "Error loading Team component: (expected name: string")
   }
 }
 
 void Collision::collision_system(Registery& /*r*/,
-                                 SparseArray<Position> positions,
-                                 SparseArray<Collidable> collidables)
+                                 const SparseArray<Position>& positions,
+                                 const SparseArray<Collidable>& collidables)
 {
   if (!_collision_algo) {
     return;
@@ -64,7 +110,7 @@ void Collision::collision_system(Registery& /*r*/,
 
   size_t max_size = std::min(positions.size(), collidables.size());
   for (size_t i = 0; i < max_size; ++i) {
-    if (positions[i] && collidables[i]) {
+    if (positions[i].has_value() && collidables[i].has_value() && collidables[i]->is_active) {
       entities.push_back(ICollisionAlgorithm::CollisionEntity {
           .entity_id = i,
           .bounds = Rect {.x = positions[i]->x,
@@ -78,8 +124,33 @@ void Collision::collision_system(Registery& /*r*/,
   auto collisions = _collision_algo->detect_collisions(entities);
 
   for (auto const& collision : collisions) {
-    this->_registery.get().emit<CollisionEvent>(collision.entity_a, collision.entity_b);
+    size_t entity_a = collision.entity_a;
+    size_t entity_b = collision.entity_b;
+
+    this->_registery.get().emit<CollisionEvent>(entity_a, entity_b);
   }
+}
+
+void Collision::on_collision(const CollisionEvent& c)
+{
+  auto& velocities = this->_registery.get().get_components<Velocity>();
+  auto const& collidables = this->_registery.get().get_components<Collidable>();
+
+  bool both_solid = collidables[c.a].has_value() && collidables[c.b].has_value()
+      && collidables[c.a]->collision_type == CollisionType::Solid
+      && collidables[c.b]->collision_type == CollisionType::Solid;
+
+  if (both_solid) {
+    if (velocities[c.a].has_value()) {
+      velocities[c.a]->dir_x = 0;
+      velocities[c.a]->dir_y = 0;
+    }
+    if (velocities[c.b].has_value()) {
+      velocities[c.b]->dir_x = 0;
+      velocities[c.b]->dir_y = 0;
+    }
+  }
+  // mettre les triggers: damage event
 }
 
 extern "C"
