@@ -15,6 +15,28 @@
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 
+static const std::map<sf::Keyboard::Key, Key> key_association = {
+    {sf::Keyboard::Key::Enter, Key::ENTER},
+    {sf::Keyboard::Key::Left, Key::LEFT},
+    {sf::Keyboard::Key::Right, Key::RIGHT},
+    {sf::Keyboard::Key::Down, Key::DOWN},
+    {sf::Keyboard::Key::Up, Key::UP},
+    {sf::Keyboard::Key::Z, Key::Z},
+    {sf::Keyboard::Key::Q, Key::Q},
+    {sf::Keyboard::Key::S, Key::S},
+    {sf::Keyboard::Key::D, Key::D},
+    {sf::Keyboard::Key::R, Key::R},
+    {sf::Keyboard::Key::Escape, Key::ECHAP},
+    {sf::Keyboard::Key::Backspace, Key::DELETE},
+    {sf::Keyboard::Key::Space, Key::SPACE},
+    {sf::Keyboard::Key::LShift, Key::SHIFT},
+    {sf::Keyboard::Key::RShift, Key::SHIFT},
+    {sf::Keyboard::Key::LControl, Key::CTRL},
+    {sf::Keyboard::Key::RControl, Key::CTRL},
+    {sf::Keyboard::Key::LAlt, Key::ALT},
+    {sf::Keyboard::Key::RAlt, Key::ALT},
+};
+
 SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
     : APlugin(r,
               l,
@@ -31,22 +53,25 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
   _registery.get().register_component<Sprite>();
   _registery.get().register_component<Text>();
 
-  _registery.get().add_system<>([this](Registery&)
-                                { _window->clear(sf::Color::Black); });
+  _registery.get().add_system<>(
+      [this](Registery&) { this->handle_events(); }, 2);
+  _registery.get().add_system<>(
+      [this](Registery&) { _window->clear(sf::Color::Black); });
   _registery.get().add_system<Position, Drawable, Sprite>(
       [this](Registery& r,
-             SparseArray<Position> pos,
-             SparseArray<Drawable> draw,
-             SparseArray<Sprite> spr)
+             SparseArray<Position>& pos,
+             SparseArray<Drawable>& draw,
+             SparseArray<Sprite>& spr)
       { this->render_sprites(r, pos, draw, spr); });
 
   _registery.get().add_system<Position, Drawable, Text>(
       [this](Registery& r,
-             SparseArray<Position> pos,
-             SparseArray<Drawable> draw,
-             SparseArray<Text> txt) { this->render_text(r, pos, draw, txt); });
+             const SparseArray<Position>& pos,
+             const SparseArray<Drawable>& draw,
+             const SparseArray<Text>& txt)
+      { this->render_text(r, pos, draw, txt); });
 
-  _registery.get().add_system<>([this](Registery&) { this->handle_window(); });
+  _registery.get().add_system<>([this](Registery&) { this->display(); });
 }
 
 SFMLRenderer::~SFMLRenderer()
@@ -142,10 +167,25 @@ void SFMLRenderer::init_text(Registery::Entity const entity,
   }
 }
 
-void SFMLRenderer::handle_window()
+std::optional<Key> SFMLRenderer::sfml_key_to_key(sf::Keyboard::Key sfml_key)
 {
-  if (!_window || !_window->isOpen()) {
-    return;
+  auto it = key_association.find(sfml_key);
+  if (it != key_association.end()) {
+    return it->second;
+  }
+  return std::nullopt;
+}
+
+void SFMLRenderer::handle_events()
+{
+  _key_pressed.key_pressed.clear();
+  if (_key_pressed.key_unicode.has_value()) {
+    _key_pressed.key_unicode->clear();
+  }
+
+  _key_released.key_released.clear();
+  if (_key_released.key_unicode.has_value()) {
+    _key_released.key_unicode->clear();
   }
 
   while (const std::optional event = _window->pollEvent()) {
@@ -153,32 +193,62 @@ void SFMLRenderer::handle_window()
       _window->close();
       _registery.get().emit<ShutdownEvent>("Window closed", 0);
     }
+    if (const auto* key_pressed = event->getIf<sf::Event::KeyPressed>()) {
+      auto key = sfml_key_to_key(key_pressed->code);
+      if (key.has_value()) {
+        _key_pressed.key_pressed[key.value()] = true;
+      }
+    }
+    if (const auto* key_released = event->getIf<sf::Event::KeyReleased>()) {
+      auto key = sfml_key_to_key(key_released->code);
+      if (key.has_value()) {
+        _key_released.key_released[key.value()] = true;
+      }
+    }
   }
+  if (!_key_pressed.key_pressed.empty()) {
+    _registery.get().emit<KeyPressedEvent>(_key_pressed);
+  }
+  if (!_key_released.key_released.empty()) {
+    _registery.get().emit<KeyReleasedEvent>(_key_released);
+  }
+}
 
+void SFMLRenderer::display()
+{
+  if (!_window || !_window->isOpen()) {
+    return;
+  }
   _window->display();
 }
 
 void SFMLRenderer::render_sprites(Registery& /*unused*/,
-                                  SparseArray<Position> positions,
-                                  SparseArray<Drawable> drawable,
-                                  SparseArray<Sprite> sprites)
+                                  const SparseArray<Position>& positions,
+                                  const SparseArray<Drawable>& drawable,
+                                  const SparseArray<Sprite>& sprites)
 {
   for (auto&& [pos, draw, spr] : Zipper(positions, drawable, sprites)) {
     auto texture = load_texture(spr.texture_path);
 
+    if (!texture) {
+      continue;
+    }
     if (!_sprite.has_value()) {
       _sprite.emplace(*texture);
     }
     _sprite->setPosition(sf::Vector2f(pos.x, pos.y));
     _sprite->setTexture(*texture);
+    if (!_window || !_window->isOpen()) {
+      continue;
+    }
     _window->draw(*_sprite);
   }
 }
 
 void SFMLRenderer::render_text(Registery& /*unused*/,
-                               SparseArray<Position> positions,
-                               SparseArray<Drawable> drawable,
-                               SparseArray<Text> texts)
+                               const SparseArray<Position>& positions,
+                               const SparseArray<Drawable>& drawable,
+                               const SparseArray<Text>& texts)
 {
   for (auto&& [pos, draw, txt] : Zipper(positions, drawable, texts)) {
     auto font = load_font(txt.font_path);
@@ -187,6 +257,9 @@ void SFMLRenderer::render_text(Registery& /*unused*/,
     }
     _text->setFont(*font);
     _text->setPosition(sf::Vector2f(pos.x, pos.y));
+    if (!_window || !_window->isOpen()) {
+      continue;
+    }
     _window->draw(*_text);
   }
 }

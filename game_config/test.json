@@ -3,21 +3,16 @@
     {
       "moving:Position": { "x": 300.0, "y": 250.0 },
       "sfml:Drawable": {},
+      "moving:Velocity": { "speed_x": 5.0, "speed_y": 5.0, "dir_x": 0.0, "dir_y": 0.0 },
       "sfml:Sprite": { "texture": "assets/spaceship.png" },
-      "collision:Collidable": { "width": 10.0, "height": 10.0 }
-    },
-    {
-      "moving:Position": { "x": 400.0, "y": 150.0 },
-      "moving:Velocity": { "x": 1.0, "y": 1.0 },
-      "sfml:Drawable": {},
-      "sfml:Sprite": { "texture": "assets/enemy.png" }
+      "collision:Collidable": { "width": 10.0, "height": 10.0, "collision_type": "Solid" },
+      "controller:Controllable": {"UP": "Z", "DOWN": "S", "LEFT": "Q", "RIGHT": "D"}
     },
     {
       "moving:Position": { "x": 200.0, "y": 150.0 },
-      "moving:Velocity": { "x": 1.0, "y": 1.0 },
       "sfml:Drawable": {},
       "sfml:Sprite": { "texture": "assets/enemy.png" },
-      "collision:Collidable": { "width": 10.0, "height": 10.0 }
+      "collision:Collidable": { "width": 10.0, "height": 10.0, "collision_type": "Solid" }
     }
   ]
 }

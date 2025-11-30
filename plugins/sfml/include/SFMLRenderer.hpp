@@ -14,6 +14,7 @@
 #include <SFML/System/Clock.hpp>
 #include <SFML/Window.hpp>
 
+#include "Events.hpp"
 #include "Json/JsonParser.hpp"
 #include "ecs/Registery.hpp"
 #include "ecs/SparseArray.hpp"
@@ -41,15 +42,18 @@ private:
   void init_sprite(Registery::Entity const entity, JsonVariant const& config);
   void init_text(Registery::Entity const entity, JsonVariant const& config);
 
-  void handle_window();
   void render_sprites(Registery& r,
-                      SparseArray<Position> positions,
-                      SparseArray<Drawable> drawable,
-                      SparseArray<Sprite> sprites);
+                      const SparseArray<Position> &positions,
+                      const SparseArray<Drawable> &drawable,
+                      const SparseArray<Sprite> &sprites);
   void render_text(Registery& r,
-                   SparseArray<Position> positions,
-                   SparseArray<Drawable> drawable,
-                   SparseArray<Text> texts);
+                   const SparseArray<Position> &positions,
+                   const SparseArray<Drawable> &drawable,
+                   const SparseArray<Text> &texts);
+  void display();
+  void handle_events();
+
+  std::optional<Key> sfml_key_to_key(sf::Keyboard::Key sfml_key);
 
   std::unique_ptr<sf::RenderWindow> _window;
   std::chrono::time_point<std::chrono::high_resolution_clock> _last_update;
@@ -60,5 +64,6 @@ private:
   std::optional<sf::Sprite> _sprite;
   std::optional<sf::Text> _text;
 
-  const std::vector<std::string> depends_on = {"moving"};
+  KeyPressedEvent _key_pressed;
+  KeyReleasedEvent _key_released;
 };

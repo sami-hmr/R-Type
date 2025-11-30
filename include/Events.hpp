@@ -55,9 +55,15 @@ enum class Key : std::uint8_t
   SPACE,
 };
 
-struct KeyPressed
+struct KeyPressedEvent
 {
   std::map<Key, bool> key_pressed;
+  std::optional<std::string> key_unicode;
+};
+
+struct KeyReleasedEvent
+{
+  std::map<Key, bool> key_released;
   std::optional<std::string> key_unicode;
 };
 

@@ -2,6 +2,9 @@
 
 struct Velocity
 {
-  double x;
-  double y;
+  double speed_x;
+  double speed_y;
+  double dir_x;
+  double dir_y;
+
 };
