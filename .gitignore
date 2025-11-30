@@ -20,3 +20,10 @@ coverage_html/
 rtype.log
 vcpkg
 .cache
+*.a
+
+docs/html
+docs/xml
+docs/Doxyfile
+triplets
+activate.sh

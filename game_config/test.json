@@ -3,14 +3,22 @@
     {
       "moving:Position": { "x": 300.0, "y": 250.0 },
       "sfml:Drawable": {},
-      "sfml:Sprite": { "texture": "assets/spaceship.png" },
+      "sfml:Sprite": { "texture": "assets/spaceship.png",
+    "size": {
+      "width": "10.0%",
+      "height": "10.0%"
+    } },
       "collision:Collidable": { "width": 10.0, "height": 10.0 }
     },
     {
       "moving:Position": { "x": 400.0, "y": 150.0 },
       "moving:Velocity": { "x": 1.0, "y": 1.0 },
       "sfml:Drawable": {},
-      "sfml:Sprite": { "texture": "assets/enemy.png" }
+      "sfml:Sprite": {
+        "texture": "assets/enemy.png",
+        "size": { "width": "10.0%", "height": "10.0%" }
+      },
+      "logger:log": {}
     },
     {
       "moving:Position": { "x": 200.0, "y": 150.0 },

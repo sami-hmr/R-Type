@@ -79,3 +79,4 @@ if(r-type_DEVELOPER_MODE)
 endif()
 
 add_subdirectory(plugins)
+add_subdirectory(lib)

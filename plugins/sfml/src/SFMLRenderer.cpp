@@ -21,6 +21,7 @@
 #include "ecs/zipper/Zipper.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
+#include "Vector2D.hpp"
 
 static sf::Texture gen_placeholder()
 {
@@ -124,22 +125,52 @@ void SFMLRenderer::init_drawable(Registery::Entity const entity,
   }
 }
 
+static Vector2D parse_vector2d(JsonVariant const& variant)
+{
+  try {
+    JsonObject obj = std::get<JsonObject>(variant);
+    double x = std::get<double>(obj.at("width").value);
+    double y = std::get<double>(obj.at("height").value);
+    return {x / SFMLRenderer::window_size.x, y / SFMLRenderer::window_size.y};
+  } catch (std::bad_variant_access const&) {
+    try {
+      JsonObject obj = std::get<JsonObject>(variant);
+      std::string x_percentage = std::get<std::string>(obj.at("width").value);
+      std::string y_percentage = std::get<std::string>(obj.at("height").value);
+      if (x_percentage.back() == '%') {
+        x_percentage.pop_back();
+      }
+      if (y_percentage.back() == '%') {
+        y_percentage.pop_back();
+      }
+      double x = std::stod(x_percentage) / 100.0;
+      double y = std::stod(y_percentage) / 100.0;
+      return {x, y};
+    } catch (std::bad_variant_access const&) {
+      return {10 / 100.0, 10 / 100.0};
+    }
+  }
+}
+
 void SFMLRenderer::init_sprite(Registery::Entity const entity,
                                JsonVariant const &config)
 {
   try {
     JsonObject obj = std::get<JsonObject>(config);
     std::string texture_path = std::get<std::string>(obj.at("texture").value);
-    _registery.get().emplace_component<Sprite>(entity, texture_path);
-
+    Vector2D scale(0.1, 0.1);
+    if (obj.contains("size")) {
+      scale = parse_vector2d(obj.at("size").value); //la scale est en pourcentage de la taille de la window
+    }
+    _registery.get().emplace_component<Sprite>(entity, texture_path, scale);
   } catch (std::bad_variant_access const&) {
     LOGGER("SFML",
-           LogLevel::ERROR,
-           "Error loading sprite component: unexpected value type")
-  } catch (std::out_of_range const&) {
+      LogLevel::ERROR,
+      "Error loading sprite component: unexpected value type")
+    } catch (std::out_of_range const &e) {
     LOGGER("SFML",
            LogLevel::ERROR,
-           "Error loading sprite component: missing value in JsonObject")
+           std::format("Error loading sprite component: missing value {} in JsonObject", e.what()))
   }
 }
 
@@ -161,6 +192,14 @@ void SFMLRenderer::init_text(Registery::Entity const entity,
   }
 }
 
+void SFMLRenderer::handle_resize() {
+  sf::Vector2u new_size = _window.getSize();
+  sf::View view(sf::Vector2f(static_cast<float>(new_size.x) / 2, static_cast<float>(new_size.y) / 2),
+                sf::Vector2f(static_cast<float>(new_size.x),
+                              static_cast<float>(new_size.y)));
+  _window.setView(view);
+}
+
 void SFMLRenderer::handle_window()
 {
   if (!_window.isOpen()) {
@@ -173,11 +212,7 @@ void SFMLRenderer::handle_window()
       _registery.get().emit<ShutdownEvent>("Window closed", 0);
     }
     if (event->is<sf::Event::Resized>()) {
-      sf::Vector2u new_size = _window.getSize();
-      sf::View view(sf::Vector2f(static_cast<float>(new_size.x) / 2, static_cast<float>(new_size.y) / 2),
-                    sf::Vector2f(static_cast<float>(new_size.x),
-                                 static_cast<float>(new_size.y)));
-      _window.setView(view);
+      handle_resize();
     }
   }
 
@@ -191,12 +226,19 @@ void SFMLRenderer::render_sprites(Registery &/*unused*/,
 {
   for (auto&& [pos, draw, spr] : Zipper(positions, drawable, sprites)) {
     sf::Texture &texture = load_texture(spr.texture_path);
-
+    sf::Vector2u window_size = _window.getSize();
+  
     if (!_sprite.has_value()) {
       _sprite.emplace(texture);
     }
     _sprite.value().setPosition(sf::Vector2f(static_cast<float>(pos.x), static_cast<float>(pos.y)));
     _sprite.value().setTexture(texture);
+    _sprite.value().setScale(sf::Vector2f(
+        static_cast<float>(window_size.x * spr.scale.x) / texture.getSize().x,
+        static_cast<float>(window_size.x * spr.scale.y) / texture.getSize().y));
+    std::cout << "window size = " << window_size.x << " " << window_size.y << std::endl;
+    std::cout << "texture size = " << texture.getSize().x << " " << texture.getSize().y << std::endl;
+    std::cout << _sprite.value().getScale().x << " " << _sprite.value().getScale().y << std::endl;
     _window.draw(_sprite.value());
   }
 }
