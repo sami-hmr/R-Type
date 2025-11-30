@@ -19,25 +19,7 @@
 class Moving : public APlugin
 {
 public:
-  Moving(Registery& r, EntityLoader& l)
-      : APlugin(
-            r,
-            l,
-            {},
-            {COMP_INIT(Position, init_pos), COMP_INIT(Velocity, init_velocity)})
-  {
-    this->_registery.get().register_component<Position>();
-    this->_registery.get().register_component<Velocity>();
-    this->_registery.get().add_system<Position, Velocity>(
-        [this](Registery& r,
-               SparseArray<Position>& pos,
-               const SparseArray<Velocity>& vel)
-        { this->moving_system(r, pos, vel); });
-      this->_registery.get().on<CollisionEvent>([this](const CollisionEvent &c){
-        this->_registery.get().remove_component<Velocity>(c.a);
-        this->_registery.get().remove_component<Velocity>(c.b);
-      });
-  }
+  Moving(Registery& r, EntityLoader& l);
 
 private:
   void init_pos(Registery::Entity const entity, JsonVariant const& config);
@@ -46,6 +28,4 @@ private:
   void moving_system(Registery&,
                      SparseArray<Position>& positions,
                      const SparseArray<Velocity>& velocities);
-
-  const std::vector<std::string> depends_on;
 };
