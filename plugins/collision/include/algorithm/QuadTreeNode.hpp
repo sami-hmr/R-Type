@@ -1,6 +1,5 @@
 #pragma once
 
-#include <memory>
 #include <vector>
 
 #include "ICollisionAlgorithm.hpp"
@@ -16,6 +15,11 @@ public:
       : bounds(bounds)
       , _level(level) {};
   ~QuadTreeNode() = default;
+  
+  QuadTreeNode(const QuadTreeNode &) = default;
+  QuadTreeNode &operator=(const QuadTreeNode &) = default;
+  QuadTreeNode(QuadTreeNode &&) noexcept = default;
+  QuadTreeNode &operator=(QuadTreeNode &&) noexcept = default;
 
   void clear();
   void split();
@@ -29,5 +33,5 @@ public:
 private:
   int _level;
   std::vector<ICollisionAlgorithm::CollisionEntity> _entities;
-  std::unique_ptr<QuadTreeNode> _nodes[4];
+  std::vector<QuadTreeNode> _nodes;
 };

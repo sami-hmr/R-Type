@@ -1,4 +1,5 @@
 
+#include <functional>
 #include <iostream>
 #include <memory>
 #include <stdexcept>
@@ -6,7 +7,13 @@
 
 #include "SFMLRenderer.hpp"
 
+#include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/Sprite.hpp>
+#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/View.hpp>
+#include <SFML/System/Vector2.hpp>
+#include <SFML/Window/Event.hpp>
 
 #include "Events.hpp"
 #include "Json/JsonParser.hpp"
@@ -37,6 +44,20 @@ static const std::map<sf::Keyboard::Key, Key> key_association = {
     {sf::Keyboard::Key::RAlt, Key::ALT},
 };
 
+static sf::Texture gen_placeholder()
+{
+  sf::Image image(SFMLRenderer::placeholder_size, sf::Color::Black);  
+
+  for (unsigned int y = 0; y < SFMLRenderer::placeholder_size.y; ++y) {
+    for (unsigned int x = 0; x < SFMLRenderer::placeholder_size.x; ++x) {
+      if ((x + y) % 2 == 0) {
+        image.setPixel({x, y}, sf::Color::Magenta);
+      }
+    }
+  }
+  return sf::Texture(image);
+}
+
 SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
     : APlugin(r,
               l,
@@ -45,9 +66,9 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
                COMP_INIT(Sprite, init_sprite),
                COMP_INIT(Text, init_text)})
 {
-  _window = std::make_unique<sf::RenderWindow>(sf::VideoMode(window_size),
+  _window = sf::RenderWindow(sf::VideoMode(window_size),
                                                "R-Type - SFML Renderer");
-  _window->setFramerateLimit(window_rate);
+  _window.setFramerateLimit(window_rate);
 
   _registery.get().register_component<Drawable>();
   _registery.get().register_component<Sprite>();
@@ -55,8 +76,8 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
 
   _registery.get().add_system<>(
       [this](Registery&) { this->handle_events(); }, 2);
-  _registery.get().add_system<>(
-      [this](Registery&) { _window->clear(sf::Color::Black); });
+  _registery.get().add_system<>([this](Registery&)
+                                { _window.clear(sf::Color::Black); });
   _registery.get().add_system<Position, Drawable, Sprite>(
       [this](Registery& r,
              SparseArray<Position>& pos,
@@ -72,45 +93,43 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
       { this->render_text(r, pos, draw, txt); });
 
   _registery.get().add_system<>([this](Registery&) { this->display(); });
+  _textures.insert_or_assign(
+      SFMLRenderer::placeholder_texture, gen_placeholder());
 }
 
 SFMLRenderer::~SFMLRenderer()
 {
-  if (_window && _window->isOpen()) {
-    _window->close();
+  if (_window.isOpen()) {
+    _window.close();
   }
 }
 
-std::shared_ptr<sf::Texture> SFMLRenderer::load_texture(std::string const& path)
+sf::Texture &SFMLRenderer::load_texture(std::string const& path)
 {
-  auto it = _textures.find(path);
-  if (it != _textures.end()) {
-    return it->second;
+  if (_textures.contains(path)) {
+    return _textures.at(path);
   }
-
-  auto texture = std::make_shared<sf::Texture>();
-  if (!texture->loadFromFile(path)) {
+  sf::Texture texture;
+  if (!texture.loadFromFile(path)) {
     LOGGER("SFML", LogLevel::ERROR, "Failed to load texture: " + path)
-    return nullptr;
+    return _textures.at(placeholder_texture);
   }
-  _textures[path] = texture;
-  return texture;
+  _textures.insert_or_assign(path, std::move(texture));
+  return _textures.at(path);
 }
 
-std::shared_ptr<sf::Font> SFMLRenderer::load_font(std::string const& path)
+sf::Font &SFMLRenderer::load_font(std::string const& path)
 {
-  auto it = _fonts.find(path);
-  if (it != _fonts.end()) {
-    return it->second;
+  if (_fonts.contains(path)) {
+    return _fonts.at(path);
   }
-
-  auto font = std::make_shared<sf::Font>();
-  if (!font->openFromFile(path)) {
-    LOGGER("SFML", LogLevel::ERROR, "Failed to font texture: " + path)
-    return nullptr;
+  sf::Font font;
+  if (!font.openFromFile(path)) {
+    LOGGER("SFML", LogLevel::ERROR, "Failed to load font: " + path)
+    throw std::runtime_error("Failed to load font: " + path);
   }
-  _fonts[path] = font;
-  return font;
+  _fonts.insert_or_assign(path, std::move(font));
+  return _fonts.at(path);
 }
 
 void SFMLRenderer::init_drawable(Registery::Entity const entity,
@@ -131,7 +150,7 @@ void SFMLRenderer::init_drawable(Registery::Entity const entity,
 }
 
 void SFMLRenderer::init_sprite(Registery::Entity const entity,
-                               JsonVariant const& config)
+                               JsonVariant const &config)
 {
   try {
     JsonObject obj = std::get<JsonObject>(config);
@@ -150,7 +169,7 @@ void SFMLRenderer::init_sprite(Registery::Entity const entity,
 }
 
 void SFMLRenderer::init_text(Registery::Entity const entity,
-                             JsonVariant const& config)
+                             JsonVariant const &config)
 {
   try {
     JsonObject obj = std::get<JsonObject>(config);
@@ -178,6 +197,10 @@ std::optional<Key> SFMLRenderer::sfml_key_to_key(sf::Keyboard::Key sfml_key)
 
 void SFMLRenderer::handle_events()
 {
+  if (!_window.isOpen()) {
+    return;
+  }
+
   _key_pressed.key_pressed.clear();
   if (_key_pressed.key_unicode.has_value()) {
     _key_pressed.key_unicode->clear();
@@ -188,9 +211,9 @@ void SFMLRenderer::handle_events()
     _key_released.key_unicode->clear();
   }
 
-  while (const std::optional event = _window->pollEvent()) {
+  while (const std::optional event = _window.pollEvent()) {
     if (event->is<sf::Event::Closed>()) {
-      _window->close();
+      _window.close();
       _registery.get().emit<ShutdownEvent>("Window closed", 0);
     }
     if (const auto* key_pressed = event->getIf<sf::Event::KeyPressed>()) {
@@ -205,6 +228,13 @@ void SFMLRenderer::handle_events()
         _key_released.key_released[key.value()] = true;
       }
     }
+    if (event->is<sf::Event::Resized>()) {
+      sf::Vector2u new_size = _window.getSize();
+      sf::View view(sf::Vector2f(static_cast<float>(new_size.x) / 2, static_cast<float>(new_size.y) / 2),
+                    sf::Vector2f(static_cast<float>(new_size.x),
+                                 static_cast<float>(new_size.y)));
+      _window.setView(view);
+    }
   }
   if (!_key_pressed.key_pressed.empty()) {
     _registery.get().emit<KeyPressedEvent>(_key_pressed);
@@ -216,10 +246,10 @@ void SFMLRenderer::handle_events()
 
 void SFMLRenderer::display()
 {
-  if (!_window || !_window->isOpen()) {
+  if (!_window.isOpen()) {
     return;
   }
-  _window->display();
+  _window.display();
 }
 
 void SFMLRenderer::render_sprites(Registery& /*unused*/,
@@ -228,20 +258,14 @@ void SFMLRenderer::render_sprites(Registery& /*unused*/,
                                   const SparseArray<Sprite>& sprites)
 {
   for (auto&& [pos, draw, spr] : Zipper(positions, drawable, sprites)) {
-    auto texture = load_texture(spr.texture_path);
+    sf::Texture &texture = load_texture(spr.texture_path);
 
-    if (!texture) {
-      continue;
-    }
     if (!_sprite.has_value()) {
-      _sprite.emplace(*texture);
+      _sprite.emplace(texture);
     }
-    _sprite->setPosition(sf::Vector2f(pos.x, pos.y));
-    _sprite->setTexture(*texture);
-    if (!_window || !_window->isOpen()) {
-      continue;
-    }
-    _window->draw(*_sprite);
+    _sprite.value().setPosition(sf::Vector2f(static_cast<float>(pos.x), static_cast<float>(pos.y)));
+    _sprite.value().setTexture(texture);
+    _window.draw(_sprite.value());
   }
 }
 
@@ -251,16 +275,13 @@ void SFMLRenderer::render_text(Registery& /*unused*/,
                                const SparseArray<Text>& texts)
 {
   for (auto&& [pos, draw, txt] : Zipper(positions, drawable, texts)) {
-    auto font = load_font(txt.font_path);
+    sf::Font &font = load_font(txt.font_path);
     if (!_text.has_value()) {
-      _text.emplace(*font);
+      _text.emplace(font);
     }
-    _text->setFont(*font);
-    _text->setPosition(sf::Vector2f(pos.x, pos.y));
-    if (!_window || !_window->isOpen()) {
-      continue;
-    }
-    _window->draw(*_text);
+    _text.value().setFont(font);
+    _text.value().setPosition(sf::Vector2f(static_cast<float>(pos.x), static_cast<float>(pos.y)));
+    _window.draw(_text.value());
   }
 }
 
