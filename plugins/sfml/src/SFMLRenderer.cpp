@@ -179,16 +179,36 @@ void SFMLRenderer::init_text(Registery::Entity const entity,
 {
   try {
     JsonObject obj = std::get<JsonObject>(config);
-    std::string font_path = std::get<std::string>(obj.at("font").value);
-    auto txt = _registery.get().emplace_component<Text>(entity, font_path);
+    std::string font_path;
+    if (!obj.contains("font")) {
+      throw std::out_of_range("font");
+      return;
+    }
+    std::cout << "Loading font for text component\n";
+    font_path = std::get<std::string>(obj.at("font").value);
+    Vector2D scale(0.1, 0.1);
+    if (!obj.contains("size")) {
+      throw std::out_of_range("size");
+      return;
+    }
+    std::cout << "Loading size for text component\n";
+    scale = parse_vector2d(obj.at("size").value); //la scale est en pourcentage de la taille de la window
+    std::string text;
+    if (!obj.contains("text")) {
+      throw std::out_of_range("text");
+      return;
+    }
+    std::cout << "Loading text for text component\n";
+    text = std::get<std::string>(obj.at("text").value);
+    auto txt = _registery.get().emplace_component<Text>(entity, font_path, scale, text);
   } catch (std::bad_variant_access const&) {
     LOGGER("SFML",
            LogLevel::ERROR,
            "Error loading text component: unexpected value type")
-  } catch (std::out_of_range const&) {
+  } catch (std::out_of_range const &e) {
     LOGGER("SFML",
            LogLevel::ERROR,
-           "Error loading text component: missing value in JsonObject")
+           std::format("Error loading text component: missing {} in JsonObject", e.what()))
   }
 }
 
@@ -251,7 +271,9 @@ void SFMLRenderer::render_text(Registery &/*unused*/,
       _text.emplace(font);
     }
     _text.value().setFont(font);
+    _text.value().setString(txt.text);
     _text.value().setPosition(sf::Vector2f(static_cast<float>(pos.x), static_cast<float>(pos.y)));
+    _text.value().setCharacterSize(static_cast<unsigned int>(window_size.x * txt.scale.x));
     _window.draw(_text.value());
   }
 }
