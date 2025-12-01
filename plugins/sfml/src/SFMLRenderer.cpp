@@ -236,9 +236,6 @@ void SFMLRenderer::render_sprites(Registery &/*unused*/,
     _sprite.value().setScale(sf::Vector2f(
         static_cast<float>(window_size.x * spr.scale.x) / texture.getSize().x,
         static_cast<float>(window_size.x * spr.scale.y) / texture.getSize().y));
-    std::cout << "window size = " << window_size.x << " " << window_size.y << std::endl;
-    std::cout << "texture size = " << texture.getSize().x << " " << texture.getSize().y << std::endl;
-    std::cout << _sprite.value().getScale().x << " " << _sprite.value().getScale().y << std::endl;
     _window.draw(_sprite.value());
   }
 }
