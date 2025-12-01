@@ -12,13 +12,7 @@ add_library(${LIB_NAME} STATIC
 )
 
 target_include_directories(${LIB_NAME}
-    PUBLIC
-    include/
+    PRIVATE
+    ${CMAKE_SOURCE_DIR}/include/
 )
 
-add_custom_command(TARGET ${LIB_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/Vector2D.hpp
-    ${CMAKE_SOURCE_DIR}/include/Vector2D.hpp
-    COMMENT "Copying Vector2D.hpp to include directory"
-)

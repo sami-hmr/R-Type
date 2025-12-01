@@ -2,12 +2,14 @@
 
 #include <string>
 #include <utility>
-#include "Vector2D.hpp"
+
+#include "libs/Vector2D.hpp"
 
 struct Sprite
 {
   Sprite(std::string texture_path, Vector2D scale)
-      : texture_path(std::move(texture_path)), scale(scale)
+      : texture_path(std::move(texture_path))
+      , scale(scale)
   {
   }
 

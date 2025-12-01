@@ -8,11 +8,9 @@
 
 class EntityLoader;
 
-
 CUSTOM_EXCEPTION(NotExistingLib)
 CUSTOM_EXCEPTION(LoaderNotExistingFunction)
 CUSTOM_EXCEPTION(LoaderException)
-
 
 template<typename Module>
 concept lib = std::is_base_of_v<IPlugin, Module>;
