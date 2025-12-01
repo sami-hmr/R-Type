@@ -75,7 +75,7 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
   _registery.get().register_component<Text>();
 
   _registery.get().add_system<>(
-      [this](Registery&) { this->handle_events(); }, 2);
+      [this](Registery&) { this->handle_events(); }, 1);
   _registery.get().add_system<>([this](Registery&)
                                 { _window.clear(sf::Color::Black); });
   _registery.get().add_system<Position, Drawable, Sprite>(

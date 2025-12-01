@@ -17,7 +17,7 @@ Moving::Moving(Registery& r, EntityLoader& l)
       [this](Registery& r,
              SparseArray<Position>& pos,
              const SparseArray<Velocity>& vel)
-      { this->moving_system(r, pos, vel); }, 3);
+      { this->moving_system(r, pos, vel); }, 2);
 }
 
 void Moving::moving_system(Registery& /*unused*/,

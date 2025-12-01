@@ -37,7 +37,7 @@ Collision::Collision(Registery& r, EntityLoader& l)
              const SparseArray<Position>& pos,
              const SparseArray<Collidable>& col)
       { this->collision_system(r, pos, col); },
-      1);
+      3);
 
   this->_registery.get().on<CollisionEvent>([this](const CollisionEvent& c)
                                             { this->on_collision(c); });
@@ -134,6 +134,7 @@ void Collision::collision_system(Registery& /*r*/,
 void Collision::on_collision(const CollisionEvent& c)
 {
   auto& velocities = this->_registery.get().get_components<Velocity>();
+  auto& positions = this->_registery.get().get_components<Position>();
   auto const& collidables = this->_registery.get().get_components<Collidable>();
 
   bool both_solid = collidables[c.a].has_value() && collidables[c.b].has_value()
@@ -141,11 +142,15 @@ void Collision::on_collision(const CollisionEvent& c)
       && collidables[c.b]->collision_type == CollisionType::Solid;
 
   if (both_solid) {
-    if (velocities[c.a].has_value()) {
+    if (velocities[c.a].has_value() && positions[c.a].has_value()) {
+      positions[c.a]->x -= velocities[c.a]->speed_x * velocities[c.a]->dir_x;
+      positions[c.a]->y -= velocities[c.a]->speed_y * velocities[c.a]->dir_y;
       velocities[c.a]->dir_x = 0;
       velocities[c.a]->dir_y = 0;
     }
-    if (velocities[c.b].has_value()) {
+    if (velocities[c.b].has_value() && positions[c.b].has_value()) {
+      positions[c.b]->x -= velocities[c.b]->speed_x * velocities[c.b]->dir_x;
+      positions[c.b]->y -= velocities[c.b]->speed_y * velocities[c.b]->dir_y;
       velocities[c.b]->dir_x = 0;
       velocities[c.b]->dir_y = 0;
     }
