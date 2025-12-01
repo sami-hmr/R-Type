@@ -49,9 +49,12 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
              SparseArray<Drawable> draw,
              SparseArray<Text> txt) { this->render_text(r, pos, draw, txt); });
 
-  _registery.get().add_system<>([this](Registery&) {
-      this->handle_events();
-      this->_window->display(); });
+  _registery.get().add_system<>(
+      [this](Registery&)
+      {
+        this->handle_events();
+        this->_window->display();
+      });
 }
 
 SFMLRenderer::~SFMLRenderer()
@@ -147,21 +150,14 @@ void SFMLRenderer::init_text(Registery::Entity const entity,
   }
 }
 
-void SFMLRenderer::handle_events() {
-    this->_window->handleEvents(
-        [this](sf::Event::Closed const&)
-        {
-          this->_window->close();
-          this->_registery.get().emit<ShutdownEvent>("Window closed", 0);
-        },
-        [this](sf::Event::KeyPressed const &key) {
-            if (key.code == sf::Keyboard::Key::Space) {
-                this->_registery.get().emit<ClientConnection>("127.0.0.1", 4242);
-            }
-            if (key.code == sf::Keyboard::Key::S) {
-                this->_registery.get().emit<ServerLaunching>(4242);
-            }
-        });
+void SFMLRenderer::handle_events()
+{
+  this->_window->handleEvents(
+      [this](sf::Event::Closed const&)
+      {
+        this->_window->close();
+        this->_registery.get().emit<ShutdownEvent>("Window closed", 0);
+      });
 }
 
 void SFMLRenderer::render_sprites(Registery& /*unused*/,

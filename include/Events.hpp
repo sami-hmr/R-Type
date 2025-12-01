@@ -59,3 +59,11 @@ struct KeyPressed
   std::map<Key, bool> key_pressed;
   std::optional<std::string> key_unicode;
 };
+
+struct CliStart
+{
+};
+
+struct CliComp
+{
+};
