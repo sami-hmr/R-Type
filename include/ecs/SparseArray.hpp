@@ -84,7 +84,7 @@ public:
    */
   void erase(SizeType pos)
   {
-    if (pos < this->size()) {
+    if (pos < this->size() && (*this)[pos].has_value()) {
       (*this)[pos].reset();
     }
   }
