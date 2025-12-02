@@ -4,6 +4,7 @@
 #include <any>
 #include <cstddef>
 #include <functional>
+#include <map>
 #include <queue>
 #include <random>
 #include <typeindex>
@@ -13,6 +14,7 @@
 
 #include "SparseArray.hpp"
 #include "TwoWayMap.hpp"
+#include "ecs/Scenes.hpp"
 #include "ecs/Systems.hpp"
 #include "plugin/Byte.hpp"
 
@@ -107,7 +109,7 @@ public:
   }
 
   void emplace_component(Entity const& to,
-                         std::string const &string_id,
+                         std::string const& string_id,
                          ByteArray const& bytes)
   {
     this->_emplace_functions.at(this->_index_getter.at(string_id))(to, bytes);
@@ -206,6 +208,11 @@ public:
     }
   }
 
+  void add_scene(std::string const& scene_name, SceneState state)
+  {
+    _scenes.insert_or_assign(scene_name, state);
+  }
+
 private:
   static HandlerId generate_uuid()
   {
@@ -227,4 +234,5 @@ private:
   std::vector<System<>> _frequent_systems;
   std::queue<Entity> _dead_entites;
   std::size_t _max = 0;
+  std::unordered_map<std::string, SceneState> _scenes;
 };

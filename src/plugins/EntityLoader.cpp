@@ -2,7 +2,10 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <optional>
+#include <stdexcept>
 #include <string>
+#include <variant>
 
 #include "plugin/EntityLoader.hpp"
 
@@ -10,6 +13,7 @@
 
 #include "Json/JsonParser.hpp"
 #include "ecs/Registery.hpp"
+#include "ecs/Scenes.hpp"
 #include "plugin/libLoaders/LDLoader.hpp"
 
 EntityLoader::EntityLoader(Registery& registery)
@@ -32,6 +36,59 @@ void EntityLoader::load(std::string const& directory)
   }
 }
 
+void EntityLoader::load_scene(JsonObject& json_scene)
+{
+  std::string scene = "default";
+  SceneState scene_state = SceneState::DISABLED;
+
+  if (json_scene.contains("name")) {
+    scene = std::get<std::string>(json_scene.at("name").value);
+  }
+
+  if (json_scene.contains("state")) {
+    std::string scene_state_tmp =
+        std::get<std::string>(json_scene.at("state").value);
+    try {
+      scene_state = SCENE_STATE_STR.at(scene_state_tmp);
+    } catch (std::out_of_range&) {
+      std::cerr << "Scene: " << scene_state_tmp << " not found\n";
+    }
+  }
+
+  this->_registery.get().add_scene(scene, scene_state);
+
+  if (json_scene.contains("plugins")) {
+    JsonArray const& plugin_array =
+        std::get<JsonArray>(json_scene.at("plugins").value);
+    for (auto const& it : plugin_array) {
+      JsonObject config_obj = std::get<JsonObject>(it.value);
+      if (config_obj.contains("name")) {
+        std::string name = std::get<std::string>(config_obj.at("name").value);
+        if (config_obj.contains("config")) {
+          JsonObject config =
+              std::get<JsonObject>(config_obj.at("config").value);
+          this->load_plugin(name, config);
+        } else {
+          this->load_plugin(name);
+        }
+      }
+    }
+  }
+
+  if (json_scene.contains("entities")) {
+    JsonArray const& array =
+        std::get<JsonArray>(json_scene.at("entities").value);
+    for (auto const& it : array) {
+      std::optional<Registery::Entity> new_e =
+          this->load_entity(std::get<JsonObject>(it.value));
+      if (new_e.has_value()) {
+        this->_registery.get().add_component(new_e.value(),
+                                             Scene(scene, scene_state));
+      }
+    }
+  }
+}
+
 void EntityLoader::load_file(std::string const& filepath)
 {
   std::ifstream infi(filepath);
@@ -49,26 +106,26 @@ void EntityLoader::load_file(std::string const& filepath)
   } else {
     JsonObject r = std::get<SUCCESS>(result).value;
     try {
-      JsonArray const& plugin_array =
-          std::get<JsonArray>(r.at("plugins").value);
-      for (auto const& it : plugin_array) {
-        this->load_plugin(std::get<std::string>(it.value));
-      }
-      JsonArray const& array = std::get<JsonArray>(r.at("entities").value);
-      for (auto const& it : array) {
-        this->load_entity(std::get<JsonObject>(it.value));
+      if (r.contains("scenes")) {
+        JsonArray const& scenes_array =
+            std::get<JsonArray>(r.at("scenes").value);
+        for (auto const& scene_it : scenes_array) {
+          JsonObject scene_obj = std::get<JsonObject>(scene_it.value);
+          this->load_scene(scene_obj);
+        }
+      } else {
+        this->load_scene(r);
       }
     } catch (std::out_of_range&) {
-      std::cerr << "Parsing \"" << filepath << R"(": missing "entities" field)"
-                << '\n';
+      std::cerr << "Parsing \"" << filepath << R"(": missing field)" << '\n';
     } catch (std::bad_variant_access&) {
-      std::cerr << "Parsing \"" << filepath << R"(": invalid "entities" value)"
-                << '\n';
+      std::cerr << "Parsing \"" << filepath << R"(": invalid value)" << '\n';
     }
   }
 }
 
-void EntityLoader::load_plugin(std::string const& plugin)
+void EntityLoader::load_plugin(std::string const& plugin,
+                               std::optional<JsonObject> const& config)
 {
   this->get_loader(plugin);
   if (!this->_plugins.contains(plugin)) {
@@ -77,14 +134,15 @@ void EntityLoader::load_plugin(std::string const& plugin)
       this->_plugins.insert_or_assign(
           plugin,
           this->_loaders.at(plugin)->get_instance(
-              "entry_point", this->_registery.get(), *this));
+              "entry_point", this->_registery.get(), *this, config));
     } catch (LoaderException const& e) {
       std::cerr << e.what() << '\n';
     }
   }
 }
 
-void EntityLoader::load_entity(JsonObject const& config)
+std::optional<Registery::Entity> EntityLoader::load_entity(
+    JsonObject const& config)
 {
   Registery::Entity new_entity = this->_registery.get().spawn_entity();
   for (auto const& [key, sub_config] : config) {
@@ -103,6 +161,7 @@ void EntityLoader::load_entity(JsonObject const& config)
                  comp,
                  plugin,
                  e.what());
+      return std::nullopt;
     } catch (UndefinedComponentValue const& e) {
       std::cerr << std::format(
           "Error creating component {} in plugin {}: undefined value: {}\n",
@@ -110,7 +169,9 @@ void EntityLoader::load_entity(JsonObject const& config)
           plugin,
           e.what());
     }
+    return std::nullopt;
   }
+  return new_entity;
 }
 
 void EntityLoader::get_loader(std::string const& plugin)

@@ -1,3 +1,4 @@
+#include <cstdint>
 #include <iostream>
 #include <optional>
 #include <string>
@@ -5,6 +6,7 @@
 
 #include "Events.hpp"
 #include "ecs/Registery.hpp"
+#include "ecs/Scenes.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/libLoaders/ILibLoader.hpp"
 
@@ -37,11 +39,17 @@ static int true_main(Registery& r,
   return exit_code;
 }
 
+static void init_scenes(Registery& r, EntityLoader& e)
+{
+  r.register_component<Scene>("scene");
+}
+
 int main(int argc, char* argv[])
 {
   std::optional<Registery> r;
   r.emplace();
   EntityLoader e(*r);
+  init_scenes(*r, e);
   int result =
       true_main(*r, e, std::vector<std::string>(argv + 1, argv + argc));
   r.reset();

@@ -1,11 +1,13 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 #include <string>
 
 #include <dlfcn.h>
 
 #include "ILibLoader.hpp"
+#include "Json/JsonParser.hpp"
 #include "ecs/Registery.hpp"
 #include "plugin/IPlugin.hpp"
 #include "plugin/libLoaders/ILibLoader.hpp"
@@ -40,17 +42,21 @@ public:
     }
   }
 
-  std::unique_ptr<Module> get_instance(const std::string& entry_point,
-                                       Registery& r,
-                                       EntityLoader& e) override
+  std::unique_ptr<Module> get_instance(
+      const std::string& entry_point,
+      Registery& r,
+      EntityLoader& e,
+      std::optional<JsonObject> const& config) override
   {
-    auto* function = (IPlugin * (*)(Registery&, EntityLoader&))(
-        dlsym(this->_lib, entry_point.c_str()));
+    auto* function =
+        (IPlugin
+         * (*)(Registery&, EntityLoader&, std::optional<JsonObject> const&))(
+            dlsym(this->_lib, entry_point.c_str()));
 
     if (function == nullptr) {
       throw LoaderException("not a rtype Plugin lib");
     }
-    auto* instance = dynamic_cast<Module*>(function(r, e));
+    auto* instance = dynamic_cast<Module*>(function(r, e, config));
     if (instance == nullptr) {
       throw LoaderException("wrong plugin type");
     }

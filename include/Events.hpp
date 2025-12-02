@@ -64,6 +64,10 @@ struct CliStart
 {
 };
 
+struct CliStop
+{
+};
+
 struct CliComp
 {
 };

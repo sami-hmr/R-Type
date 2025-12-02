@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include <optional>
 #include <string>
 
 #include "EntityLoader.hpp"
@@ -19,11 +20,12 @@ class APlugin : public IPlugin
 public:
   APlugin(Registery& registery,
           EntityLoader& loader,
-          std::vector<std::string> const &depends_on,
+          std::vector<std::string> const& depends_on,
           std::unordered_map<
               std::string,
               std::function<void(Registery::Entity, JsonVariant const&)>>
-              components);
+              components,
+          std::optional<JsonObject> const& config = std::nullopt);
 
   void set_component(Registery::Entity entity,
                      std::string const& key,
@@ -36,4 +38,5 @@ protected:
       components;
   std::reference_wrapper<Registery> _registery;
   std::reference_wrapper<EntityLoader> _loader;
+  std::optional<JsonObject> _config;
 };
