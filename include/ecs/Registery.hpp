@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <any>
+#include <chrono>
 #include <cstddef>
 #include <functional>
 #include <queue>

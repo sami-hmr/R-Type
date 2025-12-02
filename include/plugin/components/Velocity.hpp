@@ -1,10 +1,3 @@
-/*
-** EPITECH PROJECT, 2025
-** R-Type
-** File description:
-** Velocity
-*/
-
 #pragma once
 
 #include "ByteParser/ByteParser.hpp"
