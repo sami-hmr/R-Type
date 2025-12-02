@@ -168,8 +168,8 @@ std::optional<Registery::Entity> EntityLoader::load_entity(
           comp,
           plugin,
           e.what());
+      return std::nullopt;
     }
-    return std::nullopt;
   }
   return new_entity;
 }
