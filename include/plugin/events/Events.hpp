@@ -104,3 +104,9 @@ struct DamageEvent
   Registery::Entity source;
   int amount;
 };
+
+struct SceneChangeEvent
+{
+  std::string target_scene;
+  std::string reason;
+};

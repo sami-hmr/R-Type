@@ -1,7 +1,7 @@
 {
   "scenes": [
     {
-      "name": "name",
+      "name": "menu",
       "state": "main",
       "plugins": [
         {
@@ -9,28 +9,60 @@
           "config": {
             "level": "DEBUG"
           }
-        },
-        {
-          "name": "moving",
-          "config": {}
-        },
-        {
-          "name": "sfml",
-          "config": {}
-        },
-        {
-          "name": "life",
-          "config": {}
-        },
-        {
-          "name": "collision",
-          "config": {}
-        },
-        {
-          "name": "controller",
-          "config": {}
         }
       ],
+      "entities": [
+        {
+          "moving:Position": {
+            "x": 0.0,
+            "y": -0.5
+          },
+          "sfml:Drawable": {},
+          "sfml:Text": {
+            "font": "assets/fonts/roboto.ttf",
+            "size": {
+              "width": 40.0,
+              "height": 40.0
+            },
+            "text": "R-TYPE MENU"
+          }
+        },
+        {
+          "moving:Position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "sfml:Drawable": {},
+          "sfml:Text": {
+            "font": "assets/fonts/roboto.ttf",
+            "size": {
+              "width": 30.0,
+              "height": 30.0
+            },
+            "text": "Press ENTER to start game"
+          }
+        },
+        {
+          "moving:Position": {
+            "x": 0.0,
+            "y": 0.3
+          },
+          "sfml:Drawable": {},
+          "sfml:Text": {
+            "font": "assets/fonts/roboto.ttf",
+            "size": {
+              "width": 25.0,
+              "height": 25.0
+            },
+            "text": "Press R to return to menu"
+          }
+        }
+      ]
+    },
+    {
+      "name": "game",
+      "state": "disabled",
+      "plugins": [],
       "entities": [
         {
           "moving:Position": { "x": 0.0, "y": 0.0 },
