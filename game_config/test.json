@@ -1,57 +1,64 @@
 {
   "entities": [
     {
-      "collision:Collidable": {
-        "height": 10.0,
-        "width": 10.0
-      },
-      "moving:Position": {
-        "x": 0.0,
-        "y": 0.0
-      },
+      "moving:Position": { "x": 300.0, "y": 250.0 },
       "sfml:Drawable": {},
-      "sfml:Sprite": {
-        "texture": "assets/spaceship.png",
-        "size" : {
-          "width" : "50%",
-          "height": "50%"
-        }
-      }
-    },
-    {
-      "moving:Position": {
-        "x": 0.3,
-        "y": 0.3
-      },
       "moving:Velocity": {
-        "x": 0.0,
-        "y": 0.0
+        "speed_x": 100.0,
+        "speed_y": 100.0,
+        "dir_x": 0.0,
+        "dir_y": 0.0
       },
-      "sfml:Drawable": {},
       "sfml:Sprite": {
         "size": {
-          "height": "20.0%",
-          "width": "20.0%"
-        },
-        "texture": "assets/enemy.png"
-      }
+          "width": "20.0%",
+          "height": "20.0%"
+        }
+      },
+      "collision:Collidable": {
+        "width": 60.0,
+        "height": 60.0,
+        "collision_type": "Solid"
+      },
+      "controller:Controllable": {
+        "UP": "Z",
+        "DOWN": "S",
+        "LEFT": "Q",
+        "RIGHT": "D"
+      },
+      "life:Health": { "current": 5, "max": 100 },
+      "life:Damage": { "amount": 1 },
+      "life:Heal": { "amount": 1 },
+      "life:Team": { "name": "test1" }
     },
     {
+      "moving:Position": { "x": 200.0, "y": 150.0 },
+      "sfml:Drawable": {},
+      "sfml:Sprite": { "texture": "assets/enemy.png" },
       "collision:Collidable": {
-        "height": 10.0,
-        "width": 10.0
+        "width": 60.0,
+        "height": 60.0,
+        "collision_type": "Solid"
       },
+      "life:Health": { "current": 5, "max": 100 },
+      "life:Team": { "name": "test" }
+    },
+    {
       "moving:Position": {
-        "x": 0.4,
-        "y": 0.4
-      },
-      "moving:Velocity": {
-        "x": 1.0,
-        "y": 1.0
+        "x": 100.0,
+        "y": 50.0
       },
       "sfml:Drawable": {},
-      "sfml:Sprite": {
-        "texture": "assets/enemy.png"
+      "sfml:Text": {
+        "font": "assets/fonts/roboto.ttf",
+        "size": {
+          "width": 0.05,
+          "height": 0.05
+        },
+        "text": "Hello, World!"
+      },
+      "logger:log": {
+        "name": "test"
       }
     }
   ]
