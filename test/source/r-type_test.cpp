@@ -155,7 +155,7 @@ TEST_CASE("Registery - registerComponent creates component storage",
 {
   Registery reg;
 
-  auto& positions = reg.register_component<Position>();
+  auto& positions = reg.register_component<Position>("test:position");
 
   REQUIRE(positions.empty());
 }
@@ -164,7 +164,7 @@ TEST_CASE("Registery - getComponents retrieves registered components",
           "[registery]")
 {
   Registery reg;
-  reg.register_component<Position>();
+  reg.register_component<Position>("test:position");
 
   auto& positions = reg.get_components<Position>();
 
@@ -174,7 +174,7 @@ TEST_CASE("Registery - getComponents retrieves registered components",
 TEST_CASE("Registery - add_component adds component to entity", "[registery]")
 {
   Registery reg;
-  reg.register_component<Position>();
+  reg.register_component<Position>("test:position");
 
   auto entity = reg.spawn_entity();
   auto& comp = reg.add_component(entity, Position(50.0f, 75.0f));
@@ -187,7 +187,7 @@ TEST_CASE("Registery - add_component adds component to entity", "[registery]")
 TEST_CASE("Registery - emplace_component constructs in place", "[registery]")
 {
   Registery reg;
-  reg.register_component<Position>();
+  reg.register_component<Position>("test:position");
 
   auto entity = reg.spawn_entity();
   auto& comp = reg.emplace_component<Position>(entity, 10.0f, 20.0f);
@@ -201,7 +201,7 @@ TEST_CASE("Registery - removeComponent removes component from entity",
           "[registery]")
 {
   Registery reg;
-  reg.register_component<Position>();
+  reg.register_component<Position>("test:position");
 
   auto entity = reg.spawn_entity();
   reg.add_component(entity, Position(10.0f, 20.0f));
@@ -217,8 +217,8 @@ TEST_CASE("Registery - removeComponent removes component from entity",
 TEST_CASE("Registery - kill_entity removes all components", "[registery]")
 {
   Registery reg;
-  reg.register_component<Position>();
-  reg.register_component<Velocity>();
+  reg.register_component<Position>("test:position");
+  reg.register_component<Velocity>("test:velocity");
 
   auto entity = reg.spawn_entity();
   reg.add_component(entity, Position(10.0f, 20.0f));
@@ -253,9 +253,9 @@ TEST_CASE("Registery - kill_entity recycles entity IDs", "[registery]")
 TEST_CASE("Registery - multiple components per entity", "[registery]")
 {
   Registery reg;
-  reg.register_component<Position>();
-  reg.register_component<Velocity>();
-  reg.register_component<Health>();
+  reg.register_component<Position>("test:position");
+  reg.register_component<Velocity>("test:velocity");
+  reg.register_component<Health>("test:health");
 
   auto entity = reg.spawn_entity();
   reg.add_component(entity, Position(10.0f, 20.0f));
@@ -275,7 +275,7 @@ TEST_CASE("Registery - multiple components per entity", "[registery]")
 TEST_CASE("Registery - add_system and runSystems", "[registery]")
 {
   Registery reg;
-  reg.register_component<Position>();
+  reg.register_component<Position>("test:position");
 
   auto entity = reg.spawn_entity();
   reg.add_component(entity, Position(0.0f, 0.0f));
