@@ -32,7 +32,7 @@ public:
   SFMLRenderer(Registery& r, EntityLoader& l);
   ~SFMLRenderer() override;
 
-  static constexpr sf::Vector2u window_size = {1800, 1600};
+  static constexpr sf::Vector2u window_size = {1080, 1080};
   static const std::size_t window_rate = 60;
   static constexpr sf::Vector2u placeholder_size = {50, 50};
   static constexpr std::string placeholder_texture = "placeholder ";
@@ -45,6 +45,7 @@ private:
   void init_sprite(Registery::Entity const entity, JsonVariant const &config);
   void init_text(Registery::Entity const entity, JsonVariant const &config);
 
+  void handle_resize();
   void render_sprites(Registery& r,
                       const SparseArray<Position> &positions,
                       const SparseArray<Drawable> &drawable,

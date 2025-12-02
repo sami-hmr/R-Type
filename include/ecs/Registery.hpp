@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <any>
+#include <chrono>
 #include <cstddef>
 #include <functional>
 #include <queue>
@@ -11,7 +12,6 @@
 #include <unordered_set>
 #include <utility>
 #include <vector>
-#include <chrono>
 
 #include "SparseArray.hpp"
 #include "ecs/Systems.hpp"
