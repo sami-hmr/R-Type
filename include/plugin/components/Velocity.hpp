@@ -6,15 +6,31 @@
 
 struct Velocity
 {
-    Velocity() = default;
-    Velocity(double x, double y): x(x), y(y) {}
+  Velocity() = default;
 
-    DEFAULT_BYTE_CONSTRUCTOR(Velocity,
-                             ([](double x, double y)
-                              { return (Velocity){x, y}; }),
-                             parseByte<double>(),
-                             parseByte<double>())
-    DEFAULT_SERIALIZE(type_to_byte(this->x), type_to_byte(this->y))
-  double x;
-  double y;
+  Velocity(double speed_x, double speed_y, double dir_x, double dir_y)
+      : speed_x(speed_x)
+      , speed_y(speed_y)
+      , dir_x(dir_x)
+      , dir_y(dir_y)
+  {
+  }
+
+  DEFAULT_BYTE_CONSTRUCTOR(
+      Velocity,
+      ([](double speed_x, double speed_y, double dir_x, double dir_y)
+       { return (Velocity) {speed_x, speed_y, dir_x, dir_y}; }),
+      parseByte<double>(),
+      parseByte<double>(),
+      parseByte<double>(),
+      parseByte<double>())
+  DEFAULT_SERIALIZE(type_to_byte(this->speed_x),
+                    type_to_byte(this->speed_y),
+                    type_to_byte(this->dir_x),
+                    type_to_byte(this->dir_y))
+
+  double speed_x;
+  double speed_y;
+  double dir_x;
+  double dir_y;
 };

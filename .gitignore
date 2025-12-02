@@ -17,6 +17,12 @@ coverage.profdata
 coverage.info
 coverage_html/
 .clangd
+
+# Documentation files
+docs/html/
+docs/xml/
+docs/Doxyfile
+
 rtype.log
 vcpkg
 .cache

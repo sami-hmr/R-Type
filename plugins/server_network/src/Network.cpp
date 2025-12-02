@@ -4,9 +4,9 @@
 
 #include "Network.hpp"
 
-#include "Events.hpp"
 #include "ecs/Registery.hpp"
 #include "plugin/EntityLoader.hpp"
+#include "plugin/events/Events.hpp"
 
 const std::unordered_map<std::string,
                          void (NetworkServer::*)(
@@ -194,7 +194,8 @@ void NetworkServer::handle_getinfo(const std::vector<std::string>& UNUSED args,
   send_connectionless(oss.str(), sender);
 }
 
-void NetworkServer::handle_getstatus(const std::vector<std::string>& UNUSED args,
+void NetworkServer::handle_getstatus(const std::vector<std::string>& UNUSED
+                                         args,
                                      const asio::ip::udp::endpoint& sender)
 {
   std::ostringstream oss;
@@ -210,7 +211,8 @@ void NetworkServer::handle_getstatus(const std::vector<std::string>& UNUSED args
   send_connectionless(oss.str(), sender);
 }
 
-void NetworkServer::handle_getchallenge(const std::vector<std::string>& UNUSED args,
+void NetworkServer::handle_getchallenge(const std::vector<std::string>& UNUSED
+                                            args,
                                         const asio::ip::udp::endpoint& sender)
 {
   uint32_t challenge = generate_challenge();

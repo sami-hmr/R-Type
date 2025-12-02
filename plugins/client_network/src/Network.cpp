@@ -6,9 +6,9 @@
 
 #include "Network.hpp"
 
-#include "Events.hpp"
 #include "ecs/Registery.hpp"
 #include "plugin/EntityLoader.hpp"
+#include "plugin/events/Events.hpp"
 
 const std::unordered_map<std::string,
                          void (NetworkClient::*)(

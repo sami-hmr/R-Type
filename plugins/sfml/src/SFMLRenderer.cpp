@@ -10,15 +10,13 @@
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/Sprite.hpp>
-#include <SFML/Window/Event.hpp>
-#include <SFML/Window/Keyboard.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/View.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Window/Keyboard.hpp>
 
 #include "ClientConnection.hpp"
-#include "Events.hpp"
 #include "Json/JsonParser.hpp"
 #include "ServerLaunch.hpp"
 #include "ecs/Registery.hpp"
@@ -26,6 +24,29 @@
 #include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
+#include "plugin/events/Events.hpp"
+
+static const std::map<sf::Keyboard::Key, Key> key_association = {
+    {sf::Keyboard::Key::Enter, Key::ENTER},
+    {sf::Keyboard::Key::Left, Key::LEFT},
+    {sf::Keyboard::Key::Right, Key::RIGHT},
+    {sf::Keyboard::Key::Down, Key::DOWN},
+    {sf::Keyboard::Key::Up, Key::UP},
+    {sf::Keyboard::Key::Z, Key::Z},
+    {sf::Keyboard::Key::Q, Key::Q},
+    {sf::Keyboard::Key::S, Key::S},
+    {sf::Keyboard::Key::D, Key::D},
+    {sf::Keyboard::Key::R, Key::R},
+    {sf::Keyboard::Key::Escape, Key::ECHAP},
+    {sf::Keyboard::Key::Backspace, Key::DELETE},
+    {sf::Keyboard::Key::Space, Key::SPACE},
+    {sf::Keyboard::Key::LShift, Key::SHIFT},
+    {sf::Keyboard::Key::RShift, Key::SHIFT},
+    {sf::Keyboard::Key::LControl, Key::CTRL},
+    {sf::Keyboard::Key::RControl, Key::CTRL},
+    {sf::Keyboard::Key::LAlt, Key::ALT},
+    {sf::Keyboard::Key::RAlt, Key::ALT},
+};
 
 static sf::Texture gen_placeholder()
 {
@@ -57,22 +78,25 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
   _registery.get().register_component<Sprite>("sfml:Sprite");
   _registery.get().register_component<Text>("sfml:Text");
 
+  _registery.get().add_system<>([this](Registery&) { this->handle_events(); },
+                                1);
   _registery.get().add_system<>([this](Registery&)
                                 { _window.clear(sf::Color::Black); });
   _registery.get().add_system<Position, Drawable, Sprite>(
       [this](Registery& r,
-             SparseArray<Position> pos,
-             SparseArray<Drawable> draw,
-             SparseArray<Sprite> spr)
+             SparseArray<Position>& pos,
+             SparseArray<Drawable>& draw,
+             SparseArray<Sprite>& spr)
       { this->render_sprites(r, pos, draw, spr); });
 
   _registery.get().add_system<Position, Drawable, Text>(
       [this](Registery& r,
-             SparseArray<Position> pos,
-             SparseArray<Drawable> draw,
-             SparseArray<Text> txt) { this->render_text(r, pos, draw, txt); });
+             const SparseArray<Position>& pos,
+             const SparseArray<Drawable>& draw,
+             const SparseArray<Text>& txt)
+      { this->render_text(r, pos, draw, txt); });
 
-  _registery.get().add_system<>([this](Registery&) { this->handle_window(); });
+  _registery.get().add_system<>([this](Registery&) { this->display(); });
   _textures.insert_or_assign(SFMLRenderer::placeholder_texture,
                              gen_placeholder());
 }
@@ -222,6 +246,15 @@ void SFMLRenderer::init_text(Registery::Entity const entity,
   }
 }
 
+std::optional<Key> SFMLRenderer::sfml_key_to_key(sf::Keyboard::Key sfml_key)
+{
+  auto it = key_association.find(sfml_key);
+  if (it != key_association.end()) {
+    return it->second;
+  }
+  return std::nullopt;
+}
+
 void SFMLRenderer::handle_resize()
 {
   sf::Vector2u new_size = _window.getSize();
@@ -232,10 +265,20 @@ void SFMLRenderer::handle_resize()
   _window.setView(view);
 }
 
-void SFMLRenderer::handle_window()
+void SFMLRenderer::handle_events()
 {
   if (!_window.isOpen()) {
     return;
+  }
+
+  _key_pressed.key_pressed.clear();
+  if (_key_pressed.key_unicode.has_value()) {
+    _key_pressed.key_unicode->clear();
+  }
+
+  _key_released.key_released.clear();
+  if (_key_released.key_unicode.has_value()) {
+    _key_released.key_unicode->clear();
   }
 
   while (const std::optional event = _window.pollEvent()) {
@@ -243,18 +286,42 @@ void SFMLRenderer::handle_window()
       _window.close();
       _registery.get().emit<ShutdownEvent>("Window closed", 0);
     }
+    if (const auto* key_pressed = event->getIf<sf::Event::KeyPressed>()) {
+      auto key = sfml_key_to_key(key_pressed->code);
+      if (key.has_value()) {
+        _key_pressed.key_pressed[key.value()] = true;
+      }
+    }
+    if (const auto* key_released = event->getIf<sf::Event::KeyReleased>()) {
+      auto key = sfml_key_to_key(key_released->code);
+      if (key.has_value()) {
+        _key_released.key_released[key.value()] = true;
+      }
+    }
     if (event->is<sf::Event::Resized>()) {
       handle_resize();
     }
   }
+  if (!_key_pressed.key_pressed.empty()) {
+    _registery.get().emit<KeyPressedEvent>(_key_pressed);
+  }
+  if (!_key_released.key_released.empty()) {
+    _registery.get().emit<KeyReleasedEvent>(_key_released);
+  }
+}
 
+void SFMLRenderer::display()
+{
+  if (!_window.isOpen()) {
+    return;
+  }
   _window.display();
 }
 
 void SFMLRenderer::render_sprites(Registery& /*unused*/,
-                                  SparseArray<Position> positions,
-                                  SparseArray<Drawable> drawable,
-                                  SparseArray<Sprite> sprites)
+                                  const SparseArray<Position>& positions,
+                                  const SparseArray<Drawable>& drawable,
+                                  const SparseArray<Sprite>& sprites)
 {
   for (auto&& [pos, draw, spr] : Zipper(positions, drawable, sprites)) {
     sf::Texture& texture = load_texture(spr.texture_path);
@@ -264,23 +331,30 @@ void SFMLRenderer::render_sprites(Registery& /*unused*/,
       _sprite.emplace(texture);
     }
 
-    _sprite.value().setPosition(
-        sf::Vector2f(static_cast<float>(pos.x), static_cast<float>(pos.y)));
     _sprite.value().setTexture(texture);
 
-    float scale_x = static_cast<float>(window_size.x * spr.scale.x) / texture.getSize().x;
-    float scale_y = static_cast<float>(window_size.y * spr.scale.y) / texture.getSize().y;
+    float scale_x =
+        static_cast<float>(window_size.x * spr.scale.x) / texture.getSize().x;
+    float scale_y =
+        static_cast<float>(window_size.y * spr.scale.y) / texture.getSize().y;
     float uniform_scale = std::min(scale_x, scale_y);
 
+    _sprite->setOrigin(
+        sf::Vector2f(texture.getSize().x / 2.0f, texture.getSize().y / 2.0f));
     _sprite.value().setScale(sf::Vector2f(uniform_scale, uniform_scale));
+
+    sf::Vector2f new_pos(
+        static_cast<float>((pos.x + 1.0) * window_size.x / 2.0),
+        static_cast<float>((pos.y + 1.0) * window_size.y / 2.0));
+    _sprite.value().setPosition(new_pos);
     _window.draw(_sprite.value());
   }
 }
 
 void SFMLRenderer::render_text(Registery& /*unused*/,
-                               SparseArray<Position> positions,
-                               SparseArray<Drawable> drawable,
-                               SparseArray<Text> texts)
+                               const SparseArray<Position>& positions,
+                               const SparseArray<Drawable>& drawable,
+                               const SparseArray<Text>& texts)
 {
   for (auto&& [pos, draw, txt] : Zipper(positions, drawable, texts)) {
     sf::Font& font = load_font(txt.font_path);
@@ -289,10 +363,13 @@ void SFMLRenderer::render_text(Registery& /*unused*/,
     }
     _text.value().setFont(font);
     _text.value().setString(txt.text);
-    _text.value().setPosition(
-        sf::Vector2f(static_cast<float>(pos.x), static_cast<float>(pos.y)));
-    _text.value().setCharacterSize(
-        static_cast<unsigned int>(window_size.x * txt.scale.x));
+
+    sf::Vector2u window_size = _window.getSize();
+    sf::Vector2f new_pos(
+        static_cast<float>((pos.x + 1.0) * window_size.x / 2.0),
+        static_cast<float>((pos.y + 1.0) * window_size.y / 2.0));
+    _text.value().setPosition(new_pos);
+    _text.value().setCharacterSize(static_cast<unsigned int>(txt.scale.x));
     _window.draw(_text.value());
   }
 }

@@ -10,9 +10,9 @@
 #include "CLI.hpp"
 
 #include "ClientConnection.hpp"
-#include "Events.hpp"
 #include "ServerLaunch.hpp"
 #include "plugin/APlugin.hpp"
+#include "plugin/events/Events.hpp"
 
 CLI::CLI(Registery& r, EntityLoader& l, std::optional<JsonObject> const& config)
     : APlugin(r, l, {"logger", "server_network", "client_network"}, {}, config)

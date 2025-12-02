@@ -5,11 +5,11 @@
 #include <string>
 #include <thread>
 
-#include "Events.hpp"
 #include "Json/JsonParser.hpp"
 #include "ecs/Registery.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
+#include "plugin/events/Events.hpp"
 
 class CLI : public APlugin
 {
