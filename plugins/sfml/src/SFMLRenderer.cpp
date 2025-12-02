@@ -147,7 +147,8 @@ static Vector2D parse_vector2d(JsonVariant const& variant)
       double y = std::stod(y_percentage) / 100.0;
       return {x, y};
     } catch (std::bad_variant_access const&) {
-      return {10 / 100.0, 10 / 100.0};
+      // std::cout << "test" << std::endl;
+      return {10 / 100.0, 15 / 100.0};
     }
   }
 }
@@ -258,12 +259,16 @@ void SFMLRenderer::render_sprites(Registery& /*unused*/,
     if (!_sprite.has_value()) {
       _sprite.emplace(texture);
     }
+    
     _sprite.value().setPosition(
         sf::Vector2f(static_cast<float>(pos.x), static_cast<float>(pos.y)));
     _sprite.value().setTexture(texture);
-    _sprite.value().setScale(sf::Vector2f(
-        static_cast<float>(window_size.x * spr.scale.x) / texture.getSize().x,
-        static_cast<float>(window_size.x * spr.scale.y) / texture.getSize().y));
+    
+    float scale_x = static_cast<float>(window_size.x * spr.scale.x) / texture.getSize().x;
+    float scale_y = static_cast<float>(window_size.y * spr.scale.y) / texture.getSize().y;
+    float uniform_scale = std::min(scale_x, scale_y);
+    
+    _sprite.value().setScale(sf::Vector2f(uniform_scale, uniform_scale));
     _window.draw(_sprite.value());
   }
 }
