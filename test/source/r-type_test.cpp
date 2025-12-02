@@ -231,6 +231,7 @@ TEST_CASE("Registery - kill_entity removes all components", "[registery]")
   REQUIRE(velocities[entity].has_value());
 
   reg.kill_entity(entity);
+  reg.process_entity_deletions();
 
   REQUIRE(!positions[entity].has_value());
   REQUIRE(!velocities[entity].has_value());
@@ -244,6 +245,7 @@ TEST_CASE("Registery - kill_entity recycles entity IDs", "[registery]")
   auto entity2 = reg.spawn_entity();
 
   reg.kill_entity(entity1);
+  reg.process_entity_deletions();
 
   auto entity3 = reg.spawn_entity();
 
