@@ -5,7 +5,7 @@
 #include <utility>
 #include <vector>
 
-#include "Events.hpp"
+#include "plugin/events/Events.hpp"
 #include "Json/JsonParser.hpp"
 #include "ecs/Registery.hpp"
 #include "plugin/APlugin.hpp"

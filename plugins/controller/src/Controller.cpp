@@ -1,6 +1,6 @@
 #include "Controller.hpp"
 
-#include "Events.hpp"
+#include "plugin/events/Events.hpp"
 #include "ecs/Registery.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Controllable.hpp"

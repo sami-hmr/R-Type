@@ -5,7 +5,7 @@
 
 #include "Collision.hpp"
 
-#include "Events.hpp"
+#include "plugin/events/Events.hpp"
 #include "Logger.hpp"
 #include "algorithm/QuadTreeCollision.hpp"
 #include "ecs/Registery.hpp"
@@ -15,13 +15,16 @@
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Team.hpp"
 #include "plugin/components/Velocity.hpp"
+#include "plugin/components/Damage.hpp"
+#include "plugin/components/Health.hpp"
+
 
 Collision::Collision(Registery& r, EntityLoader& l)
     : APlugin(
           r,
           l,
           {"moving"},
-          {COMP_INIT(Collidable, init_collision), COMP_INIT(Team, init_team)})
+          {COMP_INIT(Collidable, init_collision)})
 {
   _registery.get().register_component<Collidable>();
   _registery.get().register_component<Team>();
@@ -79,26 +82,7 @@ void Collision::init_collision(Registery::Entity const entity,
   }
 }
 
-void Collision::init_team(Registery::Entity const entity,
-                          JsonVariant const& config)
-{
-  try {
-    JsonObject obj = std::get<JsonObject>(config);
-    std::string name = std::get<std::string>(obj.at("name").value);
-
-    this->_registery.get().emplace_component<Team>(entity, name);
-  } catch (std::bad_variant_access const&) {
-    LOGGER("Collision",
-           LogLevel::ERROR,
-           "Error loading Team component: unexpected value type")
-  } catch (std::out_of_range const&) {
-    LOGGER("Collision",
-           LogLevel::ERROR,
-           "Error loading Team component: (expected name: string")
-  }
-}
-
-void Collision::collision_system(Registery& /*r*/,
+void Collision::collision_system(Registery& reg,
                                  const SparseArray<Position>& positions,
                                  const SparseArray<Collidable>& collidables)
 {
@@ -108,9 +92,9 @@ void Collision::collision_system(Registery& /*r*/,
 
   std::vector<ICollisionAlgorithm::CollisionEntity> entities;
 
-  size_t max_size = std::min(positions.size(), collidables.size());
-  for (size_t i = 0; i < max_size; ++i) {
-    if (positions[i].has_value() && collidables[i].has_value() && collidables[i]->is_active) {
+  std::size_t max_size = std::min(positions.size(), collidables.size());
+  for (std::size_t i = 0; i < max_size; ++i) {
+    if (reg.has_component<Position>(i) && reg.has_component<Collidable>(i) && collidables[i]->is_active) {
       entities.push_back(ICollisionAlgorithm::CollisionEntity {
           .entity_id = i,
           .bounds = Rect {.x = positions[i]->x,
@@ -124,10 +108,11 @@ void Collision::collision_system(Registery& /*r*/,
   auto collisions = _collision_algo->detect_collisions(entities);
 
   for (auto const& collision : collisions) {
-    size_t entity_a = collision.entity_a;
-    size_t entity_b = collision.entity_b;
+    std::size_t entity_a = collision.entity_a;
+    std::size_t entity_b = collision.entity_b;
 
     this->_registery.get().emit<CollisionEvent>(entity_a, entity_b);
+    this->_registery.get().emit<CollisionEvent>(entity_b, entity_a);
   }
 }
 
@@ -137,25 +122,17 @@ void Collision::on_collision(const CollisionEvent& c)
   auto& positions = this->_registery.get().get_components<Position>();
   auto const& collidables = this->_registery.get().get_components<Collidable>();
 
-  bool both_solid = collidables[c.a].has_value() && collidables[c.b].has_value()
+  bool both_solid = this->_registery.get().has_component<Collidable>(c.a) && this->_registery.get().has_component<Collidable>(c.b)
       && collidables[c.a]->collision_type == CollisionType::Solid
       && collidables[c.b]->collision_type == CollisionType::Solid;
 
   if (both_solid) {
-    if (velocities[c.a].has_value() && positions[c.a].has_value()) {
-      positions[c.a]->x -= velocities[c.a]->speed_x * velocities[c.a]->dir_x;
-      positions[c.a]->y -= velocities[c.a]->speed_y * velocities[c.a]->dir_y;
-      velocities[c.a]->dir_x = 0;
-      velocities[c.a]->dir_y = 0;
-    }
-    if (velocities[c.b].has_value() && positions[c.b].has_value()) {
-      positions[c.b]->x -= velocities[c.b]->speed_x * velocities[c.b]->dir_x;
-      positions[c.b]->y -= velocities[c.b]->speed_y * velocities[c.b]->dir_y;
-      velocities[c.b]->dir_x = 0;
-      velocities[c.b]->dir_y = 0;
+    double dt = this->_registery.get().clock().delta_seconds();
+    if (this->_registery.get().has_component<Velocity>(c.a) && this->_registery.get().has_component<Position>(c.a)) {
+      positions[c.a]->x -= velocities[c.a]->speed_x * velocities[c.a]->dir_x * dt;
+      positions[c.a]->y -= velocities[c.a]->speed_y * velocities[c.a]->dir_y * dt;
     }
   }
-  // mettre les triggers: damage event
 }
 
 extern "C"

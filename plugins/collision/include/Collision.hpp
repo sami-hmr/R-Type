@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "Events.hpp"
+#include "plugin/events/Events.hpp"
 #include "ICollisionAlgorithm.hpp"
 #include "Json/JsonParser.hpp"
 #include "ecs/Registery.hpp"
@@ -26,7 +26,6 @@ public:
 private:
   void init_collision(Registery::Entity const entity,
                       JsonVariant const& config);
-  void init_team(Registery::Entity const entity, JsonVariant const& config);
 
   void collision_system(Registery& r,
                         const SparseArray<Position>& positions,
