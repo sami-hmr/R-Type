@@ -3,16 +3,23 @@
     {
       "moving:Position": { "x": 300.0, "y": 250.0 },
       "sfml:Drawable": {},
-      "moving:Velocity": { "speed_x": 5.0, "speed_y": 5.0, "dir_x": 0.0, "dir_y": 0.0 },
+      "moving:Velocity": { "speed_x": 100.0, "speed_y": 100.0, "dir_x": 0.0, "dir_y": 0.0 },
       "sfml:Sprite": { "texture": "assets/spaceship.png" },
-      "collision:Collidable": { "width": 10.0, "height": 10.0, "collision_type": "Solid" },
-      "controller:Controllable": {"UP": "Z", "DOWN": "S", "LEFT": "Q", "RIGHT": "D"}
+      "collision:Collidable": { "width": 60.0, "height": 60.0, "collision_type": "Solid" },
+      "controller:Controllable": {"UP": "Z", "DOWN": "S", "LEFT": "Q", "RIGHT": "D"},
+      "life:Health": {"current": 5, "max": 100},
+      "life:Damage": {"amount": 1},
+      "life:Heal": {"amount": 1},
+      "life:Team": {"name": "test1"},
+      "logger:log": {"level": "INFO"}
     },
     {
       "moving:Position": { "x": 200.0, "y": 150.0 },
       "sfml:Drawable": {},
       "sfml:Sprite": { "texture": "assets/enemy.png" },
-      "collision:Collidable": { "width": 10.0, "height": 10.0, "collision_type": "Solid" }
+      "collision:Collidable": { "width": 60.0, "height": 60.0, "collision_type": "Solid"},
+      "life:Health": {"current": 5, "max": 100},
+      "life:Team": {"name": "test"}
     }
   ]
 }
