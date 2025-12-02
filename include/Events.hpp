@@ -4,6 +4,7 @@
 #include <map>
 #include <optional>
 #include <string>
+
 #include "ecs/Registery.hpp"
 
 struct ShutdownEvent
@@ -67,7 +68,8 @@ struct KeyReleasedEvent
   std::optional<std::string> key_unicode;
 };
 
-struct CollisionEvent {
+struct CollisionEvent
+{
   Registery::Entity a;
   Registery::Entity b;
 };
