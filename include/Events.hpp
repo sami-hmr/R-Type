@@ -4,6 +4,8 @@
 #include <map>
 #include <optional>
 #include <string>
+#include "plugin/Byte.hpp"
+#include "ParserUtils.hpp"
 
 struct ShutdownEvent
 {
@@ -66,4 +68,7 @@ struct CliStart
 
 struct CliComp
 {
+    CliComp() = default;
+    EMPTY_BYTE_CONSTRUCTOR(CliComp)
+    DEFAULT_SERIALIZE(ByteArray{})
 };
