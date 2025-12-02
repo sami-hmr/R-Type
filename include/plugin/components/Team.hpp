@@ -4,5 +4,11 @@
 #include <string>
 
 struct Team {
-    std::string team_name;
+    Team() = default;
+
+    Team(std::string name)
+        : name(std::move(name))
+    {
+    }
+    std::string name;
 };
