@@ -5,7 +5,9 @@
 #include <optional>
 #include <string>
 
+#include "ParserUtils.hpp"
 #include "ecs/Registery.hpp"
+#include "plugin/Byte.hpp"
 
 struct ShutdownEvent
 {
@@ -68,7 +70,19 @@ struct KeyReleasedEvent
   std::optional<std::string> key_unicode;
 };
 
-struct CollisionEvent {
+struct CliStart
+{
+};
+
+struct CliComp
+{
+  CliComp() = default;
+  EMPTY_BYTE_CONSTRUCTOR(CliComp)
+  DEFAULT_SERIALIZE(ByteArray {})
+};
+
+struct CollisionEvent
+{
   Registery::Entity a;
   Registery::Entity b;
 };

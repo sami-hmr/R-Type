@@ -1,14 +1,25 @@
 #pragma once
 
-
 #include <string>
 
-struct Team {
-    Team() = default;
+#include "ByteParser/ByteParser.hpp"
+#include "plugin/Byte.hpp"
 
-    Team(std::string name)
-        : name(std::move(name))
-    {
-    }
-    std::string name;
+struct Team
+{
+  Team() = default;
+
+  Team(std::string name)
+      : name(std::move(name))
+  {
+  }
+
+  DEFAULT_BYTE_CONSTRUCTOR(
+      Team,
+      ([](std::vector<char> name_vec)
+       { return Team(std::string(name_vec.begin(), name_vec.end())); }),
+      parseByteArray(parseAnyChar()))
+  DEFAULT_SERIALIZE(string_to_byte(this->name))
+
+  std::string name;
 };

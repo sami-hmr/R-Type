@@ -13,47 +13,82 @@
 #include <utility>
 #include <vector>
 
-#include "SparseArray.hpp"
-#include "ecs/Systems.hpp"
 #include "Clock.hpp"
+#include "SparseArray.hpp"
+#include "TwoWayMap.hpp"
+#include "ecs/Systems.hpp"
+#include "plugin/Byte.hpp"
 
 /**
- * @brief The Registery class is the core of the ECS (Entity-Component-System) architecture.
- * 
- * It manages entities, their associated components, and the systems that operate on them.
+ * @brief The Registery class is the core of the ECS (Entity-Component-System)
+ * architecture.
+ *
+ * It manages entities, their associated components, and the systems that
+ * operate on them.
  */
 class Registery
 {
 public:
   /**
    * @brief Type alias for an entity identifier.
-   * 
+   *
    */
   using Entity = std::size_t;
   using HandlerId = std::size_t;
 
   /**
-   * @brief Registers a component type in the registry.
-   * 
+   * @brief Registers a bytable component type with a string identifier.
+   *
+   * @tparam Component The type of the component to register (must satisfy
+   * bytable concept).
+   * @param string_id The string identifier for this component type.
+   * @return SparseArray<Component>& A reference to the sparse array of the
+   * registered component type.
+   */
+  template<bytable Component>
+  SparseArray<Component>& register_component(std::string const& string_id)
+  {
+    std::type_index ti(typeid(Component));
+
+    this->_components.insert_or_assign(ti, SparseArray<Component>());
+    SparseArray<Component>& comp = this->get_components<Component>();
+
+    this->_delete_functions.insert_or_assign(
+        ti, [&comp](Entity const& e) { comp.erase(e); });
+    this->_emplace_functions.insert_or_assign(
+        ti,
+        [&comp](Entity const& e, ByteArray const& bytes)
+        { comp.insert_at(e, bytes); });
+    this->_index_getter.insert(ti, string_id);
+    return comp;
+  }
+
+  /**
+   * @brief Registers a component type in the registry (non-bytable overload).
+   *
    * @tparam Component The type of the component to register.
-   * @return SparseArray<Component>& A reference to the sparse array of the registered component type.
+   * @return SparseArray<Component>& A reference to the sparse array of the
+   * registered component type.
    */
   template<class Component>
   SparseArray<Component>& register_component()
   {
-    this->_components.insert_or_assign(std::type_index(typeid(Component)),
-                                       SparseArray<Component>());
+    std::type_index ti(typeid(Component));
+
+    this->_components.insert_or_assign(ti, SparseArray<Component>());
     SparseArray<Component>& comp = this->get_components<Component>();
-    this->_delete_functions.push_back([&comp](Entity const& e)
-                                      { comp.erase(e); });
+
+    this->_delete_functions.insert_or_assign(
+        ti, [&comp](Entity const& e) { comp.erase(e); });
     return comp;
   }
 
   /**
    * @brief Get the components object
-   * 
+   *
    * @tparam Component The type of the component to retrieve.
-   * @return SparseArray<Component>& A reference to the sparse array of the specified component type.
+   * @return SparseArray<Component>& A reference to the sparse array of the
+   * specified component type.
    */
   template<class Component>
   SparseArray<Component>& get_components()
@@ -64,9 +99,10 @@ public:
 
   /**
    * @brief Get the components object (const version)
-   * 
+   *
    * @tparam Component The type of the component to retrieve.
-   * @return SparseArray<Component> const& A const reference to the sparse array of the specified component type.
+   * @return SparseArray<Component> const& A const reference to the sparse array
+   * of the specified component type.
    */
   template<class Component>
   SparseArray<Component> const& get_components() const
@@ -76,7 +112,7 @@ public:
   }
 
   template<class Component>
-  bool has_component(const Entity &e) const
+  bool has_component(const Entity& e) const
   {
     SparseArray<Component> const& comp = this->get_components<Component>();
     return (e < comp.size() && comp[e].has_value());
@@ -96,14 +132,12 @@ public:
   }
 
   /**
-   * @brief Kills an entity, marking it for deletion and allowing its ID to be reused.
-   * 
+   * @brief Kills an entity, marking it for deletion and allowing its ID to be
+   * reused.
+   *
    * @param e The entity to kill.
    */
-  void kill_entity(Entity const& e)
-  {
-    _entities_to_kill.insert(e);
-  }
+  void kill_entity(Entity const& e) { _entities_to_kill.insert(e); }
 
   bool is_entity_dying(Entity const& e) const
   {
@@ -113,7 +147,7 @@ public:
   void process_entity_deletions()
   {
     for (auto const& e : _entities_to_kill) {
-      for (auto const& f : this->_delete_functions) {
+      for (auto const& [_, f] : this->_delete_functions) {
         f(e);
       }
       this->_dead_entities.push(e);
@@ -123,7 +157,7 @@ public:
 
   /**
    * @brief Adds a component to an entity.
-   * 
+   *
    * @tparam Component The type of the component to add.
    * @param to The entity to which the component will be added.
    * @param c The component to add.
@@ -139,7 +173,7 @@ public:
 
   /**
    * @brief Constructs and adds a component to an entity.
-   * 
+   *
    * @tparam Component The type of the component to add.
    * @tparam Params The types of the parameters to construct the component.
    * @param to The entity to which the component will be added.
@@ -155,11 +189,27 @@ public:
   }
 
   /**
+   * @brief Constructs and adds a component to an entity using byte array (for
+   * bytable components).
+   *
+   * @param to The entity to which the component will be added.
+   * @param string_id The string identifier of the component type.
+   * @param bytes The byte array to construct the component from.
+   */
+  void emplace_component(Entity const& to,
+                         std::string const& string_id,
+                         ByteArray const& bytes)
+  {
+    this->_emplace_functions.at(this->_index_getter.at(string_id))(to, bytes);
+  }
+
+  /**
    * @brief Removes a component from an entity.
-   * 
+   *
    * @tparam Component: The type of the component to remove.
    * @param from The entity from which the component will be removed.
    */
+
   template<typename Component>
   void remove_component(Entity const& from)
   {
@@ -168,7 +218,7 @@ public:
 
   /**
    * @brief Adds a system that operates on specified components.
-   * 
+   *
    * @tparam Components: The types of the components the system will operate on.
    * @tparam Function The type of the function representing the system.
    * @param f The function representing the system.
@@ -186,7 +236,7 @@ public:
 
   /**
    * @brief Runs all registered systems.
-   * 
+   *
    */
   void run_systems()
   {
@@ -268,6 +318,7 @@ public:
   }
 
   Clock& clock() { return _clock; }
+
   const Clock& clock() const { return _clock; }
 
 private:
@@ -280,9 +331,15 @@ private:
   }
 
   std::unordered_map<std::type_index, std::any> _components;
+  std::unordered_map<std::type_index, std::function<void(Entity const&)>>
+      _delete_functions;
+  std::unordered_map<std::type_index,
+                     std::function<void(Entity const&, ByteArray const&)>>
+      _emplace_functions;
+  TwoWayMap<std::type_index, std::string> _index_getter;
+
   std::unordered_map<std::type_index, std::any> _event_handlers;
   std::vector<System<>> _frequent_systems;
-  std::vector<std::function<void(Entity const&)>> _delete_functions;
   std::queue<Entity> _dead_entities;
   std::unordered_set<Entity> _entities_to_kill;
   Clock _clock;

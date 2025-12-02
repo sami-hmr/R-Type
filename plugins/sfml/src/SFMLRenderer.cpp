@@ -14,14 +14,17 @@
 #include <SFML/Graphics/View.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Window/Keyboard.hpp>
 
-#include "plugin/events/Events.hpp"
+#include "ClientConnection.hpp"
 #include "Json/JsonParser.hpp"
+#include "ServerLaunch.hpp"
 #include "ecs/Registery.hpp"
 #include "ecs/zipper/Zipper.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
+#include "plugin/events/Events.hpp"
 
 static const std::map<sf::Keyboard::Key, Key> key_association = {
     {sf::Keyboard::Key::Enter, Key::ENTER},
@@ -62,7 +65,7 @@ static sf::Texture gen_placeholder()
 SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
     : APlugin(r,
               l,
-              {"moving"},
+              {"moving", "client_network", "server_network"},
               {COMP_INIT(Drawable, init_drawable),
                COMP_INIT(Sprite, init_sprite),
                COMP_INIT(Text, init_text)})
@@ -71,12 +74,12 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
       sf::RenderWindow(sf::VideoMode(window_size), "R-Type - SFML Renderer");
   _window.setFramerateLimit(window_rate);
 
-  _registery.get().register_component<Drawable>();
-  _registery.get().register_component<Sprite>();
-  _registery.get().register_component<Text>();
+  _registery.get().register_component<Drawable>("sfml:Drawable");
+  _registery.get().register_component<Sprite>("sfml:Sprite");
+  _registery.get().register_component<Text>("sfml:Text");
 
-  _registery.get().add_system<>(
-      [this](Registery&) { this->handle_events(); }, 1);
+  _registery.get().add_system<>([this](Registery&) { this->handle_events(); },
+                                1);
   _registery.get().add_system<>([this](Registery&)
                                 { _window.clear(sf::Color::Black); });
   _registery.get().add_system<Position, Drawable, Sprite>(
@@ -94,8 +97,8 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
       { this->render_text(r, pos, draw, txt); });
 
   _registery.get().add_system<>([this](Registery&) { this->display(); });
-  _textures.insert_or_assign(
-      SFMLRenderer::placeholder_texture, gen_placeholder());
+  _textures.insert_or_assign(SFMLRenderer::placeholder_texture,
+                             gen_placeholder());
 }
 
 SFMLRenderer::~SFMLRenderer()
@@ -327,14 +330,17 @@ void SFMLRenderer::render_sprites(Registery& /*unused*/,
     if (!_sprite.has_value()) {
       _sprite.emplace(texture);
     }
-    
+
     _sprite.value().setTexture(texture);
-    
-    float scale_x = static_cast<float>(window_size.x * spr.scale.x) / texture.getSize().x;
-    float scale_y = static_cast<float>(window_size.y * spr.scale.y) / texture.getSize().y;
+
+    float scale_x =
+        static_cast<float>(window_size.x * spr.scale.x) / texture.getSize().x;
+    float scale_y =
+        static_cast<float>(window_size.y * spr.scale.y) / texture.getSize().y;
     float uniform_scale = std::min(scale_x, scale_y);
-    
-    _sprite->setOrigin(sf::Vector2f(texture.getSize().x / 2.0f, texture.getSize().y / 2.0f));
+
+    _sprite->setOrigin(
+        sf::Vector2f(texture.getSize().x / 2.0f, texture.getSize().y / 2.0f));
     _sprite.value().setScale(sf::Vector2f(uniform_scale, uniform_scale));
 
     sf::Vector2f new_pos(
@@ -357,10 +363,13 @@ void SFMLRenderer::render_text(Registery& /*unused*/,
     }
     _text.value().setFont(font);
     _text.value().setString(txt.text);
-    _text.value().setPosition(
-        sf::Vector2f(static_cast<float>(pos.x), static_cast<float>(pos.y)));
-    _text.value().setCharacterSize(
-        static_cast<unsigned int>(window_size.x * txt.scale.x));
+
+    sf::Vector2u window_size = _window.getSize();
+    sf::Vector2f new_pos(
+        static_cast<float>((pos.x + 1.0) * window_size.x / 2.0),
+        static_cast<float>((pos.y + 1.0) * window_size.y / 2.0));
+    _text.value().setPosition(new_pos);
+    _text.value().setCharacterSize(static_cast<unsigned int>(txt.scale.x));
     _window.draw(_text.value());
   }
 }

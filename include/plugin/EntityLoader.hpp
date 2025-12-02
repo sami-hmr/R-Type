@@ -2,9 +2,12 @@
 
 #include <memory>
 #include <string>
+#include <typeindex>
+#include <unordered_map>
 
 #include "CustomException.hpp"
 #include "Json/JsonParser.hpp"
+#include "TwoWayMap.hpp"
 #include "ecs/Registery.hpp"
 #include "plugin/IPlugin.hpp"
 #include "plugin/libLoaders/ILibLoader.hpp"

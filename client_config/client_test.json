@@ -1,0 +1,18 @@
+{
+  "plugins": [
+    "logger",
+    "client_network",
+    "cli"
+  ],
+  "entities": [
+    {
+      "logger:log": {
+        "name": "",
+        "level": "DEBUG"
+      }
+    },
+    {
+      "cli:CliComp": {}
+    }
+  ]
+}

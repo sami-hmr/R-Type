@@ -1,35 +1,32 @@
 #include <iostream>
+#include <iterator>
 #include <stdexcept>
 #include <variant>
 #include <vector>
 
 #include "Collision.hpp"
 
-#include "plugin/events/Events.hpp"
 #include "Logger.hpp"
 #include "algorithm/QuadTreeCollision.hpp"
 #include "ecs/Registery.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
+#include "plugin/Byte.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Collidable.hpp"
+#include "plugin/components/Damage.hpp"
+#include "plugin/components/Health.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Team.hpp"
 #include "plugin/components/Velocity.hpp"
-#include "plugin/components/Damage.hpp"
-#include "plugin/components/Health.hpp"
-
+#include "plugin/events/Events.hpp"
 
 Collision::Collision(Registery& r, EntityLoader& l)
-    : APlugin(
-          r,
-          l,
-          {"moving"},
-          {COMP_INIT(Collidable, init_collision)})
+    : APlugin(r, l, {"moving"}, {COMP_INIT(Collidable, init_collision)})
 {
-  _registery.get().register_component<Collidable>();
-  _registery.get().register_component<Team>();
+  _registery.get().register_component<Collidable>("collision:Collidable");
+  _registery.get().register_component<Team>("collision:Team");
 
-  _collision_algo = std::make_unique<QuadTreeCollision>(1920.0, 1080.0);
+  _collision_algo = std::make_unique<QuadTreeCollision>(2.0, 2.0);
 
   if (!_collision_algo) {
     LOGGER("COLLISION", LogLevel::ERROR, "Error loading collision algorithm")
@@ -51,7 +48,7 @@ void Collision::set_algorithm(std::unique_ptr<ICollisionAlgorithm> algo)
   _collision_algo = std::move(algo);
 }
 
-void Collision::init_collision(Registery::Entity const entity,
+void Collision::init_collision(Registery::Entity const& entity,
                                JsonVariant const& config)
 {
   try {
@@ -94,7 +91,9 @@ void Collision::collision_system(Registery& reg,
 
   std::size_t max_size = std::min(positions.size(), collidables.size());
   for (std::size_t i = 0; i < max_size; ++i) {
-    if (reg.has_component<Position>(i) && reg.has_component<Collidable>(i) && collidables[i]->is_active) {
+    if (reg.has_component<Position>(i) && reg.has_component<Collidable>(i)
+        && collidables[i]->is_active)
+    {
       entities.push_back(ICollisionAlgorithm::CollisionEntity {
           .entity_id = i,
           .bounds = Rect {.x = positions[i]->x,
@@ -122,15 +121,20 @@ void Collision::on_collision(const CollisionEvent& c)
   auto& positions = this->_registery.get().get_components<Position>();
   auto const& collidables = this->_registery.get().get_components<Collidable>();
 
-  bool both_solid = this->_registery.get().has_component<Collidable>(c.a) && this->_registery.get().has_component<Collidable>(c.b)
+  bool both_solid = this->_registery.get().has_component<Collidable>(c.a)
+      && this->_registery.get().has_component<Collidable>(c.b)
       && collidables[c.a]->collision_type == CollisionType::Solid
       && collidables[c.b]->collision_type == CollisionType::Solid;
 
   if (both_solid) {
     double dt = this->_registery.get().clock().delta_seconds();
-    if (this->_registery.get().has_component<Velocity>(c.a) && this->_registery.get().has_component<Position>(c.a)) {
-      positions[c.a]->x -= velocities[c.a]->speed_x * velocities[c.a]->dir_x * dt;
-      positions[c.a]->y -= velocities[c.a]->speed_y * velocities[c.a]->dir_y * dt;
+    if (this->_registery.get().has_component<Velocity>(c.a)
+        && this->_registery.get().has_component<Position>(c.a))
+    {
+      positions[c.a]->x -=
+          velocities[c.a]->speed_x * velocities[c.a]->dir_x * dt;
+      positions[c.a]->y -=
+          velocities[c.a]->speed_y * velocities[c.a]->dir_y * dt;
     }
   }
 }

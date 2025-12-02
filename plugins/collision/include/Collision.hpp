@@ -4,7 +4,6 @@
 #include <string>
 #include <vector>
 
-#include "plugin/events/Events.hpp"
 #include "ICollisionAlgorithm.hpp"
 #include "Json/JsonParser.hpp"
 #include "ecs/Registery.hpp"
@@ -15,6 +14,7 @@
 #include "plugin/components/Collidable.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Velocity.hpp"
+#include "plugin/events/Events.hpp"
 
 class Collision : public APlugin
 {
@@ -24,7 +24,7 @@ public:
   void set_algorithm(std::unique_ptr<ICollisionAlgorithm> algo);
 
 private:
-  void init_collision(Registery::Entity const entity,
+  void init_collision(Registery::Entity const& entity,
                       JsonVariant const& config);
 
   void collision_system(Registery& r,
