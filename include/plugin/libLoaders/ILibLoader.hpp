@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <optional>
 #include <string>
 
 #include "CustomException.hpp"
@@ -20,7 +21,9 @@ class LibLoader
 {
 public:
   virtual ~LibLoader() = default;
-  virtual std::unique_ptr<Module> get_instance(const std::string& entry_point,
-                                               Registery& r,
-                                               EntityLoader& e) = 0;
+  virtual std::unique_ptr<Module> get_instance(
+      const std::string& entry_point,
+      Registery& r,
+      EntityLoader& e,
+      std::optional<JsonObject> const& config) = 0;
 };

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <fstream>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
@@ -41,16 +42,16 @@ struct LogComponent
 class Logger : public APlugin
 {
 public:
-  Logger(Registery& r, EntityLoader& l);
+  Logger(Registery& r,
+         EntityLoader& l,
+         std::optional<JsonObject> const& config);
 
 private:
-  void init_log(Registery::Entity entity, JsonVariant const& config);
-
   void on_log_event(const LogEvent& event);
 
   static std::string get_timestamp();
   static std::string level_to_string(LogLevel level);
 
   std::ofstream _log_file;
-  const std::vector<std::string> depends_on;
+  LogLevel _min_log_level;
 };

@@ -5,6 +5,7 @@
 #include <chrono>
 #include <cstddef>
 #include <functional>
+#include <map>
 #include <queue>
 #include <random>
 #include <typeindex>
@@ -16,7 +17,9 @@
 #include "Clock.hpp"
 #include "SparseArray.hpp"
 #include "TwoWayMap.hpp"
+#include "ecs/Scenes.hpp"
 #include "ecs/Systems.hpp"
+#include "ecs/zipper/Zipper.hpp"
 #include "plugin/Byte.hpp"
 
 /**
@@ -317,6 +320,30 @@ public:
     }
   }
 
+  void add_scene(std::string const& scene_name, SceneState state)
+  {
+    _scenes.insert_or_assign(scene_name, state);
+  }
+
+  void init_scene_management() { this->register_component<Scene>("scene"); }
+
+  void setup_scene_systems()
+  {
+    for (const auto& [name, state] : _scenes) {
+      if (state == SceneState::MAIN) {
+        _current_scene = name;
+        break;
+      }
+    }
+  }
+
+  void set_current_scene(std::string const& scene_name)
+  {
+    _current_scene = scene_name;
+  }
+
+  std::string const& get_current_scene() const { return _current_scene; }
+
   Clock& clock() { return _clock; }
 
   const Clock& clock() const { return _clock; }
@@ -344,4 +371,6 @@ private:
   std::unordered_set<Entity> _entities_to_kill;
   Clock _clock;
   std::size_t _max = 0;
+  std::unordered_map<std::string, SceneState> _scenes;
+  std::string _current_scene;
 };

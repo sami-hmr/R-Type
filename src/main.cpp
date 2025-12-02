@@ -1,15 +1,15 @@
+#include <cstdint>
 #include <iostream>
 #include <optional>
 #include <string>
 #include <vector>
 
-#include "plugin/events/Events.hpp"
 #include "ecs/Registery.hpp"
+#include "ecs/Scenes.hpp"
 #include "plugin/EntityLoader.hpp"
+#include "plugin/components/Drawable.hpp"
+#include "plugin/events/Events.hpp"
 #include "plugin/libLoaders/ILibLoader.hpp"
-
-static constexpr int target_fps = 60;
-static constexpr int frame_time_ms = 1000 / target_fps;
 
 static int true_main(Registery& r,
                      EntityLoader& e,
@@ -26,9 +26,30 @@ static int true_main(Registery& r,
         std::cout << "Shutdown requested: " << event.reason << "\n";
       });
 
+  r.on<SceneChangeEvent>([&r](const SceneChangeEvent& event)
+                         { r.set_current_scene(event.target_scene); });
+
+  r.on<KeyPressedEvent>(
+      [&r](const KeyPressedEvent& event)
+      {
+        if (event.key_pressed.contains(Key::ENTER)
+            && event.key_pressed.at(Key::ENTER))
+        {
+          r.emit<SceneChangeEvent>("game", "User pressed ENTER");
+        }
+        if (event.key_pressed.contains(Key::R)
+            && event.key_pressed.at(Key::R)) {
+          r.emit<SceneChangeEvent>("menu", "User pressed R");
+        }
+      });
+
+  r.init_scene_management();
+
   for (auto const& i : argv) {
     e.load(i);
   }
+
+  r.setup_scene_systems();
 
   while (!should_exit) {
     r.run_systems();

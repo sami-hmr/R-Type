@@ -74,6 +74,10 @@ struct CliStart
 {
 };
 
+struct CliStop
+{
+};
+
 struct CliComp
 {
   CliComp() = default;
@@ -99,4 +103,10 @@ struct DamageEvent
   Registery::Entity target;
   Registery::Entity source;
   int amount;
+};
+
+struct SceneChangeEvent
+{
+  std::string target_scene;
+  std::string reason;
 };

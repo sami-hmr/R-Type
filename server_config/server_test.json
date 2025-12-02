@@ -1,15 +1,29 @@
 {
-  "plugins": ["server_network"],
-  "entities": [
+  "scenes": [
     {
-      "logger:log": {
-        "name": "",
-        "level": "DEBUG"
-      },
-      "cli:CliComp": {}
-    },
-    {
-      "moving:Position": { "x": 200.0, "y": 150.0 }
+      "name": "server",
+      "state": "main",
+      "plugins": [
+        {
+          "name": "logger",
+          "config": {
+            "level": "DEBUG"
+          }
+        },
+        {
+          "name": "cli",
+          "config": {}
+        },
+        {
+          "name": "server_network",
+          "config": {}
+        }
+      ],
+      "entities": [
+        {
+          "moving:Position": { "x": 0.0, "y": 0.0 }
+        }
+      ]
     }
   ]
 }

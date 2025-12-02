@@ -1,89 +1,135 @@
 {
-  "plugins": [
-    "logger",
-    "moving",
-    "sfml",
-    "life",
-    "collision",
-    "controller"
-  ],
-  "entities": [
+  "scenes": [
     {
-      "moving:Position": { "x": 0.0, "y": 0.0 },
-      "sfml:Drawable": {},
-      "moving:Velocity": {
-        "speed_x": 0.5,
-        "speed_y": 0.5,
-        "dir_x": 0.0,
-        "dir_y": 0.0
-      },
-      "sfml:Sprite": {
-        "texture": "assets/spaceship.png",
-        "size": {
-          "width": "20.0%",
-          "height": "20.0%"
+      "name": "menu",
+      "state": "main",
+      "plugins": [
+        {
+          "name": "logger",
+          "config": {
+            "level": "DEBUG"
+          }
         }
-      },
-      "collision:Collidable": {
-        "width": 0.1,
-        "height": 0.1,
-        "collision_type": "Solid"
-      },
-      "controller:Controllable": {
-        "UP": "Z",
-        "DOWN": "S",
-        "LEFT": "Q",
-        "RIGHT": "D"
-      },
-      "life:Health": { "current": 5, "max": 100 },
-      "life:Damage": { "amount": 1 },
-      "life:Heal": { "amount": 1 },
-      "life:Team": { "name": "test1" },
-      "logger:log": {
-        "name": "",
-        "level": "DEBUG"
-      }
-    },
-    {
-      "moving:Position": { "x": 0.5, "y": -0.3 },
-      "sfml:Drawable": {},
-      "sfml:Sprite": {
-        "texture": "assets/enemy.png",
-        "size": {
-          "width": "20.0%",
-          "height": "20.0%"
-        }
-      },
-      "collision:Collidable": {
-        "width": 0.1,
-        "height": 0.1,
-        "collision_type": "Solid"
-      },
-      "life:Health": { "current": 5, "max": 100 },
-      "life:Team": { "name": "test" },
-      "logger:log": {
-        "name": "",
-        "level": "DEBUG"
-      }
-    },
-    {
-      "moving:Position": {
-        "x": -0.8,
-        "y": -0.8
-      },
-      "sfml:Drawable": {},
-      "sfml:Text": {
-        "font": "assets/fonts/roboto.ttf",
-        "size": {
-          "width": 30.0,
-          "height": 30.0
+      ],
+      "entities": [
+        {
+          "moving:Position": {
+            "x": 0.0,
+            "y": -0.5
+          },
+          "sfml:Drawable": {},
+          "sfml:Text": {
+            "font": "assets/fonts/roboto.ttf",
+            "size": {
+              "width": 40.0,
+              "height": 40.0
+            },
+            "text": "R-TYPE MENU"
+          }
         },
-        "text": "Hello, World!"
-      },
-      "logger:log": {
-        "name": "",
-        "level": "DEBUG"
-      }
+        {
+          "moving:Position": {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "sfml:Drawable": {},
+          "sfml:Text": {
+            "font": "assets/fonts/roboto.ttf",
+            "size": {
+              "width": 30.0,
+              "height": 30.0
+            },
+            "text": "Press ENTER to start game"
+          }
+        },
+        {
+          "moving:Position": {
+            "x": 0.0,
+            "y": 0.3
+          },
+          "sfml:Drawable": {},
+          "sfml:Text": {
+            "font": "assets/fonts/roboto.ttf",
+            "size": {
+              "width": 25.0,
+              "height": 25.0
+            },
+            "text": "Press R to return to menu"
+          }
+        }
+      ]
+    },
+    {
+      "name": "game",
+      "state": "disabled",
+      "plugins": [],
+      "entities": [
+        {
+          "moving:Position": { "x": 0.0, "y": 0.0 },
+          "sfml:Drawable": {},
+          "moving:Velocity": {
+            "speed_x": 0.5,
+            "speed_y": 0.5,
+            "dir_x": 0.0,
+            "dir_y": 0.0
+          },
+          "sfml:Sprite": {
+            "texture": "assets/spaceship.png",
+            "size": {
+              "width": "20.0%",
+              "height": "20.0%"
+            }
+          },
+          "collision:Collidable": {
+            "width": 0.1,
+            "height": 0.1,
+            "collision_type": "Solid"
+          },
+          "controller:Controllable": {
+            "UP": "Z",
+            "DOWN": "S",
+            "LEFT": "Q",
+            "RIGHT": "D"
+          },
+          "life:Health": { "current": 5, "max": 100 },
+          "life:Damage": { "amount": 1 },
+          "life:Heal": { "amount": 1 },
+          "life:Team": { "name": "test1" }
+        },
+        {
+          "moving:Position": { "x": 0.5, "y": -0.3 },
+          "sfml:Drawable": {},
+          "sfml:Sprite": {
+            "texture": "assets/enemy.png",
+            "size": {
+              "width": "20.0%",
+              "height": "20.0%"
+            }
+          },
+          "collision:Collidable": {
+            "width": 0.1,
+            "height": 0.1,
+            "collision_type": "Solid"
+          },
+          "life:Health": { "current": 5, "max": 100 },
+          "life:Team": { "name": "test" }
+        },
+        {
+          "moving:Position": {
+            "x": -0.8,
+            "y": -0.8
+          },
+          "sfml:Drawable": {},
+          "sfml:Text": {
+            "font": "assets/fonts/roboto.ttf",
+            "size": {
+              "width": 30.0,
+              "height": 30.0
+            },
+            "text": "Hello, World!"
+          }
+        }
+      ]
     }
   ]
 }

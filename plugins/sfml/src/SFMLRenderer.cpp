@@ -78,6 +78,19 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
   _registery.get().register_component<Sprite>("sfml:Sprite");
   _registery.get().register_component<Text>("sfml:Text");
 
+  _registery.get().add_system<Scene, Drawable>(
+      [this](Registery&,
+             SparseArray<Scene>& scenes,
+             SparseArray<Drawable>& drawables)
+      {
+        for (auto&& [scene, drawable] : Zipper(scenes, drawables)) {
+          drawable.enabled =
+              (scene.scene_name == _registery.get().get_current_scene()
+               || scene.state == SceneState::ACTIVE);
+        }
+      },
+      0);
+
   _registery.get().add_system<>([this](Registery&) { this->handle_events(); },
                                 1);
   _registery.get().add_system<>([this](Registery&)
@@ -175,7 +188,6 @@ static Vector2D parse_vector2d(JsonVariant const& variant)
       double y = std::stod(y_percentage) / 100.0;
       return {x, y};
     } catch (std::bad_variant_access const&) {
-      // std::cout << "test" << std::endl;
       return {10 / 100.0, 15 / 100.0};
     }
   }
@@ -223,9 +235,7 @@ void SFMLRenderer::init_text(Registery::Entity const entity,
       throw std::out_of_range("size");
       return;
     }
-    scale = parse_vector2d(
-        obj.at("size")
-            .value);  // la scale est en pourcentage de la taille de la window
+    scale = parse_vector2d(obj.at("size").value);
     std::string text;
     if (!obj.contains("text")) {
       throw std::out_of_range("text");
@@ -324,6 +334,10 @@ void SFMLRenderer::render_sprites(Registery& /*unused*/,
                                   const SparseArray<Sprite>& sprites)
 {
   for (auto&& [pos, draw, spr] : Zipper(positions, drawable, sprites)) {
+    if (!draw.enabled) {
+      continue;
+    }
+
     sf::Texture& texture = load_texture(spr.texture_path);
     sf::Vector2u window_size = _window.getSize();
 
@@ -357,6 +371,10 @@ void SFMLRenderer::render_text(Registery& /*unused*/,
                                const SparseArray<Text>& texts)
 {
   for (auto&& [pos, draw, txt] : Zipper(positions, drawable, texts)) {
+    if (!draw.enabled) {
+      continue;
+    }
+
     sf::Font& font = load_font(txt.font_path);
     if (!_text.has_value()) {
       _text.emplace(font);
