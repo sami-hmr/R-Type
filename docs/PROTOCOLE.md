@@ -206,21 +206,15 @@ Time  Client                          Server
 
 All server-to-client packets begin with a 32-bit sequence number in little-endian format. If this sequence equals 0x67676767, the packet is connectionless (see section 1). Otherwise, the packet follows the connected format below.
 
+PACKETS are always smaller than 2048 (eof and header included) otherwise the package is considered fragmented, another package with the same sequence will be sent until end of content byte is 1.
+
 **Header:**
 <!-- Sequence_Number:32;Reliable_Acknowledge:32 -->
-```
- 0                   1                   2                   3
- 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| Sequence_Number:32                                            |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| Reliable_Acknowledge:32                                       |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-```
 
 Fields:
 - Sequence Number (32 bits): Incrementing packet sequence (starts at 1, wraps at 2^32)
 - Reliable Acknowledge (32 bits): Highest cli_command sequence number received from this client
+- End of content (8 bits): (0/1), cf previous warning about packet size
 
 The Reliable Acknowledge field tells the client which commands have been successfully received. The client can stop retransmitting any cli_command with sequence <= Reliable Acknowledge.
 

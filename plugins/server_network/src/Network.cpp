@@ -90,7 +90,7 @@ void NetworkServer::launch_server(ServerLaunching const& s)
 
 void NetworkServer::receive_loop()
 {
-  std::array<char, 2048> recv_buf {};
+  std::array<char, BUFFER_SIZE> recv_buf {};
   asio::ip::udp::endpoint sender_endpoint;
 
   while (_running) {
@@ -100,7 +100,7 @@ void NetworkServer::receive_loop()
           _socket->receive_from(asio::buffer(recv_buf), sender_endpoint, 0, ec);
 
       if (ec == asio::error::would_block) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_DURATION));
         continue;
       }
 
@@ -113,7 +113,7 @@ void NetworkServer::receive_loop()
         break;
       }
 
-      if (len < 4) {
+      if (len < MAGIC_LENGTH) {
         continue;
       }
 
@@ -121,7 +121,7 @@ void NetworkServer::receive_loop()
       std::memcpy(&magic, recv_buf.data(), sizeof(uint32_t));
 
       if (magic == MAGIC_SEQUENCE) {
-        std::string command(recv_buf.data() + 4, len - 4);
+        std::string command(recv_buf.data() + MAGIC_LENGTH, len - MAGIC_LENGTH);
         if (!command.empty() && command.back() == '\0') {
           command.pop_back();
         }
@@ -168,21 +168,22 @@ void NetworkServer::handle_connectionless_packet(
 void NetworkServer::send_connectionless(const std::string& response,
                                         const asio::ip::udp::endpoint& endpoint)
 {
+  std::size_t length = response.size();
   std::vector<char> packet;
-  packet.resize(4 + response.size() + 1);
+  packet.resize(MAGIC_LENGTH + length + 1);
 
   uint32_t magic = MAGIC_SEQUENCE;
   std::memcpy(packet.data(), &magic, sizeof(uint32_t));
 
-  std::memcpy(packet.data() + 4, response.c_str(), response.size());
-  packet[4 + response.size()] = '\0';
+  std::memcpy(packet.data() + MAGIC_LENGTH, response.c_str(), length);
+  packet[MAGIC_LENGTH + length] = '\0';
 
   _socket->send_to(asio::buffer(packet), endpoint);
 
   LOGGER("server", LogLevel::DEBUG, std::format("Sent: '{}'", response));
 }
 
-void NetworkServer::handle_getinfo(const std::vector<std::string>& args,
+void NetworkServer::handle_getinfo(const std::vector<std::string>& UNUSED args,
                                    const asio::ip::udp::endpoint& sender)
 {
   std::ostringstream oss;
@@ -193,7 +194,7 @@ void NetworkServer::handle_getinfo(const std::vector<std::string>& args,
   send_connectionless(oss.str(), sender);
 }
 
-void NetworkServer::handle_getstatus(const std::vector<std::string>& args,
+void NetworkServer::handle_getstatus(const std::vector<std::string>& UNUSED args,
                                      const asio::ip::udp::endpoint& sender)
 {
   std::ostringstream oss;
@@ -209,7 +210,7 @@ void NetworkServer::handle_getstatus(const std::vector<std::string>& args,
   send_connectionless(oss.str(), sender);
 }
 
-void NetworkServer::handle_getchallenge(const std::vector<std::string>& args,
+void NetworkServer::handle_getchallenge(const std::vector<std::string>& UNUSED args,
                                         const asio::ip::udp::endpoint& sender)
 {
   uint32_t challenge = generate_challenge();
@@ -247,7 +248,7 @@ void NetworkServer::handle_connect(const std::vector<std::string>& args,
   uint32_t challenge = std::stoul(args[2]);
   std::string player_name = args[3];
 
-  if (protocol_version != 1) {
+  if (protocol_version != CURRENT_PROTOCOL_VERSION) {
     send_connectionless("disconnect;Protocol version mismatch", sender);
     return;
   }

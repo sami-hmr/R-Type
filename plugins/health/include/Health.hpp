@@ -3,15 +3,32 @@
 #include <string>
 #include <vector>
 
+#include "ByteParser/ByteParser.hpp"
 #include "Json/JsonParser.hpp"
 #include "ecs/Registery.hpp"
 #include "plugin/APlugin.hpp"
+#include "plugin/Byte.hpp"
 #include "plugin/EntityLoader.hpp"
 
 struct HealthComponent
 {
-  int current;
-  int max;
+  HealthComponent() = default;
+
+  HealthComponent(int c, int m)
+      : current(c)
+      , max(m)
+  {
+  }
+
+  DEFAULT_BYTE_CONSTRUCTOR(HealthComponent,
+                           ([](int c, int m)
+                            { return (HealthComponent) {c, m}; }),
+                           parseByte<int>(),
+                           parseByte<int>())
+  DEFAULT_SERIALIZE(type_to_byte(this->current), type_to_byte(this->max))
+
+  int current = 0;
+  int max = 0;
 };
 
 struct DamageEvent

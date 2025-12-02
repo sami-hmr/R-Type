@@ -32,6 +32,13 @@ private:
 };
 
 #define CUSTOM_EXCEPTION(name) \
-    class name : public CustomException{ public: explicit name(const std::string& message) : CustomException(message){} };
+  class name : public CustomException \
+  { \
+  public: \
+    explicit name(const std::string& message) \
+        : CustomException(message) \
+    { \
+    } \
+  };
 
 #endif

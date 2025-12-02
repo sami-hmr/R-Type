@@ -40,6 +40,7 @@ set(CORE_LIB r-type_core)
 add_library(${CORE_LIB} STATIC
     src/plugins/APlugin.cpp
     src/plugins/EntityLoader.cpp
+    src/plugins/Byte.cpp
 )
 
 target_include_directories(${CORE_LIB}
@@ -79,3 +80,4 @@ if(r-type_DEVELOPER_MODE)
 endif()
 
 add_subdirectory(plugins)
+add_subdirectory(lib)

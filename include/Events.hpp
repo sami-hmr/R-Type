@@ -4,6 +4,10 @@
 #include <map>
 #include <optional>
 #include <string>
+#include "plugin/Byte.hpp"
+#include "ParserUtils.hpp"
+
+#include "ecs/Registery.hpp"
 
 struct ShutdownEvent
 {
@@ -70,4 +74,13 @@ struct CliStop
 
 struct CliComp
 {
+    CliComp() = default;
+    EMPTY_BYTE_CONSTRUCTOR(CliComp)
+    DEFAULT_SERIALIZE(ByteArray{})
+};
+
+struct CollisionEvent
+{
+  Registery::Entity a;
+  Registery::Entity b;
 };

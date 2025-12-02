@@ -10,7 +10,9 @@
 #include <asio/ip/udp.hpp>
 #include "plugin/Byte.hpp"
 
-template<std::size_t Size = 256>
+#define SIZE 256
+
+template<std::size_t Size = SIZE>
 class CircularBuffer {
     public:
     using Package = std::vector<Byte>;
@@ -18,6 +20,14 @@ class CircularBuffer {
 
     std::size_t read_socket(asio::ip::udp::socket &socket) {
         std::size_t read_size = asio::read(socket,
+            this->_array.data() + this->_write, asio::transfer_exactly(this->get_write_size()));
+
+        this->_write = (this->_write + read_size) % Size;
+        return read_size;
+    }
+
+    std::size_t read_endpoint(asio::ip::udp::endpoint &endpoint) {
+        std::size_t read_size = asio::read(endpoint,
             this->_array.data() + this->_write, asio::transfer_exactly(this->get_write_size()));
 
         this->_write = (this->_write + read_size) % Size;
