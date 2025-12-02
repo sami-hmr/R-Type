@@ -33,6 +33,10 @@ public:
                SparseArray<Position>& pos,
                const SparseArray<Velocity>& vel)
         { this->moving_system(r, pos, vel); });
+      this->_registery.get().on<CollisionEvent>([this](const CollisionEvent &c){
+        this->_registery.get().remove_component<Velocity>(c.a);
+        this->_registery.get().remove_component<Velocity>(c.b);
+      });
   }
 
 private:

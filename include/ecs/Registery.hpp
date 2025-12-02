@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <any>
+#include <chrono>
 #include <cstddef>
 #include <functional>
 #include <queue>
@@ -22,23 +23,8 @@ public:
   using Entity = std::size_t;
   using HandlerId = std::size_t;
 
-  template<class Component>
-  SparseArray<Component>& register_component(
-      std::string const& string_id,
-      std::function<void(Entity const&,
-                         SparseArray<Component>&,
-                         ByteArray const&)> emplace_function =
-          [](Entity const& e,
-             SparseArray<Component>& comp,
-             ByteArray const& bytes)
-      {
-        if (sizeof(Component) <= bytes.size()) {
-          comp.insert_at(e, *reinterpret_cast<Component const*>(bytes.data()));
-        } else {
-          std::cerr << "error loading comp, sizeof = " << sizeof(Component)
-                    << ", size = " << bytes.size() << '\n';
-        }
-      })
+  template<bytable Component>
+  SparseArray<Component>& register_component(std::string const& string_id)
   {
     std::type_index ti(typeid(Component));
 
@@ -49,9 +35,23 @@ public:
         ti, [&comp](Entity const& e) { comp.erase(e); });
     this->_emplace_functions.insert_or_assign(
         ti,
-        [&comp, emplace_function](Entity const& e, ByteArray const& bytes)
-        { emplace_function(e, comp, bytes); });
+        [&comp](Entity const& e, ByteArray const& bytes)
+        { comp.insert_at(e, bytes); });
     this->_index_getter.insert(ti, string_id);
+    return comp;
+  }
+
+  // Overload for non-bytable components (for testing)
+  template<class Component>
+  SparseArray<Component>& register_component()
+  {
+    std::type_index ti(typeid(Component));
+
+    this->_components.insert_or_assign(ti, SparseArray<Component>());
+    SparseArray<Component>& comp = this->get_components<Component>();
+
+    this->_delete_functions.insert_or_assign(
+        ti, [&comp](Entity const& e) { comp.erase(e); });
     return comp;
   }
 
@@ -107,7 +107,7 @@ public:
   }
 
   void emplace_component(Entity const& to,
-                         std::string const &string_id,
+                         std::string const& string_id,
                          ByteArray const& bytes)
   {
     this->_emplace_functions.at(this->_index_getter.at(string_id))(to, bytes);

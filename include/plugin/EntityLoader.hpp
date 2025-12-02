@@ -19,19 +19,16 @@ public:
 
   void load(std::string const& directory);
 
-
   void load_file(std::string const& filepath);
-
 
   void load_entity(JsonObject const& config);
 
-  void load_plugin(std::string const &plugin);
+  void load_plugin(std::string const& plugin);
 
 private:
   void get_loader(std::string const& plugin);
 
-  std::unordered_map<std::string, std::unique_ptr<LibLoader<IPlugin>>>
-      _loaders;
+  std::unordered_map<std::string, std::unique_ptr<LibLoader<IPlugin>>> _loaders;
   std::unordered_map<std::string, std::unique_ptr<IPlugin>> _plugins;
   std::reference_wrapper<Registery> _registery;
 };
