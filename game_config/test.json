@@ -1,23 +1,72 @@
 {
   "entities": [
     {
-      "moving:Position": { "x": 300.0, "y": 250.0 },
+      "moving:Position": {
+        "x": 300.0,
+        "y": 250.0
+      },
       "sfml:Drawable": {},
-      "sfml:Sprite": { "texture": "assets/spaceship.png" },
-      "collision:Collidable": { "width": 10.0, "height": 10.0 }
+      "sfml:Sprite": {
+        "texture": "assets/spaceship.png"
+      },
+      "collision:Collidable": {
+        "width": 10.0,
+        "height": 10.0
+      }
     },
     {
-      "moving:Position": { "x": 400.0, "y": 150.0 },
-      "moving:Velocity": { "x": 1.0, "y": 1.0 },
+      "moving:Position": {
+        "x": 400.0,
+        "y": 150.0
+      },
+      "moving:Velocity": {
+        "x": 0.0,
+        "y": 0.0
+      },
       "sfml:Drawable": {},
-      "sfml:Sprite": { "texture": "assets/enemy.png" }
+      "sfml:Sprite": {
+        "texture": "assets/enemy.png",
+        "size": {
+          "width": "20.0%",
+          "height": "20.0%"
+        }
+      }
     },
     {
-      "moving:Position": { "x": 200.0, "y": 150.0 },
-      "moving:Velocity": { "x": 1.0, "y": 1.0 },
+      "moving:Position": {
+        "x": 200.0,
+        "y": 150.0
+      },
+      "moving:Velocity": {
+        "x": 1.0,
+        "y": 1.0
+      },
       "sfml:Drawable": {},
-      "sfml:Sprite": { "texture": "assets/enemy.png" },
-      "collision:Collidable": { "width": 10.0, "height": 10.0 }
+      "sfml:Sprite": {
+        "texture": "assets/enemy.png"
+      },
+      "collision:Collidable": {
+        "width": 10.0,
+        "height": 10.0
+      }
+    },
+    {
+      "moving:Position": {
+        "x": 100.0,
+        "y": 50.0
+      },
+      "sfml:Drawable": {},
+      "sfml:Text": {
+        "font": "assets/fonts/roboto.ttf",
+        "size": {
+          "width": 0.05,
+          "height": 0.05
+        },
+        "text": "Hello, World!"
+      },
+      "logger:log": {
+        "name": "test"
+      }
     }
   ]
 }

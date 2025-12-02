@@ -19,7 +19,7 @@ class APlugin : public IPlugin
 public:
   APlugin(Registery& registery,
           EntityLoader& loader,
-          std::vector<std::string> const &depends_on,
+          std::vector<std::string> const& depends_on,
           std::unordered_map<
               std::string,
               std::function<void(Registery::Entity, JsonVariant const&)>>

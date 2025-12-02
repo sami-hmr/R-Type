@@ -26,3 +26,11 @@ docs/Doxyfile
 rtype.log
 vcpkg
 .cache
+*.a
+
+docs/html
+docs/xml
+docs/Doxyfile
+triplets
+activate.sh
+include/Vector2D.hpp
