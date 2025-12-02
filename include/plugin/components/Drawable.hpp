@@ -1,8 +1,7 @@
 #pragma once
 
-#include "ParserTypes.hpp"
-#include "ParserUtils.hpp"
 #include "plugin/Byte.hpp"
+#include "ParserUtils.hpp"
 
 struct Drawable
 {
