@@ -13,19 +13,19 @@
 #include "ecs/zipper/Zipper.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
+#include "plugin/components/Controllable.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Velocity.hpp"
 
-class Moving : public APlugin
+class Controller : public APlugin
 {
 public:
-  Moving(Registery& r, EntityLoader& l);
+  Controller(Registery& r, EntityLoader& l);
 
 private:
-  void init_pos(Registery::Entity const entity, JsonVariant const& config);
-  void init_velocity(Registery::Entity const entity, JsonVariant const& config);
+  void init_controller(Registery::Entity const entity,
+                       JsonVariant const& config);
 
-  void moving_system(Registery&,
-                     SparseArray<Position>& positions,
-                     const SparseArray<Velocity>& velocities);
+  std::optional<Key> char_to_key(char c);
+  void handle_key_change(Key key, bool is_pressed);
 };
