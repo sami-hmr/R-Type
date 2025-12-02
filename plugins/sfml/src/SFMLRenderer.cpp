@@ -331,8 +331,6 @@ void SFMLRenderer::render_sprites(Registery& /*unused*/,
       _sprite.emplace(texture);
     }
 
-    _sprite.value().setPosition(
-        sf::Vector2f(static_cast<float>(pos.x), static_cast<float>(pos.y)));
     _sprite.value().setTexture(texture);
 
     float scale_x =
@@ -341,7 +339,14 @@ void SFMLRenderer::render_sprites(Registery& /*unused*/,
         static_cast<float>(window_size.y * spr.scale.y) / texture.getSize().y;
     float uniform_scale = std::min(scale_x, scale_y);
 
+    _sprite->setOrigin(
+        sf::Vector2f(texture.getSize().x / 2.0f, texture.getSize().y / 2.0f));
     _sprite.value().setScale(sf::Vector2f(uniform_scale, uniform_scale));
+
+    sf::Vector2f new_pos(
+        static_cast<float>((pos.x + 1.0) * window_size.x / 2.0),
+        static_cast<float>((pos.y + 1.0) * window_size.y / 2.0));
+    _sprite.value().setPosition(new_pos);
     _window.draw(_sprite.value());
   }
 }
@@ -358,10 +363,13 @@ void SFMLRenderer::render_text(Registery& /*unused*/,
     }
     _text.value().setFont(font);
     _text.value().setString(txt.text);
-    _text.value().setPosition(
-        sf::Vector2f(static_cast<float>(pos.x), static_cast<float>(pos.y)));
-    _text.value().setCharacterSize(
-        static_cast<unsigned int>(window_size.x * txt.scale.x));
+
+    sf::Vector2u window_size = _window.getSize();
+    sf::Vector2f new_pos(
+        static_cast<float>((pos.x + 1.0) * window_size.x / 2.0),
+        static_cast<float>((pos.y + 1.0) * window_size.y / 2.0));
+    _text.value().setPosition(new_pos);
+    _text.value().setCharacterSize(static_cast<unsigned int>(txt.scale.x));
     _window.draw(_text.value());
   }
 }

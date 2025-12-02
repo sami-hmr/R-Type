@@ -26,7 +26,7 @@ Collision::Collision(Registery& r, EntityLoader& l)
   _registery.get().register_component<Collidable>("collision:Collidable");
   _registery.get().register_component<Team>("collision:Team");
 
-  _collision_algo = std::make_unique<QuadTreeCollision>(1920.0, 1080.0);
+  _collision_algo = std::make_unique<QuadTreeCollision>(2.0, 2.0);
 
   if (!_collision_algo) {
     LOGGER("COLLISION", LogLevel::ERROR, "Error loading collision algorithm")
