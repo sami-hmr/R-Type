@@ -7,21 +7,36 @@
 #include "ByteParser/ByteParser.hpp"
 #include "plugin/Byte.hpp"
 
+enum class CollisionType
+{
+  Solid,
+  Trigger
+};
+
 struct Collidable
 {
   Collidable() = default;
 
-  Collidable(double width, double height)
-      : width(width)
-      , height(height)
+  Collidable(double w,
+             double h,
+             CollisionType type = CollisionType::Solid,
+             bool active = true)
+      : width(w)
+      , height(h)
+      , collision_type(type)
+      , is_active(active)
   {
   }
 
-  Collidable(double width,
-             double height,
-             std::vector<std::string> const& exclude)
-      : width(width)
-      , height(height)
+  Collidable(double w,
+             double h,
+             CollisionType type,
+             bool active,
+             const std::vector<std::string>& exclude)
+      : width(w)
+      , height(h)
+      , collision_type(type)
+      , is_active(active)
       , exclude_entities(exclude)
   {
   }
@@ -31,11 +46,12 @@ struct Collidable
       (
           [](double x, double y, std::vector<std::vector<char>> const& excludes)
           {
-            std::vector<std::string> r(excludes.size());
+            std::vector<std::string> r;
+            r.reserve(excludes.size());
             for (auto const& it : excludes) {
               r.emplace_back(it.begin(), it.end());
             }
-            return Collidable(x, y, r);
+            return Collidable(x, y, CollisionType::Solid, true, r);
           }),
       parseByte<double>(),
       parseByte<double>(),
@@ -47,5 +63,7 @@ struct Collidable
 
   double width = 0.0;
   double height = 0.0;
+  CollisionType collision_type = CollisionType::Solid;
+  bool is_active = true;
   std::vector<std::string> exclude_entities;
 };

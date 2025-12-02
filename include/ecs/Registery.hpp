@@ -9,9 +9,11 @@
 #include <random>
 #include <typeindex>
 #include <unordered_map>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 
+#include "Clock.hpp"
 #include "SparseArray.hpp"
 #include "TwoWayMap.hpp"
 #include "ecs/Systems.hpp"
@@ -65,29 +67,46 @@ public:
   template<class Component>
   SparseArray<Component> const& get_components() const
   {
-    return std::any_cast<SparseArray<Component>&>(
+    return std::any_cast<const SparseArray<Component>&>(
         this->_components.at(std::type_index(typeid(Component))));
+  }
+
+  template<class Component>
+  bool has_component(const Entity& e) const
+  {
+    SparseArray<Component> const& comp = this->get_components<Component>();
+    return (e < comp.size() && comp[e].has_value());
   }
 
   Entity spawn_entity()
   {
     Entity to_return = 0;
-    if (this->_dead_entites.empty()) {
+    if (this->_dead_entities.empty()) {
       to_return = this->_max;
       this->_max += 1;
     } else {
-      to_return = this->_dead_entites.front();
-      this->_dead_entites.pop();
+      to_return = this->_dead_entities.front();
+      this->_dead_entities.pop();
     }
     return to_return;
   }
 
-  void kill_entity(Entity const& e)
+  void kill_entity(Entity const& e) { _entities_to_kill.insert(e); }
+
+  bool is_entity_dying(Entity const& e) const
   {
-    for (auto const& [_, f] : this->_delete_functions) {
-      f(e);
+    return _entities_to_kill.find(e) != _entities_to_kill.end();
+  }
+
+  void process_entity_deletions()
+  {
+    for (auto const& e : _entities_to_kill) {
+      for (auto const& [_, f] : this->_delete_functions) {
+        f(e);
+      }
+      this->_dead_entities.push(e);
     }
-    this->_dead_entites.push(e);
+    _entities_to_kill.clear();
   }
 
   template<typename Component>
@@ -132,9 +151,12 @@ public:
 
   void run_systems()
   {
+    this->clock().tick();
+
     for (auto const& f : this->_frequent_systems) {
       f();
     }
+    process_entity_deletions();
   }
 
   template<typename EventType>
@@ -206,6 +228,10 @@ public:
     }
   }
 
+  Clock& clock() { return _clock; }
+
+  const Clock& clock() const { return _clock; }
+
 private:
   static HandlerId generate_uuid()
   {
@@ -225,6 +251,8 @@ private:
 
   std::unordered_map<std::type_index, std::any> _event_handlers;
   std::vector<System<>> _frequent_systems;
-  std::queue<Entity> _dead_entites;
+  std::queue<Entity> _dead_entities;
+  std::unordered_set<Entity> _entities_to_kill;
+  Clock _clock;
   std::size_t _max = 0;
 };

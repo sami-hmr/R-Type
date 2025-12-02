@@ -4,10 +4,10 @@
 #include <map>
 #include <optional>
 #include <string>
-#include "plugin/Byte.hpp"
-#include "ParserUtils.hpp"
 
+#include "ParserUtils.hpp"
 #include "ecs/Registery.hpp"
+#include "plugin/Byte.hpp"
 
 struct ShutdownEvent
 {
@@ -58,9 +58,15 @@ enum class Key : std::uint8_t
   SPACE,
 };
 
-struct KeyPressed
+struct KeyPressedEvent
 {
   std::map<Key, bool> key_pressed;
+  std::optional<std::string> key_unicode;
+};
+
+struct KeyReleasedEvent
+{
+  std::map<Key, bool> key_released;
   std::optional<std::string> key_unicode;
 };
 
@@ -70,13 +76,27 @@ struct CliStart
 
 struct CliComp
 {
-    CliComp() = default;
-    EMPTY_BYTE_CONSTRUCTOR(CliComp)
-    DEFAULT_SERIALIZE(ByteArray{})
+  CliComp() = default;
+  EMPTY_BYTE_CONSTRUCTOR(CliComp)
+  DEFAULT_SERIALIZE(ByteArray {})
 };
 
 struct CollisionEvent
 {
   Registery::Entity a;
   Registery::Entity b;
+};
+
+struct HealEvent
+{
+  Registery::Entity target;
+  Registery::Entity source;
+  int amount;
+};
+
+struct DamageEvent
+{
+  Registery::Entity target;
+  Registery::Entity source;
+  int amount;
 };

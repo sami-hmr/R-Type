@@ -24,6 +24,7 @@
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Sprite.hpp"
 #include "plugin/components/Text.hpp"
+#include "plugin/events/Events.hpp"
 
 class SFMLRenderer : public APlugin
 {
@@ -37,24 +38,26 @@ public:
   static constexpr std::string placeholder_texture = "placeholder ";
 
 private:
-  sf::Texture &load_texture(std::string const& path);
-  sf::Font &load_font(std::string const& path);
+  sf::Texture& load_texture(std::string const& path);
+  sf::Font& load_font(std::string const& path);
 
-  void init_drawable(Registery::Entity const entity, JsonVariant const &config);
-  void init_sprite(Registery::Entity const entity, JsonVariant const &config);
-  void init_text(Registery::Entity const entity, JsonVariant const &config);
+  void init_drawable(Registery::Entity const entity, JsonVariant const& config);
+  void init_sprite(Registery::Entity const entity, JsonVariant const& config);
+  void init_text(Registery::Entity const entity, JsonVariant const& config);
 
   void handle_events();
-  void handle_window();
   void handle_resize();
   void render_sprites(Registery& r,
-                      SparseArray<Position> positions,
-                      SparseArray<Drawable> drawable,
-                      SparseArray<Sprite> sprites);
+                      const SparseArray<Position>& positions,
+                      const SparseArray<Drawable>& drawable,
+                      const SparseArray<Sprite>& sprites);
   void render_text(Registery& r,
-                   SparseArray<Position> positions,
-                   SparseArray<Drawable> drawable,
-                   SparseArray<Text> texts);
+                   const SparseArray<Position>& positions,
+                   const SparseArray<Drawable>& drawable,
+                   const SparseArray<Text>& texts);
+  void display();
+
+  std::optional<Key> sfml_key_to_key(sf::Keyboard::Key sfml_key);
 
   sf::RenderWindow _window;
   std::chrono::time_point<std::chrono::high_resolution_clock> _last_update;
@@ -65,5 +68,6 @@ private:
   std::optional<sf::Sprite> _sprite;
   std::optional<sf::Text> _text;
 
-  const std::vector<std::string> depends_on = {"moving"};
+  KeyPressedEvent _key_pressed;
+  KeyReleasedEvent _key_released;
 };

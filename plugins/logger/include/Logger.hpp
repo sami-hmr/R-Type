@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "BaseTypes.hpp"
-#include "Events.hpp"
+#include "ByteParser/ByteParser.hpp"
 #include "Json/JsonParser.hpp"
 #include "ParserTypes.hpp"
 #include "Rest.hpp"
@@ -14,17 +14,19 @@
 #include "plugin/APlugin.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/EntityLoader.hpp"
-#include "ByteParser/ByteParser.hpp"
+#include "plugin/events/Events.hpp"
 
 struct LogComponent
 {
   LogComponent() = default;
-  DEFAULT_BYTE_CONSTRUCTOR(LogComponent,
-                           ([](std::vector<char> name, LogLevel level) {
-                               return LogComponent(std::string(name.begin(), name.end()), level);
-                           }),
-                           parseByteArray(parseAnyChar()), parseByte<LogLevel>())
-  DEFAULT_SERIALIZE(string_to_byte(this->name), type_to_byte((uint8_t)this->level))
+  DEFAULT_BYTE_CONSTRUCTOR(
+      LogComponent,
+      ([](std::vector<char> name, LogLevel level)
+       { return LogComponent(std::string(name.begin(), name.end()), level); }),
+      parseByteArray(parseAnyChar()),
+      parseByte<LogLevel>())
+  DEFAULT_SERIALIZE(string_to_byte(this->name),
+                    type_to_byte((uint8_t)this->level))
 
   LogComponent(std::string name, LogLevel level = LogLevel::INFO)
       : name(std::move(name))

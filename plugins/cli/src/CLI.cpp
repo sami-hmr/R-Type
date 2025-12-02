@@ -8,9 +8,9 @@
 #include "CLI.hpp"
 
 #include "ClientConnection.hpp"
-#include "Events.hpp"
 #include "ServerLaunch.hpp"
 #include "plugin/APlugin.hpp"
+#include "plugin/events/Events.hpp"
 
 CLI::CLI(Registery& r, EntityLoader& l)
     : APlugin(r,
