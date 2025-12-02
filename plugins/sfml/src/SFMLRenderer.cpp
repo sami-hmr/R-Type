@@ -260,15 +260,19 @@ void SFMLRenderer::render_sprites(Registery& /*unused*/,
       _sprite.emplace(texture);
     }
     
-    _sprite.value().setPosition(
-        sf::Vector2f(static_cast<float>(pos.x), static_cast<float>(pos.y)));
     _sprite.value().setTexture(texture);
     
     float scale_x = static_cast<float>(window_size.x * spr.scale.x) / texture.getSize().x;
     float scale_y = static_cast<float>(window_size.y * spr.scale.y) / texture.getSize().y;
     float uniform_scale = std::min(scale_x, scale_y);
     
+    _sprite->setOrigin(sf::Vector2f(texture.getSize().x / 2.0f, texture.getSize().y / 2.0f));
     _sprite.value().setScale(sf::Vector2f(uniform_scale, uniform_scale));
+
+    sf::Vector2f new_pos(
+        static_cast<float>((pos.x + 1.0) * window_size.x / 2.0),
+        static_cast<float>((pos.y + 1.0) * window_size.y / 2.0));
+    _sprite.value().setPosition(new_pos);
     _window.draw(_sprite.value());
   }
 }
