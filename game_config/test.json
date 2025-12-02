@@ -10,7 +10,6 @@
         "dir_y": 0.0
       },
       "sfml:Sprite": {
-        "texture": "assets/enemy.png",
         "size": {
           "width": "20.0%",
           "height": "20.0%"
