@@ -17,19 +17,21 @@ Moving::Moving(Registery& r, EntityLoader& l)
       [this](Registery& r,
              SparseArray<Position>& pos,
              const SparseArray<Velocity>& vel)
-      { this->moving_system(r, pos, vel); }, 2);
+      { this->moving_system(r, pos, vel); }, 4);
 }
 
-void Moving::moving_system(Registery& /*unused*/,
+void Moving::moving_system(Registery& reg,
                            SparseArray<Position>& positions,
                            const SparseArray<Velocity>& velocities)
 {
+  double dt = reg.clock().delta_seconds();
+
   for (auto&& [position, velocity] : Zipper(positions, velocities)) {
     if (velocity.dir_x != 0.0) {
-      position.x += velocity.speed_x * velocity.dir_x;
+      position.x += velocity.speed_x * velocity.dir_x * dt;
     }
     if (velocity.dir_y != 0.0) {
-      position.y += velocity.speed_y * velocity.dir_y;
+      position.y += velocity.speed_y * velocity.dir_y * dt;
     }
   }
 }
