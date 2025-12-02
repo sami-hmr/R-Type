@@ -1,79 +1,51 @@
 #pragma once
 
-#include <iostream>
+#include <format>
 #include <stdexcept>
 #include <string>
 #include <variant>
 #include <vector>
 
+#include "Events.hpp"
 #include "Json/JsonParser.hpp"
 #include "ecs/Registery.hpp"
 #include "ecs/SparseArray.hpp"
 #include "ecs/zipper/Zipper.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
-
-struct Position
-{
-  Position(float x, float y)
-      : x(x)
-      , y(y)
-  {
-  }
-
-  double x;
-  double y;
-};
+#include "plugin/components/Position.hpp"
+#include "plugin/components/Velocity.hpp"
 
 class Moving : public APlugin
 {
 public:
   Moving(Registery& r, EntityLoader& l)
       : APlugin(
-          r,
-          l,
-          {"health"}, // depends on
-          {COMP_INIT(position, init_pos)} // componend loader
-      )
+            r,
+            l,
+            {},
+            {COMP_INIT(Position, init_pos), COMP_INIT(Velocity, init_velocity)})
   {
     this->_registery.get().register_component<Position>();
-    this->_registery.get().add_system<Position>(
-        [](Registery&, const SparseArray<Position>& s)
-        {
-          for (auto&& [position] : Zipper(s)) {
-            std::cout << "last\n";
-          }
-        }, 0);
-    this->_registery.get().add_system<Position>(
-        [](Registery&, const SparseArray<Position>& s)
-        {
-          for (auto&& [position] : Zipper(s)) {
-            std::cout << "middle\n";
-          }
-        }, 1);
-    this->_registery.get().add_system<Position>(
-        [](Registery&, const SparseArray<Position>& s)
-        {
-          for (auto&& [position] : Zipper(s)) {
-              std::cout << "first\n";
-          }
-        }, 2);
+    this->_registery.get().register_component<Velocity>();
+    this->_registery.get().add_system<Position, Velocity>(
+        [this](Registery& r,
+               SparseArray<Position>& pos,
+               const SparseArray<Velocity>& vel)
+        { this->moving_system(r, pos, vel); });
+      this->_registery.get().on<CollisionEvent>([this](const CollisionEvent &c){
+        this->_registery.get().remove_component<Velocity>(c.a);
+        this->_registery.get().remove_component<Velocity>(c.b);
+      });
   }
 
 private:
-  void init_pos(Registery::Entity const entity, JsonVariant const& config)
-  {
-    try {
-      JsonObject obj = std::get<JsonObject>(config);
-      double x = std::get<double>(obj.at("x").value);
-      double y = std::get<double>(obj.at("y").value);
-      this->_registery.get().emplace_component<Position>(entity, x, y);
-    } catch (std::bad_variant_access const&) {
-      throw BadComponentDefinition("expected JsonObject");
-    } catch (std::out_of_range const&) {
-      throw UndefinedComponentValue(R"(expected "x": double and "y": double )");
-    }
-  }
+  void init_pos(Registery::Entity const entity, JsonVariant const& config);
+  void init_velocity(Registery::Entity const entity, JsonVariant const& config);
+
+  void moving_system(Registery&,
+                     SparseArray<Position>& positions,
+                     const SparseArray<Velocity>& velocities);
 
   const std::vector<std::string> depends_on;
 };

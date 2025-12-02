@@ -8,5 +8,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 include_directories(${parser_SOURCE_DIR}/include)
 
 add_subdirectory(moving)
+add_subdirectory(sfml)
 add_subdirectory(logger)
 add_subdirectory(health)
+add_subdirectory(collision)

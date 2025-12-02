@@ -22,7 +22,7 @@ public:
 
   bool operator<(System const& other) const
   {
-    return this->_priority < other._priority;
+    return this->_priority > other._priority;
   }
 
 private:

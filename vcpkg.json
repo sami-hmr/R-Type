@@ -1,15 +1,15 @@
 {
   "name": "r-type",
   "version-semver": "0.1.0",
-  "builtin-baseline": "d7112d1a4fb50410d3639f5f586972591d848beb",
+  "builtin-baseline": "ae8fa5ae5e6162a88e412618245809ed2aa579d9",
   "dependencies": [
     {
-      "name": "fmt",
-      "version>=": "11.0.2#1"
+      "name": "sfml",
+      "version>=": "3.0.2"
     }
   ],
   "features": {
-    "test": {
+    "tests": {
       "description": "Dependencies for testing",
       "dependencies": [
         {
