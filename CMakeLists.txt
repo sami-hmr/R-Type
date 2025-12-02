@@ -74,14 +74,6 @@ target_link_libraries(r-type_exe PUBLIC ${CORE_LIB})
 #    target_link_libraries(r-type_exe PRIVATE stdc++)
 #endif()
 
-# ---- Documentation ----
-
-option(BUILD_DOCS "Build documentation using Doxygen" OFF)
-
-if(BUILD_DOCS)
-    include(cmake/docs.cmake)
-endif()
-
 # ---- Developer mode ----
 
 if(r-type_DEVELOPER_MODE)
