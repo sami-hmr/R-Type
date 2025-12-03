@@ -6,134 +6,141 @@ Connectionless packets are identified by a magic sequence of 0x67676767 at the s
 
 ### 1.1 Connectionless Packet Structure
 
-<!-- Magic=0x67676767:32;ASCII_Command:variable -->
-```
- 0                   1                   2                   3
- 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| Magic=0x67676767:32                                           |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|                                                               |
-+ ASCII_Command:variable                                        +
-|                                                               |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-```
+<!-- Magic=0x67676767:32;Command:32 -->
+
+Magic=0x67676767:32
+Command:variable
+End of Packet:8
 
 ### 1.2 Client-to-Server Connectionless Commands
 
 All connectionless commands follow the format:
 ```
-0x67676767 "<command>;<arg1>;<arg2>;...;\0"
+0x67676767 <command> <arg1> <arg2> ... 0x__
 ```
 
-Arguments are ASCII strings separated by semicolons, terminated by a null byte.
+Arguments are sent in binary format.
+If the command is too long (more than 64-bits), it should be fragmented and sent in multiple packages.
+When the command's packets left until the end of the command reaches 0, it signals the end of the command's transmission.
 
-**getinfo**: Request basic server information
+**getinfo**: Request basic server information (=> 0x01 : 8 bits)
 
 ```
-0x67676767 "getinfo\0"
+0x67676767 0x01 0x00
 ```
 
 Server responds with infoResponse.
 
-**getstatus**: Request detailed server status including connected players
+**getstatus**: Request detailed server status including connected players (=> 0x02 : 8 bits)
 
 ```
-0x67676767 "getstatus\0"
+0x67676767 0x02 0x00
 ```
 
 Server responds with statusResponse.
 
-**getchallenge**: Request a challenge token for connection authentication
+**getchallenge**: Request a challenge token for connection authentication (=> 0x03 : 8 bits)
 
 ```
-0x67676767 "getchallenge\0"
+0x67676767 0x03 0x00
 ```
 
-Server responds with challengeResponse containing a 32-bit challenge number.
+Server responds with challengeResponse containing a 32-bits challenge number.
 
-**connect**: Initiate connection with challenge response and player information
+**connect**: Initiate connection with challenge response and player information (=> 0x04 : 8 bits)
 
 ```
-0x67676767 "connect;<protocol_version>;<challenge>;<player_name>\0"
+0x67676767 0x04 <protocol_version> <challenge> <player_id> 0x00
 ```
 
 Arguments:
-- protocol_version: Integer (current version is 1)
-- challenge: 32-bit integer as ASCII decimal string (from challengeResponse)
-- player_name: ASCII string (max 32 characters)
+- protocol_version: 8-bits integer (current version is 1)
+- challenge: 32-bits integer (from challengeResponse)
+- player_name: 256-bits string (36-bytes)
 
-Example: `0x67676767 "connect;1;2847561;PlayerOne\0"`
+Total: 48-bits
+
+Example: `0x67676767 0x04 1 2847561 0x08 0x00`
 
 Server responds with connectResponse if successful.
 
 ### 1.3 Server-to-Client Connectionless Responses
 
-All connectionless responses follow the format:
+All connectionless commands follow the format:
 ```
-0x67676767 "<command>;<arg1>;<arg2>;...;\0"
+0x67676767 <command> <arg1> <arg2> ... 0x__
 ```
 
-Arguments are ASCII strings separated by semicolons, terminated by a null byte.
+Arguments are sent in binary format.
+A maximum of 3 arguments is authorized. Each argument is on 8 bits.
+When the command's packets left until the end of the command reaches 0, it signals the end of the command's transmission.
+(Pretty much like mentionned in Client-to-Server Connectionless Commands)
 
-**infoResponse**: Basic server information response
+**infoResponse**: Basic server information response (=> 0x05 : 8 bits)
 
 ```
-0x67676767 "infoResponse;<key1>;<value1>;<key2>;<value2>;...\0"
+0x67676767 0x05 <key1> <value1> <key2> <value2>... 0x00
 ```
 
 Required keys:
-- hostname: Server display name (max 64 chars)
-- mapname: Current map identifier (max 32 chars)
-- gametype: Game type string (always "coop")
-- maxplayers: Maximum player count (integer 2-4 as ASCII)
-- protocol: Protocol version (integer 1 as ASCII)
+- hostname: Server display name (512-bits)
+- mapname: Current map identifier (256-bits)
+- gametype: Game type (always coop (=> 0x02)): (8-bits integer 1-2)
+- maxplayers: Maximum player count (8-bits integer 2-4)
+- protocol: Protocol version (8-bits integer 1)
 
-Example: `0x67676767 "infoResponse;hostname;MyServer;mapname;level1;gametype;coop;maxplayers;4;protocol;1\0"`
+Total: 24-bits
 
-**statusResponse**: Detailed status response with player list
+Example:  `0x67676767 0x05 MyServer 0x04 level1 0x02 4 1 0x00`
+
+**statusResponse**: Detailed status response with player list (=> 0x06 : 8 bits)
 
 ```
-0x67676767 "statusResponse;<server_info>;<player1_info>;<player2_info>;...\0"
+0x67676767 0x06 <server_info> <player1_info> <player2_info> ... 0x00
 ```
 
 Format:
-- server_info: Same key-value pairs as infoResponse (semicolon-separated)
-- player_info entries: Each player as "score;ping;name"
+- server_info: Same key-value pairs as infoResponse
+- player_info entries: Each player as "score ping name"
 
 Player info format:
-- score: Integer score as ASCII
-- ping: Integer ping in milliseconds as ASCII
-- name: Player name (max 32 chars)
+- score: Score (16-bits integer)
+- ping:  Ping in milliseconds (8-bits integer)
+- name:  Player name (max 256-bits (=32-bytes))
 
-Example: `0x67676767 "statusResponse;hostname;MyServer;maxplayers;4;12500;45;PlayerOne;8200;38;PlayerTwo\0"`
+Total Player info format: 32-bits
+Total Format: 32-bits + __-bits (??-bits)
 
-**challengeResponse**: Challenge token for connection authentication
+Example:  `0x67676767 0x06 MyServer level1 0x02 4 1 12500 45 0x01 8200 38 0x02 0x00`
 
-```
-0x67676767 "challengeResponse;<challenge_number>\0"
-```
-
-Arguments:
-- challenge_number: 32-bit unsigned integer as ASCII decimal string
-
-The challenge number is a cryptographically random value generated by the server. Valid range: 1 to 4294967295.
-
-Example: `0x67676767 "challengeResponse;2847561\0"`
-
-**connectResponse**: Connection acknowledgment with client ID
+**challengeResponse**: Challenge token for connection authentication (=> 0x07 : 8 bits)
 
 ```
-0x67676767 "connectResponse;<client_id>;<server_id>\0"
+0x67676767 0x07 <challenge_number> 0x00
 ```
 
 Arguments:
-- client_id: Integer 0-3 as ASCII (player slot assigned to this client)
-- server_id: 32-bit unsigned integer as ASCII decimal (unique server instance identifier)
+- challenge_number: 32-bits unsigned integer
+
+The challenge number is a cryptographically random value generated by the server. Valid range: 1 to 4 294 967 295.
+
+Example: `0x67676767 0x07 2847561 0x00`
+
+**connectResponse**: Connection acknowledgment with client ID (=> 0x08 : 8 bits)
+
+```
+0x67676767 "0x08 <client_id> <server_id> 0x00"
+```
+
+Arguments:
+- client_id: Player slot assigned to this client (8-bits integer 0-3)
+- server_id: Unique server instance identifier (32-bits unsigned integer)
+
+Total: 40-bits
 
 After receiving this, the client transitions to connected mode and expects srv_gamestate.
 
-Example: `0x67676767 "connectResponse;0;19283746\0"`
+Example: `0x67676767 0x08 0 19283746 0x00`
 
 ## 2. Connected Packets
 
@@ -204,7 +211,7 @@ Time  Client                          Server
 
 ### 2.1 Server-to-Client Packet Structure
 
-All server-to-client packets begin with a 32-bit sequence number in little-endian format. If this sequence equals 0x67676767, the packet is connectionless (see section 1). Otherwise, the packet follows the connected format below.
+All server-to-client packets begin with a 32-bits sequence number in little-endian format. If this sequence equals 0x67676767, the packet is connectionless (see section 1). Otherwise, the packet follows the connected format below.
 
 PACKETS are always smaller than 2048 (eof and header included) otherwise the package is considered fragmented, another package with the same sequence will be sent until end of content byte is 1.
 
@@ -377,7 +384,7 @@ No additional data follows. The packet ends immediately after this opcode.
 
 ### 2.2 Client-to-Server Packet Structure
 
-All client-to-server packets begin with a 32-bit sequence number in little-endian format. If this sequence equals 0x67676767, the packet is connectionless (see section 1). Otherwise, the packet follows the connected format below.
+All client-to-server packets begin with a 32-bits sequence number in little-endian format. If this sequence equals 0x67676767, the packet is connectionless (see section 1). Otherwise, the packet follows the connected format below.
 
 **Header:**
 <!-- Sequence_Number:32;Server_ID:32;Server_Message_Sequence:32;Server_Command_Sequence:32 -->
