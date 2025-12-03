@@ -58,7 +58,7 @@ Arguments:
 - challenge: 32-bits integer (from challengeResponse)
 - player_name: 256-bits string (36-bytes)
 
-Total: 48-bits
+Total: 296-bits
 
 Example: `0x67676767 0x04 1 2847561 0x08 0x00`
 
@@ -89,7 +89,7 @@ Required keys:
 - maxplayers: Maximum player count (8-bits integer 2-4)
 - protocol: Protocol version (8-bits integer 1)
 
-Total: 24-bits
+Total: 792-bits
 
 Example:  `0x67676767 0x05 MyServer 0x04 level1 0x02 4 1 0x00`
 
@@ -109,7 +109,7 @@ Player info format:
 - name:  Player name (max 256-bits (=32-bytes))
 
 Total Player info format: 32-bits
-Total Format: 32-bits + __-bits (??-bits)
+Total Format: 32-bits + 792-bits (824-bits)
 
 Example:  `0x67676767 0x06 MyServer level1 0x02 4 1 12500 45 0x01 8200 38 0x02 0x00`
 
