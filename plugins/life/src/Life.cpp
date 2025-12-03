@@ -47,10 +47,19 @@ void Life::init_health(Registery::Entity entity, JsonVariant const& config)
 {
   try {
     JsonObject obj = std::get<JsonObject>(config);
+
+
+
     int current = std::get<int>(obj.at("current").value);
     int max = std::get<int>(obj.at("max").value);
 
-    this->_registery.get().emplace_component<Health>(entity, current, max);
+    auto &comp = this->_registery.get().emplace_component<Health>(entity, current, max);
+    if (obj.contains("hook")) {
+        try {
+            std::string hook_name = std::get<std::string>(obj.at("hook").value);
+            this->_registery.get().register_hook<Health>(hook_name, comp);
+        } catch (...) {}
+    }
   } catch (std::bad_variant_access const&) {
     std::cerr << "Error loading health component: unexpected value type\n";
   } catch (std::out_of_range const&) {

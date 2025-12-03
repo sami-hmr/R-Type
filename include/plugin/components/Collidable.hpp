@@ -1,11 +1,15 @@
 #pragma once
 
+#include <any>
+#include <concepts>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include "BaseTypes.hpp"
 #include "ByteParser/ByteParser.hpp"
 #include "plugin/Byte.hpp"
+#include "plugin/Hooks.hpp"
 
 enum class CollisionType
 {
@@ -66,4 +70,6 @@ struct Collidable
   CollisionType collision_type = CollisionType::Solid;
   bool is_active = true;
   std::vector<std::string> exclude_entities;
+
+  //HOOKABLE(HOOK(width), HOOK(height), HOOK(collision_type),)
 };
