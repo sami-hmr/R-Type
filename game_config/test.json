@@ -69,8 +69,8 @@
           "sfml:Drawable": {},
           "moving:Velocity": {
             "speed" : {
-              "x" : 0.005,
-              "y" : 0.005
+              "x" : 0.05,
+              "y" : 0.05
             },
             "direction" : {
               "x" : 0.0,
