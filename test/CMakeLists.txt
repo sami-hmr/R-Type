@@ -10,7 +10,7 @@ include(Catch)
 
 # ---- Tests ----
 
-add_executable(r-type_test source/r-type_test.cpp)
+add_executable(r-type_test source/r-type_test.cpp source/serialization_test.cpp source/advanced_test.cpp)
 target_link_libraries(
     r-type_test PRIVATE
     r-type_core
