@@ -131,10 +131,8 @@ void Collision::on_collision(const CollisionEvent& c)
     if (this->_registery.get().has_component<Velocity>(c.a)
         && this->_registery.get().has_component<Position>(c.a))
     {
-      positions[c.a]->pos.x -=
-          velocities[c.a]->speed.x * velocities[c.a]->direction.x * dt;
-      positions[c.a]->pos.y -=
-          velocities[c.a]->speed.y * velocities[c.a]->direction.y * dt;
+      positions[c.a]->pos -= (velocities[c.a]->direction * dt).normalize()
+          * velocities[c.a]->speed;
     }
   }
 }
