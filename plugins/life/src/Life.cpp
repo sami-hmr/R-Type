@@ -52,10 +52,13 @@ void Life::init_health(Registery::Entity entity, JsonVariant const& config)
 
     this->_registery.get().emplace_component<Health>(entity, current, max);
   } catch (std::bad_variant_access const&) {
-    std::cerr << "Error loading health component: unexpected value type\n";
+    LOGGER("Life",
+           LogLevel::ERROR,
+           "Error loading Health component: unexpected value type")
   } catch (std::out_of_range const&) {
-    std::cerr
-        << "Error loading health component: missing value in JsonObject\n";
+    LOGGER("Life",
+           LogLevel::ERROR,
+           "Error loading Health component: (expected current: int, max: int")
   }
 }
 
@@ -67,10 +70,13 @@ void Life::init_damage(Registery::Entity entity, JsonVariant const& config)
 
     this->_registery.get().emplace_component<Damage>(entity, value);
   } catch (std::bad_variant_access const&) {
-    std::cerr << "Error loading damage component: unexpected value type\n";
+    LOGGER("Life",
+           LogLevel::ERROR,
+           "Error loading Damage component: unexpected value type")
   } catch (std::out_of_range const&) {
-    std::cerr
-        << "Error loading damage component: missing value in JsonObject\n";
+    LOGGER("Life",
+           LogLevel::ERROR,
+           "Error loading Damage component: (expected amount: int")
   }
 }
 
@@ -82,9 +88,13 @@ void Life::init_heal(Registery::Entity entity, JsonVariant const& config)
 
     this->_registery.get().emplace_component<Heal>(entity, value);
   } catch (std::bad_variant_access const&) {
-    std::cerr << "Error loading heal component: unexpected value type\n";
+    LOGGER("Life",
+           LogLevel::ERROR,
+           "Error loading Heal component: unexpected value type")
   } catch (std::out_of_range const&) {
-    std::cerr << "Error loading heal component: missing value in JsonObject\n";
+    LOGGER("Life",
+           LogLevel::ERROR,
+           "Error loading Heal component: (expected amount: int")
   }
 }
 
@@ -137,9 +147,7 @@ void Life::on_collision(const CollisionEvent& event)
 
   if (!this->_registery.get().has_component<Health>(event.a)
       || !this->_registery.get().has_component<Team>(event.a)
-      || !this->_registery.get().has_component<Team>(event.b)
-      || this->_registery.get().is_entity_dying(event.a)
-      || this->_registery.get().is_entity_dying(event.b))
+      || !this->_registery.get().has_component<Team>(event.b))
   {
     return;
   }
