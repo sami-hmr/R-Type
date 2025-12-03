@@ -352,17 +352,18 @@ public:
   const Clock& clock() const { return _clock; }
 
   template<hookable T>
-  void register_hook(std::string name, std::optional<T>& comp)
+  void register_hook(std::string name, Entity const &e)
   {
     this->_hooked_components.insert_or_assign(
         name,
-        [comp =
-             std::ref(comp)](std::string const& key) -> std::optional<std::any>
+        [this, e](std::string const& key) -> std::optional<std::any>
         {
-          if (!comp.get().has_value()) {
+          auto &array = this->get_components<T>();
+          auto &comp = array[e];
+          if (!comp.has_value()) {
             return std::nullopt;
           }
-          return comp.get().value().hook_map.at(key)();
+          return comp.value().hook_map.at(key)(comp.value());
         });
   }
 
@@ -374,7 +375,7 @@ public:
     if (!tmp.has_value()) {
         return std::nullopt;
     }
-    return std::any_cast<std::reference_wrapper<T>>(tmp);
+    return std::any_cast<std::reference_wrapper<T>>(tmp.value());
   }
 
 private:

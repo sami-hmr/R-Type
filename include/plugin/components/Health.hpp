@@ -41,5 +41,5 @@ struct Health
   double heal_delta;
   double damage_delta;
 
-  HOOKABLE(HOOK(current), HOOK(max), HOOK(heal_delta), HOOK(damage_delta))
+  HOOKABLE(Health, HOOK(Health, current), HOOK(Health, max), HOOK(Health, heal_delta), HOOK(Health, damage_delta))
 };

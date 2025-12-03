@@ -1,6 +1,9 @@
 #include <algorithm>
+#include <any>
 #include <format>
+#include <functional>
 #include <iostream>
+#include <optional>
 
 #include "Life.hpp"
 
@@ -53,11 +56,12 @@ void Life::init_health(Registery::Entity entity, JsonVariant const& config)
     int current = std::get<int>(obj.at("current").value);
     int max = std::get<int>(obj.at("max").value);
 
-    auto &comp = this->_registery.get().emplace_component<Health>(entity, current, max);
+    std::optional<Health> &comp = this->_registery.get().emplace_component<Health>(entity, current, max);
+    std::cout << std::any_cast<std::reference_wrapper<int>>(comp->hook_map.at("max")(comp.value())).get() << std::endl;
     if (obj.contains("hook")) {
         try {
             std::string hook_name = std::get<std::string>(obj.at("hook").value);
-            this->_registery.get().register_hook<Health>(hook_name, comp);
+            this->_registery.get().register_hook<Health>(hook_name, entity);
         } catch (...) {}
     }
   } catch (std::bad_variant_access const&) {
