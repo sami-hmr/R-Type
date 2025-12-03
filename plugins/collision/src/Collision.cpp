@@ -96,8 +96,8 @@ void Collision::collision_system(Registery& reg,
     {
       entities.push_back(ICollisionAlgorithm::CollisionEntity {
           .entity_id = i,
-          .bounds = Rect {.x = positions[i]->x,
-                          .y = positions[i]->y,
+          .bounds = Rect {.x = positions[i]->pos.x,
+                          .y = positions[i]->pos.y,
                           .width = collidables[i]->width,
                           .height = collidables[i]->height}});
     }
@@ -131,10 +131,10 @@ void Collision::on_collision(const CollisionEvent& c)
     if (this->_registery.get().has_component<Velocity>(c.a)
         && this->_registery.get().has_component<Position>(c.a))
     {
-      positions[c.a]->x -=
-          velocities[c.a]->speed_x * velocities[c.a]->dir_x * dt;
-      positions[c.a]->y -=
-          velocities[c.a]->speed_y * velocities[c.a]->dir_y * dt;
+      positions[c.a]->pos.x -=
+          velocities[c.a]->speed.x * velocities[c.a]->direction.x * dt;
+      positions[c.a]->pos.y -=
+          velocities[c.a]->speed.y * velocities[c.a]->direction.y * dt;
     }
   }
 }

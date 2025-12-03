@@ -68,8 +68,8 @@
           "moving:Position": { "x": 0.0, "y": 0.0 },
           "sfml:Drawable": {},
           "moving:Velocity": {
-            "speed_x": 0.5,
-            "speed_y": 0.5,
+            "speed_x": 0.005,
+            "speed_y": 0.005,
             "dir_x": 0.0,
             "dir_y": 0.0
           },

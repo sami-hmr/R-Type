@@ -107,16 +107,16 @@ void Controller::handle_key_change(Key key, bool is_pressed)
     double dir = is_pressed ? 1.0 : 0.0;
 
     if (up_key.has_value() && key == up_key.value()) {
-      velocity.dir_y = is_pressed ? -dir : 0.0;
+      velocity.direction.y = is_pressed ? -dir : 0.0;
     }
     if (down_key.has_value() && key == down_key.value()) {
-      velocity.dir_y = is_pressed ? dir : 0.0;
+      velocity.direction.y = is_pressed ? dir : 0.0;
     }
     if (left_key.has_value() && key == left_key.value()) {
-      velocity.dir_x = is_pressed ? -dir : 0.0;
+      velocity.direction.x = is_pressed ? -dir : 0.0;
     }
     if (right_key.has_value() && key == right_key.value()) {
-      velocity.dir_x = is_pressed ? dir : 0.0;
+      velocity.direction.x = is_pressed ? dir : 0.0;
     }
   }
 };
