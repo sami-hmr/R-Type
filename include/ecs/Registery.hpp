@@ -370,8 +370,11 @@ public:
   std::optional<std::reference_wrapper<T>> get_hooked_value(
       std::string const& comp, std::string const& value)
   {
-    return std::any_cast<std::optional<std::reference_wrapper<T>>>(
-        this->_hooked_components.at(comp)(value));
+    auto const &tmp = std::any_cast<std::optional<std::any>>(this->_hooked_components.at(comp)(value));
+    if (!tmp.has_value()) {
+        return std::nullopt;
+    }
+    return std::any_cast<std::reference_wrapper<T>>(tmp);
   }
 
 private:
