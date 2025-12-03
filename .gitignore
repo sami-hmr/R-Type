@@ -36,3 +36,4 @@ activate.sh
 include/Vector2D.hpp
 test.cpp
 a.out
+aliases.fish
