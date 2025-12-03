@@ -187,8 +187,8 @@ TEST_CASE("Serialization - Position round-trip", "[serialization]")
   ByteArray bytes = original.to_bytes();
   Position deserialized(bytes);
 
-  REQUIRE(deserialized.x == original.x);
-  REQUIRE(deserialized.y == original.y);
+  REQUIRE(deserialized.pos.x == original.pos.x);
+  REQUIRE(deserialized.pos.y == original.pos.y);
 }
 
 TEST_CASE("Serialization - Position with zero values", "[serialization]")
@@ -197,8 +197,8 @@ TEST_CASE("Serialization - Position with zero values", "[serialization]")
   ByteArray bytes = original.to_bytes();
   Position deserialized(bytes);
 
-  REQUIRE(deserialized.x == 0.0);
-  REQUIRE(deserialized.y == 0.0);
+  REQUIRE(deserialized.pos.x == 0.0);
+  REQUIRE(deserialized.pos.y == 0.0);
 }
 
 TEST_CASE("Serialization - Position with negative values", "[serialization]")
@@ -207,8 +207,8 @@ TEST_CASE("Serialization - Position with negative values", "[serialization]")
   ByteArray bytes = original.to_bytes();
   Position deserialized(bytes);
 
-  REQUIRE(deserialized.x == original.x);
-  REQUIRE(deserialized.y == original.y);
+  REQUIRE(deserialized.pos.x == original.pos.x);
+  REQUIRE(deserialized.pos.y == original.pos.y);
 }
 
 TEST_CASE("Serialization - Position with large values", "[serialization]")
@@ -217,8 +217,8 @@ TEST_CASE("Serialization - Position with large values", "[serialization]")
   ByteArray bytes = original.to_bytes();
   Position deserialized(bytes);
 
-  REQUIRE(deserialized.x == original.x);
-  REQUIRE(deserialized.y == original.y);
+  REQUIRE(deserialized.pos.x == original.pos.x);
+  REQUIRE(deserialized.pos.y == original.pos.y);
 }
 
 TEST_CASE("Serialization - Position with very small values", "[serialization]")
@@ -227,8 +227,8 @@ TEST_CASE("Serialization - Position with very small values", "[serialization]")
   ByteArray bytes = original.to_bytes();
   Position deserialized(bytes);
 
-  REQUIRE(deserialized.x == original.x);
-  REQUIRE(deserialized.y == original.y);
+  REQUIRE(deserialized.pos.x == original.pos.x);
+  REQUIRE(deserialized.pos.y == original.pos.y);
 }
 
 TEST_CASE("Serialization - Position with extreme double values",
@@ -239,8 +239,8 @@ TEST_CASE("Serialization - Position with extreme double values",
   ByteArray bytes = original.to_bytes();
   Position deserialized(bytes);
 
-  REQUIRE(deserialized.x == original.x);
-  REQUIRE(deserialized.y == original.y);
+  REQUIRE(deserialized.pos.x == original.pos.x);
+  REQUIRE(deserialized.pos.y == original.pos.y);
 }
 
 TEST_CASE("Serialization - Velocity to_bytes", "[serialization]")
@@ -258,10 +258,10 @@ TEST_CASE("Serialization - Velocity round-trip", "[serialization]")
   ByteArray bytes = original.to_bytes();
   Velocity deserialized(bytes);
 
-  REQUIRE(deserialized.speed_x == original.speed_x);
-  REQUIRE(deserialized.speed_y == original.speed_y);
-  REQUIRE(deserialized.dir_x == original.dir_x);
-  REQUIRE(deserialized.dir_y == original.dir_y);
+  REQUIRE(deserialized.speed.x == original.speed.x);
+  REQUIRE(deserialized.speed.y == original.speed.y);
+  REQUIRE(deserialized.direction.x == original.direction.x);
+  REQUIRE(deserialized.direction.y == original.direction.y);
 }
 
 TEST_CASE("Serialization - Velocity with zero speed", "[serialization]")
@@ -270,10 +270,10 @@ TEST_CASE("Serialization - Velocity with zero speed", "[serialization]")
   ByteArray bytes = original.to_bytes();
   Velocity deserialized(bytes);
 
-  REQUIRE(deserialized.speed_x == 0.0);
-  REQUIRE(deserialized.speed_y == 0.0);
-  REQUIRE(deserialized.dir_x == 1.0);
-  REQUIRE(deserialized.dir_y == 0.0);
+  REQUIRE(deserialized.speed.x == 0.0);
+  REQUIRE(deserialized.speed.y == 0.0);
+  REQUIRE(deserialized.direction.x == 1.0);
+  REQUIRE(deserialized.direction.y == 0.0);
 }
 
 TEST_CASE("Serialization - Velocity with negative values", "[serialization]")
@@ -282,10 +282,10 @@ TEST_CASE("Serialization - Velocity with negative values", "[serialization]")
   ByteArray bytes = original.to_bytes();
   Velocity deserialized(bytes);
 
-  REQUIRE(deserialized.speed_x == original.speed_x);
-  REQUIRE(deserialized.speed_y == original.speed_y);
-  REQUIRE(deserialized.dir_x == original.dir_x);
-  REQUIRE(deserialized.dir_y == original.dir_y);
+  REQUIRE(deserialized.speed.x == original.speed.x);
+  REQUIRE(deserialized.speed.y == original.speed.y);
+  REQUIRE(deserialized.direction.x == original.direction.x);
+  REQUIRE(deserialized.direction.y == original.direction.y);
 }
 
 TEST_CASE("Serialization - Velocity all zeros", "[serialization]")
@@ -294,10 +294,10 @@ TEST_CASE("Serialization - Velocity all zeros", "[serialization]")
   ByteArray bytes = original.to_bytes();
   Velocity deserialized(bytes);
 
-  REQUIRE(deserialized.speed_x == 0.0);
-  REQUIRE(deserialized.speed_y == 0.0);
-  REQUIRE(deserialized.dir_x == 0.0);
-  REQUIRE(deserialized.dir_y == 0.0);
+  REQUIRE(deserialized.speed.x == 0.0);
+  REQUIRE(deserialized.speed.y == 0.0);
+  REQUIRE(deserialized.direction.x == 0.0);
+  REQUIRE(deserialized.direction.y == 0.0);
 }
 
 TEST_CASE("Serialization - Velocity with fractional values", "[serialization]")
@@ -306,10 +306,10 @@ TEST_CASE("Serialization - Velocity with fractional values", "[serialization]")
   ByteArray bytes = original.to_bytes();
   Velocity deserialized(bytes);
 
-  REQUIRE(deserialized.speed_x == original.speed_x);
-  REQUIRE(deserialized.speed_y == original.speed_y);
-  REQUIRE(deserialized.dir_x == original.dir_x);
-  REQUIRE(deserialized.dir_y == original.dir_y);
+  REQUIRE(deserialized.speed.x == original.speed.x);
+  REQUIRE(deserialized.speed.y == original.speed.y);
+  REQUIRE(deserialized.direction.x == original.direction.x);
+  REQUIRE(deserialized.direction.y == original.direction.y);
 }
 
 TEST_CASE("Serialization - Team to_bytes", "[serialization]")
@@ -568,12 +568,12 @@ TEST_CASE("Serialization - multiple Position serialization", "[serialization]")
   Position deser2(bytes2);
   Position deser3(bytes3);
 
-  REQUIRE(deser1.x == 10.0);
-  REQUIRE(deser1.y == 20.0);
-  REQUIRE(deser2.x == 30.0);
-  REQUIRE(deser2.y == 40.0);
-  REQUIRE(deser3.x == 50.0);
-  REQUIRE(deser3.y == 60.0);
+  REQUIRE(deser1.pos.x == 10.0);
+  REQUIRE(deser1.pos.y == 20.0);
+  REQUIRE(deser2.pos.x == 30.0);
+  REQUIRE(deser2.pos.y == 40.0);
+  REQUIRE(deser3.pos.x == 50.0);
+  REQUIRE(deser3.pos.y == 60.0);
 }
 
 TEST_CASE("Serialization - byte_array_join with multiple arrays",
@@ -677,8 +677,8 @@ TEST_CASE("Serialization - multiple consecutive serializations",
     ByteArray bytes = pos.to_bytes();
     Position deser(bytes);
 
-    REQUIRE(deser.x == static_cast<double>(i));
-    REQUIRE(deser.y == static_cast<double>(i * 2));
+    REQUIRE(deser.pos.x == static_cast<double>(i));
+    REQUIRE(deser.pos.y == static_cast<double>(i * 2));
   }
 }
 
@@ -696,7 +696,7 @@ TEST_CASE("Serialization - mixed component serialization", "[serialization]")
   Velocity vel_deser(vel_bytes);
   Team team_deser(team_bytes);
 
-  REQUIRE(pos_deser.x == 100.0);
-  REQUIRE(vel_deser.speed_x == 1.0);
+  REQUIRE(pos_deser.pos.x == 100.0);
+  REQUIRE(vel_deser.speed.x == 1.0);
   REQUIRE(team_deser.name == "TestTeam");
 }

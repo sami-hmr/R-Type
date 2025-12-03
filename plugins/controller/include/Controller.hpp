@@ -1,6 +1,7 @@
 #pragma once
 
 #include <format>
+#include <map>
 #include <stdexcept>
 #include <string>
 #include <variant>
@@ -20,12 +21,16 @@
 class Controller : public APlugin
 {
 public:
-  Controller(Registery& r, EntityLoader& l);
+  Controller(Registery &r, EntityLoader &l);
 
 private:
   void init_controller(Registery::Entity const entity,
-                       JsonVariant const& config);
+                       JsonVariant const &config);
 
-  std::optional<Key> char_to_key(char c);
+  Key char_to_key(char c);
   void handle_key_change(Key key, bool is_pressed);
+  double compute_axis(Key negative, Key positive) const;
+  bool is_key_active(Key key) const;
+
+  std::map<Key, bool> _key_states;
 };

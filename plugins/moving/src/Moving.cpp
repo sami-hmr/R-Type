@@ -1,7 +1,11 @@
+#include <iostream>
 #include "Moving.hpp"
 
+#include "Json/JsonParser.hpp"
 #include "ecs/Registery.hpp"
+#include "libs/Vector2D.hpp"
 #include "plugin/EntityLoader.hpp"
+#include "plugin/events/Events.hpp"
 
 Moving::Moving(Registery& r, EntityLoader& l)
     : APlugin(
@@ -28,12 +32,8 @@ void Moving::moving_system(Registery& reg,
   double dt = reg.clock().delta_seconds();
 
   for (auto&& [position, velocity] : Zipper(positions, velocities)) {
-    if (velocity.dir_x != 0.0) {
-      position.x += velocity.speed_x * velocity.dir_x * dt;
-    }
-    if (velocity.dir_y != 0.0) {
-      position.y += velocity.speed_y * velocity.dir_y * dt;
-    }
+    Vector2D movement = velocity.direction * dt;
+    position.pos += movement.normalize() * velocity.speed;
   }
 }
 
@@ -42,9 +42,8 @@ void Moving::init_pos(Registery::Entity const& entity,
 {
   try {
     JsonObject obj = std::get<JsonObject>(config);
-    double x = std::get<double>(obj.at("x").value);
-    double y = std::get<double>(obj.at("y").value);
-    this->_registery.get().emplace_component<Position>(entity, x, y);
+    Vector2D pos(obj);
+    this->_registery.get().emplace_component<Position>(entity, pos.x, pos.y);
   } catch (std::bad_variant_access const&) {
     LOGGER("SFML",
            LogLevel::ERROR,
@@ -62,14 +61,13 @@ void Moving::init_velocity(Registery::Entity const& entity,
 {
   try {
     JsonObject obj = std::get<JsonObject>(config);
-    double speed_x = std::get<double>(obj.at("speed_x").value);
-    double speed_y = std::get<double>(obj.at("speed_y").value);
-    double dir_x = std::get<double>(obj.at("dir_x").value);
-    double dir_y = std::get<double>(obj.at("dir_y").value);
+    JsonObject speed_obj = std::get<JsonObject>(obj.at("speed").value);
+    JsonObject dir_obj = std::get<JsonObject>(obj.at("direction").value);
+    Vector2D speed(speed_obj);
+    Vector2D direction(dir_obj);
 
     this->_registery.get().emplace_component<Velocity>(
-        entity, speed_x, speed_y, dir_x, dir_y);
-
+        entity, speed.x, speed.y, direction.x, direction.y);
   } catch (std::bad_variant_access const&) {
     LOGGER("SFML",
            LogLevel::ERROR,
