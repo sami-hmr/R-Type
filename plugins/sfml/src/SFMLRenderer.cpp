@@ -358,8 +358,8 @@ void SFMLRenderer::render_sprites(Registery& /*unused*/,
     _sprite.value().setScale(sf::Vector2f(uniform_scale, uniform_scale));
 
     sf::Vector2f new_pos(
-        static_cast<float>((pos.x + 1.0) * window_size.x / 2.0),
-        static_cast<float>((pos.y + 1.0) * window_size.y / 2.0));
+        static_cast<float>((pos.pos.x + 1.0) * window_size.x / 2.0),
+        static_cast<float>((pos.pos.y + 1.0) * window_size.y / 2.0));
     _sprite.value().setPosition(new_pos);
     _window.draw(_sprite.value());
   }
@@ -384,8 +384,8 @@ void SFMLRenderer::render_text(Registery& /*unused*/,
 
     sf::Vector2u window_size = _window.getSize();
     sf::Vector2f new_pos(
-        static_cast<float>((pos.x + 1.0) * window_size.x / 2.0),
-        static_cast<float>((pos.y + 1.0) * window_size.y / 2.0));
+        static_cast<float>((pos.pos.x + 1.0) * window_size.x / 2.0),
+        static_cast<float>((pos.pos.y + 1.0) * window_size.y / 2.0));
     _text.value().setPosition(new_pos);
     _text.value().setCharacterSize(static_cast<unsigned int>(txt.scale.x));
     _window.draw(_text.value());
