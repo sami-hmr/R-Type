@@ -56,8 +56,7 @@ void Life::init_health(Registery::Entity entity, JsonVariant const& config)
     int current = std::get<int>(obj.at("current").value);
     int max = std::get<int>(obj.at("max").value);
 
-    std::optional<Health> &comp = this->_registery.get().emplace_component<Health>(entity, current, max);
-    std::cout << std::any_cast<std::reference_wrapper<int>>(comp->hook_map.at("max")(comp.value())).get() << std::endl;
+    this->_registery.get().emplace_component<Health>(entity, current, max);
     if (obj.contains("hook")) {
         try {
             std::string hook_name = std::get<std::string>(obj.at("hook").value);

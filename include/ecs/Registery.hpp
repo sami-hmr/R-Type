@@ -363,7 +363,7 @@ public:
           if (!comp.has_value()) {
             return std::nullopt;
           }
-          return comp.value().hook_map.at(key)(comp.value());
+          return T::hook_map().at(key)(comp.value());
         });
   }
 

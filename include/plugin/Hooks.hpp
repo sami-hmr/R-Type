@@ -8,16 +8,23 @@
 #include "Json/JsonParser.hpp"
 #include "ecs/Registery.hpp"
 
-#define HOOK(type, var) \
-  {#var, \
-   [](type &self) -> std::any \
+#define GAUTHIER_SOIT_PAS_DEBILE_STP(key, var) \
+  {#key, \
+   [](Component &self) -> std::any \
    { \
      return std::reference_wrapper(self.var); \
    }}
 
+#define HOOK(var) GAUTHIER_SOIT_PAS_DEBILE_STP(var, var)
+
 #define HOOKABLE(type, ...) \
-  std::unordered_map<std::string, std::function<std::any(type &)>> hook_map { \
-      __VA_ARGS__};
+  using Component = type; \
+  static const auto& hook_map() { \
+    static const std::unordered_map<std::string, std::function<std::any(type &)>> map{ \
+        __VA_ARGS__\
+      };\
+      return map; \
+  } \
 
 template<typename T>
 std::optional<std::reference_wrapper<T>> get_ref(Registery& r,
