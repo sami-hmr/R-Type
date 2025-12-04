@@ -22,9 +22,9 @@ public:
   Moving(Registery& r, EntityLoader& l);
 
 private:
-  void init_pos(Registery::Entity const& entity, JsonVariant const& config);
+  void init_pos(Registery::Entity const& entity, JsonObject const& obj);
   void init_velocity(Registery::Entity const& entity,
-                     JsonVariant const& config);
+                     JsonObject const& obj);
 
   void moving_system(Registery&,
                      SparseArray<Position>& positions,

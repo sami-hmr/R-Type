@@ -25,7 +25,7 @@ public:
 
 private:
   void init_collision(Registery::Entity const& entity,
-                      JsonVariant const& config);
+                      JsonObject const& obj);
 
   void collision_system(Registery& r,
                         const SparseArray<Position>& positions,

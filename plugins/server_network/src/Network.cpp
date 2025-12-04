@@ -90,7 +90,7 @@ void NetworkServer::launch_server(ServerLaunching const& s)
   }
 }
 
-asio::socket_base::message_flags NetworkServer::handle_receive(const boost::system::error_code& UNUSED error, std::size_t UNUSED bytes_transferred)
+asio::socket_base::message_flags NetworkServer::handle_receive(const asio::error_code& UNUSED error, std::size_t UNUSED bytes_transferred)
 {
   asio::socket_base::message_flags flag = MSG_OOB;
   std::cout << "handled the reception" << std::endl;

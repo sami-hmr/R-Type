@@ -18,6 +18,7 @@
 #include "Json/JsonParser.hpp"
 #include "ecs/Registery.hpp"
 #include "ecs/SparseArray.hpp"
+#include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Drawable.hpp"
@@ -41,9 +42,11 @@ private:
   sf::Texture& load_texture(std::string const& path);
   sf::Font& load_font(std::string const& path);
 
-  void init_drawable(Registery::Entity const entity, JsonVariant const& config);
-  void init_sprite(Registery::Entity const entity, JsonVariant const& config);
-  void init_text(Registery::Entity const entity, JsonVariant const& config);
+  void init_drawable(Registery::Entity const entity, JsonObject const& obj);
+  void init_sprite(Registery::Entity const entity, JsonObject const& obj);
+  void init_text(Registery::Entity const entity, JsonObject const& obj);
+
+  Vector2D parse_vector2d(JsonVariant const& variant);
 
   void handle_events();
   void handle_resize();

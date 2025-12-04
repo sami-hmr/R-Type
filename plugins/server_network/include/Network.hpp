@@ -10,10 +10,11 @@
 #include <unordered_map>
 #include <vector>
 
+#include <asio/error_code.hpp>
 #include <asio/io_context.hpp>
 #include <asio/ip/udp.hpp>
 
-#include <boost/system/error_code.hpp>
+//#include <boost/system/error_code.hpp>
 
 #include "ServerLaunch.hpp"
 #include "ecs/Registery.hpp"
@@ -116,7 +117,7 @@ private:
                            const asio::ip::udp::endpoint& sender);
   void handle_connect(const std::string& commandline,
                       const asio::ip::udp::endpoint& sender);
-    static asio::socket_base::message_flags handle_receive(const boost::system::error_code& error, std::size_t bytes_transferred);
+    static asio::socket_base::message_flags handle_receive(const asio::error_code& error, std::size_t bytes_transferred);
 
   static uint32_t generate_challenge();
   static std::vector<std::string> parse_connect_args(const std::string& commandline);

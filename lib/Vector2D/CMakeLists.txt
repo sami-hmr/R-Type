@@ -14,5 +14,8 @@ add_library(${LIB_NAME} STATIC
 target_include_directories(${LIB_NAME}
     PRIVATE
     ${CMAKE_SOURCE_DIR}/include/
+    ${parser_SOURCE_DIR}/include
 )
+
+target_link_libraries(${LIB_NAME} PRIVATE parser)
 

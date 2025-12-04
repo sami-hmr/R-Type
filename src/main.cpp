@@ -2,11 +2,14 @@
 #include <iostream>
 #include <optional>
 #include <string>
+#include <unordered_map>
 #include <vector>
 
+#include "Json/JsonParser.hpp"
 #include "ecs/Registery.hpp"
 #include "ecs/Scenes.hpp"
 #include "plugin/EntityLoader.hpp"
+#include "plugin/Hooks.hpp"
 #include "plugin/components/Drawable.hpp"
 #include "plugin/events/Events.hpp"
 #include "plugin/libLoaders/ILibLoader.hpp"
@@ -50,6 +53,10 @@ static int true_main(Registery& r,
   }
 
   r.setup_scene_systems();
+
+  JsonObject test({{"prout", JsonValue("#prout:max")}});
+
+  std::cout << get_value<int>(r, test, "prout").value() << std::endl;
 
   while (!should_exit) {
     r.run_systems();
