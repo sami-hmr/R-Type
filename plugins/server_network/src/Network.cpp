@@ -10,7 +10,7 @@
 #include "plugin/EntityLoader.hpp"
 #include "plugin/events/Events.hpp"
 
-const std::unordered_map<char,
+const std::unordered_map<std::uint8_t,
                          void (NetworkServer::*)(
                              const std::string &,
                              const asio::ip::udp::endpoint&)>
@@ -164,7 +164,7 @@ void NetworkServer::handle_connectionless_packet(
   LOGGER(
       "server", LogLevel::DEBUG, std::format("Connectionless: '{}'", command));
 
-  char cmd = command[CMD_INDEX];
+  std::uint8_t cmd = command[CMD_INDEX];
 
   auto it = _command_table.find(cmd);
   if (it != _command_table.end()) {
@@ -267,7 +267,7 @@ std::vector<std::string> NetworkServer::parse_connect_args(const std::string& co
   args.push_back(commandline.substr(MAGIC_LENGTH + PROTOCOL_SIZE,
     CHALLENGE_SIZE));
   args.push_back(commandline.substr(MAGIC_LENGTH + PROTOCOL_SIZE + CHALLENGE_SIZE, PLAYERNAME_MAX_SIZE));
-  args.push_back(commandline.substr(commandline.length() -1, 1));
+  args.push_back(commandline.substr(commandline.length() - 1, 1));
   return args;
 }
 
@@ -280,7 +280,7 @@ void NetworkServer::handle_connect(const std::string& commandline,
   }
   std::vector<std::string> args = parse_connect_args(commandline);
 
-  int protocol_version = std::stoi(args[PROTOCOL_CNT_INDEX]);
+  int protocol_version = std::stoi(args[PROTOCOL_INDEX]);
   uint32_t challenge = std::stoul(args[CHALLENGE_CNT_INDEX]);
   std::string player_name = args[PLAYERNAME_CNT_INDEX];
   std::ostringstream oss;

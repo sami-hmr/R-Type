@@ -66,7 +66,7 @@ Server responds with connectResponse if successful.
 
 All connectionless commands follow the format:
 ```
-0x67676767 <command> <arg1> <arg2> ... 0x__
+0x67676767 <command> <arg1> <arg2> ... 0x00
 ```
 
 Arguments are sent in binary format.
@@ -127,7 +127,7 @@ Example: `0x67676767 0x07 2847561 0x00`
 **connectResponse**: Connection acknowledgment with client ID (=> 0x08 : 8 bits)
 
 ```
-0x67676767 "0x08 <client_id> <server_id> 0x00"
+0x67676767 0x08 <client_id> <server_id> 0x00
 ```
 
 Arguments:
@@ -143,7 +143,7 @@ Example: `0x67676767 0x08 0 19283746 0x00`
 **disconnectResponse**: Refusal of client's connection (=> 0x09 : 8 bits)
 
 ```
-0x67676767 "0x09 <error_message> 0x00"
+0x67676767 0x09 <error_message> 0x00
 ```
 
 Argument:

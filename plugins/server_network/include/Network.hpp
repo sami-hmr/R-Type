@@ -2,9 +2,9 @@
 
 #include <array>
 #include <cstdint>
-#include <functional>
-#include <map>
-#include <random>
+// #include <functional>
+// #include <map>
+// #include <random>
 #include <string>
 #include <thread>
 #include <unordered_map>
@@ -20,7 +20,7 @@
 #include "plugin/APlugin.hpp"
 #include "plugin/CircularBuffer.hpp"
 #include "plugin/EntityLoader.hpp"
-#include "plugin/events/Events.hpp"
+// #include "plugin/events/Events.hpp"
 
 #define MAX_PLAYERS 4
 
@@ -45,7 +45,8 @@
 
 #define CMD_INDEX MAGIC_LENGTH
 
-#define PROTOCOL_CNT_INDEX 1
+#define PROTOCOL_INDEX 1
+
 #define CHALLENGE_CNT_INDEX 2
 #define PLAYERNAME_CNT_INDEX 3
 
@@ -73,7 +74,7 @@ enum DisconnectedCommands : std::uint8_t
 
 enum class ClientState : std::uint8_t
 {
-  DISCONNECTED,
+  DISCONNECTED = 0,
   CHALLENGING,
   CONNECTED
 };
@@ -119,10 +120,9 @@ private:
   static std::vector<std::string> parse_connect_args(const std::string& commandline);
   ClientInfo* find_client_by_endpoint(const asio::ip::udp::endpoint& endpoint);
 
-  static const std::unordered_map<char,
-                                  void (NetworkServer::*)(
-                                      const std::string &,
-                                      const asio::ip::udp::endpoint&)>
+  static const std::unordered_map<std::uint8_t,
+    void (NetworkServer::*)(const std::string &,
+      const asio::ip::udp::endpoint&)>
       _command_table;
 
   asio::io_context _io_c;
