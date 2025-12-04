@@ -17,10 +17,10 @@
 CLI::CLI(Registery& r, EntityLoader& l, std::optional<JsonObject> const& config)
     : APlugin(r, l, {"logger", "server_network", "client_network"}, {}, config)
 {
-  _registery.get().on<ShutdownEvent>([this](const ShutdownEvent& event)
+  _registery.get().on<ShutdownEvent>([this](const ShutdownEvent&)
                                      { _running = false; });
 
-  _registery.get().on<CleanupEvent>([this](const CleanupEvent& event)
+  _registery.get().on<CleanupEvent>([this](const CleanupEvent&)
                                     { _running = false; });
 
   _registery.get().on<CliStart>(
@@ -33,7 +33,6 @@ CLI::CLI(Registery& r, EntityLoader& l, std::optional<JsonObject> const& config)
 
   _registery.get().on<CliStop>([this](const CliStop&) { _running = false; });
 
-  // Auto-start CLI when plugin is loaded
   _registery.get().emit<CliStart>();
 }
 
@@ -148,7 +147,34 @@ void CLI::process_command(const std::string& cmd)
             std::cout << "Example: connect 127.0.0.1 27015\n";
             return;
           }
-
+          _registery.get().emit<ClientConnection>(host, port);
+          std::cout << "Connecting to " << host << ":" << port << "\n";
+        }}},
+      {"s",
+       {.usage = "s",
+        .description = "commande de goat pour lancer le server",
+        .handler =
+            [this](std::istringstream&)
+        {
+          uint16_t port = 4242;
+          _registery.get().emit<ServerLaunching>(port);
+          std::cout << "Starting server on "
+                    << "0.0.0.0"
+                    << ":" << port << "\n";
+        }}},
+      {"c",
+       {.usage = "c",
+        .description = "autre commande de goat pour connect le client",
+        .handler =
+            [this](std::istringstream&)
+        {
+          std::string host = "0.0.0.0";
+          uint16_t port = 4242;
+          if (host.empty() || port == 0) {
+            std::cout << "Usage: connect <host> <port>\n";
+            std::cout << "Example: connect 127.0.0.1 27015\n";
+            return;
+          }
           _registery.get().emit<ClientConnection>(host, port);
           std::cout << "Connecting to " << host << ":" << port << "\n";
         }}},

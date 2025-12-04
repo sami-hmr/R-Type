@@ -1,18 +1,19 @@
-#include <chrono>
 #include <cstring>
 #include <format>
-#include <sstream>
 #include <thread>
 
 #include "Network.hpp"
 
+#include "NetworkCommun.hpp"
+#include "ServerCommands.hpp"
 #include "ecs/Registery.hpp"
 #include "plugin/Byte.hpp"
+#include "plugin/CircularBuffer.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/events/Events.hpp"
 
 const std::unordered_map<std::uint8_t,
-                         void (NetworkClient::*)(const std::string&)>
+                         void (NetworkClient::*)(ByteArray const&)>
     NetworkClient::_command_table = {
         {CHALLENGERESPONSE, &NetworkClient::handle_challenge_response},
         {CONNECTRESPONSE, &NetworkClient::handle_connect_response},
@@ -94,17 +95,22 @@ void NetworkClient::connection_thread(ClientConnection const& c)
 
 void NetworkClient::receive_loop()
 {
-  std::array<char, BUFFER_SIZE> recv_buf {};
+  CircularBuffer<BUFFER_SIZE> recv_buf;
   asio::ip::udp::endpoint sender_endpoint;
 
   while (_running) {
     try {
       std::error_code ec;
-      size_t len =
-          _socket->receive_from(asio::buffer(recv_buf), sender_endpoint, 0, ec);
+      std::size_t len = recv_buf.read_socket(*_socket, sender_endpoint, ec);
+
+      if (len > 0) {
+        LOGGER("client",
+               LogLevel::DEBUG,
+               std::format("received buffer, size : {}", len));
+      }
 
       if (ec == asio::error::would_block) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_DURATION));
+        std::this_thread::yield();
         continue;
       }
 
@@ -117,20 +123,9 @@ void NetworkClient::receive_loop()
         break;
       }
 
-      if (len >= MAGIC_LENGTH) {
-        uint32_t magic = 0;
-        std::memcpy(&magic, recv_buf.data(), sizeof(uint32_t));
-
-        if (magic == MAGIC_SEQUENCE) {
-          std::string response(recv_buf.data() + MAGIC_LENGTH,
-                               len - MAGIC_LENGTH);
-          if (!response.empty() && response.back() == END_OF_CMD) {
-            response.pop_back();
-          }
-          handle_connectionless_response(response);
-        } else {
-          LOGGER("client", LogLevel::DEBUG, "Received connected packet");
-        }
+      while (std::optional<ByteArray> p = recv_buf.extract(PROTOCOL_EOF)) {
+        LOGGER("client", LogLevel::DEBUG, "package extracted");
+        this->handle_package(*p);
       }
 
     } catch (std::exception& e) {
@@ -146,11 +141,38 @@ void NetworkClient::receive_loop()
   LOGGER("client", LogLevel::INFO, "Client receive loop ended");
 }
 
+void NetworkClient::handle_package(ByteArray const& package)
+{
+  std::optional<Package> pkg = this->parse_package(package);
+
+  if (!pkg) {
+    return;
+  }
+  if (pkg->magic != MAGIC_SEQUENCE) {
+    LOGGER("client", LogLevel::DEBUG, "Invalid magic sequence, ignoring.");
+    return;
+  }
+  handle_connectionless_response(pkg->real_package);
+}
+
+std::optional<Package> NetworkClient::parse_package(ByteArray const& package)
+{
+  if (package.size() < MAGIC_LENGTH) {
+    LOGGER("client", LogLevel::DEBUG, "Package too small");
+    return std::nullopt;
+  }
+
+  Package pkg;
+  std::memcpy(&pkg.magic, package.data(), sizeof(uint32_t));
+  pkg.real_package = ByteArray(package.begin() + MAGIC_LENGTH, package.end());
+
+  return pkg;
+}
+
 void NetworkClient::send_connectionless(ByteArray const& command)
 {
-  ByteArray pkg = type_to_byte(MAGIC_SEQUENCE) + command + type_to_byte(PROTOCOL_EOF_NUMBER);
-
-  std::cout << pkg.size() << std::endl;
+  ByteArray pkg = type_to_byte(MAGIC_SEQUENCE) + command
+      + type_to_byte(PROTOCOL_EOF_NUMBER);
 
   _socket->send_to(asio::buffer(pkg), _server_endpoint);
 
@@ -159,8 +181,13 @@ void NetworkClient::send_connectionless(ByteArray const& command)
          std::format("Sent: '{}'", static_cast<int>(command[CMD_INDEX])));
 }
 
-void NetworkClient::handle_connectionless_response(const std::string& response)
+void NetworkClient::handle_connectionless_response(ByteArray const& response)
 {
+  if (response.empty()) {
+    LOGGER("client", LogLevel::DEBUG, "Empty response");
+    return;
+  }
+
   LOGGER("client",
          LogLevel::DEBUG,
          std::format("Received: '{}'", static_cast<int>(response[CMD_INDEX])));
@@ -169,7 +196,8 @@ void NetworkClient::handle_connectionless_response(const std::string& response)
 
   auto it = _command_table.find(cmd);
   if (it != _command_table.end()) {
-    (this->*(it->second))(response);
+    ByteArray cmd_data(response.begin() + 1, response.end());
+    (this->*(it->second))(cmd_data);
   } else {
     LOGGER(
         "client", LogLevel::DEBUG, std::format("Unhandled response: {}", cmd));
@@ -184,86 +212,50 @@ void NetworkClient::send_getchallenge()
 void NetworkClient::send_connect(std::uint32_t challenge,
                                  ByteArray const& player_name)
 {
-    ByteArray msg = type_to_byte<Byte>(CONNECT) + type_to_byte<Byte>(CURRENT_PROTOCOL_VERSION)
-      + type_to_byte(challenge)
+  ByteArray msg = type_to_byte<Byte>(CONNECT)
+      + type_to_byte<Byte>(CURRENT_PROTOCOL_VERSION) + type_to_byte(challenge)
       + player_name;
 
   send_connectionless(msg);
 }
 
-bool NetworkClient::is_valid_response_format(
-    const std::vector<std::string>& args,
-    std::uint8_t requested_size,
-    const std::string& err_mess)
+void NetworkClient::handle_challenge_response(ByteArray const& commandline)
 {
-  std::size_t len = args.size();
-
-  if (len != requested_size) {
-    LOGGER("client", LogLevel::WARNING, err_mess.c_str());
-    return false;
-  }
-  return true;
-}
-
-std::vector<std::string> NetworkClient::parse_challenge_response(
-    const std::string& resp)
-{
-  std::vector<std::string> args;
-
-  args.push_back(resp.substr(0, PROTOCOL_SIZE));
-  args.push_back(resp.substr(PROTOCOL_SIZE, CHALLENGE_SIZE));
-  return args;
-}
-
-void NetworkClient::handle_challenge_response(const std::string& commandline)
-{
-  std::vector<std::string> args = parse_challenge_response(commandline);
-
-  if (!is_valid_response_format(
-          args, CHALLENGE_RESP_CMD_SIZE, "Invalid challengeResponse"))
-  {
+  if (commandline.size() < CHALLENGE_SIZE) {
+    LOGGER("client",
+           LogLevel::WARNING,
+           "Invalid challengeResponse: size too small");
     return;
   }
 
-  std::uint32_t challenge = std::stoul(args[CHALLENGE_CLG_INDEX]);
+  std::uint32_t challenge = 0;
+  std::memcpy(&challenge, commandline.data(), sizeof(uint32_t));
+
   LOGGER("client",
          LogLevel::INFO,
          std::format("Received challenge: {}", challenge));
 
   _state = ConnectionState::CONNECTING;
   ByteArray pn(PLAYERNAME_MAX_SIZE, 0);
-  for (int i = 0 ; i < _player_name.size(); i++) {
-      pn[i] = _player_name[i];
-  }
+  std::copy_n(
+      _player_name.begin(),
+      std::min(_player_name.size(), static_cast<size_t>(PLAYERNAME_MAX_SIZE)),
+      pn.begin());
   send_connect(challenge, pn);
 }
 
-std::vector<std::string> NetworkClient::parse_connect_response(
-    const std::string& resp)
+void NetworkClient::handle_connect_response(ByteArray const& commandline)
 {
-  std::vector<std::string> args;
-
-  args.push_back(resp.substr(0, MAGIC_LENGTH));
-  args.push_back(resp.substr(MAGIC_LENGTH, PROTOCOL_SIZE));
-  args.push_back(resp.substr(MAGIC_LENGTH + PROTOCOL_SIZE, CLIENT_ID_SIZE));
-  args.push_back(resp.substr(MAGIC_LENGTH + PROTOCOL_SIZE + CLIENT_ID_SIZE,
-                             SERVER_ID_SIZE));
-  args.push_back(resp.substr(resp.length() - 1, 1));
-  return args;
-}
-
-void NetworkClient::handle_connect_response(const std::string& commandline)
-{
-  std::vector<std::string> args = parse_connect_response(commandline);
-
-  if (!is_valid_response_format(
-          args, CONNECT_RESP_CMD_SIZE, "Invalid connectResponse"))
-  {
+  if (commandline.size() < (CLIENT_ID_SIZE + SERVER_ID_SIZE)) {
+    LOGGER(
+        "client", LogLevel::WARNING, "Invalid connectResponse: size too small");
     return;
   }
-  _client_id =
-      static_cast<std::uint8_t>(std::stoi(args[CLIENT_ID_CNT_RESP_INDEX]));
-  _server_id = std::stoul(args[SERVER_ID_CNT_RESP_INDEX]);
+
+  std::memcpy(&_client_id, commandline.data(), sizeof(uint8_t));
+  std::memcpy(
+      &_server_id, commandline.data() + CLIENT_ID_SIZE, sizeof(uint32_t));
+
   _state = ConnectionState::CONNECTED;
 
   LOGGER("client",
@@ -273,28 +265,16 @@ void NetworkClient::handle_connect_response(const std::string& commandline)
                      _server_id));
 }
 
-std::vector<std::string> NetworkClient::parse_disconnect_response(
-    const std::string& resp)
+void NetworkClient::handle_disconnect_response(ByteArray const& commandline)
 {
-  std::vector<std::string> args;
+  std::string reason = "Unknown reason";
 
-  args.push_back(resp.substr(0, PROTOCOL_SIZE));
-  args.push_back(resp.substr(PROTOCOL_SIZE, ERROR_MSG_SIZE));
-  return args;
-}
-
-void NetworkClient::handle_disconnect_response(const std::string& commandline)
-{
-  std::vector<std::string> args = parse_disconnect_response(commandline);
-
-  if (!is_valid_response_format(
-          args, DISCONNECT_RESP_CMD_SIZE, "Invalid disconnectResponse"))
-  {
-    return;
+  if (!commandline.empty()) {
+    // Find the first null terminator or use whole string
+    auto null_pos = std::find(commandline.begin(), commandline.end(), 0);
+    reason = std::string(commandline.begin(), null_pos);
   }
-  std::string reason = args[ERR_MESS_DSCNT_INDEX][0] == END_OF_CMD
-      ? args[ERR_MESS_DSCNT_INDEX]
-      : "Unknown reason";
+
   LOGGER("client",
          LogLevel::WARNING,
          std::format("Server disconnected: {}", reason));
