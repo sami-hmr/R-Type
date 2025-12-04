@@ -29,14 +29,14 @@
 
 #define UNUSED __attribute__((unused))
 
-#define CURRENT_PROTOCOL_VERSION 1
+#define CURRENT_PROTOCOL_VERSION std::uint8_t(1)
 
 #define SOLO uint8_t(0x01)
 #define COOP uint8_t(0x02)
 
-#define DISCONNECT_RESP_CMD_SIZE 4
-#define CHALLENGE_RESP_CMD_SIZE 4
-#define CONNECT_RESP_CMD_SIZE 5
+#define DISCONNECT_RESP_CMD_SIZE 2
+#define CHALLENGE_RESP_CMD_SIZE 2
+#define CONNECT_RESP_CMD_SIZE 3
 
 #define END_OF_CMD std::uint8_t(0x00)
 

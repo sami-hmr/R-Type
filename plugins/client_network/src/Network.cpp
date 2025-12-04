@@ -207,10 +207,8 @@ std::vector<std::string> NetworkClient::parse_challenge_response(const std::stri
 {
   std::vector<std::string> args;
 
-  args.push_back(resp.substr(0, MAGIC_LENGTH));
-  args.push_back(resp.substr(MAGIC_LENGTH, PROTOCOL_SIZE));
-  args.push_back(resp.substr(MAGIC_LENGTH + PROTOCOL_SIZE, CHALLENGE_SIZE));
-  args.push_back(resp.substr(resp.length() - 1, 1));
+  args.push_back(resp.substr(0, PROTOCOL_SIZE));
+  args.push_back(resp.substr(PROTOCOL_SIZE, CHALLENGE_SIZE));
   return args;
 }
 
@@ -235,12 +233,9 @@ std::vector<std::string> NetworkClient::parse_connect_response(const std::string
 {
   std::vector<std::string> args;
 
-  args.push_back(resp.substr(0, MAGIC_LENGTH));
-  args.push_back(resp.substr(MAGIC_LENGTH, PROTOCOL_SIZE));
-  args.push_back(resp.substr(MAGIC_LENGTH + PROTOCOL_SIZE, CLIENT_ID_SIZE));
-  args.push_back(resp.substr(MAGIC_LENGTH + PROTOCOL_SIZE + CLIENT_ID_SIZE,
-    SERVER_ID_SIZE));
-  args.push_back(resp.substr(resp.length() - 1, 1));
+  args.push_back(resp.substr(0, PROTOCOL_SIZE));
+  args.push_back(resp.substr(PROTOCOL_SIZE, CLIENT_ID_SIZE));
+  args.push_back(resp.substr(PROTOCOL_SIZE + CLIENT_ID_SIZE, SERVER_ID_SIZE));
   return args;
 }
 
@@ -265,10 +260,8 @@ std::vector<std::string> NetworkClient::parse_disconnect_response(const std::str
 {
   std::vector<std::string> args;
 
-  args.push_back(resp.substr(0, MAGIC_LENGTH));
-  args.push_back(resp.substr(MAGIC_LENGTH, PROTOCOL_SIZE));
-  args.push_back(resp.substr(MAGIC_LENGTH + PROTOCOL_SIZE, ERROR_MSG_SIZE));
-  args.push_back(resp.substr(resp.length() - 1, 1));
+  args.push_back(resp.substr(0, PROTOCOL_SIZE));
+  args.push_back(resp.substr(PROTOCOL_SIZE, ERROR_MSG_SIZE));
   return args;
 }
 

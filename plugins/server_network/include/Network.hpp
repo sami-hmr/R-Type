@@ -41,6 +41,8 @@
 #define SOLO uint8_t(0x01)
 #define COOP uint8_t(0x02)
 
+#define CONNECT_CMD_SIZE 3
+
 #define END_OF_CMD std::uint8_t(0x00)
 
 // indexes

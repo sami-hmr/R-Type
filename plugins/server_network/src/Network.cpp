@@ -271,14 +271,14 @@ std::vector<std::string> NetworkServer::parse_connect_args(const std::string& co
 void NetworkServer::handle_connect(const std::string& commandline,
                                    const asio::ip::udp::endpoint& sender)
 {
-  std::size_t len = commandline.size();
+  std::vector<std::string> args = parse_connect_args(commandline);
+  std::size_t len = args.size();
 
-  if (len != CONNECT_COMMAND_SIZE) {
+  if (len != CONNECT_CMD_SIZE) {
     LOGGER("server", LogLevel::WARNING, std::format("Invalid connect command: command size is {} and content is {}", len, &commandline[0] + 1));
     return;
   }
-  std::vector<std::string> args = parse_connect_args(commandline);
-
+    // LOGGER("server", LogLevel::WARNING, std::format("Look at that '{}' '{}' '{}' '{}' '{}' '{}'", (args[PROTOCOL_SIZE]), args[PROTOCOL_SIZE].size(), (args[CHALLENGE_CNT_INDEX]), args[CHALLENGE_CNT_INDEX].size(), args[PLAYERNAME_CNT_INDEX], args[PLAYERNAME_CNT_INDEX].size()));
   int protocol_version = std::stoi(args[PROTOCOL_INDEX]);
   uint32_t challenge = std::stoul(args[CHALLENGE_CNT_INDEX]);
   std::string player_name = args[PLAYERNAME_CNT_INDEX];
