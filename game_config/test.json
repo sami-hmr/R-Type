@@ -65,7 +65,7 @@
       "plugins": [],
       "entities": [
         {
-          "moving:Position": { "x": 0.0, "y": 0.0 },
+          "moving:Position": { "x": 0.0, "y": 0.0, "z": 2 },
           "sfml:Drawable": {},
           "moving:Velocity": {
             "speed" : {
