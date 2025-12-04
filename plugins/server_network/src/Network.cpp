@@ -193,13 +193,13 @@ void NetworkServer::handle_connectionless_packet(
 void NetworkServer::send_connectionless(ByteArray const& response,
                                         const asio::ip::udp::endpoint& endpoint)
 {
-    ByteArray pkg = type_to_byte(MAGIC_SEQUENCE) + response + type_to_byte(PROTOCOL_EOF_NUMBER);
+  ByteArray pkg = MAGIC_SEQUENCE + response + PROTOCOL_EOF;
 
   _socket->send_to(asio::buffer(pkg), endpoint);
 
   LOGGER("server",
          LogLevel::DEBUG,
-         std::format("Sent: '{}'", static_cast<int>(response[CMD_INDEX])));
+         std::format("Sent connectionless package of size: {}", pkg.size()));
 }
 
 void NetworkServer::handle_getinfo(ByteArray const& cmd,
@@ -279,18 +279,6 @@ void NetworkServer::handle_connect(ByteArray const& cmd,
     return;
   }
 
-  if (parsed->protocol != CURRENT_PROTOCOL_VERSION) {
-    std::array<char, ERROR_MSG_SIZE> msg {};
-    std::string error_message = "Protocol version mismatch";
-    std::copy(error_message.data(),
-              error_message.data() + error_message.length(),
-              msg.begin());
-    ByteArray pkg =
-        type_to_byte<Byte>(DISCONNECT) + ByteArray(msg.begin(), msg.end());
-    send_connectionless(pkg, sender);
-    return;
-  }
-
   try {
     ClientInfo& client = find_client_by_endpoint(sender);
 
@@ -300,13 +288,10 @@ void NetworkServer::handle_connect(ByteArray const& cmd,
       LOGGER("server", LogLevel::WARNING, "Invalid challenge");
       return;
     }
-
-    uint8_t client_id = _clients.size();
+    uint8_t client_id = _clients.size(); //TODO: change to incrementator uint32 in the wrapper class
 
     client.client_id = client_id;
-    std::copy(parsed->player_name.data(),
-              parsed->player_name.data() + parsed->player_name.length(),
-              client.player_name.begin());
+    client.player_name = parsed->player_name;
     client.state = ClientState::CONNECTED;
 
     LOGGER("server",
@@ -344,8 +329,8 @@ ClientInfo& NetworkServer::find_client_by_endpoint(
     {
       return client;
     }
-    throw ClientNotFound("");
   }
+  throw ClientNotFound("");
 }
 
 extern "C"

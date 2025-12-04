@@ -5,6 +5,7 @@ set(LIB_NAME client_network)
 find_package(asio CONFIG REQUIRED)
 
 add_library(${LIB_NAME} SHARED
+    src/CommandParsing.cpp
     src/Network.cpp
 )
 

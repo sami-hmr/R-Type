@@ -14,13 +14,7 @@
 #include "plugin/Byte.hpp"
 #include "plugin/events/Events.hpp"
 
-static Parser<Package> parse_pkg()
-{
-  return apply([](std::uint32_t magic, ByteArray r)
-               { return Package(magic, std::move(r)); },
-               parseByte<std::uint32_t>(),
-               parseByte<Byte>().many());
-}
+
 
 std::optional<Package> NetworkServer::parse_package(ByteArray const& package)
 {
@@ -36,16 +30,8 @@ std::optional<Package> NetworkServer::parse_package(ByteArray const& package)
   return std::get<SUCCESS>(r).value;
 }
 
-static Parser<ConnectionlessCommand> parse_connectionless()
-{
-  return apply([](std::uint8_t code, ByteArray c)
-               { return ConnectionlessCommand(code, std::move(c)); },
-               parseByte<std::uint8_t>(),
-               parseByte<Byte>().many());
-}
-
 std::optional<ConnectionlessCommand>
-NetworkServer::parse_connectionless_package(ByteArray& package)
+NetworkServer::parse_connectionless_package(ByteArray const& package)
 {
   Result<ConnectionlessCommand> r = parse_connectionless()(Rest(package));
 
@@ -57,16 +43,6 @@ NetworkServer::parse_connectionless_package(ByteArray& package)
     return std::nullopt;
   }
   return std::get<SUCCESS>(r).value;
-}
-
-static Parser<ConnectCommand> parse_connect_cmd()
-{
-  return apply(
-      [](std::uint8_t p, std::uint32_t c, ByteArray name)
-      { return ConnectCommand(p, c, std::string(name.begin(), name.end())); },
-      parseByte<uint8_t>(),
-      parseByte<u_int32_t>(),
-      parseByte<Byte>() * PLAYERNAME_MAX_SIZE);
 }
 
 std::optional<ConnectCommand> NetworkServer::parse_connect_command(

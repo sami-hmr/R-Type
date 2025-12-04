@@ -1,20 +1,32 @@
 #pragma once
 
 #include <array>
+#include <bit>
 #include <cstdint>
 #include <string>
 
 #include <asio/error_code.hpp>
 #include <asio/io_context.hpp>
 #include <asio/ip/udp.hpp>
+#include "plugin/Byte.hpp"
 
 #define MAX_PLAYERS 4
 #define BUFFER_SIZE 2048
 
-#define MAGIC_SEQUENCE std::uint32_t(0x436482793)
-#define MAGIC_LENGTH 4
-#define PROTOCOL_EOF {0x67, 0x67, 0x67, 0x67}
-#define PROTOCOL_EOF_NUMBER std::uint32_t(0x67676767)
+
+#define __VERSION_MAGIC_SEQUENCE__ 0x436482793
+//#define MAGIC_SEQUENCE std::uint32_t(0x436482793)
+
+consteval std::array<Byte, 4> __generate_index_sequence__() {
+    auto magic = static_cast<uint32_t>(__VERSION_MAGIC_SEQUENCE__);
+    return std::bit_cast<std::array<Byte, 4>>(magic);
+}
+
+static constexpr std::array<Byte, 4> __MAGIC_SEQUENCE__ = __generate_index_sequence__();
+
+
+static const ByteArray MAGIC_SEQUENCE = {__MAGIC_SEQUENCE__.begin(), __MAGIC_SEQUENCE__.end()};
+static const ByteArray PROTOCOL_EOF = {0x67, 0x67, 0x67, 0x67};
 
 #define HOSTNAME_LENGTH 64
 #define MAPNAME_LENGTH 32

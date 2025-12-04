@@ -57,7 +57,7 @@ private:
   static uint32_t generate_challenge();
   std::optional<Package> parse_package(ByteArray const& package);
   std::optional<ConnectionlessCommand> parse_connectionless_package(
-      ByteArray& package);
+      ByteArray const& package);
   std::optional<ConnectCommand> parse_connect_command(ByteArray const& cmd);
 
   ClientInfo& find_client_by_endpoint(const asio::ip::udp::endpoint& endpoint);

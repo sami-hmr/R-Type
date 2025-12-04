@@ -34,13 +34,15 @@ private:
   void handle_package(ByteArray const& package);
 
   void send_getchallenge();
-  void send_connect(uint32_t challenge, ByteArray const& player_name);
+  void send_connect(uint32_t challenge);
 
   void handle_challenge_response(ByteArray const& commandline);
   void handle_connect_response(ByteArray const& commandline);
   void handle_disconnect_response(ByteArray const& commandline);
 
   std::optional<Package> parse_package(ByteArray const& package);
+  std::optional<ConnectionlessCommand> parse_connectionless_package(
+      ByteArray const& package);
 
   static const std::unordered_map<std::uint8_t,
                                   void (NetworkClient::*)(ByteArray const&)>

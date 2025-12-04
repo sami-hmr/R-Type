@@ -1,5 +1,6 @@
 #include <cstring>
 #include <format>
+#include <stdexcept>
 #include <thread>
 
 #include "Network.hpp"
@@ -109,11 +110,6 @@ void NetworkClient::receive_loop()
                std::format("received buffer, size : {}", len));
       }
 
-      if (ec == asio::error::would_block) {
-        std::this_thread::yield();
-        continue;
-      }
-
       if (ec) {
         if (_running) {
           LOGGER("client",
@@ -155,30 +151,15 @@ void NetworkClient::handle_package(ByteArray const& package)
   handle_connectionless_response(pkg->real_package);
 }
 
-std::optional<Package> NetworkClient::parse_package(ByteArray const& package)
-{
-  if (package.size() < MAGIC_LENGTH) {
-    LOGGER("client", LogLevel::DEBUG, "Package too small");
-    return std::nullopt;
-  }
-
-  Package pkg;
-  std::memcpy(&pkg.magic, package.data(), sizeof(uint32_t));
-  pkg.real_package = ByteArray(package.begin() + MAGIC_LENGTH, package.end());
-
-  return pkg;
-}
-
 void NetworkClient::send_connectionless(ByteArray const& command)
 {
-  ByteArray pkg = type_to_byte(MAGIC_SEQUENCE) + command
-      + type_to_byte(PROTOCOL_EOF_NUMBER);
+  ByteArray pkg = MAGIC_SEQUENCE + command + PROTOCOL_EOF;
 
   _socket->send_to(asio::buffer(pkg), _server_endpoint);
 
   LOGGER("client",
          LogLevel::DEBUG,
-         std::format("Sent: '{}'", static_cast<int>(command[CMD_INDEX])));
+         std::format("Sent connectionless package of size: {}", pkg.size()));
 }
 
 void NetworkClient::handle_connectionless_response(ByteArray const& response)
@@ -190,17 +171,16 @@ void NetworkClient::handle_connectionless_response(ByteArray const& response)
 
   LOGGER("client",
          LogLevel::DEBUG,
-         std::format("Received: '{}'", static_cast<int>(response[CMD_INDEX])));
-
-  std::uint8_t cmd = response[CMD_INDEX];
-
-  auto it = _command_table.find(cmd);
-  if (it != _command_table.end()) {
-    ByteArray cmd_data(response.begin() + 1, response.end());
-    (this->*(it->second))(cmd_data);
-  } else {
-    LOGGER(
-        "client", LogLevel::DEBUG, std::format("Unhandled response: {}", cmd));
+         std::format("Received connectionless response of size: {}", response.size()));
+  auto const& parsed = this->parse_connectionless_package(response);
+  if (!parsed) {
+    return;
+  }
+  try {
+      (this->*(_command_table.at(parsed->command_code)))(parsed->command);
+  } catch (std::out_of_range const&) {
+         LOGGER(
+            "client", LogLevel::DEBUG, std::format("Unhandled connectionless response: {}", parsed->command));
   }
 }
 
@@ -209,12 +189,11 @@ void NetworkClient::send_getchallenge()
   send_connectionless(type_to_byte<Byte>(GETCHALLENGE));
 }
 
-void NetworkClient::send_connect(std::uint32_t challenge,
-                                 ByteArray const& player_name)
+void NetworkClient::send_connect(std::uint32_t challenge)
 {
   ByteArray msg = type_to_byte<Byte>(CONNECT)
       + type_to_byte<Byte>(CURRENT_PROTOCOL_VERSION) + type_to_byte(challenge)
-      + player_name;
+      + string_to_byte(_player_name);
 
   send_connectionless(msg);
 }
@@ -236,12 +215,7 @@ void NetworkClient::handle_challenge_response(ByteArray const& commandline)
          std::format("Received challenge: {}", challenge));
 
   _state = ConnectionState::CONNECTING;
-  ByteArray pn(PLAYERNAME_MAX_SIZE, 0);
-  std::copy_n(
-      _player_name.begin(),
-      std::min(_player_name.size(), static_cast<size_t>(PLAYERNAME_MAX_SIZE)),
-      pn.begin());
-  send_connect(challenge, pn);
+  send_connect(challenge);
 }
 
 void NetworkClient::handle_connect_response(ByteArray const& commandline)

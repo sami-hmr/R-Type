@@ -35,7 +35,6 @@ class CircularBuffer {
 
     std::optional<Package> extract(Eof eof) {
         std::size_t available = this->get_available_size();
-        std::cout << "available " << available << std::endl;
         if (available < eof.size()) {return std::nullopt;}
 
         Package tmp(available);
