@@ -23,7 +23,8 @@
 #include "plugin/events/Events.hpp"
 
 Collision::Collision(Registery& r, EntityLoader& l)
-    : APlugin(r, l, {"moving"}, {COMP_INIT(Collidable, Collidable, init_collision)})
+    : APlugin(
+          r, l, {"moving"}, {COMP_INIT(Collidable, Collidable, init_collision)})
 {
   _registery.get().register_component<Collidable>("collision:Collidable");
   _registery.get().register_component<Team>("collision:Team");
@@ -86,18 +87,16 @@ void Collision::collision_system(Registery& reg,
 
   std::vector<ICollisionAlgorithm::CollisionEntity> entities;
 
-  std::size_t max_size = std::min(positions.size(), collidables.size());
-  for (std::size_t i = 0; i < max_size; ++i) {
-    if (reg.has_component<Position>(i) && reg.has_component<Collidable>(i)
-        && collidables[i]->is_active)
-    {
-      entities.push_back(ICollisionAlgorithm::CollisionEntity {
-          .entity_id = i,
-          .bounds = Rect {.x = positions[i]->pos.x,
-                          .y = positions[i]->pos.y,
-                          .width = collidables[i]->width,
-                          .height = collidables[i]->height}});
+  for (auto&& [i, position, collidable] : ZipperIndex(positions, collidables)) {
+    if (!collidables[i]->is_active) {
+      continue;
     }
+    entities.push_back(ICollisionAlgorithm::CollisionEntity {
+        .entity_id = i,
+        .bounds = Rect {.x = position.pos.x,
+                        .y = position.pos.y,
+                        .width = collidable.width,
+                        .height = collidable.height}});
   }
 
   _collision_algo->update(entities);

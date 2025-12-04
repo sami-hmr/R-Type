@@ -9,6 +9,7 @@
 #include "plugin/components/Owner.hpp"
 #include "plugin/components/Temporal.hpp"
 #include "plugin/events/Events.hpp"
+#include "ecs/zipper/ZipperIndex.hpp"
 
 Projectile::Projectile(Registery& r, EntityLoader& l)
     : APlugin(r,
@@ -72,11 +73,11 @@ void Projectile::temporal_system(Registery& reg)
   auto& temporals = reg.get_components<Temporal>();
   double dt = reg.clock().delta_seconds();
 
-  for (size_t i = 0; i < temporals.size(); ++i) {
-    if (temporals[i].has_value() && !reg.is_entity_dying(i)) {
+  for (auto&& [i, temporal] : ZipperIndex(temporals)) {
+    if (!reg.is_entity_dying(i)) {
       temporals[i]->elapsed += dt;
 
-      if (temporals[i]->elapsed >= temporals[i]->lifetime) {
+      if (temporal.elapsed >= temporal.lifetime) {
         reg.kill_entity(i);
       }
     }

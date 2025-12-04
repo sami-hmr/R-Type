@@ -42,7 +42,7 @@ public:
    * @tparam Container The container type.
    */
   template<class Container>
-  using Value = Base::template value<Container>;
+  using Value = typename Base::template Value<Container>;
   
   /** @brief Tuple type containing the index followed by values from all containers. */
   using ValueType = std::tuple<std::size_t, Value<Containers>...>;
@@ -88,7 +88,7 @@ public:
    */
   ValueType operator*()
   {
-    return std::tuple_cat(std::make_tuple(this->_base.idx_), *this->_base);
+    return std::tuple_cat(std::make_tuple(this->_base._idx), *this->_base);
   }
 
   /**
@@ -104,7 +104,7 @@ public:
    */
   bool operator==(ZipperIndexIterator const& rhs)
   {
-    return this->_base.idx_ == rhs._base.idx_;
+    return this->_base._idx == rhs._base._idx;
   }
 
   /**
@@ -151,7 +151,7 @@ public:
   using Iterator = ZipperIndexIterator<Containers...>;
   
   /** @brief Tuple type containing iterators for all containers. */
-  using IteratorTuple = typename Iterator::base::iterator_tuple;
+  using IteratorTuple = typename Iterator::Base::iterator_tuple;
 
   /**
    * @brief Constructs an indexed zipper from multiple container references.
@@ -198,7 +198,7 @@ private:
    */
   static std::size_t compute_size(Containers&... containers)
   {
-    return std::min(containers.size()...);
+    return std::min({containers.size()...});
   }
 
   /**
