@@ -108,7 +108,7 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
   _registery.get().add_system<Drawable, Background>(
       [this](Registery& r,
              const SparseArray<Drawable>& drawables,
-             const SparseArray<Background>& backgrounds)
+         SparseArray<Background>& backgrounds)
       { this->background_system(r, drawables, backgrounds); }
   );
   _registery.get().add_system<Position, Drawable, Sprite>(

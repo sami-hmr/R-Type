@@ -62,8 +62,8 @@ private:
                    const SparseArray<Drawable>& drawable,
                    const SparseArray<Text>& texts);
   void background_system(Registery& r,
-                              const SparseArray<Drawable>& drawables,
-                             const SparseArray<Background>& backgrounds);
+                         const SparseArray<Drawable>& drawables,
+                         SparseArray<Background>& backgrounds);
 
 
   void display();
@@ -80,15 +80,14 @@ private:
   std::optional<sf::Text> _text;
   sf::View _view;
 
-  void draw_nothing_background(const Background &background);
-  void draw_repeat_background(const Background &background);
-  void draw_stretch_background(const Background &background);
-  void draw_parallax_background(const Background &background);
+  void draw_nothing_background(Background &background);
+  void draw_repeat_background(Background &background);
+  void draw_stretch_background(Background &background);
 
-  std::map<Background::RenderType, std::function<void(const Background &)>> _draw_functions {
-        {Background::RenderType::NOTHING, [this](const Background &background) { this->draw_nothing_background(background); }},
-        {Background::RenderType::REPEAT, [this](const Background &background) { this->draw_repeat_background(background); }},
-        {Background::RenderType::STRETCH, [this](const Background &background) { this->draw_stretch_background(background); }},
+  std::map<Background::RenderType, std::function<void(Background &)>> _draw_functions {
+        {Background::RenderType::NOTHING, [this](Background &background) { this->draw_nothing_background(background); }},
+        {Background::RenderType::REPEAT, [this](Background &background) { this->draw_repeat_background(background); }},
+        {Background::RenderType::STRETCH, [this](Background &background) { this->draw_stretch_background(background); }},
   };
 
   KeyPressedEvent _key_pressed;

@@ -9,6 +9,7 @@
 #include "SFMLRenderer.hpp"
 #include "ecs/Registery.hpp"
 #include "ecs/zipper/Zipper.hpp"
+#include "libs/Vector2D.hpp"
 
 void SFMLRenderer::init_background(Registery::Entity const entity,
                                    JsonObject const& obj)
@@ -52,11 +53,24 @@ void SFMLRenderer::init_background(Registery::Entity const entity,
                    "value, using default (NOTHING)\n";
     }
   }
-  bool parallax = false;
-  auto const& parallax_value =
-      get_value<bool>(this->_registery.get(), obj, "parallax");
-  if (parallax_value.has_value()) {
-    parallax = parallax_value.value();
+  Parallax parallax;
+  const std::optional<JsonObject>& parallax_obj =
+      get_value<JsonObject>(this->_registery.get(), obj, "parallax");
+  if (parallax_obj.has_value()) {
+    const auto& active =
+        get_value<bool>(this->_registery.get(), parallax_obj.value(), "active");
+    const auto& speed = get_value<JsonObject>(
+        this->_registery.get(), parallax_obj.value(), "speed");
+    const auto& framerate = get_value<double>(
+        this->_registery.get(), parallax_obj.value(), "framerate");
+    if (active.has_value() && speed.has_value() && framerate.has_value()) {
+      parallax.speed = Vector2D(speed.value());
+      parallax.active = active.value();
+      parallax.framerate = framerate.value();
+    } else {
+      std::cerr << "Error loading Background component: invalid parallax "
+                   "value, using default (inactive)\n";
+    }
   }
   this->_registery.get().emplace_component<Background>(
       entity, Background(paths, render_type, parallax));
@@ -64,17 +78,24 @@ void SFMLRenderer::init_background(Registery::Entity const entity,
 
 void SFMLRenderer::background_system(Registery& r,
                                      const SparseArray<Drawable>& drawables,
-                                     const SparseArray<Background>& backgrounds)
+                                     SparseArray<Background>& backgrounds)
 {
+  sf::Vector2u window_size = _window.getSize();
+
   for (const auto&& [draw, background] : Zipper(drawables, backgrounds)) {
     if (!draw.enabled) {
       continue;
+    }
+    if (background.parallax.active) {
+      double dt = r.clock().delta_seconds();
+      background.parallax.pos.x += background.parallax.speed.x * dt;
+      background.parallax.pos.y += background.parallax.speed.y * dt;
     }
     this->_draw_functions.at(background.render_type)(background);
   }
 }
 
-void SFMLRenderer::draw_nothing_background(const Background& bg)
+void SFMLRenderer::draw_nothing_background(Background& bg)
 {
   for (const std::string& texture_path : bg.textures_path) {
     sf::Texture& texture = load_texture(texture_path);
@@ -91,14 +112,12 @@ void SFMLRenderer::draw_nothing_background(const Background& bg)
   }
 }
 
-void SFMLRenderer::draw_parallax_background(const Background& bg) {}
-
 /**
  * @brief if the background does not fill the window, draw it again
  *
  * @param bg
  */
-void SFMLRenderer::draw_repeat_background(const Background& bg)
+void SFMLRenderer::draw_repeat_background(Background& bg)
 {
   sf::Vector2u window_size = _window.getSize();
 
@@ -137,9 +156,10 @@ void SFMLRenderer::draw_repeat_background(const Background& bg)
  *
  * @param bg
  */
-void SFMLRenderer::draw_stretch_background(const Background& bg)
+void SFMLRenderer::draw_stretch_background(Background& bg)
 {
   sf::Vector2u window_size = _window.getSize();
+  int i = bg.textures_path.size();
 
   for (const std::string& texture_path : bg.textures_path) {
     sf::Texture& texture = load_texture(texture_path);
@@ -154,7 +174,24 @@ void SFMLRenderer::draw_stretch_background(const Background& bg)
 
     this->_sprite->setScale({scale_x, scale_y});
     this->_sprite->setOrigin({0, 0});
-    this->_sprite->setPosition({0, 0});
+    sf::Vector2f new_pos = {static_cast<float>(bg.parallax.pos.x / (i)),
+      static_cast<float>(bg.parallax.pos.y / (i))};
+    this->_sprite->setPosition(new_pos);
     this->_window.draw(*this->_sprite);
+    if (bg.parallax.active) {
+      while (new_pos.x > 0) {
+        new_pos = {new_pos.x - static_cast<float>(texture.getSize().x * scale_x),
+                   new_pos.y};
+        this->_sprite->setPosition(new_pos);
+        this->_window.draw(*this->_sprite);
+      }
+      while (new_pos.x + static_cast<float>(texture.getSize().x * scale_x) < window_size.x) {
+        new_pos = {new_pos.x + static_cast<float>(texture.getSize().x * scale_x),
+                   new_pos.y};
+        this->_sprite->setPosition(new_pos);
+        this->_window.draw(*this->_sprite);
+      }
+    }
+    i = std::max(i - 1, 1);
   }
 }
