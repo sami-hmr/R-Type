@@ -43,28 +43,27 @@
 
 // indexes
 
-#define CMD_INDEX MAGIC_LENGTH
+#define CMD_INDEX 0
 
-#define MAGIC_INDEX 0
-#define PROTOCOL_INDEX 1
+#define PROTOCOL_INDEX 0
 
 //- Challend resp -//
 
-#define CHALLENGE_CLG_INDEX 2
+#define CHALLENGE_CLG_INDEX 1
 
 //- Connect command -//
 
-#define ERR_MESS_DSCNT_INDEX 2
+#define ERR_MESS_DSCNT_INDEX 1
 
 //- Connect command -//
 
-#define CHALLENGE_CNT_INDEX 2
-#define PLAYERNAME_CNT_INDEX 3
+#define CHALLENGE_CNT_INDEX 1
+#define PLAYERNAME_CNT_INDEX 2
 
 //- Connect response -//
 
-#define CLIENT_ID_CNT_RESP_INDEX 2
-#define SERVER_ID_CNT_RESP_INDEX 3
+#define CLIENT_ID_CNT_RESP_INDEX 1
+#define SERVER_ID_CNT_RESP_INDEX 2
 
 
 // size in byte

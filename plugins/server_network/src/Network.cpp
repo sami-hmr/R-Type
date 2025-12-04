@@ -137,7 +137,7 @@ void NetworkServer::receive_loop()
 
       if (magic == MAGIC_SEQUENCE) {
         std::string command(recv_buf.data() + MAGIC_LENGTH, len - MAGIC_LENGTH);
-        if (!command.empty() && command.back() == '\0') {
+        if (!command.empty() && command.back() == END_OF_CMD) {
           command.pop_back();
         }
         handle_connectionless_packet(command, sender_endpoint);
@@ -162,7 +162,7 @@ void NetworkServer::handle_connectionless_packet(
     const std::string& command, const asio::ip::udp::endpoint& sender)
 {
   LOGGER(
-      "server", LogLevel::DEBUG, std::format("Connectionless: '{}'", command));
+      "server", LogLevel::DEBUG, std::format("Received connectionless packet: '{}'", int(command[CMD_INDEX])));
 
   std::uint8_t cmd = command[CMD_INDEX];
 
@@ -186,17 +186,17 @@ void NetworkServer::send_connectionless(const std::string& response,
   std::memcpy(packet.data(), &magic, sizeof(uint32_t));
 
   std::memcpy(packet.data() + MAGIC_LENGTH, response.c_str(), length);
-  packet[MAGIC_LENGTH + length] = '\0';
+  packet[MAGIC_LENGTH + length] = END_OF_CMD;
 
   _socket->send_to(asio::buffer(packet), endpoint);
 
-  LOGGER("server", LogLevel::DEBUG, std::format("Sent: '{}'", response));
+  LOGGER("server", LogLevel::DEBUG, std::format("Sent: '{}'", static_cast<int>(response[CMD_INDEX])));
 }
 
 void NetworkServer::handle_getinfo(const std::string& UNUSED commandline,
                                    const asio::ip::udp::endpoint& sender)
 {
-  if (commandline.size() != MAGIC_LENGTH + COMMAND_SIZE + 1) {
+  if (commandline.size() != COMMAND_SIZE) {
     LOGGER("server", LogLevel::WARNING, "Invalid getinfo command");
     return;
   }
@@ -210,7 +210,7 @@ void NetworkServer::handle_getinfo(const std::string& UNUSED commandline,
 void NetworkServer::handle_getstatus(const std::string& UNUSED commandline,
                                      const asio::ip::udp::endpoint& sender)
 {
-  if (commandline.size() != MAGIC_LENGTH + COMMAND_SIZE + 1) {
+  if (commandline.size() != COMMAND_SIZE) {
     LOGGER("server", LogLevel::WARNING, "Invalid getstatus command");
     return;
   }
@@ -231,7 +231,7 @@ void NetworkServer::handle_getstatus(const std::string& UNUSED commandline,
 void NetworkServer::handle_getchallenge(const std::string& UNUSED commandline,
                                         const asio::ip::udp::endpoint& sender)
 {
-  if (commandline.size() != MAGIC_LENGTH + COMMAND_SIZE + 1) {
+  if (commandline.size() != COMMAND_SIZE) {
     LOGGER("server", LogLevel::WARNING, "Invalid getchallenge command");
     return;
   }
@@ -262,20 +262,19 @@ std::vector<std::string> NetworkServer::parse_connect_args(const std::string& co
 {
   std::vector<std::string> args;
 
-  args.push_back(commandline.substr(0, MAGIC_LENGTH));
-  args.push_back(commandline.substr(MAGIC_LENGTH, PROTOCOL_SIZE));
-  args.push_back(commandline.substr(MAGIC_LENGTH + PROTOCOL_SIZE,
-    CHALLENGE_SIZE));
-  args.push_back(commandline.substr(MAGIC_LENGTH + PROTOCOL_SIZE + CHALLENGE_SIZE, PLAYERNAME_MAX_SIZE));
-  args.push_back(commandline.substr(commandline.length() - 1, 1));
+  args.push_back(commandline.substr(0, PROTOCOL_SIZE));
+  args.push_back(commandline.substr(PROTOCOL_SIZE, CHALLENGE_SIZE));
+  args.push_back(commandline.substr(PROTOCOL_SIZE + CHALLENGE_SIZE, PLAYERNAME_MAX_SIZE));
   return args;
 }
 
 void NetworkServer::handle_connect(const std::string& commandline,
                                    const asio::ip::udp::endpoint& sender)
 {
-  if (commandline.size() != MAGIC_LENGTH + CONNECT_COMMAND_SIZE + 1) {
-    LOGGER("server", LogLevel::WARNING, "Invalid connect command");
+  std::size_t len = commandline.size();
+
+  if (len != CONNECT_COMMAND_SIZE) {
+    LOGGER("server", LogLevel::WARNING, std::format("Invalid connect command: command size is {} and content is {}", len, &commandline[0] + 1));
     return;
   }
   std::vector<std::string> args = parse_connect_args(commandline);

@@ -125,7 +125,7 @@ void NetworkClient::receive_loop()
 
         if (magic == MAGIC_SEQUENCE) {
           std::string response(recv_buf.data() + MAGIC_LENGTH, len - MAGIC_LENGTH);
-          if (!response.empty() && response.back() == '\0') {
+          if (!response.empty() && response.back() == END_OF_CMD) {
             response.pop_back();
           }
           handle_connectionless_response(response);
@@ -156,16 +156,16 @@ void NetworkClient::send_connectionless(const std::string& command)
   std::memcpy(packet.data(), &magic, sizeof(uint32_t));
 
   std::memcpy(packet.data() + MAGIC_LENGTH, command.c_str(), command.size());
-  packet[MAGIC_LENGTH + command.size()] = '\0';
+  packet[MAGIC_LENGTH + command.size()] = END_OF_CMD;
 
   _socket->send_to(asio::buffer(packet), _server_endpoint);
 
-  LOGGER("client", LogLevel::DEBUG, std::format("Sent: '{}'", command));
+  LOGGER("client", LogLevel::DEBUG, std::format("Sent: '{}'", static_cast<int>(command[CMD_INDEX])));
 }
 
 void NetworkClient::handle_connectionless_response(const std::string& response)
 {
-  LOGGER("client", LogLevel::DEBUG, std::format("Received: '{}'", response));
+  LOGGER("client", LogLevel::DEBUG, std::format("Received: '{}'", static_cast<int>(response[CMD_INDEX])));
 
   std::uint8_t cmd = response[CMD_INDEX];
 
@@ -196,7 +196,7 @@ bool NetworkClient::is_valid_response_format(const std::vector<std::string> &arg
 {
   std::size_t len = args.size();
 
-  if (stoi(args[MAGIC_INDEX]) != MAGIC_SEQUENCE || len != requested_size || stoi(args[len - 1]) != END_OF_CMD) {
+  if (len != requested_size) {
     LOGGER("client", LogLevel::WARNING, err_mess.c_str());
     return false;
   }
@@ -280,7 +280,7 @@ void NetworkClient::handle_disconnect_response(
   if (!is_valid_response_format(args, DISCONNECT_RESP_CMD_SIZE, "Invalid disconnectResponse")) {
     return;
   }
-  std::string reason = args[ERR_MESS_DSCNT_INDEX][0] == '\0' ?
+  std::string reason = args[ERR_MESS_DSCNT_INDEX][0] == END_OF_CMD ?
     args[ERR_MESS_DSCNT_INDEX] : "Unknown reason";
   LOGGER("client", LogLevel::WARNING,
     std::format("Server disconnected: {}", reason));

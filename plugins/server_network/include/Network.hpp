@@ -41,14 +41,16 @@
 #define SOLO uint8_t(0x01)
 #define COOP uint8_t(0x02)
 
+#define END_OF_CMD std::uint8_t(0x00)
+
 // indexes
 
-#define CMD_INDEX MAGIC_LENGTH
+#define CMD_INDEX 0
 
-#define PROTOCOL_INDEX 1
+#define PROTOCOL_INDEX 0
 
-#define CHALLENGE_CNT_INDEX 2
-#define PLAYERNAME_CNT_INDEX 3
+#define CHALLENGE_CNT_INDEX 1
+#define PLAYERNAME_CNT_INDEX 2
 
 // size in byte
 
