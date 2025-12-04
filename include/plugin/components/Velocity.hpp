@@ -3,6 +3,7 @@
 #include "ByteParser/ByteParser.hpp"
 #include "ParserUtils.hpp"
 #include "plugin/Byte.hpp"
+#include "plugin/Hooks.hpp"
 
 struct Velocity
 {
@@ -33,4 +34,7 @@ struct Velocity
   double speed_y;
   double dir_x;
   double dir_y;
+
+  HOOKABLE(Velocity, HOOK(speed_x), HOOK(speed_y), HOOK(dir_x), HOOK(dir_y))
+
 };

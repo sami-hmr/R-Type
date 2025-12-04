@@ -1,7 +1,10 @@
 #pragma once
 
+#include <any>
 #include <functional>
+#include <iostream>
 #include <optional>
+#include <stdexcept>
 #include <string>
 #include <variant>
 
@@ -27,26 +30,38 @@
   } \
 
 template<typename T>
-std::optional<std::reference_wrapper<T>> get_ref(Registery& r,
-                                                 JsonObject& object,
+std::optional<std::reference_wrapper<const T>> get_ref(Registery& r,
+                                                 JsonObject const &object,
                                                  std::string const& key)
 {
   try {
     std::string hook = std::get<std::string>(object.at(key).value);
-    if (hook.starts_with('#')) {
-      hook = hook.substr(1);
-      std::string comp = hook.substr(0, hook.find(':'));
-      std::string value = hook.substr(hook.find(':') + 1);
-      return r.get_hooked_value<T>(comp, value);
+    try {
+        if (hook.starts_with('#')) {
+            std::string striped = hook.substr(1);
+            std::string comp = striped.substr(0, striped.find(':'));
+            std::string value = striped.substr(striped.find(':') + 1);
+            return r.get_hooked_value<T>(comp, value);
+        }
+    } catch (std::bad_any_cast const &) {
+        std::cerr << std::format(R"(Error geting hooked value "{}": Invalid type\n)", hook);
+        return std::nullopt;
+    } catch (std::out_of_range const &) {
+        std::cerr << std::format(R"(Error geting hooked value "{}": Invalid hook\n)", hook);
+        return std::nullopt;
     }
-  } catch (std::bad_variant_access const&) {
-  }  // NOLINT intentional fallthrought
-  return std::reference_wrapper<T>(std::get<T>(object.at(key).value));
+  } catch (std::bad_variant_access const&) { // NOLINT intentional fallthrought
+  }
+  try {
+      return std::reference_wrapper<const T>(std::get<T>(object.at(key).value));
+  } catch (...) {
+      return std::nullopt;
+  }
 }
 
 template<typename T>
 std::optional<T> get_value(Registery& r,
-                           JsonObject& object,
+                           JsonObject const &object,
                            std::string const& key)
 {
   auto tmp = get_ref<T>(r, object, key);

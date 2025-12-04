@@ -95,6 +95,7 @@ void EntityLoader::load_file(std::string const& filepath)
   if (infi.fail()) {
     std::cerr << "failed to open file \"" << filepath << "\": " << errno
               << '\n';
+    return;
   }
   std::string str((std::istreambuf_iterator<char>(infi)),
                   std::istreambuf_iterator<char>());

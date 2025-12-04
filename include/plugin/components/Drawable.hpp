@@ -2,6 +2,7 @@
 
 #include "ParserUtils.hpp"
 #include "plugin/Byte.hpp"
+#include "plugin/Hooks.hpp"
 
 struct Drawable
 {
@@ -15,4 +16,6 @@ struct Drawable
   DEFAULT_SERIALIZE(ByteArray {})
 
   bool enabled = true;
+
+  HOOKABLE(Drawable, HOOK(enabled))
 };

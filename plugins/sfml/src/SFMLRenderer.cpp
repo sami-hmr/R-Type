@@ -24,6 +24,10 @@
 #include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
+#include "plugin/Hooks.hpp"
+#include "plugin/components/Drawable.hpp"
+#include "plugin/components/Sprite.hpp"
+#include "plugin/components/Text.hpp"
 #include "plugin/events/Events.hpp"
 
 static const std::map<sf::Keyboard::Key, Key> key_association = {
@@ -66,9 +70,9 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
     : APlugin(r,
               l,
               {"moving", "client_network", "server_network"},
-              {COMP_INIT(Drawable, init_drawable),
-               COMP_INIT(Sprite, init_sprite),
-               COMP_INIT(Text, init_text)})
+              {COMP_INIT(Drawable, Drawable, init_drawable),
+               COMP_INIT(Sprite, Sprite, init_sprite),
+               COMP_INIT(Text, Text, init_text)})
 {
   _window =
       sf::RenderWindow(sf::VideoMode(window_size), "R-Type - SFML Renderer");
@@ -150,20 +154,9 @@ sf::Font& SFMLRenderer::load_font(std::string const& path)
 }
 
 void SFMLRenderer::init_drawable(Registery::Entity const entity,
-                                 JsonVariant const& config)
+                                 JsonObject const& obj)
 {
-  try {
-    JsonObject obj = std::get<JsonObject>(config);
     _registery.get().emplace_component<Drawable>(entity);
-  } catch (std::bad_variant_access const&) {
-    LOGGER("SFML",
-           LogLevel::ERROR,
-           "Error loading sprite component: unexpected value type")
-  } catch (std::out_of_range const&) {
-    LOGGER("SFML",
-           LogLevel::ERROR,
-           "Error loading drawable component: missing value in JsonObject")
-  }
 }
 
 static Vector2D parse_vector2d(JsonVariant const& variant)
@@ -194,67 +187,44 @@ static Vector2D parse_vector2d(JsonVariant const& variant)
 }
 
 void SFMLRenderer::init_sprite(Registery::Entity const entity,
-                               JsonVariant const& config)
+                               JsonObject const& obj)
 {
-  try {
-    JsonObject obj = std::get<JsonObject>(config);
-    std::string texture_path = std::get<std::string>(obj.at("texture").value);
+    auto const &texture_path = get_value<std::string>(this->_registery.get(), obj, "texture");
+
+    if (!texture_path) {
+        std::cerr << "Error loading sprite component: unexpected value type (texture: string)\n";
+        return;
+    }
+
     Vector2D scale(0.1, 0.1);
     if (obj.contains("size")) {
       scale = parse_vector2d(
-          obj.at("size")
+          obj.at("size")  //TODO: faire un getter de jsonvariant qui prend en compte les hooks
               .value);  // la scale est en pourcentage de la taille de la window
     }
-    _registery.get().emplace_component<Sprite>(entity, texture_path, scale);
-  } catch (std::bad_variant_access const&) {
-    LOGGER("SFML",
-           LogLevel::ERROR,
-           "Error loading sprite component: unexpected value type")
-  } catch (std::out_of_range const& e) {
-    LOGGER("SFML",
-           LogLevel::ERROR,
-           std::format(
-               "Error loading sprite component: missing value {} in JsonObject",
-               e.what()))
-  }
+    _registery.get().emplace_component<Sprite>(entity, texture_path.value(), scale);
 }
 
 void SFMLRenderer::init_text(Registery::Entity const entity,
-                             JsonVariant const& config)
+                             JsonObject const& obj)
 {
-  try {
-    JsonObject obj = std::get<JsonObject>(config);
-    std::string font_path;
-    if (!obj.contains("font")) {
-      throw std::out_of_range("font");
-      return;
+    auto const &font_path = get_value<std::string>(this->_registery.get(), obj, "font");
+    auto const &text = get_value<std::string>(this->_registery.get(), obj, "text");
+
+    if (!font_path || !text) {
+        std::cerr << "Error loading text component: unexpected value type (font: string, text: string)\n";
+        return;
     }
-    font_path = std::get<std::string>(obj.at("font").value);
     Vector2D scale(0.1, 0.1);
     if (!obj.contains("size")) {
-      throw std::out_of_range("size");
+      std::cerr << "y a pas de size brother\n"; //TODO: pareil que au dessus
       return;
     }
     scale = parse_vector2d(obj.at("size").value);
-    std::string text;
-    if (!obj.contains("text")) {
-      throw std::out_of_range("text");
-      return;
-    }
-    text = std::get<std::string>(obj.at("text").value);
-    auto txt = _registery.get().emplace_component<Text>(
-        entity, font_path, scale, text);
-  } catch (std::bad_variant_access const&) {
-    LOGGER("SFML",
-           LogLevel::ERROR,
-           "Error loading text component: unexpected value type")
-  } catch (std::out_of_range const& e) {
-    LOGGER("SFML",
-           LogLevel::ERROR,
-           std::format("Error loading text component: missing {} in JsonObject",
-                       e.what()))
+    _registery.get().emplace_component<Text>(
+        entity, font_path.value(), scale, text.value());
   }
-}
+
 
 std::optional<Key> SFMLRenderer::sfml_key_to_key(sf::Keyboard::Key sfml_key)
 {

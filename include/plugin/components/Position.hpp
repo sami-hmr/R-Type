@@ -2,6 +2,7 @@
 
 #include "ByteParser/ByteParser.hpp"
 #include "plugin/Byte.hpp"
+#include "plugin/Hooks.hpp"
 
 struct Position
 {
@@ -22,4 +23,7 @@ struct Position
 
   double x;
   double y;
+
+  HOOKABLE(Position, HOOK(x), HOOK(y))
+
 };

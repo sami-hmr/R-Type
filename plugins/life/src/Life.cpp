@@ -7,11 +7,13 @@
 
 #include "Life.hpp"
 
+#include "Json/JsonParser.hpp"
 #include "Logger.hpp"
 #include "ecs/Registery.hpp"
 #include "ecs/SparseArray.hpp"
 #include "ecs/zipper/Zipper.hpp"
 #include "plugin/EntityLoader.hpp"
+#include "plugin/Hooks.hpp"
 #include "plugin/components/Damage.hpp"
 #include "plugin/components/Heal.hpp"
 #include "plugin/components/Health.hpp"
@@ -22,10 +24,10 @@ Life::Life(Registery& r, EntityLoader& l)
     : APlugin(r,
               l,
               {"moving", "collision"},
-              {COMP_INIT(Health, init_health),
-               COMP_INIT(Damage, init_damage),
-               COMP_INIT(Heal, init_heal),
-               COMP_INIT(Team, init_team)})
+              {COMP_INIT(Health, Health, init_health),
+               COMP_INIT(Damage, Damage, init_damage),
+               COMP_INIT(Heal, Heal, init_heal),
+               COMP_INIT(Team, Team, init_team)})
 {
   this->_registery.get().register_component<Health>();
   this->_registery.get().register_component<Damage>();
@@ -46,203 +48,183 @@ Life::Life(Registery& r, EntityLoader& l)
                                             { this->on_collision(event); });
 }
 
-void Life::init_health(Registery::Entity entity, JsonVariant const& config)
+void Life::init_health(Registery::Entity entity, JsonObject const& obj)
 {
-  try {
-    JsonObject obj = std::get<JsonObject>(config);
+  auto const& current = get_value<int>(this->_registery.get(), obj, "current");
+  auto const& max = get_value<int>(this->_registery.get(), obj, "max");
 
+  if (!current || !max) {
+    std::cerr << "Error loading health component: unexpected value type or "
+                 "missing value in JsonObject\n";
+    return;
+  }
+  this->_registery.get().emplace_component<Health>(entity, current.value(), max.value());
+  }
 
+  void Life::init_damage(Registery::Entity entity, JsonObject const& obj)
+  {
+      auto const& value = get_value<int>(this->_registery.get(), obj, "amount");
 
-    int current = std::get<int>(obj.at("current").value);
-    int max = std::get<int>(obj.at("max").value);
+      if (!value) {
+        std::cerr << "Error loading damage component: unexpected value type or "
+                     "missing value in JsonObject\n";
+        return;
+      }
+      this->_registery.get().emplace_component<Damage>(entity, value.value());
+  }
 
-    this->_registery.get().emplace_component<Health>(entity, current, max);
-    if (obj.contains("hook")) {
-        try {
-            std::string hook_name = std::get<std::string>(obj.at("hook").value);
-            this->_registery.get().register_hook<Health>(hook_name, entity);
-        } catch (...) {}
+  void Life::init_heal(Registery::Entity entity, JsonObject const& obj)
+  {
+      auto const& value = get_value<int>(this->_registery.get(), obj, "amount");
+
+      if (!value) {
+        std::cerr << "Error loading heal component: unexpected value type or "
+                     "missing value in JsonObject\n";
+        return;
+      }
+      this->_registery.get().emplace_component<Heal>(entity, value.value());
+
+  }
+
+  void Life::init_team(Registery::Entity const &entity,
+                       JsonObject const& obj)
+  {
+      auto const& value = get_value<std::string>(this->_registery.get(), obj, "name");
+
+      if (!value) {
+        std::cerr << "Error loading team component: unexpected value type or "
+                     "missing value in JsonObject\n";
+        return;
+      }
+      this->_registery.get().emplace_component<Team>(entity, value.value());
+
+  }
+
+  void Life::damage_entity(const CollisionEvent& event,
+                           SparseArray<Health>& healths)
+  {
+    auto& damages = this->_registery.get().get_components<Damage>();
+
+    if (healths[event.a]->damage_delta >= damage_cooldown) {
+      healths[event.a]->damage_delta = 0.0;
+      _registery.get().emit<DamageEvent>(
+          event.a, event.b, damages[event.b]->amount);
     }
-  } catch (std::bad_variant_access const&) {
-    std::cerr << "Error loading health component: unexpected value type\n";
-  } catch (std::out_of_range const&) {
-    std::cerr
-        << "Error loading health component: missing value in JsonObject\n";
   }
-}
 
-void Life::init_damage(Registery::Entity entity, JsonVariant const& config)
-{
-  try {
-    JsonObject obj = std::get<JsonObject>(config);
-    int value = std::get<int>(obj.at("amount").value);
-
-    this->_registery.get().emplace_component<Damage>(entity, value);
-  } catch (std::bad_variant_access const&) {
-    std::cerr << "Error loading damage component: unexpected value type\n";
-  } catch (std::out_of_range const&) {
-    std::cerr
-        << "Error loading damage component: missing value in JsonObject\n";
-  }
-}
-
-void Life::init_heal(Registery::Entity entity, JsonVariant const& config)
-{
-  try {
-    JsonObject obj = std::get<JsonObject>(config);
-    int value = std::get<int>(obj.at("amount").value);
-
-    this->_registery.get().emplace_component<Heal>(entity, value);
-  } catch (std::bad_variant_access const&) {
-    std::cerr << "Error loading heal component: unexpected value type\n";
-  } catch (std::out_of_range const&) {
-    std::cerr << "Error loading heal component: missing value in JsonObject\n";
-  }
-}
-
-void Life::init_team(Registery::Entity const entity, JsonVariant const& config)
-{
-  try {
-    JsonObject obj = std::get<JsonObject>(config);
-    std::string name = std::get<std::string>(obj.at("name").value);
-
-    this->_registery.get().emplace_component<Team>(entity, name);
-  } catch (std::bad_variant_access const&) {
-    LOGGER("Life",
-           LogLevel::ERROR,
-           "Error loading Team component: unexpected value type")
-  } catch (std::out_of_range const&) {
-    LOGGER("Life",
-           LogLevel::ERROR,
-           "Error loading Team component: (expected name: string")
-  }
-}
-
-void Life::damage_entity(const CollisionEvent& event,
+  void Life::heal_entity(const CollisionEvent& event,
                          SparseArray<Health>& healths)
-{
-  auto& damages = this->_registery.get().get_components<Damage>();
-
-  if (healths[event.a]->damage_delta >= damage_cooldown) {
-    healths[event.a]->damage_delta = 0.0;
-    _registery.get().emit<DamageEvent>(
-        event.a, event.b, damages[event.b]->amount);
-  }
-}
-
-void Life::heal_entity(const CollisionEvent& event,
-                       SparseArray<Health>& healths)
-{
-  auto& healers = this->_registery.get().get_components<Heal>();
-
-  if (healths[event.a]->heal_delta >= heal_cooldown) {
-    healths[event.a]->heal_delta = 0.0;
-    _registery.get().emit<HealEvent>(
-        event.a, event.b, healers[event.b]->amount);
-  }
-}
-
-void Life::on_collision(const CollisionEvent& event)
-{
-  auto& healths = this->_registery.get().get_components<Health>();
-  auto& teams = this->_registery.get().get_components<Team>();
-
-  if (!this->_registery.get().has_component<Health>(event.a)
-      || !this->_registery.get().has_component<Team>(event.a)
-      || !this->_registery.get().has_component<Team>(event.b)
-      || this->_registery.get().is_entity_dying(event.a)
-      || this->_registery.get().is_entity_dying(event.b))
   {
-    return;
+    auto& healers = this->_registery.get().get_components<Heal>();
+
+    if (healths[event.a]->heal_delta >= heal_cooldown) {
+      healths[event.a]->heal_delta = 0.0;
+      _registery.get().emit<HealEvent>(
+          event.a, event.b, healers[event.b]->amount);
+    }
   }
 
-  if (this->_registery.get().has_component<Damage>(event.b)
-      && teams[event.a]->name != teams[event.b]->name)
+  void Life::on_collision(const CollisionEvent& event)
   {
-    damage_entity(event, healths);
-  } else if (this->_registery.get().has_component<Heal>(event.b)
-             && teams[event.a]->name == teams[event.b]->name)
+    auto& healths = this->_registery.get().get_components<Health>();
+    auto& teams = this->_registery.get().get_components<Team>();
+
+    if (!this->_registery.get().has_component<Health>(event.a)
+        || !this->_registery.get().has_component<Team>(event.a)
+        || !this->_registery.get().has_component<Team>(event.b)
+        || this->_registery.get().is_entity_dying(event.a)
+        || this->_registery.get().is_entity_dying(event.b))
+    {
+      return;
+    }
+
+    if (this->_registery.get().has_component<Damage>(event.b)
+        && teams[event.a]->name != teams[event.b]->name)
+    {
+      damage_entity(event, healths);
+    } else if (this->_registery.get().has_component<Heal>(event.b)
+               && teams[event.a]->name == teams[event.b]->name)
+    {
+      heal_entity(event, healths);
+    }
+  }
+
+  void Life::on_damage(const DamageEvent& event)
   {
-    heal_entity(event, healths);
-  }
-}
+    auto& healths = this->_registery.get().get_components<Health>();
 
-void Life::on_damage(const DamageEvent& event)
-{
-  auto& healths = this->_registery.get().get_components<Health>();
-
-  if (!this->_registery.get().has_component<Health>(event.target)) {
-    return;
-  }
-  if (event.target < healths.size() && healths[event.target].has_value()) {
-    healths[event.target]->current -= event.amount;
-  } else {
-    return;
-  }
-  this->_registery.get().emit<LogEvent>(
-      "HealthSystem",
-      LogLevel::INFO,
-      std::format("Entity {} took {} damage from Entity {}",
-                  event.target,
-                  event.amount,
-                  event.source));
-
-  if (healths[event.target]->current <= 0
-      && !this->_registery.get().is_entity_dying(event.target))
-  {
-    this->_registery.get().emit<LogEvent>(
-        "HealthSystem",
-        LogLevel::WARNING,
-        std::format("Entity {} died!", event.target));
-
-    this->_registery.get().kill_entity(event.target);
-  }
-}
-
-void Life::on_heal(const HealEvent& event)
-{
-  auto& healths = this->_registery.get().get_components<Health>();
-
-  if (!this->_registery.get().has_component<Health>(event.target)) {
-    return;
-  }
-  if (event.target < healths.size() && healths[event.target].has_value()) {
-    int old_health = healths[event.target]->current;
-    healths[event.target]->current =
-        std::min(healths[event.target]->current + event.amount,
-                 healths[event.target]->max);
-
-    int actual_heal = healths[event.target]->current - old_health;
-
+    if (!this->_registery.get().has_component<Health>(event.target)) {
+      return;
+    }
+    if (event.target < healths.size() && healths[event.target].has_value()) {
+      healths[event.target]->current -= event.amount;
+    } else {
+      return;
+    }
     this->_registery.get().emit<LogEvent>(
         "HealthSystem",
         LogLevel::INFO,
-        std::format("Entity {} healed for {} HP (now {}/{})",
+        std::format("Entity {} took {} damage from Entity {}",
                     event.target,
-                    actual_heal,
-                    healths[event.target]->current,
-                    healths[event.target]->max));
-    return;
-  }
-}
+                    event.amount,
+                    event.source));
 
-void Life::update_cooldowns(Registery& reg)
-{
-  double dt = reg.clock().delta_seconds();
-  auto& healths = reg.get_components<Health>();
+    if (healths[event.target]->current <= 0
+        && !this->_registery.get().is_entity_dying(event.target))
+    {
+      this->_registery.get().emit<LogEvent>(
+          "HealthSystem",
+          LogLevel::WARNING,
+          std::format("Entity {} died!", event.target));
 
-  for (size_t i = 0; i < healths.size(); ++i) {
-    if (healths[i].has_value() && !reg.is_entity_dying(i)) {
-      healths[i]->damage_delta += dt;
-      healths[i]->heal_delta += dt;
+      this->_registery.get().kill_entity(event.target);
     }
   }
-}
 
-extern "C"
-{
-void* entry_point(Registery& r, EntityLoader& e)
-{
-  return new Life(r, e);
-}
-}
+  void Life::on_heal(const HealEvent& event)
+  {
+    auto& healths = this->_registery.get().get_components<Health>();
+
+    if (!this->_registery.get().has_component<Health>(event.target)) {
+      return;
+    }
+    if (event.target < healths.size() && healths[event.target].has_value()) {
+      int old_health = healths[event.target]->current;
+      healths[event.target]->current =
+          std::min(healths[event.target]->current + event.amount,
+                   healths[event.target]->max);
+
+      int actual_heal = healths[event.target]->current - old_health;
+
+      this->_registery.get().emit<LogEvent>(
+          "HealthSystem",
+          LogLevel::INFO,
+          std::format("Entity {} healed for {} HP (now {}/{})",
+                      event.target,
+                      actual_heal,
+                      healths[event.target]->current,
+                      healths[event.target]->max));
+      return;
+    }
+  }
+
+  void Life::update_cooldowns(Registery & reg)
+  {
+    double dt = reg.clock().delta_seconds();
+    auto& healths = reg.get_components<Health>();
+
+    for (size_t i = 0; i < healths.size(); ++i) {
+      if (healths[i].has_value() && !reg.is_entity_dying(i)) {
+        healths[i]->damage_delta += dt;
+        healths[i]->heal_delta += dt;
+      }
+    }
+  }
+
+  extern "C"
+  {
+  void* entry_point(Registery& r, EntityLoader& e)
+  {
+    return new Life(r, e);
+  }
+  }

@@ -1,9 +1,11 @@
 #include "Controller.hpp"
 
-#include "plugin/events/Events.hpp"
+#include "Json/JsonParser.hpp"
 #include "ecs/Registery.hpp"
 #include "plugin/EntityLoader.hpp"
+#include "plugin/Hooks.hpp"
 #include "plugin/components/Controllable.hpp"
+#include "plugin/events/Events.hpp"
 
 static const std::map<char, Key> mapping = {
     {'z', Key::Z},
@@ -32,7 +34,7 @@ std::optional<Key> Controller::char_to_key(char c)
 }
 
 Controller::Controller(Registery& r, EntityLoader& l)
-    : APlugin(r, l, {"moving"}, {COMP_INIT(Controllable, init_controller)})
+    : APlugin(r, l, {"moving"}, {COMP_INIT(Controllable, Controllable, init_controller)})
 {
   this->_registery.get().register_component<Controllable>();
 
@@ -58,38 +60,31 @@ Controller::Controller(Registery& r, EntityLoader& l)
 }
 
 void Controller::init_controller(Registery::Entity const entity,
-                                 JsonVariant const& config)
+                                 JsonObject const& obj)
 {
-  try {
-    JsonObject obj = std::get<JsonObject>(config);
+  auto const& up_str = get_value<std::string>(this->_registery, obj, "UP");
+  auto const& down_str = get_value<std::string>(this->_registery, obj, "DOWN");
+  auto const& left_str = get_value<std::string>(this->_registery, obj, "LEFT");
+  auto const& right_str =
+      get_value<std::string>(this->_registery, obj, "RIGHT");
 
-    std::string up_str = std::get<std::string>(obj.at("UP").value);
-    std::string down_str = std::get<std::string>(obj.at("DOWN").value);
-    std::string left_str = std::get<std::string>(obj.at("LEFT").value);
-    std::string right_str = std::get<std::string>(obj.at("RIGHT").value);
-
-    if (up_str.empty() || down_str.empty() || left_str.empty()
-        || right_str.empty())
-    {
-      LOGGER("Controller",
-             LogLevel::ERROR,
-             "Controllable keys cannot be empty strings")
-      return;
-    }
-
-    this->_registery.get().emplace_component<Controllable>(
-        entity, up_str[0], down_str[0], left_str[0], right_str[0]);
-
-  } catch (std::bad_variant_access const&) {
-    LOGGER("Controller",
-           LogLevel::ERROR,
-           "Error loading Controllable component: unexpected value type")
-  } catch (std::out_of_range const&) {
-    LOGGER("Controller",
-           LogLevel::ERROR,
-           "Error loading Controllable component: missing keys (expected UP, "
-           "DOWN, LEFT, RIGHT)")
+  if (!up_str || !down_str || !left_str || !right_str) {
+    std::cerr << "Error loading controller component: unexpected value type "
+                 "(expected UP, " "DOWN, LEFT, RIGHT)\n";
+    return;
   }
+
+  if (up_str->empty() || down_str->empty() || left_str->empty()
+      || right_str->empty())
+  {
+    LOGGER("Controller",
+           LogLevel::ERROR,
+           "Controllable keys cannot be empty strings")
+    return;
+  }
+
+  this->_registery.get().emplace_component<Controllable>(
+      entity, up_str.value()[0], down_str.value()[0], left_str.value()[0], right_str.value()[0]);
 }
 
 void Controller::handle_key_change(Key key, bool is_pressed)

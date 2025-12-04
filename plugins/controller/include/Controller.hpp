@@ -24,7 +24,7 @@ public:
 
 private:
   void init_controller(Registery::Entity const entity,
-                       JsonVariant const& config);
+                       JsonObject const& obj);
 
   std::optional<Key> char_to_key(char c);
   void handle_key_change(Key key, bool is_pressed);

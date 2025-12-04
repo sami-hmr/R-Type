@@ -71,5 +71,5 @@ struct Collidable
   bool is_active = true;
   std::vector<std::string> exclude_entities;
 
-  //HOOKABLE(HOOK(width), HOOK(height), HOOK(collision_type),)
+  HOOKABLE(Collidable, HOOK(width), HOOK(height), HOOK(collision_type), HOOK(is_active), HOOK(exclude_entities))
 };
