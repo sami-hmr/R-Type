@@ -30,22 +30,9 @@ static int true_main(Registery& r,
                                   << "\n";
                       });
 
-  r.on<SceneChangeEvent>([&r](const SceneChangeEvent& event)
+  r.on<SceneChangeEvent>("SceneChangeEvent",
+                         [&r](const SceneChangeEvent& event)
                          { r.set_current_scene(event.target_scene); });
-
-  r.on<KeyPressedEvent>(
-      [&r](const KeyPressedEvent& event)
-      {
-        if (event.key_pressed.contains(Key::ENTER)
-            && event.key_pressed.at(Key::ENTER))
-        {
-          r.emit<SceneChangeEvent>("game", "User pressed ENTER");
-        }
-        if (event.key_pressed.contains(Key::R)
-            && event.key_pressed.at(Key::R)) {
-          r.emit<SceneChangeEvent>("menu", "User pressed R");
-        }
-      });
 
   r.init_scene_management();
 

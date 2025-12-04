@@ -9,6 +9,10 @@
           "config": {
             "level": "DEBUG"
           }
+        },
+        {
+          "name": "actions",
+          "config": {}
         }
       ],
       "entities": [
@@ -56,13 +60,34 @@
             },
             "text": "Press R to return to menu"
           }
+        },
+        {
+          "actions:ActionTrigger": {
+            "trigger": "key_press",
+            "condition": "ENTER",
+            "actions": [
+              {
+                "type": "emit_event",
+                "event": "SceneChangeEvent",
+                "params": {
+                  "target_scene": "game",
+                  "reason": "User pressed ENTER"
+                }
+              }
+            ]
+          }
         }
       ]
     },
     {
       "name": "game",
       "state": "disabled",
-      "plugins": [],
+      "plugins": [
+        {
+          "name": "actions",
+          "config": {}
+        }
+      ],
       "entities": [
         {
           "moving:Position": { "x": 0.0, "y": 0.0 },
@@ -139,6 +164,38 @@
               "height": 30.0
             },
             "text": "#game_text:buffer"
+          }
+        },
+        {
+          "actions:ActionTrigger": {
+            "trigger": "key_press",
+            "condition": "R",
+            "actions": [
+              {
+                "type": "emit_event",
+                "event": "SceneChangeEvent",
+                "params": {
+                  "target_scene": "menu",
+                  "reason": "User pressed R"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "actions:ActionTrigger": {
+            "trigger": "timer",
+            "actions": [
+              {
+                "type": "emit_event",
+                "event": "ShutdownEvent",
+                "params": {
+                  "reason": "Automatic shutdown after timeout",
+                  "exit_code": "0"
+                },
+                "delay": 10.0
+              }
+            ]
           }
         }
       ]

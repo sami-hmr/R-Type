@@ -17,6 +17,7 @@
 #include <vector>
 
 #include "Clock.hpp"
+#include "Json/JsonParser.hpp"
 #include "SparseArray.hpp"
 #include "TwoWayMap.hpp"
 #include "ecs/Scenes.hpp"
@@ -24,6 +25,7 @@
 #include "ecs/zipper/Zipper.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/HookConcept.hpp"
+#include "plugin/events/EventConcept.hpp"
 
 /**
  * @brief The Registery class is the core of the ECS (Entity-Component-System)
@@ -277,12 +279,13 @@ public:
     return handler_id;
   }
 
-  template<typename EventType>
+  template<EventIsJsonBuilable EventType>
   HandlerId on(std::string const& name,
                std::function<void(const EventType&)> handler)
   {
     std::type_index type_id(typeid(EventType));
     _events_index_getter.insert(type_id, name);
+    this->add_event_builder<EventType>(name);
 
     return this->on<EventType>(handler);
   }
@@ -312,6 +315,26 @@ public:
   {
     std::type_index type_id(typeid(EventType));
     _event_handlers.erase(type_id);
+  }
+
+  void emit(std::string const& name, JsonObject const& args)
+  {
+    std::type_index type_id = _events_index_getter.at(name);
+    if (!_event_handlers.contains(type_id)) {
+      return;
+    }
+
+    // Build the event
+    auto builder =
+        std::any_cast<std::function<std::any(Registery&, JsonObject const&)>>(
+            _event_builders.at(type_id));
+    std::any event = builder(*this, args);
+
+    // Use invoker to call handlers
+    auto invoker =
+        std::any_cast<std::function<void(const std::any&, const std::any&)>>(
+            _event_invokers.at(type_id));
+    invoker(_event_handlers.at(type_id), event);
   }
 
   template<typename EventType, typename... Args>
@@ -389,6 +412,32 @@ public:
     return std::any_cast<std::reference_wrapper<T>>(tmp.value());
   }
 
+  template<EventIsJsonBuilable T>
+  void add_event_builder(std::string const& name)
+  {
+    std::type_index type_id(typeid(T));
+
+    _event_builders.insert_or_assign(
+        type_id,
+        std::function<std::any(Registery&, JsonObject const&)>(
+            [](Registery& r, JsonObject const& e) -> std::any
+            { return T(r, e); }));
+
+    _event_invokers.insert_or_assign(
+        type_id,
+        [](const std::any& handlers_any, const std::any& event_any)
+        {
+          auto& handlers = std::any_cast<
+              const std::unordered_map<HandlerId,
+                                       std::function<void(const T&)>>&>(
+              handlers_any);
+          auto& event = std::any_cast<const T&>(event_any);
+          for (auto const& [id, handler] : handlers) {
+            handler(event);
+          }
+        });
+  }
+
 private:
   static HandlerId generate_uuid()
   {
@@ -408,6 +457,11 @@ private:
 
   std::unordered_map<std::type_index, std::any> _event_handlers;
   TwoWayMap<std::type_index, std::string> _events_index_getter;
+  std::unordered_map<std::type_index, std::any> _event_builders;
+
+  std::unordered_map<std::type_index,
+                     std::function<void(const std::any&, const std::any&)>>
+      _event_invokers;
 
   std::vector<System<>> _frequent_systems;
   std::queue<Entity> _dead_entities;
