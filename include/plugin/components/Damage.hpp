@@ -1,6 +1,7 @@
 #pragma once
 #include "ByteParser/ByteParser.hpp"
 #include "plugin/Byte.hpp"
+#include "plugin/Hooks.hpp"
 
 struct Damage
 {
@@ -17,4 +18,6 @@ struct Damage
   DEFAULT_SERIALIZE(type_to_byte(this->amount))
 
   int amount;
+
+  HOOKABLE(Damage, HOOK(amount))
 };

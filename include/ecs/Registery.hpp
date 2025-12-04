@@ -6,8 +6,10 @@
 #include <cstddef>
 #include <functional>
 #include <map>
+#include <optional>
 #include <queue>
 #include <random>
+#include <string>
 #include <typeindex>
 #include <unordered_map>
 #include <unordered_set>
@@ -21,6 +23,7 @@
 #include "ecs/Systems.hpp"
 #include "ecs/zipper/Zipper.hpp"
 #include "plugin/Byte.hpp"
+#include "plugin/HookConcept.hpp"
 
 /**
  * @brief The Registery class is the core of the ECS (Entity-Component-System)
@@ -348,6 +351,33 @@ public:
 
   const Clock& clock() const { return _clock; }
 
+  template<hookable T>
+  void register_hook(std::string name, Entity const &e)
+  {
+    this->_hooked_components.insert_or_assign(
+        name,
+        [this, e](std::string const& key) -> std::optional<std::any>
+        {
+          auto &array = this->get_components<T>();
+          auto &comp = array[e];
+          if (!comp.has_value()) {
+            return std::nullopt;
+          }
+          return T::hook_map().at(key)(comp.value());
+        });
+  }
+
+  template<typename T>
+  std::optional<std::reference_wrapper<T>> get_hooked_value(
+      std::string const& comp, std::string const& value)
+  {
+    auto const &tmp = std::any_cast<std::optional<std::any>>(this->_hooked_components.at(comp)(value));
+    if (!tmp.has_value()) {
+        return std::nullopt;
+    }
+    return std::any_cast<std::reference_wrapper<T>>(tmp.value());
+  }
+
 private:
   static HandlerId generate_uuid()
   {
@@ -373,4 +403,8 @@ private:
   std::size_t _max = 0;
   std::unordered_map<std::string, SceneState> _scenes;
   std::string _current_scene;
+
+  std::unordered_map<std::string,
+                     std::function<std::optional<std::any>(std::string const&)>>
+      _hooked_components;
 };

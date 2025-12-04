@@ -6,7 +6,7 @@
 
 /**
  * @brief A sparse array implementation that stores components in an optional vector.
- * 
+ *
  * @tparam Component The type of component to be stored in the sparse array.
  */
 template<typename Component>
@@ -25,7 +25,7 @@ public:
 
   /**
    * @brief Ensures the underlying vector has enough capacity and size to accommodate the given position.
-   * 
+   *
    * @param pos The position to reserve space for.
    */
   void reserve_init(SizeType pos)
@@ -38,7 +38,7 @@ public:
 
   /**
    * @brief   Inserts a component at the specified position in the sparse array.
-   * 
+   *
    * @param pos The position to insert the component at.
    * @param v The component to insert.
    * @return Ref A reference to the inserted component.
@@ -51,7 +51,7 @@ public:
 
   /**
    * @brief   Inserts a component at the specified position in the sparse array.
-   * 
+   *
    * @tparam Params The types of the parameters to construct the component.
    * @param pos The position to insert the component at.
    * @param params The parameters to construct the component.
@@ -66,7 +66,7 @@ public:
 
   /**
    * @brief   Inserts a component at the specified position in the sparse array.
-   * 
+   *
    * @param pos The position to insert the component at.
    * @param v The component to insert.
    * @return Ref A reference to the inserted component.
@@ -79,7 +79,7 @@ public:
 
   /**
    * @brief  Erases the component at the specified position in the sparse array.
-   * 
+   *
    * @param pos The position of the component to erase.
    */
   void erase(SizeType pos)
@@ -91,7 +91,7 @@ public:
 
   /**
    * @brief   Finds the index of the specified component value in the sparse array.
-   * 
+   *
    * @param val The component value to find.
    * @return SizeType The index of the component value.
    * @throws std::out_of_range if the component value is not found.

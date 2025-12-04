@@ -3,6 +3,7 @@
 #include "ByteParser/ByteParser.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/Byte.hpp"
+#include "plugin/Hooks.hpp"
 
 struct Position
 {
@@ -26,4 +27,6 @@ struct Position
   DEFAULT_SERIALIZE(type_to_byte(this->pos.x), type_to_byte(this->pos.y))
 
   Vector2D pos;
+
+  HOOKABLE(Position, HOOK(pos))
 };

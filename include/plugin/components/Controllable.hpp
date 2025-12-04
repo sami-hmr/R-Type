@@ -1,5 +1,6 @@
 #pragma once
 
+#include "plugin/Hooks.hpp"
 struct Controllable
 {
   Controllable() = default;
@@ -16,4 +17,6 @@ struct Controllable
   char down;
   char left;
   char right;
+
+  HOOKABLE(Controllable, HOOK(up), HOOK(down), HOOK(left), HOOK(right))
 };
