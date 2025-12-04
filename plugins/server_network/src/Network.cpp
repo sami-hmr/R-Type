@@ -122,10 +122,6 @@ void NetworkServer::receive_loop()
                LogLevel::DEBUG,
                std::format("received buffer, size : {}", len));
       }
-      if (ec == asio::error::would_block) {
-        std::this_thread::yield();
-        continue;
-      }
 
       if (ec) {
         if (_running) {
@@ -138,9 +134,9 @@ void NetworkServer::receive_loop()
 
       while (std::optional<ByteArray> p = recv_buf.extract(PROTOCOL_EOF)) {
         LOGGER("server", LogLevel::DEBUG, "package extracted");
-        for (auto it : *p) {
-          std::cout << (int)it << std::endl;
-        }
+        // for (auto it : *p) {
+        //   std::cout << (int)it << std::endl;
+        // }
         this->handle_package(*p, sender_endpoint);
       }
     } catch (std::exception& e) {
@@ -169,6 +165,7 @@ void NetworkServer::handle_package(ByteArray const& package,
     return;
   }
   auto const& parsed = this->parse_connectionless_package(pkg->real_package);
+  // TODO: handle in different function connected and not connected package
   if (!parsed) {
     return;
   }
@@ -196,17 +193,9 @@ void NetworkServer::handle_connectionless_packet(
 void NetworkServer::send_connectionless(ByteArray const& response,
                                         const asio::ip::udp::endpoint& endpoint)
 {
-  std::size_t length = response.size();
-  std::vector<char> packet;
-  packet.resize(MAGIC_LENGTH + length + 1);
+    ByteArray pkg = type_to_byte(MAGIC_SEQUENCE) + response + type_to_byte(PROTOCOL_EOF_NUMBER);
 
-  std::uint32_t magic = MAGIC_SEQUENCE;
-  std::memcpy(packet.data(), &magic, sizeof(uint32_t));
-
-  std::memcpy(packet.data() + MAGIC_LENGTH, response.data(), length);
-  packet[MAGIC_LENGTH + length] = END_OF_CMD;
-
-  _socket->send_to(asio::buffer(packet), endpoint);
+  _socket->send_to(asio::buffer(pkg), endpoint);
 
   LOGGER("server",
          LogLevel::DEBUG,
