@@ -21,4 +21,5 @@ target_link_libraries(${LIB_NAME} PRIVATE
     SFML::Graphics
     SFML::Window
     ${CORE_LIB}
+    Vector2D
 )
