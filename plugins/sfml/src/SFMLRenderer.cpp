@@ -338,17 +338,17 @@ void SFMLRenderer::render_sprites(Registery& /*unused*/,
                                   const SparseArray<Drawable>& drawable,
                                   const SparseArray<Sprite>& sprites)
 {
-  std::vector<std::tuple<const sf::Texture&, double, sf::Vector2f, int>> drawables;
+  std::vector<std::tuple<std::reference_wrapper<sf::Texture>, double, sf::Vector2f, int>> drawables;
   sf::Vector2u window_size = _window.getSize();
   drawables.reserve(
       std::max({positions.size(), drawable.size(), sprites.size()}));
 
-  for (auto&& [pos, draw, spr] : Zipper(positions, drawable, sprites)) {
+  for (auto &&[pos, draw, spr] : Zipper(positions, drawable, sprites)) {
     if (!draw.enabled) {
       continue;
     }
 
-    sf::Texture& texture = load_texture(spr.texture_path);
+    sf::Texture &texture = load_texture(spr.texture_path);
 
     float scale_x =
         static_cast<float>(window_size.x * spr.scale.x) / texture.getSize().x;
@@ -359,31 +359,21 @@ void SFMLRenderer::render_sprites(Registery& /*unused*/,
     sf::Vector2f new_pos(
         static_cast<float>((pos.pos.x + 1.0) * window_size.x / 2.0),
         static_cast<float>((pos.pos.y + 1.0) * window_size.y / 2.0));
-    drawables.emplace_back(texture, uniform_scale, new_pos, pos.z);
+    drawables.emplace_back(std::ref(texture), uniform_scale, new_pos, pos.z);
   }
-  std::qsort(drawables.data(),
-              drawables.size(),
-              sizeof(drawables.front()),
-              [](const void* a, const void* b) {
-                int z_a = std::get<3>(*static_cast<const std::tuple<const sf::Texture &,
-                                                        double,
-                                                        sf::Vector2f,
-                                                        int>*>(a));
-                int z_b = std::get<3>(*static_cast<const std::tuple<const sf::Texture &,
-                                                        double,
-                                                        sf::Vector2f,
-                                                        int>*>(b));
-                return z_a - z_b;
-              });
+  std::sort(drawables.begin(), drawables.end(), [](auto const &a, auto const &b) {
+    return std::get<3>(a) < std::get<3>(b);
+  });
+  
   for (auto&& [texture, scale, new_pos, z] : drawables) {
     if (!this->_sprite.has_value()) {
-      this->_sprite.emplace(texture);
+      this->_sprite.emplace(texture.get());
     } else {
-      this->_sprite->setTexture(texture);
+      this->_sprite->setTexture(texture.get());
     }
     this->_sprite->setOrigin(sf::Vector2f(
-        static_cast<float>(texture.getSize().x) / 2.0f,
-        static_cast<float>(texture.getSize().y) / 2.0f));
+        static_cast<float>(texture.get().getSize().x) / 2.0f,
+        static_cast<float>(texture.get().getSize().y) / 2.0f));
     this->_sprite->setScale(sf::Vector2f(scale, scale));
     this->_sprite->setPosition(new_pos);
     _window.draw(*this->_sprite);
