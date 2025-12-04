@@ -32,6 +32,7 @@
 #include "plugin/components/Sprite.hpp"
 #include "plugin/components/Text.hpp"
 #include "plugin/events/Events.hpp"
+#include "plugin/components/Background.hpp"
 
 static const std::map<sf::Keyboard::Key, Key> key_association = {
     {sf::Keyboard::Key::Enter, Key::ENTER},
@@ -75,7 +76,8 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
               {"moving", "client_network", "server_network"},
               {COMP_INIT(Drawable, Drawable, init_drawable),
                COMP_INIT(Sprite, Sprite, init_sprite),
-               COMP_INIT(Text, Text, init_text)})
+               COMP_INIT(Text, Text, init_text),
+               COMP_INIT(Background, Background, init_background)})
 {
   _window =
       sf::RenderWindow(sf::VideoMode(window_size), "R-Type - SFML Renderer");
@@ -84,6 +86,7 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
   _registery.get().register_component<Drawable>("sfml:Drawable");
   _registery.get().register_component<Sprite>("sfml:Sprite");
   _registery.get().register_component<Text>("sfml:Text");
+  _registery.get().register_component<Background>("sfml:Background");
 
   _registery.get().add_system<Scene, Drawable>(
       [this](Registery&,
@@ -102,6 +105,12 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
                                 1);
   _registery.get().add_system<>([this](Registery&)
                                 { _window.clear(sf::Color::Black); });
+  _registery.get().add_system<Drawable, Background>(
+      [this](Registery& r,
+             const SparseArray<Drawable>& drawables,
+             const SparseArray<Background>& backgrounds)
+      { this->background_system(r, drawables, backgrounds); }
+  );
   _registery.get().add_system<Position, Drawable, Sprite>(
       [this](Registery& r,
              SparseArray<Position>& pos,
@@ -119,6 +128,7 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
   _registery.get().add_system<>([this](Registery&) { this->display(); });
   _textures.insert_or_assign(SFMLRenderer::placeholder_texture,
                              gen_placeholder());
+
 }
 
 SFMLRenderer::~SFMLRenderer()
@@ -273,11 +283,11 @@ std::optional<Key> SFMLRenderer::sfml_key_to_key(sf::Keyboard::Key sfml_key)
 void SFMLRenderer::handle_resize()
 {
   sf::Vector2u new_size = _window.getSize();
-  sf::View view(sf::Vector2f(static_cast<float>(new_size.x) / 2,
-                             static_cast<float>(new_size.y) / 2),
-                sf::Vector2f(static_cast<float>(new_size.x),
+  this->_view.setSize(sf::Vector2f(static_cast<float>(new_size.x),
                              static_cast<float>(new_size.y)));
-  _window.setView(view);
+  this->_view.setCenter(sf::Vector2f(static_cast<float>(new_size.x) / 2,
+                               static_cast<float>(new_size.y) / 2));
+  _window.setView(this->_view);
 }
 
 void SFMLRenderer::handle_events()
@@ -369,7 +379,7 @@ void SFMLRenderer::render_sprites(Registery& /*unused*/,
     if (!this->_sprite.has_value()) {
       this->_sprite.emplace(texture.get());
     } else {
-      this->_sprite->setTexture(texture.get());
+      this->_sprite->setTexture(texture.get(), true);
     }
     this->_sprite->setOrigin(sf::Vector2f(
         static_cast<float>(texture.get().getSize().x) / 2.0f,

@@ -11,6 +11,7 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/View.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window.hpp>
@@ -21,6 +22,7 @@
 #include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
+#include "plugin/components/Background.hpp"
 #include "plugin/components/Drawable.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Sprite.hpp"
@@ -45,6 +47,7 @@ private:
   void init_drawable(Registery::Entity const entity, JsonObject const& obj);
   void init_sprite(Registery::Entity const entity, JsonObject const& obj);
   void init_text(Registery::Entity const entity, JsonObject const& obj);
+  void init_background(Registery::Entity const entity, JsonObject const &obj);
 
   Vector2D parse_vector2d(JsonVariant const& variant);
 
@@ -58,6 +61,11 @@ private:
                    const SparseArray<Position>& positions,
                    const SparseArray<Drawable>& drawable,
                    const SparseArray<Text>& texts);
+  void background_system(Registery& r,
+                              const SparseArray<Drawable>& drawables,
+                             const SparseArray<Background>& backgrounds);
+
+
   void display();
 
   std::optional<Key> sfml_key_to_key(sf::Keyboard::Key sfml_key);
@@ -70,6 +78,18 @@ private:
 
   std::optional<sf::Sprite> _sprite;
   std::optional<sf::Text> _text;
+  sf::View _view;
+
+  void draw_nothing_background(const Background &background);
+  void draw_repeat_background(const Background &background);
+  void draw_stretch_background(const Background &background);
+  void draw_parallax_background(const Background &background);
+
+  std::map<Background::RenderType, std::function<void(const Background &)>> _draw_functions {
+        {Background::RenderType::NOTHING, [this](const Background &background) { this->draw_nothing_background(background); }},
+        {Background::RenderType::REPEAT, [this](const Background &background) { this->draw_repeat_background(background); }},
+        {Background::RenderType::STRETCH, [this](const Background &background) { this->draw_stretch_background(background); }},
+  };
 
   KeyPressedEvent _key_pressed;
   KeyReleasedEvent _key_released;
