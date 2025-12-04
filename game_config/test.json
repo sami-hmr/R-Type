@@ -68,13 +68,13 @@
           "moving:Position": { "x": 0.0, "y": 0.0 },
           "sfml:Drawable": {},
           "moving:Velocity": {
-            "speed" : {
-              "x" : 0.05,
-              "y" : 0.05
+            "speed": {
+              "x": 0.05,
+              "y": 0.05
             },
-            "direction" : {
-              "x" : 0.0,
-              "y" : 0.0
+            "direction": {
+              "x": 0.0,
+              "y": 0.0
             }
           },
           "sfml:Sprite": {

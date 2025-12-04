@@ -54,12 +54,6 @@ void UI::handle_key_pressed(const KeyPressedEvent& event)
         input.value().buffer.pop_back();
       }
     }
-
-    if (event.key_pressed.contains(Key::ENTER)
-        && event.key_pressed.at(Key::ENTER))
-    {
-      input.value().buffer += "\n";
-    }
   }
 }
 

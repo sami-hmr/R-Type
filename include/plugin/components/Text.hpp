@@ -1,4 +1,6 @@
 #pragma once
+#include <functional>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -17,6 +19,13 @@ struct Text
   {
   }
 
+  Text(std::string font_path, Vector2D v, HookRef<std::string> t)
+      : font_path(std::move(font_path))
+      , scale(v)
+      , text(std::move(t))
+  {
+  }
+
   DEFAULT_BYTE_CONSTRUCTOR(Text,
                            (
                                [](std::vector<char> font_path,
@@ -27,16 +36,21 @@ struct Text
                                  return Text(
                                      std::string(font_path.begin(),
                                                  font_path.end()),
-                                     Vector2D{x, y},
+                                     Vector2D {x, y},
                                      std::string(text.begin(), text.end()));
                                }),
-                           parseByteArray(parseAnyChar()), parseByte<double>(), parseByte<double>(), parseByteArray(parseAnyChar()))
-  DEFAULT_SERIALIZE(string_to_byte(this->font_path), type_to_byte(this->scale.x), type_to_byte(this->scale.y), string_to_byte(this->text))
+                           parseByteArray(parseAnyChar()),
+                           parseByte<double>(),
+                           parseByte<double>(),
+                           parseByteArray(parseAnyChar()))
+  DEFAULT_SERIALIZE(string_to_byte(this->font_path),
+                    type_to_byte(this->scale.x),
+                    type_to_byte(this->scale.y),
+                    string_to_byte(this->text.get()))
 
   std::string font_path;
   Vector2D scale;
-  std::string text;
+  HookRef<std::string> text;
 
   HOOKABLE(Text, HOOK(font_path), HOOK(scale), HOOK(text))
-
 };

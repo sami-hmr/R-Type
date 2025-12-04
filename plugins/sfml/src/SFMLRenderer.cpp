@@ -226,10 +226,7 @@ void SFMLRenderer::init_sprite(Registery::Entity const entity,
 
   Vector2D scale(0.1, 0.1);
   if (obj.contains("size")) {
-    scale = this->parse_vector2d(
-        obj.at("size")  // TODO: faire un getter de jsonvariant qui prend en
-                        // compte les hooks
-            .value);  // la scale est en pourcentage de la taille de la window
+    scale = this->parse_vector2d(obj.at("size").value);
   }
   _registery.get().emplace_component<Sprite>(
       entity, texture_path.value(), scale);
@@ -240,22 +237,22 @@ void SFMLRenderer::init_text(Registery::Entity const entity,
 {
   auto const& font_path =
       get_value<std::string>(this->_registery.get(), obj, "font");
-  auto const& text =
-      get_value<std::string>(this->_registery.get(), obj, "text");
 
-  if (!font_path || !text) {
+  if (!font_path) {
     std::cerr << "Error loading text component: unexpected value type (font: "
-                 "string, text: string)\n";
+                 "string)\n";
     return;
   }
+
   Vector2D scale(0.1, 0.1);
-  if (!obj.contains("size")) {
-    std::cerr << "y a pas de size brother\n";  // TODO: pareil que au dessus
-    return;
+  if (obj.contains("size")) {
+    scale = this->parse_vector2d(obj.at("size").value);
   }
-  scale = this->parse_vector2d(obj.at("size").value);
+
+  auto text = get_hook_ref<std::string>(this->_registery.get(), obj, "text");
+
   _registery.get().emplace_component<Text>(
-      entity, font_path.value(), scale, text.value());
+      entity, font_path.value(), scale, text);
 }
 
 std::optional<Key> SFMLRenderer::sfml_key_to_key(sf::Keyboard::Key sfml_key)
@@ -310,11 +307,21 @@ void SFMLRenderer::handle_events()
         _key_released.key_released[key.value()] = true;
       }
     }
+    if (const auto* text_entered = event->getIf<sf::Event::TextEntered>()) {
+      if (text_entered->unicode >= 'A' && text_entered->unicode < 'z') {
+        if (!_key_pressed.key_unicode.has_value()) {
+          _key_pressed.key_unicode = "";
+        }
+        _key_pressed.key_unicode.value() +=
+            static_cast<char>(text_entered->unicode);
+      }
+    }
     if (event->is<sf::Event::Resized>()) {
       handle_resize();
     }
   }
-  if (!_key_pressed.key_pressed.empty()) {
+  if (!_key_pressed.key_pressed.empty() || _key_pressed.key_unicode.has_value())
+  {
     _registery.get().emit<KeyPressedEvent>(_key_pressed);
   }
   if (!_key_released.key_released.empty()) {
@@ -382,7 +389,8 @@ void SFMLRenderer::render_text(Registery& /*unused*/,
       _text.emplace(font);
     }
     _text.value().setFont(font);
-    _text.value().setString(txt.text);
+
+    _text.value().setString(txt.text.get());
 
     sf::Vector2u window_size = _window.getSize();
     sf::Vector2f new_pos(
