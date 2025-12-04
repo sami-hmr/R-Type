@@ -2,6 +2,7 @@
 
 #include "ByteParser/ByteParser.hpp"
 #include "plugin/Byte.hpp"
+#include "plugin/Hooks.hpp"
 
 struct Health
 {
@@ -39,4 +40,6 @@ struct Health
   int max;
   double heal_delta;
   double damage_delta;
+
+  HOOKABLE(Health, HOOK(current), HOOK(max), HOOK(heal_delta), HOOK(damage_delta))
 };

@@ -6,6 +6,7 @@
 #include "ByteParser/ByteParser.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/Byte.hpp"
+#include "plugin/Hooks.hpp"
 
 struct Text
 {
@@ -35,4 +36,7 @@ struct Text
   std::string font_path;
   Vector2D scale;
   std::string text;
+
+  HOOKABLE(Text, HOOK(font_path), HOOK(scale), HOOK(text))
+
 };

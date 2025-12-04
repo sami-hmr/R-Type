@@ -20,14 +20,14 @@ public:
   static constexpr double damage_cooldown = 0.5;
 
 private:
-  void init_health(Registery::Entity entity, JsonVariant const& config);
-  void init_damage(Registery::Entity entity, JsonVariant const& config);
-  void init_heal(Registery::Entity entity, JsonVariant const& config);
-  void init_team(Registery::Entity const entity, JsonVariant const& config);
+  void init_health(Registery::Entity entity, JsonObject const& obj);
+  void init_damage(Registery::Entity entity, JsonObject const& obj);
+  void init_heal(Registery::Entity entity, JsonObject const& obj);
+  void init_team(Registery::Entity const &entity, JsonObject const& obj);
 
   void damage_entity(const CollisionEvent& event, SparseArray<Health> &healths);
   void heal_entity(const CollisionEvent& event, SparseArray<Health> &healths);
-  
+
   void update_cooldowns(Registery& reg);
 
   void on_collision(const CollisionEvent& event);

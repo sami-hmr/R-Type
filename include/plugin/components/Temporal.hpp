@@ -3,6 +3,7 @@
 #include "ByteParser/ByteParser.hpp"
 #include "ParserUtils.hpp"
 #include "plugin/Byte.hpp"
+#include "plugin/Hooks.hpp"
 
 struct Temporal
 {
@@ -26,6 +27,8 @@ struct Temporal
                            parseByte<double>(),
                            parseByte<double>())
   DEFAULT_SERIALIZE(type_to_byte(this->lifetime), type_to_byte(this->elapsed))
+
+  HOOKABLE(Temporal, HOOK(lifetime))
 
   double lifetime;
   double elapsed;

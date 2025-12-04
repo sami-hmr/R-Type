@@ -4,6 +4,7 @@
 #include "ParserUtils.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/Byte.hpp"
+#include "plugin/Hooks.hpp"
 
 struct Velocity
 {
@@ -36,4 +37,6 @@ struct Velocity
 
   Vector2D speed;
   Vector2D direction;
+
+  HOOKABLE(Velocity, HOOK(speed), HOOK(direction))
 };

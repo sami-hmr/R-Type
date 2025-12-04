@@ -3,6 +3,7 @@
 #include "ByteParser/ByteParser.hpp"
 #include "ParserUtils.hpp"
 #include "plugin/Byte.hpp"
+#include "plugin/Hooks.hpp"
 
 struct Owner
 {
@@ -18,6 +19,8 @@ struct Owner
                             { return (Owner) {entity_id}; }),
                            parseByte<int>())
   DEFAULT_SERIALIZE(type_to_byte(this->entity_id))
+
+  HOOKABLE(Owner, HOOK(entity_id))
 
   std::size_t entity_id;
 };

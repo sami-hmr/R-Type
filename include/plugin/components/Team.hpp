@@ -4,6 +4,7 @@
 
 #include "ByteParser/ByteParser.hpp"
 #include "plugin/Byte.hpp"
+#include "plugin/Hooks.hpp"
 
 struct Team
 {
@@ -22,4 +23,6 @@ struct Team
   DEFAULT_SERIALIZE(string_to_byte(this->name))
 
   std::string name;
+
+  HOOKABLE(Team, HOOK(name))
 };

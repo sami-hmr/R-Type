@@ -1,14 +1,19 @@
 #include <algorithm>
+#include <any>
 #include <format>
+#include <functional>
 #include <iostream>
+#include <optional>
 
 #include "Life.hpp"
 
+#include "Json/JsonParser.hpp"
 #include "Logger.hpp"
 #include "ecs/Registery.hpp"
 #include "ecs/SparseArray.hpp"
 #include "ecs/zipper/Zipper.hpp"
 #include "plugin/EntityLoader.hpp"
+#include "plugin/Hooks.hpp"
 #include "plugin/components/Damage.hpp"
 #include "plugin/components/Heal.hpp"
 #include "plugin/components/Health.hpp"
@@ -19,10 +24,10 @@ Life::Life(Registery& r, EntityLoader& l)
     : APlugin(r,
               l,
               {"moving", "collision"},
-              {COMP_INIT(Health, init_health),
-               COMP_INIT(Damage, init_damage),
-               COMP_INIT(Heal, init_heal),
-               COMP_INIT(Team, init_team)})
+              {COMP_INIT(Health, Health, init_health),
+               COMP_INIT(Damage, Damage, init_damage),
+               COMP_INIT(Heal, Heal, init_heal),
+               COMP_INIT(Team, Team, init_team)})
 {
   this->_registery.get().register_component<Health>();
   this->_registery.get().register_component<Damage>();
@@ -43,77 +48,55 @@ Life::Life(Registery& r, EntityLoader& l)
                                             { this->on_collision(event); });
 }
 
-void Life::init_health(Registery::Entity entity, JsonVariant const& config)
+void Life::init_health(Registery::Entity entity, JsonObject const& obj)
 {
-  try {
-    JsonObject obj = std::get<JsonObject>(config);
-    int current = std::get<int>(obj.at("current").value);
-    int max = std::get<int>(obj.at("max").value);
+  auto const& current = get_value<int>(this->_registery.get(), obj, "current");
+  auto const& max = get_value<int>(this->_registery.get(), obj, "max");
 
-    this->_registery.get().emplace_component<Health>(entity, current, max);
-  } catch (std::bad_variant_access const&) {
-    LOGGER("Life",
-           LogLevel::ERROR,
-           "Error loading Health component: unexpected value type")
-  } catch (std::out_of_range const&) {
-    LOGGER("Life",
-           LogLevel::ERROR,
-           "Error loading Health component: (expected current: int, max: int")
+  if (!current || !max) {
+    std::cerr << "Error loading health component: unexpected value type or "
+                 "missing value in JsonObject\n";
+    return;
   }
+  this->_registery.get().emplace_component<Health>(
+      entity, current.value(), max.value());
 }
 
-void Life::init_damage(Registery::Entity entity, JsonVariant const& config)
+void Life::init_damage(Registery::Entity entity, JsonObject const& obj)
 {
-  try {
-    JsonObject obj = std::get<JsonObject>(config);
-    int value = std::get<int>(obj.at("amount").value);
+  auto const& value = get_value<int>(this->_registery.get(), obj, "amount");
 
-    this->_registery.get().emplace_component<Damage>(entity, value);
-  } catch (std::bad_variant_access const&) {
-    LOGGER("Life",
-           LogLevel::ERROR,
-           "Error loading Damage component: unexpected value type")
-  } catch (std::out_of_range const&) {
-    LOGGER("Life",
-           LogLevel::ERROR,
-           "Error loading Damage component: (expected amount: int")
+  if (!value) {
+    std::cerr << "Error loading damage component: unexpected value type or "
+                     "missing value in JsonObject\n";
+    return;
   }
+  this->_registery.get().emplace_component<Damage>(entity, value.value());
 }
 
-void Life::init_heal(Registery::Entity entity, JsonVariant const& config)
+void Life::init_heal(Registery::Entity entity, JsonObject const& obj)
 {
-  try {
-    JsonObject obj = std::get<JsonObject>(config);
-    int value = std::get<int>(obj.at("amount").value);
+  auto const& value = get_value<int>(this->_registery.get(), obj, "amount");
 
-    this->_registery.get().emplace_component<Heal>(entity, value);
-  } catch (std::bad_variant_access const&) {
-    LOGGER("Life",
-           LogLevel::ERROR,
-           "Error loading Heal component: unexpected value type")
-  } catch (std::out_of_range const&) {
-    LOGGER("Life",
-           LogLevel::ERROR,
-           "Error loading Heal component: (expected amount: int")
+  if (!value) {
+    std::cerr << "Error loading heal component: unexpected value type or "
+                     "missing value in JsonObject\n";
+    return;
   }
+  this->_registery.get().emplace_component<Heal>(entity, value.value());
 }
 
-void Life::init_team(Registery::Entity const entity, JsonVariant const& config)
+void Life::init_team(Registery::Entity const& entity, JsonObject const& obj)
 {
-  try {
-    JsonObject obj = std::get<JsonObject>(config);
-    std::string name = std::get<std::string>(obj.at("name").value);
+  auto const& value =
+      get_value<std::string>(this->_registery.get(), obj, "name");
 
-    this->_registery.get().emplace_component<Team>(entity, name);
-  } catch (std::bad_variant_access const&) {
-    LOGGER("Life",
-           LogLevel::ERROR,
-           "Error loading Team component: unexpected value type")
-  } catch (std::out_of_range const&) {
-    LOGGER("Life",
-           LogLevel::ERROR,
-           "Error loading Team component: (expected name: string")
+  if (!value) {
+    std::cerr << "Error loading team component: unexpected value type or "
+                     "missing value in JsonObject\n";
+    return;
   }
+  this->_registery.get().emplace_component<Team>(entity, value.value());
 }
 
 void Life::damage_entity(const CollisionEvent& event,

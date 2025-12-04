@@ -1,5 +1,6 @@
 #include "Projectile.hpp"
 
+#include "Json/JsonParser.hpp"
 #include "Logger.hpp"
 #include "ecs/Registery.hpp"
 #include "ecs/SparseArray.hpp"
@@ -13,9 +14,9 @@ Projectile::Projectile(Registery& r, EntityLoader& l)
     : APlugin(r,
               l,
               {"moving", "collision"},
-              {COMP_INIT(Temporal, init_temporal),
-               COMP_INIT(Fragile, init_fragile),
-               COMP_INIT(Owner, init_owner)})
+              {COMP_INIT(Temporal, Temporal, init_temporal),
+               COMP_INIT(Fragile, Fragile, init_fragile),
+               COMP_INIT(Owner, Owner, init_owner)})
 {
   this->_registery.get().register_component<Temporal>();
   this->_registery.get().register_component<Fragile>();
@@ -31,46 +32,39 @@ Projectile::Projectile(Registery& r, EntityLoader& l)
 }
 
 void Projectile::init_temporal(Registery::Entity entity,
-                               JsonVariant const& config)
+                               JsonObject const& obj)
 {
-  try {
-    JsonObject obj = std::get<JsonObject>(config);
-    double lifetime = std::get<double>(obj.at("lifetime").value);
+  auto const& lifetime = get_value<double>(this->_registery.get(), obj, "lifetime");
 
-    this->_registery.get().emplace_component<Temporal>(entity, lifetime);
-  } catch (std::bad_variant_access const&) {
-    LOGGER("Projectile",
-           LogLevel::ERROR,
-           "Error loading Temporal component: unexpected value type")
-  } catch (std::out_of_range const&) {
-    LOGGER("Projectile",
-           LogLevel::ERROR,
-           "Error loading Temporal component: (expected lifetime: int")
+  if (!lifetime) {
+    std::cerr << "Error loading Position component: unexpected value type "
+                 "(expected lifetime: double)\n";
+    return;
   }
+
+  this->_registery.get().emplace_component<Temporal>(
+      entity, lifetime.value());
 }
 
 void Projectile::init_fragile(Registery::Entity entity,
-                              JsonVariant const& /*config*/)
+                              JsonObject const& /*obj*/)
 {
   this->_registery.get().emplace_component<Fragile>(entity);
 }
 
-void Projectile::init_owner(Registery::Entity entity, JsonVariant const& config)
+void Projectile::init_owner(Registery::Entity entity,
+                              JsonObject const& obj)
 {
-  try {
-    JsonObject obj = std::get<JsonObject>(config);
-    int owner = std::get<int>(obj.at("owner").value);
+  auto const& owner = get_value<int>(this->_registery.get(), obj, "owner");
 
-    this->_registery.get().emplace_component<Owner>(entity, owner);
-  } catch (std::bad_variant_access const&) {
-    LOGGER("Projectile",
-           LogLevel::ERROR,
-           "Error loading Owner component: unexpected value type")
-  } catch (std::out_of_range const&) {
-    LOGGER("Projectile",
-           LogLevel::ERROR,
-           "Error loading Owner component: (expected lifetime: int")
+  if (!owner || owner < 0) {
+    std::cerr << "Error loading Position component: unexpected value type "
+                 "(expected owner: unsigned int)\n";
+    return;
   }
+
+  this->_registery.get().emplace_component<Owner>(
+      entity, owner.value());
 }
 
 void Projectile::temporal_system(Registery& reg)
