@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ByteParser/ByteParser.hpp"
+#include "libs/Vector2D.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
 
@@ -9,8 +10,12 @@ struct Position
   Position() = default;
 
   Position(double x, double y)
-      : x(x)
-      , y(y)
+      : pos(x, y)
+  {
+  }
+
+  Position(Vector2D pos)
+      : pos(pos)
   {
   }
 
@@ -19,11 +24,9 @@ struct Position
                             { return (Position) {x, y}; }),
                            parseByte<double>(),
                            parseByte<double>())
-  DEFAULT_SERIALIZE(type_to_byte(this->x), type_to_byte(this->y))
+  DEFAULT_SERIALIZE(type_to_byte(this->pos.x), type_to_byte(this->pos.y))
 
-  double x;
-  double y;
+  Vector2D pos;
 
-  HOOKABLE(Position, HOOK(x), HOOK(y))
-
+  HOOKABLE(Position, HOOK(pos))
 };

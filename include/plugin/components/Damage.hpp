@@ -1,16 +1,23 @@
 #pragma once
-
+#include "ByteParser/ByteParser.hpp"
+#include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
+
 struct Damage
 {
-    Damage() = default;
+  Damage() = default;
 
-    Damage(int amount)
-        : amount(amount)
-    {
-    }
+  Damage(int amount)
+      : amount(amount)
+  {
+  }
 
-    int amount;
+  DEFAULT_BYTE_CONSTRUCTOR(Damage,
+                           ([](int x) { return (Damage) {x}; }),
+                           parseByte<int>())
+  DEFAULT_SERIALIZE(type_to_byte(this->amount))
 
-    HOOKABLE(Damage, HOOK(amount))
+  int amount;
+
+  HOOKABLE(Damage, HOOK(amount))
 };

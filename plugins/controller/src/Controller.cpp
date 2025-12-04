@@ -1,3 +1,5 @@
+#include <iterator>
+
 #include "Controller.hpp"
 
 #include "Json/JsonParser.hpp"
@@ -24,17 +26,20 @@ static const std::map<char, Key> mapping = {
     {'\b', Key::DELETE},
 };
 
-std::optional<Key> Controller::char_to_key(char c)
+Key Controller::char_to_key(char c)
 {
   auto it = mapping.find(c);
   if (it != mapping.end()) {
     return it->second;
   }
-  return std::nullopt;
+  return Key::Unknown;
 }
 
 Controller::Controller(Registery& r, EntityLoader& l)
-    : APlugin(r, l, {"moving"}, {COMP_INIT(Controllable, Controllable, init_controller)})
+    : APlugin(r,
+              l,
+              {"moving"},
+              {COMP_INIT(Controllable, Controllable, init_controller)})
 {
   this->_registery.get().register_component<Controllable>();
 
@@ -83,38 +88,50 @@ void Controller::init_controller(Registery::Entity const entity,
     return;
   }
 
-  this->_registery.get().emplace_component<Controllable>(
-      entity, up_str.value()[0], down_str.value()[0], left_str.value()[0], right_str.value()[0]);
+  this->_registery.get().emplace_component<Controllable>(entity,
+                                                         up_str.value()[0],
+                                                         down_str.value()[0],
+                                                         left_str.value()[0],
+                                                         right_str.value()[0]);
 }
 
 void Controller::handle_key_change(Key key, bool is_pressed)
 {
+  this->_key_states[key] = is_pressed;
+
   auto& velocities = this->_registery.get().get_components<Velocity>();
   auto const& controllers =
       this->_registery.get().get_components<Controllable>();
 
   for (auto&& [controller, velocity] : Zipper(controllers, velocities)) {
-    auto up_key = char_to_key(controller.up);
-    auto down_key = char_to_key(controller.down);
-    auto left_key = char_to_key(controller.left);
-    auto right_key = char_to_key(controller.right);
+    Key up_key = this->char_to_key(controller.up);
+    Key down_key = this->char_to_key(controller.down);
+    Key left_key = this->char_to_key(controller.left);
+    Key right_key = this->char_to_key(controller.right);
 
-    double dir = is_pressed ? 1.0 : 0.0;
-
-    if (up_key.has_value() && key == up_key.value()) {
-      velocity.dir_y = is_pressed ? -dir : 0.0;
-    }
-    if (down_key.has_value() && key == down_key.value()) {
-      velocity.dir_y = is_pressed ? dir : 0.0;
-    }
-    if (left_key.has_value() && key == left_key.value()) {
-      velocity.dir_x = is_pressed ? -dir : 0.0;
-    }
-    if (right_key.has_value() && key == right_key.value()) {
-      velocity.dir_x = is_pressed ? dir : 0.0;
-    }
+    velocity.direction.y = this->compute_axis(up_key, down_key);
+    velocity.direction.x = this->compute_axis(left_key, right_key);
   }
 };
+
+bool Controller::is_key_active(Key target) const
+{
+  auto it = this->_key_states.find(target);
+  return it != this->_key_states.end() && it->second;
+}
+
+double Controller::compute_axis(Key negative, Key positive) const
+{
+  bool negative_active =
+      negative != Key::Unknown && this->is_key_active(negative);
+  bool positive_active =
+      positive != Key::Unknown && this->is_key_active(positive);
+
+  if (negative_active == positive_active) {
+    return 0.0;
+  }
+  return negative_active ? -1.0 : 1.0;
+}
 
 extern "C"
 {

@@ -38,9 +38,10 @@ struct LogEvent
 #define LOGGER(category, level, message) \
   this->_registery.get().emit<LogEvent>(category, level, message);
 
-enum class Key : std::uint8_t
+enum class Key
 {
-  SHIFT,
+  Unknown = -1,
+  SHIFT = 0,
   CTRL,
   ALT,
   ENTER,

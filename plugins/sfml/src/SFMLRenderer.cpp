@@ -154,77 +154,109 @@ sf::Font& SFMLRenderer::load_font(std::string const& path)
 }
 
 void SFMLRenderer::init_drawable(Registery::Entity const entity,
-                                 JsonObject const& obj)
+                                 JsonObject const&)
 {
-    _registery.get().emplace_component<Drawable>(entity);
+  _registery.get().emplace_component<Drawable>(entity);
 }
 
-static Vector2D parse_vector2d(JsonVariant const& variant)
+Vector2D SFMLRenderer::parse_vector2d(JsonVariant const& variant)
 {
+  JsonObject obj;
   try {
-    JsonObject obj = std::get<JsonObject>(variant);
-    double x = std::get<double>(obj.at("width").value);
-    double y = std::get<double>(obj.at("height").value);
-    return {x / SFMLRenderer::window_size.x, y / SFMLRenderer::window_size.y};
+    obj = std::get<JsonObject>(variant);
   } catch (std::bad_variant_access const&) {
+    std::cerr << "Error parsing vector2d: not a JsonObject, using default "
+                 "(10%, 15%)\n";
+    return {10.0 / 100.0, 15.0 / 100.0};
+  }
+
+  auto const& width_double =
+      get_value<double>(this->_registery.get(), obj, "width");
+  auto const& height_double =
+      get_value<double>(this->_registery.get(), obj, "height");
+
+  if (width_double && height_double) {
+    return {width_double.value() / SFMLRenderer::window_size.x,
+            height_double.value() / SFMLRenderer::window_size.y};
+  }
+
+  auto const& width_str =
+      get_value<std::string>(this->_registery.get(), obj, "width");
+  auto const& height_str =
+      get_value<std::string>(this->_registery.get(), obj, "height");
+
+  if (width_str && height_str) {
+    std::string x_percentage = width_str.value();
+    std::string y_percentage = height_str.value();
+
+    if (!x_percentage.empty() && x_percentage.back() == '%') {
+      x_percentage.pop_back();
+    }
+    if (!y_percentage.empty() && y_percentage.back() == '%') {
+      y_percentage.pop_back();
+    }
+
     try {
-      JsonObject obj = std::get<JsonObject>(variant);
-      std::string x_percentage = std::get<std::string>(obj.at("width").value);
-      std::string y_percentage = std::get<std::string>(obj.at("height").value);
-      if (x_percentage.back() == '%') {
-        x_percentage.pop_back();
-      }
-      if (y_percentage.back() == '%') {
-        y_percentage.pop_back();
-      }
       double x = std::stod(x_percentage) / 100.0;
       double y = std::stod(y_percentage) / 100.0;
       return {x, y};
-    } catch (std::bad_variant_access const&) {
-      return {10 / 100.0, 15 / 100.0};
+    } catch (std::invalid_argument const&) {
+      std::cerr << "Error parsing vector2d: invalid percentage values, using "
+                   "default (10%, 15%)\n";
+      return {10.0 / 100.0, 15.0 / 100.0};
     }
   }
+
+  std::cerr << "Error parsing vector2d: missing width/height, using default "
+               "(10%, 15%)\n";
+  return {10.0 / 100.0, 15.0 / 100.0};
 }
 
 void SFMLRenderer::init_sprite(Registery::Entity const entity,
                                JsonObject const& obj)
 {
-    auto const &texture_path = get_value<std::string>(this->_registery.get(), obj, "texture");
+  auto const& texture_path =
+      get_value<std::string>(this->_registery.get(), obj, "texture");
 
-    if (!texture_path) {
-        std::cerr << "Error loading sprite component: unexpected value type (texture: string)\n";
-        return;
-    }
+  if (!texture_path) {
+    std::cerr << "Error loading sprite component: unexpected value type "
+                 "(texture: string)\n";
+    return;
+  }
 
-    Vector2D scale(0.1, 0.1);
-    if (obj.contains("size")) {
-      scale = parse_vector2d(
-          obj.at("size")  //TODO: faire un getter de jsonvariant qui prend en compte les hooks
-              .value);  // la scale est en pourcentage de la taille de la window
-    }
-    _registery.get().emplace_component<Sprite>(entity, texture_path.value(), scale);
+  Vector2D scale(0.1, 0.1);
+  if (obj.contains("size")) {
+    scale = this->parse_vector2d(
+        obj.at("size")  // TODO: faire un getter de jsonvariant qui prend en
+                        // compte les hooks
+            .value);  // la scale est en pourcentage de la taille de la window
+  }
+  _registery.get().emplace_component<Sprite>(
+      entity, texture_path.value(), scale);
 }
 
 void SFMLRenderer::init_text(Registery::Entity const entity,
                              JsonObject const& obj)
 {
-    auto const &font_path = get_value<std::string>(this->_registery.get(), obj, "font");
-    auto const &text = get_value<std::string>(this->_registery.get(), obj, "text");
+  auto const& font_path =
+      get_value<std::string>(this->_registery.get(), obj, "font");
+  auto const& text =
+      get_value<std::string>(this->_registery.get(), obj, "text");
 
-    if (!font_path || !text) {
-        std::cerr << "Error loading text component: unexpected value type (font: string, text: string)\n";
-        return;
-    }
-    Vector2D scale(0.1, 0.1);
-    if (!obj.contains("size")) {
-      std::cerr << "y a pas de size brother\n"; //TODO: pareil que au dessus
-      return;
-    }
-    scale = parse_vector2d(obj.at("size").value);
-    _registery.get().emplace_component<Text>(
-        entity, font_path.value(), scale, text.value());
+  if (!font_path || !text) {
+    std::cerr << "Error loading text component: unexpected value type (font: "
+                 "string, text: string)\n";
+    return;
   }
-
+  Vector2D scale(0.1, 0.1);
+  if (!obj.contains("size")) {
+    std::cerr << "y a pas de size brother\n";  // TODO: pareil que au dessus
+    return;
+  }
+  scale = this->parse_vector2d(obj.at("size").value);
+  _registery.get().emplace_component<Text>(
+      entity, font_path.value(), scale, text.value());
+}
 
 std::optional<Key> SFMLRenderer::sfml_key_to_key(sf::Keyboard::Key sfml_key)
 {
@@ -328,8 +360,8 @@ void SFMLRenderer::render_sprites(Registery& /*unused*/,
     _sprite.value().setScale(sf::Vector2f(uniform_scale, uniform_scale));
 
     sf::Vector2f new_pos(
-        static_cast<float>((pos.x + 1.0) * window_size.x / 2.0),
-        static_cast<float>((pos.y + 1.0) * window_size.y / 2.0));
+        static_cast<float>((pos.pos.x + 1.0) * window_size.x / 2.0),
+        static_cast<float>((pos.pos.y + 1.0) * window_size.y / 2.0));
     _sprite.value().setPosition(new_pos);
     _window.draw(_sprite.value());
   }
@@ -354,8 +386,8 @@ void SFMLRenderer::render_text(Registery& /*unused*/,
 
     sf::Vector2u window_size = _window.getSize();
     sf::Vector2f new_pos(
-        static_cast<float>((pos.x + 1.0) * window_size.x / 2.0),
-        static_cast<float>((pos.y + 1.0) * window_size.y / 2.0));
+        static_cast<float>((pos.pos.x + 1.0) * window_size.x / 2.0),
+        static_cast<float>((pos.pos.y + 1.0) * window_size.y / 2.0));
     _text.value().setPosition(new_pos);
     _text.value().setCharacterSize(static_cast<unsigned int>(txt.scale.x));
     _window.draw(_text.value());
