@@ -16,9 +16,11 @@
 
 //#include <boost/system/error_code.hpp>
 
+#include "Commands.hpp"
 #include "ServerLaunch.hpp"
 #include "ecs/Registery.hpp"
 #include "plugin/APlugin.hpp"
+#include "plugin/Byte.hpp"
 #include "plugin/CircularBuffer.hpp"
 #include "plugin/EntityLoader.hpp"
 // #include "plugin/events/Events.hpp"
@@ -27,7 +29,8 @@
 
 #define BUFFER_SIZE 2048
 
-#define MAGIC_SEQUENCE 0x67676767
+#define PROTOCOL_EOF {0x67, 0x67, 0x67, 0x67}
+#define MAGIC_SEQUENCE std::uint32_t(0x436482793)
 #define MAGIC_LENGTH 4
 
 #define HOSTNAME_LENGTH 64
@@ -104,27 +107,32 @@ private:
   void launch_server(ServerLaunching const& s);
   void receive_loop();
 
-  void handle_connectionless_packet(const std::string& command,
+  void handle_connectionless_packet(ConnectionlessCommand const &command,
                                     const asio::ip::udp::endpoint& sender);
-  void send_connectionless(const std::string& response,
+  void send_connectionless(ByteArray const& response,
                            const asio::ip::udp::endpoint& endpoint);
 
-  void handle_getinfo(const std::string& commandline,
+  void handle_getinfo(ByteArray const &cmd,
                       const asio::ip::udp::endpoint& sender);
-  void handle_getstatus(const std::string& commandline,
+  void handle_getstatus(ByteArray const &cmd,
                         const asio::ip::udp::endpoint& sender);
-  void handle_getchallenge(const std::string& commandline,
+  void handle_getchallenge(ByteArray const &cmd,
                            const asio::ip::udp::endpoint& sender);
-  void handle_connect(const std::string& commandline,
+  void handle_connect(ByteArray const &cmd,
                       const asio::ip::udp::endpoint& sender);
     static asio::socket_base::message_flags handle_receive(const asio::error_code& error, std::size_t bytes_transferred);
 
+  void handle_package(ByteArray const &, const asio::ip::udp::endpoint&);
+
   static uint32_t generate_challenge();
-  static std::vector<std::string> parse_connect_args(const std::string& commandline);
+  std::optional<Package> parse_package(ByteArray const &package);
+  std::optional<ConnectionlessCommand> parse_connectionless_package(ByteArray &package);
+  std::optional<ConnectCommand> parse_connect_command(ByteArray const& cmd);
+
   ClientInfo* find_client_by_endpoint(const asio::ip::udp::endpoint& endpoint);
 
   static const std::unordered_map<std::uint8_t,
-    void (NetworkServer::*)(const std::string &,
+    void (NetworkServer::*)(ByteArray const &,
       const asio::ip::udp::endpoint&)>
       _command_table;
 

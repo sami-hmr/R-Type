@@ -6,6 +6,7 @@ find_package(asio CONFIG REQUIRED)
 
 add_library(${LIB_NAME} SHARED
     src/Network.cpp
+    src/CommandParsing.cpp
 )
 
 target_compile_features(${LIB_NAME} PRIVATE cxx_std_23)

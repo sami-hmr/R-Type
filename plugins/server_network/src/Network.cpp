@@ -1,18 +1,26 @@
+#include <array>
 #include <cstddef>
 #include <cstring>
 #include <format>
+#include <optional>
 #include <sstream>
 #include <functional>
+#include <stdexcept>
+#include <thread>
 
 #include "Network.hpp"
 
+#include "Commands.hpp"
+#include "ParserTypes.hpp"
 #include "ecs/Registery.hpp"
+#include "plugin/Byte.hpp"
+#include "plugin/CircularBuffer.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/events/Events.hpp"
 
 const std::unordered_map<std::uint8_t,
                          void (NetworkServer::*)(
-                             const std::string &,
+                             ByteArray const &,
                              const asio::ip::udp::endpoint&)>
     NetworkServer::_command_table = {
         {GETINFO, &NetworkServer::handle_getinfo},
@@ -99,23 +107,18 @@ asio::socket_base::message_flags NetworkServer::handle_receive(const asio::error
 
 void NetworkServer::receive_loop()
 {
-  std::array<char, BUFFER_SIZE> recv_buf {};
+  CircularBuffer<BUFFER_SIZE> recv_buf;
   asio::ip::udp::endpoint sender_endpoint;
-
-  // std::cout << "hell yeah" << std::endl;
-  //         _socket->async_receive_from(
-  //               asio::buffer(recv_buf), sender_endpoint,
-  //               NetworkServer::handle_receive);
-  // std::cout << "hell nah" << std::endl;
 
   while (_running) {
     try {
       std::error_code ec;
-      size_t len =
-          _socket->receive_from(asio::buffer(recv_buf), sender_endpoint, 0, ec);
-
+      std::size_t len = recv_buf.read_socket(*this->_socket, sender_endpoint, ec);
+      if (len > 0) {
+          LOGGER("server", LogLevel::DEBUG, std::format("received buffer, size : {}", len));
+      }
       if (ec == asio::error::would_block) {
-        std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_DURATION));
+        std::this_thread::yield();
         continue;
       }
 
@@ -128,23 +131,13 @@ void NetworkServer::receive_loop()
         break;
       }
 
-      if (len < MAGIC_LENGTH) {
-        continue;
+      while (std::optional<ByteArray> p = recv_buf.extract(PROTOCOL_EOF)) {
+          LOGGER("server", LogLevel::DEBUG, "package extracted");
+          for (auto it : *p) {
+              std::cout << (int)it << std::endl;
+          }
+          this->handle_package(*p, sender_endpoint);
       }
-
-      uint32_t magic = 0;
-      std::memcpy(&magic, recv_buf.data(), sizeof(uint32_t));
-
-      if (magic == MAGIC_SEQUENCE) {
-        std::string command(recv_buf.data() + MAGIC_LENGTH, len - MAGIC_LENGTH);
-        if (!command.empty() && command.back() == END_OF_CMD) {
-          command.pop_back();
-        }
-        handle_connectionless_packet(command, sender_endpoint);
-      } else {
-        LOGGER("server", LogLevel::DEBUG, "Received connected packet");
-      }
-
     } catch (std::exception& e) {
       if (_running) {
         LOGGER("server",
@@ -158,24 +151,34 @@ void NetworkServer::receive_loop()
   LOGGER("server", LogLevel::INFO, "Server receive loop ended");
 }
 
+void NetworkServer::handle_package(ByteArray const &package, const asio::ip::udp::endpoint& sender) {
+    std::optional<Package> pkg = this->parse_package(package);
+
+    if (!pkg) {return;}
+    if (pkg->magic != MAGIC_SEQUENCE) {
+        LOGGER("server", LogLevel::DEBUG, "Invalid magic sequence, ignoring.");
+        return;
+    }
+    auto const &parsed = this->parse_connectionless_package(pkg->real_package);
+    if (!parsed) {return;}
+    handle_connectionless_packet(parsed.value(), sender);
+}
+
 void NetworkServer::handle_connectionless_packet(
-    const std::string& command, const asio::ip::udp::endpoint& sender)
+    ConnectionlessCommand const &command, const asio::ip::udp::endpoint& sender)
 {
   LOGGER(
-      "server", LogLevel::DEBUG, std::format("Received connectionless packet: '{}'", int(command[CMD_INDEX])));
+      "server", LogLevel::DEBUG, std::format("Received connectionless packet: '{}'", command.command_code));
 
-  std::uint8_t cmd = command[CMD_INDEX];
-
-  auto it = _command_table.find(cmd);
-  if (it != _command_table.end()) {
-    (this->*(it->second))(command, sender);
-  } else {
+  try {
+      (this->*(_command_table.find(command.command_code)->second))(command.command, sender);
+  } catch(std::out_of_range const &) {
     LOGGER(
-        "server", LogLevel::WARNING, std::format("Unknown command: {}", cmd));
+        "server", LogLevel::WARNING, std::format("Unknown command: {}", command.command_code));
   }
 }
 
-void NetworkServer::send_connectionless(const std::string& response,
+void NetworkServer::send_connectionless(ByteArray const& response,
                                         const asio::ip::udp::endpoint& endpoint)
 {
   std::size_t length = response.size();
@@ -193,25 +196,23 @@ void NetworkServer::send_connectionless(const std::string& response,
   LOGGER("server", LogLevel::DEBUG, std::format("Sent: '{}'", static_cast<int>(response[CMD_INDEX])));
 }
 
-void NetworkServer::handle_getinfo(const std::string& UNUSED commandline,
+void NetworkServer::handle_getinfo(ByteArray const& cmd,
                                    const asio::ip::udp::endpoint& sender)
 {
-  if (commandline.size() != COMMAND_SIZE) {
-    LOGGER("server", LogLevel::WARNING, "Invalid getinfo command");
+  if (!cmd.empty()) {
+    LOGGER("server", LogLevel::WARNING, "Invalid getinfo command: command not empty");
     return;
   }
-  std::ostringstream oss;
-  oss << INFORESPONSE << std::string(_hostname.begin(), _hostname.end()) << std::string(_mapname.begin(), _mapname.end())
-      << COOP << _max_players << CURRENT_PROTOCOL_VERSION;
+  ByteArray pkg = type_to_byte<Byte>(INFORESPONSE) + ByteArray(_hostname.begin(), _hostname.end()) + ByteArray(_mapname.begin(), _mapname.end()) + type_to_byte(COOP) + type_to_byte(_max_players) + type_to_byte<Byte>(CURRENT_PROTOCOL_VERSION);
 
-  send_connectionless(oss.str(), sender);
+  send_connectionless(pkg, sender);
 }
 
-void NetworkServer::handle_getstatus(const std::string& UNUSED commandline,
+void NetworkServer::handle_getstatus(ByteArray const& cmd,
                                      const asio::ip::udp::endpoint& sender)
 {
-  if (commandline.size() != COMMAND_SIZE) {
-    LOGGER("server", LogLevel::WARNING, "Invalid getstatus command");
+  if (!cmd.empty()) {
+    LOGGER("server", LogLevel::WARNING, "Invalid getstatus command: command not empty");
     return;
   }
   std::ostringstream oss;
@@ -228,11 +229,11 @@ void NetworkServer::handle_getstatus(const std::string& UNUSED commandline,
   send_connectionless(oss.str(), sender);
 }
 
-void NetworkServer::handle_getchallenge(const std::string& UNUSED commandline,
+void NetworkServer::handle_getchallenge(ByteArray const& cmd,
                                         const asio::ip::udp::endpoint& sender)
 {
-  if (commandline.size() != COMMAND_SIZE) {
-    LOGGER("server", LogLevel::WARNING, "Invalid getchallenge command");
+  if (!cmd.empty()) {
+    LOGGER("server", LogLevel::WARNING, "Invalid getchallenge command: command not empty");
     return;
   }
   uint32_t challenge = generate_challenge();
@@ -258,33 +259,16 @@ void NetworkServer::handle_getchallenge(const std::string& UNUSED commandline,
   send_connectionless(oss.str(), sender);
 }
 
-std::vector<std::string> NetworkServer::parse_connect_args(const std::string& commandline)
-{
-  std::vector<std::string> args;
-
-  args.push_back(commandline.substr(0, PROTOCOL_SIZE));
-  args.push_back(commandline.substr(PROTOCOL_SIZE, CHALLENGE_SIZE));
-  args.push_back(commandline.substr(PROTOCOL_SIZE + CHALLENGE_SIZE, PLAYERNAME_MAX_SIZE));
-  return args;
-}
-
-void NetworkServer::handle_connect(const std::string& commandline,
+void NetworkServer::handle_connect(ByteArray const& cmd,
                                    const asio::ip::udp::endpoint& sender)
 {
-  std::size_t len = commandline.size();
-
-  if (len != CONNECT_COMMAND_SIZE) {
-    LOGGER("server", LogLevel::WARNING, std::format("Invalid connect command: command size is {} and content is {}", len, &commandline[0] + 1));
-    return;
+  std::optional<ConnectCommand> parsed = this->parse_connect_command(cmd);
+  if (!parsed) {
+      return;
   }
-  std::vector<std::string> args = parse_connect_args(commandline);
-
-  int protocol_version = std::stoi(args[PROTOCOL_INDEX]);
-  uint32_t challenge = std::stoul(args[CHALLENGE_CNT_INDEX]);
-  std::string player_name = args[PLAYERNAME_CNT_INDEX];
   std::ostringstream oss;
 
-  if (protocol_version != CURRENT_PROTOCOL_VERSION) {
+  if (parsed->protocol != CURRENT_PROTOCOL_VERSION) {
     std::array<char, ERROR_MSG_SIZE> msg {};
     std::string error_message = "Protocol version mismatch";
     std::copy(error_message.data(), error_message.data() + error_message.length(), msg.begin());
@@ -295,7 +279,7 @@ void NetworkServer::handle_connect(const std::string& commandline,
 
   ClientInfo* client = find_client_by_endpoint(sender);
   if (client == nullptr || client->state != ClientState::CHALLENGING
-      || client->challenge != challenge)
+      || client->challenge != parsed->challenge)
   {
     LOGGER("server", LogLevel::WARNING, "Invalid challenge");
     return;
@@ -310,12 +294,12 @@ void NetworkServer::handle_connect(const std::string& commandline,
   }
 
   client->client_id = client_id;
-  std::copy(player_name.data(), player_name.data() + player_name.length(), client->player_name.begin());
+  std::copy(parsed->player_name.data(), parsed->player_name.data() + parsed->player_name.length(), client->player_name.begin());
   client->state = ClientState::CONNECTED;
 
   LOGGER("server", LogLevel::INFO,
     std::format("Player '{}' connected as client {}",
-      player_name, static_cast<int>(client_id)));
+      parsed->player_name, static_cast<int>(client_id)));
 
   oss << CONNECTRESPONSE << static_cast<char>(client_id) << _server_id;
   send_connectionless(oss.str(), sender);

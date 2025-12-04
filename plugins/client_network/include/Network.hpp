@@ -13,14 +13,18 @@
 #include "ClientConnection.hpp"
 #include "ecs/Registery.hpp"
 #include "plugin/APlugin.hpp"
+#include "plugin/Byte.hpp"
 #include "plugin/EntityLoader.hpp"
 
 #define MAX_PLAYERS 4
 
 #define BUFFER_SIZE 2048
 
-#define MAGIC_SEQUENCE 0x67676767
+#define MAGIC_SEQUENCE std::uint32_t(0x436482793)
 #define MAGIC_LENGTH 4
+
+#define PROTOCOL_EOF std::vector<unsigned char>({0x67, 0x67, 0x67, 0x67})
+#define PROTOCOL_EOF_NUMBER std::uint32_t(0x67676767)
 
 #define HOSTNAME_LENGTH 64
 #define MAPNAME_LENGTH 32
@@ -108,11 +112,11 @@ private:
   void connection_thread(ClientConnection const& c);
   void receive_loop();
 
-  void send_connectionless(const std::string& command);
+  void send_connectionless(ByteArray const& command);
   void handle_connectionless_response(const std::string& response);
 
   void send_getchallenge();
-  void send_connect(uint32_t challenge, const std::string& player_name);
+  void send_connect(uint32_t challenge, ByteArray const& player_name);
 
   void handle_challenge_response(const std::string& commandline);
   void handle_connect_response(const std::string& commandline);

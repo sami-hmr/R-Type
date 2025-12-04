@@ -7,12 +7,12 @@
 #include "Network.hpp"
 
 #include "ecs/Registery.hpp"
+#include "plugin/Byte.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/events/Events.hpp"
 
 const std::unordered_map<std::uint8_t,
-                         void (NetworkClient::*)(
-                             const std::string &)>
+                         void (NetworkClient::*)(const std::string&)>
     NetworkClient::_command_table = {
         {CHALLENGERESPONSE, &NetworkClient::handle_challenge_response},
         {CONNECTRESPONSE, &NetworkClient::handle_connect_response},
@@ -69,8 +69,6 @@ void NetworkClient::connection_thread(ClientConnection const& c)
     _socket = std::make_unique<asio::ip::udp::socket>(_io_c);
     _socket->open(asio::ip::udp::v4());
 
-    _socket->non_blocking(true);
-
     _server_endpoint =
         asio::ip::udp::endpoint(asio::ip::address::from_string(c.host), c.port);
 
@@ -124,7 +122,8 @@ void NetworkClient::receive_loop()
         std::memcpy(&magic, recv_buf.data(), sizeof(uint32_t));
 
         if (magic == MAGIC_SEQUENCE) {
-          std::string response(recv_buf.data() + MAGIC_LENGTH, len - MAGIC_LENGTH);
+          std::string response(recv_buf.data() + MAGIC_LENGTH,
+                               len - MAGIC_LENGTH);
           if (!response.empty() && response.back() == END_OF_CMD) {
             response.pop_back();
           }
@@ -147,25 +146,24 @@ void NetworkClient::receive_loop()
   LOGGER("client", LogLevel::INFO, "Client receive loop ended");
 }
 
-void NetworkClient::send_connectionless(const std::string& command)
+void NetworkClient::send_connectionless(ByteArray const& command)
 {
-  std::vector<char> packet;
-  packet.resize(MAGIC_LENGTH + command.size() + 1);
+  ByteArray pkg = type_to_byte(MAGIC_SEQUENCE) + command + type_to_byte(PROTOCOL_EOF_NUMBER);
 
-  uint32_t magic = MAGIC_SEQUENCE;
-  std::memcpy(packet.data(), &magic, sizeof(uint32_t));
+  std::cout << pkg.size() << std::endl;
 
-  std::memcpy(packet.data() + MAGIC_LENGTH, command.c_str(), command.size());
-  packet[MAGIC_LENGTH + command.size()] = END_OF_CMD;
+  _socket->send_to(asio::buffer(pkg), _server_endpoint);
 
-  _socket->send_to(asio::buffer(packet), _server_endpoint);
-
-  LOGGER("client", LogLevel::DEBUG, std::format("Sent: '{}'", static_cast<int>(command[CMD_INDEX])));
+  LOGGER("client",
+         LogLevel::DEBUG,
+         std::format("Sent: '{}'", static_cast<int>(command[CMD_INDEX])));
 }
 
 void NetworkClient::handle_connectionless_response(const std::string& response)
 {
-  LOGGER("client", LogLevel::DEBUG, std::format("Received: '{}'", static_cast<int>(response[CMD_INDEX])));
+  LOGGER("client",
+         LogLevel::DEBUG,
+         std::format("Received: '{}'", static_cast<int>(response[CMD_INDEX])));
 
   std::uint8_t cmd = response[CMD_INDEX];
 
@@ -180,19 +178,23 @@ void NetworkClient::handle_connectionless_response(const std::string& response)
 
 void NetworkClient::send_getchallenge()
 {
-  std::ostringstream oss;
-  oss << GETCHALLENGE;
-  send_connectionless(oss.str());
+  send_connectionless(type_to_byte<Byte>(GETCHALLENGE));
 }
 
-void NetworkClient::send_connect(std::uint32_t challenge, const std::string& player_name)
+void NetworkClient::send_connect(std::uint32_t challenge,
+                                 ByteArray const& player_name)
 {
-  std::ostringstream oss;
-  oss << CONNECT << CURRENT_PROTOCOL_VERSION << challenge << player_name;
-  send_connectionless(oss.str());
+    ByteArray msg = type_to_byte<Byte>(CONNECT) + type_to_byte<Byte>(CURRENT_PROTOCOL_VERSION)
+      + type_to_byte(challenge)
+      + player_name;
+
+  send_connectionless(msg);
 }
 
-bool NetworkClient::is_valid_response_format(const std::vector<std::string> &args, std::uint8_t requested_size, const std::string &err_mess)
+bool NetworkClient::is_valid_response_format(
+    const std::vector<std::string>& args,
+    std::uint8_t requested_size,
+    const std::string& err_mess)
 {
   std::size_t len = args.size();
 
@@ -203,7 +205,8 @@ bool NetworkClient::is_valid_response_format(const std::vector<std::string> &arg
   return true;
 }
 
-std::vector<std::string> NetworkClient::parse_challenge_response(const std::string& resp)
+std::vector<std::string> NetworkClient::parse_challenge_response(
+    const std::string& resp)
 {
   std::vector<std::string> args;
 
@@ -214,24 +217,31 @@ std::vector<std::string> NetworkClient::parse_challenge_response(const std::stri
   return args;
 }
 
-void NetworkClient::handle_challenge_response(
-    const std::string& commandline)
+void NetworkClient::handle_challenge_response(const std::string& commandline)
 {
   std::vector<std::string> args = parse_challenge_response(commandline);
 
-  if (!is_valid_response_format(args, CHALLENGE_RESP_CMD_SIZE, "Invalid challengeResponse")) {
+  if (!is_valid_response_format(
+          args, CHALLENGE_RESP_CMD_SIZE, "Invalid challengeResponse"))
+  {
     return;
   }
 
   std::uint32_t challenge = std::stoul(args[CHALLENGE_CLG_INDEX]);
-  LOGGER("client", LogLevel::INFO,
-    std::format("Received challenge: {}", challenge));
+  LOGGER("client",
+         LogLevel::INFO,
+         std::format("Received challenge: {}", challenge));
 
   _state = ConnectionState::CONNECTING;
-  send_connect(challenge, _player_name);
+  ByteArray pn(PLAYERNAME_MAX_SIZE, 0);
+  for (int i = 0 ; i < _player_name.size(); i++) {
+      pn[i] = _player_name[i];
+  }
+  send_connect(challenge, pn);
 }
 
-std::vector<std::string> NetworkClient::parse_connect_response(const std::string& resp)
+std::vector<std::string> NetworkClient::parse_connect_response(
+    const std::string& resp)
 {
   std::vector<std::string> args;
 
@@ -239,29 +249,34 @@ std::vector<std::string> NetworkClient::parse_connect_response(const std::string
   args.push_back(resp.substr(MAGIC_LENGTH, PROTOCOL_SIZE));
   args.push_back(resp.substr(MAGIC_LENGTH + PROTOCOL_SIZE, CLIENT_ID_SIZE));
   args.push_back(resp.substr(MAGIC_LENGTH + PROTOCOL_SIZE + CLIENT_ID_SIZE,
-    SERVER_ID_SIZE));
+                             SERVER_ID_SIZE));
   args.push_back(resp.substr(resp.length() - 1, 1));
   return args;
 }
 
-void NetworkClient::handle_connect_response(
-    const std::string& commandline)
+void NetworkClient::handle_connect_response(const std::string& commandline)
 {
   std::vector<std::string> args = parse_connect_response(commandline);
 
-  if (!is_valid_response_format(args, CONNECT_RESP_CMD_SIZE, "Invalid connectResponse")) {
+  if (!is_valid_response_format(
+          args, CONNECT_RESP_CMD_SIZE, "Invalid connectResponse"))
+  {
     return;
   }
-  _client_id = static_cast<std::uint8_t>(std::stoi(args[CLIENT_ID_CNT_RESP_INDEX]));
+  _client_id =
+      static_cast<std::uint8_t>(std::stoi(args[CLIENT_ID_CNT_RESP_INDEX]));
   _server_id = std::stoul(args[SERVER_ID_CNT_RESP_INDEX]);
   _state = ConnectionState::CONNECTED;
 
-  LOGGER("client", LogLevel::INFO,
-   std::format("Connected! Client ID: {}, Server ID: {}",
-    static_cast<int>(_client_id), _server_id));
+  LOGGER("client",
+         LogLevel::INFO,
+         std::format("Connected! Client ID: {}, Server ID: {}",
+                     static_cast<int>(_client_id),
+                     _server_id));
 }
 
-std::vector<std::string> NetworkClient::parse_disconnect_response(const std::string& resp)
+std::vector<std::string> NetworkClient::parse_disconnect_response(
+    const std::string& resp)
 {
   std::vector<std::string> args;
 
@@ -272,18 +287,21 @@ std::vector<std::string> NetworkClient::parse_disconnect_response(const std::str
   return args;
 }
 
-void NetworkClient::handle_disconnect_response(
-    const std::string& commandline)
+void NetworkClient::handle_disconnect_response(const std::string& commandline)
 {
   std::vector<std::string> args = parse_disconnect_response(commandline);
 
-  if (!is_valid_response_format(args, DISCONNECT_RESP_CMD_SIZE, "Invalid disconnectResponse")) {
+  if (!is_valid_response_format(
+          args, DISCONNECT_RESP_CMD_SIZE, "Invalid disconnectResponse"))
+  {
     return;
   }
-  std::string reason = args[ERR_MESS_DSCNT_INDEX][0] == END_OF_CMD ?
-    args[ERR_MESS_DSCNT_INDEX] : "Unknown reason";
-  LOGGER("client", LogLevel::WARNING,
-    std::format("Server disconnected: {}", reason));
+  std::string reason = args[ERR_MESS_DSCNT_INDEX][0] == END_OF_CMD
+      ? args[ERR_MESS_DSCNT_INDEX]
+      : "Unknown reason";
+  LOGGER("client",
+         LogLevel::WARNING,
+         std::format("Server disconnected: {}", reason));
   _running = false;
 
   this->_registery.get().emit<ShutdownEvent>(
