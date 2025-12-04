@@ -36,8 +36,8 @@ void Moving::moving_system(Registery& reg,
   double dt = reg.clock().delta_seconds();
 
   for (auto&& [position, velocity] : Zipper(positions, velocities)) {
-    Vector2D movement = velocity.direction * dt;
-    position.pos += movement.normalize() * velocity.speed;
+    Vector2D movement = (velocity.direction * dt).normalize() * velocity.speed;
+    position.pos += movement;
   }
 }
 
