@@ -210,10 +210,8 @@ std::vector<std::string> NetworkClient::parse_challenge_response(
 {
   std::vector<std::string> args;
 
-  args.push_back(resp.substr(0, MAGIC_LENGTH));
-  args.push_back(resp.substr(MAGIC_LENGTH, PROTOCOL_SIZE));
-  args.push_back(resp.substr(MAGIC_LENGTH + PROTOCOL_SIZE, CHALLENGE_SIZE));
-  args.push_back(resp.substr(resp.length() - 1, 1));
+  args.push_back(resp.substr(0, PROTOCOL_SIZE));
+  args.push_back(resp.substr(PROTOCOL_SIZE, CHALLENGE_SIZE));
   return args;
 }
 
@@ -280,10 +278,8 @@ std::vector<std::string> NetworkClient::parse_disconnect_response(
 {
   std::vector<std::string> args;
 
-  args.push_back(resp.substr(0, MAGIC_LENGTH));
-  args.push_back(resp.substr(MAGIC_LENGTH, PROTOCOL_SIZE));
-  args.push_back(resp.substr(MAGIC_LENGTH + PROTOCOL_SIZE, ERROR_MSG_SIZE));
-  args.push_back(resp.substr(resp.length() - 1, 1));
+  args.push_back(resp.substr(0, PROTOCOL_SIZE));
+  args.push_back(resp.substr(PROTOCOL_SIZE, ERROR_MSG_SIZE));
   return args;
 }
 

@@ -262,10 +262,24 @@ void NetworkServer::handle_getchallenge(ByteArray const& cmd,
 void NetworkServer::handle_connect(ByteArray const& cmd,
                                    const asio::ip::udp::endpoint& sender)
 {
+<<<<<<< HEAD
   std::optional<ConnectCommand> parsed = this->parse_connect_command(cmd);
   if (!parsed) {
       return;
   }
+=======
+  std::vector<std::string> args = parse_connect_args(commandline);
+  std::size_t len = args.size();
+
+  if (len != CONNECT_CMD_SIZE) {
+    LOGGER("server", LogLevel::WARNING, std::format("Invalid connect command: command size is {} and content is {}", len, &commandline[0] + 1));
+    return;
+  }
+    // LOGGER("server", LogLevel::WARNING, std::format("Look at that '{}' '{}' '{}' '{}' '{}' '{}'", (args[PROTOCOL_SIZE]), args[PROTOCOL_SIZE].size(), (args[CHALLENGE_CNT_INDEX]), args[CHALLENGE_CNT_INDEX].size(), args[PLAYERNAME_CNT_INDEX], args[PLAYERNAME_CNT_INDEX].size()));
+  int protocol_version = std::stoi(args[PROTOCOL_INDEX]);
+  uint32_t challenge = std::stoul(args[CHALLENGE_CNT_INDEX]);
+  std::string player_name = args[PLAYERNAME_CNT_INDEX];
+>>>>>>> d7c3a77625c1d182a307a46c82aed0cf6e3400fa
   std::ostringstream oss;
 
   if (parsed->protocol != CURRENT_PROTOCOL_VERSION) {
