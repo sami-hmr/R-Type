@@ -21,13 +21,14 @@ static int true_main(Registery& r,
   bool should_exit = false;
   int exit_code = 0;
 
-  r.on<ShutdownEvent>(
-      [&should_exit, &exit_code](const ShutdownEvent& event)
-      {
-        should_exit = true;
-        exit_code = event.exit_code;
-        std::cout << "Shutdown requested: " << event.reason << "\n";
-      });
+  r.on<ShutdownEvent>("ShutdownEvent",
+                      [&should_exit, &exit_code](const ShutdownEvent& event)
+                      {
+                        should_exit = true;
+                        exit_code = event.exit_code;
+                        std::cout << "Shutdown requested: " << event.reason
+                                  << "\n";
+                      });
 
   r.on<SceneChangeEvent>([&r](const SceneChangeEvent& event)
                          { r.set_current_scene(event.target_scene); });

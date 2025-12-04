@@ -115,10 +115,18 @@
           "life:Team": { "name": "test" }
         },
         {
+          "ui:input": {
+            "hook": "game_text",
+            "buffer": "test",
+            "enabled": true
+          }
+        },
+        {
           "moving:Position": {
             "x": -0.8,
             "y": -0.8
           },
+
           "sfml:Drawable": {},
           "sfml:Text": {
             "font": "assets/fonts/roboto.ttf",
@@ -126,7 +134,7 @@
               "width": 30.0,
               "height": 30.0
             },
-            "text": "Hello, World!"
+            "text": "#game_text:buffer"
           }
         }
       ]
