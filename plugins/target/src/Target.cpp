@@ -43,8 +43,6 @@ void Target::target_system(Registery& reg,
                            const SparseArray<Position>& positions,
                            SparseArray<Velocity>& velocities)
 {
-  double dt = reg.clock().delta_seconds();
-
   for (auto&& [i, follower, position, velocity] :
        ZipperIndex(followers, positions, velocities))
   {
