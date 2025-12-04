@@ -7,6 +7,7 @@
 
 #include "ByteParser/ByteParser.hpp"
 #include "plugin/Byte.hpp"
+#include "plugin/Hooks.hpp"
 
 struct Sprite
 {
@@ -26,4 +27,6 @@ struct Sprite
 
   std::string texture_path;
   Vector2D scale;
+
+  HOOKABLE(Sprite, HOOK(texture_path), HOOK(scale))
 };

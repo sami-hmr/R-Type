@@ -6,12 +6,14 @@
 
 #include "Collision.hpp"
 
+#include "Json/JsonParser.hpp"
 #include "Logger.hpp"
 #include "algorithm/QuadTreeCollision.hpp"
 #include "ecs/Registery.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/EntityLoader.hpp"
+#include "plugin/Hooks.hpp"
 #include "plugin/components/Collidable.hpp"
 #include "plugin/components/Damage.hpp"
 #include "plugin/components/Health.hpp"
@@ -21,7 +23,7 @@
 #include "plugin/events/Events.hpp"
 
 Collision::Collision(Registery& r, EntityLoader& l)
-    : APlugin(r, l, {"moving"}, {COMP_INIT(Collidable, init_collision)})
+    : APlugin(r, l, {"moving"}, {COMP_INIT(Collidable, Collidable, init_collision)})
 {
   _registery.get().register_component<Collidable>("collision:Collidable");
   _registery.get().register_component<Team>("collision:Team");
@@ -49,34 +51,29 @@ void Collision::set_algorithm(std::unique_ptr<ICollisionAlgorithm> algo)
 }
 
 void Collision::init_collision(Registery::Entity const& entity,
-                               JsonVariant const& config)
+                               JsonObject const& obj)
 {
-  try {
-    JsonObject obj = std::get<JsonObject>(config);
-    double width = std::get<double>(obj.at("width").value);
-    double height = std::get<double>(obj.at("height").value);
+  auto const& width = get_value<double>(this->_registery.get(), obj, "width");
+  auto const& height = get_value<double>(this->_registery.get(), obj, "height");
+  auto const& type_str =
+      get_value<std::string>(this->_registery.get(), obj, "collision_type");
 
-    CollisionType type = CollisionType::Solid;
-    std::string type_str =
-        std::get<std::string>(obj.at("collision_type").value);
-    if (type_str == "Trigger" || type_str == "trigger") {
-      type = CollisionType::Trigger;
-    } else if (type_str == "Solid" || type_str == "solid") {
-      type = CollisionType::Solid;
-    }
-
-    this->_registery.get().emplace_component<Collidable>(
-        entity, width, height, type, true);
-  } catch (std::bad_variant_access const&) {
-    LOGGER("Collision",
-           LogLevel::ERROR,
-           "Error loading Collision component: unexpected value type")
-  } catch (std::out_of_range const&) {
-    LOGGER("Collision",
-           LogLevel::ERROR,
-           "Error loading Collision component: (expected width: double and "
-           "height: double )")
+  if (!width || !height || !type_str) {
+    std::cerr
+        << "Error loading collision component: unexpected value type (expected "
+           "width: double and height: double) or missing value in JsonObject\n";
+    return;
   }
+
+  CollisionType type = CollisionType::Solid;
+  if (type_str.value() == "Trigger" || type_str.value() == "trigger") {
+    type = CollisionType::Trigger;
+  } else if (type_str == "Solid" || type_str == "solid") {
+    type = CollisionType::Solid;
+  }
+
+  this->_registery.get().emplace_component<Collidable>(
+      entity, width.value(), height.value(), type, true);
 }
 
 void Collision::collision_system(Registery& reg,
@@ -96,8 +93,8 @@ void Collision::collision_system(Registery& reg,
     {
       entities.push_back(ICollisionAlgorithm::CollisionEntity {
           .entity_id = i,
-          .bounds = Rect {.x = positions[i]->x,
-                          .y = positions[i]->y,
+          .bounds = Rect {.x = positions[i]->pos.x,
+                          .y = positions[i]->pos.y,
                           .width = collidables[i]->width,
                           .height = collidables[i]->height}});
     }
@@ -131,10 +128,8 @@ void Collision::on_collision(const CollisionEvent& c)
     if (this->_registery.get().has_component<Velocity>(c.a)
         && this->_registery.get().has_component<Position>(c.a))
     {
-      positions[c.a]->x -=
-          velocities[c.a]->speed_x * velocities[c.a]->dir_x * dt;
-      positions[c.a]->y -=
-          velocities[c.a]->speed_y * velocities[c.a]->dir_y * dt;
+      positions[c.a]->pos -= (velocities[c.a]->direction * dt).normalize()
+          * velocities[c.a]->speed;
     }
   }
 }

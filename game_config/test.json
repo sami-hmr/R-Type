@@ -68,10 +68,14 @@
           "moving:Position": { "x": 0.0, "y": 0.0 },
           "sfml:Drawable": {},
           "moving:Velocity": {
-            "speed_x": 0.5,
-            "speed_y": 0.5,
-            "dir_x": 0.0,
-            "dir_y": 0.0
+            "speed" : {
+              "x" : 0.05,
+              "y" : 0.05
+            },
+            "direction" : {
+              "x" : 0.0,
+              "y" : 0.0
+            }
           },
           "sfml:Sprite": {
             "texture": "assets/spaceship.png",
@@ -94,7 +98,9 @@
           "life:Health": { "current": 5, "max": 100 },
           "life:Damage": { "amount": 1 },
           "life:Heal": { "amount": 1 },
-          "life:Team": { "name": "test1" }
+          "life:Team": { "name": "test1" },
+          "projectile:Temporal": {"lifetime": 5.0},
+          "projectile:Fragile": {}
         },
         {
           "moving:Position": { "x": 0.5, "y": -0.3 },
@@ -111,7 +117,7 @@
             "height": 0.1,
             "collision_type": "Solid"
           },
-          "life:Health": { "current": 5, "max": 100 },
+          "life:Health": { "hook": "prout", "current": 5, "max": 100 },
           "life:Team": { "name": "test" }
         },
         {

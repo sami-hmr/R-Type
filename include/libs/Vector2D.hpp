@@ -9,7 +9,9 @@
 #define VECTOR2D_HPP_
 
 #include <cmath>
+#include <iostream>
 #include <ostream>
+#include "Json/JsonParser.hpp"
 
 class Vector2D
 {
@@ -18,6 +20,7 @@ public:
   Vector2D(double x, double y)
       : x(x)
       , y(y) {};
+  Vector2D(JsonVariant const& variant);
   ~Vector2D() = default;
 
   Vector2D(const Vector2D& other) = default;
@@ -54,7 +57,19 @@ public:
     return {this->x * scalar, this->y * scalar};
   };
 
-  Vector2D& operator*=(double scalar)
+  Vector2D operator*(Vector2D other) const
+  {
+    return {this->x * other.x, this->y * other.y};
+  }
+
+  Vector2D &operator*=(Vector2D other)
+  {
+    this->x *= other.x;
+    this->y *= other.y;
+    return *this;
+  }
+
+  Vector2D &operator*=(double scalar)
   {
     this->x *= scalar;
     this->y *= scalar;
@@ -89,7 +104,7 @@ public:
   {
     double len = this->length();
     Vector2D normal(0, 0);
-    if (len != 0) {
+    if (len == 0) {
       return {0, 0};
     }
     return {this->x / len, this->y / len};

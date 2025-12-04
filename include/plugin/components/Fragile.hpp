@@ -4,18 +4,19 @@
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
 
-struct Drawable
+struct Fragile
 {
-  Drawable() = default;
+  Fragile() = default;
 
-  Drawable(bool enabled)
+  Fragile(bool enabled)
       : enabled(enabled)
   {
   }
-  EMPTY_BYTE_CONSTRUCTOR(Drawable)
+
+  EMPTY_BYTE_CONSTRUCTOR(Fragile)
   DEFAULT_SERIALIZE(ByteArray {})
 
   bool enabled = true;
 
-  HOOKABLE(Drawable, HOOK(enabled))
+  HOOKABLE(Fragile, HOOK(enabled))
 };
