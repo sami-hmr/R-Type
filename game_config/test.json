@@ -98,7 +98,9 @@
           "life:Health": { "current": 5, "max": 100 },
           "life:Damage": { "amount": 1 },
           "life:Heal": { "amount": 1 },
-          "life:Team": { "name": "test1" }
+          "life:Team": { "name": "test1" },
+          "projectile:Temporal": {"lifetime": 5.0},
+          "projectile:Fragile": {}
         },
         {
           "moving:Position": { "x": 0.5, "y": -0.3 },
