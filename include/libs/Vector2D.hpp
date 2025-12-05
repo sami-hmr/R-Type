@@ -11,7 +11,10 @@
 #include <cmath>
 #include <iostream>
 #include <ostream>
+#include "ByteParser/ByteParser.hpp"
 #include "Json/JsonParser.hpp"
+#include "Parser.hpp"
+#include "plugin/Byte.hpp"
 
 class Vector2D
 {
@@ -95,6 +98,26 @@ public:
 
   bool operator!=(const Vector2D& other) const { return !(*this == other); };
 
+  bool operator<=(const Vector2D& other) const
+  {
+    return (this->x <= other.x && this->y <= other.y);
+  };
+
+  bool operator>=(const Vector2D& other) const
+  {
+    return (this->x >= other.x && this->y >= other.y);
+  };
+
+  bool operator<(const Vector2D& other) const
+  {
+    return (this->x < other.x && this->y < other.y);
+  };
+
+  bool operator>(const Vector2D& other) const
+  {
+    return (this->x > other.x && this->y > other.y);
+  };
+
   double length() const
   {
     return std::sqrt((this->x * this->x) + (this->y * this->y));
@@ -110,6 +133,11 @@ public:
     return {this->x / len, this->y / len};
   }
 
+  double distanceTo(const Vector2D& other) const
+  {
+    return (*this - other).length();
+  }
+
   double x = 0;
   double y = 0;
 };
@@ -118,6 +146,18 @@ inline std::ostream& operator<<(std::ostream& os, const Vector2D& vec)
 {
   os << "Vector2D(" << vec.x << ", " << vec.y << ")";
   return os;
+}
+
+inline Parser<Vector2D>parseVector2D()
+{
+  return apply(
+      [](double x, double y) { return Vector2D{x, y}; },
+      parseByte<double>(),
+      parseByte<double>());
+}
+
+inline ByteArray vector2DToByte(Vector2D const &vec) {
+    return byte_array_join(type_to_byte(vec.x), type_to_byte(vec.y));
 }
 
 #endif /* !VECTOR2D_HPP_ */

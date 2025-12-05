@@ -65,16 +65,19 @@
       "plugins": [],
       "entities": [
         {
-          "moving:Position": { "x": 0.0, "y": 0.0 },
+          "moving:Position": {
+            "x": 0.0,
+            "y": 0.0
+          },
           "sfml:Drawable": {},
           "moving:Velocity": {
-            "speed" : {
-              "x" : 0.05,
-              "y" : 0.05
+            "speed": {
+              "x": 0.05,
+              "y": 0.05
             },
-            "direction" : {
-              "x" : 0.0,
-              "y" : 0.0
+            "direction": {
+              "x": 0.0,
+              "y": 0.0
             }
           },
           "sfml:Sprite": {
@@ -94,16 +97,13 @@
             "DOWN": "S",
             "LEFT": "Q",
             "RIGHT": "D"
-          },
-          "life:Health": { "current": 5, "max": 100 },
-          "life:Damage": { "amount": 1 },
-          "life:Heal": { "amount": 1 },
-          "life:Team": { "name": "test1" },
-          "projectile:Temporal": {"lifetime": 5.0},
-          "projectile:Fragile": {}
+          }
         },
         {
-          "moving:Position": { "x": 0.5, "y": -0.3 },
+          "moving:Position": {
+            "x": 0.5,
+            "y": -0.3
+          },
           "sfml:Drawable": {},
           "sfml:Sprite": {
             "texture": "assets/enemy.png",
@@ -116,9 +116,7 @@
             "width": 0.1,
             "height": 0.1,
             "collision_type": "Solid"
-          },
-          "life:Health": { "hook": "prout", "current": 5, "max": 100 },
-          "life:Team": { "name": "test" }
+          }
         },
         {
           "moving:Position": {
@@ -133,6 +131,26 @@
               "height": 30.0
             },
             "text": "Hello, World!"
+          }
+        },
+        {
+          "moving:Position" : {
+            "x": 0.0,
+            "y": 0.0
+          },
+          "sfml:Camera": {
+            "size": {
+              "width": "50.0%",
+              "height": "50.0%"
+            },
+            "target": {
+              "width": "100.0%",
+              "height": "100.0%"
+            },
+            "speed": {
+              "width": 3.8,
+              "height": 3.8
+            }
           }
         }
       ]

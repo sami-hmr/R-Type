@@ -255,7 +255,7 @@ public:
   }
 
   template<typename EventType>
-  HandlerId on(std::function<void(const EventType&)> handler)
+  HandlerId on(std::function<void(const EventType &)> handler)
   {
     std::type_index type_id(typeid(EventType));
 

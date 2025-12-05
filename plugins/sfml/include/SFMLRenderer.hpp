@@ -11,6 +11,7 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/View.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window.hpp>
@@ -21,6 +22,7 @@
 #include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
+#include "plugin/components/Camera.hpp"
 #include "plugin/components/Drawable.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Sprite.hpp"
@@ -45,7 +47,8 @@ private:
   void init_drawable(Registery::Entity const entity, JsonObject const& obj);
   void init_sprite(Registery::Entity const entity, JsonObject const& obj);
   void init_text(Registery::Entity const entity, JsonObject const& obj);
-
+  void init_cam(Registery::Entity const entity, JsonObject const& obj);
+  
   Vector2D parse_vector2d(JsonVariant const& variant);
 
   void handle_events();
@@ -58,6 +61,9 @@ private:
                    const SparseArray<Position>& positions,
                    const SparseArray<Drawable>& drawable,
                    const SparseArray<Text>& texts);
+  void camera_system(Registery &r, SparseArray<Position> &positions, SparseArray<Camera> &cameras);
+  void cam_target_event(const CamAggroEvent &e);
+
   void display();
 
   std::optional<Key> sfml_key_to_key(sf::Keyboard::Key sfml_key);
@@ -70,6 +76,8 @@ private:
 
   std::optional<sf::Sprite> _sprite;
   std::optional<sf::Text> _text;
+
+  sf::View _view;
 
   KeyPressedEvent _key_pressed;
   KeyReleasedEvent _key_released;

@@ -1,4 +1,5 @@
 
+#include <cstdio>
 #include <functional>
 #include <iostream>
 #include <memory>
@@ -20,11 +21,13 @@
 #include "Json/JsonParser.hpp"
 #include "ServerLaunch.hpp"
 #include "ecs/Registery.hpp"
+#include "ecs/SparseArray.hpp"
 #include "ecs/zipper/Zipper.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
+#include "plugin/components/Camera.hpp"
 #include "plugin/components/Drawable.hpp"
 #include "plugin/components/Sprite.hpp"
 #include "plugin/components/Text.hpp"
@@ -72,7 +75,9 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
               {"moving", "client_network", "server_network"},
               {COMP_INIT(Drawable, Drawable, init_drawable),
                COMP_INIT(Sprite, Sprite, init_sprite),
-               COMP_INIT(Text, Text, init_text)})
+               COMP_INIT(Text, Text, init_text),
+               COMP_INIT(Camera, Camera, init_cam)
+              })
 {
   _window =
       sf::RenderWindow(sf::VideoMode(window_size), "R-Type - SFML Renderer");
@@ -81,6 +86,7 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
   _registery.get().register_component<Drawable>("sfml:Drawable");
   _registery.get().register_component<Sprite>("sfml:Sprite");
   _registery.get().register_component<Text>("sfml:Text");
+  _registery.get().register_component<Camera>("sfml:Camera");
 
   _registery.get().add_system<Scene, Drawable>(
       [this](Registery&,
@@ -112,7 +118,11 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
              const SparseArray<Drawable>& draw,
              const SparseArray<Text>& txt)
       { this->render_text(r, pos, draw, txt); });
+  _registery.get().add_system<Position, Camera>(
+      [this](Registery& r, SparseArray<Position> &positions, SparseArray<Camera>& cameras)
+      { this->camera_system(r, positions, cameras); });
 
+  /**Ne pas mettre un system apres celui la surtout si tu veux draw*/
   _registery.get().add_system<>([this](Registery&) { this->display(); });
   _textures.insert_or_assign(SFMLRenderer::placeholder_texture,
                              gen_placeholder());
@@ -174,6 +184,7 @@ Vector2D SFMLRenderer::parse_vector2d(JsonVariant const& variant)
       get_value<double>(this->_registery.get(), obj, "width");
   auto const& height_double =
       get_value<double>(this->_registery.get(), obj, "height");
+
 
   if (width_double && height_double) {
     return {width_double.value() / SFMLRenderer::window_size.x,
@@ -270,11 +281,11 @@ std::optional<Key> SFMLRenderer::sfml_key_to_key(sf::Keyboard::Key sfml_key)
 void SFMLRenderer::handle_resize()
 {
   sf::Vector2u new_size = _window.getSize();
-  sf::View view(sf::Vector2f(static_cast<float>(new_size.x) / 2,
-                             static_cast<float>(new_size.y) / 2),
-                sf::Vector2f(static_cast<float>(new_size.x),
-                             static_cast<float>(new_size.y)));
-  _window.setView(view);
+  this->_view.setCenter(
+      {static_cast<float>(new_size.x) / 2, static_cast<float>(new_size.y) / 2});
+  this->_view.setSize(
+      {static_cast<float>(new_size.x), static_cast<float>(new_size.y)});
+  _window.setView(this->_view);
 }
 
 void SFMLRenderer::handle_events()

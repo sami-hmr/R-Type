@@ -7,6 +7,7 @@
 
 #include "ParserUtils.hpp"
 #include "ecs/Registery.hpp"
+#include "libs/Vector2D.hpp"
 #include "plugin/Byte.hpp"
 
 struct ShutdownEvent
@@ -110,4 +111,10 @@ struct SceneChangeEvent
 {
   std::string target_scene;
   std::string reason;
+};
+
+struct CamAggroEvent
+{
+  Registery::Entity target;
+  bool stops_at_end = false;
 };

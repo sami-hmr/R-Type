@@ -38,5 +38,11 @@ struct Velocity
   Vector2D speed;
   Vector2D direction;
 
-  HOOKABLE(Velocity, HOOK(speed), HOOK(direction))
+  HOOKABLE(Velocity,
+           HOOK(speed),
+           HOOK(direction),
+           HOOK(direction.x),
+           HOOK(direction.y),
+           HOOK(speed.x),
+           HOOK(speed.y), )
 };
