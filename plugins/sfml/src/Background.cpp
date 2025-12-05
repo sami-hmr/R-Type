@@ -1,3 +1,4 @@
+#include <cmath>
 #include <iostream>
 
 #include "plugin/components/Background.hpp"
@@ -108,7 +109,7 @@ void SFMLRenderer::draw_nothing_background(Background& bg)
     this->_sprite->setScale({1, 1});
     this->_sprite->setOrigin({0, 0});
     this->_sprite->setPosition({0, 0});
-    this->_window.draw(*this->_sprite);
+    this->_window.draw(*this->_sprite); 
   }
 }
 
@@ -171,25 +172,34 @@ void SFMLRenderer::draw_stretch_background(Background& bg)
     }
     float scale_x = static_cast<float>(window_size.x) / texture.getSize().x;
     float scale_y = static_cast<float>(window_size.y) / texture.getSize().y;
+    float scaled_width = static_cast<float>(texture.getSize().x) * scale_x;
+    float scaled_height = static_cast<float>(texture.getSize().y) * scale_y;
 
     this->_sprite->setScale({scale_x, scale_y});
     this->_sprite->setOrigin({0, 0});
-    sf::Vector2f new_pos = {static_cast<float>(bg.parallax.pos.x / (i)),
-      static_cast<float>(bg.parallax.pos.y / (i))};
+
+    float offset_x = std::fmod(static_cast<float>(bg.parallax.pos.x / i), scaled_width);
+    float offset_y = std::fmod(static_cast<float>(bg.parallax.pos.y / i), scaled_height);
+
+    sf::Vector2f new_pos = {offset_x, offset_y};
     this->_sprite->setPosition(new_pos);
     this->_window.draw(*this->_sprite);
     if (bg.parallax.active) {
-      while (new_pos.x > 0) {
-        new_pos = {new_pos.x - static_cast<float>(texture.getSize().x * scale_x),
-                   new_pos.y};
-        this->_sprite->setPosition(new_pos);
-        this->_window.draw(*this->_sprite);
+      sf::Vector2f tile_pos = new_pos;
+      while (tile_pos.x > -scaled_width) {
+        tile_pos.x -= scaled_width;
+        if (tile_pos.x + scaled_width > 0) {
+          this->_sprite->setPosition(tile_pos);
+          this->_window.draw(*this->_sprite);
+        }
       }
-      while (new_pos.x + static_cast<float>(texture.getSize().x * scale_x) < window_size.x) {
-        new_pos = {new_pos.x + static_cast<float>(texture.getSize().x * scale_x),
-                   new_pos.y};
-        this->_sprite->setPosition(new_pos);
-        this->_window.draw(*this->_sprite);
+      tile_pos = new_pos;
+      while (tile_pos.x < window_size.x) {
+        tile_pos.x += scaled_width;
+        if (tile_pos.x < window_size.x) {
+          this->_sprite->setPosition(tile_pos);
+          this->_window.draw(*this->_sprite);
+        }
       }
     }
     i = std::max(i - 1, 1);
