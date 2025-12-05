@@ -11,12 +11,12 @@
 #include "Json/JsonParser.hpp"
 #include "ecs/Registery.hpp"
 
-#define GAUTHIER_SOIT_PAS_DEBILE_STP(key, var) \
+#define HOOK_CUSTOM(key, var) \
   {#key, \
    [](Component& self) -> std::any \
    { return std::reference_wrapper(self.var); }}
 
-#define HOOK(var) GAUTHIER_SOIT_PAS_DEBILE_STP(var, var)
+#define HOOK(var) HOOK_CUSTOM(var, var)
 
 #define HOOKABLE(type, ...) \
   using Component = type; \
@@ -72,6 +72,25 @@ std::optional<T> get_value(Registery& r,
   return std::nullopt;
 }
 
+template<typename ComponentType, typename T>
+std::optional<T> get_value(Registery& r,
+                           JsonObject const& object,
+                           Registery::Entity entity,
+                           std::string const& field_name)
+{
+  try {
+    std::string value_str = std::get<std::string>(object.at(field_name).value);
+    if (value_str.starts_with('#')) {
+      std::string stripped = value_str.substr(1);
+      r.template register_binding<ComponentType, T>(
+          entity, field_name, stripped);
+    }
+  } catch (std::bad_variant_access const&) {  // NOLINT intentional fallthrought
+  }
+
+  return get_value<T>(r, object, field_name);
+}
+
 inline bool is_hook(JsonObject const& object, std::string const& key)
 {
   try {
@@ -80,89 +99,4 @@ inline bool is_hook(JsonObject const& object, std::string const& key)
   } catch (...) {
     return false;
   }
-}
-
-template<typename T>
-struct ValueRefPair
-{
-  T value;
-  std::optional<std::reference_wrapper<const T>> ref;
-};
-
-template<typename T>
-std::optional<ValueRefPair<T>> get_value_or_ref(Registery& r,
-                                                JsonObject const& object,
-                                                std::string const& key)
-{
-  if (is_hook(object, key)) {
-    auto ref = get_ref<T>(r, object, key);
-    if (!ref.has_value()) {
-      return std::nullopt;
-    }
-    return ValueRefPair<T> {T {}, ref};
-  }
-  auto val = get_value<T>(r, object, key);
-  if (!val.has_value()) {
-    return std::nullopt;
-  }
-  return ValueRefPair<T> {val.value(), std::nullopt};
-}
-
-template<typename T>
-class HookRef
-{
-public:
-  HookRef()
-      : _value {}
-      , _ref(std::nullopt)
-  {
-  }
-
-  HookRef(T value)
-      : _value(std::move(value))
-      , _ref(std::nullopt)
-  {
-  }
-
-  HookRef(T value, std::optional<std::reference_wrapper<const T>> ref)
-      : _value(std::move(value))
-      , _ref(ref)
-  {
-  }
-
-  const T& get() const
-  {
-    return _ref.has_value() ? _ref.value().get() : _value;
-  }
-
-  operator const T&() const { return get(); }
-
-  void set(T value)
-  {
-    _value = std::move(value);
-    _ref = std::nullopt;
-  }
-
-  void set_ref(std::optional<std::reference_wrapper<const T>> ref)
-  {
-    _ref = ref;
-  }
-
-  bool is_ref() const { return _ref.has_value(); }
-
-private:
-  T _value;
-  std::optional<std::reference_wrapper<const T>> _ref;
-};
-
-template<typename T>
-HookRef<T> get_hook_ref(Registery& r,
-                        JsonObject const& object,
-                        std::string const& key)
-{
-  auto pair = get_value_or_ref<T>(r, object, key);
-  if (!pair.has_value()) {
-    return HookRef<T> {};
-  }
-  return HookRef<T>(pair->value, pair->ref);
 }

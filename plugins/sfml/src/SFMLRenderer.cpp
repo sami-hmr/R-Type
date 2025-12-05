@@ -249,10 +249,16 @@ void SFMLRenderer::init_text(Registery::Entity const entity,
     scale = this->parse_vector2d(obj.at("size").value);
   }
 
-  auto text = get_hook_ref<std::string>(this->_registery.get(), obj, "text");
+  auto& text_opt = _registery.get().emplace_component<Text>(
+      entity, font_path.value(), scale, "");
 
-  _registery.get().emplace_component<Text>(
-      entity, font_path.value(), scale, text);
+  if (text_opt.has_value()) {
+    auto text_val = get_value<Text, std::string>(
+        this->_registery.get(), obj, entity, "text");
+    if (text_val) {
+      text_opt.value().text = text_val.value();
+    }
+  }
 }
 
 std::optional<Key> SFMLRenderer::sfml_key_to_key(sf::Keyboard::Key sfml_key)
@@ -390,7 +396,7 @@ void SFMLRenderer::render_text(Registery& /*unused*/,
     }
     _text.value().setFont(font);
 
-    _text.value().setString(txt.text.get());
+    _text.value().setString(txt.text);
 
     sf::Vector2u window_size = _window.getSize();
     sf::Vector2f new_pos(

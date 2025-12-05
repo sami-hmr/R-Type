@@ -28,5 +28,5 @@ struct Position
 
   Vector2D pos;
 
-  HOOKABLE(Position, HOOK(pos))
+  HOOKABLE(Position, HOOK(pos), HOOK(pos.x), HOOK(pos.y))
 };

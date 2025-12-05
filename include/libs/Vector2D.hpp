@@ -11,6 +11,7 @@
 #include <cmath>
 #include <iostream>
 #include <ostream>
+
 #include "Json/JsonParser.hpp"
 
 class Vector2D
@@ -21,6 +22,7 @@ public:
       : x(x)
       , y(y) {};
   Vector2D(JsonVariant const& variant);
+  Vector2D(JsonObject const& obj);
   ~Vector2D() = default;
 
   Vector2D(const Vector2D& other) = default;
@@ -62,14 +64,14 @@ public:
     return {this->x * other.x, this->y * other.y};
   }
 
-  Vector2D &operator*=(Vector2D other)
+  Vector2D& operator*=(Vector2D other)
   {
     this->x *= other.x;
     this->y *= other.y;
     return *this;
   }
 
-  Vector2D &operator*=(double scalar)
+  Vector2D& operator*=(double scalar)
   {
     this->x *= scalar;
     this->y *= scalar;

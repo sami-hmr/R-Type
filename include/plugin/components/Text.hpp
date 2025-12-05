@@ -19,13 +19,6 @@ struct Text
   {
   }
 
-  Text(std::string font_path, Vector2D v, HookRef<std::string> t)
-      : font_path(std::move(font_path))
-      , scale(v)
-      , text(std::move(t))
-  {
-  }
-
   DEFAULT_BYTE_CONSTRUCTOR(Text,
                            (
                                [](std::vector<char> font_path,
@@ -46,11 +39,11 @@ struct Text
   DEFAULT_SERIALIZE(string_to_byte(this->font_path),
                     type_to_byte(this->scale.x),
                     type_to_byte(this->scale.y),
-                    string_to_byte(this->text.get()))
+                    string_to_byte(this->text))
 
   std::string font_path;
   Vector2D scale;
-  HookRef<std::string> text;
+  std::string text;
 
   HOOKABLE(Text, HOOK(font_path), HOOK(scale), HOOK(text))
 };

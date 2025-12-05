@@ -17,10 +17,7 @@
       ],
       "entities": [
         {
-          "moving:Position": {
-            "x": 0.0,
-            "y": -0.5
-          },
+          "moving:Position": { "pos": { "x": 0.0, "y": -0.5 } },
           "sfml:Drawable": {},
           "sfml:Text": {
             "font": "assets/fonts/roboto.ttf",
@@ -32,10 +29,7 @@
           }
         },
         {
-          "moving:Position": {
-            "x": 0.0,
-            "y": 0.0
-          },
+          "moving:Position": { "pos": { "x": 0.0, "y": 0.0 } },
           "sfml:Drawable": {},
           "sfml:Text": {
             "font": "assets/fonts/roboto.ttf",
@@ -47,10 +41,7 @@
           }
         },
         {
-          "moving:Position": {
-            "x": 0.0,
-            "y": 0.3
-          },
+          "moving:Position": { "pos": { "x": 0.0, "y": 0.3 } },
           "sfml:Drawable": {},
           "sfml:Text": {
             "font": "assets/fonts/roboto.ttf",
@@ -90,9 +81,10 @@
       ],
       "entities": [
         {
-          "moving:Position": { "x": 0.0, "y": 0.0 },
+          "moving:Position": { "pos": { "x": 0.0, "y": 0.0 } },
           "sfml:Drawable": {},
           "moving:Velocity": {
+            "hook": "player",
             "speed": {
               "x": 0.05,
               "y": 0.05
@@ -126,7 +118,17 @@
           "life:Team": { "name": "test1" }
         },
         {
-          "moving:Position": { "x": 0.5, "y": -0.3 },
+          "moving:Position": { "pos": { "x": 0.5, "y": -0.3 } },
+          "moving:Velocity": {
+            "speed": {
+              "x": 0.05,
+              "y": 0.05
+            },
+            "direction": {
+              "x": "#player:direction.x",
+              "y": "#player:direction.y"
+            }
+          },
           "sfml:Drawable": {},
           "sfml:Sprite": {
             "texture": "assets/enemy.png",
@@ -151,11 +153,7 @@
           }
         },
         {
-          "moving:Position": {
-            "x": -0.8,
-            "y": -0.8
-          },
-
+          "moving:Position": { "pos": { "x": -0.8, "y": -0.8 } },
           "sfml:Drawable": {},
           "sfml:Text": {
             "font": "assets/fonts/roboto.ttf",
@@ -191,7 +189,7 @@
                 "event": "ShutdownEvent",
                 "params": {
                   "reason": "Automatic shutdown after timeout",
-                  "exit_code": "0"
+                  "exit_code": 0
                 },
                 "delay": 10.0
               }

@@ -250,11 +250,76 @@ public:
   {
     this->clock().tick();
 
+    update_bindings();
+
     for (auto const& f : this->_frequent_systems) {
       f();
     }
     process_entity_deletions();
   }
+
+  /**
+   * @brief Updates all variable bindings from their hooked sources.
+   *
+   */
+  void update_bindings()
+  {
+    for (auto& binding : _bindings) {
+      binding.updater();
+    }
+  }
+
+  /**
+   * @brief Registers a binding that syncs a variable to a hooked source every
+   * tick.
+   *
+   * @tparam ComponentType The type of component containing the field.
+   * @tparam T The type of the field being bound.
+   * @param entity The entity containing the component.
+   * @param field_name The name of the field to bind.
+   * @param source_hook The hook string (e.g., "player:position").
+   */
+  template<typename ComponentType, typename T>
+  void register_binding(Entity entity,
+                        std::string const& field_name,
+                        std::string const& source_hook)
+  {
+    std::type_index ti(typeid(ComponentType));
+
+    auto updater = [this, entity, field_name, source_hook]()
+    {
+      try {
+        std::string comp = source_hook.substr(0, source_hook.find(':'));
+        std::string value = source_hook.substr(source_hook.find(':') + 1);
+        auto ref = this->get_hooked_value<T>(comp, value);
+
+        if (ref.has_value()) {
+          auto& components = this->get_components<ComponentType>();
+          if (entity < components.size() && components[entity].has_value()) {
+            auto& target_comp = components[entity].value();
+
+            auto& hook_map = ComponentType::hook_map();
+            if (hook_map.find(field_name) != hook_map.end()) {
+              std::any field_any = hook_map.at(field_name)(target_comp);
+              auto field_ref_wrapper =
+                  std::any_cast<std::reference_wrapper<T>>(field_any);
+              field_ref_wrapper.get() = ref.value().get();
+            }
+          }
+        }
+      } catch (...) {  // NOLINT  TODO: catch correctly
+      }
+    };
+
+    _bindings.emplace_back(
+        entity, ti, field_name, source_hook, std::move(updater));
+  }
+
+  /**
+   * @brief Clears all registered bindings.
+   *
+   */
+  void clear_bindings() { _bindings.clear(); }
 
   template<typename EventType>
   HandlerId on(std::function<void(const EventType&)> handler)
@@ -285,7 +350,7 @@ public:
   {
     std::type_index type_id(typeid(EventType));
     _events_index_getter.insert(type_id, name);
-    this->add_event_builder<EventType>(name);
+    this->add_event_builder<EventType>();
 
     return this->on<EventType>(handler);
   }
@@ -413,7 +478,7 @@ public:
   }
 
   template<EventIsJsonBuilable T>
-  void add_event_builder(std::string const& name)
+  void add_event_builder()
   {
     std::type_index type_id(typeid(T));
 
@@ -439,6 +504,28 @@ public:
   }
 
 private:
+  struct Binding
+  {
+    Entity target_entity;
+    std::type_index target_component;
+    std::string target_field;
+    std::string source_hook;
+    std::function<void()> updater;
+
+    Binding(Entity e,
+            std::type_index ti,
+            std::string tf,
+            std::string sh,
+            std::function<void()> u)
+        : target_entity(e)
+        , target_component(ti)
+        , target_field(std::move(tf))
+        , source_hook(std::move(sh))
+        , updater(std::move(u))
+    {
+    }
+  };
+
   static HandlerId generate_uuid()
   {
     static std::random_device rd;
@@ -474,4 +561,5 @@ private:
   std::unordered_map<std::string,
                      std::function<std::optional<std::any>(std::string const&)>>
       _hooked_components;
+  std::vector<Binding> _bindings;
 };
