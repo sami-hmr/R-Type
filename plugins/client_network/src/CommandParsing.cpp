@@ -2,6 +2,7 @@
 #include <optional>
 
 #include "Network.hpp"
+#include "ParserTypes.hpp"
 #include "ServerCommands.hpp"
 #include "plugin/events/Events.hpp"
 
@@ -32,4 +33,30 @@ NetworkClient::parse_connectionless_package(ByteArray const& package)
     return std::nullopt;
   }
   return std::get<SUCCESS>(r).value;
+}
+
+std::optional<ConnectResponse> NetworkClient::parse_connect_response(ByteArray const& package) {
+    Result<ConnectResponse> r = parse_connect_rsp()(package);
+
+    if (r.index() == ERROR) {
+        LOGGER("client",
+               LogLevel::ERROR,
+               std::format("Failed to read connect response package : {}",
+                           std::get<ERROR>(r).message));
+        return std::nullopt;
+    }
+    return std::get<SUCCESS>(r).value;
+}
+
+std::optional<ChallengeResponse> NetworkClient::parse_challenge_response(ByteArray const& package) {
+    Result<ChallengeResponse> r = parse_challenge_rsp()(package);
+
+    if (r.index() == ERROR) {
+        LOGGER("client",
+               LogLevel::ERROR,
+               std::format("Failed to read challenge response package : {}",
+                           std::get<ERROR>(r).message));
+        return std::nullopt;
+    }
+    return std::get<SUCCESS>(r).value;
 }

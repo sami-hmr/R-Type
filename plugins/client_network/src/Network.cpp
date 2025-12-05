@@ -171,16 +171,19 @@ void NetworkClient::handle_connectionless_response(ByteArray const& response)
 
   LOGGER("client",
          LogLevel::DEBUG,
-         std::format("Received connectionless response of size: {}", response.size()));
+         std::format("Received connectionless response of size: {}",
+                     response.size()));
   auto const& parsed = this->parse_connectionless_package(response);
   if (!parsed) {
     return;
   }
   try {
-      (this->*(_command_table.at(parsed->command_code)))(parsed->command);
+    (this->*(_command_table.at(parsed->command_code)))(parsed->command);
   } catch (std::out_of_range const&) {
-         LOGGER(
-            "client", LogLevel::DEBUG, std::format("Unhandled connectionless response: {}", parsed->command));
+    LOGGER(
+        "client",
+        LogLevel::DEBUG,
+        std::format("Unhandled connectionless response: {}", parsed->command));
   }
 }
 
@@ -191,62 +194,51 @@ void NetworkClient::send_getchallenge()
 
 void NetworkClient::send_connect(std::uint32_t challenge)
 {
-  ByteArray msg = type_to_byte<Byte>(CONNECT)
-      + type_to_byte<Byte>(CURRENT_PROTOCOL_VERSION) + type_to_byte(challenge)
+  ByteArray msg = type_to_byte<Byte>(CONNECT) + type_to_byte(challenge)
       + string_to_byte(_player_name);
 
   send_connectionless(msg);
 }
 
-void NetworkClient::handle_challenge_response(ByteArray const& commandline)
+void NetworkClient::handle_challenge_response(ByteArray const& package)
 {
-  if (commandline.size() < CHALLENGE_SIZE) {
-    LOGGER("client",
-           LogLevel::WARNING,
-           "Invalid challengeResponse: size too small");
+  auto const& parsed = this->parse_challenge_response(package);
+  if (!parsed) {
     return;
   }
-
-  std::uint32_t challenge = 0;
-  std::memcpy(&challenge, commandline.data(), sizeof(uint32_t));
 
   LOGGER("client",
          LogLevel::INFO,
-         std::format("Received challenge: {}", challenge));
+         std::format("Received challenge: {}", parsed->challenge));
 
   _state = ConnectionState::CONNECTING;
-  send_connect(challenge);
+  send_connect(parsed->challenge);
 }
 
-void NetworkClient::handle_connect_response(ByteArray const& commandline)
+void NetworkClient::handle_connect_response(ByteArray const& package)
 {
-  if (commandline.size() < (CLIENT_ID_SIZE + SERVER_ID_SIZE)) {
-    LOGGER(
-        "client", LogLevel::WARNING, "Invalid connectResponse: size too small");
+  auto const& parsed = this->parse_connect_response(package);
+
+  if (!parsed) {
     return;
   }
 
-  std::memcpy(&_client_id, commandline.data(), sizeof(uint8_t));
-  std::memcpy(
-      &_server_id, commandline.data() + CLIENT_ID_SIZE, sizeof(uint32_t));
-
   _state = ConnectionState::CONNECTED;
-
   LOGGER("client",
          LogLevel::INFO,
          std::format("Connected! Client ID: {}, Server ID: {}",
-                     static_cast<int>(_client_id),
-                     _server_id));
+                     parsed->client_id,
+                     parsed->server_id));
 }
 
-void NetworkClient::handle_disconnect_response(ByteArray const& commandline)
+void NetworkClient::handle_disconnect_response(ByteArray const& package)
 {
   std::string reason = "Unknown reason";
 
-  if (!commandline.empty()) {
+  if (!package.empty()) {
     // Find the first null terminator or use whole string
-    auto null_pos = std::find(commandline.begin(), commandline.end(), 0);
-    reason = std::string(commandline.begin(), null_pos);
+    auto null_pos = std::find(package.begin(), package.end(), 0);
+    reason = std::string(package.begin(), null_pos);
   }
 
   LOGGER("client",
