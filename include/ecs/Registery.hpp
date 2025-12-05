@@ -291,7 +291,6 @@ public:
       try {
         std::string comp = source_hook.substr(0, source_hook.find(':'));
         std::string value = source_hook.substr(source_hook.find(':') + 1);
-        std::cout << "value: " << value << std::endl;
         auto ref = this->get_hooked_value<T>(comp, value);
 
         if (ref.has_value()) {
@@ -300,7 +299,7 @@ public:
             auto& target_comp = components[entity].value();
 
             auto& hook_map = ComponentType::hook_map();
-            if (hook_map.find(field_name) != hook_map.end()) {
+            if (hook_map.contains(field_name)) {  // TODO: PROPER ERROR HANDLING
               std::any field_any = hook_map.at(field_name)(target_comp);
               auto field_ref_wrapper =
                   std::any_cast<std::reference_wrapper<T>>(field_any);

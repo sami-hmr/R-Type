@@ -62,9 +62,9 @@ void Moving::init_pos(Registery::Entity const& entity, JsonObject& obj)
 
 void Moving::init_velocity(Registery::Entity const& entity, JsonObject& obj)
 {
-  auto speed = get_value<Position, Vector2D>(
+  auto speed = get_value<Velocity, Vector2D>(
       this->_registery.get(), obj, entity, "speed");
-  auto dir = get_value<Position, Vector2D>(
+  auto dir = get_value<Velocity, Vector2D>(
       this->_registery.get(), obj, entity, "direction");
 
   if (!speed || !dir) {

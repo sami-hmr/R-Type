@@ -121,8 +121,8 @@
           "moving:Position": { "pos": { "x": 0.5, "y": -0.3 } },
           "moving:Velocity": {
             "speed": {
-              "x": 0.05,
-              "y": 0.05
+              "x": 0.07,
+              "y": 0.08
             },
             "direction": "#player:direction"
           },

@@ -29,7 +29,6 @@
     return map; \
   }
 
-// Helper trait to check if a type is in JsonVariant
 template<typename T>
 struct is_in_json_variant
     : std::disjunction<std::is_same<T, int>,
@@ -70,7 +69,6 @@ std::optional<std::reference_wrapper<const T>> get_ref(Registery& r,
   } catch (std::bad_variant_access const&) {  // NOLINT intentional fallthrought
   }
 
-  // Only try std::get if T is actually in the JsonVariant
   if constexpr (is_in_json_variant_v<T>) {
     try {
       return std::reference_wrapper<const T>(std::get<T>(object.at(key).value));
@@ -110,16 +108,13 @@ std::optional<T> get_value(Registery& r,
                            std::string const& field_name)
 {
   try {
-    std::cout << "trying for hook" << field_name << std::endl;
     std::string value_str = std::get<std::string>(object.at(field_name).value);
     if (value_str.starts_with('#')) {
       std::string stripped = value_str.substr(1);
-      std::cout << "detected hook" << stripped << std::endl;
       r.template register_binding<ComponentType, T>(
           entity, field_name, stripped);
     }
   } catch (std::bad_variant_access const&) {  // NOLINT intentional fallthrough
-    std::cerr << "error: " << field_name << std::endl;
   }
 
   return get_value<T>(r, object, field_name);
