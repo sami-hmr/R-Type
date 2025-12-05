@@ -124,10 +124,7 @@
               "x": 0.05,
               "y": 0.05
             },
-            "direction": {
-              "x": "#player:direction.x",
-              "y": "#player:direction.y"
-            }
+            "direction": "#player:direction"
           },
           "sfml:Drawable": {},
           "sfml:Sprite": {

@@ -291,6 +291,7 @@ public:
       try {
         std::string comp = source_hook.substr(0, source_hook.find(':'));
         std::string value = source_hook.substr(source_hook.find(':') + 1);
+        std::cout << "value: " << value << std::endl;
         auto ref = this->get_hooked_value<T>(comp, value);
 
         if (ref.has_value()) {

@@ -64,8 +64,8 @@ void Moving::init_velocity(Registery::Entity const& entity, JsonObject& obj)
 {
   auto speed = get_value<Position, Vector2D>(
       this->_registery.get(), obj, entity, "speed");
-  auto dir =
-      get_value<Position, Vector2D>(this->_registery.get(), obj, entity, "dir");
+  auto dir = get_value<Position, Vector2D>(
+      this->_registery.get(), obj, entity, "direction");
 
   if (!speed || !dir) {
     std::cerr << "Error loading velocity component: missing speed or direction "
