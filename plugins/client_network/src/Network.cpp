@@ -180,10 +180,8 @@ void NetworkClient::handle_connectionless_response(ByteArray const& response)
   try {
     (this->*(_command_table.at(parsed->command_code)))(parsed->command);
   } catch (std::out_of_range const&) {
-    LOGGER(
-        "client",
-        LogLevel::DEBUG,
-        std::format("Unhandled connectionless response: {}", parsed->command));
+    LOGGER("client", LogLevel::DEBUG,
+        std::format("Unhandled connectionless response: {}", parsed->command_code));
   }
 }
 
