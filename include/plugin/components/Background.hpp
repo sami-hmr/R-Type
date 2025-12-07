@@ -22,7 +22,7 @@
 struct Parallax {
     Parallax() : active(false), speed({0, 0}), framerate(0.0)
     {}
-    Parallax(bool active, double x, double y, double framerate)
+    Parallax(bool active, double x, double y, double framerate, double posx, double posy)
         : active(active), speed(x, y), framerate(framerate)
     {}
     Parallax(bool active, Vector2D speed, double framerate)
@@ -34,10 +34,10 @@ struct Parallax {
     Vector2D pos = {0, 0};
     double framerate;
 
-    DEFAULT_BYTE_CONSTRUCTOR(Parallax, ([] (bool active, double x, double y, double framerate) {
-            return Parallax(active, x, y, framerate);
+    DEFAULT_BYTE_CONSTRUCTOR(Parallax, ([] (bool active, double x, double y, double framerate, double posx, double posy) {
+            return Parallax(active, x, y, framerate, posx, posy);
         }),
-        parseByte<bool>(), parseByte<double>(), parseByte<double>(), parseByte<double>())
+        parseByte<bool>(), parseByte<double>(), parseByte<double>(), parseByte<double>(), parseByte<double>(), parseByte<double>())
     DEFAULT_SERIALIZE(type_to_byte(this->active),
                       type_to_byte(this->speed.x),
                       type_to_byte(this->speed.y),

@@ -1,0 +1,60 @@
+{
+    "scenes": [
+        {
+            "name": "game",
+            "state": "disabled",
+            "plugins": [],
+            "entities": [
+                {
+                    "moving:Position": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 2
+                    },
+                    "sfml:Drawable": {},
+                    "moving:Velocity": {
+                        "speed": {
+                            "x": 0.05,
+                            "y": 0.05
+                        },
+                        "direction": {
+                            "x": 0.0,
+                            "y": 0.0
+                        }
+                    },
+                    "sfml:Sprite": {
+                        "texture": "assets/spaceship.png",
+                        "size": {
+                            "width": "20.0%",
+                            "height": "20.0%"
+                        }
+                    },
+                    "collision:Collidable": {
+                        "width": 0.1,
+                        "height": 0.1,
+                        "collision_type": "Solid"
+                    },
+                    "controller:Controllable": {
+                        "UP": "Z",
+                        "DOWN": "S",
+                        "LEFT": "Q",
+                        "RIGHT": "D"
+                    },
+                    "life:Health": {
+                        "current": 30,
+                        "max": 100
+                    },
+                    "life:Damage": {
+                        "amount": 0
+                    },
+                    "life:Heal": {
+                        "amount": 1
+                    },
+                    "life:Team": {
+                        "name": "test1"
+                    }
+                }
+            ]
+        }
+    ]
+}

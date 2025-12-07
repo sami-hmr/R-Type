@@ -81,8 +81,6 @@ void SFMLRenderer::background_system(Registery& r,
                                      const SparseArray<Drawable>& drawables,
                                      SparseArray<Background>& backgrounds)
 {
-  sf::Vector2u window_size = _window.getSize();
-
   for (const auto&& [draw, background] : Zipper(drawables, backgrounds)) {
     if (!draw.enabled) {
       continue;
@@ -98,7 +96,7 @@ void SFMLRenderer::background_system(Registery& r,
 
 void SFMLRenderer::draw_nothing_background(Background& bg)
 {
-  for (const std::string& texture_path : bg.textures_path) {
+  for (const std::string &texture_path : bg.textures_path) {
     sf::Texture& texture = load_texture(texture_path);
 
     if (!this->_sprite.has_value()) {
