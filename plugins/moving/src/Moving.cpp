@@ -36,8 +36,8 @@ void Moving::moving_system(Registery& reg,
   double dt = reg.clock().delta_seconds();
 
   for (auto&& [position, velocity] : Zipper(positions, velocities)) {
-    Vector2D movement = velocity.direction * dt;
-    position.pos += movement.normalize() * velocity.speed;
+    Vector2D movement = (velocity.direction * dt).normalize() * velocity.speed;
+    position.pos += movement;
   }
 }
 
@@ -51,9 +51,18 @@ void Moving::init_pos(Registery::Entity const& entity, JsonObject const& obj)
                  "(expected x: double and y: double)\n";
     return;
   }
-
+  int z = 1;
+  if (obj.contains("z")) {
+    auto const& z_value = get_value<int>(this->_registery.get(), obj, "z");
+    if (z_value) {
+      z = z_value.value();
+    } else {
+      std::cerr << "Error loading Position component: unexpected value type "
+                   "(expected z: int)\n";
+    }
+  }
   this->_registery.get().emplace_component<Position>(
-      entity, x.value(), y.value());
+      entity, x.value(), y.value(), z);
 }
 
 void Moving::init_velocity(Registery::Entity const& entity,
