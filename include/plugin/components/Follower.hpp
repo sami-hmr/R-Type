@@ -8,7 +8,11 @@
 
 struct Follower
 {
-  Follower() = default;
+  Follower()
+      : target(0)
+      , lost_target(true)
+  {
+  }
 
   Follower(std::size_t target, bool lost_target)
       : target(target)
@@ -27,11 +31,9 @@ struct Follower
                             { return (Follower) {target, lost_target}; }),
                            parseByte<std::size_t>(),
                            parseByte<bool>())
-  DEFAULT_SERIALIZE(type_to_byte(this->target),
-                    type_to_byte(this->lost_target))
+  DEFAULT_SERIALIZE(type_to_byte(this->target), type_to_byte(this->lost_target))
 
   HOOKABLE(Follower, HOOK(target), HOOK(lost_target))
-  
 
   std::size_t target;
   bool lost_target;

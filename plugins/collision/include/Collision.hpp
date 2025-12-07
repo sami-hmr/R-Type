@@ -12,6 +12,7 @@
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Collidable.hpp"
+#include "plugin/components/InteractionZone.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Velocity.hpp"
 #include "plugin/events/Events.hpp"
@@ -24,12 +25,16 @@ public:
   void set_algorithm(std::unique_ptr<ICollisionAlgorithm> algo);
 
 private:
-  void init_collision(Registery::Entity const& entity,
-                      JsonObject const& obj);
+  void init_collision(Registery::Entity const& entity, JsonObject const& obj);
+  void init_interaction_zone(Registery::Entity const& entity,
+                             JsonObject const& obj);
 
   void collision_system(Registery& r,
                         const SparseArray<Position>& positions,
                         const SparseArray<Collidable>& collidables);
+  void interaction_zone_system(Registery& r,
+                        const SparseArray<Position>& positions,
+                        const SparseArray<InteractionZone>& zones);
   void on_collision(const CollisionEvent& c);
 
   std::unique_ptr<ICollisionAlgorithm> _collision_algo;

@@ -4,10 +4,12 @@
 #include <map>
 #include <optional>
 #include <string>
+#include <vector>
 
 #include "ParserUtils.hpp"
 #include "ecs/Registery.hpp"
 #include "plugin/Byte.hpp"
+#include "plugin/components/InteractionZone.hpp"
 
 struct ShutdownEvent
 {
@@ -90,6 +92,13 @@ struct CollisionEvent
 {
   Registery::Entity a;
   Registery::Entity b;
+};
+
+struct InteractionZoneEvent
+{
+  Registery::Entity source;
+  double radius;
+  std::vector<Registery::Entity> candidates;
 };
 
 struct HealEvent
