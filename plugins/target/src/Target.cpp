@@ -7,6 +7,7 @@
 #include "libs/Vector2D.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Follower.hpp"
+#include "plugin/components/InteractionZone.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Velocity.hpp"
 #include "plugin/events/Events.hpp"
@@ -22,20 +23,14 @@ Target::Target(Registery& r, EntityLoader& l)
              const SparseArray<Position>& positions,
              SparseArray<Velocity>& velocities)
       { this->target_system(r, followers, positions, velocities); });
+  this->_registery.get().on<InteractionZoneEvent>(
+      [this](const InteractionZoneEvent& event)
+      { this->on_interaction_zone(event); });
 }
 
 void Target::init_follower(Registery::Entity entity, JsonObject const& obj)
 {
-  auto const& target =
-      get_value<int>(this->_registery.get(), obj, "target");
-
-  if (!target || target.value() < 0) {
-    std::cerr << "Error loading Position component: unexpected value type "
-                 "(expected follower: unsigned int)\n";
-    return;
-  }
-
-  this->_registery.get().emplace_component<Follower>(entity, target.value());
+  this->_registery.get().emplace_component<Follower>(entity);
 }
 
 void Target::target_system(Registery& reg,
@@ -62,6 +57,35 @@ void Target::target_system(Registery& reg,
     Vector2D vect = target_position - position.pos;
 
     velocity.direction = vect.normalize();
+  }
+}
+
+void Target::on_interaction_zone(const InteractionZoneEvent& event)
+{
+  const auto& positions = this->_registery.get().get_components<Position>();
+  auto& followers = this->_registery.get().get_components<Follower>();
+
+  if (!this->_registery.get().has_component<Follower>(event.source)
+      || !followers[event.source]->lost_target)
+  {
+    return;
+  }
+
+  std::optional<Registery::Entity> closest_entity = std::nullopt;
+  double closest_distance_sq = event.radius * event.radius;
+
+  for (const Registery::Entity& candidate : event.candidates) {
+    Vector2D distance =
+        positions[candidate]->pos - positions[event.source]->pos;
+    double distance_sq = distance.length();
+
+    if (distance_sq < closest_distance_sq) {
+      closest_distance_sq = distance_sq;
+      closest_entity = candidate;
+    }
+  }
+  if (closest_entity.has_value()) {
+    followers[event.source] = closest_entity;
   }
 }
 

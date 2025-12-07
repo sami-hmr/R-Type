@@ -6,7 +6,7 @@
 #include "ecs/SparseArray.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Fragile.hpp"
-#include "plugin/components/Owner.hpp"
+#include "plugin/components/Team.hpp"
 #include "plugin/components/Temporal.hpp"
 #include "plugin/events/Events.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
@@ -16,12 +16,10 @@ Projectile::Projectile(Registery& r, EntityLoader& l)
               l,
               {"moving", "collision"},
               {COMP_INIT(Temporal, Temporal, init_temporal),
-               COMP_INIT(Fragile, Fragile, init_fragile),
-               COMP_INIT(Owner, Owner, init_owner)})
+               COMP_INIT(Fragile, Fragile, init_fragile)})
 {
   this->_registery.get().register_component<Temporal>();
   this->_registery.get().register_component<Fragile>();
-  this->_registery.get().register_component<Owner>();
 
   this->_registery.get().add_system<Temporal>(
       [this](Registery& r, const SparseArray<Temporal>&)
@@ -53,21 +51,6 @@ void Projectile::init_fragile(Registery::Entity entity,
   this->_registery.get().emplace_component<Fragile>(entity);
 }
 
-void Projectile::init_owner(Registery::Entity entity,
-                              JsonObject const& obj)
-{
-  auto const& owner = get_value<int>(this->_registery.get(), obj, "owner");
-
-  if (!owner || owner < 0) {
-    std::cerr << "Error loading Position component: unexpected value type "
-                 "(expected owner: unsigned int)\n";
-    return;
-  }
-
-  this->_registery.get().emplace_component<Owner>(
-      entity, owner.value());
-}
-
 void Projectile::temporal_system(Registery& reg)
 {
   auto& temporals = reg.get_components<Temporal>();
@@ -90,10 +73,10 @@ void Projectile::on_collision(const CollisionEvent& event)
     return;
   }
 
-  if (this->_registery.get().has_component<Owner>(event.a)) {
-    auto& owners = this->_registery.get().get_components<Owner>();
+  if (this->_registery.get().has_component<Team>(event.a) && this->_registery.get().has_component<Team>(event.b)) {
+    auto& teams = this->_registery.get().get_components<Team>();
 
-    if (owners[event.a]->entity_id == event.b) {
+    if (teams[event.a]->name == teams[event.b]->name) {
       return;
     }
   }
