@@ -50,7 +50,7 @@ void NetworkServer::launch_server(ServerLaunching const& s)
 {
   try {
     _running = true;
-    Server server(s, _components_to_create, _running);
+    Server server(s, _components_to_create, _running, _cmpts_lock);
     LOGGER("server",
            LogLevel::INFO,
            std::format("Server started on port {}", s.port));

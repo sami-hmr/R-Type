@@ -27,7 +27,7 @@
 class Server
 {
   public:
-    Server(ServerLaunching const& s, std::queue<std::shared_ptr<ByteArray>> &cmpnts, bool running);
+    Server(ServerLaunching const& s, std::queue<std::shared_ptr<ByteArray>> &cmpnts, std::atomic<bool> &running, std::mutex &lock);
     ~Server();
 
     void close();
@@ -73,7 +73,8 @@ class Server
     std::string _hostname = "R-Type Server";
     std::string _mapname = "level1";
     int _max_players = MAX_PLAYERS;
+    std::mutex &_cmpts_lock;
 
-    std::atomic<bool> _running;
+    std::atomic<bool> &_running;
     std::reference_wrapper<std::queue<std::shared_ptr<ByteArray>>> _components_to_create;
 };

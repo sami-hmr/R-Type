@@ -31,7 +31,8 @@ class NetworkServer : public APlugin
     // std::reference_wrapper<Server> _server;
     std::queue<std::shared_ptr<ByteArray>> _components_to_create;
     std::vector<std::thread> _threads;
-    bool _running = false;
+    std::mutex _cmpts_lock;
+    std::atomic<bool> _running = false;
 };
 
 CUSTOM_EXCEPTION(ClientNotFound)

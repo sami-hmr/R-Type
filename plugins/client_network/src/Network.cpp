@@ -49,7 +49,7 @@ NetworkClient::~NetworkClient()
 void NetworkClient::connection_thread(ClientConnection const& c)
 {
   try {
-    Client client(c, _components_to_create, _running);
+    Client client(c, _components_to_create, _running, _cmpts_lock);
     client.connect();
   } catch (std::exception& e) {
     LOGGER("client",

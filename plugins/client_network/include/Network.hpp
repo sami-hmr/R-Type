@@ -23,5 +23,6 @@ class NetworkClient : public APlugin
 
     std::queue<std::shared_ptr<ByteArray>> _components_to_create;
     std::vector<std::thread> _threads;
+    std::mutex _cmpts_lock;
     std::atomic<bool> _running = false;
 };

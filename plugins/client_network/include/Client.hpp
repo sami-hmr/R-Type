@@ -24,7 +24,7 @@
 class Client
 {
   public:
-    Client(ClientConnection const& c, std::queue<std::shared_ptr<ByteArray>> &cmpnts, std::atomic<bool> &running);
+    Client(ClientConnection const& c, std::queue<std::shared_ptr<ByteArray>> &cmpnts, std::atomic<bool> &running, std::mutex &lock);
     ~Client();
 
     void close();
@@ -63,6 +63,7 @@ class Client
     std::uint8_t _client_id = 0;
     std::uint32_t _server_id = 0;
     std::string _player_name = "Player";
+    std::mutex &_cmpts_lock;
 
     std::atomic<bool> &_running;
     std::reference_wrapper<std::queue<std::shared_ptr<ByteArray>>> _components_to_create;

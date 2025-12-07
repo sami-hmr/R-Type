@@ -4,6 +4,7 @@
 ** File description:
 ** Server
 */
+#include <atomic>
 #include "Server.hpp"
 #include "Network.hpp"
 // #include "plugin/events/Events.hpp"
@@ -18,7 +19,7 @@ const std::unordered_map<std::uint8_t,
         {CONNECT, &Server::handle_connect},
 };
 
-Server::Server(ServerLaunching const& s, std::queue<std::shared_ptr<ByteArray>> &cmpnts, bool running) : _socket(_io_c, asio::ip::udp::endpoint(asio::ip::udp::v4(), s.port)), _running(running), _components_to_create(std::reference_wrapper(cmpnts))
+Server::Server(ServerLaunching const& s, std::queue<std::shared_ptr<ByteArray>> &cmpnts, std::atomic<bool> &running, std::mutex &lock) : _socket(_io_c, asio::ip::udp::endpoint(asio::ip::udp::v4(), s.port)), _cmpts_lock(lock), _running(running), _components_to_create(std::reference_wrapper(cmpnts))
 {
     std::random_device rd;
     std::mt19937 gen(rd());

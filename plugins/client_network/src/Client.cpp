@@ -17,7 +17,7 @@ const std::unordered_map<std::uint8_t,
         {DISCONNECT, &Client::handle_disconnect_response},
 };
 
-Client::Client(ClientConnection const& c, std::queue<std::shared_ptr<ByteArray>> &cmpnts, std::atomic<bool> &running) : _socket(_io_c), _running(running), _components_to_create(std::reference_wrapper(cmpnts))
+Client::Client(ClientConnection const& c, std::queue<std::shared_ptr<ByteArray>> &cmpnts, std::atomic<bool> &running, std::mutex &lock) : _socket(_io_c), _cmpts_lock(lock), _running(running), _components_to_create(std::reference_wrapper(cmpnts))
 {
     _socket.open(asio::ip::udp::v4());
     _server_endpoint = asio::ip::udp::endpoint(asio::ip::address::from_string(c.host), c.port);
