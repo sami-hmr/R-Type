@@ -22,7 +22,7 @@ std::optional<Package> Server::parse_package(ByteArray const& package)
   Result<Package> r = parse_pkg()(Rest(package));
 
   if (r.index() == ERROR) {
-    SERVER_LOGGER(
+    NETWORK_LOGGER(
         "server",
         std::uint8_t(LogLevel::ERROR),
         std::format("Failed to read package : {}", std::get<ERROR>(r).message));
@@ -37,7 +37,7 @@ Server::parse_connectionless_package(ByteArray const& package)
   Result<ConnectionlessCommand> r = parse_connectionless()(Rest(package));
 
   if (r.index() == ERROR) {
-    SERVER_LOGGER("server",
+    NETWORK_LOGGER("server",
            std::uint8_t(LogLevel::ERROR),
            std::format("Failed to read connectionless package : {}",
                        std::get<ERROR>(r).message));
@@ -52,7 +52,7 @@ std::optional<ConnectCommand> Server::parse_connect_command(
   Result<ConnectCommand> r = parse_connect_cmd()(Rest(cmd));
 
   if (r.index() == ERROR) {
-    SERVER_LOGGER("server",
+    NETWORK_LOGGER("server",
            std::uint8_t(LogLevel::ERROR),
            std::format("Failed to read connect command : {}",
                        std::get<ERROR>(r).message));

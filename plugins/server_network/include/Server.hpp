@@ -7,20 +7,20 @@
 
 #pragma once
 
-#include <cstdint>
-#include <unordered_map>
-#include <functional>
-#include <string>
 #include <queue>
+#include <string>
 #include <vector>
+#include <cstdint>
+#include <functional>
+#include <unordered_map>
 
+#include <asio/ip/udp.hpp>
 #include <asio/error_code.hpp>
 #include <asio/io_context.hpp>
-#include <asio/ip/udp.hpp>
 
-#include "NetworkCommun.hpp"
-#include "ServerCommands.hpp"
 #include "plugin/CircularBuffer.hpp"
+#include "ServerCommands.hpp"
+#include "NetworkCommun.hpp"
 #include "ServerLaunch.hpp"
 #include "plugin/Byte.hpp"
 
@@ -34,7 +34,6 @@ class Server
     void receive_loop();
 
   private:
-
     void handle_connectionless_packet(ConnectionlessCommand const& command,
                                       const asio::ip::udp::endpoint& sender);
     void send_connectionless(ByteArray const& response,
@@ -69,12 +68,12 @@ class Server
     asio::ip::udp::socket _socket;
     std::vector<ClientInfo> _clients;
     CircularBuffer<BUFFER_SIZE> _recv_buffer;
-    uint32_t _server_id;
+    std::uint32_t _server_id;
 
     std::string _hostname = "R-Type Server";
     std::string _mapname = "level1";
     int _max_players = MAX_PLAYERS;
 
-    std::reference_wrapper<bool> _running;
+    std::atomic<bool> _running;
     std::reference_wrapper<std::queue<std::shared_ptr<ByteArray>>> _components_to_create;
 };

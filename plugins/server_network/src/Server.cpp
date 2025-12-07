@@ -6,7 +6,7 @@
 */
 #include "Server.hpp"
 #include "Network.hpp"
-#include "plugin/events/Events.hpp"
+// #include "plugin/events/Events.hpp"
 
 const std::unordered_map<std::uint8_t,
                          void (Server::*)(
@@ -17,6 +17,26 @@ const std::unordered_map<std::uint8_t,
         {GETCHALLENGE, &Server::handle_getchallenge},
         {CONNECT, &Server::handle_connect},
 };
+
+Server::Server(ServerLaunching const& s, std::queue<std::shared_ptr<ByteArray>> &cmpnts, bool running) : _socket(_io_c, asio::ip::udp::endpoint(asio::ip::udp::v4(), s.port)), _running(running), _components_to_create(std::reference_wrapper(cmpnts))
+{
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<uint32_t> dis;
+    _server_id = dis(gen);
+}
+
+void Server::close()
+{
+  if (_socket.is_open()) {
+    _socket.close();
+  }
+}
+
+Server::~Server()
+{
+  _socket.close();
+}
 
 void Server::receive_loop()
 {
@@ -29,14 +49,14 @@ void Server::receive_loop()
       std::size_t len =
           recv_buf.read_socket(this->_socket, sender_endpoint, ec);
       if (len > 0) {
-        SERVER_LOGGER("server",
+        NETWORK_LOGGER("server",
                std::uint8_t(LogLevel::DEBUG),
                std::format("received buffer, size : {}", len));
       }
 
       if (ec) {
         if (_running) {
-          SERVER_LOGGER("server",
+          NETWORK_LOGGER("server",
                  std::uint8_t(LogLevel::ERROR),
                  std::format("Receive error: {}", ec.message()));
         }
@@ -44,7 +64,7 @@ void Server::receive_loop()
       }
 
       while (std::optional<ByteArray> p = recv_buf.extract(PROTOCOL_EOF)) {
-        SERVER_LOGGER("server", std::uint8_t(LogLevel::DEBUG), "package extracted");
+        NETWORK_LOGGER("server", std::uint8_t(LogLevel::DEBUG), "package extracted");
         // for (auto it : *p) {
         //   std::cout << (int)it << std::endl;
         // }
@@ -52,7 +72,7 @@ void Server::receive_loop()
       }
     } catch (std::exception& e) {
       if (_running) {
-        SERVER_LOGGER("server",
+        NETWORK_LOGGER("server",
                std::uint8_t(LogLevel::ERROR),
                std::format("Error in receive loop: {}", e.what()));
       }
@@ -60,7 +80,7 @@ void Server::receive_loop()
     }
   }
 
-  SERVER_LOGGER("server", std::uint8_t(LogLevel::INFO), "Server receive loop ended");
+  NETWORK_LOGGER("server", std::uint8_t(LogLevel::INFO), "Server receive loop ended");
 }
 
 void Server::handle_package(ByteArray const& package,
@@ -72,7 +92,7 @@ void Server::handle_package(ByteArray const& package,
     return;
   }
   if (pkg->magic != MAGIC_SEQUENCE) {
-    SERVER_LOGGER("server", std::uint8_t(LogLevel::DEBUG), "Invalid magic sequence, ignoring.");
+    NETWORK_LOGGER("server", std::uint8_t(LogLevel::DEBUG), "Invalid magic sequence, ignoring.");
     return;
   }
   auto const& parsed = this->parse_connectionless_package(pkg->real_package);
@@ -86,7 +106,7 @@ void Server::handle_package(ByteArray const& package,
 void Server::handle_connectionless_packet(
     ConnectionlessCommand const& command, const asio::ip::udp::endpoint& sender)
 {
-  SERVER_LOGGER("server",
+  NETWORK_LOGGER("server",
          std::uint8_t(LogLevel::DEBUG),
          std::format("Received connectionless packet: '{}'",
                      command.command_code));
@@ -95,7 +115,7 @@ void Server::handle_connectionless_packet(
     (this->*(_command_table.find(command.command_code)->second))(
         command.command, sender);
   } catch (std::out_of_range const&) {
-    SERVER_LOGGER("server",
+    NETWORK_LOGGER("server",
            std::uint8_t(LogLevel::WARNING),
            std::format("Unknown command: {}", command.command_code));
   }
@@ -108,7 +128,7 @@ void Server::send_connectionless(ByteArray const& response,
 
   _socket.send_to(asio::buffer(pkg), endpoint);
 
-  SERVER_LOGGER("server",
+  NETWORK_LOGGER("server",
          std::uint8_t(LogLevel::DEBUG),
          std::format("Sent connectionless package of size: {}", pkg.size()));
 }
@@ -117,7 +137,7 @@ void Server::handle_getinfo(ByteArray const& cmd,
                                    const asio::ip::udp::endpoint& sender)
 {
   if (!cmd.empty()) {
-    SERVER_LOGGER("server",
+    NETWORK_LOGGER("server",
            std::uint8_t(LogLevel::WARNING),
            "Invalid getinfo command: command not empty");
     return;
@@ -135,7 +155,7 @@ void Server::handle_getstatus(ByteArray const& cmd,
                                      const asio::ip::udp::endpoint& sender)
 {
   if (!cmd.empty()) {
-    SERVER_LOGGER("server",
+    NETWORK_LOGGER("server",
            std::uint8_t(LogLevel::WARNING),
            "Invalid getstatus command: command not empty");
     return;
@@ -162,7 +182,7 @@ void Server::handle_getchallenge(ByteArray const& cmd,
                                         const asio::ip::udp::endpoint& sender)
 {
   if (!cmd.empty()) {
-    SERVER_LOGGER("server",
+    NETWORK_LOGGER("server",
            std::uint8_t(LogLevel::WARNING),
            "Invalid getchallenge command: command not empty");
     return;
@@ -196,7 +216,7 @@ void Server::handle_connect(ByteArray const& cmd,
     if (client.state != ClientState::CHALLENGING
         || client.challenge != parsed->challenge)
     {
-      SERVER_LOGGER("server", std::uint8_t(LogLevel::WARNING), "Invalid challenge");
+      NETWORK_LOGGER("server", std::uint8_t(LogLevel::WARNING), "Invalid challenge");
       return;
     }
     uint8_t client_id = _clients.size(); //TODO: change to incrementator uint32 in the wrapper class
@@ -205,7 +225,7 @@ void Server::handle_connect(ByteArray const& cmd,
     client.player_name = parsed->player_name;
     client.state = ClientState::CONNECTED;
 
-    SERVER_LOGGER("server",
+    NETWORK_LOGGER("server",
            std::uint8_t(LogLevel::INFO),
            std::format("Player '{}' connected as client {}",
                        parsed->player_name,
@@ -218,7 +238,7 @@ void Server::handle_connect(ByteArray const& cmd,
     send_connectionless(pkg, sender);
 
   } catch (ClientNotFound&) {
-    SERVER_LOGGER("server", std::uint8_t(LogLevel::WARNING), "Invalid challenge");
+    NETWORK_LOGGER("server", std::uint8_t(LogLevel::WARNING), "Invalid challenge");
     return;
   }
 }

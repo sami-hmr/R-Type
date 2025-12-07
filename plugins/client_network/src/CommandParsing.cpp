@@ -1,17 +1,17 @@
 
 #include <optional>
 
-#include "Network.hpp"
+#include "Client.hpp"
 #include "ParserTypes.hpp"
 #include "ServerCommands.hpp"
 #include "plugin/events/Events.hpp"
 
-std::optional<Package> NetworkClient::parse_package(ByteArray const& package)
+std::optional<Package> Client::parse_package(ByteArray const& package)
 {
   Result<Package> r = parse_pkg()(Rest(package));
 
   if (r.index() == ERROR) {
-    LOGGER(
+    NETWORK_LOGGER(
         "client",
         LogLevel::ERROR,
         std::format("Failed to read package : {}", std::get<ERROR>(r).message));
@@ -21,12 +21,12 @@ std::optional<Package> NetworkClient::parse_package(ByteArray const& package)
 }
 
 std::optional<ConnectionlessCommand>
-NetworkClient::parse_connectionless_package(ByteArray const& package)
+Client::parse_connectionless_package(ByteArray const& package)
 {
   Result<ConnectionlessCommand> r = parse_connectionless()(Rest(package));
 
   if (r.index() == ERROR) {
-    LOGGER("client",
+    NETWORK_LOGGER("client",
            LogLevel::ERROR,
            std::format("Failed to read connectionless package : {}",
                        std::get<ERROR>(r).message));
@@ -35,11 +35,11 @@ NetworkClient::parse_connectionless_package(ByteArray const& package)
   return std::get<SUCCESS>(r).value;
 }
 
-std::optional<ConnectResponse> NetworkClient::parse_connect_response(ByteArray const& package) {
+std::optional<ConnectResponse> Client::parse_connect_response(ByteArray const& package) {
     Result<ConnectResponse> r = parse_connect_rsp()(package);
 
     if (r.index() == ERROR) {
-        LOGGER("client",
+        NETWORK_LOGGER("client",
                LogLevel::ERROR,
                std::format("Failed to read connect response package : {}",
                            std::get<ERROR>(r).message));
@@ -48,11 +48,11 @@ std::optional<ConnectResponse> NetworkClient::parse_connect_response(ByteArray c
     return std::get<SUCCESS>(r).value;
 }
 
-std::optional<ChallengeResponse> NetworkClient::parse_challenge_response(ByteArray const& package) {
+std::optional<ChallengeResponse> Client::parse_challenge_response(ByteArray const& package) {
     Result<ChallengeResponse> r = parse_challenge_rsp()(package);
 
     if (r.index() == ERROR) {
-        LOGGER("client",
+        NETWORK_LOGGER("client",
                LogLevel::ERROR,
                std::format("Failed to read challenge response package : {}",
                            std::get<ERROR>(r).message));

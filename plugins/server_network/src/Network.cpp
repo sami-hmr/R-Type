@@ -10,25 +10,6 @@
 #include "plugin/EntityLoader.hpp"
 #include "plugin/events/Events.hpp"
 
-Server::Server(ServerLaunching const& s, std::queue<std::shared_ptr<ByteArray>> &cmpnts, bool running) : _socket(_io_c, asio::ip::udp::endpoint(asio::ip::udp::v4(), s.port)), _running(std::reference_wrapper(running)), _components_to_create(std::reference_wrapper(cmpnts))
-{
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_int_distribution<uint32_t> dis;
-    _server_id = dis(gen);
-}
-
-void Server::close()
-{
-  if (_socket.is_open())
-    _socket.close();
-}
-
-Server::~Server()
-{
-  _socket.close();
-}
-
 NetworkServer::NetworkServer(Registery& r, EntityLoader& l)
     : APlugin(r, l, {}, {})
 {

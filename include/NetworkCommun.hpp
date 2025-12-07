@@ -13,6 +13,8 @@
 #define MAX_PLAYERS 4
 #define BUFFER_SIZE 2048
 
+#define NETWORK_LOGGER(category, level, message) \
+  std::cerr  << (category) << ": " << (message) << "\n"
 
 #define __VERSION_MAGIC_SEQUENCE__ 0x436482793
 //#define MAGIC_SEQUENCE std::uint32_t(0x436482793)

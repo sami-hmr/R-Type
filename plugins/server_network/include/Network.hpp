@@ -3,6 +3,7 @@
 // #include <functional>
 // #include <map>
 // #include <random>
+
 #include <memory>
 #include <thread>
 #include <vector>
@@ -17,9 +18,6 @@
 #include "plugin/APlugin.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/EntityLoader.hpp"
-
-#define SERVER_LOGGER(category, level, message) \
-  std::cerr  << (category) << ": " << (message) << std::endl
 
 class NetworkServer : public APlugin
 {
