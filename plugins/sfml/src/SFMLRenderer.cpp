@@ -1,8 +1,11 @@
 
+#include <algorithm>
+#include <cstdlib>
 #include <functional>
 #include <iostream>
 #include <memory>
 #include <stdexcept>
+#include <tuple>
 #include <variant>
 
 #include "SFMLRenderer.hpp"
@@ -335,19 +338,17 @@ void SFMLRenderer::render_sprites(Registery& /*unused*/,
                                   const SparseArray<Drawable>& drawable,
                                   const SparseArray<Sprite>& sprites)
 {
-  for (auto&& [pos, draw, spr] : Zipper(positions, drawable, sprites)) {
+  std::vector<std::tuple<std::reference_wrapper<sf::Texture>, double, sf::Vector2f, int>> drawables;
+  sf::Vector2u window_size = _window.getSize();
+  drawables.reserve(
+      std::max({positions.size(), drawable.size(), sprites.size()}));
+
+  for (auto &&[pos, draw, spr] : Zipper(positions, drawable, sprites)) {
     if (!draw.enabled) {
       continue;
     }
 
-    sf::Texture& texture = load_texture(spr.texture_path);
-    sf::Vector2u window_size = _window.getSize();
-
-    if (!_sprite.has_value()) {
-      _sprite.emplace(texture);
-    }
-
-    _sprite.value().setTexture(texture);
+    sf::Texture &texture = load_texture(spr.texture_path);
 
     float scale_x =
         static_cast<float>(window_size.x * spr.scale.x) / texture.getSize().x;
@@ -355,15 +356,27 @@ void SFMLRenderer::render_sprites(Registery& /*unused*/,
         static_cast<float>(window_size.y * spr.scale.y) / texture.getSize().y;
     float uniform_scale = std::min(scale_x, scale_y);
 
-    _sprite->setOrigin(
-        sf::Vector2f(texture.getSize().x / 2.0f, texture.getSize().y / 2.0f));
-    _sprite.value().setScale(sf::Vector2f(uniform_scale, uniform_scale));
-
     sf::Vector2f new_pos(
         static_cast<float>((pos.pos.x + 1.0) * window_size.x / 2.0),
         static_cast<float>((pos.pos.y + 1.0) * window_size.y / 2.0));
-    _sprite.value().setPosition(new_pos);
-    _window.draw(_sprite.value());
+    drawables.emplace_back(std::ref(texture), uniform_scale, new_pos, pos.z);
+  }
+  std::sort(drawables.begin(), drawables.end(), [](auto const &a, auto const &b) {
+    return std::get<3>(a) < std::get<3>(b);
+  });
+  
+  for (auto&& [texture, scale, new_pos, z] : drawables) {
+    if (!this->_sprite.has_value()) {
+      this->_sprite.emplace(texture.get());
+    } else {
+      this->_sprite->setTexture(texture.get());
+    }
+    this->_sprite->setOrigin(sf::Vector2f(
+        static_cast<float>(texture.get().getSize().x) / 2.0f,
+        static_cast<float>(texture.get().getSize().y) / 2.0f));
+    this->_sprite->setScale(sf::Vector2f(scale, scale));
+    this->_sprite->setPosition(new_pos);
+    _window.draw(*this->_sprite);
   }
 }
 
