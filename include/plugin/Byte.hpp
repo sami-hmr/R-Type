@@ -76,6 +76,23 @@ ByteArray vector_to_byte(std::vector<T> const &v, std::function<ByteArray (T con
     return r;
 }
 
+template<typename Key, typename Value>
+ByteArray pair_to_byte(std::pair<Key, Value> p,
+                       std::function<ByteArray(Key const&)> f1,
+                       std::function<ByteArray(Value const&)> f2)
+{
+  return f1(p.first) + f2(p.second);
+}
+
+template<typename Key, typename Value>
+ByteArray map_to_byte(std::unordered_map<Key, Value> const& m,
+                      std::function<ByteArray(Key const&)> f1,
+                      std::function<ByteArray(Value const&)> f2)
+{
+  return vector_to_byte(std::vector<std::pair<Key, Value>>(m.begin(), m.end()),
+                        std::function([f1, f2](std::pair<Key, Value> const& p)
+                                      { return pair_to_byte(p, f1, f2); }));
+}
 
 ByteArray string_to_byte(std::string const &str);
 
