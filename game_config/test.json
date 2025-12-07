@@ -85,9 +85,9 @@
             }
           },
           "collision:Collidable": {
-            "width": 0.1,
-            "height": 0.1,
-            "collision_type": "Solid"
+            "width": 0.2,
+            "height": 0.2,
+            "collision_type": "solid"
           },
           "controller:Controllable": {
             "UP": "Z",
@@ -96,7 +96,6 @@
             "RIGHT": "D"
           },
           "life:Health": { "current": 5, "max": 100 },
-          "life:Damage": { "amount": 1 },
           "life:Heal": { "amount": 1 },
           "life:Team": { "name": "test1" }
         },
@@ -111,9 +110,9 @@
             }
           },
           "collision:Collidable": {
-            "width": 0.1,
-            "height": 0.1,
-            "collision_type": "Solid"
+            "width": 0.2,
+            "height": 0.2,
+            "collision_type": "solid"
           },
           "life:Health": { "hook": "prout", "current": 5, "max": 100 },
           "life:Team": { "name": "test" },
@@ -126,10 +125,7 @@
               "x" : 0.0,
               "y" : 0.0
             }
-          },
-          "projectile:Temporal": {"lifetime": 5.0},
-          "projectile:Fragile": {},
-          "target:Follower": {"target": 3}
+          }
         },
         {
           "moving:Position": {

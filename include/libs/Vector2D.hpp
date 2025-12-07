@@ -110,6 +110,11 @@ public:
     return {this->x / len, this->y / len};
   }
 
+  double dot(const Vector2D& other) const
+  {
+    return (this->x * other.x) + (this->y * other.y);
+  }
+
   double x = 0;
   double y = 0;
 };

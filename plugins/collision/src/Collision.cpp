@@ -1,7 +1,6 @@
+#include <cctype>
 #include <iostream>
-#include <iterator>
-#include <stdexcept>
-#include <variant>
+#include <string>
 #include <vector>
 
 #include "Collision.hpp"
@@ -11,6 +10,7 @@
 #include "algorithm/QuadTreeCollision.hpp"
 #include "ecs/Registery.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
+#include "libs/Vector2D.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
@@ -67,10 +67,16 @@ void Collision::init_collision(Registery::Entity const& entity,
   }
 
   CollisionType type = CollisionType::Solid;
-  if (type_str.value() == "Trigger" || type_str.value() == "trigger") {
+  std::string type_text = type_str.value();
+  std::transform(
+      type_text.begin(), type_text.end(), type_text.begin(), ::tolower);
+
+  if (type_text == "trigger") {
     type = CollisionType::Trigger;
-  } else if (type_str == "Solid" || type_str == "solid") {
+  } else if (type_text == "solid") {
     type = CollisionType::Solid;
+  } else if (type_text == "push") {
+    type = CollisionType::Push;
   }
 
   this->_registery.get().emplace_component<Collidable>(
@@ -117,18 +123,41 @@ void Collision::on_collision(const CollisionEvent& c)
   auto& positions = this->_registery.get().get_components<Position>();
   auto const& collidables = this->_registery.get().get_components<Collidable>();
 
-  bool both_solid = this->_registery.get().has_component<Collidable>(c.a)
-      && this->_registery.get().has_component<Collidable>(c.b)
-      && collidables[c.a]->collision_type == CollisionType::Solid
-      && collidables[c.b]->collision_type == CollisionType::Solid;
+  if (!this->_registery.get().has_component<Collidable>(c.a)
+      || !this->_registery.get().has_component<Collidable>(c.b)
+      || !this->_registery.get().has_component<Position>(c.a)
+      || !this->_registery.get().has_component<Position>(c.b))
+  {
+    return;
+  }
 
-  if (both_solid) {
-    double dt = this->_registery.get().clock().delta_seconds();
-    if (this->_registery.get().has_component<Velocity>(c.a)
-        && this->_registery.get().has_component<Position>(c.a))
-    {
-      positions[c.a]->pos -= (velocities[c.a]->direction * dt).normalize()
-          * velocities[c.a]->speed;
+  CollisionType type_a = collidables[c.a]->collision_type;
+  CollisionType type_b = collidables[c.b]->collision_type;
+
+  if ((type_a != CollisionType::Solid && type_a != CollisionType::Push)
+      || (type_b != CollisionType::Solid && type_b != CollisionType::Push))
+  {
+    return;
+  }
+  double dt = this->_registery.get().clock().delta_seconds();
+
+  if (this->_registery.get().has_component<Velocity>(c.a))
+  {
+    Vector2D movement = (velocities[c.a]->direction * dt).normalize() * velocities[c.a]->speed;
+
+    if (this->_registery.get().has_component<Velocity>(c.b) && type_a == CollisionType::Push) {
+      positions[c.a]->pos -= movement;
+      positions[c.b]->pos += movement;
+    } else if (type_a == CollisionType::Solid) {
+      Vector2D collision_normal = (positions[c.a]->pos - positions[c.b]->pos).normalize();
+      double dot_product = movement.dot(collision_normal);
+
+      if (dot_product < 0) {
+        Vector2D perpendicular_vector = collision_normal * dot_product;
+        positions[c.a]->pos -= perpendicular_vector;
+      }
+    } else {
+      positions[c.a]->pos -= movement;
     }
   }
 }
