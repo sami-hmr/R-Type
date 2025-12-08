@@ -77,12 +77,21 @@
               "y" : 0.0
             }
           },
-          "sfml:Sprite": {
-            "texture": "assets/spaceship.png",
-            "size": {
-              "width": "20.0%",
-              "height": "20.0%"
-            }
+          "sfml:AnimatedSprite": {
+            "animations": [
+              {
+                "name": "idle",
+                "texture": "assets/player.png",
+                "frame_size": { "x": 350.0, "y": 150.0 },
+                "frame_pos": { "x": 0.0, "y": 0.0 },
+                "direction": { "x": 1.0, "y": 0.0 },
+                "sprite_size": { "width": "20.0%", "height": "20.0%" },
+                "framerate": 10.0,
+                "nb_frames": 7,
+                "loop": true
+              }
+            ],
+            "default_animation": "idle"
           },
           "collision:Collidable": {
             "width": 0.1,
@@ -94,13 +103,7 @@
             "DOWN": "S",
             "LEFT": "Q",
             "RIGHT": "D"
-          },
-          "life:Health": { "current": 5, "max": 100 },
-          "life:Damage": { "amount": 1 },
-          "life:Heal": { "amount": 1 },
-          "life:Team": { "name": "test1" },
-          "projectile:Temporal": {"lifetime": 5.0},
-          "projectile:Fragile": {}
+          }
         },
         {
           "moving:Position": { "x": 0.5, "y": -0.3 },

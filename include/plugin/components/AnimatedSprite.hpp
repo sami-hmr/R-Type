@@ -9,7 +9,9 @@
 #define ANIMATED_SPRITE_HPP_
 
 #include <string>
+#include <unordered_map>
 
+#include "BaseTypes.hpp"
 #include "ByteParser/ByteParser.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/Byte.hpp"
@@ -17,14 +19,22 @@
 
 struct AnimationData
 {
+  AnimationData() = default;
+
   AnimationData(std::string texture_path,
                 Vector2D frame_size,
+                Vector2D frame_pos,
+                Vector2D direction,
+                Vector2D sprite_size,
                 double framerate,
                 int nb_frames,
                 int current_frame,
                 bool loop)
       : texture_path(std::move(texture_path))
       , frame_size(frame_size)
+      , frame_pos(frame_pos)
+      , direction(direction)
+      , sprite_size(sprite_size)
       , framerate(framerate)
       , nb_frames(nb_frames)
       , current_frame(current_frame)
@@ -34,8 +44,11 @@ struct AnimationData
 
   std::string texture_path;
   Vector2D frame_size;
-  double framerate;
-  int nb_frames;
+  Vector2D frame_pos;
+  Vector2D direction;
+  Vector2D sprite_size;
+  double framerate = 0;
+  int nb_frames = 0;
   int current_frame = 0;
   bool loop = false;
 
@@ -43,6 +56,9 @@ struct AnimationData
                            (
                                [](std::vector<char> texture_path_vec,
                                   Vector2D frame_size,
+                                  Vector2D frame_pos,
+                                  Vector2D direction,
+                                  Vector2D sprite_size,
                                   double framerate,
                                   int nb_frames,
                                   int current_frame,
@@ -52,12 +68,18 @@ struct AnimationData
                                      std::string(texture_path_vec.begin(),
                                                  texture_path_vec.end()),
                                      frame_size,
+                                     frame_pos,
+                                     direction,
+                                     sprite_size,
                                      framerate,
                                      nb_frames,
                                      current_frame,
                                      loop);
                                }),
                            parseByteArray(parseAnyChar()),
+                           parseVector2D(),
+                           parseVector2D(),
+                           parseVector2D(),
                            parseVector2D(),
                            parseByte<double>(),
                            parseByte<int>(),
@@ -66,6 +88,8 @@ struct AnimationData
 
   DEFAULT_SERIALIZE(string_to_byte(this->texture_path),
                     vector2DToByte(this->frame_size),
+                    vector2DToByte(this->frame_pos),
+                    vector2DToByte(this->sprite_size    ),
                     type_to_byte(this->framerate),
                     type_to_byte(this->nb_frames),
                     type_to_byte(this->current_frame),
@@ -74,23 +98,100 @@ struct AnimationData
   HOOKABLE(AnimationData,
            HOOK(texture_path),
            HOOK(frame_size),
+           HOOK(frame_pos),
+           HOOK(direction),
+           HOOK(sprite_size),
            HOOK(framerate),
            HOOK(nb_frames),
            HOOK(current_frame),
            HOOK(loop))
 };
 
+inline Parser<AnimationData> parseAnimationData()
+{
+  return apply(
+      [](std::string texture_path_vec,
+         Vector2D frame_size,
+         Vector2D frame_pos,
+         Vector2D direction,
+         Vector2D sprite_size,
+         double framerate,
+         int nb_frames,
+         int current_frame,
+         bool loop)
+      {
+        return AnimationData(
+            std::string(texture_path_vec.begin(), texture_path_vec.end()),
+            frame_size,
+            frame_pos,
+            direction,
+            sprite_size,
+            framerate,
+            nb_frames,
+            current_frame,
+            loop);
+      },
+      parseByteString(),
+      parseVector2D(),
+      parseVector2D(),
+      parseVector2D(),
+      parseVector2D(),
+      parseByte<double>(),
+      parseByte<int>(),
+      parseByte<int>(),
+      parseByte<bool>());
+}
+
 class AnimatedSprite
 {
 public:
-  AnimatedSprite();
-  ~AnimatedSprite();
+  AnimatedSprite(std::unordered_map<std::string, AnimationData> animations,
+                 std::string current_animation,
+                 std::string default_animation)
+      : animations(std::move(animations))
+      , current_animation(std::move(current_animation))
+      , default_animation(std::move(default_animation))
+  {
+    this->last_update = std::chrono::high_resolution_clock::now();
+  };
 
-  std::map<std::string, AnimationData> animations;
+  ~AnimatedSprite() = default;
+
+  std::unordered_map<std::string, AnimationData> animations;
   std::string current_animation;
   std::string default_animation = "";
 
+  std::chrono::high_resolution_clock::time_point last_update;
 
+  void update_anim(std::chrono::high_resolution_clock::time_point now);
+  DEFAULT_BYTE_CONSTRUCTOR(
+      AnimatedSprite,
+      (
+          [](std::unordered_map<std::string, AnimationData> animations,
+             std::string current_animation,
+             std::string default_animation)
+          {
+            return AnimatedSprite(std::move(animations),
+                                  std::move(current_animation),
+                                  std::move(default_animation));
+          }),
+      parseByteMap(parseByteString(), parseAnimationData()),
+      parseByteString(),
+      parseByteString())
+
+  DEFAULT_SERIALIZE(
+      map_to_byte<std::string, AnimationData>(
+          this->animations,
+          std::function<ByteArray(std::string const&)>(string_to_byte),
+          std::function<ByteArray(AnimationData)>([](AnimationData data)
+                                                  { return data.to_bytes(); })),
+      string_to_byte(this->current_animation),
+      string_to_byte(this->default_animation))
+
+  HOOKABLE(AnimatedSprite,
+           HOOK(animations),
+           HOOK(current_animation),
+           HOOK(default_animation))
 };
 
 #endif /* !ANIMATED_SPRITE_HPP_ */
