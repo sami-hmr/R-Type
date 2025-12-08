@@ -5,6 +5,7 @@
 ** Client
 */
 
+#include "NetworkShared.hpp"
 #include "plugin/CircularBuffer.hpp"
 #include "plugin/events/Events.hpp"
 #include "Client.hpp"
@@ -17,12 +18,12 @@ const std::unordered_map<std::uint8_t,
         {DISCONNECT, &Client::handle_disconnect_response},
 };
 
-Client::Client(ClientConnection const& c, std::queue<std::shared_ptr<ByteArray>> &cmpnts, std::atomic<bool> &running, std::mutex &lock) : _socket(_io_c), _cmpts_lock(lock), _running(running), _components_to_create(std::reference_wrapper(cmpnts))
+Client::Client(ClientConnection const& c, SharedQueue &shared_queue, std::atomic<bool> &running) : _socket(_io_c), _components_to_create(std::ref(shared_queue)), _running(running)
 {
     _socket.open(asio::ip::udp::v4());
     _server_endpoint = asio::ip::udp::endpoint(asio::ip::address::from_string(c.host), c.port);
 
-    _running = true;
+    _running.get() = true;
     NETWORK_LOGGER("client",
            LogLevel::INFO,
            std::format("Connecting to {}:{}", c.host, c.port));
@@ -52,7 +53,7 @@ void Client::receive_loop()
   CircularBuffer<BUFFER_SIZE> recv_buf;
   asio::ip::udp::endpoint sender_endpoint;
 
-  while (_running) {
+  while (_running.get()) {
     try {
       std::error_code ec;
       std::size_t len = recv_buf.read_socket(_socket, sender_endpoint, ec);
@@ -64,7 +65,7 @@ void Client::receive_loop()
       }
 
       if (ec) {
-        if (_running) {
+        if (_running.get()) {
           NETWORK_LOGGER("client",
                  LogLevel::ERROR,
                  std::format("Receive error: {}", ec.message()));
@@ -78,7 +79,7 @@ void Client::receive_loop()
       }
 
     } catch (std::exception& e) {
-      if (_running) {
+      if (_running.get()) {
         NETWORK_LOGGER("client",
                LogLevel::ERROR,
                std::format("Error in receive loop: {}", e.what()));
@@ -102,103 +103,4 @@ void Client::handle_package(ByteArray const& package)
     return;
   }
   handle_connectionless_response(pkg->real_package);
-}
-
-void Client::send_connectionless(ByteArray const& command)
-{
-  ByteArray pkg = MAGIC_SEQUENCE + command + PROTOCOL_EOF;
-
-  _socket.send_to(asio::buffer(pkg), _server_endpoint);
-
-  NETWORK_LOGGER("client",
-         LogLevel::DEBUG,
-         std::format("Sent connectionless package of size: {}", pkg.size()));
-}
-
-void Client::handle_connectionless_response(ByteArray const& response)
-{
-  if (response.empty()) {
-    NETWORK_LOGGER("client", LogLevel::DEBUG, "Empty response");
-    return;
-  }
-
-  NETWORK_LOGGER("client",
-         LogLevel::DEBUG,
-         std::format("Received connectionless response of size: {}",
-                     response.size()));
-  auto const& parsed = this->parse_connectionless_package(response);
-  if (!parsed) {
-    return;
-  }
-  try {
-    (this->*(_command_table.at(parsed->command_code)))(parsed->command);
-  } catch (std::out_of_range const&) {
-    NETWORK_LOGGER("client", LogLevel::DEBUG,
-        std::format("Unhandled connectionless response: {}", parsed->command_code));
-  }
-}
-
-void Client::send_getchallenge()
-{
-  send_connectionless(type_to_byte<Byte>(GETCHALLENGE));
-}
-
-void Client::send_connect(std::uint32_t challenge)
-{
-  ByteArray msg = type_to_byte<Byte>(CONNECT) + type_to_byte(challenge)
-      + string_to_byte(_player_name);
-
-  send_connectionless(msg);
-}
-
-void Client::handle_challenge_response(ByteArray const& package)
-{
-  auto const& parsed = this->parse_challenge_response(package);
-  if (!parsed) {
-    return;
-  }
-
-  NETWORK_LOGGER("client",
-         LogLevel::INFO,
-         std::format("Received challenge: {}", parsed->challenge));
-
-  _state = ConnectionState::CONNECTING;
-  send_connect(parsed->challenge);
-}
-
-void Client::handle_connect_response(ByteArray const& package)
-{
-  auto const& parsed = this->parse_connect_response(package);
-
-  if (!parsed) {
-    return;
-  }
-
-  _state = ConnectionState::CONNECTED;
-  NETWORK_LOGGER("client",
-         LogLevel::INFO,
-         std::format("Connected! Client ID: {}, Server ID: {}",
-                     parsed->client_id,
-                     parsed->server_id));
-}
-
-void Client::handle_disconnect_response(ByteArray const& package)
-{
-  std::string reason = "Unknown reason";
-
-  if (!package.empty()) {
-    // Find the first null terminator or use whole string
-    auto null_pos = std::find(package.begin(), package.end(), 0);
-    reason = std::string(package.begin(), null_pos);
-  }
-
-  NETWORK_LOGGER("client",
-         LogLevel::WARNING,
-         std::format("Server disconnected: {}", reason));
-  
-  _running = false;
-
-  // this->_registery.get().emit<ShutdownEvent>(
-  //     std::format("Server disconnected: {}", reason), 0);
-  // no registery in client. Find anothere way to disconnect
 }

@@ -6,6 +6,7 @@
 #include <asio/io_context.hpp>
 #include <asio/ip/udp.hpp>
 
+#include "NetworkShared.hpp"
 #include "plugin/Byte.hpp"
 #include "ecs/Registery.hpp"
 #include "plugin/APlugin.hpp"
@@ -21,8 +22,7 @@ class NetworkClient : public APlugin
   private:
     void connection_thread(ClientConnection const& c);
 
-    std::queue<std::shared_ptr<ByteArray>> _components_to_create;
+    SharedQueue _component_queue;
     std::vector<std::thread> _threads;
-    std::mutex _cmpts_lock;
     std::atomic<bool> _running = false;
 };

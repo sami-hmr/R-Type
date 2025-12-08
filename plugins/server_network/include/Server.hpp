@@ -18,6 +18,7 @@
 #include <asio/error_code.hpp>
 #include <asio/io_context.hpp>
 
+#include "NetworkShared.hpp"
 #include "plugin/CircularBuffer.hpp"
 #include "ServerCommands.hpp"
 #include "NetworkCommun.hpp"
@@ -27,7 +28,7 @@
 class Server
 {
   public:
-    Server(ServerLaunching const& s, std::queue<std::shared_ptr<ByteArray>> &cmpnts, std::atomic<bool> &running, std::mutex &lock);
+    Server(ServerLaunching const& s, SharedQueue &, std::atomic<bool> &running);
     ~Server();
 
     void close();
@@ -62,7 +63,7 @@ class Server
 
     static const std::unordered_map<std::uint8_t,
       void (Server::*)(ByteArray const&, const asio::ip::udp::endpoint&)>
-      _command_table;
+      command_table;
 
     asio::io_context _io_c;
     asio::ip::udp::socket _socket;
@@ -73,8 +74,7 @@ class Server
     std::string _hostname = "R-Type Server";
     std::string _mapname = "level1";
     int _max_players = MAX_PLAYERS;
-    std::mutex &_cmpts_lock;
 
+    std::reference_wrapper<SharedQueue> _shared_queue;
     std::atomic<bool> &_running;
-    std::reference_wrapper<std::queue<std::shared_ptr<ByteArray>>> _components_to_create;
 };

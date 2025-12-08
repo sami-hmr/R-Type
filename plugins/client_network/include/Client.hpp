@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include <atomic>
+#include <functional>
 #include <queue>
 #include <string>
 #include <cstdint>
@@ -16,6 +18,7 @@
 #include <asio/ip/udp.hpp>
 
 #include "ClientConnection.hpp"
+#include "NetworkShared.hpp"
 #include "ServerCommands.hpp"
 #include "NetworkCommun.hpp"
 #include "ServerLaunch.hpp"
@@ -24,7 +27,7 @@
 class Client
 {
   public:
-    Client(ClientConnection const& c, std::queue<std::shared_ptr<ByteArray>> &cmpnts, std::atomic<bool> &running, std::mutex &lock);
+    Client(ClientConnection const& c, SharedQueue &, std::atomic<bool> &running);
     ~Client();
 
     void close();
@@ -63,8 +66,7 @@ class Client
     std::uint8_t _client_id = 0;
     std::uint32_t _server_id = 0;
     std::string _player_name = "Player";
-    std::mutex &_cmpts_lock;
 
-    std::atomic<bool> &_running;
-    std::reference_wrapper<std::queue<std::shared_ptr<ByteArray>>> _components_to_create;
+    std::reference_wrapper<SharedQueue> _components_to_create;
+    std::reference_wrapper<std::atomic<bool>> _running;
 };

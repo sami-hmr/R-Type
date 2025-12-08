@@ -8,6 +8,7 @@ add_library(${LIB_NAME} SHARED
     src/CommandParsing.cpp
     src/Network.cpp
     src/Client.cpp
+    src/Connectionless.cpp
 )
 
 target_compile_features(${LIB_NAME} PRIVATE cxx_std_23)

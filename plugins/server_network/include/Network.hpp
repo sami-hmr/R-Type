@@ -13,6 +13,7 @@
 #include <asio/ip/udp.hpp>
 
 #include "CustomException.hpp"
+#include "NetworkShared.hpp"
 #include "ServerLaunch.hpp"
 #include "ecs/Registery.hpp"
 #include "plugin/APlugin.hpp"
@@ -29,9 +30,8 @@ class NetworkServer : public APlugin
     void launch_server(ServerLaunching const& s);
 
     // std::reference_wrapper<Server> _server;
-    std::queue<std::shared_ptr<ByteArray>> _components_to_create;
     std::vector<std::thread> _threads;
-    std::mutex _cmpts_lock;
+    SharedQueue _component_queue;
     std::atomic<bool> _running = false;
 };
 

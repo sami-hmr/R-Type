@@ -1,0 +1,168 @@
+#include <cstdint>
+#include <random>
+#include "Network.hpp"
+#include "Server.hpp"
+void Server::handle_connectionless_packet(ConnectionlessCommand const& command,
+                                          const asio::ip::udp::endpoint& sender)
+{
+  NETWORK_LOGGER("server",
+                 std::uint8_t(LogLevel::DEBUG),
+                 std::format("Received connectionless packet: '{}'",
+                             command.command_code));
+
+  try {
+    (this->*(command_table.find(command.command_code)->second))(
+        command.command, sender);
+  } catch (std::out_of_range const&) {
+    NETWORK_LOGGER("server",
+                   std::uint8_t(LogLevel::WARNING),
+                   std::format("Unknown command: {}", command.command_code));
+  }
+}
+
+void Server::send_connectionless(ByteArray const& response,
+                                 const asio::ip::udp::endpoint& endpoint)
+{
+  ByteArray pkg = MAGIC_SEQUENCE + response + PROTOCOL_EOF;
+
+  _socket.send_to(asio::buffer(pkg), endpoint);
+
+  NETWORK_LOGGER(
+      "server",
+      std::uint8_t(LogLevel::DEBUG),
+      std::format("Sent connectionless package of size: {}", pkg.size()));
+}
+
+void Server::handle_getinfo(ByteArray const& cmd,
+                            const asio::ip::udp::endpoint& sender)
+{
+  if (!cmd.empty()) {
+    NETWORK_LOGGER("server",
+                   std::uint8_t(LogLevel::WARNING),
+                   "Invalid getinfo command: command not empty");
+    return;
+  }
+  ByteArray pkg = type_to_byte<Byte>(INFORESPONSE)
+      + ByteArray(_hostname.begin(), _hostname.end())
+      + ByteArray(_mapname.begin(), _mapname.end()) + type_to_byte(COOP)
+      + type_to_byte(_max_players)
+      + type_to_byte<Byte>(CURRENT_PROTOCOL_VERSION);
+
+  send_connectionless(pkg, sender);
+}
+
+void Server::handle_getstatus(ByteArray const& cmd,
+                              const asio::ip::udp::endpoint& sender)
+{
+  if (!cmd.empty()) {
+    NETWORK_LOGGER("server",
+                   std::uint8_t(LogLevel::WARNING),
+                   "Invalid getstatus command: command not empty");
+    return;
+  }
+
+  ByteArray pkg = type_to_byte<Byte>(INFORESPONSE)
+      + ByteArray(_hostname.begin(), _hostname.end())
+      + ByteArray(_mapname.begin(), _mapname.end()) + type_to_byte(COOP)
+      + type_to_byte(_max_players)
+      + type_to_byte<Byte>(CURRENT_PROTOCOL_VERSION);
+
+  for (const auto& client : _clients) {
+    if (client.state == ClientState::CONNECTED) {
+      pkg = pkg + type_to_byte<std::uint32_t>(client.score)
+          + type_to_byte<std::uint8_t>(client.ping)
+          + ByteArray(client.player_name.begin(), client.player_name.end());
+    }
+  }
+
+  send_connectionless(pkg, sender);
+}
+
+void Server::handle_getchallenge(ByteArray const& cmd,
+                                 const asio::ip::udp::endpoint& sender)
+{
+  if (!cmd.empty()) {
+    NETWORK_LOGGER("server",
+                   std::uint8_t(LogLevel::WARNING),
+                   "Invalid getchallenge command: command not empty");
+    return;
+  }
+  uint32_t challenge = generate_challenge();
+
+  ClientInfo client;
+
+  client.endpoint = sender;
+  client.challenge = challenge;
+  client.state = ClientState::CHALLENGING;
+
+  _clients.push_back(client);
+
+  ByteArray pkg = type_to_byte<Byte>(CHALLENGERESPONSE)
+      + type_to_byte<std::uint32_t>(challenge);
+  send_connectionless(pkg, sender);
+}
+
+void Server::handle_connect(ByteArray const& cmd,
+                            const asio::ip::udp::endpoint& sender)
+{
+  std::optional<ConnectCommand> parsed = this->parse_connect_command(cmd);
+  if (!parsed) {
+    return;
+  }
+
+  try {
+    ClientInfo& client = find_client_by_endpoint(sender);
+
+    if (client.state != ClientState::CHALLENGING
+        || client.challenge != parsed->challenge)
+    {
+      NETWORK_LOGGER(
+          "server", std::uint8_t(LogLevel::WARNING), "Invalid challenge");
+      return;
+    }
+    uint8_t client_id = _clients.size();  // TODO: change to incrementator
+                                          // uint32 in the wrapper class
+
+    client.client_id = client_id;
+    client.player_name = parsed->player_name;
+    client.state = ClientState::CONNECTED;
+
+    NETWORK_LOGGER("server",
+                   std::uint8_t(LogLevel::INFO),
+                   std::format("Player '{}' connected as client {}",
+                               parsed->player_name,
+                               static_cast<int>(client_id)));
+
+    ByteArray pkg = type_to_byte<Byte>(CONNECTRESPONSE)
+        + type_to_byte<std::uint8_t>(client_id)
+        + type_to_byte<std::uint32_t>(_server_id);
+
+    send_connectionless(pkg, sender);
+
+  } catch (ClientNotFound&) {
+    NETWORK_LOGGER(
+        "server", std::uint8_t(LogLevel::WARNING), "Invalid challenge");
+    return;
+  }
+}
+
+std::uint32_t Server::generate_challenge()
+{
+  static std::random_device rd;
+  static std::mt19937 gen(rd());
+  static std::uniform_int_distribution<uint32_t> dis(1, UINT32_MAX);
+  return dis(gen);
+}
+
+ClientInfo& Server::find_client_by_endpoint(
+    const asio::ip::udp::endpoint& endpoint)
+{
+  for (auto& client : _clients) {
+    if (client.state != ClientState::DISCONNECTED
+        && client.endpoint == endpoint)
+    {
+      return client;
+    }
+  }
+  throw ClientNotFound("");
+}
