@@ -23,11 +23,14 @@
 #include "Json/JsonParser.hpp"
 #include "ServerLaunch.hpp"
 #include "ecs/Registery.hpp"
+#include "ecs/Scenes.hpp"
+#include "ecs/SparseArray.hpp"
 #include "ecs/zipper/Zipper.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
+#include "plugin/components/AnimatedSprite.hpp"
 #include "plugin/components/Drawable.hpp"
 #include "plugin/components/Sprite.hpp"
 #include "plugin/components/Text.hpp"
@@ -77,7 +80,8 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
               {COMP_INIT(Drawable, Drawable, init_drawable),
                COMP_INIT(Sprite, Sprite, init_sprite),
                COMP_INIT(Text, Text, init_text),
-               COMP_INIT(Background, Background, init_background)})
+               COMP_INIT(Background, Background, init_background),
+              COMP_INIT(AnimatedSprite, AnimatedSprite, init_animated_sprite)})
 {
   _window =
       sf::RenderWindow(sf::VideoMode(window_size), "R-Type - SFML Renderer");
@@ -87,6 +91,7 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
   _registery.get().register_component<Sprite>("sfml:Sprite");
   _registery.get().register_component<Text>("sfml:Text");
   _registery.get().register_component<Background>("sfml:Background");
+  _registery.get().register_component<AnimatedSprite>("sfml:AnimatedSprite");
 
   _registery.get().add_system<Scene, Drawable>(
       [this](Registery&,
@@ -124,6 +129,13 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
              const SparseArray<Drawable>& draw,
              const SparseArray<Text>& txt)
       { this->render_text(r, pos, draw, txt); });
+
+  _registery.get().add_system<Position, Drawable, AnimatedSprite>(
+      [this](Registery& r,
+             const SparseArray<Position>& positions,
+             const SparseArray<Drawable>& drawable,
+            SparseArray<AnimatedSprite>& AnimatedSprites)
+      { this->animation_system(r, positions, drawable, AnimatedSprites); });
 
   _registery.get().add_system<>([this](Registery&) { this->display(); });
   _textures.insert_or_assign(SFMLRenderer::placeholder_texture,
@@ -348,7 +360,10 @@ void SFMLRenderer::render_sprites(Registery& /*unused*/,
                                   const SparseArray<Drawable>& drawable,
                                   const SparseArray<Sprite>& sprites)
 {
-  std::vector<std::tuple<std::reference_wrapper<sf::Texture>, double, sf::Vector2f, int>> drawables;
+  std::vector<
+      std::
+          tuple<std::reference_wrapper<sf::Texture>, double, sf::Vector2f, int>>
+      drawables;
   sf::Vector2u window_size = _window.getSize();
     float min_dimension =
       static_cast<float>(std::min(window_size.x, window_size.y));
@@ -356,12 +371,12 @@ void SFMLRenderer::render_sprites(Registery& /*unused*/,
   drawables.reserve(
       std::max({positions.size(), drawable.size(), sprites.size()}));
 
-  for (auto &&[pos, draw, spr] : Zipper(positions, drawable, sprites)) {
+  for (auto&& [pos, draw, spr] : Zipper(positions, drawable, sprites)) {
     if (!draw.enabled) {
       continue;
     }
 
-    sf::Texture &texture = load_texture(spr.texture_path);
+    sf::Texture& texture = load_texture(spr.texture_path);
 
     float scale_x =
         static_cast<float>(window_size.x * spr.scale.x) / texture.getSize().x;
@@ -374,19 +389,20 @@ void SFMLRenderer::render_sprites(Registery& /*unused*/,
       static_cast<float>((pos.pos.y + 1.0) * min_dimension / 2.0f));
     drawables.emplace_back(std::ref(texture), uniform_scale, new_pos, pos.z);
   }
-  std::sort(drawables.begin(), drawables.end(), [](auto const &a, auto const &b) {
-    return std::get<3>(a) < std::get<3>(b);
-  });
-  
+  std::sort(drawables.begin(),
+            drawables.end(),
+            [](auto const& a, auto const& b)
+            { return std::get<3>(a) < std::get<3>(b); });
+
   for (auto&& [texture, scale, new_pos, z] : drawables) {
     if (!this->_sprite.has_value()) {
       this->_sprite.emplace(texture.get());
     } else {
       this->_sprite->setTexture(texture.get(), true);
     }
-    this->_sprite->setOrigin(sf::Vector2f(
-        static_cast<float>(texture.get().getSize().x) / 2.0f,
-        static_cast<float>(texture.get().getSize().y) / 2.0f));
+    this->_sprite->setOrigin(
+        sf::Vector2f(static_cast<float>(texture.get().getSize().x) / 2.0f,
+                     static_cast<float>(texture.get().getSize().y) / 2.0f));
     this->_sprite->setScale(sf::Vector2f(scale, scale));
     this->_sprite->setPosition(new_pos);
     _window.draw(*this->_sprite);

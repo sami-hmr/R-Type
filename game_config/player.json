@@ -14,25 +14,46 @@
                     "sfml:Drawable": {},
                     "moving:Velocity": {
                         "speed": {
-                            "x": 0.05,
-                            "y": 0.05
+                            "x": 0.01,
+                            "y": 0.01
                         },
                         "direction": {
                             "x": 0.0,
                             "y": 0.0
                         }
                     },
-                    "sfml:Sprite": {
-                        "texture": "assets/spaceship.png",
-                        "size": {
-                            "width": "20.0%",
-                            "height": "20.0%"
-                        }
+                    "sfml:AnimatedSprite": {
+                        "animations": [
+                            {
+                                "name": "idle",
+                                "texture": "assets/player.png",
+                                "frame_size": {
+                                    "x": 350.0,
+                                    "y": 150.0
+                                },
+                                "frame_pos": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "direction": {
+                                    "x": 1.0,
+                                    "y": 0.0
+                                },
+                                "sprite_size": {
+                                    "width": "20.0%",
+                                    "height": "20.0%"
+                                },
+                                "framerate": 10.0,
+                                "nb_frames": 7,
+                                "loop": true
+                            }
+                        ],
+                        "default_animation": "idle"
                     },
                     "collision:Collidable": {
-                        "width": 0.1,
-                        "height": 0.1,
-                        "collision_type": "Solid"
+                        "width": 0.2,
+                        "height": 0.2,
+                        "collision_type": "solid"
                     },
                     "controller:Controllable": {
                         "UP": "Z",
@@ -41,11 +62,8 @@
                         "RIGHT": "D"
                     },
                     "life:Health": {
-                        "current": 30,
+                        "current": 5,
                         "max": 100
-                    },
-                    "life:Damage": {
-                        "amount": 0
                     },
                     "life:Heal": {
                         "amount": 1
