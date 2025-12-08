@@ -48,8 +48,15 @@ std::optional<std::reference_wrapper<const T>> get_ref(Registery& r,
                                                        JsonObject const& object,
                                                        std::string const& key)
 {
+  auto it = object.find(key);
+  if (it == object.end()) {
+    return std::nullopt;
+  }
+
+  auto const& value = it->second.value;
+
   try {
-    std::string hook = std::get<std::string>(object.at(key).value);
+    std::string hook = std::get<std::string>(value);
     try {
       if (hook.starts_with('#')) {
         std::string striped = hook.substr(1);
@@ -71,7 +78,7 @@ std::optional<std::reference_wrapper<const T>> get_ref(Registery& r,
 
   if constexpr (is_in_json_variant_v<T>) {
     try {
-      return std::reference_wrapper<const T>(std::get<T>(object.at(key).value));
+      return std::reference_wrapper<const T>(std::get<T>(value));
     } catch (...) {
       return std::nullopt;
     }

@@ -1,12 +1,9 @@
 
 #include <algorithm>
-#include <cstdlib>
 #include <functional>
 #include <iostream>
-#include <memory>
 #include <stdexcept>
 #include <tuple>
-#include <variant>
 
 #include "SFMLRenderer.hpp"
 
@@ -19,16 +16,17 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
 
-#include "ClientConnection.hpp"
 #include "Json/JsonParser.hpp"
-#include "ServerLaunch.hpp"
 #include "ecs/Registery.hpp"
 #include "ecs/Scenes.hpp"
+#include "ecs/SparseArray.hpp"
 #include "ecs/zipper/Zipper.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
+#include "plugin/components/AnimatedSprite.hpp"
+#include "plugin/components/Background.hpp"
 #include "plugin/components/Drawable.hpp"
 #include "plugin/components/Sprite.hpp"
 #include "plugin/components/Text.hpp"
@@ -76,7 +74,9 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
               {"moving", "client_network", "server_network"},
               {COMP_INIT(Drawable, Drawable, init_drawable),
                COMP_INIT(Sprite, Sprite, init_sprite),
-               COMP_INIT(Text, Text, init_text)})
+               COMP_INIT(Text, Text, init_text),
+               COMP_INIT(Background, Background, init_background),
+               COMP_INIT(AnimatedSprite, AnimatedSprite, init_animated_sprite)})
 {
   _window =
       sf::RenderWindow(sf::VideoMode(window_size), "R-Type - SFML Renderer");
@@ -85,11 +85,20 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
   _registery.get().register_component<Drawable>("sfml:Drawable");
   _registery.get().register_component<Sprite>("sfml:Sprite");
   _registery.get().register_component<Text>("sfml:Text");
+  _registery.get().register_component<Background>("sfml:Background");
+  _registery.get().register_component<AnimatedSprite>("sfml:AnimatedSprite");
 
   _registery.get().add_system<>([this](Registery&) { this->handle_events(); },
                                 1);
   _registery.get().add_system<>([this](Registery&)
                                 { _window.clear(sf::Color::Black); });
+  _registery.get().add_system<Scene, Drawable, Background>(
+      [this](Registery& r,
+             const SparseArray<Scene>& scenes,
+             const SparseArray<Drawable>& drawables,
+             SparseArray<Background>& backgrounds)
+      { this->background_system(r, scenes, drawables, backgrounds); });
+
   _registery.get().add_system<Scene, Position, Drawable, Sprite>(
       [this](Registery& r,
              SparseArray<Scene>& scenes,
@@ -105,6 +114,16 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
              const SparseArray<Drawable>& draw,
              const SparseArray<Text>& txt)
       { this->render_text(r, scenes, pos, draw, txt); });
+
+  _registery.get().add_system<Scene, Position, Drawable, AnimatedSprite>(
+      [this](Registery& r,
+             const SparseArray<Scene>& scenes,
+             const SparseArray<Position>& positions,
+             const SparseArray<Drawable>& drawable,
+             SparseArray<AnimatedSprite>& AnimatedSprites)
+      {
+        this->animation_system(r, scenes, positions, drawable, AnimatedSprites);
+      });
 
   _registery.get().add_system<>([this](Registery&) { this->display(); });
   _textures.insert_or_assign(SFMLRenderer::placeholder_texture,
@@ -150,19 +169,6 @@ void SFMLRenderer::init_drawable(Registery::Entity const& entity,
                                  JsonObject const&)
 {
   _registery.get().emplace_component<Drawable>(entity);
-}
-
-template<typename T>
-Vector2D SFMLRenderer::parse_vector2d(Registery::Entity const& entity,
-                                      JsonObject const& obj,
-                                      std::string const& str)
-{
-  auto vec = get_value<T, Vector2D>(
-      this->_registery.get(), obj, entity, str, "width", "height");
-
-  std::cout << "vec: " << vec.value() << std::endl;
-
-  return vec.value();
 }
 
 void SFMLRenderer::init_sprite(Registery::Entity const& entity,
@@ -226,11 +232,11 @@ std::optional<Key> SFMLRenderer::sfml_key_to_key(sf::Keyboard::Key sfml_key)
 void SFMLRenderer::handle_resize()
 {
   sf::Vector2u new_size = _window.getSize();
-  sf::View view(sf::Vector2f(static_cast<float>(new_size.x) / 2,
-                             static_cast<float>(new_size.y) / 2),
-                sf::Vector2f(static_cast<float>(new_size.x),
-                             static_cast<float>(new_size.y)));
-  _window.setView(view);
+  this->_view.setSize(sf::Vector2f(static_cast<float>(new_size.x),
+                                   static_cast<float>(new_size.y)));
+  this->_view.setCenter(sf::Vector2f(static_cast<float>(new_size.x) / 2,
+                                     static_cast<float>(new_size.y) / 2));
+  _window.setView(this->_view);
 }
 
 void SFMLRenderer::handle_events()
@@ -307,6 +313,9 @@ void SFMLRenderer::render_sprites(Registery& /*unused*/,
           tuple<std::reference_wrapper<sf::Texture>, double, sf::Vector2f, int>>
       drawables;
   sf::Vector2u window_size = _window.getSize();
+  float min_dimension =
+      static_cast<float>(std::min(window_size.x, window_size.y));
+
   drawables.reserve(
       std::max({positions.size(), drawable.size(), sprites.size()}));
 
@@ -329,8 +338,8 @@ void SFMLRenderer::render_sprites(Registery& /*unused*/,
     float uniform_scale = std::min(scale_x, scale_y);
 
     sf::Vector2f new_pos(
-        static_cast<float>((pos.pos.x + 1.0) * window_size.x / 2.0),
-        static_cast<float>((pos.pos.y + 1.0) * window_size.y / 2.0));
+        static_cast<float>((pos.pos.x + 1.0) * min_dimension / 2.0f),
+        static_cast<float>((pos.pos.y + 1.0) * min_dimension / 2.0f));
     drawables.emplace_back(std::ref(texture), uniform_scale, new_pos, pos.z);
   }
   std::sort(drawables.begin(),
@@ -342,7 +351,7 @@ void SFMLRenderer::render_sprites(Registery& /*unused*/,
     if (!this->_sprite.has_value()) {
       this->_sprite.emplace(texture.get());
     } else {
-      this->_sprite->setTexture(texture.get());
+      this->_sprite->setTexture(texture.get(), true);
     }
     this->_sprite->setOrigin(
         sf::Vector2f(static_cast<float>(texture.get().getSize().x) / 2.0f,
@@ -378,9 +387,11 @@ void SFMLRenderer::render_text(Registery& /*unused*/,
     _text.value().setString(txt.text);
 
     sf::Vector2u window_size = _window.getSize();
+    float min_dimension =
+        static_cast<float>(std::min(window_size.x, window_size.y));
     sf::Vector2f new_pos(
-        static_cast<float>((pos.pos.x + 1.0) * window_size.x / 2.0),
-        static_cast<float>((pos.pos.y + 1.0) * window_size.y / 2.0));
+        static_cast<float>((pos.pos.x + 1.0) * min_dimension / 2.0f),
+        static_cast<float>((pos.pos.y + 1.0) * min_dimension / 2.0f));
     _text.value().setPosition(new_pos);
     _text.value().setCharacterSize(static_cast<unsigned int>(txt.scale.x));
     _window.draw(_text.value());

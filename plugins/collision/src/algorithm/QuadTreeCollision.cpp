@@ -12,7 +12,8 @@ void QuadTreeCollision::update(std::vector<CollisionEntity> const& entities)
   }
 }
 
-std::vector<ICollisionAlgorithm::CollisionPair> QuadTreeCollision::detect_collisions(
+std::vector<ICollisionAlgorithm::CollisionPair>
+QuadTreeCollision::detect_collisions(
     std::vector<CollisionEntity> const& entities)
 {
   std::vector<CollisionPair> collisions;
@@ -34,4 +35,12 @@ std::vector<ICollisionAlgorithm::CollisionPair> QuadTreeCollision::detect_collis
   }
 
   return collisions;
+}
+
+std::vector<ICollisionAlgorithm::CollisionEntity> QuadTreeCollision::detect_range_collisions(Rect const& range)
+{
+  std::vector<CollisionEntity> entities;
+
+  _root.retrieve(entities, range);
+  return entities;
 }
