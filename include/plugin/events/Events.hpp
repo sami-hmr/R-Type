@@ -4,13 +4,27 @@
 #include <map>
 #include <optional>
 #include <string>
+#include <utility>
 
+#include "ByteParser/ByteParser.hpp"
 #include "ParserUtils.hpp"
 #include "ecs/Registery.hpp"
 #include "plugin/Byte.hpp"
 
 struct ShutdownEvent
 {
+  ShutdownEvent(std::string r, int e)
+      : reason(std::move(r))
+      , exit_code(e)
+  {
+  }
+  DEFAULT_BYTE_CONSTRUCTOR(ShutdownEvent,
+                           ([](std::string const& r, int e)
+                            { return (ShutdownEvent) {r, e}; }),
+                           parseByteString(),
+                           parseByte<int>())
+
+  DEFAULT_SERIALIZE(string_to_byte(this->reason), type_to_byte(this->exit_code))
   std::string reason;
   int exit_code = 0;
 };

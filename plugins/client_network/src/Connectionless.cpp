@@ -1,5 +1,7 @@
 #include "Client.hpp"
+#include "NetworkShared.hpp"
 #include "plugin/Byte.hpp"
+#include "plugin/events/Events.hpp"
 
 void Client::send_connectionless(ByteArray const& command)
 {
@@ -95,7 +97,6 @@ void Client::handle_disconnect_response(ByteArray const& package)
 
   _running.get() = false;
 
-  // this->_registery.get().emit<ShutdownEvent>(
-  //     std::format("Server disconnected: {}", reason), 0);
-  // no registery in client. Find anothere way to disconnect
+  ShutdownEvent e(std::format("Server disconnected: {}", reason), 0);
+  this->transmit_event(EventBuilder{.event_id="shutdown", .data=e.to_bytes()});
 }

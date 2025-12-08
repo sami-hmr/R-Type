@@ -18,7 +18,7 @@ const std::unordered_map<std::uint8_t,
         {DISCONNECT, &Client::handle_disconnect_response},
 };
 
-Client::Client(ClientConnection const& c, SharedQueue &shared_queue, std::atomic<bool> &running) : _socket(_io_c), _components_to_create(std::ref(shared_queue)), _running(running)
+Client::Client(ClientConnection const& c, SharedQueue<ComponentBuilder> &shared_components, SharedQueue<EventBuilder> &shared_events,  std::atomic<bool> &running) : _socket(_io_c), _components_to_create(std::ref(shared_components)), _events_to_transmit(std::ref(shared_events)),  _running(running)
 {
     _socket.open(asio::ip::udp::v4());
     _server_endpoint = asio::ip::udp::endpoint(asio::ip::address::from_string(c.host), c.port);
@@ -103,4 +103,10 @@ void Client::handle_package(ByteArray const& package)
     return;
   }
   handle_connectionless_response(pkg->real_package);
+}
+
+void Client::transmit_event(EventBuilder &&to_transmit) {
+    this->_events_to_transmit.get().lock.lock();
+    this->_events_to_transmit.get().queue.push(std::move(to_transmit));
+    this->_events_to_transmit.get().lock.unlock();
 }

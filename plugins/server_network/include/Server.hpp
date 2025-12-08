@@ -28,7 +28,7 @@
 class Server
 {
   public:
-    Server(ServerLaunching const& s, SharedQueue &, std::atomic<bool> &running);
+    Server(ServerLaunching const& s, SharedQueue<ComponentBuilder> &, std::atomic<bool> &running);
     ~Server();
 
     void close();
@@ -75,6 +75,6 @@ class Server
     std::string _mapname = "level1";
     int _max_players = MAX_PLAYERS;
 
-    std::reference_wrapper<SharedQueue> _shared_queue;
+    std::reference_wrapper<SharedQueue<ComponentBuilder>> _shared_queue;
     std::atomic<bool> &_running;
 };

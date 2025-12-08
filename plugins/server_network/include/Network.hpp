@@ -31,7 +31,7 @@ class NetworkServer : public APlugin
 
     // std::reference_wrapper<Server> _server;
     std::vector<std::thread> _threads;
-    SharedQueue _component_queue;
+    SharedQueue<ComponentBuilder> _component_queue;
     std::atomic<bool> _running = false;
 };
 

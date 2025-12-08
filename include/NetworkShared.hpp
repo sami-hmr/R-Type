@@ -12,7 +12,13 @@ struct ComponentBuilder {
     ByteArray data;
 };
 
+struct EventBuilder {
+    std::string event_id;
+    ByteArray data;
+};
+
+template<typename T>
 struct SharedQueue {
     std::mutex lock;
-    std::queue<ComponentBuilder> queue;
+    std::queue<T> queue;
 };

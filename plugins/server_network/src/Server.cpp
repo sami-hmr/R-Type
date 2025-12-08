@@ -24,7 +24,7 @@ const std::unordered_map<std::uint8_t,
 };
 
 Server::Server(ServerLaunching const& s,
-               SharedQueue &shared_queue,
+               SharedQueue<ComponentBuilder> &shared_queue,
                std::atomic<bool>& running)
     : _socket(_io_c, asio::ip::udp::endpoint(asio::ip::udp::v4(), s.port))
     , _shared_queue(std::ref(shared_queue))

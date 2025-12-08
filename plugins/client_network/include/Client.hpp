@@ -27,7 +27,7 @@
 class Client
 {
   public:
-    Client(ClientConnection const& c, SharedQueue &, std::atomic<bool> &running);
+    Client(ClientConnection const& c, SharedQueue<ComponentBuilder> &,SharedQueue<EventBuilder> &, std::atomic<bool> &running);
     ~Client();
 
     void close();
@@ -53,6 +53,7 @@ class Client
     std::optional<ConnectResponse> parse_connect_response(ByteArray const& package);
     std::optional<ChallengeResponse> parse_challenge_response(ByteArray const& package);
 
+    void transmit_event(EventBuilder &&);
 
     static const std::unordered_map<std::uint8_t,
                                     void (Client::*)(ByteArray const&)>
@@ -67,6 +68,7 @@ class Client
     std::uint32_t _server_id = 0;
     std::string _player_name = "Player";
 
-    std::reference_wrapper<SharedQueue> _components_to_create;
+    std::reference_wrapper<SharedQueue<ComponentBuilder>> _components_to_create;
+    std::reference_wrapper<SharedQueue<EventBuilder>> _events_to_transmit;
     std::reference_wrapper<std::atomic<bool>> _running;
 };

@@ -22,7 +22,7 @@ class NetworkClient : public APlugin
   private:
     void connection_thread(ClientConnection const& c);
 
-    SharedQueue _component_queue;
+    SharedQueue<ComponentBuilder> _component_queue;
     std::vector<std::thread> _threads;
     std::atomic<bool> _running = false;
 };
