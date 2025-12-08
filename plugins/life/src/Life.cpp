@@ -12,6 +12,7 @@
 #include "ecs/Registry.hpp"
 #include "ecs/SparseArray.hpp"
 #include "ecs/zipper/Zipper.hpp"
+#include "ecs/zipper/ZipperIndex.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Damage.hpp"
@@ -210,10 +211,10 @@ void Life::update_cooldowns(Registry& reg)
   double dt = reg.clock().delta_seconds();
   auto& healths = reg.get_components<Health>();
 
-  for (size_t i = 0; i < healths.size(); ++i) {
-    if (healths[i].has_value() && !reg.is_entity_dying(i)) {
-      healths[i]->damage_delta += dt;
-      healths[i]->heal_delta += dt;
+  for (auto&& [i, health] : ZipperIndex(healths)) {
+    if (!reg.is_entity_dying(i)) {
+      health.damage_delta += dt;
+      health.heal_delta += dt;
     }
   }
 }
