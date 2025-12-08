@@ -8,6 +8,7 @@
 #include <asio/error_code.hpp>
 #include <asio/io_context.hpp>
 #include <asio/ip/udp.hpp>
+#include "ServerCommands.hpp"
 #include "plugin/Byte.hpp"
 
 #define MAX_PLAYERS 4
@@ -80,6 +81,13 @@ enum DisconnectedCommands : std::uint8_t
   CHALLENGERESPONSE,
   CONNECTRESPONSE,
   DISCONNECT
+};
+
+
+enum ConnectedOpcodes : std::uint8_t
+{
+    SENDEVENT = 0x01,
+    SENDCOMP
 };
 
 enum class ConnectionState : std::uint8_t

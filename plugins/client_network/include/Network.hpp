@@ -1,6 +1,8 @@
 #pragma once
 
+#include <semaphore>
 #include <thread>
+#include <unordered_map>
 #include <vector>
 
 #include <asio/io_context.hpp>
@@ -23,6 +25,12 @@ class NetworkClient : public APlugin
     void connection_thread(ClientConnection const& c);
 
     SharedQueue<ComponentBuilder> _component_queue;
-    std::vector<std::thread> _threads;
+    SharedQueue<EventBuilder> _exec_event_queue;
+
+    std::unordered_map<Registery::Entity, Registery::Entity> _server_indexes;
+
+    std::counting_semaphore<> _sem;
+    SharedQueue<EventBuilder> _event_queue;
+    std::thread _thread;
     std::atomic<bool> _running = false;
 };

@@ -1,7 +1,15 @@
 #include "Client.hpp"
 #include "NetworkShared.hpp"
+#include "ServerCommands.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/events/Events.hpp"
+
+const std::unordered_map<std::uint8_t, void (Client::*)(ByteArray const&)>
+    Client::connectionless_table = {
+        {CHALLENGERESPONSE, &Client::handle_challenge_response},
+        {CONNECTRESPONSE, &Client::handle_connect_response},
+        {DISCONNECT, &Client::handle_disconnect_response},
+};
 
 void Client::send_connectionless(ByteArray const& command)
 {
@@ -14,26 +22,13 @@ void Client::send_connectionless(ByteArray const& command)
          std::format("Sent connectionless package of size: {}", pkg.size()));
 }
 
-void Client::handle_connectionless_response(ByteArray const& response)
+void Client::handle_connectionless_response(ConnectionlessCommand const& response)
 {
-  if (response.empty()) {
-    NETWORK_LOGGER("client", LogLevel::DEBUG, "Empty response");
-    return;
-  }
-
-  NETWORK_LOGGER("client",
-         LogLevel::DEBUG,
-         std::format("Received connectionless response of size: {}",
-                     response.size()));
-  auto const& parsed = this->parse_connectionless_package(response);
-  if (!parsed) {
-    return;
-  }
   try {
-    (this->*(_command_table.at(parsed->command_code)))(parsed->command);
+    (this->*(connectionless_table.at(response.command_code)))(response.command);
   } catch (std::out_of_range const&) {
     NETWORK_LOGGER("client", LogLevel::DEBUG,
-        std::format("Unhandled connectionless response: {}", parsed->command_code));
+        std::format("Unhandled connectionless response: {}", response.command_code));
   }
 }
 
@@ -52,7 +47,7 @@ void Client::send_connect(std::uint32_t challenge)
 
 void Client::handle_challenge_response(ByteArray const& package)
 {
-  auto const& parsed = this->parse_challenge_response(package);
+  auto const& parsed = parse_challenge_response(package);
   if (!parsed) {
     return;
   }
@@ -67,7 +62,7 @@ void Client::handle_challenge_response(ByteArray const& package)
 
 void Client::handle_connect_response(ByteArray const& package)
 {
-  auto const& parsed = this->parse_connect_response(package);
+  auto const& parsed = parse_connect_response(package);
 
   if (!parsed) {
     return;

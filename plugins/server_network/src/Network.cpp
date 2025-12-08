@@ -1,40 +1,64 @@
-#include <cstring>
 #include <format>
 #include <functional>
 #include <thread>
 
 #include "Network.hpp"
-#include "Server.hpp"
 
+#include "NetworkShared.hpp"
+#include "Server.hpp"
 #include "ecs/Registery.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/events/Events.hpp"
 
 NetworkServer::NetworkServer(Registery& r, EntityLoader& l)
     : APlugin(r, l, {}, {})
+    , _event_semaphore(0)
 {
-
   this->_registery.get().on<ServerLaunching>(
-    [this](ServerLaunching const& s)
-  {
-    this->_threads.emplace_back([this, s]() { this->launch_server(s); });
-  });
+      [this](ServerLaunching const& s)
+      {
+        this->_threads.emplace_back([this, s]() { this->launch_server(s); });
+      });
 
   this->_registery.get().on<ShutdownEvent>(
-    [this](ShutdownEvent const& event)
-  {
-    _running = false;
-    LOGGER("server", LogLevel::INFO,
-      std::format("Shutdown requested: {}", event.reason));
-    // server.close();
-  });
+      [this](ShutdownEvent const& event)
+      {
+        _running = false;
+        LOGGER("server",
+               LogLevel::INFO,
+               std::format("Shutdown requested: {}", event.reason));
+        // server.close();
+      });
 
   this->_registery.get().on<CleanupEvent>(
-    [this](CleanupEvent const&)
-  {
-    _running = false;
-    LOGGER("server", LogLevel::DEBUG, "Cleanup requested");
-    // server.close();
+      [this](CleanupEvent const&)
+      {
+        _running = false;
+        LOGGER("server", LogLevel::DEBUG, "Cleanup requested");
+        // server.close();
+      });
+
+  this->_registery.get().on<ComponentBuilder>(
+      [this](ComponentBuilder e)
+      {
+        this->_component_queue.lock.lock();
+        this->_component_queue.queue.push(std::move(e));
+        this->_component_queue.lock.unlock();
+        this->_event_semaphore.release();
+      });
+
+  this->_registery.get().add_system<>([this](Registery &r){
+      ComponentBuilder t;
+
+
+      this->_event_queue.lock.lock();
+      while (!this->_event_queue.queue.empty()) {
+          auto &e = this->_event_queue.queue.front();
+          std::cout << e.event_id << " emmited" << std::endl;
+          // r.emit(std::move(e.event_id), std::move(e.data));
+          this->_event_queue.queue.pop();
+      }
+      this->_event_queue.lock.unlock();
   });
 }
 
@@ -50,12 +74,13 @@ void NetworkServer::launch_server(ServerLaunching const& s)
 {
   try {
     _running = true;
-    Server server(s, _component_queue, _running);
+    Server server(
+        s, _component_queue, _event_queue, _running, _event_semaphore);
     LOGGER("server",
            LogLevel::INFO,
            std::format("Server started on port {}", s.port));
 
-      server.receive_loop();
+    server.receive_loop();
   } catch (std::exception& e) {
     LOGGER("server",
            LogLevel::ERROR,
@@ -64,7 +89,8 @@ void NetworkServer::launch_server(ServerLaunching const& s)
 }
 
 // asio::socket_base::message_flags Server::handle_receive(
-//     const asio::error_code& UNUSED error, std::size_t UNUSED bytes_transferred)
+//     const asio::error_code& UNUSED error, std::size_t UNUSED
+//     bytes_transferred)
 // {
 //   asio::socket_base::message_flags flag = MSG_OOB;
 //   std::cout << "handled the reception" << std::endl;

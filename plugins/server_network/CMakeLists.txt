@@ -9,6 +9,8 @@ add_library(${LIB_NAME} SHARED
     src/CommandParsing.cpp
     src/Server.cpp
     src/Connectionless.cpp
+    src/Connected.cpp
+    src/DataTransfer.cpp
 )
 
 target_compile_features(${LIB_NAME} PRIVATE cxx_std_23)

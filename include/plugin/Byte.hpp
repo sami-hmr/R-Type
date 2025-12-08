@@ -44,6 +44,7 @@ concept bytable = serializable<T> && unserializable<T>;
     } \
 
 ByteArray operator+(ByteArray first, ByteArray const &second);
+ByteArray &operator+=(ByteArray &first, ByteArray const &second);
 
 template<std::same_as<ByteArray>... Args>
 ByteArray byte_array_join(Args... arrays) {

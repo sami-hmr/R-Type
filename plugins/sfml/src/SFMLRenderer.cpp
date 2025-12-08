@@ -364,7 +364,7 @@ void SFMLRenderer::render_sprites(Registery& /*unused*/,
   std::sort(drawables.begin(), drawables.end(), [](auto const &a, auto const &b) {
     return std::get<3>(a) < std::get<3>(b);
   });
-  
+
   for (auto&& [texture, scale, new_pos, z] : drawables) {
     if (!this->_sprite.has_value()) {
       this->_sprite.emplace(texture.get());

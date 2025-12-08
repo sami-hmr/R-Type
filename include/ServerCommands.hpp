@@ -63,13 +63,45 @@ inline Parser<ConnectResponse> parse_connect_rsp()
                parseByte<std::uint32_t>());
 }
 
-struct ChallengeResponse {
-    std::uint32_t challenge;
+struct ChallengeResponse
+{
+  std::uint32_t challenge;
 };
 
 inline Parser<ChallengeResponse> parse_challenge_rsp()
 {
-  return apply([](std::uint32_t c)
-               { return ChallengeResponse(c); },
+  return apply([](std::uint32_t c) { return ChallengeResponse(c); },
                parseByte<std::uint32_t>());
+}
+
+struct ConnectedPackage
+{
+  std::uint32_t sequence_number;
+  std::uint32_t acknowledge;
+  bool end_of_content;
+  ByteArray real_package;
+};
+
+inline Parser<ConnectedPackage> parse_connected()
+{
+  return apply([](std::uint32_t sn, std::uint32_t a, bool eoc, ByteArray r)
+               { return ConnectedPackage(sn, a, eoc, std::move(r)); },
+               parseByte<std::uint32_t>(),
+               parseByte<std::uint32_t>(),
+               parseByte<bool>(),
+               parseByte<Byte>().many());
+}
+
+struct ConnectedCommand
+{
+  std::uint8_t opcode;
+  ByteArray real_package;
+};
+
+inline Parser<ConnectedCommand> parse_connected_cmd()
+{
+  return apply([](std::uint8_t op, ByteArray r)
+               { return ConnectedCommand(op, std::move(r)); },
+               parseByte<std::uint8_t>(),
+               parseByte<Byte>().many());
 }
