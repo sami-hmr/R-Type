@@ -80,20 +80,26 @@ std::optional<std::reference_wrapper<const T>> get_ref(Registery& r,
   return std::nullopt;
 }
 
-template<typename T>
-std::optional<T> get_value(Registery& r,
-                           JsonObject const& object,
-                           std::string const& key)
+/*
+ *@brief Gets the value at a given key from a JsonObject for a component ALSO
+ * register the component for a **static** hook (usefull for when entity isn't
+ * accessible)
+ */
+template<typename T, typename... Args>
+std::optional<T> get_value_copy(Registery& r,
+                                JsonObject const& object,
+                                std::string const& key,
+                                Args&&... args)
 {
   auto tmp = get_ref<T>(r, object, key);
   if (tmp.has_value()) {
     return tmp.value().get();
   }
 
-  if constexpr (std::is_constructible_v<T, JsonObject>) {
+  if constexpr (std::is_constructible_v<T, JsonObject, Args...>) {
     try {
       const JsonObject& obj = std::get<JsonObject>(object.at(key).value);
-      return T(obj);
+      return T(obj, std::forward<Args>(args)...);
     } catch (...) {
     }
   }
@@ -101,11 +107,17 @@ std::optional<T> get_value(Registery& r,
   return std::nullopt;
 }
 
-template<typename ComponentType, typename T>
+/*
+ *@brief Gets the value at a given key from a JsonObject for a component ALSO
+ * register the component for a **dynamic** hook ALWAYS prefer to get_value_copy
+ * to avoid ownsership issues
+ */
+template<typename ComponentType, typename T, typename... Args>
 std::optional<T> get_value(Registery& r,
                            JsonObject const& object,
                            Registery::Entity entity,
-                           std::string const& field_name)
+                           std::string const& field_name,
+                           Args&&... args)
 {
   try {
     std::string value_str = std::get<std::string>(object.at(field_name).value);
@@ -117,7 +129,7 @@ std::optional<T> get_value(Registery& r,
   } catch (std::bad_variant_access const&) {  // NOLINT intentional fallthrough
   }
 
-  return get_value<T>(r, object, field_name);
+  return get_value_copy<T>(r, object, field_name, std::forward<Args>(args)...);
 }
 
 inline bool is_hook(JsonObject const& object, std::string const& key)

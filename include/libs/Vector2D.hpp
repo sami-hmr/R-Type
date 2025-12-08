@@ -21,8 +21,12 @@ public:
   Vector2D(double x, double y)
       : x(x)
       , y(y) {};
-  Vector2D(JsonVariant const& variant);
-  Vector2D(JsonObject const& obj);
+  Vector2D(JsonVariant const& variant,
+           std::string const& x = "x",
+           std::string const& y = "y");
+  Vector2D(JsonObject const& obj,
+           std::string const& x = "x",
+           std::string const& y = "y");
   ~Vector2D() = default;
 
   Vector2D(const Vector2D& other) = default;

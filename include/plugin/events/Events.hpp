@@ -22,8 +22,8 @@ struct ShutdownEvent
   }
 
   ShutdownEvent(Registery& r, JsonObject const& e)
-      : reason(get_value<std::string>(r, e, "reason").value())
-      , exit_code(get_value<int>(r, e, "exit_code").value())
+      : reason(get_value_copy<std::string>(r, e, "reason").value())
+      , exit_code(get_value_copy<int>(r, e, "exit_code").value())
   {
   }
 };
@@ -126,9 +126,9 @@ struct SceneChangeEvent
   std::string reason;
 
   SceneChangeEvent(Registery& r, JsonObject const& e)
-      : target_scene(get_value<std::string>(r, e, "target_scene").value())
-      , state(get_value<std::string>(r, e, "state").value())
-      , reason(get_value<std::string>(r, e, "reason").value())
+      : target_scene(get_value_copy<std::string>(r, e, "target_scene").value())
+      , state(get_value_copy<std::string>(r, e, "state").value())
+      , reason(get_value_copy<std::string>(r, e, "reason").value())
   {
   }
 };

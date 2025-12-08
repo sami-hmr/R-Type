@@ -1,8 +1,11 @@
 
+#include <algorithm>
+#include <cstdlib>
 #include <functional>
 #include <iostream>
 #include <memory>
 #include <stdexcept>
+#include <tuple>
 #include <variant>
 
 #include "SFMLRenderer.hpp"
@@ -143,70 +146,30 @@ sf::Font& SFMLRenderer::load_font(std::string const& path)
   return _fonts.at(path);
 }
 
-void SFMLRenderer::init_drawable(Registery::Entity const entity,
+void SFMLRenderer::init_drawable(Registery::Entity const& entity,
                                  JsonObject const&)
 {
   _registery.get().emplace_component<Drawable>(entity);
 }
 
-Vector2D SFMLRenderer::parse_vector2d(JsonVariant const& variant)
+template<typename T>
+Vector2D SFMLRenderer::parse_vector2d(Registery::Entity const& entity,
+                                      JsonObject const& obj,
+                                      std::string const& str)
 {
-  JsonObject obj;
-  try {
-    obj = std::get<JsonObject>(variant);
-  } catch (std::bad_variant_access const&) {
-    std::cerr << "Error parsing vector2d: not a JsonObject, using default "
-                 "(10%, 15%)\n";
-    return {10.0 / 100.0, 15.0 / 100.0};
-  }
+  auto vec = get_value<T, Vector2D>(
+      this->_registery.get(), obj, entity, str, "width", "height");
 
-  auto const& width_double =
-      get_value<double>(this->_registery.get(), obj, "width");
-  auto const& height_double =
-      get_value<double>(this->_registery.get(), obj, "height");
+  std::cout << "vec: " << vec.value() << std::endl;
 
-  if (width_double && height_double) {
-    return {width_double.value() / SFMLRenderer::window_size.x,
-            height_double.value() / SFMLRenderer::window_size.y};
-  }
-
-  auto const& width_str =
-      get_value<std::string>(this->_registery.get(), obj, "width");
-  auto const& height_str =
-      get_value<std::string>(this->_registery.get(), obj, "height");
-
-  if (width_str && height_str) {
-    std::string x_percentage = width_str.value();
-    std::string y_percentage = height_str.value();
-
-    if (!x_percentage.empty() && x_percentage.back() == '%') {
-      x_percentage.pop_back();
-    }
-    if (!y_percentage.empty() && y_percentage.back() == '%') {
-      y_percentage.pop_back();
-    }
-
-    try {
-      double x = std::stod(x_percentage) / 100.0;
-      double y = std::stod(y_percentage) / 100.0;
-      return {x, y};
-    } catch (std::invalid_argument const&) {
-      std::cerr << "Error parsing vector2d: invalid percentage values, using "
-                   "default (10%, 15%)\n";
-      return {10.0 / 100.0, 15.0 / 100.0};
-    }
-  }
-
-  std::cerr << "Error parsing vector2d: missing width/height, using default "
-               "(10%, 15%)\n";
-  return {10.0 / 100.0, 15.0 / 100.0};
+  return vec.value();
 }
 
-void SFMLRenderer::init_sprite(Registery::Entity const entity,
+void SFMLRenderer::init_sprite(Registery::Entity const& entity,
                                JsonObject const& obj)
 {
-  auto const& texture_path =
-      get_value<std::string>(this->_registery.get(), obj, "texture");
+  auto const& texture_path = get_value<Sprite, std::string>(
+      this->_registery.get(), obj, entity, "texture");
 
   if (!texture_path) {
     std::cerr << "Error loading sprite component: unexpected value type "
@@ -216,17 +179,17 @@ void SFMLRenderer::init_sprite(Registery::Entity const entity,
 
   Vector2D scale(0.1, 0.1);
   if (obj.contains("size")) {
-    scale = this->parse_vector2d(obj.at("size").value);
+    scale = this->parse_vector2d<Sprite>(entity, obj, "size");
   }
   _registery.get().emplace_component<Sprite>(
       entity, texture_path.value(), scale);
 }
 
-void SFMLRenderer::init_text(Registery::Entity const entity,
+void SFMLRenderer::init_text(Registery::Entity const& entity,
                              JsonObject const& obj)
 {
   auto const& font_path =
-      get_value<std::string>(this->_registery.get(), obj, "font");
+      get_value<Text, std::string>(this->_registery.get(), obj, entity, "font");
 
   if (!font_path) {
     std::cerr << "Error loading text component: unexpected value type (font: "
@@ -236,7 +199,7 @@ void SFMLRenderer::init_text(Registery::Entity const entity,
 
   Vector2D scale(0.1, 0.1);
   if (obj.contains("size")) {
-    scale = this->parse_vector2d(obj.at("size").value);
+    scale = this->parse_vector2d<Text>(entity, obj, "size");
   }
 
   auto& text_opt = _registery.get().emplace_component<Text>(
@@ -339,6 +302,14 @@ void SFMLRenderer::render_sprites(Registery& /*unused*/,
                                   const SparseArray<Drawable>& drawable,
                                   const SparseArray<Sprite>& sprites)
 {
+  std::vector<
+      std::
+          tuple<std::reference_wrapper<sf::Texture>, double, sf::Vector2f, int>>
+      drawables;
+  sf::Vector2u window_size = _window.getSize();
+  drawables.reserve(
+      std::max({positions.size(), drawable.size(), sprites.size()}));
+
   for (auto&& [scene, pos, draw, spr] :
        Zipper(scenes, positions, drawable, sprites))
   {
@@ -350,13 +321,6 @@ void SFMLRenderer::render_sprites(Registery& /*unused*/,
     }
 
     sf::Texture& texture = load_texture(spr.texture_path);
-    sf::Vector2u window_size = _window.getSize();
-
-    if (!_sprite.has_value()) {
-      _sprite.emplace(texture);
-    }
-
-    _sprite.value().setTexture(texture);
 
     float scale_x =
         static_cast<float>(window_size.x * spr.scale.x) / texture.getSize().x;
@@ -364,15 +328,28 @@ void SFMLRenderer::render_sprites(Registery& /*unused*/,
         static_cast<float>(window_size.y * spr.scale.y) / texture.getSize().y;
     float uniform_scale = std::min(scale_x, scale_y);
 
-    _sprite->setOrigin(
-        sf::Vector2f(texture.getSize().x / 2.0f, texture.getSize().y / 2.0f));
-    _sprite.value().setScale(sf::Vector2f(uniform_scale, uniform_scale));
-
     sf::Vector2f new_pos(
         static_cast<float>((pos.pos.x + 1.0) * window_size.x / 2.0),
         static_cast<float>((pos.pos.y + 1.0) * window_size.y / 2.0));
-    _sprite.value().setPosition(new_pos);
-    _window.draw(_sprite.value());
+    drawables.emplace_back(std::ref(texture), uniform_scale, new_pos, pos.z);
+  }
+  std::sort(drawables.begin(),
+            drawables.end(),
+            [](auto const& a, auto const& b)
+            { return std::get<3>(a) < std::get<3>(b); });
+
+  for (auto&& [texture, scale, new_pos, z] : drawables) {
+    if (!this->_sprite.has_value()) {
+      this->_sprite.emplace(texture.get());
+    } else {
+      this->_sprite->setTexture(texture.get());
+    }
+    this->_sprite->setOrigin(
+        sf::Vector2f(static_cast<float>(texture.get().getSize().x) / 2.0f,
+                     static_cast<float>(texture.get().getSize().y) / 2.0f));
+    this->_sprite->setScale(sf::Vector2f(scale, scale));
+    this->_sprite->setPosition(new_pos);
+    _window.draw(*this->_sprite);
   }
 }
 

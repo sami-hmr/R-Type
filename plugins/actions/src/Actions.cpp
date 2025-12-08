@@ -74,12 +74,14 @@ void Actions::init_action_trigger(Registery::Entity const& entity,
 {
   JsonObject trigger = std::get<JsonObject>(obj.at("trigger").value);
 
-  std::string type =
-      get_value<std::string>(this->_registery.get(), trigger, "type").value();
+  std::string type = get_value<ActionTrigger, std::string>(
+                         this->_registery.get(), trigger, entity, "type")
+                         .value();
 
   JsonObject params;
   if (trigger.contains("params")) {
-    params = get_value<JsonObject>(this->_registery.get(), trigger, "params")
+    params = get_value<ActionTrigger, JsonObject>(
+                 this->_registery.get(), trigger, entity, "params")
                  .value();
   }
 
@@ -87,14 +89,14 @@ void Actions::init_action_trigger(Registery::Entity const& entity,
   JsonArray to_emit = std::get<JsonArray>(obj.at("to_emit").value);
   for (auto const& i : to_emit) {
     JsonObject obj_array = std::get<JsonObject>(i.value);
-    std::string name =
-        get_value<std::string>(this->_registery.get(), obj_array, "name")
-            .value();
+    std::string name = get_value<ActionTrigger, std::string>(
+                           this->_registery.get(), obj_array, entity, "name")
+                           .value();
     JsonObject params;
     if (trigger.contains("params")) {
-      params =
-          get_value<JsonObject>(this->_registery.get(), obj_array, "params")
-              .value();
+      params = get_value<ActionTrigger, JsonObject>(
+                   this->_registery.get(), obj_array, entity, "params")
+                   .value();
     }
     to_emit_map.emplace_back(name, params);
   }

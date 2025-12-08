@@ -23,7 +23,8 @@
 #include "plugin/events/Events.hpp"
 
 Collision::Collision(Registery& r, EntityLoader& l)
-    : APlugin(r, l, {"moving"}, {COMP_INIT(Collidable, Collidable, init_collision)})
+    : APlugin(
+          r, l, {"moving"}, {COMP_INIT(Collidable, Collidable, init_collision)})
 {
   _registery.get().register_component<Collidable>("collision:Collidable");
   _registery.get().register_component<Team>("collision:Team");
@@ -53,10 +54,12 @@ void Collision::set_algorithm(std::unique_ptr<ICollisionAlgorithm> algo)
 void Collision::init_collision(Registery::Entity const& entity,
                                JsonObject const& obj)
 {
-  auto const& width = get_value<double>(this->_registery.get(), obj, "width");
-  auto const& height = get_value<double>(this->_registery.get(), obj, "height");
-  auto const& type_str =
-      get_value<std::string>(this->_registery.get(), obj, "collision_type");
+  auto const& width = get_value<Collidable, double>(
+      this->_registery.get(), obj, entity, "width");
+  auto const& height = get_value<Collidable, double>(
+      this->_registery.get(), obj, entity, "height");
+  auto const& type_str = get_value<Collidable, std::string>(
+      this->_registery.get(), obj, entity, "collision_type");
 
   if (!width || !height || !type_str) {
     std::cerr

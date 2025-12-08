@@ -42,11 +42,14 @@ private:
   sf::Texture& load_texture(std::string const& path);
   sf::Font& load_font(std::string const& path);
 
-  void init_drawable(Registery::Entity const entity, JsonObject const& obj);
-  void init_sprite(Registery::Entity const entity, JsonObject const& obj);
-  void init_text(Registery::Entity const entity, JsonObject const& obj);
+  void init_drawable(Registery::Entity const& entity, JsonObject const& obj);
+  void init_sprite(Registery::Entity const& entity, JsonObject const& obj);
+  void init_text(Registery::Entity const& entity, JsonObject const& obj);
 
-  Vector2D parse_vector2d(JsonVariant const& variant);
+  template<typename T>
+  Vector2D parse_vector2d(Registery::Entity const& entity,
+                          JsonObject const& obj,
+                          std::string const& str);
 
   void handle_events();
   void handle_resize();
