@@ -23,6 +23,8 @@
 #include "Json/JsonParser.hpp"
 #include "ServerLaunch.hpp"
 #include "ecs/Registery.hpp"
+#include "ecs/Scenes.hpp"
+#include "ecs/SparseArray.hpp"
 #include "ecs/zipper/Zipper.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
