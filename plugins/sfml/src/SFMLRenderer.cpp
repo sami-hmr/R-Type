@@ -350,6 +350,9 @@ void SFMLRenderer::render_sprites(Registery& /*unused*/,
 {
   std::vector<std::tuple<std::reference_wrapper<sf::Texture>, double, sf::Vector2f, int>> drawables;
   sf::Vector2u window_size = _window.getSize();
+    float min_dimension =
+      static_cast<float>(std::min(window_size.x, window_size.y));
+
   drawables.reserve(
       std::max({positions.size(), drawable.size(), sprites.size()}));
 
@@ -367,8 +370,8 @@ void SFMLRenderer::render_sprites(Registery& /*unused*/,
     float uniform_scale = std::min(scale_x, scale_y);
 
     sf::Vector2f new_pos(
-        static_cast<float>((pos.pos.x + 1.0) * window_size.x / 2.0),
-        static_cast<float>((pos.pos.y + 1.0) * window_size.y / 2.0));
+      static_cast<float>((pos.pos.x + 1.0) * min_dimension / 2.0f),
+      static_cast<float>((pos.pos.y + 1.0) * min_dimension / 2.0f));
     drawables.emplace_back(std::ref(texture), uniform_scale, new_pos, pos.z);
   }
   std::sort(drawables.begin(), drawables.end(), [](auto const &a, auto const &b) {
@@ -408,9 +411,11 @@ void SFMLRenderer::render_text(Registery& /*unused*/,
     _text.value().setString(txt.text);
 
     sf::Vector2u window_size = _window.getSize();
+  float min_dimension =
+    static_cast<float>(std::min(window_size.x, window_size.y));
     sf::Vector2f new_pos(
-        static_cast<float>((pos.pos.x + 1.0) * window_size.x / 2.0),
-        static_cast<float>((pos.pos.y + 1.0) * window_size.y / 2.0));
+    static_cast<float>((pos.pos.x + 1.0) * min_dimension / 2.0f),
+    static_cast<float>((pos.pos.y + 1.0) * min_dimension / 2.0f));
     _text.value().setPosition(new_pos);
     _text.value().setCharacterSize(static_cast<unsigned int>(txt.scale.x));
     _window.draw(_text.value());
