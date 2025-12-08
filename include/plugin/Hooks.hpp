@@ -9,7 +9,7 @@
 #include <variant>
 
 #include "Json/JsonParser.hpp"
-#include "ecs/Registery.hpp"
+#include "ecs/Registry.hpp"
 
 #define GAUTHIER_SOIT_PAS_DEBILE_STP(key, var) \
   {#key, \
@@ -30,7 +30,7 @@
   } \
 
 template<typename T>
-std::optional<std::reference_wrapper<const T>> get_ref(Registery& r,
+std::optional<std::reference_wrapper<const T>> get_ref(Registry& r,
                                                  JsonObject const &object,
                                                  std::string const& key)
 {
@@ -60,7 +60,7 @@ std::optional<std::reference_wrapper<const T>> get_ref(Registery& r,
 }
 
 template<typename T>
-std::optional<T> get_value(Registery& r,
+std::optional<T> get_value(Registry& r,
                            JsonObject const &object,
                            std::string const& key)
 {

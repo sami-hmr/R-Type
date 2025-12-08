@@ -18,16 +18,16 @@
 #include "plugin/components/Sprite.hpp"
 #include "plugin/events/Events.hpp"
 
-CLI::CLI(Registery& r, EntityLoader& l, std::optional<JsonObject> const& config)
+CLI::CLI(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config)
     : APlugin(r, l, {"logger", "server_network", "client_network"}, {}, config)
 {
-  _registery.get().on<ShutdownEvent>([this](const ShutdownEvent&)
+  _registry.get().on<ShutdownEvent>([this](const ShutdownEvent&)
                                      { _running = false; });
 
-  _registery.get().on<CleanupEvent>([this](const CleanupEvent&)
+  _registry.get().on<CleanupEvent>([this](const CleanupEvent&)
                                     { _running = false; });
 
-  _registery.get().on<CliStart>(
+  _registry.get().on<CliStart>(
       [this](const CliStart&)
       {
         if (!this->_running) {
@@ -35,9 +35,9 @@ CLI::CLI(Registery& r, EntityLoader& l, std::optional<JsonObject> const& config)
         }
       });
 
-  _registery.get().on<CliStop>([this](const CliStop&) { _running = false; });
+  _registry.get().on<CliStop>([this](const CliStop&) { _running = false; });
 
-  _registery.get().emit<CliStart>();
+  _registry.get().emit<CliStart>();
 }
 
 CLI::~CLI()
@@ -57,12 +57,12 @@ void CLI::run_cli()
     std::cout << "> " << std::flush;
 
     if (!std::getline(std::cin, line)) {
-      _registery.get().emit<ShutdownEvent>("Cli end", 0);
+      _registry.get().emit<ShutdownEvent>("Cli end", 0);
       break;
     }
 
     if (!_running) {
-      _registery.get().emit<ShutdownEvent>("Error in cli", 0);
+      _registry.get().emit<ShutdownEvent>("Error in cli", 0);
       break;
     }
 
@@ -112,7 +112,7 @@ void CLI::process_command(const std::string& cmd)
           if (!message.empty() && message[0] == ' ') {
             message = message.substr(1);
           }
-          _registery.get().emit<LogEvent>(
+          _registry.get().emit<LogEvent>(
               "cli",
               LogLevel::INFO,
               message.empty() ? "test message" : message);
@@ -131,7 +131,7 @@ void CLI::process_command(const std::string& cmd)
             return;
           }
 
-          _registery.get().emit<ServerLaunching>(port);
+          _registry.get().emit<ServerLaunching>(port);
           std::cout << "Starting server on "
                     << "0.0.0.0"
                     << ":" << port << "\n";
@@ -151,7 +151,7 @@ void CLI::process_command(const std::string& cmd)
             std::cout << "Example: connect 127.0.0.1 27015\n";
             return;
           }
-          _registery.get().emit<ClientConnection>(host, port);
+          _registry.get().emit<ClientConnection>(host, port);
           std::cout << "Connecting to " << host << ":" << port << "\n";
         }}},
       {"s",
@@ -161,7 +161,7 @@ void CLI::process_command(const std::string& cmd)
             [this](std::istringstream&)
         {
           uint16_t port = 4242;
-          _registery.get().emit<ServerLaunching>(port);
+          _registry.get().emit<ServerLaunching>(port);
           std::cout << "Starting server on "
                     << "0.0.0.0"
                     << ":" << port << "\n";
@@ -179,7 +179,7 @@ void CLI::process_command(const std::string& cmd)
             std::cout << "Example: connect 127.0.0.1 27015\n";
             return;
           }
-          _registery.get().emit<ClientConnection>(host, port);
+          _registry.get().emit<ClientConnection>(host, port);
           std::cout << "Connecting to " << host << ":" << port << "\n";
         }}},
       {"spawn",
@@ -191,9 +191,9 @@ void CLI::process_command(const std::string& cmd)
             Drawable draw;
             Sprite sprite("ça existe meme pas", {1, 1});
             Position pos(0, 0);
-            this->_registery.get().emit<ComponentBuilder>(42, "sfml:Drawable", draw.to_bytes());
-            this->_registery.get().emit<ComponentBuilder>(42, "sfml:Sprite", sprite.to_bytes());
-            this->_registery.get().emit<ComponentBuilder>(42, "moving:Position", pos.to_bytes());
+            this->_registry.get().emit<ComponentBuilder>(42, "sfml:Drawable", draw.to_bytes());
+            this->_registry.get().emit<ComponentBuilder>(42, "sfml:Sprite", sprite.to_bytes());
+            this->_registry.get().emit<ComponentBuilder>(42, "moving:Position", pos.to_bytes());
         }}},
 
       {"stop",
@@ -203,7 +203,7 @@ void CLI::process_command(const std::string& cmd)
             [this](std::istringstream&)
         {
           std::cout << "Stopping CLI...\n";
-          _registery.get().emit<CliStop>();
+          _registry.get().emit<CliStop>();
         }}},
       {"quit",
        {.usage = "quit [reason]",
@@ -216,7 +216,7 @@ void CLI::process_command(const std::string& cmd)
           if (!reason.empty() && reason[0] == ' ') {
             reason = reason.substr(1);
           }
-          _registery.get().emit<ShutdownEvent>(
+          _registry.get().emit<ShutdownEvent>(
               reason.empty() ? "CLI requested" : reason, 0);
         }}},
       {"cleanup",
@@ -229,7 +229,7 @@ void CLI::process_command(const std::string& cmd)
           if (!trigger.empty() && trigger[0] == ' ') {
             trigger = trigger.substr(1);
           }
-          _registery.get().emit<CleanupEvent>(trigger.empty() ? "CLI"
+          _registry.get().emit<CleanupEvent>(trigger.empty() ? "CLI"
                                                               : trigger);
         }}}};
 
@@ -244,7 +244,7 @@ void CLI::process_command(const std::string& cmd)
 
 extern "C"
 {
-void* entry_point(Registery& r,
+void* entry_point(Registry& r,
                   EntityLoader& l,
                   std::optional<JsonObject> const& config)
 {

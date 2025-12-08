@@ -6,21 +6,21 @@
 
 #include "NetworkShared.hpp"
 #include "Server.hpp"
-#include "ecs/Registery.hpp"
+#include "ecs/Registry.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/events/Events.hpp"
 
-NetworkServer::NetworkServer(Registery& r, EntityLoader& l)
+NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
     : APlugin(r, l, {}, {})
     , _event_semaphore(0)
 {
-  this->_registery.get().on<ServerLaunching>(
+  this->_registry.get().on<ServerLaunching>(
       [this](ServerLaunching const& s)
       {
         this->_threads.emplace_back([this, s]() { this->launch_server(s); });
       });
 
-  this->_registery.get().on<ShutdownEvent>(
+  this->_registry.get().on<ShutdownEvent>(
       [this](ShutdownEvent const& event)
       {
         _running = false;
@@ -30,7 +30,7 @@ NetworkServer::NetworkServer(Registery& r, EntityLoader& l)
         // server.close();
       });
 
-  this->_registery.get().on<CleanupEvent>(
+  this->_registry.get().on<CleanupEvent>(
       [this](CleanupEvent const&)
       {
         _running = false;
@@ -38,16 +38,16 @@ NetworkServer::NetworkServer(Registery& r, EntityLoader& l)
         // server.close();
       });
 
-  this->_registery.get().on<ComponentBuilder>(
+  this->_registry.get().on<ComponentBuilder>(
       [this](ComponentBuilder e)
       {
-        this->_component_queue.lock.lock();
-        this->_component_queue.queue.push(std::move(e));
-        this->_component_queue.lock.unlock();
+        this->_components_to_update.lock.lock();
+        this->_components_to_update.queue.push(std::move(e));
+        this->_components_to_update.lock.unlock();
         this->_event_semaphore.release();
       });
 
-  this->_registery.get().add_system<>([this](Registery &r){
+  this->_registry.get().add_system<>([this](Registry &r){
       ComponentBuilder t;
 
 
@@ -75,7 +75,7 @@ void NetworkServer::launch_server(ServerLaunching const& s)
   try {
     _running = true;
     Server server(
-        s, _component_queue, _event_queue, _running, _event_semaphore);
+        s, this->_components_to_update, _event_queue, _running, _event_semaphore);
     LOGGER("server",
            LogLevel::INFO,
            std::format("Server started on port {}", s.port));
@@ -99,7 +99,7 @@ void NetworkServer::launch_server(ServerLaunching const& s)
 
 extern "C"
 {
-void* entry_point(Registery& r, EntityLoader& e)
+void* entry_point(Registry& r, EntityLoader& e)
 {
   return new NetworkServer(r, e);
 }

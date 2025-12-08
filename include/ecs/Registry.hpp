@@ -26,13 +26,13 @@
 #include "plugin/HookConcept.hpp"
 
 /**
- * @brief The Registery class is the core of the ECS (Entity-Component-System)
+ * @brief The Registry class is the core of the ECS (Entity-Component-System)
  * architecture.
  *
  * It manages entities, their associated components, and the systems that
  * operate on them.
  */
-class Registery
+class Registry
 {
 public:
   /**

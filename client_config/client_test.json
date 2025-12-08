@@ -1,7 +1,7 @@
 {
   "scenes": [
     {
-      "name": "client",
+      "name": "game",
       "state": "main",
       "plugins": [
         {
@@ -19,7 +19,79 @@
           "config": {}
         }
       ],
-      "entities": []
+      "entities": [
+        {
+          "moving:Position": { "x": 0.0, "y": 0.0, "z": 2 },
+          "sfml:Drawable": {},
+          "moving:Velocity": {
+            "speed": {
+              "x": 0.05,
+              "y": 0.05
+            },
+            "direction": {
+              "x": 0.0,
+              "y": 0.0
+            }
+          },
+          "sfml:Sprite": {
+            "texture": "assets/spaceship.png",
+            "size": {
+              "width": "20.0%",
+              "height": "20.0%"
+            }
+          },
+          "collision:Collidable": {
+            "width": 0.1,
+            "height": 0.1,
+            "collision_type": "Solid"
+          },
+          "controller:Controllable": {
+            "UP": "Z",
+            "DOWN": "S",
+            "LEFT": "Q",
+            "RIGHT": "D"
+          },
+          "life:Health": { "current": 5, "max": 100 },
+          "life:Damage": { "amount": 1 },
+          "life:Heal": { "amount": 1 },
+          "life:Team": { "name": "test1" },
+          "projectile:Temporal": { "lifetime": 5.0 },
+          "projectile:Fragile": {}
+        },
+        {
+          "moving:Position": { "x": 0.5, "y": -0.3 },
+          "sfml:Drawable": {},
+          "sfml:Sprite": {
+            "texture": "assets/enemy.png",
+            "size": {
+              "width": "20.0%",
+              "height": "20.0%"
+            }
+          },
+          "collision:Collidable": {
+            "width": 0.1,
+            "height": 0.1,
+            "collision_type": "Solid"
+          },
+          "life:Health": { "hook": "prout", "current": 5, "max": 100 },
+          "life:Team": { "name": "test" }
+        },
+        {
+          "moving:Position": {
+            "x": -0.8,
+            "y": -0.8
+          },
+          "sfml:Drawable": {},
+          "sfml:Text": {
+            "font": "assets/fonts/roboto.ttf",
+            "size": {
+              "width": 30.0,
+              "height": 30.0
+            },
+            "text": "Hello, World!"
+          }
+        }
+      ]
     }
   ]
 }

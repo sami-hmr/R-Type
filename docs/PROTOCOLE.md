@@ -237,7 +237,7 @@ Fields:
 
 The Reliable Acknowledge field tells the client which commands have been successfully received. The client can stop retransmitting any cli_command with sequence <= Reliable Acknowledge.
 
-Following the header, the packet contains one or more server operation messages, each terminated by a srv_end operation (opcode 0).
+Following the header, the packet contains one server operation messages.
 
 **Server Operations:**
 
@@ -248,9 +248,9 @@ Server must send the first srv_snapshot immediately after connectResponse.
 Sends an event from server to client.
 Fields:
 
-- Opcode=2:8
+- Opcode=1:8
 - EventString:string
-- EventData:variable
+- EventData:byte-list
 
 ##### **srv_snapshot (opcode 2):**
 
@@ -259,7 +259,7 @@ They contain multiple gs_... until the gs_oef
 
 Fields:
 
-- Opcode=3:8
+- Opcode=2:8
 - Server_Time:32
 - Delta_Frame:8
 

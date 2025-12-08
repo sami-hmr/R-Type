@@ -8,7 +8,7 @@
 
 #include "ByteParser/ByteParser.hpp"
 #include "ParserUtils.hpp"
-#include "ecs/Registery.hpp"
+#include "ecs/Registry.hpp"
 #include "plugin/Byte.hpp"
 
 struct ShutdownEvent
@@ -50,7 +50,7 @@ struct LogEvent
 };
 
 #define LOGGER(category, level, message) \
-  this->_registery.get().emit<LogEvent>(category, level, message);
+  this->_registry.get().emit<LogEvent>(category, level, message);
 
 enum class Key
 {
@@ -102,21 +102,21 @@ struct CliComp
 
 struct CollisionEvent
 {
-  Registery::Entity a;
-  Registery::Entity b;
+  Registry::Entity a;
+  Registry::Entity b;
 };
 
 struct HealEvent
 {
-  Registery::Entity target;
-  Registery::Entity source;
+  Registry::Entity target;
+  Registry::Entity source;
   int amount;
 };
 
 struct DamageEvent
 {
-  Registery::Entity target;
-  Registery::Entity source;
+  Registry::Entity target;
+  Registry::Entity source;
   int amount;
 };
 

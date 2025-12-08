@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "Json/JsonParser.hpp"
-#include "ecs/Registery.hpp"
+#include "ecs/Registry.hpp"
 #include "ecs/SparseArray.hpp"
 #include "ecs/zipper/Zipper.hpp"
 #include "plugin/APlugin.hpp"
@@ -19,14 +19,14 @@
 class Moving : public APlugin
 {
 public:
-  Moving(Registery& r, EntityLoader& l);
+  Moving(Registry& r, EntityLoader& l);
 
 private:
-  void init_pos(Registery::Entity const& entity, JsonObject const& obj);
-  void init_velocity(Registery::Entity const& entity,
+  void init_pos(Registry::Entity const& entity, JsonObject const& obj);
+  void init_velocity(Registry::Entity const& entity,
                      JsonObject const& obj);
 
-  void moving_system(Registery&,
+  void moving_system(Registry&,
                      SparseArray<Position>& positions,
                      const SparseArray<Velocity>& velocities);
 };

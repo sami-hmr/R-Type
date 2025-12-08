@@ -16,22 +16,22 @@
 #include "CustomException.hpp"
 #include "NetworkShared.hpp"
 #include "ServerLaunch.hpp"
-#include "ecs/Registery.hpp"
+#include "ecs/Registry.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 
 class NetworkServer : public APlugin
 {
   public:
-    NetworkServer(Registery& r, EntityLoader& l);
+    NetworkServer(Registry& r, EntityLoader& l);
     ~NetworkServer() override;
 
   private:
     void launch_server(ServerLaunching const& s);
 
-    // std::reference_wrapper<Server> _server;
     std::vector<std::thread> _threads;
-    SharedQueue<ComponentBuilder> _component_queue;
+    SharedQueue<ComponentBuilder> _components_to_update;
+    SharedQueue<EventBuilder> _events_to_transmit;
     std::atomic<bool> _running = false;
     SharedQueue<EventBuilder> _event_queue;
     std::counting_semaphore<> _event_semaphore;

@@ -3,7 +3,7 @@
 #include "Moving.hpp"
 
 #include "Json/JsonParser.hpp"
-#include "ecs/Registery.hpp"
+#include "ecs/Registry.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
@@ -11,25 +11,25 @@
 #include "plugin/components/Velocity.hpp"
 #include "plugin/events/Events.hpp"
 
-Moving::Moving(Registery& r, EntityLoader& l)
+Moving::Moving(Registry& r, EntityLoader& l)
     : APlugin(r,
               l,
               {},
               {COMP_INIT(Position, Position, init_pos),
                COMP_INIT(Velocity, Velocity, init_velocity)})
 {
-  this->_registery.get().register_component<Position>("moving:Position");
-  this->_registery.get().register_component<Velocity>("moving:Velocity");
+  this->_registry.get().register_component<Position>("moving:Position");
+  this->_registry.get().register_component<Velocity>("moving:Velocity");
 
-  this->_registery.get().add_system<Position, Velocity>(
-      [this](Registery& r,
+  this->_registry.get().add_system<Position, Velocity>(
+      [this](Registry& r,
              SparseArray<Position>& pos,
              const SparseArray<Velocity>& vel)
       { this->moving_system(r, pos, vel); },
       4);
 }
 
-void Moving::moving_system(Registery& reg,
+void Moving::moving_system(Registry& reg,
                            SparseArray<Position>& positions,
                            const SparseArray<Velocity>& velocities)
 {
@@ -41,10 +41,10 @@ void Moving::moving_system(Registery& reg,
   }
 }
 
-void Moving::init_pos(Registery::Entity const& entity, JsonObject const& obj)
+void Moving::init_pos(Registry::Entity const& entity, JsonObject const& obj)
 {
-  auto const& x = get_value<double>(this->_registery.get(), obj, "x");
-  auto const& y = get_value<double>(this->_registery.get(), obj, "y");
+  auto const& x = get_value<double>(this->_registry.get(), obj, "x");
+  auto const& y = get_value<double>(this->_registry.get(), obj, "y");
 
   if (!x || !y) {
     std::cerr << "Error loading Position component: unexpected value type "
@@ -53,7 +53,7 @@ void Moving::init_pos(Registery::Entity const& entity, JsonObject const& obj)
   }
   int z = 1;
   if (obj.contains("z")) {
-    auto const& z_value = get_value<int>(this->_registery.get(), obj, "z");
+    auto const& z_value = get_value<int>(this->_registry.get(), obj, "z");
     if (z_value) {
       z = z_value.value();
     } else {
@@ -61,17 +61,17 @@ void Moving::init_pos(Registery::Entity const& entity, JsonObject const& obj)
                    "(expected z: int)\n";
     }
   }
-  this->_registery.get().emplace_component<Position>(
+  this->_registry.get().emplace_component<Position>(
       entity, x.value(), y.value(), z);
 }
 
-void Moving::init_velocity(Registery::Entity const& entity,
+void Moving::init_velocity(Registry::Entity const& entity,
                            JsonObject const& obj)
 {
   auto const& speed_obj =
-      get_ref<JsonObject>(this->_registery.get(), obj, "speed");
+      get_ref<JsonObject>(this->_registry.get(), obj, "speed");
   auto const& dir_obj =
-      get_ref<JsonObject>(this->_registery.get(), obj, "direction");
+      get_ref<JsonObject>(this->_registry.get(), obj, "direction");
 
   if (!speed_obj || !dir_obj) {
     std::cerr << "Error loading velocity component: missing speed or direction "
@@ -80,13 +80,13 @@ void Moving::init_velocity(Registery::Entity const& entity,
   }
 
   auto const& speed_x =
-      get_value<double>(this->_registery.get(), speed_obj.value().get(), "x");
+      get_value<double>(this->_registry.get(), speed_obj.value().get(), "x");
   auto const& speed_y =
-      get_value<double>(this->_registery.get(), speed_obj.value().get(), "y");
+      get_value<double>(this->_registry.get(), speed_obj.value().get(), "y");
   auto const& dir_x =
-      get_value<double>(this->_registery.get(), dir_obj.value().get(), "x");
+      get_value<double>(this->_registry.get(), dir_obj.value().get(), "x");
   auto const& dir_y =
-      get_value<double>(this->_registery.get(), dir_obj.value().get(), "y");
+      get_value<double>(this->_registry.get(), dir_obj.value().get(), "y");
 
   if (!speed_x || !speed_y || !dir_x || !dir_y) {
     std::cerr << "Error loading velocity component: unexpected value type "
@@ -94,13 +94,13 @@ void Moving::init_velocity(Registery::Entity const& entity,
     return;
   }
 
-  this->_registery.get().emplace_component<Velocity>(
+  this->_registry.get().emplace_component<Velocity>(
       entity, speed_x.value(), speed_y.value(), dir_x.value(), dir_y.value());
 }
 
 extern "C"
 {
-void* entry_point(Registery& r, EntityLoader& e)
+void* entry_point(Registry& r, EntityLoader& e)
 {
   return new Moving(r, e);
 }

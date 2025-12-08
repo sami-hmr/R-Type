@@ -4,7 +4,7 @@
 #include <vector>
 
 #include "Json/JsonParser.hpp"
-#include "ecs/Registery.hpp"
+#include "ecs/Registry.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/events/Events.hpp"
@@ -12,13 +12,13 @@
 class Projectile : public APlugin
 {
 public:
-  Projectile(Registery& r, EntityLoader& l);
+  Projectile(Registry& r, EntityLoader& l);
 
 private:
-  void init_temporal(Registery::Entity entity, JsonObject const& obj);
-  void init_fragile(Registery::Entity entity, JsonObject const& obj);
-  void init_owner(Registery::Entity entity, JsonObject const& obj);
+  void init_temporal(Registry::Entity entity, JsonObject const& obj);
+  void init_fragile(Registry::Entity entity, JsonObject const& obj);
+  void init_owner(Registry::Entity entity, JsonObject const& obj);
 
-  void temporal_system(Registery& reg);
+  void temporal_system(Registry& reg);
   void on_collision(const CollisionEvent& c);
 };

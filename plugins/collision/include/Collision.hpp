@@ -6,7 +6,7 @@
 
 #include "ICollisionAlgorithm.hpp"
 #include "Json/JsonParser.hpp"
-#include "ecs/Registery.hpp"
+#include "ecs/Registry.hpp"
 #include "ecs/SparseArray.hpp"
 #include "ecs/zipper/Zipper.hpp"
 #include "plugin/APlugin.hpp"
@@ -19,15 +19,15 @@
 class Collision : public APlugin
 {
 public:
-  Collision(Registery& r, EntityLoader& l);
+  Collision(Registry& r, EntityLoader& l);
 
   void set_algorithm(std::unique_ptr<ICollisionAlgorithm> algo);
 
 private:
-  void init_collision(Registery::Entity const& entity,
+  void init_collision(Registry::Entity const& entity,
                       JsonObject const& obj);
 
-  void collision_system(Registery& r,
+  void collision_system(Registry& r,
                         const SparseArray<Position>& positions,
                         const SparseArray<Collidable>& collidables);
   void on_collision(const CollisionEvent& c);

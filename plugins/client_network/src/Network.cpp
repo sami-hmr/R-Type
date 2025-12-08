@@ -7,22 +7,22 @@
 
 #include "Client.hpp"
 #include "NetworkShared.hpp"
-#include "ecs/Registery.hpp"
+#include "ecs/Registry.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/events/Events.hpp"
 
-NetworkClient::NetworkClient(Registery& r, EntityLoader& l)
+NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
     : APlugin(r, l, {}, {})
     , _sem(0)
 {
-  this->_registery.get().on<ClientConnection>(
+  this->_registry.get().on<ClientConnection>(
       [this](ClientConnection const& c)
       {
         this->_thread =
             std::thread([this, c]() { this->connection_thread(c); });
       });
 
-  this->_registery.get().on<ShutdownEvent>(
+  this->_registry.get().on<ShutdownEvent>(
       [this](ShutdownEvent const& event)
       {
         _running = false;
@@ -32,7 +32,7 @@ NetworkClient::NetworkClient(Registery& r, EntityLoader& l)
         // _client->close();
       });
 
-  this->_registery.get().on<CleanupEvent>(
+  this->_registry.get().on<CleanupEvent>(
       [this](CleanupEvent const&)
       {
         _running = false;
@@ -40,7 +40,7 @@ NetworkClient::NetworkClient(Registery& r, EntityLoader& l)
         // _socket->close();
       });
 
-  this->_registery.get().on<EventBuilder>(
+  this->_registry.get().on<EventBuilder>(
       [this](EventBuilder c)
       {
         if (!this->_running) {
@@ -52,8 +52,8 @@ NetworkClient::NetworkClient(Registery& r, EntityLoader& l)
         this->_sem.release();
       });
 
-  this->_registery.get().add_system<>(
-      [this](Registery& r)
+  this->_registry.get().add_system<>(
+      [this](Registry& r)
       {
         if (!this->_running) {
           return;
@@ -72,8 +72,8 @@ NetworkClient::NetworkClient(Registery& r, EntityLoader& l)
         this->_component_queue.lock.unlock();
       });
 
-  this->_registery.get().add_system<>(
-      [this](Registery& r)
+  this->_registry.get().add_system<>(
+      [this](Registry& r)
       {
         this->_exec_event_queue.lock.lock();
         while (!this->_exec_event_queue.queue.empty()) {
@@ -107,7 +107,7 @@ void NetworkClient::connection_thread(ClientConnection const& c)
 
 extern "C"
 {
-void* entry_point(Registery& r, EntityLoader& e)
+void* entry_point(Registry& r, EntityLoader& e)
 {
   return new NetworkClient(r, e);
 }

@@ -4,15 +4,15 @@
 #include "plugin/APlugin.hpp"
 
 APlugin::APlugin(
-    Registery& registery,
+    Registry& registry,
     EntityLoader& loader,
     std::vector<std::string> const& depends_on,
     std::unordered_map<
         std::string,
-        std::function<void(Registery::Entity, JsonVariant const&)>> components,
+        std::function<void(Registry::Entity, JsonVariant const&)>> components,
     std::optional<JsonObject> const& config)
     : components(std::move(components))
-    , _registery(registery)
+    , _registry(registry)
     , _loader(loader)
     , _config(config)
 {
@@ -21,7 +21,7 @@ APlugin::APlugin(
   }
 }
 
-void APlugin::set_component(Registery::Entity entity,
+void APlugin::set_component(Registry::Entity entity,
                             std::string const& key,
                             JsonVariant const& config)
 {
