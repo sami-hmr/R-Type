@@ -21,12 +21,12 @@
 #include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
+#include "plugin/components/AnimatedSprite.hpp"
 #include "plugin/components/Drawable.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Sprite.hpp"
 #include "plugin/components/Text.hpp"
 #include "plugin/events/Events.hpp"
-
 class SFMLRenderer : public APlugin
 {
 public:
@@ -45,10 +45,13 @@ private:
   void init_drawable(Registery::Entity const entity, JsonObject const& obj);
   void init_sprite(Registery::Entity const entity, JsonObject const& obj);
   void init_text(Registery::Entity const entity, JsonObject const& obj);
+  void init_animated_sprite(Registery::Entity const entity,
+                            const JsonObject& obj);
 
   Vector2D parse_vector2d(JsonVariant const& variant);
+  std::optional<AnimationData> parse_animation_data(JsonObject const& obj);
 
-  void handle_events();
+      void handle_events();
   void handle_resize();
   void render_sprites(Registery& r,
                       const SparseArray<Position>& positions,
@@ -58,6 +61,10 @@ private:
                    const SparseArray<Position>& positions,
                    const SparseArray<Drawable>& drawable,
                    const SparseArray<Text>& texts);
+  void animation_system(Registery& r,
+                        const SparseArray<Position>& positions,
+                        const SparseArray<Drawable>& drawable,
+                        SparseArray<AnimatedSprite>& AnimatedSprites);
   void display();
 
   std::optional<Key> sfml_key_to_key(sf::Keyboard::Key sfml_key);
