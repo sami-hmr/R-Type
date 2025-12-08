@@ -3,7 +3,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
-#include "ecs/Registery.hpp"
+#include "ecs/Registry.hpp"
 #include "ecs/SparseArray.hpp"
 
 // Test components
@@ -135,11 +135,11 @@ TEST_CASE("SparseArray - get_index throws when not found", "[sparse_array]")
   REQUIRE_THROWS_AS(arr.get_index(non_existent), std::out_of_range);
 }
 
-// ==================== Registery Tests ====================
+// ==================== Registry Tests ====================
 
-TEST_CASE("Registery - spawn_entity creates unique entities", "[registery]")
+TEST_CASE("Registry - spawn_entity creates unique entities", "[registry]")
 {
-  Registery reg;
+  Registry reg;
 
   auto entity1 = reg.spawn_entity();
   auto entity2 = reg.spawn_entity();
@@ -150,20 +150,20 @@ TEST_CASE("Registery - spawn_entity creates unique entities", "[registery]")
   REQUIRE(entity3 == 2);
 }
 
-TEST_CASE("Registery - registerComponent creates component storage",
-          "[registery]")
+TEST_CASE("Registry - registerComponent creates component storage",
+          "[registry]")
 {
-  Registery reg;
+  Registry reg;
 
   auto& positions = reg.register_component<Position>();
 
   REQUIRE(positions.empty());
 }
 
-TEST_CASE("Registery - getComponents retrieves registered components",
-          "[registery]")
+TEST_CASE("Registry - getComponents retrieves registered components",
+          "[registry]")
 {
-  Registery reg;
+  Registry reg;
   reg.register_component<Position>();
 
   auto& positions = reg.get_components<Position>();
@@ -171,9 +171,9 @@ TEST_CASE("Registery - getComponents retrieves registered components",
   REQUIRE(positions.empty());
 }
 
-TEST_CASE("Registery - add_component adds component to entity", "[registery]")
+TEST_CASE("Registry - add_component adds component to entity", "[registry]")
 {
-  Registery reg;
+  Registry reg;
   reg.register_component<Position>();
 
   auto entity = reg.spawn_entity();
@@ -184,9 +184,9 @@ TEST_CASE("Registery - add_component adds component to entity", "[registery]")
   REQUIRE(comp->y == 75.0f);
 }
 
-TEST_CASE("Registery - emplace_component constructs in place", "[registery]")
+TEST_CASE("Registry - emplace_component constructs in place", "[registry]")
 {
-  Registery reg;
+  Registry reg;
   reg.register_component<Position>();
 
   auto entity = reg.spawn_entity();
@@ -197,10 +197,10 @@ TEST_CASE("Registery - emplace_component constructs in place", "[registery]")
   REQUIRE(comp->y == 20.0f);
 }
 
-TEST_CASE("Registery - removeComponent removes component from entity",
-          "[registery]")
+TEST_CASE("Registry - removeComponent removes component from entity",
+          "[registry]")
 {
-  Registery reg;
+  Registry reg;
   reg.register_component<Position>();
 
   auto entity = reg.spawn_entity();
@@ -214,9 +214,9 @@ TEST_CASE("Registery - removeComponent removes component from entity",
   REQUIRE(!positions[entity].has_value());
 }
 
-TEST_CASE("Registery - kill_entity removes all components", "[registery]")
+TEST_CASE("Registry - kill_entity removes all components", "[registry]")
 {
-  Registery reg;
+  Registry reg;
   reg.register_component<Position>();
   reg.register_component<Velocity>();
 
@@ -237,9 +237,9 @@ TEST_CASE("Registery - kill_entity removes all components", "[registery]")
   REQUIRE(!velocities[entity].has_value());
 }
 
-TEST_CASE("Registery - kill_entity recycles entity IDs", "[registery]")
+TEST_CASE("Registry - kill_entity recycles entity IDs", "[registry]")
 {
-  Registery reg;
+  Registry reg;
 
   auto entity1 = reg.spawn_entity();
   auto entity2 = reg.spawn_entity();
@@ -252,9 +252,9 @@ TEST_CASE("Registery - kill_entity recycles entity IDs", "[registery]")
   REQUIRE(entity3 == entity1);
 }
 
-TEST_CASE("Registery - multiple components per entity", "[registery]")
+TEST_CASE("Registry - multiple components per entity", "[registry]")
 {
-  Registery reg;
+  Registry reg;
   reg.register_component<Position>();
   reg.register_component<Velocity>();
   reg.register_component<Health>();
@@ -274,9 +274,9 @@ TEST_CASE("Registery - multiple components per entity", "[registery]")
   REQUIRE(healths[entity]->hp == 100);
 }
 
-TEST_CASE("Registery - add_system and runSystems", "[registery]")
+TEST_CASE("Registry - add_system and runSystems", "[registry]")
 {
-  Registery reg;
+  Registry reg;
   reg.register_component<Position>();
 
   auto entity = reg.spawn_entity();
@@ -285,7 +285,7 @@ TEST_CASE("Registery - add_system and runSystems", "[registery]")
   int system_runs = 0;
 
   reg.add_system<Position>(
-      [&system_runs](Registery& /*r*/, SparseArray<Position>& /*positions*/)
+      [&system_runs](Registry& /*r*/, SparseArray<Position>& /*positions*/)
       { system_runs++; });
 
   reg.run_systems();
@@ -315,7 +315,7 @@ struct AnotherEvent
 
 TEST_CASE("Event - on() returns unique handler IDs", "[events]")
 {
-  Registery reg;
+  Registry reg;
 
   auto id1 = reg.on<TestEvent>([](const TestEvent&) {});
   auto id2 = reg.on<TestEvent>([](const TestEvent&) {});
@@ -328,7 +328,7 @@ TEST_CASE("Event - on() returns unique handler IDs", "[events]")
 
 TEST_CASE("Event - off() removes specific handler", "[events]")
 {
-  Registery reg;
+  Registry reg;
   int call_count = 0;
 
   auto id1 =
@@ -349,7 +349,7 @@ TEST_CASE("Event - off() removes specific handler", "[events]")
 
 TEST_CASE("Event - off() returns false for non-existent handler", "[events]")
 {
-  Registery reg;
+  Registry reg;
 
   bool removed = reg.off<TestEvent>(999);
   REQUIRE_FALSE(removed);
@@ -357,7 +357,7 @@ TEST_CASE("Event - off() returns false for non-existent handler", "[events]")
 
 TEST_CASE("Event - off() returns false for already removed handler", "[events]")
 {
-  Registery reg;
+  Registry reg;
 
   auto id = reg.on<TestEvent>([](const TestEvent&) {});
 
@@ -370,7 +370,7 @@ TEST_CASE("Event - off() returns false for already removed handler", "[events]")
 
 TEST_CASE("Event - off_all() removes all handlers for event type", "[events]")
 {
-  Registery reg;
+  Registry reg;
   int call_count = 0;
 
   reg.on<TestEvent>([&call_count](const TestEvent&) { call_count++; });
@@ -389,7 +389,7 @@ TEST_CASE("Event - off_all() removes all handlers for event type", "[events]")
 
 TEST_CASE("Event - off_all() does not affect other event types", "[events]")
 {
-  Registery reg;
+  Registry reg;
   int test_count = 0;
   int another_count = 0;
 
@@ -409,7 +409,7 @@ TEST_CASE("Event - off_all() does not affect other event types", "[events]")
 
 TEST_CASE("Event - handlers can remove themselves during emission", "[events]")
 {
-  Registery reg;
+  Registry reg;
   int call_count = 0;
   std::size_t self_handler_id = 0;
 
@@ -429,7 +429,7 @@ TEST_CASE("Event - handlers can remove themselves during emission", "[events]")
 
 TEST_CASE("Event - multiple handlers can be removed selectively", "[events]")
 {
-  Registery reg;
+  Registry reg;
   int count_a = 0;
   int count_b = 0;
   int count_c = 0;
@@ -458,7 +458,7 @@ TEST_CASE("Event - multiple handlers can be removed selectively", "[events]")
 
 TEST_CASE("Event - handler removal is type-safe", "[events]")
 {
-  Registery reg;
+  Registry reg;
   int test_count = 0;
   int another_count = 0;
 
@@ -478,7 +478,7 @@ TEST_CASE("Event - handler removal is type-safe", "[events]")
 
 TEST_CASE("Event - emit with no handlers does not crash", "[events]")
 {
-  Registery reg;
+  Registry reg;
 
   REQUIRE_NOTHROW(reg.emit<TestEvent>("test", 1));
 
@@ -490,7 +490,7 @@ TEST_CASE("Event - emit with no handlers does not crash", "[events]")
 
 TEST_CASE("Event - handler IDs are unique", "[events]")
 {
-  Registery reg;
+  Registry reg;
 
   auto id1 = reg.on<TestEvent>([](const TestEvent&) {});
   auto id2 = reg.on<AnotherEvent>([](const AnotherEvent&) {});
@@ -503,7 +503,7 @@ TEST_CASE("Event - handler IDs are unique", "[events]")
 
 TEST_CASE("Event - can register handler after off_all()", "[events]")
 {
-  Registery reg;
+  Registry reg;
   int call_count = 0;
 
   reg.on<TestEvent>([&call_count](const TestEvent&) { call_count++; });
@@ -517,7 +517,7 @@ TEST_CASE("Event - can register handler after off_all()", "[events]")
 
 TEST_CASE("Event - all handlers are executed", "[events]")
 {
-  Registery reg;
+  Registry reg;
   int count1 = 0;
   int count2 = 0;
   int count3 = 0;
@@ -534,7 +534,7 @@ TEST_CASE("Event - all handlers are executed", "[events]")
 
 TEST_CASE("Event - removing handler works correctly", "[events]")
 {
-  Registery reg;
+  Registry reg;
   int count1 = 0;
   int count2 = 0;
   int count3 = 0;
@@ -553,7 +553,7 @@ TEST_CASE("Event - removing handler works correctly", "[events]")
 
 TEST_CASE("Event - handler can access event data", "[events]")
 {
-  Registery reg;
+  Registry reg;
   std::string received_message;
   int received_value = 0;
 
@@ -572,7 +572,7 @@ TEST_CASE("Event - handler can access event data", "[events]")
 
 TEST_CASE("Event - multiple emits with handler removal between", "[events]")
 {
-  Registery reg;
+  Registry reg;
   int call_count = 0;
 
   auto id =

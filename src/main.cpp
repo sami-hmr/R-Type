@@ -6,7 +6,7 @@
 #include <vector>
 
 #include "Json/JsonParser.hpp"
-#include "ecs/Registery.hpp"
+#include "ecs/Registry.hpp"
 #include "ecs/Scenes.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
@@ -14,7 +14,7 @@
 #include "plugin/events/Events.hpp"
 #include "plugin/libLoaders/ILibLoader.hpp"
 
-static int true_main(Registery& r,
+static int true_main(Registry& r,
                      EntityLoader& e,
                      const std::vector<std::string>& argv)
 {
@@ -63,7 +63,7 @@ static int true_main(Registery& r,
 
 int main(int argc, char* argv[])
 {
-  std::optional<Registery> r;
+  std::optional<Registry> r;
   r.emplace();
   EntityLoader e(*r);
   int result =

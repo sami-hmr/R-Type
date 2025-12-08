@@ -6,7 +6,7 @@
 #include <thread>
 
 #include "Json/JsonParser.hpp"
-#include "ecs/Registery.hpp"
+#include "ecs/Registry.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/events/Events.hpp"
@@ -14,7 +14,7 @@
 class CLI : public APlugin
 {
 public:
-  CLI(Registery& r, EntityLoader& l, std::optional<JsonObject> const& config);
+  CLI(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config);
   ~CLI();
 
 private:

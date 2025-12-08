@@ -11,7 +11,7 @@
 #include "Json/JsonParser.hpp"
 #include "ParserTypes.hpp"
 #include "Rest.hpp"
-#include "ecs/Registery.hpp"
+#include "ecs/Registry.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/EntityLoader.hpp"
@@ -42,7 +42,7 @@ struct LogComponent
 class Logger : public APlugin
 {
 public:
-  Logger(Registery& r,
+  Logger(Registry& r,
          EntityLoader& l,
          std::optional<JsonObject> const& config);
 

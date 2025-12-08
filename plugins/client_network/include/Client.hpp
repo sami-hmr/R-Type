@@ -27,7 +27,7 @@
 class Client
 {
   public:
-    Client(ClientConnection const& c, SharedQueue<ComponentBuilder> &,SharedQueue<EventBuilder> &, std::atomic<bool> &running);
+    Client(ClientConnection const& c, SharedQueue<ComponentBuilder> &, SharedQueue<EventBuilder> &, std::atomic<bool> &running);
     ~Client();
 
     void close();

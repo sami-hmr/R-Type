@@ -3,7 +3,7 @@
 #include "Controller.hpp"
 
 #include "Json/JsonParser.hpp"
-#include "ecs/Registery.hpp"
+#include "ecs/Registry.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Controllable.hpp"
@@ -35,15 +35,15 @@ Key Controller::char_to_key(char c)
   return Key::Unknown;
 }
 
-Controller::Controller(Registery& r, EntityLoader& l)
+Controller::Controller(Registry& r, EntityLoader& l)
     : APlugin(r,
               l,
               {"moving"},
               {COMP_INIT(Controllable, Controllable, init_controller)})
 {
-  this->_registery.get().register_component<Controllable>();
+  this->_registry.get().register_component<Controllable>();
 
-  this->_registery.get().on<KeyPressedEvent>(
+  this->_registry.get().on<KeyPressedEvent>(
       [this](const KeyPressedEvent& c)
       {
         for (auto const& [key, active] : c.key_pressed) {
@@ -53,7 +53,7 @@ Controller::Controller(Registery& r, EntityLoader& l)
         }
       });
 
-  this->_registery.get().on<KeyReleasedEvent>(
+  this->_registry.get().on<KeyReleasedEvent>(
       [this](const KeyReleasedEvent& c)
       {
         for (auto const& [key, active] : c.key_released) {
@@ -64,14 +64,14 @@ Controller::Controller(Registery& r, EntityLoader& l)
       });
 }
 
-void Controller::init_controller(Registery::Entity const entity,
+void Controller::init_controller(Registry::Entity const entity,
                                  JsonObject const& obj)
 {
-  auto const& up_str = get_value<std::string>(this->_registery, obj, "UP");
-  auto const& down_str = get_value<std::string>(this->_registery, obj, "DOWN");
-  auto const& left_str = get_value<std::string>(this->_registery, obj, "LEFT");
+  auto const& up_str = get_value<std::string>(this->_registry, obj, "UP");
+  auto const& down_str = get_value<std::string>(this->_registry, obj, "DOWN");
+  auto const& left_str = get_value<std::string>(this->_registry, obj, "LEFT");
   auto const& right_str =
-      get_value<std::string>(this->_registery, obj, "RIGHT");
+      get_value<std::string>(this->_registry, obj, "RIGHT");
 
   if (!up_str || !down_str || !left_str || !right_str) {
     std::cerr << "Error loading controller component: unexpected value type "
@@ -88,7 +88,7 @@ void Controller::init_controller(Registery::Entity const entity,
     return;
   }
 
-  this->_registery.get().emplace_component<Controllable>(entity,
+  this->_registry.get().emplace_component<Controllable>(entity,
                                                          up_str.value()[0],
                                                          down_str.value()[0],
                                                          left_str.value()[0],
@@ -99,9 +99,9 @@ void Controller::handle_key_change(Key key, bool is_pressed)
 {
   this->_key_states[key] = is_pressed;
 
-  auto& velocities = this->_registery.get().get_components<Velocity>();
+  auto& velocities = this->_registry.get().get_components<Velocity>();
   auto const& controllers =
-      this->_registery.get().get_components<Controllable>();
+      this->_registry.get().get_components<Controllable>();
 
   for (auto&& [controller, velocity] : Zipper(controllers, velocities)) {
     Key up_key = this->char_to_key(controller.up);
@@ -135,7 +135,7 @@ double Controller::compute_axis(Key negative, Key positive) const
 
 extern "C"
 {
-void* entry_point(Registery& r, EntityLoader& e)
+void* entry_point(Registry& r, EntityLoader& e)
 {
   return new Controller(r, e);
 }

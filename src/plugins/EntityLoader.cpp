@@ -12,12 +12,12 @@
 #include <sys/types.h>
 
 #include "Json/JsonParser.hpp"
-#include "ecs/Registery.hpp"
+#include "ecs/Registry.hpp"
 #include "ecs/Scenes.hpp"
 #include "plugin/libLoaders/LDLoader.hpp"
 
-EntityLoader::EntityLoader(Registery& registery)
-    : _registery(registery)
+EntityLoader::EntityLoader(Registry& registry)
+    : _registry(registry)
 {
 }
 
@@ -55,7 +55,7 @@ void EntityLoader::load_scene(JsonObject& json_scene)
     }
   }
 
-  this->_registery.get().add_scene(scene, scene_state);
+  this->_registry.get().add_scene(scene, scene_state);
 
   if (json_scene.contains("plugins")) {
     JsonArray const& plugin_array =
@@ -79,10 +79,10 @@ void EntityLoader::load_scene(JsonObject& json_scene)
     JsonArray const& array =
         std::get<JsonArray>(json_scene.at("entities").value);
     for (auto const& it : array) {
-      std::optional<Registery::Entity> new_e =
+      std::optional<Registry::Entity> new_e =
           this->load_entity(std::get<JsonObject>(it.value));
       if (new_e.has_value()) {
-        this->_registery.get().add_component(new_e.value(),
+        this->_registry.get().add_component(new_e.value(),
                                              Scene(scene, scene_state));
       }
     }
@@ -135,17 +135,17 @@ void EntityLoader::load_plugin(std::string const& plugin,
       this->_plugins.insert_or_assign(
           plugin,
           this->_loaders.at(plugin)->get_instance(
-              "entry_point", this->_registery.get(), *this, config));
+              "entry_point", this->_registry.get(), *this, config));
     } catch (LoaderException const& e) {
       std::cerr << e.what() << '\n';
     }
   }
 }
 
-std::optional<Registery::Entity> EntityLoader::load_entity(
+std::optional<Registry::Entity> EntityLoader::load_entity(
     JsonObject const& config)
 {
-  Registery::Entity new_entity = this->_registery.get().spawn_entity();
+  Registry::Entity new_entity = this->_registry.get().spawn_entity();
   for (auto const& [key, sub_config] : config) {
     std::string plugin = key.substr(0, key.find(':'));
     std::string comp = key.substr(key.find(':') + 1);

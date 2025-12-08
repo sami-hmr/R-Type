@@ -5,10 +5,10 @@
 #include "Logger.hpp"
 
 #include "plugin/events/Events.hpp"
-#include "ecs/Registery.hpp"
+#include "ecs/Registry.hpp"
 #include "plugin/EntityLoader.hpp"
 
-Logger::Logger(Registery& r,
+Logger::Logger(Registry& r,
                EntityLoader& l,
                std::optional<JsonObject> const& config)
     : APlugin(r, l, {}, {}, config)
@@ -42,12 +42,12 @@ Logger::Logger(Registery& r,
     }
   }
 
-  this->_registery.get().on<LogEvent>([this](const LogEvent& event)
+  this->_registry.get().on<LogEvent>([this](const LogEvent& event)
                                       { this->on_log_event(event); });
-  this->_registery.get().on<ShutdownEvent>(
+  this->_registry.get().on<ShutdownEvent>(
       [this](const ShutdownEvent& event)
       {
-        this->_registery.get().emit<LogEvent>(
+        this->_registry.get().emit<LogEvent>(
             "System",
             event.exit_code == 0 ? LogLevel::INFO : LogLevel::WARNING,
             std::format(
@@ -121,7 +121,7 @@ std::string Logger::level_to_string(LogLevel level)
 
 extern "C"
 {
-void* entry_point(Registery& r,
+void* entry_point(Registry& r,
                   EntityLoader& e,
                   std::optional<JsonObject> const& config)
 {

@@ -22,7 +22,7 @@
 #include "ClientConnection.hpp"
 #include "Json/JsonParser.hpp"
 #include "ServerLaunch.hpp"
-#include "ecs/Registery.hpp"
+#include "ecs/Registry.hpp"
 #include "ecs/zipper/Zipper.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
@@ -69,7 +69,7 @@ static sf::Texture gen_placeholder()
   return sf::Texture(image);
 }
 
-SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
+SFMLRenderer::SFMLRenderer(Registry& r, EntityLoader& l)
     : APlugin(r,
               l,
               {"moving", "client_network", "server_network"},
@@ -81,42 +81,42 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
       sf::RenderWindow(sf::VideoMode(window_size), "R-Type - SFML Renderer");
   _window.setFramerateLimit(window_rate);
 
-  _registery.get().register_component<Drawable>("sfml:Drawable");
-  _registery.get().register_component<Sprite>("sfml:Sprite");
-  _registery.get().register_component<Text>("sfml:Text");
+  _registry.get().register_component<Drawable>("sfml:Drawable");
+  _registry.get().register_component<Sprite>("sfml:Sprite");
+  _registry.get().register_component<Text>("sfml:Text");
 
-  _registery.get().add_system<Scene, Drawable>(
-      [this](Registery&,
+  _registry.get().add_system<Scene, Drawable>(
+      [this](Registry&,
              SparseArray<Scene>& scenes,
              SparseArray<Drawable>& drawables)
       {
         for (auto&& [scene, drawable] : Zipper(scenes, drawables)) {
           drawable.enabled =
-              (scene.scene_name == _registery.get().get_current_scene()
+              (scene.scene_name == _registry.get().get_current_scene()
                || scene.state == SceneState::ACTIVE);
         }
       },
       0);
 
-  _registery.get().add_system<>([this](Registery&) { this->handle_events(); },
+  _registry.get().add_system<>([this](Registry&) { this->handle_events(); },
                                 1);
-  _registery.get().add_system<>([this](Registery&)
+  _registry.get().add_system<>([this](Registry&)
                                 { _window.clear(sf::Color::Black); });
-  _registery.get().add_system<Position, Drawable, Sprite>(
-      [this](Registery& r,
+  _registry.get().add_system<Position, Drawable, Sprite>(
+      [this](Registry& r,
              SparseArray<Position>& pos,
              SparseArray<Drawable>& draw,
              SparseArray<Sprite>& spr)
       { this->render_sprites(r, pos, draw, spr); });
 
-  _registery.get().add_system<Position, Drawable, Text>(
-      [this](Registery& r,
+  _registry.get().add_system<Position, Drawable, Text>(
+      [this](Registry& r,
              const SparseArray<Position>& pos,
              const SparseArray<Drawable>& draw,
              const SparseArray<Text>& txt)
       { this->render_text(r, pos, draw, txt); });
 
-  _registery.get().add_system<>([this](Registery&) { this->display(); });
+  _registry.get().add_system<>([this](Registry&) { this->display(); });
   _textures.insert_or_assign(SFMLRenderer::placeholder_texture,
                              gen_placeholder());
 }
@@ -156,10 +156,10 @@ sf::Font& SFMLRenderer::load_font(std::string const& path)
   return _fonts.at(path);
 }
 
-void SFMLRenderer::init_drawable(Registery::Entity const entity,
+void SFMLRenderer::init_drawable(Registry::Entity const entity,
                                  JsonObject const&)
 {
-  _registery.get().emplace_component<Drawable>(entity);
+  _registry.get().emplace_component<Drawable>(entity);
 }
 
 Vector2D SFMLRenderer::parse_vector2d(JsonVariant const& variant)
@@ -174,9 +174,9 @@ Vector2D SFMLRenderer::parse_vector2d(JsonVariant const& variant)
   }
 
   auto const& width_double =
-      get_value<double>(this->_registery.get(), obj, "width");
+      get_value<double>(this->_registry.get(), obj, "width");
   auto const& height_double =
-      get_value<double>(this->_registery.get(), obj, "height");
+      get_value<double>(this->_registry.get(), obj, "height");
 
   if (width_double && height_double) {
     return {width_double.value() / SFMLRenderer::window_size.x,
@@ -184,9 +184,9 @@ Vector2D SFMLRenderer::parse_vector2d(JsonVariant const& variant)
   }
 
   auto const& width_str =
-      get_value<std::string>(this->_registery.get(), obj, "width");
+      get_value<std::string>(this->_registry.get(), obj, "width");
   auto const& height_str =
-      get_value<std::string>(this->_registery.get(), obj, "height");
+      get_value<std::string>(this->_registry.get(), obj, "height");
 
   if (width_str && height_str) {
     std::string x_percentage = width_str.value();
@@ -215,11 +215,11 @@ Vector2D SFMLRenderer::parse_vector2d(JsonVariant const& variant)
   return {10.0 / 100.0, 15.0 / 100.0};
 }
 
-void SFMLRenderer::init_sprite(Registery::Entity const entity,
+void SFMLRenderer::init_sprite(Registry::Entity const entity,
                                JsonObject const& obj)
 {
   auto const& texture_path =
-      get_value<std::string>(this->_registery.get(), obj, "texture");
+      get_value<std::string>(this->_registry.get(), obj, "texture");
 
   if (!texture_path) {
     std::cerr << "Error loading sprite component: unexpected value type "
@@ -234,17 +234,17 @@ void SFMLRenderer::init_sprite(Registery::Entity const entity,
                         // compte les hooks
             .value);  // la scale est en pourcentage de la taille de la window
   }
-  _registery.get().emplace_component<Sprite>(
+  _registry.get().emplace_component<Sprite>(
       entity, texture_path.value(), scale);
 }
 
-void SFMLRenderer::init_text(Registery::Entity const entity,
+void SFMLRenderer::init_text(Registry::Entity const entity,
                              JsonObject const& obj)
 {
   auto const& font_path =
-      get_value<std::string>(this->_registery.get(), obj, "font");
+      get_value<std::string>(this->_registry.get(), obj, "font");
   auto const& text =
-      get_value<std::string>(this->_registery.get(), obj, "text");
+      get_value<std::string>(this->_registry.get(), obj, "text");
 
   if (!font_path || !text) {
     std::cerr << "Error loading text component: unexpected value type (font: "
@@ -257,7 +257,7 @@ void SFMLRenderer::init_text(Registery::Entity const entity,
     return;
   }
   scale = this->parse_vector2d(obj.at("size").value);
-  _registery.get().emplace_component<Text>(
+  _registry.get().emplace_component<Text>(
       entity, font_path.value(), scale, text.value());
 }
 
@@ -299,7 +299,7 @@ void SFMLRenderer::handle_events()
   while (const std::optional event = _window.pollEvent()) {
     if (event->is<sf::Event::Closed>()) {
       _window.close();
-      _registery.get().emit<ShutdownEvent>("Window closed", 0);
+      _registry.get().emit<ShutdownEvent>("Window closed", 0);
     }
     if (const auto* key_pressed = event->getIf<sf::Event::KeyPressed>()) {
       auto key = sfml_key_to_key(key_pressed->code);
@@ -318,10 +318,10 @@ void SFMLRenderer::handle_events()
     }
   }
   if (!_key_pressed.key_pressed.empty()) {
-    _registery.get().emit<KeyPressedEvent>(_key_pressed);
+    _registry.get().emit<KeyPressedEvent>(_key_pressed);
   }
   if (!_key_released.key_released.empty()) {
-    _registery.get().emit<KeyReleasedEvent>(_key_released);
+    _registry.get().emit<KeyReleasedEvent>(_key_released);
   }
 }
 
@@ -333,7 +333,7 @@ void SFMLRenderer::display()
   _window.display();
 }
 
-void SFMLRenderer::render_sprites(Registery& /*unused*/,
+void SFMLRenderer::render_sprites(Registry& /*unused*/,
                                   const SparseArray<Position>& positions,
                                   const SparseArray<Drawable>& drawable,
                                   const SparseArray<Sprite>& sprites)
@@ -380,7 +380,7 @@ void SFMLRenderer::render_sprites(Registery& /*unused*/,
   }
 }
 
-void SFMLRenderer::render_text(Registery& /*unused*/,
+void SFMLRenderer::render_text(Registry& /*unused*/,
                                const SparseArray<Position>& positions,
                                const SparseArray<Drawable>& drawable,
                                const SparseArray<Text>& texts)
@@ -409,7 +409,7 @@ void SFMLRenderer::render_text(Registery& /*unused*/,
 
 extern "C"
 {
-void* entry_point(Registery& r, EntityLoader& e)
+void* entry_point(Registry& r, EntityLoader& e)
 {
   return new SFMLRenderer(r, e);
 }

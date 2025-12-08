@@ -9,7 +9,7 @@
 #include "Json/JsonParser.hpp"
 #include "Logger.hpp"
 #include "algorithm/QuadTreeCollision.hpp"
-#include "ecs/Registery.hpp"
+#include "ecs/Registry.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/EntityLoader.hpp"
@@ -22,11 +22,11 @@
 #include "plugin/components/Velocity.hpp"
 #include "plugin/events/Events.hpp"
 
-Collision::Collision(Registery& r, EntityLoader& l)
+Collision::Collision(Registry& r, EntityLoader& l)
     : APlugin(r, l, {"moving"}, {COMP_INIT(Collidable, Collidable, init_collision)})
 {
-  _registery.get().register_component<Collidable>("collision:Collidable");
-  _registery.get().register_component<Team>("collision:Team");
+  _registry.get().register_component<Collidable>("collision:Collidable");
+  _registry.get().register_component<Team>("collision:Team");
 
   _collision_algo = std::make_unique<QuadTreeCollision>(2.0, 2.0);
 
@@ -34,14 +34,14 @@ Collision::Collision(Registery& r, EntityLoader& l)
     LOGGER("COLLISION", LogLevel::ERROR, "Error loading collision algorithm")
   }
 
-  _registery.get().add_system<Position, Collidable>(
-      [this](Registery& r,
+  _registry.get().add_system<Position, Collidable>(
+      [this](Registry& r,
              const SparseArray<Position>& pos,
              const SparseArray<Collidable>& col)
       { this->collision_system(r, pos, col); },
       3);
 
-  this->_registery.get().on<CollisionEvent>([this](const CollisionEvent& c)
+  this->_registry.get().on<CollisionEvent>([this](const CollisionEvent& c)
                                             { this->on_collision(c); });
 }
 
@@ -50,13 +50,13 @@ void Collision::set_algorithm(std::unique_ptr<ICollisionAlgorithm> algo)
   _collision_algo = std::move(algo);
 }
 
-void Collision::init_collision(Registery::Entity const& entity,
+void Collision::init_collision(Registry::Entity const& entity,
                                JsonObject const& obj)
 {
-  auto const& width = get_value<double>(this->_registery.get(), obj, "width");
-  auto const& height = get_value<double>(this->_registery.get(), obj, "height");
+  auto const& width = get_value<double>(this->_registry.get(), obj, "width");
+  auto const& height = get_value<double>(this->_registry.get(), obj, "height");
   auto const& type_str =
-      get_value<std::string>(this->_registery.get(), obj, "collision_type");
+      get_value<std::string>(this->_registry.get(), obj, "collision_type");
 
   if (!width || !height || !type_str) {
     std::cerr
@@ -72,11 +72,11 @@ void Collision::init_collision(Registery::Entity const& entity,
     type = CollisionType::Solid;
   }
 
-  this->_registery.get().emplace_component<Collidable>(
+  this->_registry.get().emplace_component<Collidable>(
       entity, width.value(), height.value(), type, true);
 }
 
-void Collision::collision_system(Registery& reg,
+void Collision::collision_system(Registry& reg,
                                  const SparseArray<Position>& positions,
                                  const SparseArray<Collidable>& collidables)
 {
@@ -107,26 +107,26 @@ void Collision::collision_system(Registery& reg,
     std::size_t entity_a = collision.entity_a;
     std::size_t entity_b = collision.entity_b;
 
-    this->_registery.get().emit<CollisionEvent>(entity_a, entity_b);
-    this->_registery.get().emit<CollisionEvent>(entity_b, entity_a);
+    this->_registry.get().emit<CollisionEvent>(entity_a, entity_b);
+    this->_registry.get().emit<CollisionEvent>(entity_b, entity_a);
   }
 }
 
 void Collision::on_collision(const CollisionEvent& c)
 {
-  auto& velocities = this->_registery.get().get_components<Velocity>();
-  auto& positions = this->_registery.get().get_components<Position>();
-  auto const& collidables = this->_registery.get().get_components<Collidable>();
+  auto& velocities = this->_registry.get().get_components<Velocity>();
+  auto& positions = this->_registry.get().get_components<Position>();
+  auto const& collidables = this->_registry.get().get_components<Collidable>();
 
-  bool both_solid = this->_registery.get().has_component<Collidable>(c.a)
-      && this->_registery.get().has_component<Collidable>(c.b)
+  bool both_solid = this->_registry.get().has_component<Collidable>(c.a)
+      && this->_registry.get().has_component<Collidable>(c.b)
       && collidables[c.a]->collision_type == CollisionType::Solid
       && collidables[c.b]->collision_type == CollisionType::Solid;
 
   if (both_solid) {
-    double dt = this->_registery.get().clock().delta_seconds();
-    if (this->_registery.get().has_component<Velocity>(c.a)
-        && this->_registery.get().has_component<Position>(c.a))
+    double dt = this->_registry.get().clock().delta_seconds();
+    if (this->_registry.get().has_component<Velocity>(c.a)
+        && this->_registry.get().has_component<Position>(c.a))
     {
       positions[c.a]->pos -= (velocities[c.a]->direction * dt).normalize()
           * velocities[c.a]->speed;
@@ -136,7 +136,7 @@ void Collision::on_collision(const CollisionEvent& c)
 
 extern "C"
 {
-void* entry_point(Registery& r, EntityLoader& e)
+void* entry_point(Registry& r, EntityLoader& e)
 {
   return new Collision(r, e);
 }

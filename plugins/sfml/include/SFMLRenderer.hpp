@@ -16,7 +16,7 @@
 #include <SFML/Window.hpp>
 
 #include "Json/JsonParser.hpp"
-#include "ecs/Registery.hpp"
+#include "ecs/Registry.hpp"
 #include "ecs/SparseArray.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
@@ -30,7 +30,7 @@
 class SFMLRenderer : public APlugin
 {
 public:
-  SFMLRenderer(Registery& r, EntityLoader& l);
+  SFMLRenderer(Registry& r, EntityLoader& l);
   ~SFMLRenderer() override;
 
   static constexpr sf::Vector2u window_size = {1080, 1080};
@@ -42,19 +42,19 @@ private:
   sf::Texture& load_texture(std::string const& path);
   sf::Font& load_font(std::string const& path);
 
-  void init_drawable(Registery::Entity const entity, JsonObject const& obj);
-  void init_sprite(Registery::Entity const entity, JsonObject const& obj);
-  void init_text(Registery::Entity const entity, JsonObject const& obj);
+  void init_drawable(Registry::Entity const entity, JsonObject const& obj);
+  void init_sprite(Registry::Entity const entity, JsonObject const& obj);
+  void init_text(Registry::Entity const entity, JsonObject const& obj);
 
   Vector2D parse_vector2d(JsonVariant const& variant);
 
   void handle_events();
   void handle_resize();
-  void render_sprites(Registery& r,
+  void render_sprites(Registry& r,
                       const SparseArray<Position>& positions,
                       const SparseArray<Drawable>& drawable,
                       const SparseArray<Sprite>& sprites);
-  void render_text(Registery& r,
+  void render_text(Registry& r,
                    const SparseArray<Position>& positions,
                    const SparseArray<Drawable>& drawable,
                    const SparseArray<Text>& texts);

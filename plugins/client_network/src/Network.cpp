@@ -6,21 +6,21 @@
 #include "Network.hpp"
 
 #include "Client.hpp"
-#include "ecs/Registery.hpp"
+#include "ecs/Registry.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/events/Events.hpp"
 
-NetworkClient::NetworkClient(Registery& r, EntityLoader& l)
+NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
     : APlugin(r, l, {}, {})
 {
-  this->_registery.get().on<ClientConnection>(
+  this->_registry.get().on<ClientConnection>(
       [this](ClientConnection const& c)
       {
         this->_threads.emplace_back([this, c]()
                                     { this->connection_thread(c); });
       });
 
-  this->_registery.get().on<ShutdownEvent>(
+  this->_registry.get().on<ShutdownEvent>(
       [this](ShutdownEvent const& event)
       {
         _running = false;
@@ -29,7 +29,7 @@ NetworkClient::NetworkClient(Registery& r, EntityLoader& l)
           // _client->close();
       });
 
-  this->_registery.get().on<CleanupEvent>(
+  this->_registry.get().on<CleanupEvent>(
       [this](CleanupEvent const&)
       {
         _running = false;
@@ -49,7 +49,7 @@ NetworkClient::~NetworkClient()
 void NetworkClient::connection_thread(ClientConnection const& c)
 {
   try {
-    Client client(c, _component_queue, _running);
+    Client client(c, _components_to_update, _events_to_transmit, _running);
     client.connect();
   } catch (std::exception& e) {
     LOGGER("client",
@@ -60,7 +60,7 @@ void NetworkClient::connection_thread(ClientConnection const& c)
 
 extern "C"
 {
-void* entry_point(Registery& r, EntityLoader& e)
+void* entry_point(Registry& r, EntityLoader& e)
 {
   return new NetworkClient(r, e);
 }
