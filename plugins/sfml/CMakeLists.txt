@@ -6,6 +6,7 @@ find_package(SFML 3 COMPONENTS Graphics Window REQUIRED)
 
 add_library(${LIB_NAME} SHARED
     src/SFMLRenderer.cpp
+    src/Background.cpp
     src/AnimatedSprite.cpp
 )
 

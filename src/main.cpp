@@ -54,9 +54,9 @@ static int true_main(Registery& r,
 
   r.setup_scene_systems();
 
-  JsonObject test({{"prout", JsonValue("#prout:max")}});
+  // JsonObject test({{"prout", JsonValue("#prout:max")}});
 
-  std::cout << get_value<int>(r, test, "prout").value() << std::endl;
+  // std::cout << get_value<int>(r, test, "prout").value() << std::endl;
 
   while (!should_exit) {
     r.run_systems();
