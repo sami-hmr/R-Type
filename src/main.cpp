@@ -11,6 +11,7 @@
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Drawable.hpp"
+#include "plugin/events/ActionEvents.hpp"
 #include "plugin/events/Events.hpp"
 #include "plugin/libLoaders/ILibLoader.hpp"
 
@@ -32,7 +33,20 @@ static int true_main(Registery& r,
 
   r.on<SceneChangeEvent>("SceneChangeEvent",
                          [&r](const SceneChangeEvent& event)
-                         { r.set_current_scene(event.target_scene); });
+                         {
+                           r.set_current_scene(event.target_scene,
+                                               SCENE_STATE_STR.at(event.state));
+                         });
+
+  r.on<SpawnEntityRequestEvent>("SpawnEntity",
+                                [&r, &e](const SpawnEntityRequestEvent& event)
+                                {
+                                  Registery::Entity entity = r.spawn_entity();
+                                  JsonObject base =
+                                      r.get_template(event.entity_template);
+                                  e.load_components(entity, base);
+                                  e.load_components(entity, event.params);
+                                });
 
   r.init_scene_management();
 

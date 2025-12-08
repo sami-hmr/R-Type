@@ -51,10 +51,12 @@ private:
   void handle_events();
   void handle_resize();
   void render_sprites(Registery& r,
+                      const SparseArray<Scene>& scenes,
                       const SparseArray<Position>& positions,
                       const SparseArray<Drawable>& drawable,
                       const SparseArray<Sprite>& sprites);
   void render_text(Registery& r,
+                   const SparseArray<Scene>& scenes,
                    const SparseArray<Position>& positions,
                    const SparseArray<Drawable>& drawable,
                    const SparseArray<Text>& texts);

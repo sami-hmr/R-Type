@@ -20,6 +20,7 @@
 #include "Json/JsonParser.hpp"
 #include "ServerLaunch.hpp"
 #include "ecs/Registery.hpp"
+#include "ecs/Scenes.hpp"
 #include "ecs/zipper/Zipper.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
@@ -82,36 +83,25 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
   _registery.get().register_component<Sprite>("sfml:Sprite");
   _registery.get().register_component<Text>("sfml:Text");
 
-  _registery.get().add_system<Scene, Drawable>(
-      [this](Registery&,
-             SparseArray<Scene>& scenes,
-             SparseArray<Drawable>& drawables)
-      {
-        for (auto&& [scene, drawable] : Zipper(scenes, drawables)) {
-          drawable.enabled =
-              (scene.scene_name == _registery.get().get_current_scene()
-               || scene.state == SceneState::ACTIVE);
-        }
-      },
-      0);
-
   _registery.get().add_system<>([this](Registery&) { this->handle_events(); },
                                 1);
   _registery.get().add_system<>([this](Registery&)
                                 { _window.clear(sf::Color::Black); });
-  _registery.get().add_system<Position, Drawable, Sprite>(
+  _registery.get().add_system<Scene, Position, Drawable, Sprite>(
       [this](Registery& r,
+             SparseArray<Scene>& scenes,
              SparseArray<Position>& pos,
              SparseArray<Drawable>& draw,
              SparseArray<Sprite>& spr)
-      { this->render_sprites(r, pos, draw, spr); });
+      { this->render_sprites(r, scenes, pos, draw, spr); });
 
-  _registery.get().add_system<Position, Drawable, Text>(
+  _registery.get().add_system<Scene, Position, Drawable, Text>(
       [this](Registery& r,
+             const SparseArray<Scene>& scenes,
              const SparseArray<Position>& pos,
              const SparseArray<Drawable>& draw,
              const SparseArray<Text>& txt)
-      { this->render_text(r, pos, draw, txt); });
+      { this->render_text(r, scenes, pos, draw, txt); });
 
   _registery.get().add_system<>([this](Registery&) { this->display(); });
   _textures.insert_or_assign(SFMLRenderer::placeholder_texture,
@@ -344,12 +334,18 @@ void SFMLRenderer::display()
 }
 
 void SFMLRenderer::render_sprites(Registery& /*unused*/,
+                                  const SparseArray<Scene>& scenes,
                                   const SparseArray<Position>& positions,
                                   const SparseArray<Drawable>& drawable,
                                   const SparseArray<Sprite>& sprites)
 {
-  for (auto&& [pos, draw, spr] : Zipper(positions, drawable, sprites)) {
+  for (auto&& [scene, pos, draw, spr] :
+       Zipper(scenes, positions, drawable, sprites))
+  {
     if (!draw.enabled) {
+      continue;
+    }
+    if (scene.state == SceneState::DISABLED) {
       continue;
     }
 
@@ -381,12 +377,18 @@ void SFMLRenderer::render_sprites(Registery& /*unused*/,
 }
 
 void SFMLRenderer::render_text(Registery& /*unused*/,
+                               const SparseArray<Scene>& scenes,
                                const SparseArray<Position>& positions,
                                const SparseArray<Drawable>& drawable,
                                const SparseArray<Text>& texts)
 {
-  for (auto&& [pos, draw, txt] : Zipper(positions, drawable, texts)) {
+  for (auto&& [scene, pos, draw, txt] :
+       Zipper(scenes, positions, drawable, texts))
+  {
     if (!draw.enabled) {
+      continue;
+    }
+    if (scene.state == SceneState::DISABLED) {
       continue;
     }
 

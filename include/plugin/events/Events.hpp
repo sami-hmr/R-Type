@@ -122,10 +122,12 @@ struct DamageEvent
 struct SceneChangeEvent
 {
   std::string target_scene;
+  std::string state;
   std::string reason;
 
   SceneChangeEvent(Registery& r, JsonObject const& e)
       : target_scene(get_value<std::string>(r, e, "target_scene").value())
+      , state(get_value<std::string>(r, e, "state").value())
       , reason(get_value<std::string>(r, e, "reason").value())
   {
   }

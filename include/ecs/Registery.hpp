@@ -5,6 +5,7 @@
 #include <chrono>
 #include <cstddef>
 #include <functional>
+#include <iostream>
 #include <map>
 #include <optional>
 #include <queue>
@@ -389,13 +390,11 @@ public:
       return;
     }
 
-    // Build the event
     auto builder =
         std::any_cast<std::function<std::any(Registery&, JsonObject const&)>>(
             _event_builders.at(type_id));
     std::any event = builder(*this, args);
 
-    // Use invoker to call handlers
     auto invoker =
         std::any_cast<std::function<void(const std::any&, const std::any&)>>(
             _event_invokers.at(type_id));
@@ -438,9 +437,15 @@ public:
     }
   }
 
-  void set_current_scene(std::string const& scene_name)
+  void set_current_scene(std::string const& scene_name,
+                         SceneState state = SceneState::MAIN)
   {
     _current_scene = scene_name;
+    for (auto&& [sc] : Zipper(this->get_components<Scene>())) {
+      if (sc.scene_name == scene_name) {
+        sc.state = state;
+      }
+    }
   }
 
   std::string const& get_current_scene() const { return _current_scene; }
@@ -503,6 +508,25 @@ public:
         });
   }
 
+  void add_template(std::string const& name, JsonObject const& config)
+  {
+    _entities_templates.insert_or_assign(name, config);
+  }
+
+  JsonObject get_template(std::string const& name)
+  {
+    if (!_entities_templates.contains(name)) {
+      std::cerr << "Template: " << name << " not found !\n";
+    }
+    return _entities_templates.find(name)->second;
+  }
+
+  bool is_current_cene(Entity e)
+  {
+    return this->get_components<Scene>()[e].value().scene_name
+        == this->_current_scene;
+  }
+
 private:
   struct Binding
   {
@@ -545,7 +569,6 @@ private:
   std::unordered_map<std::type_index, std::any> _event_handlers;
   TwoWayMap<std::type_index, std::string> _events_index_getter;
   std::unordered_map<std::type_index, std::any> _event_builders;
-
   std::unordered_map<std::type_index,
                      std::function<void(const std::any&, const std::any&)>>
       _event_invokers;
@@ -555,6 +578,7 @@ private:
   std::unordered_set<Entity> _entities_to_kill;
   Clock _clock;
   std::size_t _max = 0;
+
   std::unordered_map<std::string, SceneState> _scenes;
   std::string _current_scene;
 
@@ -562,4 +586,6 @@ private:
                      std::function<std::optional<std::any>(std::string const&)>>
       _hooked_components;
   std::vector<Binding> _bindings;
+
+  std::unordered_map<std::string, JsonObject> _entities_templates;
 };

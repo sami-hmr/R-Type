@@ -1,67 +1,49 @@
 #pragma once
 
 #include <chrono>
-#include <map>
 #include <string>
+#include <unordered_map>
+#include <utility>
 #include <vector>
 
-struct JsonValue;
-using JsonObject = std::map<std::string, JsonValue>;
-
-enum class TriggerType : std::uint8_t
-{
-  CLICK,
-  HOVER,
-  COLLISION,
-  KEY_PRESS,
-  TIMER,
-  CUSTOM
-};
-
-enum class ActionType : std::uint8_t
-{
-  EMIT_EVENT,
-  DELAY,
-  KILL_ENTITY,
-  SPAWN_ENTITY,
-  MODIFY_COMPONENT
-};
-
-struct Action
-{
-  ActionType type;
-  std::string event_name;
-  JsonObject params;
-  double delay_seconds;
-
-  Action(ActionType t = ActionType::EMIT_EVENT,
-         std::string event = "",
-         JsonObject p = {},
-         double delay = 0.0)
-      : type(t)
-      , event_name(std::move(event))
-      , params(std::move(p))
-      , delay_seconds(delay)
-  {
-  }
-};
+#include "ByteParser/ByteParser.hpp"
+#include "Json/JsonParser.hpp"
+#include "plugin/Byte.hpp"
+#include "plugin/Hooks.hpp"
 
 struct ActionTrigger
 {
-  TriggerType trigger;
-  std::vector<Action> actions;
-  std::string condition;
-  bool triggered;
-  std::chrono::steady_clock::time_point last_trigger_time;
+  ActionTrigger()
+      : triggered(false)
+      , last_trigger_time(std::chrono::steady_clock::now())
+  {
+  }
 
-  ActionTrigger(TriggerType t = TriggerType::CLICK,
-                std::vector<Action> a = {},
-                std::string cond = "")
-      : trigger(t)
-      , actions(std::move(a))
-      , condition(std::move(cond))
+  ActionTrigger(bool triggered)
+      : triggered(triggered)
+  {
+  }
+
+  ActionTrigger(std::pair<std::string, JsonObject> const& evt_trg,
+                std::vector<std::pair<std::string, JsonObject>> const& evt_emt)
+      : event_trigger(evt_trg)
+      , event_to_emit(evt_emt)
       , triggered(false)
       , last_trigger_time(std::chrono::steady_clock::now())
   {
   }
+
+  DEFAULT_BYTE_CONSTRUCTOR(ActionTrigger,
+                           ([](bool triggered)
+                            { return ActionTrigger(triggered); }),
+                           parseByte<bool>())
+  DEFAULT_SERIALIZE(string_to_byte(this->event_trigger.first),
+                    string_to_byte(this->event_trigger.first))
+
+  std::pair<std::string, JsonObject> event_trigger;
+  std::vector<std::pair<std::string, JsonObject>> event_to_emit;
+  bool triggered;
+  std::chrono::steady_clock::time_point last_trigger_time;
+
+  HOOKABLE(ActionTrigger, HOOK(event_trigger), HOOK(event_to_emit))
 };

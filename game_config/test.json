@@ -1,4 +1,21 @@
 {
+  "entities_template": [
+    {
+      "name": "menu",
+      "components": {
+        "moving:Position": { "pos": { "x": 0.0, "y": -0.5 } },
+        "sfml:Drawable": {},
+        "sfml:Text": {
+          "font": "assets/fonts/roboto.ttf",
+          "size": {
+            "width": 40.0,
+            "height": 40.0
+          },
+          "text": "R-TYPE MENU"
+        }
+      }
+    }
+  ],
   "scenes": [
     {
       "name": "menu",
@@ -17,16 +34,7 @@
       ],
       "entities": [
         {
-          "moving:Position": { "pos": { "x": 0.0, "y": -0.5 } },
-          "sfml:Drawable": {},
-          "sfml:Text": {
-            "font": "assets/fonts/roboto.ttf",
-            "size": {
-              "width": 40.0,
-              "height": 40.0
-            },
-            "text": "R-TYPE MENU"
-          }
+          "template": "menu"
         },
         {
           "moving:Position": { "pos": { "x": 0.0, "y": 0.0 } },
@@ -54,15 +62,27 @@
         },
         {
           "actions:ActionTrigger": {
-            "trigger": "key_press",
-            "condition": "ENTER",
-            "actions": [
+            "trigger": {
+              "type": "KeyPressed",
+              "params": {
+                "key": "ENTER"
+              }
+            },
+            "to_emit": [
               {
-                "type": "emit_event",
-                "event": "SceneChangeEvent",
+                "name": "SceneChangeEvent",
                 "params": {
                   "target_scene": "game",
-                  "reason": "User pressed ENTER"
+                  "state": "main",
+                  "reason": "User pressed enter"
+                }
+              },
+              {
+                "name": "SceneChangeEvent",
+                "params": {
+                  "target_scene": "menu",
+                  "state": "disabled",
+                  "reason": "User pressed R"
                 }
               }
             ]
@@ -81,7 +101,7 @@
       ],
       "entities": [
         {
-          "moving:Position": { "pos": { "x": 0.0, "y": 0.0 } },
+          "moving:Position": { "pos": { "x": -0.8, "y": 0.0 } },
           "sfml:Drawable": {},
           "moving:Velocity": {
             "hook": "player",
@@ -116,6 +136,34 @@
           "life:Damage": { "amount": 1 },
           "life:Heal": { "amount": 1 },
           "life:Team": { "name": "test1" }
+        },
+        {
+          "moving:Position": { "pos": { "x": -0.7, "y": 0.0 } },
+          "sfml:Drawable": {},
+          "moving:Velocity": {
+            "speed": {
+              "x": 0.15,
+              "y": 0.0
+            },
+            "direction": {
+              "x": 1.0,
+              "y": 0.0
+            }
+          },
+          "sfml:Sprite": {
+            "texture": "assets/enemy.png",
+            "size": {
+              "width": "5.0%",
+              "height": "5.0%"
+            }
+          },
+          "collision:Collidable": {
+            "width": 0.03,
+            "height": 0.03,
+            "collision_type": "Solid"
+          },
+          "life:Damage": { "amount": 10 },
+          "life:Team": { "name": "player" }
         },
         {
           "moving:Position": { "pos": { "x": 0.5, "y": -0.3 } },
@@ -163,32 +211,28 @@
         },
         {
           "actions:ActionTrigger": {
-            "trigger": "key_press",
-            "condition": "R",
-            "actions": [
+            "trigger": {
+              "type": "KeyPressed",
+              "params": {
+                "key": "R"
+              }
+            },
+            "to_emit": [
               {
-                "type": "emit_event",
-                "event": "SceneChangeEvent",
+                "name": "SceneChangeEvent",
                 "params": {
                   "target_scene": "menu",
+                  "state": "main",
                   "reason": "User pressed R"
                 }
-              }
-            ]
-          }
-        },
-        {
-          "actions:ActionTrigger": {
-            "trigger": "timer",
-            "actions": [
+              },
               {
-                "type": "emit_event",
-                "event": "ShutdownEvent",
+                "name": "SceneChangeEvent",
                 "params": {
-                  "reason": "Automatic shutdown after timeout",
-                  "exit_code": 0
-                },
-                "delay": 10.0
+                  "target_scene": "game",
+                  "state": "disabled",
+                  "reason": "User pressed R"
+                }
               }
             ]
           }
