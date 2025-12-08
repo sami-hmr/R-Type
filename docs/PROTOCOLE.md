@@ -229,8 +229,6 @@ PACKETS are always smaller than 2048 (eof and header included) otherwise the pac
 
 **Header:**
 
-<!-- Sequence_Number:32;Reliable_Acknowledge:32 -->
-
 Fields:
 
 - Sequence Number (32 bits): Incrementing packet sequence (starts at 1, wraps at 2^32)
@@ -243,101 +241,21 @@ Following the header, the packet contains one or more server operation messages,
 
 **Server Operations:**
 
-##### **srv_gamestate (opcode 1):**
+Server must send the first srv_snapshot immediately after connectResponse.
 
-Transmits the complete initial game state to a newly connected client. This is the first message sent after connectResponse and contains all information needed to initialize the game.
+##### **srv_event (opcode 1):**
 
-<!-- Opcode=1:8;Server_Time:32;Client_Number:8;Gamestate_Operations:variable -->
-
-Fields:
-
-- Opcode=1:8
-- Server_Time:32
-- Client_Number:8
-- Gamestate_Operations
-
-The Gamestate Operations section contains:
-
-1. Multiple gs_configstring operations (see below) to set up configuration
-2. Multiple gs_baseline operations (see below) to define initial entity states
-3. Terminated by **gs_end** (8 bits: opcode 0)
-
-Server must send srv_gamestate exactly once per client connection immediately after connectResponse.
-
-###### **gs_configstring (opcode 1):**
-
-Transmits a single configuration string as part of gamestate initialization.
-
-<!-- Opcode=1:8;Config_Index:8;Config_Value:variable -->
-
-Fields:
-
-- Opcode=1:8
-- Config_Index:8
-- Config_Value:variable
-
-Common config indices:
-
-- 0: Server name
-- 1: Map name
-- 2: Game type ("coop")
-- 3: Time limit
-- 4: Difficulty level
-- 8-11: Player names for slots 0-3
-
-The server sends multiple gs_configstring operations during gamestate initialization to set all necessary configuration values.
-
-###### **gs_baseline (opcode 2):**
-
-Defines the initial baseline state for an entity. Baselines are used as reference points for delta compression in later snapshots.
-
-<!-- Opcode=2:8;Entity_Number:32;component_string_id:variable;component_size:32;component_data:component_size -->
-
+Sends an event from server to client.
 Fields:
 
 - Opcode=2:8
-- Entity_Number:32
-- Components of said entity in this format:
-- - component_string_id:variable
-- - component_size:32
-- - component_data:component_size
+- EventString:string
+- EventData:variable
 
-Baselines are sent for all entities that exist when the client connects.
+##### **srv_snapshot (opcode 2):**
 
-##### **srv_command (opcode 2):**
-
-Sends a command from server to client. Commands are acknowledged and retransmitted if lost.
-
-<!-- Opcode=2:8;Command_Sequence:32;Command:variable -->
-
-Fields:
-
-- Opcode=2:8
-- Command_Sequence:32
-- Command:variable
-
-Command format: `<command_name>;<arg1>;<arg2>;...`
-
-Arguments are separated by semicolons.
-
-Standard server commands:
-
-**print**: Display message to client
-
-- Format: `print;<message_text>`
-- Example: `print;Player PlayerTwo has joined`
-
-**chat**: Chat message from another player
-
-- Format: `chat;<player_id>;<message_text>`
-- Example: `chat;1;Hello everyone!`
-- player_id: Integer 0-3 identifying sender
-
-##### **srv_snapshot (opcode 3):**
-
-Transmits a game state snapshot entity updates. Snapshots are sent at regular intervals (20-30 Hz).
-
-<!-- Opcode=3:8;Server_Time:32;Delta_Frame:8 -->
+Transmits a game state snapshot entity updates. Snapshots are sent at regular intervals.
+They contain multiple gs_... until the gs_oef
 
 Fields:
 
@@ -345,26 +263,18 @@ Fields:
 - Server_Time:32
 - Delta_Frame:8
 
-<!-- Entity_Number:32 -->
-
 **gs_entity_remove** (opcode 1)
 
 - Entity_Number:32
 
-<!-- Entity_Number:32;component_string_id:variable;component_size:32;component_data:component_size -->
-
-**gs_entity_update** (opcode 2)
+**gs_entity_update/init** (opcode 2)
 
 - Entity_Number:32
 - Components of said entity in this format:
 - - component_string_id:variable
-- - component_size:32
 - - component_data:component_size
 
-**gs_configstring** (opcode 3)
-cf config string in baseline
-
-Must end with **gs_end** (8 bits: opcode 0)
+Must end with **gs_oef** (8 bits: 0x69696969)
 
 **Delta Compression:**
 
@@ -380,13 +290,10 @@ If the client does not have the referenced snapshot (packet loss), it should:
 
 Notifies client of disconnection with reason. After receiving this, the client should close the connection and return to the main menu.
 
-<!-- Opcode=4:8;Reason_Length:8;Reason:Reason_Length -->
-
 Fields:
 
 - Opcode=4:8
-- Reason_Length:8
-- Reason:Reason_Length
+- Reason:string
 
 Common disconnect reasons:
 
@@ -399,23 +306,11 @@ Common disconnect reasons:
 
 The server should send srv_disconnect at least 3 times with 100ms intervals to ensure receipt, then close the socket. No acknowledgment is required - multiple rapid transmissions increase probability of delivery even with packet loss.
 
-##### **srv_end (opcode 0):**
+##### **srv_end (0x6767676767):**
 
 Marks the end of server operations in the packet. All server packets must end with this opcode.
 
-<!-- Opcode=0:8 -->
-
-```
- 0                   1                   2                   3
- 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| Opcode=0:8    |
-+-+-+-+-+-+-+-+-+
-```
-
 Fields:
-
-<!-- Opcode=0:8 -->
 
 - Opcode=0:8
 
@@ -427,25 +322,7 @@ All client-to-server packets begin with a 32-bits sequence number in little-endi
 
 **Header:**
 
-<!-- Sequence_Number:32;Server_ID:32;Server_Message_Sequence:32;Server_Command_Sequence:32 -->
-
-```
- 0                   1                   2                   3
- 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| Sequence_Number:32                                            |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| Server_ID:32                                                  |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| Server_Message_Sequence:32                                    |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| Server_Command_Sequence:32                                    |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-```
-
 Fields:
-
-<!-- Sequence_Number:32;Server_ID:32;Server_Message_Sequence:32;Server_Command_Sequence:32 -->
 
 - Sequence_Number:32
 - Server_ID:32
@@ -460,21 +337,9 @@ Following the header, the packet contains one or more client operation messages,
 
 ##### **cli_command (opcode 1):**
 
+>[TODO]: Need to figure more specific commands the client could send
+
 Sends a reliable command from client to server. Commands are acknowledged via reliable_acknowledge field and retransmitted if lost.
-
-<!-- Opcode=1:8;Command_Sequence:32;Command:variable -->
-
-```
- 0                   1                   2                   3
- 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| Opcode=1:8    | Command_Sequence:32                           |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|                                                               |
-+ Command:variable                                              +
-|                                                               |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-```
 
 Fields:
 
@@ -482,7 +347,7 @@ Fields:
 - Command_Sequence:32
 - Command:variable
 
-Command format: `<command_name>;<arg1>;<arg2>;...`
+Command format: `<command_opcode>;<arg1>;<arg2>;...`
 
 Arguments are separated by semicolons.
 
@@ -512,37 +377,15 @@ Commands use the reliable acknowledgment mechanism:
 
 ##### **cli_move (opcode 2):**
 
+>[TOFIX]: not really sure what is the best way to process inputs yet
+
 Transmits player input commands. Multiple input samples can be included in a single packet for redundancy against packet loss.
-
-<!-- Opcode=2:8;Command_Count:8;Server_Time_Δ:8;Input_Mask:8;Input_Bits:variable -->
-
-```
- 0                   1                   2                   3
- 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| Opcode=2:8    | Command_Count:8                               |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+                               +
-| Input_Commands:variable                                       |
-|                                                               |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-```
-
 Fields:
 
 - Opcode=2:8
 - Command_Count:8
 
 Each input command in the sequence:
-
-<!-- Server_Time_Δ:8;Input_Mask:8;Input_Bits:variable -->
-
-```
- 0                   1                   2                   3
- 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| Server_Time_Δ:8 | Input_Mask:8  | Input_Bits:variable |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-```
 
 Fields:
 
@@ -570,19 +413,7 @@ Clients should send the current input plus 2-3 previous inputs (Command Count = 
 
 Acknowledges receipt of a server snapshot. Used for reliability tracking and packet loss statistics.
 
-<!-- Opcode=3:8;Snapshot_Sequence:32 -->
-
-```
- 0                   1                   2                   3
- 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| Opcode=3:8    | Snapshot_Sequence:32                          |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-```
-
 Fields:
-
-<!-- Opcode=3:8;Snapshot_Sequence:32 -->
 
 - Opcode=3:8
 - Snapshot_Sequence:32
@@ -602,24 +433,12 @@ Server uses acknowledgments to:
 
 If client misses multiple consecutive snapshots (>5), it should send cli_acknowledge with sequence 0 to request a full snapshot (Delta Frame = 0) in the next transmission.
 
-##### **cli_end (opcode 0):**
+##### **cli_end (opcode 0x67676767):**
 
 Marks the end of client operations in the packet. All client packets must end with this opcode.
 
-<!-- Opcode=0:8 -->
-
-```
- 0                   1                   2                   3
- 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|   Opcode=0    |
-+-+-+-+-+-+-+-+-+
-```
-
 Fields:
 
-<!-- Opcode=0:8 -->
-
-- Opcode (8 bits): Always 0
+- Opcode (8 bits): Always 0x67676767
 
 No additional data follows. The packet ends immediately after this opcode.
