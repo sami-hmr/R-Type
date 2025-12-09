@@ -66,8 +66,14 @@ int main(int argc, char* argv[])
   std::optional<Registry> r;
   r.emplace();
   EntityLoader e(*r);
+#ifdef RTYPE_EPITECH_CLIENT
+  int result = true_main(*r, e, {"client_config"});
+#elif RTYPE_EPITECH_SERVER
+  int result = true_main(*r, e, {"server_config"});
+#else
   int result =
       true_main(*r, e, std::vector<std::string>(argv + 1, argv + argc));
+#endif
   r.reset();
   return result;
 }

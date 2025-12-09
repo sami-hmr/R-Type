@@ -29,7 +29,8 @@ struct AnimationData
                 double framerate,
                 int nb_frames,
                 int current_frame,
-                bool loop)
+                bool loop,
+                bool rollback)
       : texture_path(std::move(texture_path))
       , frame_size(frame_size)
       , frame_pos(frame_pos)
@@ -39,6 +40,7 @@ struct AnimationData
       , nb_frames(nb_frames)
       , current_frame(current_frame)
       , loop(loop)
+      , rollback(rollback)
   {
   }
 
@@ -51,6 +53,7 @@ struct AnimationData
   int nb_frames = 0;
   int current_frame = 0;
   bool loop = false;
+  bool rollback = false;
 
   DEFAULT_BYTE_CONSTRUCTOR(AnimationData,
                            (
@@ -62,7 +65,8 @@ struct AnimationData
                                   double framerate,
                                   int nb_frames,
                                   int current_frame,
-                                  bool loop)
+                                  bool loop,
+                                  bool rollback)
                                {
                                  return AnimationData(
                                      std::string(texture_path_vec.begin(),
@@ -74,7 +78,8 @@ struct AnimationData
                                      framerate,
                                      nb_frames,
                                      current_frame,
-                                     loop);
+                                     loop,
+                                     rollback);
                                }),
                            parseByteArray(parseAnyChar()),
                            parseVector2D(),
@@ -84,16 +89,18 @@ struct AnimationData
                            parseByte<double>(),
                            parseByte<int>(),
                            parseByte<int>(),
+                           parseByte<bool>(),
                            parseByte<bool>())
 
   DEFAULT_SERIALIZE(string_to_byte(this->texture_path),
                     vector2DToByte(this->frame_size),
                     vector2DToByte(this->frame_pos),
-                    vector2DToByte(this->sprite_size    ),
+                    vector2DToByte(this->sprite_size),
                     type_to_byte(this->framerate),
                     type_to_byte(this->nb_frames),
                     type_to_byte(this->current_frame),
-                    type_to_byte(this->loop))
+                    type_to_byte(this->loop),
+                    type_to_byte(this->rollback))
 
   HOOKABLE(AnimationData,
            HOOK(texture_path),
@@ -104,7 +111,8 @@ struct AnimationData
            HOOK(framerate),
            HOOK(nb_frames),
            HOOK(current_frame),
-           HOOK(loop))
+           HOOK(loop),
+           HOOK(rollback))
 };
 
 inline Parser<AnimationData> parseAnimationData()
@@ -118,7 +126,8 @@ inline Parser<AnimationData> parseAnimationData()
          double framerate,
          int nb_frames,
          int current_frame,
-         bool loop)
+         bool loop,
+         bool rollback)
       {
         return AnimationData(
             std::string(texture_path_vec.begin(), texture_path_vec.end()),
@@ -129,7 +138,8 @@ inline Parser<AnimationData> parseAnimationData()
             framerate,
             nb_frames,
             current_frame,
-            loop);
+            loop,
+            rollback);
       },
       parseByteString(),
       parseVector2D(),
@@ -139,6 +149,7 @@ inline Parser<AnimationData> parseAnimationData()
       parseByte<double>(),
       parseByte<int>(),
       parseByte<int>(),
+      parseByte<bool>(),
       parseByte<bool>());
 }
 
