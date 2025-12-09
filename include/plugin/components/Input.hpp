@@ -26,6 +26,8 @@ struct Input
 
   DEFAULT_SERIALIZE(type_to_byte(this->enabled), string_to_byte(this->buffer))
 
+  CHANGE_ENTITY_DEFAULT
+
   HOOKABLE(Input, HOOK(enabled), HOOK(buffer))
 
   bool enabled = false;
