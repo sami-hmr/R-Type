@@ -15,6 +15,7 @@
 #include "plugin/APlugin.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/EntityLoader.hpp"
+#include "plugin/events/Log.hpp"
 #include "plugin/events/Events.hpp"
 
 struct LogComponent

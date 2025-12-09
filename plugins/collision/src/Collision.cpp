@@ -21,6 +21,7 @@
 #include "plugin/components/Team.hpp"
 #include "plugin/components/Velocity.hpp"
 #include "plugin/events/Events.hpp"
+#include "plugin/events/CollisionEvent.hpp"
 
 Collision::Collision(Registry& r, EntityLoader& l)
     : APlugin(r, l, {"moving"}, {COMP_INIT(Collidable, Collidable, init_collision)})

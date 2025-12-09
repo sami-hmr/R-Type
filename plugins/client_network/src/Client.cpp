@@ -7,7 +7,6 @@
 
 #include "NetworkShared.hpp"
 #include "plugin/CircularBuffer.hpp"
-#include "plugin/events/Events.hpp"
 #include "Client.hpp"
 
 const std::unordered_map<std::uint8_t,

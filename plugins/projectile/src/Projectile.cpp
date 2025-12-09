@@ -9,6 +9,7 @@
 #include "plugin/components/Owner.hpp"
 #include "plugin/components/Temporal.hpp"
 #include "plugin/events/Events.hpp"
+#include "plugin/events/CollisionEvent.hpp"
 
 Projectile::Projectile(Registry& r, EntityLoader& l)
     : APlugin(r,

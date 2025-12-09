@@ -6,48 +6,11 @@
 #include <string>
 #include <utility>
 
-#include "ByteParser/ByteParser.hpp"
 #include "ParserUtils.hpp"
-#include "ecs/Registry.hpp"
 #include "plugin/Byte.hpp"
-
-struct ShutdownEvent
-{
-  ShutdownEvent(std::string r, int e)
-      : reason(std::move(r))
-      , exit_code(e)
-  {
-  }
-  DEFAULT_BYTE_CONSTRUCTOR(ShutdownEvent,
-                           ([](std::string const& r, int e)
-                            { return (ShutdownEvent) {r, e}; }),
-                           parseByteString(),
-                           parseByte<int>())
-
-  DEFAULT_SERIALIZE(string_to_byte(this->reason), type_to_byte(this->exit_code))
-  std::string reason;
-  int exit_code = 0;
-};
-
-struct CleanupEvent
-{
-  std::string trigger;
-};
-
-enum class LogLevel : std::uint8_t
-{
-  DEBUG,
-  INFO,
-  WARNING,
-  ERROR
-};
-
-struct LogEvent
-{
-  std::string name;
-  LogLevel level;
-  std::string message;
-};
+#include "ecs/Registry.hpp"
+#include "plugin/events/Log.hpp"
+#include "ByteParser/ByteParser.hpp"
 
 #define LOGGER(category, level, message) \
   this->_registry.get().emit<LogEvent>(category, level, message);
@@ -75,12 +38,36 @@ enum class Key
 
 struct KeyPressedEvent
 {
+  // KeyPressedEvent(std::map<Key, bool> kp, std::optional<std::string> ku)
+  //   : key_pressed(std::move(kp))
+  //   , key_unicode(std::move(ku)) {}
+
+  // DEFAULT_BYTE_CONSTRUCTOR(KeyPressedEvent,
+  //                        ([](std::map<Key, bool> const &kp, std::optional<std::string> const &ku)
+  //                         { return (KeyPressedEvent) {kp, ku}; }),
+  //                        parseByte<std::optional<std::string>>(),
+  //                        parseByte<std::map<Key, bool>>())
+
+  // DEFAULT_SERIALIZE(type_to_byte(this->key_pressed), type_to_byte(this->key_unicode))
+
   std::map<Key, bool> key_pressed;
   std::optional<std::string> key_unicode;
 };
 
 struct KeyReleasedEvent
 {
+  // KeyReleasedEvent(std::map<Key, bool> kp, std::optional<std::string> ku)
+  //   : key_pressed(std::move(kp))
+  //   , key_unicode(std::move(ku)) {}
+
+  // DEFAULT_BYTE_CONSTRUCTOR(KeyReleasedEvent,
+  //                        ([](std::map<Key, bool> const &kp, std::optional<std::string> const &ku)
+  //                         { return (KeyReleasedEvent) {kp, ku}; }),
+  //                        parseByte<std::optional<std::string>>(),
+  //                        parseByte<std::map<Key, bool>>())
+
+  // DEFAULT_SERIALIZE(type_to_byte(this->key_pressed), type_to_byte(this->key_unicode))
+
   std::map<Key, bool> key_released;
   std::optional<std::string> key_unicode;
 };
@@ -98,30 +85,4 @@ struct CliComp
   CliComp() = default;
   EMPTY_BYTE_CONSTRUCTOR(CliComp)
   DEFAULT_SERIALIZE(ByteArray {})
-};
-
-struct CollisionEvent
-{
-  Registry::Entity a;
-  Registry::Entity b;
-};
-
-struct HealEvent
-{
-  Registry::Entity target;
-  Registry::Entity source;
-  int amount;
-};
-
-struct DamageEvent
-{
-  Registry::Entity target;
-  Registry::Entity source;
-  int amount;
-};
-
-struct SceneChangeEvent
-{
-  std::string target_scene;
-  std::string reason;
 };

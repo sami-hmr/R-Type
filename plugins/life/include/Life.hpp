@@ -3,14 +3,17 @@
 #include <string>
 #include <vector>
 
-#include "Json/JsonParser.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/APlugin.hpp"
+#include "Json/JsonParser.hpp"
 #include "plugin/EntityLoader.hpp"
-#include "plugin/components/Health.hpp"
-#include "plugin/components/Damage.hpp"
 #include "plugin/events/Events.hpp"
 #include "plugin/components/Heal.hpp"
+#include "plugin/components/Health.hpp"
+#include "plugin/components/Damage.hpp"
+#include "plugin/events/HealEvent.hpp"
+#include "plugin/events/DamageEvent.hpp"
+#include "plugin/events/CollisionEvent.hpp"
 
 class Life : public APlugin
 {

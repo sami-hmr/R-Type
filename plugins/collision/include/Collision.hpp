@@ -4,17 +4,18 @@
 #include <string>
 #include <vector>
 
-#include "ICollisionAlgorithm.hpp"
-#include "Json/JsonParser.hpp"
 #include "ecs/Registry.hpp"
+#include "plugin/APlugin.hpp"
+#include "Json/JsonParser.hpp"
 #include "ecs/SparseArray.hpp"
 #include "ecs/zipper/Zipper.hpp"
-#include "plugin/APlugin.hpp"
+#include "ICollisionAlgorithm.hpp"
 #include "plugin/EntityLoader.hpp"
-#include "plugin/components/Collidable.hpp"
+#include "plugin/events/Events.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Velocity.hpp"
-#include "plugin/events/Events.hpp"
+#include "plugin/components/Collidable.hpp"
+#include "plugin/events/CollisionEvent.hpp"
 
 class Collision : public APlugin
 {

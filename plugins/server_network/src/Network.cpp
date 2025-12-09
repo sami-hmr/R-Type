@@ -7,8 +7,11 @@
 #include "Server.hpp"
 
 #include "ecs/Registry.hpp"
+#include "plugin/events/Log.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/events/Events.hpp"
+#include "plugin/events/CleanupEvent.hpp"
+#include "plugin/events/ShutdownEvent.hpp"
 
 NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
     : APlugin(r, l, {}, {})

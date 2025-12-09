@@ -13,6 +13,8 @@
 #include "ServerLaunch.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/events/Events.hpp"
+#include "plugin/events/CleanupEvent.hpp"
+#include "plugin/events/ShutdownEvent.hpp"
 
 CLI::CLI(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config)
     : APlugin(r, l, {"logger", "server_network", "client_network"}, {}, config)

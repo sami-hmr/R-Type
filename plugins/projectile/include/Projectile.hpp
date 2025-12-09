@@ -3,11 +3,12 @@
 #include <string>
 #include <vector>
 
-#include "Json/JsonParser.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/APlugin.hpp"
+#include "Json/JsonParser.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/events/Events.hpp"
+#include "plugin/events/CollisionEvent.hpp"
 
 class Projectile : public APlugin
 {

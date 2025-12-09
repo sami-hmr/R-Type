@@ -4,9 +4,10 @@
 
 #include "Logger.hpp"
 
-#include "plugin/events/Events.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/EntityLoader.hpp"
+#include "plugin/events/Events.hpp"
+#include "plugin/events/ShutdownEvent.hpp"
 
 Logger::Logger(Registry& r,
                EntityLoader& l,

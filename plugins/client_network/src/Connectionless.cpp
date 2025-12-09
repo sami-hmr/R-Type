@@ -1,7 +1,7 @@
 #include "Client.hpp"
 #include "NetworkShared.hpp"
 #include "plugin/Byte.hpp"
-#include "plugin/events/Events.hpp"
+#include "plugin/events/ShutdownEvent.hpp"
 
 void Client::send_connectionless(ByteArray const& command)
 {

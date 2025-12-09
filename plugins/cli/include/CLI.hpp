@@ -9,7 +9,6 @@
 #include "ecs/Registry.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
-#include "plugin/events/Events.hpp"
 
 class CLI : public APlugin
 {
