@@ -1,4 +1,21 @@
 {
+  "entities_template": [
+    {
+      "name": "menu",
+      "components": {
+        "moving:Position": { "pos": { "x": 0.0, "y": -0.5 } },
+        "sfml:Drawable": {},
+        "sfml:Text": {
+          "font": "assets/fonts/roboto.ttf",
+          "size": {
+            "width": 40.0,
+            "height": 40.0
+          },
+          "text": "R-TYPE MENU"
+        }
+      }
+    }
+  ],
   "scenes": [
     {
       "name": "menu",
@@ -9,29 +26,18 @@
           "config": {
             "level": "DEBUG"
           }
+        },
+        {
+          "name": "actions",
+          "config": {}
         }
       ],
       "entities": [
         {
-          "moving:Position": {
-            "x": 0.0,
-            "y": -0.5
-          },
-          "sfml:Drawable": {},
-          "sfml:Text": {
-            "font": "assets/fonts/roboto.ttf",
-            "size": {
-              "width": 40.0,
-              "height": 40.0
-            },
-            "text": "R-TYPE MENU"
-          }
+          "template": "menu"
         },
         {
-          "moving:Position": {
-            "x": 0.0,
-            "y": 0.0
-          },
+          "moving:Position": { "pos": { "x": 0.0, "y": 0.0 } },
           "sfml:Drawable": {},
           "sfml:Text": {
             "font": "assets/fonts/roboto.ttf",
@@ -43,10 +49,7 @@
           }
         },
         {
-          "moving:Position": {
-            "x": 0.0,
-            "y": 0.3
-          },
+          "moving:Position": { "pos": { "x": 0.0, "y": 0.3 } },
           "sfml:Drawable": {},
           "sfml:Text": {
             "font": "assets/fonts/roboto.ttf",
@@ -56,15 +59,56 @@
             },
             "text": "Press R to return to menu"
           }
+        },
+        {
+          "actions:ActionTrigger": {
+            "trigger": {
+              "type": "KeyPressed",
+              "params": {
+                "key": "ENTER"
+              }
+            },
+            "to_emit": [
+              {
+                "name": "SceneChangeEvent",
+                "params": {
+                  "target_scene": "game",
+                  "state": "main",
+                  "reason": "User pressed enter"
+                }
+              },
+              {
+                "name": "SceneChangeEvent",
+                "params": {
+                  "target_scene": "menu",
+                  "state": "disabled",
+                  "reason": "User pressed R"
+                }
+              }
+            ]
+          }
         }
       ]
     },
     {
       "name": "game",
       "state": "disabled",
-      "plugins": [],
+      "plugins": [
+        {
+          "name": "actions",
+          "config": {}
+        }
+      ],
       "entities": [
         {
+          "moving:Position": { "pos": { "x": 0.5, "y": -0.3 } },
+          "moving:Velocity": {
+            "speed": {
+              "x": 0.07,
+              "y": 0.08
+            },
+            "direction": "#player:direction"
+          },
           "moving:Position": { "x": 0.5, "y": -0.9 },
           "sfml:Drawable": {},
           "sfml:Sprite": {
@@ -82,23 +126,27 @@
           "life:Health": { "hook": "prout", "current": 5, "max": 100 },
           "life:Team": { "name": "test" },
           "moving:Velocity": {
-            "speed" : {
-              "x" : 0.005,
-              "y" : 0.005
+            "speed": {
+              "x": 0.005,
+              "y": 0.005
             },
-            "direction" : {
-              "x" : 0.0,
-              "y" : 0.0
+            "direction": {
+              "x": 0.0,
+              "y": 0.0
             }
           },
           "target:Follower": {},
-          "collision:InteractionZone": {"radius": 0.9}
+          "collision:InteractionZone": { "radius": 0.9 }
         },
         {
-          "moving:Position": {
-            "x": -0.8,
-            "y": -0.8
-          },
+          "ui:input": {
+            "hook": "game_text",
+            "buffer": "test",
+            "enabled": true
+          }
+        },
+        {
+          "moving:Position": { "pos": { "x": -0.8, "y": -0.8 } },
           "sfml:Drawable": {},
           "sfml:Text": {
             "font": "assets/fonts/roboto.ttf",
@@ -106,40 +154,68 @@
               "width": 30.0,
               "height": 30.0
             },
-            "text": "Hello, World!"
+            "text": "#game_text:buffer"
+          }
+        },
+        {
+          "actions:ActionTrigger": {
+            "trigger": {
+              "type": "KeyPressed",
+              "params": {
+                "key": "R"
+              }
+            },
+            "to_emit": [
+              {
+                "name": "SceneChangeEvent",
+                "params": {
+                  "target_scene": "menu",
+                  "state": "main",
+                  "reason": "User pressed R"
+                }
+              },
+              {
+                "name": "SceneChangeEvent",
+                "params": {
+                  "target_scene": "game",
+                  "state": "disabled",
+                  "reason": "User pressed R"
+                }
+              }
+            ]
           }
         },
         {
           "sfml:Drawable": {},
           "sfml:Background": {
             "layers": [
-            {
-              "path": "assets/backgrounds/skies/Sky_sky.png"
-            },
-            {
-              "path": "assets/backgrounds/skies/sky_moon.png"
-            },
-            {
-              "path": "assets/backgrounds/skies/Sky_back_mountain.png"
-            },
-            {
-              "path": "assets/backgrounds/skies/sky_front_mountain.png"
-            },
-            {
-              "path": "assets/backgrounds/skies/sky_clouds.png"
-            },
-            {
-              "path": "assets/backgrounds/skies/Sky_cloud_single.png"
-            },
-            {
-              "path": "assets/backgrounds/skies/Sky_front_cloud.png"
-            },
-            {
-              "path": "assets/backgrounds/skies/sky_cloud_floor.png"
-            },
-            {
-              "path": "assets/backgrounds/skies/sky_cloud_floor_2.png"
-            }
+              {
+                "path": "assets/backgrounds/skies/Sky_sky.png"
+              },
+              {
+                "path": "assets/backgrounds/skies/sky_moon.png"
+              },
+              {
+                "path": "assets/backgrounds/skies/Sky_back_mountain.png"
+              },
+              {
+                "path": "assets/backgrounds/skies/sky_front_mountain.png"
+              },
+              {
+                "path": "assets/backgrounds/skies/sky_clouds.png"
+              },
+              {
+                "path": "assets/backgrounds/skies/Sky_cloud_single.png"
+              },
+              {
+                "path": "assets/backgrounds/skies/Sky_front_cloud.png"
+              },
+              {
+                "path": "assets/backgrounds/skies/sky_cloud_floor.png"
+              },
+              {
+                "path": "assets/backgrounds/skies/sky_cloud_floor_2.png"
+              }
             ],
             "render_type": "STRETCH",
             "parallax": {

@@ -51,8 +51,10 @@ Life::Life(Registery& r, EntityLoader& l)
 
 void Life::init_health(Registery::Entity entity, JsonObject const& obj)
 {
-  auto const& current = get_value<int>(this->_registery.get(), obj, "current");
-  auto const& max = get_value<int>(this->_registery.get(), obj, "max");
+  auto const& current =
+      get_value<Health, int>(this->_registery.get(), obj, entity, "current");
+  auto const& max =
+      get_value<Health, int>(this->_registery.get(), obj, entity, "max");
 
   if (!current || !max) {
     std::cerr << "Error loading health component: unexpected value type or "
@@ -65,7 +67,8 @@ void Life::init_health(Registery::Entity entity, JsonObject const& obj)
 
 void Life::init_damage(Registery::Entity entity, JsonObject const& obj)
 {
-  auto const& value = get_value<int>(this->_registery.get(), obj, "amount");
+  auto const& value =
+      get_value<Damage, int>(this->_registery.get(), obj, entity, "amount");
 
   if (!value) {
     std::cerr << "Error loading damage component: unexpected value type or "
@@ -77,7 +80,8 @@ void Life::init_damage(Registery::Entity entity, JsonObject const& obj)
 
 void Life::init_heal(Registery::Entity entity, JsonObject const& obj)
 {
-  auto const& value = get_value<int>(this->_registery.get(), obj, "amount");
+  auto const& value =
+      get_value<Heal, int>(this->_registery.get(), obj, entity, "amount");
 
   if (!value) {
     std::cerr << "Error loading heal component: unexpected value type or "
@@ -90,7 +94,7 @@ void Life::init_heal(Registery::Entity entity, JsonObject const& obj)
 void Life::init_team(Registery::Entity const& entity, JsonObject const& obj)
 {
   auto const& value =
-      get_value<std::string>(this->_registery.get(), obj, "name");
+      get_value<Team, std::string>(this->_registery.get(), obj, entity, "name");
 
   if (!value) {
     std::cerr << "Error loading team component: unexpected value type or "

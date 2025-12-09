@@ -1,12 +1,9 @@
 
 #include <algorithm>
-#include <cstdlib>
 #include <functional>
 #include <iostream>
-#include <memory>
 #include <stdexcept>
 #include <tuple>
-#include <variant>
 
 #include "SFMLRenderer.hpp"
 
@@ -19,9 +16,7 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
 
-#include "ClientConnection.hpp"
 #include "Json/JsonParser.hpp"
-#include "ServerLaunch.hpp"
 #include "ecs/Registery.hpp"
 #include "ecs/Scenes.hpp"
 #include "ecs/SparseArray.hpp"
@@ -31,11 +26,11 @@
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/AnimatedSprite.hpp"
+#include "plugin/components/Background.hpp"
 #include "plugin/components/Drawable.hpp"
 #include "plugin/components/Sprite.hpp"
 #include "plugin/components/Text.hpp"
 #include "plugin/events/Events.hpp"
-#include "plugin/components/Background.hpp"
 
 static const std::map<sf::Keyboard::Key, Key> key_association = {
     {sf::Keyboard::Key::Enter, Key::ENTER},
@@ -81,7 +76,7 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
                COMP_INIT(Sprite, Sprite, init_sprite),
                COMP_INIT(Text, Text, init_text),
                COMP_INIT(Background, Background, init_background),
-              COMP_INIT(AnimatedSprite, AnimatedSprite, init_animated_sprite)})
+               COMP_INIT(AnimatedSprite, AnimatedSprite, init_animated_sprite)})
 {
   _window =
       sf::RenderWindow(sf::VideoMode(window_size), "R-Type - SFML Renderer");
@@ -93,54 +88,46 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
   _registery.get().register_component<Background>("sfml:Background");
   _registery.get().register_component<AnimatedSprite>("sfml:AnimatedSprite");
 
-  _registery.get().add_system<Scene, Drawable>(
-      [this](Registery&,
-             SparseArray<Scene>& scenes,
-             SparseArray<Drawable>& drawables)
-      {
-        for (auto&& [scene, drawable] : Zipper(scenes, drawables)) {
-          drawable.enabled =
-              (scene.scene_name == _registery.get().get_current_scene()
-               || scene.state == SceneState::ACTIVE);
-        }
-      },
-      0);
-
   _registery.get().add_system<>([this](Registery&) { this->handle_events(); },
                                 1);
   _registery.get().add_system<>([this](Registery&)
                                 { _window.clear(sf::Color::Black); });
-  _registery.get().add_system<Drawable, Background>(
+  _registery.get().add_system<Scene, Drawable, Background>(
       [this](Registery& r,
+             const SparseArray<Scene>& scenes,
              const SparseArray<Drawable>& drawables,
-         SparseArray<Background>& backgrounds)
-      { this->background_system(r, drawables, backgrounds); }
-  );
-  _registery.get().add_system<Position, Drawable, Sprite>(
+             SparseArray<Background>& backgrounds)
+      { this->background_system(r, scenes, drawables, backgrounds); });
+
+  _registery.get().add_system<Scene, Position, Drawable, Sprite>(
       [this](Registery& r,
+             SparseArray<Scene>& scenes,
              SparseArray<Position>& pos,
              SparseArray<Drawable>& draw,
              SparseArray<Sprite>& spr)
-      { this->render_sprites(r, pos, draw, spr); });
+      { this->render_sprites(r, scenes, pos, draw, spr); });
 
-  _registery.get().add_system<Position, Drawable, Text>(
+  _registery.get().add_system<Scene, Position, Drawable, Text>(
       [this](Registery& r,
+             const SparseArray<Scene>& scenes,
              const SparseArray<Position>& pos,
              const SparseArray<Drawable>& draw,
              const SparseArray<Text>& txt)
-      { this->render_text(r, pos, draw, txt); });
+      { this->render_text(r, scenes, pos, draw, txt); });
 
-  _registery.get().add_system<Position, Drawable, AnimatedSprite>(
+  _registery.get().add_system<Scene, Position, Drawable, AnimatedSprite>(
       [this](Registery& r,
+             const SparseArray<Scene>& scenes,
              const SparseArray<Position>& positions,
              const SparseArray<Drawable>& drawable,
-            SparseArray<AnimatedSprite>& AnimatedSprites)
-      { this->animation_system(r, positions, drawable, AnimatedSprites); });
+             SparseArray<AnimatedSprite>& AnimatedSprites)
+      {
+        this->animation_system(r, scenes, positions, drawable, AnimatedSprites);
+      });
 
   _registery.get().add_system<>([this](Registery&) { this->display(); });
   _textures.insert_or_assign(SFMLRenderer::placeholder_texture,
                              gen_placeholder());
-
 }
 
 SFMLRenderer::~SFMLRenderer()
@@ -178,70 +165,17 @@ sf::Font& SFMLRenderer::load_font(std::string const& path)
   return _fonts.at(path);
 }
 
-void SFMLRenderer::init_drawable(Registery::Entity const entity,
+void SFMLRenderer::init_drawable(Registery::Entity const& entity,
                                  JsonObject const&)
 {
   _registery.get().emplace_component<Drawable>(entity);
 }
 
-Vector2D SFMLRenderer::parse_vector2d(JsonVariant const& variant)
-{
-  JsonObject obj;
-  try {
-    obj = std::get<JsonObject>(variant);
-  } catch (std::bad_variant_access const&) {
-    std::cerr << "Error parsing vector2d: not a JsonObject, using default "
-                 "(10%, 15%)\n";
-    return {10.0 / 100.0, 15.0 / 100.0};
-  }
-
-  auto const& width_double =
-      get_value<double>(this->_registery.get(), obj, "width");
-  auto const& height_double =
-      get_value<double>(this->_registery.get(), obj, "height");
-
-  if (width_double && height_double) {
-    return {width_double.value() / SFMLRenderer::window_size.x,
-            height_double.value() / SFMLRenderer::window_size.y};
-  }
-
-  auto const& width_str =
-      get_value<std::string>(this->_registery.get(), obj, "width");
-  auto const& height_str =
-      get_value<std::string>(this->_registery.get(), obj, "height");
-
-  if (width_str && height_str) {
-    std::string x_percentage = width_str.value();
-    std::string y_percentage = height_str.value();
-
-    if (!x_percentage.empty() && x_percentage.back() == '%') {
-      x_percentage.pop_back();
-    }
-    if (!y_percentage.empty() && y_percentage.back() == '%') {
-      y_percentage.pop_back();
-    }
-
-    try {
-      double x = std::stod(x_percentage) / 100.0;
-      double y = std::stod(y_percentage) / 100.0;
-      return {x, y};
-    } catch (std::invalid_argument const&) {
-      std::cerr << "Error parsing vector2d: invalid percentage values, using "
-                   "default (10%, 15%)\n";
-      return {10.0 / 100.0, 15.0 / 100.0};
-    }
-  }
-
-  std::cerr << "Error parsing vector2d: missing width/height, using default "
-               "(10%, 15%)\n";
-  return {10.0 / 100.0, 15.0 / 100.0};
-}
-
-void SFMLRenderer::init_sprite(Registery::Entity const entity,
+void SFMLRenderer::init_sprite(Registery::Entity const& entity,
                                JsonObject const& obj)
 {
-  auto const& texture_path =
-      get_value<std::string>(this->_registery.get(), obj, "texture");
+  auto const& texture_path = get_value<Sprite, std::string>(
+      this->_registery.get(), obj, entity, "texture");
 
   if (!texture_path) {
     std::cerr << "Error loading sprite component: unexpected value type "
@@ -251,36 +185,39 @@ void SFMLRenderer::init_sprite(Registery::Entity const entity,
 
   Vector2D scale(0.1, 0.1);
   if (obj.contains("size")) {
-    scale = this->parse_vector2d(
-        obj.at("size")  // TODO: faire un getter de jsonvariant qui prend en
-                        // compte les hooks
-            .value);  // la scale est en pourcentage de la taille de la window
+    scale = this->parse_vector2d<Sprite>(entity, obj, "size");
   }
   _registery.get().emplace_component<Sprite>(
       entity, texture_path.value(), scale);
 }
 
-void SFMLRenderer::init_text(Registery::Entity const entity,
+void SFMLRenderer::init_text(Registery::Entity const& entity,
                              JsonObject const& obj)
 {
   auto const& font_path =
-      get_value<std::string>(this->_registery.get(), obj, "font");
-  auto const& text =
-      get_value<std::string>(this->_registery.get(), obj, "text");
+      get_value<Text, std::string>(this->_registery.get(), obj, entity, "font");
 
-  if (!font_path || !text) {
+  if (!font_path) {
     std::cerr << "Error loading text component: unexpected value type (font: "
-                 "string, text: string)\n";
+                 "string)\n";
     return;
   }
+
   Vector2D scale(0.1, 0.1);
-  if (!obj.contains("size")) {
-    std::cerr << "y a pas de size brother\n";  // TODO: pareil que au dessus
-    return;
+  if (obj.contains("size")) {
+    scale = this->parse_vector2d<Text>(entity, obj, "size");
   }
-  scale = this->parse_vector2d(obj.at("size").value);
-  _registery.get().emplace_component<Text>(
-      entity, font_path.value(), scale, text.value());
+
+  auto& text_opt = _registery.get().emplace_component<Text>(
+      entity, font_path.value(), scale, "");
+
+  if (text_opt.has_value()) {
+    auto text_val = get_value<Text, std::string>(
+        this->_registery.get(), obj, entity, "text");
+    if (text_val) {
+      text_opt.value().text = text_val.value();
+    }
+  }
 }
 
 std::optional<Key> SFMLRenderer::sfml_key_to_key(sf::Keyboard::Key sfml_key)
@@ -296,9 +233,9 @@ void SFMLRenderer::handle_resize()
 {
   sf::Vector2u new_size = _window.getSize();
   this->_view.setSize(sf::Vector2f(static_cast<float>(new_size.x),
-                             static_cast<float>(new_size.y)));
+                                   static_cast<float>(new_size.y)));
   this->_view.setCenter(sf::Vector2f(static_cast<float>(new_size.x) / 2,
-                               static_cast<float>(new_size.y) / 2));
+                                     static_cast<float>(new_size.y) / 2));
   _window.setView(this->_view);
 }
 
@@ -335,11 +272,21 @@ void SFMLRenderer::handle_events()
         _key_released.key_released[key.value()] = true;
       }
     }
+    if (const auto* text_entered = event->getIf<sf::Event::TextEntered>()) {
+      if (text_entered->unicode >= 'A' && text_entered->unicode < 'z') {
+        if (!_key_pressed.key_unicode.has_value()) {
+          _key_pressed.key_unicode = "";
+        }
+        _key_pressed.key_unicode.value() +=
+            static_cast<char>(text_entered->unicode);
+      }
+    }
     if (event->is<sf::Event::Resized>()) {
       handle_resize();
     }
   }
-  if (!_key_pressed.key_pressed.empty()) {
+  if (!_key_pressed.key_pressed.empty() || _key_pressed.key_unicode.has_value())
+  {
     _registery.get().emit<KeyPressedEvent>(_key_pressed);
   }
   if (!_key_released.key_released.empty()) {
@@ -356,6 +303,7 @@ void SFMLRenderer::display()
 }
 
 void SFMLRenderer::render_sprites(Registery& /*unused*/,
+                                  const SparseArray<Scene>& scenes,
                                   const SparseArray<Position>& positions,
                                   const SparseArray<Drawable>& drawable,
                                   const SparseArray<Sprite>& sprites)
@@ -365,14 +313,19 @@ void SFMLRenderer::render_sprites(Registery& /*unused*/,
           tuple<std::reference_wrapper<sf::Texture>, double, sf::Vector2f, int>>
       drawables;
   sf::Vector2u window_size = _window.getSize();
-    float min_dimension =
+  float min_dimension =
       static_cast<float>(std::min(window_size.x, window_size.y));
 
   drawables.reserve(
       std::max({positions.size(), drawable.size(), sprites.size()}));
 
-  for (auto&& [pos, draw, spr] : Zipper(positions, drawable, sprites)) {
+  for (auto&& [scene, pos, draw, spr] :
+       Zipper(scenes, positions, drawable, sprites))
+  {
     if (!draw.enabled) {
+      continue;
+    }
+    if (scene.state == SceneState::DISABLED) {
       continue;
     }
 
@@ -385,8 +338,8 @@ void SFMLRenderer::render_sprites(Registery& /*unused*/,
     float uniform_scale = std::min(scale_x, scale_y);
 
     sf::Vector2f new_pos(
-      static_cast<float>((pos.pos.x + 1.0) * min_dimension / 2.0f),
-      static_cast<float>((pos.pos.y + 1.0) * min_dimension / 2.0f));
+        static_cast<float>((pos.pos.x + 1.0) * min_dimension / 2.0f),
+        static_cast<float>((pos.pos.y + 1.0) * min_dimension / 2.0f));
     drawables.emplace_back(std::ref(texture), uniform_scale, new_pos, pos.z);
   }
   std::sort(drawables.begin(),
@@ -410,12 +363,18 @@ void SFMLRenderer::render_sprites(Registery& /*unused*/,
 }
 
 void SFMLRenderer::render_text(Registery& /*unused*/,
+                               const SparseArray<Scene>& scenes,
                                const SparseArray<Position>& positions,
                                const SparseArray<Drawable>& drawable,
                                const SparseArray<Text>& texts)
 {
-  for (auto&& [pos, draw, txt] : Zipper(positions, drawable, texts)) {
+  for (auto&& [scene, pos, draw, txt] :
+       Zipper(scenes, positions, drawable, texts))
+  {
     if (!draw.enabled) {
+      continue;
+    }
+    if (scene.state == SceneState::DISABLED) {
       continue;
     }
 
@@ -424,14 +383,15 @@ void SFMLRenderer::render_text(Registery& /*unused*/,
       _text.emplace(font);
     }
     _text.value().setFont(font);
+
     _text.value().setString(txt.text);
 
     sf::Vector2u window_size = _window.getSize();
-  float min_dimension =
-    static_cast<float>(std::min(window_size.x, window_size.y));
+    float min_dimension =
+        static_cast<float>(std::min(window_size.x, window_size.y));
     sf::Vector2f new_pos(
-    static_cast<float>((pos.pos.x + 1.0) * min_dimension / 2.0f),
-    static_cast<float>((pos.pos.y + 1.0) * min_dimension / 2.0f));
+        static_cast<float>((pos.pos.x + 1.0) * min_dimension / 2.0f),
+        static_cast<float>((pos.pos.y + 1.0) * min_dimension / 2.0f));
     _text.value().setPosition(new_pos);
     _text.value().setCharacterSize(static_cast<unsigned int>(txt.scale.x));
     _window.draw(_text.value());

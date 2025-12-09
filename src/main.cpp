@@ -11,6 +11,7 @@
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Drawable.hpp"
+#include "plugin/events/ActionEvents.hpp"
 #include "plugin/events/Events.hpp"
 #include "plugin/libLoaders/ILibLoader.hpp"
 
@@ -21,30 +22,31 @@ static int true_main(Registery& r,
   bool should_exit = false;
   int exit_code = 0;
 
-  r.on<ShutdownEvent>(
-      [&should_exit, &exit_code](const ShutdownEvent& event)
-      {
-        should_exit = true;
-        exit_code = event.exit_code;
-        std::cout << "Shutdown requested: " << event.reason << "\n";
-      });
+  r.on<ShutdownEvent>("ShutdownEvent",
+                      [&should_exit, &exit_code](const ShutdownEvent& event)
+                      {
+                        should_exit = true;
+                        exit_code = event.exit_code;
+                        std::cout << "Shutdown requested: " << event.reason
+                                  << "\n";
+                      });
 
-  r.on<SceneChangeEvent>([&r](const SceneChangeEvent& event)
-                         { r.set_current_scene(event.target_scene); });
+  r.on<SceneChangeEvent>("SceneChangeEvent",
+                         [&r](const SceneChangeEvent& event)
+                         {
+                           r.set_current_scene(event.target_scene,
+                                               SCENE_STATE_STR.at(event.state));
+                         });
 
-  r.on<KeyPressedEvent>(
-      [&r](const KeyPressedEvent& event)
-      {
-        if (event.key_pressed.contains(Key::ENTER)
-            && event.key_pressed.at(Key::ENTER))
-        {
-          r.emit<SceneChangeEvent>("game", "User pressed ENTER");
-        }
-        if (event.key_pressed.contains(Key::R)
-            && event.key_pressed.at(Key::R)) {
-          r.emit<SceneChangeEvent>("menu", "User pressed R");
-        }
-      });
+  r.on<SpawnEntityRequestEvent>("SpawnEntity",
+                                [&r, &e](const SpawnEntityRequestEvent& event)
+                                {
+                                  Registery::Entity entity = r.spawn_entity();
+                                  JsonObject base =
+                                      r.get_template(event.entity_template);
+                                  e.load_components(entity, base);
+                                  e.load_components(entity, event.params);
+                                });
 
   r.init_scene_management();
 
@@ -53,10 +55,6 @@ static int true_main(Registery& r,
   }
 
   r.setup_scene_systems();
-
-  // JsonObject test({{"prout", JsonValue("#prout:max")}});
-
-  // std::cout << get_value<int>(r, test, "prout").value() << std::endl;
 
   while (!should_exit) {
     r.run_systems();

@@ -4,12 +4,12 @@
 #include "Logger.hpp"
 #include "ecs/Registery.hpp"
 #include "ecs/SparseArray.hpp"
+#include "ecs/zipper/ZipperIndex.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Fragile.hpp"
 #include "plugin/components/Team.hpp"
 #include "plugin/components/Temporal.hpp"
 #include "plugin/events/Events.hpp"
-#include "ecs/zipper/ZipperIndex.hpp"
 
 Projectile::Projectile(Registery& r, EntityLoader& l)
     : APlugin(r,
@@ -30,10 +30,10 @@ Projectile::Projectile(Registery& r, EntityLoader& l)
                                             { this->on_collision(event); });
 }
 
-void Projectile::init_temporal(Registery::Entity entity,
-                               JsonObject const& obj)
+void Projectile::init_temporal(Registery::Entity entity, JsonObject const& obj)
 {
-  auto const& lifetime = get_value<double>(this->_registery.get(), obj, "lifetime");
+  auto const& lifetime = get_value<Temporal, double>(
+      this->_registery.get(), obj, entity, "lifetime");
 
   if (!lifetime) {
     std::cerr << "Error loading Position component: unexpected value type "
@@ -41,8 +41,7 @@ void Projectile::init_temporal(Registery::Entity entity,
     return;
   }
 
-  this->_registery.get().emplace_component<Temporal>(
-      entity, lifetime.value());
+  this->_registery.get().emplace_component<Temporal>(entity, lifetime.value());
 }
 
 void Projectile::init_fragile(Registery::Entity entity,
@@ -73,7 +72,9 @@ void Projectile::on_collision(const CollisionEvent& event)
     return;
   }
 
-  if (this->_registery.get().has_component<Team>(event.a) && this->_registery.get().has_component<Team>(event.b)) {
+  if (this->_registery.get().has_component<Team>(event.a)
+      && this->_registery.get().has_component<Team>(event.b))
+  {
     auto& teams = this->_registery.get().get_components<Team>();
 
     if (teams[event.a]->name == teams[event.b]->name) {

@@ -5,6 +5,7 @@
 #include <chrono>
 #include <cstddef>
 #include <functional>
+#include <iostream>
 #include <map>
 #include <optional>
 #include <queue>
@@ -17,6 +18,7 @@
 #include <vector>
 
 #include "Clock.hpp"
+#include "Json/JsonParser.hpp"
 #include "SparseArray.hpp"
 #include "TwoWayMap.hpp"
 #include "ecs/Scenes.hpp"
@@ -24,6 +26,7 @@
 #include "ecs/zipper/Zipper.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/HookConcept.hpp"
+#include "plugin/events/EventConcept.hpp"
 
 /**
  * @brief The Registery class is the core of the ECS (Entity-Component-System)
@@ -248,11 +251,76 @@ public:
   {
     this->clock().tick();
 
+    update_bindings();
+
     for (auto const& f : this->_frequent_systems) {
       f();
     }
     process_entity_deletions();
   }
+
+  /**
+   * @brief Updates all variable bindings from their hooked sources.
+   *
+   */
+  void update_bindings()
+  {
+    for (auto& binding : _bindings) {
+      binding.updater();
+    }
+  }
+
+  /**
+   * @brief Registers a binding that syncs a variable to a hooked source every
+   * tick.
+   *
+   * @tparam ComponentType The type of component containing the field.
+   * @tparam T The type of the field being bound.
+   * @param entity The entity containing the component.
+   * @param field_name The name of the field to bind.
+   * @param source_hook The hook string (e.g., "player:position").
+   */
+  template<typename ComponentType, typename T>
+  void register_binding(Entity entity,
+                        std::string const& field_name,
+                        std::string const& source_hook)
+  {
+    std::type_index ti(typeid(ComponentType));
+
+    auto updater = [this, entity, field_name, source_hook]()
+    {
+      try {
+        std::string comp = source_hook.substr(0, source_hook.find(':'));
+        std::string value = source_hook.substr(source_hook.find(':') + 1);
+        auto ref = this->get_hooked_value<T>(comp, value);
+
+        if (ref.has_value()) {
+          auto& components = this->get_components<ComponentType>();
+          if (entity < components.size() && components[entity].has_value()) {
+            auto& target_comp = components[entity].value();
+
+            auto& hook_map = ComponentType::hook_map();
+            if (hook_map.contains(field_name)) {  // TODO: PROPER ERROR HANDLING
+              std::any field_any = hook_map.at(field_name)(target_comp);
+              auto field_ref_wrapper =
+                  std::any_cast<std::reference_wrapper<T>>(field_any);
+              field_ref_wrapper.get() = ref.value().get();
+            }
+          }
+        }
+      } catch (...) {  // NOLINT  TODO: catch correctly
+      }
+    };
+
+    _bindings.emplace_back(
+        entity, ti, field_name, source_hook, std::move(updater));
+  }
+
+  /**
+   * @brief Clears all registered bindings.
+   *
+   */
+  void clear_bindings() { _bindings.clear(); }
 
   template<typename EventType>
   HandlerId on(std::function<void(const EventType&)> handler)
@@ -275,6 +343,17 @@ public:
     handlers[handler_id] = std::move(handler);
 
     return handler_id;
+  }
+
+  template<EventIsJsonBuilable EventType>
+  HandlerId on(std::string const& name,
+               std::function<void(const EventType&)> handler)
+  {
+    std::type_index type_id(typeid(EventType));
+    _events_index_getter.insert(type_id, name);
+    this->add_event_builder<EventType>();
+
+    return this->on<EventType>(handler);
   }
 
   template<typename EventType>
@@ -302,6 +381,24 @@ public:
   {
     std::type_index type_id(typeid(EventType));
     _event_handlers.erase(type_id);
+  }
+
+  void emit(std::string const& name, JsonObject const& args)
+  {
+    std::type_index type_id = _events_index_getter.at(name);
+    if (!_event_handlers.contains(type_id)) {
+      return;
+    }
+
+    auto builder =
+        std::any_cast<std::function<std::any(Registery&, JsonObject const&)>>(
+            _event_builders.at(type_id));
+    std::any event = builder(*this, args);
+
+    auto invoker =
+        std::any_cast<std::function<void(const std::any&, const std::any&)>>(
+            _event_invokers.at(type_id));
+    invoker(_event_handlers.at(type_id), event);
   }
 
   template<typename EventType, typename... Args>
@@ -340,9 +437,15 @@ public:
     }
   }
 
-  void set_current_scene(std::string const& scene_name)
+  void set_current_scene(std::string const& scene_name,
+                         SceneState state = SceneState::MAIN)
   {
     _current_scene = scene_name;
+    for (auto&& [sc] : Zipper(this->get_components<Scene>())) {
+      if (sc.scene_name == scene_name) {
+        sc.state = state;
+      }
+    }
   }
 
   std::string const& get_current_scene() const { return _current_scene; }
@@ -352,14 +455,14 @@ public:
   const Clock& clock() const { return _clock; }
 
   template<hookable T>
-  void register_hook(std::string name, Entity const &e)
+  void register_hook(std::string name, Entity const& e)
   {
     this->_hooked_components.insert_or_assign(
         name,
         [this, e](std::string const& key) -> std::optional<std::any>
         {
-          auto &array = this->get_components<T>();
-          auto &comp = array[e];
+          auto& array = this->get_components<T>();
+          auto& comp = array[e];
           if (!comp.has_value()) {
             return std::nullopt;
           }
@@ -371,14 +474,82 @@ public:
   std::optional<std::reference_wrapper<T>> get_hooked_value(
       std::string const& comp, std::string const& value)
   {
-    auto const &tmp = std::any_cast<std::optional<std::any>>(this->_hooked_components.at(comp)(value));
+    auto const& tmp = std::any_cast<std::optional<std::any>>(
+        this->_hooked_components.at(comp)(value));
     if (!tmp.has_value()) {
-        return std::nullopt;
+      return std::nullopt;
     }
     return std::any_cast<std::reference_wrapper<T>>(tmp.value());
   }
 
+  template<EventIsJsonBuilable T>
+  void add_event_builder()
+  {
+    std::type_index type_id(typeid(T));
+
+    _event_builders.insert_or_assign(
+        type_id,
+        std::function<std::any(Registery&, JsonObject const&)>(
+            [](Registery& r, JsonObject const& e) -> std::any
+            { return T(r, e); }));
+
+    _event_invokers.insert_or_assign(
+        type_id,
+        [](const std::any& handlers_any, const std::any& event_any)
+        {
+          auto& handlers = std::any_cast<
+              const std::unordered_map<HandlerId,
+                                       std::function<void(const T&)>>&>(
+              handlers_any);
+          auto& event = std::any_cast<const T&>(event_any);
+          for (auto const& [id, handler] : handlers) {
+            handler(event);
+          }
+        });
+  }
+
+  void add_template(std::string const& name, JsonObject const& config)
+  {
+    _entities_templates.insert_or_assign(name, config);
+  }
+
+  JsonObject get_template(std::string const& name)
+  {
+    if (!_entities_templates.contains(name)) {
+      std::cerr << "Template: " << name << " not found !\n";
+    }
+    return _entities_templates.find(name)->second;
+  }
+
+  bool is_current_cene(Entity e)
+  {
+    return this->get_components<Scene>()[e].value().scene_name
+        == this->_current_scene;
+  }
+
 private:
+  struct Binding
+  {
+    Entity target_entity;
+    std::type_index target_component;
+    std::string target_field;
+    std::string source_hook;
+    std::function<void()> updater;
+
+    Binding(Entity e,
+            std::type_index ti,
+            std::string tf,
+            std::string sh,
+            std::function<void()> u)
+        : target_entity(e)
+        , target_component(ti)
+        , target_field(std::move(tf))
+        , source_hook(std::move(sh))
+        , updater(std::move(u))
+    {
+    }
+  };
+
   static HandlerId generate_uuid()
   {
     static std::random_device rd;
@@ -396,15 +567,25 @@ private:
   TwoWayMap<std::type_index, std::string> _index_getter;
 
   std::unordered_map<std::type_index, std::any> _event_handlers;
+  TwoWayMap<std::type_index, std::string> _events_index_getter;
+  std::unordered_map<std::type_index, std::any> _event_builders;
+  std::unordered_map<std::type_index,
+                     std::function<void(const std::any&, const std::any&)>>
+      _event_invokers;
+
   std::vector<System<>> _frequent_systems;
   std::queue<Entity> _dead_entities;
   std::unordered_set<Entity> _entities_to_kill;
   Clock _clock;
   std::size_t _max = 0;
+
   std::unordered_map<std::string, SceneState> _scenes;
   std::string _current_scene;
 
   std::unordered_map<std::string,
                      std::function<std::optional<std::any>(std::string const&)>>
       _hooked_components;
+  std::vector<Binding> _bindings;
+
+  std::unordered_map<std::string, JsonObject> _entities_templates;
 };
