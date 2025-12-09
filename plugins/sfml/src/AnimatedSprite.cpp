@@ -71,6 +71,15 @@ std::optional<AnimationData> SFMLRenderer::parse_animation_data(
     return std::nullopt;
   }
   animdata.loop = loop.value();
+  auto const& rollback = get_value<AnimatedSprite, bool>(
+      this->_registery.get(), obj, e, "rollback");
+  if (!rollback) {
+    std::cerr << "Error parsing animation data: \"rollback\" field not found or "
+                 "invalid"
+              << "\n";
+    return std::nullopt;
+  }
+  animdata.rollback = rollback.value();
   return animdata;
 }
 
@@ -213,11 +222,17 @@ void AnimatedSprite::update_anim(
   double elapsed = std::chrono::duration<double>(now - last_update).count();
 
   if (elapsed >= (1.0 / animation.framerate)) {
-    animation.current_frame++;
+    animation.current_frame += 1;
     animation.frame_pos += animation.direction * animation.frame_size;
-    if (animation.current_frame >= animation.nb_frames) {
-      animation.current_frame = 0;
-      animation.frame_pos = Vector2D(0, 0);
+    if (animation.current_frame >= animation.nb_frames || animation.current_frame < 0) {
+      if (animation.rollback) {
+        animation.direction = animation.direction * -1;
+        animation.frame_pos += animation.direction * animation.frame_size;
+        animation.current_frame = 0;
+      } else {
+        animation.current_frame = 0;
+        animation.frame_pos = Vector2D(0, 0);
+      }
       if (!animation.loop) {
         this->current_animation = default_animation;
       }
