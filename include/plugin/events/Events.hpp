@@ -5,12 +5,61 @@
 #include <optional>
 #include <string>
 #include <utility>
+#include <vector>
 
 #include "ParserUtils.hpp"
 #include "plugin/Byte.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/events/Log.hpp"
 #include "ByteParser/ByteParser.hpp"
+#include "plugin/Hooks.hpp"
+#include "plugin/components/ActionTrigger.hpp"
+#include "plugin/components/InteractionZone.hpp"
+
+struct ShutdownEvent
+{
+  DEFAULT_BYTE_CONSTRUCTOR(ShutdownEvent,
+                           ([](std::string const& r, int e)
+                            { return (ShutdownEvent) {r, e}; }),
+                           parseByteString(),
+                           parseByte<int>())
+
+  DEFAULT_SERIALIZE(string_to_byte(this->reason), type_to_byte(this->exit_code))
+  std::string reason;
+  int exit_code = 0;
+
+  ShutdownEvent(std::string reason, int exit_code)
+      : reason(std::move(reason))
+      , exit_code(exit_code)
+  {
+  }
+
+  ShutdownEvent(Registry& r, JsonObject const& e)
+      : reason(get_value_copy<std::string>(r, e, "reason").value())
+      , exit_code(get_value_copy<int>(r, e, "exit_code").value())
+  {
+  }
+};
+
+struct CleanupEvent
+{
+  std::string trigger;
+};
+
+enum class LogLevel : std::uint8_t
+{
+  DEBUG,
+  INFO,
+  WARNING,
+  ERROR
+};
+
+struct LogEvent
+{
+  std::string name;
+  LogLevel level;
+  std::string message;
+};
 
 #define LOGGER(category, level, message) \
   this->_registry.get().emit<LogEvent>(category, level, message);

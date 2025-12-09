@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ByteParser/ByteParser.hpp"
 #include "ParserUtils.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
@@ -12,8 +13,8 @@ struct Drawable
       : enabled(enabled)
   {
   }
-  EMPTY_BYTE_CONSTRUCTOR(Drawable)
-  DEFAULT_SERIALIZE(ByteArray {})
+  DEFAULT_BYTE_CONSTRUCTOR(Drawable, ([](bool e) {return Drawable(e);}), parseByte<bool>())
+  DEFAULT_SERIALIZE(type_to_byte<bool>(this->enabled))
 
   bool enabled = true;
 

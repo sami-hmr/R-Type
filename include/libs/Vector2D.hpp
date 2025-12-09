@@ -11,7 +11,10 @@
 #include <cmath>
 #include <iostream>
 #include <ostream>
+
+#include "ByteParser/ByteParser.hpp"
 #include "Json/JsonParser.hpp"
+#include "plugin/Byte.hpp"
 
 class Vector2D
 {
@@ -20,7 +23,12 @@ public:
   Vector2D(double x, double y)
       : x(x)
       , y(y) {};
-  Vector2D(JsonVariant const& variant);
+  Vector2D(JsonVariant const& variant,
+           std::string const& x = "x",
+           std::string const& y = "y");
+  Vector2D(JsonObject const& obj,
+           std::string const& x = "x",
+           std::string const& y = "y");
   ~Vector2D() = default;
 
   Vector2D(const Vector2D& other) = default;
@@ -62,14 +70,14 @@ public:
     return {this->x * other.x, this->y * other.y};
   }
 
-  Vector2D &operator*=(Vector2D other)
+  Vector2D& operator*=(Vector2D other)
   {
     this->x *= other.x;
     this->y *= other.y;
     return *this;
   }
 
-  Vector2D &operator*=(double scalar)
+  Vector2D& operator*=(double scalar)
   {
     this->x *= scalar;
     this->y *= scalar;
@@ -110,9 +118,26 @@ public:
     return {this->x / len, this->y / len};
   }
 
+  double dot(const Vector2D& other) const
+  {
+    return (this->x * other.x) + (this->y * other.y);
+  }
+
   double x = 0;
   double y = 0;
 };
+
+inline Parser<Vector2D> parseVector2D()
+{
+  return apply([](double x, double y) { return Vector2D {x, y}; },
+               parseByte<double>(),
+               parseByte<double>());
+}
+
+inline ByteArray vector2DToByte(Vector2D const& vec)
+{
+  return byte_array_join(type_to_byte(vec.x), type_to_byte(vec.y));
+}
 
 inline std::ostream& operator<<(std::ostream& os, const Vector2D& vec)
 {

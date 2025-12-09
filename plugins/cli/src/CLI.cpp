@@ -10,8 +10,13 @@
 #include "CLI.hpp"
 
 #include "ClientConnection.hpp"
+#include "NetworkShared.hpp"
 #include "ServerLaunch.hpp"
+#include "ecs/Scenes.hpp"
 #include "plugin/APlugin.hpp"
+#include "plugin/components/Drawable.hpp"
+#include "plugin/components/Position.hpp"
+#include "plugin/components/Sprite.hpp"
 #include "plugin/events/Events.hpp"
 #include "plugin/events/CleanupEvent.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
@@ -55,12 +60,12 @@ void CLI::run_cli()
     std::cout << "> " << std::flush;
 
     if (!std::getline(std::cin, line)) {
-      _registry.get().emit<ShutdownEvent>("Cli end", 0);
+     // _registry.get().emit<ShutdownEvent>("Cli end", 0);
       break;
     }
 
     if (!_running) {
-      _registry.get().emit<ShutdownEvent>("Error in cli", 0);
+     // _registry.get().emit<ShutdownEvent>("Error in cli", 0);
       break;
     }
 
@@ -180,6 +185,22 @@ void CLI::process_command(const std::string& cmd)
           _registry.get().emit<ClientConnection>(host, port);
           std::cout << "Connecting to " << host << ":" << port << "\n";
         }}},
+      {"spawn",
+       {.usage = "spawn",
+        .description = "spawn entity with drawing de con en 0, 0",
+        .handler =
+            [this](std::istringstream&)
+        {
+            Drawable draw;
+            Sprite sprite("ça existe meme pas", {1, 1});
+            Position pos(0, 0);
+            Scene scene("game", SceneState::ACTIVE);
+            this->_registry.get().emit<ComponentBuilder>(42, "sfml:Drawable", draw.to_bytes());
+            this->_registry.get().emit<ComponentBuilder>(42, "sfml:Sprite", sprite.to_bytes());
+            this->_registry.get().emit<ComponentBuilder>(42, "moving:Position", pos.to_bytes());
+            this->_registry.get().emit<ComponentBuilder>(42, "scene", scene.to_bytes());
+        }}},
+
       {"stop",
        {.usage = "stop",
         .description = "Stop CLI thread",

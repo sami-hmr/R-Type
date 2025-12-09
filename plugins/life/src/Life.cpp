@@ -12,6 +12,7 @@
 #include "ecs/Registry.hpp"
 #include "ecs/SparseArray.hpp"
 #include "ecs/zipper/Zipper.hpp"
+#include "ecs/zipper/ZipperIndex.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Damage.hpp"
@@ -50,8 +51,10 @@ Life::Life(Registry& r, EntityLoader& l)
 
 void Life::init_health(Registry::Entity entity, JsonObject const& obj)
 {
-  auto const& current = get_value<int>(this->_registry.get(), obj, "current");
-  auto const& max = get_value<int>(this->_registry.get(), obj, "max");
+  auto const& current =
+      get_value<Health, int>(this->_registry.get(), obj, entity, "current");
+  auto const& max =
+      get_value<Health, int>(this->_registry.get(), obj, entity, "max");
 
   if (!current || !max) {
     std::cerr << "Error loading health component: unexpected value type or "
@@ -64,7 +67,8 @@ void Life::init_health(Registry::Entity entity, JsonObject const& obj)
 
 void Life::init_damage(Registry::Entity entity, JsonObject const& obj)
 {
-  auto const& value = get_value<int>(this->_registry.get(), obj, "amount");
+  auto const& value =
+      get_value<Damage, int>(this->_registry.get(), obj, entity, "amount");
 
   if (!value) {
     std::cerr << "Error loading damage component: unexpected value type or "
@@ -76,7 +80,8 @@ void Life::init_damage(Registry::Entity entity, JsonObject const& obj)
 
 void Life::init_heal(Registry::Entity entity, JsonObject const& obj)
 {
-  auto const& value = get_value<int>(this->_registry.get(), obj, "amount");
+  auto const& value =
+      get_value<Heal, int>(this->_registry.get(), obj, entity, "amount");
 
   if (!value) {
     std::cerr << "Error loading heal component: unexpected value type or "
@@ -89,7 +94,7 @@ void Life::init_heal(Registry::Entity entity, JsonObject const& obj)
 void Life::init_team(Registry::Entity const& entity, JsonObject const& obj)
 {
   auto const& value =
-      get_value<std::string>(this->_registry.get(), obj, "name");
+      get_value<Team, std::string>(this->_registry.get(), obj, entity, "name");
 
   if (!value) {
     std::cerr << "Error loading team component: unexpected value type or "
@@ -210,10 +215,10 @@ void Life::update_cooldowns(Registry& reg)
   double dt = reg.clock().delta_seconds();
   auto& healths = reg.get_components<Health>();
 
-  for (size_t i = 0; i < healths.size(); ++i) {
-    if (healths[i].has_value() && !reg.is_entity_dying(i)) {
-      healths[i]->damage_delta += dt;
-      healths[i]->heal_delta += dt;
+  for (auto&& [i, health] : ZipperIndex(healths)) {
+    if (!reg.is_entity_dying(i)) {
+      health.damage_delta += dt;
+      health.heal_delta += dt;
     }
   }
 }

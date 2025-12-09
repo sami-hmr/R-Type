@@ -5,6 +5,7 @@
 // #include <random>
 
 #include <memory>
+#include <semaphore>
 #include <thread>
 #include <vector>
 
@@ -17,7 +18,6 @@
 #include "ServerLaunch.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/APlugin.hpp"
-#include "plugin/Byte.hpp"
 #include "plugin/EntityLoader.hpp"
 
 class NetworkServer : public APlugin
@@ -29,10 +29,12 @@ class NetworkServer : public APlugin
   private:
     void launch_server(ServerLaunching const& s);
 
-    std::vector<std::thread> _threads;
+    std::thread _thread;
     SharedQueue<ComponentBuilder> _components_to_update;
     SharedQueue<EventBuilder> _events_to_transmit;
     std::atomic<bool> _running = false;
+    SharedQueue<EventBuilder> _event_queue;
+    std::counting_semaphore<> _event_semaphore;
 };
 
 CUSTOM_EXCEPTION(ClientNotFound)

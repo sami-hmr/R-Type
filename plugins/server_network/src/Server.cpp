@@ -6,29 +6,29 @@
 */
 #include <atomic>
 #include <queue>
+#include <semaphore>
 
 #include "Server.hpp"
+#include <asio/system_error.hpp>
 
 #include "Network.hpp"
+#include "NetworkCommun.hpp"
 #include "NetworkShared.hpp"
+#include "plugin/Byte.hpp"
+
 // #include "plugin/events/Events.hpp"
 
-const std::unordered_map<std::uint8_t,
-                         void (Server::*)(ByteArray const&,
-                                          const asio::ip::udp::endpoint&)>
-    Server::command_table = {
-        {GETINFO, &Server::handle_getinfo},
-        {GETSTATUS, &Server::handle_getstatus},
-        {GETCHALLENGE, &Server::handle_getchallenge},
-        {CONNECT, &Server::handle_connect},
-};
-
 Server::Server(ServerLaunching const& s,
-               SharedQueue<ComponentBuilder> &shared_queue,
-               std::atomic<bool>& running)
+               SharedQueue<ComponentBuilder>& comp_queue,
+               SharedQueue<EventBuilder>& event_queue,
+               std::atomic<bool>& running,
+               std::counting_semaphore<>& sem)
     : _socket(_io_c, asio::ip::udp::endpoint(asio::ip::udp::v4(), s.port))
-    , _shared_queue(std::ref(shared_queue))
+    , _components_to_create(std::ref(comp_queue))
+    , _events_to_transmit(std::ref(event_queue))
     , _running(running)
+    , _semaphore(std::ref(sem))
+    , _queue_reader([this]() { this->send_comp(); })
 {
   std::random_device rd;
   std::mt19937 gen(rd());
@@ -45,6 +45,10 @@ void Server::close()
 
 Server::~Server()
 {
+  this->_semaphore.get().release();
+  if (this->_queue_reader.joinable()) {
+    this->_queue_reader.join();
+  }
   _socket.close();
 }
 
@@ -76,9 +80,6 @@ void Server::receive_loop()
       while (std::optional<ByteArray> p = recv_buf.extract(PROTOCOL_EOF)) {
         NETWORK_LOGGER(
             "server", std::uint8_t(LogLevel::DEBUG), "package extracted");
-        // for (auto it : *p) {
-        //   std::cout << (int)it << std::endl;
-        // }
         this->handle_package(*p, sender_endpoint);
       }
     } catch (std::exception& e) {
@@ -98,7 +99,7 @@ void Server::receive_loop()
 void Server::handle_package(ByteArray const& package,
                             const asio::ip::udp::endpoint& sender)
 {
-  std::optional<Package> pkg = this->parse_package(package);
+  std::optional<Package> pkg = parse_package(package);
 
   if (!pkg) {
     return;
@@ -109,10 +110,50 @@ void Server::handle_package(ByteArray const& package,
                    "Invalid magic sequence, ignoring.");
     return;
   }
-  auto const& parsed = this->parse_connectionless_package(pkg->real_package);
-  // TODO: handle in different function connected and not connected package
-  if (!parsed) {
-    return;
+  ClientState state = ClientState::CHALLENGING;
+  this->_client_mutex.lock();
+  try {
+    state = this->find_client_by_endpoint(sender).state;
+  } catch (ClientNotFound const&) {
   }
-  handle_connectionless_packet(parsed.value(), sender);
+  this->_client_mutex.unlock();
+  if (state == ClientState::CONNECTED) {
+    auto const& parsed = parse_connected_package(pkg->real_package);
+    if (!parsed) {
+      return;
+    }
+    this->handle_connected_packet(parsed.value(), sender);
+  } else {
+    auto const& parsed = parse_connectionless_package(pkg->real_package);
+    if (!parsed) {
+      return;
+    }
+    this->handle_connectionless_packet(parsed.value(), sender);
+  }
+}
+
+void Server::send(ByteArray const& response,
+                  const asio::ip::udp::endpoint& endpoint)
+{
+  ByteArray pkg = MAGIC_SEQUENCE + response + PROTOCOL_EOF;
+
+  try {
+      _socket.send_to(asio::buffer(pkg), endpoint);
+  } catch (asio::system_error const&) {
+      this->remove_client_by_endpoint(endpoint);
+  }
+
+  NETWORK_LOGGER("server",
+                 std::uint8_t(LogLevel::DEBUG),
+                 std::format("Sent package of size: {}", pkg.size()));
+}
+
+void Server::send_connected(ByteArray const& response,
+                            const asio::ip::udp::endpoint& endpoint)
+{
+  ByteArray pkg = type_to_byte(this->_current_index_sequence)
+      + type_to_byte<std::uint32_t>(0) + type_to_byte<bool>(true) + response;
+
+  this->_current_index_sequence += 1;
+  this->send(pkg, endpoint);
 }

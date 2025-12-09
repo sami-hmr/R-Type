@@ -18,7 +18,6 @@ public:
 private:
   void init_temporal(Registry::Entity entity, JsonObject const& obj);
   void init_fragile(Registry::Entity entity, JsonObject const& obj);
-  void init_owner(Registry::Entity entity, JsonObject const& obj);
 
   void temporal_system(Registry& reg);
   void on_collision(const CollisionEvent& c);

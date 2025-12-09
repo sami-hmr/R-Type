@@ -5,31 +5,44 @@
 ** Client
 */
 
+#include <semaphore>
+
+#include "Client.hpp"
+
+#include "NetworkCommun.hpp"
 #include "NetworkShared.hpp"
 #include "plugin/CircularBuffer.hpp"
 #include "Client.hpp"
 
-const std::unordered_map<std::uint8_t,
-                         void (Client::*)(ByteArray const&)>
-    Client::_command_table = {
-        {CHALLENGERESPONSE, &Client::handle_challenge_response},
-        {CONNECTRESPONSE, &Client::handle_connect_response},
-        {DISCONNECT, &Client::handle_disconnect_response},
-};
-
-Client::Client(ClientConnection const& c, SharedQueue<ComponentBuilder> &shared_components, SharedQueue<EventBuilder> &shared_events,  std::atomic<bool> &running) : _socket(_io_c), _components_to_create(std::ref(shared_components)), _events_to_transmit(std::ref(shared_events)),  _running(running)
+Client::Client(ClientConnection const& c,
+               SharedQueue<ComponentBuilder>& shared_components,
+               SharedQueue<EventBuilder>& shared_events,
+               SharedQueue<EventBuilder>& shared_exec_events,
+               std::atomic<bool>& running,
+               std::counting_semaphore<>& sem)
+    : _socket(_io_c)
+    , _components_to_create(std::ref(shared_components))
+    , _events_to_transmit(std::ref(shared_events))
+    , _event_to_exec(std::ref(shared_exec_events))
+    , _running(running)
+    , _semaphore(sem)
 {
-    _socket.open(asio::ip::udp::v4());
-    _server_endpoint = asio::ip::udp::endpoint(asio::ip::address::from_string(c.host), c.port);
+  _socket.open(asio::ip::udp::v4());
+  _server_endpoint =
+      asio::ip::udp::endpoint(asio::ip::address::from_string(c.host), c.port);
 
-    _running.get() = true;
-    NETWORK_LOGGER("client",
-           LogLevel::INFO,
-           std::format("Connecting to {}:{}", c.host, c.port));
+  NETWORK_LOGGER("client",
+                 LogLevel::INFO,
+                 std::format("Connecting to {}:{}", c.host, c.port));
+  this->_queue_reader = std::thread([this]() { this->send_evt(); });
 }
 
 void Client::close()
 {
+  this->_semaphore.get().release();
+  if (this->_queue_reader.joinable()) {
+      this->_queue_reader.join();
+  }
   if (_socket.is_open()) {
     _socket.close();
   }
@@ -37,14 +50,19 @@ void Client::close()
 
 Client::~Client()
 {
+  this->_running.get() = false;
+  this->_semaphore.get().release();
+  if (this->_queue_reader.joinable()) {
+      this->_queue_reader.join();
+  }
   _socket.close();
 }
 
 void Client::connect()
 {
-    send_getchallenge();
-    _state = ConnectionState::CHALLENGING;
-    receive_loop();
+  send_getchallenge();
+  _state = ConnectionState::CHALLENGING;
+  receive_loop();
 }
 
 void Client::receive_loop()
@@ -59,29 +77,34 @@ void Client::receive_loop()
 
       if (len > 0) {
         NETWORK_LOGGER("client",
-               LogLevel::DEBUG,
-               std::format("received buffer, size : {}", len));
+                       LogLevel::DEBUG,
+                       std::format("received buffer, size : {}", len));
       }
 
       if (ec) {
         if (_running.get()) {
           NETWORK_LOGGER("client",
-                 LogLevel::ERROR,
-                 std::format("Receive error: {}", ec.message()));
+                         LogLevel::ERROR,
+                         std::format("Receive error: {}", ec.message()));
         }
         break;
       }
 
       while (std::optional<ByteArray> p = recv_buf.extract(PROTOCOL_EOF)) {
         NETWORK_LOGGER("client", LogLevel::DEBUG, "package extracted");
+        // std::cout << "[";
+        // for (auto i : *p) {
+        //     std::cout << " " << (unsigned int)i << ",";
+        // }
+        // std::cout << "]\n";
         this->handle_package(*p);
       }
 
     } catch (std::exception& e) {
       if (_running.get()) {
         NETWORK_LOGGER("client",
-               LogLevel::ERROR,
-               std::format("Error in receive loop: {}", e.what()));
+                       LogLevel::ERROR,
+                       std::format("Error in receive loop: {}", e.what()));
       }
       break;
     }
@@ -92,20 +115,27 @@ void Client::receive_loop()
 
 void Client::handle_package(ByteArray const& package)
 {
-  std::optional<Package> pkg = this->parse_package(package);
+  std::optional<Package> pkg = parse_package(package);
 
   if (!pkg) {
     return;
   }
   if (pkg->magic != MAGIC_SEQUENCE) {
-    NETWORK_LOGGER("client", LogLevel::DEBUG, "Invalid magic sequence, ignoring.");
+    NETWORK_LOGGER(
+        "client", LogLevel::DEBUG, "Invalid magic sequence, ignoring.");
     return;
   }
-  handle_connectionless_response(pkg->real_package);
-}
-
-void Client::transmit_event(EventBuilder &&to_transmit) {
-    this->_events_to_transmit.get().lock.lock();
-    this->_events_to_transmit.get().queue.push(std::move(to_transmit));
-    this->_events_to_transmit.get().lock.unlock();
+  if (this->_state == ConnectionState::CONNECTED) {
+    auto const& parsed = parse_connected_package(pkg->real_package);
+    if (!parsed) {
+      return;
+    }
+    this->handle_connected_package(parsed.value());
+  } else {
+    auto const& parsed = parse_connectionless_package(pkg->real_package);
+    if (!parsed) {
+      return;
+    }
+    this->handle_connectionless_response(parsed.value());
+  }
 }

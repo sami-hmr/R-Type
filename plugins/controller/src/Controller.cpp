@@ -67,11 +67,14 @@ Controller::Controller(Registry& r, EntityLoader& l)
 void Controller::init_controller(Registry::Entity const entity,
                                  JsonObject const& obj)
 {
-  auto const& up_str = get_value<std::string>(this->_registry, obj, "UP");
-  auto const& down_str = get_value<std::string>(this->_registry, obj, "DOWN");
-  auto const& left_str = get_value<std::string>(this->_registry, obj, "LEFT");
-  auto const& right_str =
-      get_value<std::string>(this->_registry, obj, "RIGHT");
+  auto const& up_str =
+      get_value<Controllable, std::string>(this->_registry, obj, entity, "UP");
+  auto const& down_str = get_value<Controllable, std::string>(
+      this->_registry, obj, entity, "DOWN");
+  auto const& left_str = get_value<Controllable, std::string>(
+      this->_registry, obj, entity, "LEFT");
+  auto const& right_str = get_value<Controllable, std::string>(
+      this->_registry, obj, entity, "RIGHT");
 
   if (!up_str || !down_str || !left_str || !right_str) {
     std::cerr << "Error loading controller component: unexpected value type "

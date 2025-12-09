@@ -1,7 +1,21 @@
+#include <algorithm>
 #include <cstdint>
 #include <random>
+
 #include "Network.hpp"
+#include "NetworkCommun.hpp"
 #include "Server.hpp"
+
+const std::unordered_map<std::uint8_t,
+                         void (Server::*)(ByteArray const&,
+                                          const asio::ip::udp::endpoint&)>
+    Server::connectionless_table = {
+        {GETINFO, &Server::handle_getinfo},
+        {GETSTATUS, &Server::handle_getstatus},
+        {GETCHALLENGE, &Server::handle_getchallenge},
+        {CONNECT, &Server::handle_connect},
+};
+
 void Server::handle_connectionless_packet(ConnectionlessCommand const& command,
                                           const asio::ip::udp::endpoint& sender)
 {
@@ -11,26 +25,13 @@ void Server::handle_connectionless_packet(ConnectionlessCommand const& command,
                              command.command_code));
 
   try {
-    (this->*(command_table.find(command.command_code)->second))(
+    (this->*(connectionless_table.find(command.command_code)->second))(
         command.command, sender);
   } catch (std::out_of_range const&) {
     NETWORK_LOGGER("server",
                    std::uint8_t(LogLevel::WARNING),
                    std::format("Unknown command: {}", command.command_code));
   }
-}
-
-void Server::send_connectionless(ByteArray const& response,
-                                 const asio::ip::udp::endpoint& endpoint)
-{
-  ByteArray pkg = MAGIC_SEQUENCE + response + PROTOCOL_EOF;
-
-  _socket.send_to(asio::buffer(pkg), endpoint);
-
-  NETWORK_LOGGER(
-      "server",
-      std::uint8_t(LogLevel::DEBUG),
-      std::format("Sent connectionless package of size: {}", pkg.size()));
 }
 
 void Server::handle_getinfo(ByteArray const& cmd,
@@ -48,7 +49,7 @@ void Server::handle_getinfo(ByteArray const& cmd,
       + type_to_byte(_max_players)
       + type_to_byte<Byte>(CURRENT_PROTOCOL_VERSION);
 
-  send_connectionless(pkg, sender);
+  send(pkg, sender);
 }
 
 void Server::handle_getstatus(ByteArray const& cmd,
@@ -75,7 +76,7 @@ void Server::handle_getstatus(ByteArray const& cmd,
     }
   }
 
-  send_connectionless(pkg, sender);
+  send(pkg, sender);
 }
 
 void Server::handle_getchallenge(ByteArray const& cmd,
@@ -95,22 +96,25 @@ void Server::handle_getchallenge(ByteArray const& cmd,
   client.challenge = challenge;
   client.state = ClientState::CHALLENGING;
 
+  this->_client_mutex.lock();
   _clients.push_back(client);
+  this->_client_mutex.unlock();
 
   ByteArray pkg = type_to_byte<Byte>(CHALLENGERESPONSE)
       + type_to_byte<std::uint32_t>(challenge);
-  send_connectionless(pkg, sender);
+  send(pkg, sender);
 }
 
 void Server::handle_connect(ByteArray const& cmd,
                             const asio::ip::udp::endpoint& sender)
 {
-  std::optional<ConnectCommand> parsed = this->parse_connect_command(cmd);
+  std::optional<ConnectCommand> parsed = parse_connect_command(cmd);
   if (!parsed) {
     return;
   }
 
   try {
+    this->_client_mutex.lock();
     ClientInfo& client = find_client_by_endpoint(sender);
 
     if (client.state != ClientState::CHALLENGING
@@ -118,14 +122,16 @@ void Server::handle_connect(ByteArray const& cmd,
     {
       NETWORK_LOGGER(
           "server", std::uint8_t(LogLevel::WARNING), "Invalid challenge");
+      this->_client_mutex.unlock();
       return;
     }
-    uint8_t client_id = _clients.size();  // TODO: change to incrementator
-                                          // uint32 in the wrapper class
+    uint8_t client_id = this->_c_id_incrementator;
+    this->_c_id_incrementator++;
 
     client.client_id = client_id;
     client.player_name = parsed->player_name;
     client.state = ClientState::CONNECTED;
+    this->_client_mutex.unlock();
 
     NETWORK_LOGGER("server",
                    std::uint8_t(LogLevel::INFO),
@@ -137,7 +143,7 @@ void Server::handle_connect(ByteArray const& cmd,
         + type_to_byte<std::uint8_t>(client_id)
         + type_to_byte<std::uint32_t>(_server_id);
 
-    send_connectionless(pkg, sender);
+    send(pkg, sender);
 
   } catch (ClientNotFound&) {
     NETWORK_LOGGER(
@@ -164,5 +170,18 @@ ClientInfo& Server::find_client_by_endpoint(
       return client;
     }
   }
-  throw ClientNotFound("");
+  throw ClientNotFound("client not found");
+}
+
+void Server::remove_client_by_endpoint(const asio::ip::udp::endpoint& endpoint)
+{
+  this->_client_mutex.lock();
+  auto it = std::find_if(this->_clients.begin(),
+               this->_clients.end(),
+               [endpoint](ClientInfo const& c)
+               { return c.endpoint == endpoint; });
+  if (it != this->_clients.end()) {
+      this->_clients.erase(it);
+  }
+  this->_client_mutex.unlock();
 }
