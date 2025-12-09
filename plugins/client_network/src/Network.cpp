@@ -10,6 +10,8 @@
 #include "ecs/Registry.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/events/Events.hpp"
+#include "plugin/events/LoggerEvent.hpp"
+#include "plugin/events/Shutdown.hpp"
 
 NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
     : APlugin(r, l, {}, {})

@@ -17,16 +17,19 @@
 #include "plugin/components/Drawable.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Sprite.hpp"
+#include "plugin/events/CliEvents.hpp"
 #include "plugin/events/Events.hpp"
+#include "plugin/events/LoggerEvent.hpp"
+#include "plugin/events/Shutdown.hpp"
 
 CLI::CLI(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config)
     : APlugin(r, l, {"logger", "server_network", "client_network"}, {}, config)
 {
   _registry.get().on<ShutdownEvent>([this](const ShutdownEvent&)
-                                     { _running = false; });
+                                    { _running = false; });
 
   _registry.get().on<CleanupEvent>([this](const CleanupEvent&)
-                                    { _running = false; });
+                                   { _running = false; });
 
   _registry.get().on<CliStart>(
       [this](const CliStart&)
@@ -58,12 +61,12 @@ void CLI::run_cli()
     std::cout << "> " << std::flush;
 
     if (!std::getline(std::cin, line)) {
-     // _registry.get().emit<ShutdownEvent>("Cli end", 0);
+      // _registry.get().emit<ShutdownEvent>("Cli end", 0);
       break;
     }
 
     if (!_running) {
-     // _registry.get().emit<ShutdownEvent>("Error in cli", 0);
+      // _registry.get().emit<ShutdownEvent>("Error in cli", 0);
       break;
     }
 
@@ -189,14 +192,18 @@ void CLI::process_command(const std::string& cmd)
         .handler =
             [this](std::istringstream&)
         {
-            Drawable draw;
-            Sprite sprite("ça existe meme pas", {1, 1});
-            Position pos(0, 0);
-            Scene scene("game", SceneState::ACTIVE);
-            this->_registry.get().emit<ComponentBuilder>(42, "sfml:Drawable", draw.to_bytes());
-            this->_registry.get().emit<ComponentBuilder>(42, "sfml:Sprite", sprite.to_bytes());
-            this->_registry.get().emit<ComponentBuilder>(42, "moving:Position", pos.to_bytes());
-            this->_registry.get().emit<ComponentBuilder>(42, "scene", scene.to_bytes());
+          Drawable draw;
+          Sprite sprite("ça existe meme pas", {1, 1});
+          Position pos(0, 0);
+          Scene scene("game", SceneState::ACTIVE);
+          this->_registry.get().emit<ComponentBuilder>(
+              42, "sfml:Drawable", draw.to_bytes());
+          this->_registry.get().emit<ComponentBuilder>(
+              42, "sfml:Sprite", sprite.to_bytes());
+          this->_registry.get().emit<ComponentBuilder>(
+              42, "moving:Position", pos.to_bytes());
+          this->_registry.get().emit<ComponentBuilder>(
+              42, "scene", scene.to_bytes());
         }}},
 
       {"stop",
@@ -232,8 +239,7 @@ void CLI::process_command(const std::string& cmd)
           if (!trigger.empty() && trigger[0] == ' ') {
             trigger = trigger.substr(1);
           }
-          _registry.get().emit<CleanupEvent>(trigger.empty() ? "CLI"
-                                                              : trigger);
+          _registry.get().emit<CleanupEvent>(trigger.empty() ? "CLI" : trigger);
         }}}};
 
   auto it = COMMANDS.find(command);

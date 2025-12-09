@@ -15,6 +15,7 @@
 #include "plugin/components/InteractionZone.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Velocity.hpp"
+#include "plugin/events/EntityEvents.hpp"
 #include "plugin/events/Events.hpp"
 
 class Collision : public APlugin
@@ -33,8 +34,8 @@ private:
                         const SparseArray<Position>& positions,
                         const SparseArray<Collidable>& collidables);
   void interaction_zone_system(Registry& r,
-                        const SparseArray<Position>& positions,
-                        const SparseArray<InteractionZone>& zones);
+                               const SparseArray<Position>& positions,
+                               const SparseArray<InteractionZone>& zones);
   void on_collision(const CollisionEvent& c);
 
   std::unique_ptr<ICollisionAlgorithm> _collision_algo;

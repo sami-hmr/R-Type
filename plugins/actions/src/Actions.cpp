@@ -16,6 +16,7 @@
 #include "plugin/components/ActionTrigger.hpp"
 #include "plugin/events/ActionEvents.hpp"
 #include "plugin/events/Events.hpp"
+#include "plugin/events/IoEvents.hpp"
 
 static const std::unordered_map<std::string, Key> KEY_MAPPING = {
     {"ENTER", Key::ENTER},
@@ -47,7 +48,8 @@ Actions::Actions(Registry& r, EntityLoader& l)
       },
       5);
 
-  this->_registry.get().on<KeyPressedEvent>("KeyPressedEvent",
+  this->_registry.get().on<KeyPressedEvent>(
+      "KeyPressedEvent",
       [this](KeyPressedEvent const& evt)
       {
         auto& actions = this->_registry.get().get_components<ActionTrigger>();

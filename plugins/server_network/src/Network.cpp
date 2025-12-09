@@ -9,6 +9,8 @@
 #include "ecs/Registry.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/events/Events.hpp"
+#include "plugin/events/LoggerEvent.hpp"
+#include "plugin/events/Shutdown.hpp"
 
 NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
     : APlugin(r, l, {}, {})
@@ -47,26 +49,27 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
         this->_event_semaphore.release();
       });
 
-  this->_registry.get().add_system<>([this](Registry &r){
-      ComponentBuilder t;
+  this->_registry.get().add_system<>(
+      [this](Registry& r)
+      {
+        ComponentBuilder t;
 
-
-      this->_event_queue.lock.lock();
-      while (!this->_event_queue.queue.empty()) {
-          auto &e = this->_event_queue.queue.front();
+        this->_event_queue.lock.lock();
+        while (!this->_event_queue.queue.empty()) {
+          auto& e = this->_event_queue.queue.front();
           std::cout << e.event_id << " emmited" << std::endl;
           // r.emit(std::move(e.event_id), std::move(e.data));
           this->_event_queue.queue.pop();
-      }
-      this->_event_queue.lock.unlock();
-  });
+        }
+        this->_event_queue.lock.unlock();
+      });
 }
 
 NetworkServer::~NetworkServer()
 {
   _running = false;
   if (this->_thread.joinable()) {
-      this->_thread.join();
+    this->_thread.join();
   }
 }
 
@@ -74,8 +77,11 @@ void NetworkServer::launch_server(ServerLaunching const& s)
 {
   try {
     _running = true;
-    Server server(
-        s, this->_components_to_update, _event_queue, _running, _event_semaphore);
+    Server server(s,
+                  this->_components_to_update,
+                  _event_queue,
+                  _running,
+                  _event_semaphore);
     LOGGER("server",
            LogLevel::INFO,
            std::format("Server started on port {}", s.port));

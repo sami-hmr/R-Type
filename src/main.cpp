@@ -12,7 +12,9 @@
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Drawable.hpp"
 #include "plugin/events/ActionEvents.hpp"
+#include "plugin/events/EntityEvents.hpp"
 #include "plugin/events/Events.hpp"
+#include "plugin/events/Shutdown.hpp"
 #include "plugin/libLoaders/ILibLoader.hpp"
 
 static int true_main(Registry& r,
@@ -34,8 +36,9 @@ static int true_main(Registry& r,
   r.on<SceneChangeEvent>("SceneChangeEvent",
                          [&r](const SceneChangeEvent& event)
                          {
-                           r.set_current_scene(event.target_scene,
-                                               SCENE_STATE_STR.at_second(event.state));
+                           r.set_current_scene(
+                               event.target_scene,
+                               SCENE_STATE_STR.at_second(event.state));
                          });
 
   r.on<SpawnEntityRequestEvent>("SpawnEntity",

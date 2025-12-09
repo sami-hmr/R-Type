@@ -4,9 +4,10 @@
 
 #include "Logger.hpp"
 
-#include "plugin/events/Events.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/EntityLoader.hpp"
+#include "plugin/events/Events.hpp"
+#include "plugin/events/Shutdown.hpp"
 
 Logger::Logger(Registry& r,
                EntityLoader& l,
@@ -43,7 +44,7 @@ Logger::Logger(Registry& r,
   }
 
   this->_registry.get().on<LogEvent>([this](const LogEvent& event)
-                                      { this->on_log_event(event); });
+                                     { this->on_log_event(event); });
   this->_registry.get().on<ShutdownEvent>(
       [this](const ShutdownEvent& event)
       {

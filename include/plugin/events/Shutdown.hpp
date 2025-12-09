@@ -17,6 +17,9 @@
 
 struct ShutdownEvent
 {
+  std::string reason;
+  int exit_code = 0;
+
   DEFAULT_BYTE_CONSTRUCTOR(ShutdownEvent,
                            ([](std::string const& r, int e)
                             { return (ShutdownEvent) {r, e}; }),
@@ -24,8 +27,6 @@ struct ShutdownEvent
                            parseByte<int>())
 
   DEFAULT_SERIALIZE(string_to_byte(this->reason), type_to_byte(this->exit_code))
-  std::string reason;
-  int exit_code = 0;
 
   ShutdownEvent(std::string reason, int exit_code)
       : reason(std::move(reason))

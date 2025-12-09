@@ -17,6 +17,7 @@
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Velocity.hpp"
 #include "plugin/events/Events.hpp"
+#include "plugin/events/LoggerEvent.hpp"
 
 Collision::Collision(Registry& r, EntityLoader& l)
     : APlugin(
@@ -50,7 +51,7 @@ Collision::Collision(Registry& r, EntityLoader& l)
       4);
 
   this->_registry.get().on<CollisionEvent>([this](const CollisionEvent& c)
-                                            { this->on_collision(c); });
+                                           { this->on_collision(c); });
 }
 
 void Collision::set_algorithm(std::unique_ptr<ICollisionAlgorithm> algo)
@@ -104,7 +105,7 @@ void Collision::init_interaction_zone(Registry::Entity const& entity,
   }
 
   this->_registry.get().emplace_component<InteractionZone>(entity,
-                                                            radius.value());
+                                                           radius.value());
 }
 
 void Collision::collision_system(Registry& /*r*/,
@@ -142,7 +143,7 @@ void Collision::collision_system(Registry& /*r*/,
 }
 
 void Collision::interaction_zone_system(
-    Registry&  /*r*/,
+    Registry& /*r*/,
     const SparseArray<Position>& positions,
     const SparseArray<InteractionZone>& zones)
 {
