@@ -9,6 +9,7 @@
 #include <asio/ip/udp.hpp>
 
 #include "NetworkShared.hpp"
+#include "TwoWayMap.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/APlugin.hpp"
 #include "ClientConnection.hpp"
@@ -26,7 +27,7 @@ class NetworkClient : public APlugin
     SharedQueue<ComponentBuilder> _component_queue;
     SharedQueue<EventBuilder> _exec_event_queue;
 
-    std::unordered_map<Registry::Entity, Registry::Entity> _server_indexes;
+    TwoWayMap<Registry::Entity, Registry::Entity> _server_indexes;
 
     std::counting_semaphore<> _sem;
     SharedQueue<EventBuilder> _event_queue;

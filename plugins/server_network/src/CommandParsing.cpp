@@ -5,7 +5,6 @@
 #include <sys/types.h>
 
 // #include "ByteParser/ByteParser.hpp"
-#include "Network.hpp"
 #include "NetworkShared.hpp"
 #include "Server.hpp"
 #include "Parser.hpp"
@@ -14,7 +13,6 @@
 #include "Rest.hpp"
 #include "ServerCommands.hpp"
 #include "plugin/Byte.hpp"
-#include "plugin/events/Events.hpp"
 
 std::optional<Package> Server::parse_package(ByteArray const& package)
 {

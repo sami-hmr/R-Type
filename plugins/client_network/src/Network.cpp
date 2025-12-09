@@ -67,11 +67,11 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
         this->_component_queue.lock.lock();
         while (!this->_component_queue.queue.empty()) {
           auto& e = this->_component_queue.queue.front();
-          if (!this->_server_indexes.contains(e.entity)) {
+          if (!this->_server_indexes.contains_first(e.entity)) {
             auto new_entity = r.spawn_entity();
-            this->_server_indexes.insert_or_assign(e.entity, new_entity);
+            this->_server_indexes.insert(e.entity, new_entity);
           }
-          auto true_entity = this->_server_indexes.at(e.entity);
+          auto true_entity = this->_server_indexes.at_first(e.entity);
           r.emplace_component(true_entity, e.id, e.data);
           this->_component_queue.queue.pop();
         }

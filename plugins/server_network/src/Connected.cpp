@@ -10,7 +10,9 @@
 const std::unordered_map<std::uint8_t,
                          void (Server::*)(ByteArray const&,
                                           const asio::ip::udp::endpoint&)>
-    Server::connected_table = {{SENDEVENT, &Server::handle_event_receive}};
+    Server::connected_table = {
+        {SENDEVENT, &Server::handle_event_receive},
+};
 
 void Server::handle_connected_packet(ConnectedPackage const& command,
                                      const asio::ip::udp::endpoint& sender)
@@ -53,15 +55,13 @@ void Server::handle_connected_command(ConnectedCommand const& command,
   }
 }
 
-
-
 void Server::handle_event_receive(ByteArray const& package,
                                   const asio::ip::udp::endpoint&)
 {
-    auto parsed = parse_event_build_cmd(package);
+  auto parsed = parse_event_build_cmd(package);
 
-    if (!parsed) {
-        return;
-    }
-    this->transmit_event(std::move(parsed.value()));
+  if (!parsed) {
+    return;
+  }
+  this->transmit_event(std::move(parsed.value()));
 }

@@ -67,6 +67,7 @@ private:
                       const asio::ip::udp::endpoint& sender);
 
   void handle_event_receive(ByteArray const&, const asio::ip::udp::endpoint&);
+  void handle_entity_creation(ByteArray const&, const asio::ip::udp::endpoint&);
 
   // static asio::socket_base::message_flags handle_receive(
   //     const asio::error_code& error, std::size_t bytes_transferred);
@@ -87,7 +88,6 @@ private:
       ByteArray const& package);
   static std::optional<ComponentBuilder> parse_component_build_cmd(
       ByteArray const& package);
-
   ClientInfo& find_client_by_endpoint(const asio::ip::udp::endpoint& endpoint);
   void remove_client_by_endpoint(const asio::ip::udp::endpoint& endpoint);
 
