@@ -228,11 +228,10 @@ void AnimatedSprite::update_anim(
       if (animation.rollback) {
         animation.direction = animation.direction * -1;
         animation.frame_pos += animation.direction * animation.frame_size;
-        animation.current_frame = 0;
       } else {
-        animation.current_frame = 0;
         animation.frame_pos = Vector2D(0, 0);
       }
+      animation.current_frame = 0;
       if (!animation.loop) {
         this->current_animation = default_animation;
       }
