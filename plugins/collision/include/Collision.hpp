@@ -35,8 +35,8 @@ private:
                         const SparseArray<Position>& positions,
                         const SparseArray<Collidable>& collidables);
   void interaction_zone_system(Registry& r,
-                        const SparseArray<Position>& positions,
-                        const SparseArray<InteractionZone>& zones);
+                               const SparseArray<Position>& positions,
+                               const SparseArray<InteractionZone>& zones);
   void on_collision(const CollisionEvent& c);
 
   std::unique_ptr<ICollisionAlgorithm> _collision_algo;

@@ -16,17 +16,7 @@
 #include "plugin/components/ActionTrigger.hpp"
 #include "plugin/events/ActionEvents.hpp"
 #include "plugin/events/Events.hpp"
-
-static const std::unordered_map<std::string, Key> KEY_MAPPING = {
-    {"ENTER", Key::ENTER},
-    {"R", Key::R},
-    {"Z", Key::Z},
-    {"Q", Key::Q},
-    {"S", Key::S},
-    {"D", Key::D},
-    {"SPACE", Key::SPACE},
-    {"ECHAP", Key::ECHAP},
-    {"DELETE", Key::DELETE}};
+#include "plugin/events/IoEvents.hpp"
 
 Actions::Actions(Registry& r, EntityLoader& l)
     : APlugin(r,
@@ -47,7 +37,8 @@ Actions::Actions(Registry& r, EntityLoader& l)
       },
       5);
 
-  this->_registry.get().on<KeyPressedEvent>("KeyPressedEvent",
+  this->_registry.get().on<KeyPressedEvent>(
+      "KeyPressedEvent",
       [this](KeyPressedEvent const& evt)
       {
         auto& actions = this->_registry.get().get_components<ActionTrigger>();
@@ -59,7 +50,7 @@ Actions::Actions(Registry& r, EntityLoader& l)
           std::string key = std::get<std::string>(
               action.event_trigger.second.at("key").value);
           if (std::any_cast<KeyPressedEvent>(evt).key_pressed.contains(
-                  KEY_MAPPING.at(key)))
+                  KEY_MAPPING.at_first(key)))
           {
             for (auto& i : action.event_to_emit) {
               this->_registry.get().emit(i.first, i.second);

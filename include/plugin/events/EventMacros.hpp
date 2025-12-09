@@ -8,10 +8,7 @@
 
 /**
  * @brief Maps a vector of Registry::Entity using a TwoWayMap
- * @details Creates a new vector with all entities mapped. If any mapping fails,
- *          the exception propagates (all-or-nothing semantics with
- * DEFINE_CHANGE_ENTITY). Use this within DEFINE_CHANGE_ENTITY to map vector
- * fields.
+ * @details Creates a new vector with all entities mapped.
  *
  * @example
  * DEFINE_CHANGE_ENTITY(
@@ -31,8 +28,7 @@
   }()
 
 /**
- * @brief Generates a change_entity method for event structs with all-or-nothing
- * semantics
+ * @brief Generates a change_entity method for event structs
  * @details Creates a const method that maps Registry::Entity fields using a
  * TwoWayMap. Non-entity fields are automatically copied from the original
  * event. If any mapping fails (std::out_of_range), returns the original event
@@ -53,7 +49,7 @@
  *   )
  * };
  */
-#define DEFINE_CHANGE_ENTITY(...) \
+#define CHANGE_ENTITY(...) \
   auto change_entity(TwoWayMap<Registry::Entity, Registry::Entity> const& map) \
       const \
   { \
@@ -64,4 +60,11 @@
     } catch (std::out_of_range const&) { \
       return *this; \
     } \
+  }
+
+#define CHANGE_ENTITY_DEFAULT \
+  auto change_entity(TwoWayMap<Registry::Entity, Registry::Entity> const&) \
+      const \
+  { \
+    return *this; \
   }

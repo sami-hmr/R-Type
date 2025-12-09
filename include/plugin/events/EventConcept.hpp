@@ -4,14 +4,16 @@
 #include <cstddef>
 
 #include "Json/JsonParser.hpp"
+#include "plugin/Byte.hpp"
+#include "TwoWayMap.hpp"
 
-template<typename K, typename V>
-class TwoWayMap;
+// template<typename K, typename V>
+// class TwoWayMap;
 
 class Registry;
 
 template<typename T>
-concept EventIsJsonBuilable = requires(Registry& r, JsonObject const& j) {
+concept json_buildable = requires(Registry& r, JsonObject const& j) {
   { T(r, j) } -> std::same_as<T>;
 };
 
@@ -31,7 +33,7 @@ concept EventIsJsonBuilable = requires(Registry& r, JsonObject const& j) {
  * static_assert(EventHasChangeEntity<MyEvent>);
  */
 template<typename T>
-concept EventChangeEntity =
+concept entity_convertible =
     requires(T const& event, TwoWayMap<std::size_t, std::size_t> const& map) {
       { event.change_entity(map) } -> std::same_as<T>;
     };

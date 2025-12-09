@@ -7,7 +7,7 @@
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Controllable.hpp"
-#include "plugin/events/Events.hpp"
+#include "plugin/events/IoEvents.hpp"
 
 static const std::map<char, Key> mapping = {
     {'z', Key::Z},
@@ -92,10 +92,10 @@ void Controller::init_controller(Registry::Entity const entity,
   }
 
   this->_registry.get().emplace_component<Controllable>(entity,
-                                                         up_str.value()[0],
-                                                         down_str.value()[0],
-                                                         left_str.value()[0],
-                                                         right_str.value()[0]);
+                                                        up_str.value()[0],
+                                                        down_str.value()[0],
+                                                        left_str.value()[0],
+                                                        right_str.value()[0]);
 }
 
 void Controller::handle_key_change(Key key, bool is_pressed)

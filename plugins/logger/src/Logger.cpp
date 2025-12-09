@@ -2,12 +2,11 @@
 #include <format>
 #include <iostream>
 
-#include "Logger.hpp"
-
 #include "ecs/Registry.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/events/Log.hpp"
-#include "plugin/events/Events.hpp"
+#include "plugin/events/ShutdownEvent.hpp"
+#include "plugin/events/LoggerEvent.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
 
 Logger::Logger(Registry& r,
@@ -27,15 +26,7 @@ Logger::Logger(Registry& r,
       if (config->contains("level")) {
         std::string level_str =
             std::get<std::string>(config->at("level").value);
-        if (level_str == "DEBUG") {
-          _min_log_level = LogLevel::DEBUG;
-        } else if (level_str == "INFO") {
-          _min_log_level = LogLevel::INFO;
-        } else if (level_str == "WARNING") {
-          _min_log_level = LogLevel::WARNING;
-        } else if (level_str == "ERROR") {
-          _min_log_level = LogLevel::ERROR;
-        }
+        _min_log_level = LOG_LEVEL_STR.at_first(level_str);
       }
     } catch (std::bad_variant_access const&) {
       std::cerr << "Error parsing logger config: unexpected value type\n";

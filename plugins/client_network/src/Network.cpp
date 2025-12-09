@@ -12,6 +12,7 @@
 #include "plugin/events/Events.hpp"
 #include "plugin/events/CleanupEvent.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
+#include "plugin/events/Log.hpp"
 
 NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
     : APlugin(r, l, {}, {})
@@ -26,7 +27,7 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
           this->_thread =
               std::thread([this, c]() { this->connection_thread(c); });
         } else {
-            LOGGER("client", LogLevel::WARNING, "client already running");
+          LOGGER("client", LogLevel::WARNING, "client already running");
         }
       });
 
@@ -54,8 +55,11 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
         if (!this->_running) {
           return;
         }
+        EventBuilder true_e(c.event_id,
+                            this->_registry.get().convert_event_entity(
+                                c.event_id, c.data, this->_server_indexes));
         this->_event_queue.lock.lock();
-        this->_event_queue.queue.push(std::move(c));
+        this->_event_queue.queue.push(std::move(true_e));
         this->_event_queue.lock.unlock();
         this->_sem.release();
       });

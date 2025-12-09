@@ -17,6 +17,7 @@
 #include "plugin/EntityLoader.hpp"
 #include "plugin/events/Log.hpp"
 #include "plugin/events/Events.hpp"
+#include "plugin/events/LoggerEvent.hpp"
 
 struct LogComponent
 {
@@ -43,9 +44,7 @@ struct LogComponent
 class Logger : public APlugin
 {
 public:
-  Logger(Registry& r,
-         EntityLoader& l,
-         std::optional<JsonObject> const& config);
+  Logger(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config);
 
 private:
   void on_log_event(const LogEvent& event);

@@ -16,7 +16,7 @@
 #include "plugin/components/Controllable.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Velocity.hpp"
-#include "plugin/events/Events.hpp"
+#include "plugin/events/IoEvents.hpp"
 
 class Controller : public APlugin
 {
