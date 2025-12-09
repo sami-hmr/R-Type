@@ -39,7 +39,23 @@ struct InteractionZoneEvent
       : source(static_cast<Registry::Entity>(
             get_value_copy<double>(r, e, "source").value()))
       , radius(get_value_copy<double>(r, e, "radius").value())
-      , candidates()
   {
   }
+
+  DEFAULT_BYTE_CONSTRUCTOR(
+      InteractionZoneEvent,
+      ([](Registry::Entity s, double r, std::vector<Registry::Entity> const& c)
+       { return InteractionZoneEvent(s, r, c); }),
+      parseByte<Registry::Entity>(),
+      parseByte<double>(),
+      parseByteArray(parseByte<Registry::Entity>()))
+
+  DEFAULT_SERIALIZE(
+      type_to_byte(source),
+      type_to_byte(radius),
+      vector_to_byte(candidates,
+                     std::function<ByteArray(Registry::Entity const&)>(
+                         [](Registry::Entity const& e)
+                         { return type_to_byte<Registry::Entity>(e); })))
+
 };

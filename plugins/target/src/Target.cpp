@@ -23,7 +23,13 @@ Target::Target(Registry& r, EntityLoader& l)
              const SparseArray<Position>& positions,
              SparseArray<Velocity>& velocities)
       { this->target_system(r, followers, positions, velocities); });
+<<<<<<< Updated upstream
   this->_registry.get().on<InteractionZone>("InteractionZone", [this](const InteractionZone& event)
+=======
+  this->_registry.get().on<InteractionZoneEvent>(
+      "InteractionZoneEvent",
+      [this](const InteractionZoneEvent& event)
+>>>>>>> Stashed changes
       { this->on_interaction_zone(event); });
 }
 

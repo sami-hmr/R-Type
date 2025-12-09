@@ -9,14 +9,10 @@
 #include "BaseTypes.hpp"
 #include "ByteParser/ByteParser.hpp"
 #include "Json/JsonParser.hpp"
-#include "ParserTypes.hpp"
-#include "Rest.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/EntityLoader.hpp"
-#include "plugin/events/Log.hpp"
-#include "plugin/events/Events.hpp"
 #include "plugin/events/LoggerEvent.hpp"
 
 struct LogComponent

@@ -319,10 +319,12 @@ public:
   {
     std::type_index type_id(typeid(EventType));
     _events_index_getter.insert(type_id, name);
-    _event_entity_converters.insert(
-        name,
-        [](ByteArray const& b, TwoWayMap<Entity, Entity> const& map)
-        { return EventType(b).change_entity(map).to_bytes(); });
+    if (!_event_entity_converters.contains(name)) {
+        _event_entity_converters.insert(
+            name,
+            [](ByteArray const& b, TwoWayMap<Entity, Entity> const& map)
+            { return EventType(b).change_entity(map).to_bytes(); });
+    }
     this->add_event_builder<EventType>();
 
     return this->on<EventType>("EventType", handler);

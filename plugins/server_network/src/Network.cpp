@@ -7,24 +7,35 @@
 #include "NetworkShared.hpp"
 #include "Server.hpp"
 #include "ecs/Registry.hpp"
-#include "plugin/events/Log.hpp"
+#include "plugin/events/LoggerEvent.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/events/Events.hpp"
 #include "plugin/events/CleanupEvent.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
-#include "plugin/events/Log.hpp"
+#include "plugin/events/LoggerEvent.hpp"
 
 NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
     : APlugin(r, l, {}, {})
     , _event_semaphore(0)
 {
+<<<<<<< Updated upstream
   this->_registry.get().on<ServerLaunching>("ServerLaunching",
+=======
+  this->_registry.get().on<ServerLaunching>(
+      "ServerLaunching",
+>>>>>>> Stashed changes
       [this](ServerLaunching const& s)
       {
         this->_thread = std::thread([this, s]() { this->launch_server(s); });
       });
 
+<<<<<<< Updated upstream
   this->_registry.get().on<ShutdownEvent>("ShutdownEvent", [this](ShutdownEvent const& event)
+=======
+  this->_registry.get().on<ShutdownEvent>(
+      "ShutdownEvent",
+      [this](ShutdownEvent const& event)
+>>>>>>> Stashed changes
       {
         _running = false;
         LOGGER("server",
@@ -33,14 +44,26 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
         // server.close();
       });
 
+<<<<<<< Updated upstream
   this->_registry.get().on<CleanupEvent>("CleanupEvent", [this](CleanupEvent const&)
+=======
+  this->_registry.get().on<CleanupEvent>(
+      "CleanupEvent",
+      [this](CleanupEvent const&)
+>>>>>>> Stashed changes
       {
         _running = false;
         LOGGER("server", LogLevel::DEBUG, "Cleanup requested");
         // server.close();
       });
 
+<<<<<<< Updated upstream
   this->_registry.get().on<ComponentBuilder>("ComponentBuilder", [this](ComponentBuilder e)
+=======
+  this->_registry.get().on<ComponentBuilder>(
+      "ComponentBuilder",
+      [this](ComponentBuilder e)
+>>>>>>> Stashed changes
       {
         this->_components_to_update.lock.lock();
         this->_components_to_update.queue.push(std::move(e));

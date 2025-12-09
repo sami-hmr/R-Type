@@ -9,13 +9,11 @@
 
 #include "Json/JsonParser.hpp"
 #include "TwoWayMap.hpp"
-#include "ecs/SparseArray.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/ActionTrigger.hpp"
 #include "plugin/events/ActionEvents.hpp"
-#include "plugin/events/Events.hpp"
 #include "plugin/events/IoEvents.hpp"
 
 Actions::Actions(Registry& r, EntityLoader& l)
@@ -26,7 +24,7 @@ Actions::Actions(Registry& r, EntityLoader& l)
                   COMP_INIT(ActionTrigger, ActionTrigger, init_action_trigger),
               }})
 {
-  _registry.get().register_component<ActionTrigger>();
+  _registry.get().register_component<ActionTrigger>("ActionTrigger");
 
   _registry.get().add_system<>(
       [](Registry& r)

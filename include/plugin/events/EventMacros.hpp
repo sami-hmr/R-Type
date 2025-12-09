@@ -1,11 +1,5 @@
 #pragma once
 
-#include <algorithm>
-#include <vector>
-
-#include "TwoWayMap.hpp"
-#include "ecs/Registry.hpp"
-
 /**
  * @brief Maps a vector of Registry::Entity using a TwoWayMap
  * @details Creates a new vector with all entities mapped.
@@ -63,7 +57,7 @@
   }
 
 #define CHANGE_ENTITY_DEFAULT \
-  auto change_entity(TwoWayMap<Registry::Entity, Registry::Entity> const&) \
+  auto change_entity(TwoWayMap<std::size_t, std::size_t> const&) \
       const \
   { \
     return *this; \

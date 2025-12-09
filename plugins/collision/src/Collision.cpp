@@ -16,9 +16,8 @@
 #include "plugin/components/InteractionZone.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Velocity.hpp"
-#include "plugin/events/Events.hpp"
 #include "plugin/events/CollisionEvent.hpp"
-#include "plugin/events/Log.hpp"
+#include "plugin/events/LoggerEvent.hpp"
 
 Collision::Collision(Registry& r, EntityLoader& l)
     : APlugin(
@@ -51,7 +50,8 @@ Collision::Collision(Registry& r, EntityLoader& l)
       { this->interaction_zone_system(r, pos, zone); },
       4);
 
-  this->_registry.get().on<CollisionEvent>([this](const CollisionEvent& c)
+  this->_registry.get().on<CollisionEvent>("CollisionEvent",
+                                           [this](const CollisionEvent& c)
                                            { this->on_collision(c); });
 }
 

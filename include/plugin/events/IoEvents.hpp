@@ -4,6 +4,7 @@
 #include <map>
 #include <optional>
 #include <string>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -18,7 +19,7 @@
 #include "plugin/components/ActionTrigger.hpp"
 #include "plugin/components/InteractionZone.hpp"
 
-enum class Key
+enum Key : int
 {
   Unknown = -1,
   SHIFT = 0,
@@ -52,12 +53,13 @@ static const TwoWayMap<std::string, Key> KEY_MAPPING = {
 
 struct KeyPressedEvent
 {
-  std::map<Key, bool> key_pressed;
+  std::unordered_map<Key, bool> key_pressed;
   std::optional<std::string> key_unicode;
 
   CHANGE_ENTITY_DEFAULT
 
-  KeyPressedEvent(std::map<Key, bool> kp, std::optional<std::string> ku)
+  KeyPressedEvent(std::unordered_map<Key, bool> kp,
+                  std::optional<std::string> ku)
       : key_pressed(std::move(kp))
       , key_unicode(std::move(ku))
   {
@@ -65,10 +67,10 @@ struct KeyPressedEvent
 
   KeyPressedEvent(Registry& r, JsonObject const& e)
       : key_pressed(
-            [&]() -> std::map<Key, bool>
+            [&]() -> std::unordered_map<Key, bool>
             {
               JsonArray arr = get_value_copy<JsonArray>(r, e, "keys").value();
-              std::map<Key, bool> map;
+              std::unordered_map<Key, bool> map;
               for (auto const& i : arr) {
                 map.insert_or_assign(
                     KEY_MAPPING.at_first(std::get<std::string>(i.value)), true);
@@ -78,16 +80,32 @@ struct KeyPressedEvent
       , key_unicode(get_value_copy<std::string>(r, e, "key_unicode"))
   {
   }
+
+  DEFAULT_BYTE_CONSTRUCTOR(KeyPressedEvent,
+                           ([](std::unordered_map<Key, bool> const& kp,
+                               std::optional<std::string> const& ku)
+                            { return KeyPressedEvent(kp, ku); }),
+                           parseByteMap<Key, bool>(parseByte<Key>(),
+                                                   parseByte<bool>()),
+                           parseByteOptional(parseByteString()))
+
+  DEFAULT_SERIALIZE(
+      map_to_byte<Key, bool>(
+          this->key_pressed,
+          std::function<ByteArray(Key)>([](Key k) { return type_to_byte(k); }),
+          std::function<ByteArray(bool)>([](bool b)
+                                         { return type_to_byte(b); })),
+      optional_to_byte<std::string>(this->key_unicode, string_to_byte))
 };
 
 struct KeyReleasedEvent
 {
-  std::map<Key, bool> key_released;
+  std::unordered_map<Key, bool> key_released;
   std::optional<std::string> key_unicode;
 
   CHANGE_ENTITY_DEFAULT
 
-  KeyReleasedEvent(std::map<Key, bool> kr, std::optional<std::string> ku)
+  KeyReleasedEvent(std::unordered_map<Key, bool> kr, std::optional<std::string> ku)
       : key_released(std::move(kr))
       , key_unicode(std::move(ku))
   {
@@ -95,10 +113,10 @@ struct KeyReleasedEvent
 
   KeyReleasedEvent(Registry& r, JsonObject const& e)
       : key_released(
-            [&]() -> std::map<Key, bool>
+            [&]() -> std::unordered_map<Key, bool>
             {
               JsonArray arr = get_value_copy<JsonArray>(r, e, "keys").value();
-              std::map<Key, bool> map;
+              std::unordered_map<Key, bool> map;
               for (auto const& i : arr) {
                 map.insert_or_assign(
                     KEY_MAPPING.at_first(std::get<std::string>(i.value)), true);
@@ -108,4 +126,20 @@ struct KeyReleasedEvent
       , key_unicode(get_value_copy<std::string>(r, e, "key_unicode"))
   {
   }
+
+  DEFAULT_BYTE_CONSTRUCTOR(KeyReleasedEvent,
+                           ([](std::unordered_map<Key, bool> const& kp,
+                               std::optional<std::string> const& ku)
+                            { return KeyReleasedEvent(kp, ku); }),
+                           parseByteMap<Key, bool>(parseByte<Key>(),
+                                                   parseByte<bool>()),
+                           parseByteOptional(parseByteString()))
+
+  DEFAULT_SERIALIZE(
+      map_to_byte<Key, bool>(
+          this->key_released,
+          std::function<ByteArray(Key)>([](Key k) { return type_to_byte(k); }),
+          std::function<ByteArray(bool)>([](bool b)
+                                         { return type_to_byte(b); })),
+      optional_to_byte<std::string>(this->key_unicode, string_to_byte))
 };

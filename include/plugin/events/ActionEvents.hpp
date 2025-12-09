@@ -117,11 +117,9 @@ struct TimerTickEvent
   double delta_time;
   std::chrono::steady_clock::time_point now;
 
-<<<<<<< Updated upstream
   TimerTickEvent(double dt): delta_time(dt) {}
 
   DEFAULT_BYTE_CONSTRUCTOR(TimerTickEvent, ([](double dt){return TimerTickEvent(dt);}), parseByte<double>())
-=======
   CHANGE_ENTITY_DEFAULT
 
   TimerTickEvent(double dt, std::chrono::steady_clock::time_point n)
@@ -135,5 +133,4 @@ struct TimerTickEvent
       , now(std::chrono::steady_clock::now())
   {
   }
->>>>>>> Stashed changes
 };

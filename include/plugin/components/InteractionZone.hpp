@@ -3,6 +3,7 @@
 #include "ByteParser/ByteParser.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
+#include "plugin/events/EventMacros.hpp"
 
 struct InteractionZone
 {
@@ -26,6 +27,8 @@ struct InteractionZone
                            parseByte<double>(),
                           parseByte<bool>())
   DEFAULT_SERIALIZE(type_to_byte(this->radius), type_to_byte(this->enabled))
+
+  CHANGE_ENTITY_DEFAULT
 
   double radius;
   bool enabled;

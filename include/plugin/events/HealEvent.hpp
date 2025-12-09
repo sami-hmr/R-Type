@@ -23,8 +23,8 @@ struct HealEvent
                 result.source = map.at_second(source);)
 
   HealEvent(Registry::Entity t, Registry::Entity s, int a)
-    : target(std::move(t))
-    , source(std::move(s))
+    : target(t)
+    , source(s)
     , amount(a) {}
 
   DEFAULT_BYTE_CONSTRUCTOR(HealEvent,

@@ -19,7 +19,6 @@
 #include "plugin/components/Heal.hpp"
 #include "plugin/components/Health.hpp"
 #include "plugin/components/Team.hpp"
-#include "plugin/events/Events.hpp"
 
 Life::Life(Registry& r, EntityLoader& l)
     : APlugin(r,
@@ -30,10 +29,10 @@ Life::Life(Registry& r, EntityLoader& l)
                COMP_INIT(Heal, Heal, init_heal),
                COMP_INIT(Team, Team, init_team)})
 {
-  this->_registry.get().register_component<Health>();
-  this->_registry.get().register_component<Damage>();
-  this->_registry.get().register_component<Heal>();
-  this->_registry.get().register_component<Team>();
+  this->_registry.get().register_component<Health>("life:Health");
+  this->_registry.get().register_component<Damage>("life:Health");
+  this->_registry.get().register_component<Heal>("life:Heal");
+  this->_registry.get().register_component<Team>("life:Team");
 
   this->_registry.get().add_system<Health>(
       [this](Registry& r, const SparseArray<Health>&)
@@ -123,8 +122,7 @@ void Life::heal_entity(const CollisionEvent& event,
 
   if (healths[event.a]->heal_delta >= heal_cooldown) {
     healths[event.a]->heal_delta = 0.0;
-    _registry.get().emit<HealEvent>(
-        event.a, event.b, healers[event.b]->amount);
+    _registry.get().emit<HealEvent>(event.a, event.b, healers[event.b]->amount);
   }
 }
 

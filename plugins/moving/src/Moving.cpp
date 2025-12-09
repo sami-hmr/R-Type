@@ -9,7 +9,6 @@
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Velocity.hpp"
-#include "plugin/events/Events.hpp"
 
 Moving::Moving(Registry& r, EntityLoader& l)
     : APlugin(r,

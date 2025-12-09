@@ -18,7 +18,6 @@
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Sprite.hpp"
 #include "plugin/events/CliEvents.hpp"
-#include "plugin/events/Events.hpp"
 #include "plugin/events/CleanupEvent.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
 #include "plugin/events/LoggerEvent.hpp"
@@ -26,20 +25,23 @@
 CLI::CLI(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config)
     : APlugin(r, l, {"logger", "server_network", "client_network"}, {}, config)
 {
-  _registry.get().on<ShutdownEvent>("ShutdownEvent", [this](const ShutdownEvent&)
-                                     { _running = false; });
+  _registry.get().on<ShutdownEvent>(
+      "ShutdownEvent", [this](const ShutdownEvent&) { _running = false; });
 
-  _registry.get().on<CleanupEvent>("CleanupEvent", [this](const CleanupEvent&)
-                                    { _running = false; });
+  _registry.get().on<CleanupEvent>(
+      "CleanupEvent", [this](const CleanupEvent&) { _running = false; });
 
-  _registry.get().on<CliStart>("CliStart", [this](const CliStart&)
-      {
-        if (!this->_running) {
-          _cli_thread = std::thread(&CLI::run_cli, this);
-        }
-      });
+  _registry.get().on<CliStart>("CliStart",
+                               [this](const CliStart&)
+                               {
+                                 if (!this->_running) {
+                                   _cli_thread =
+                                       std::thread(&CLI::run_cli, this);
+                                 }
+                               });
 
-  _registry.get().on<CliStop>("CliStop", [this](const CliStop&) { _running = false; });
+  _registry.get().on<CliStop>("CliStop",
+                              [this](const CliStop&) { _running = false; });
 
   _registry.get().emit<CliStart>();
 }

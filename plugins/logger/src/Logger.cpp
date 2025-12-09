@@ -2,11 +2,11 @@
 #include <format>
 #include <iostream>
 
-#include "Log.hpp"
+#include "plugin/events/LoggerEvent.hpp"
 
 #include "ecs/Registry.hpp"
 #include "plugin/EntityLoader.hpp"
-#include "plugin/events/Log.hpp"
+#include "plugin/events/LoggerEvent.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
 #include "plugin/events/LoggerEvent.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
@@ -37,9 +37,16 @@ Logger::Logger(Registry& r,
     }
   }
 
+<<<<<<< Updated upstream
   this->_registry.get().on<LogEvent>("LogEvent", [this](const LogEvent& event)
                                       { this->on_log_event(event); });
   this->_registry.get().on<ShutdownEvent>("ShutdownEvent",
+=======
+  this->_registry.get().on<LogEvent>(
+      "LogEvent", [this](const LogEvent& event) { this->on_log_event(event); });
+  this->_registry.get().on<ShutdownEvent>(
+      "ShutdownEvent",
+>>>>>>> Stashed changes
       [this](const ShutdownEvent& event)
       {
         this->_registry.get().emit<LogEvent>(

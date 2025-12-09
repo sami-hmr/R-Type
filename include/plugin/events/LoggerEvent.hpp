@@ -1,21 +1,16 @@
 #pragma once
 
 #include <cstdint>
-#include <map>
 #include <optional>
 #include <string>
 #include <utility>
-#include <vector>
 
 #include "ByteParser/ByteParser.hpp"
 #include "EventMacros.hpp"
-#include "ParserUtils.hpp"
 #include "TwoWayMap.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
-#include "plugin/components/ActionTrigger.hpp"
-#include "plugin/components/InteractionZone.hpp"
 
 enum class LogLevel : std::uint8_t
 {
@@ -45,6 +40,16 @@ struct LogEvent
       , message(std::move(m))
   {
   }
+
+  DEFAULT_BYTE_CONSTRUCTOR(LogEvent,
+                         ([](std::string const& n, LogLevel l, std::string const& m)
+                          { return (LogEvent) {n, l, m}; }),
+                         parseByteString(),
+                         parseByte<LogLevel>(),
+                         parseByteString())
+
+  DEFAULT_SERIALIZE(string_to_byte(this->name), type_to_byte(this->level), string_to_byte(this->message))
+
 
   LogEvent(Registry& r, JsonObject const& e)
       : name(get_value_copy<std::string>(r, e, "name").value())

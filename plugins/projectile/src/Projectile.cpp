@@ -9,7 +9,6 @@
 #include "plugin/components/Fragile.hpp"
 #include "plugin/components/Team.hpp"
 #include "plugin/components/Temporal.hpp"
-#include "plugin/events/Events.hpp"
 #include "plugin/events/CollisionEvent.hpp"
 
 Projectile::Projectile(Registry& r, EntityLoader& l)
@@ -19,8 +18,8 @@ Projectile::Projectile(Registry& r, EntityLoader& l)
               {COMP_INIT(Temporal, Temporal, init_temporal),
                COMP_INIT(Fragile, Fragile, init_fragile)})
 {
-  this->_registry.get().register_component<Temporal>();
-  this->_registry.get().register_component<Fragile>();
+  this->_registry.get().register_component<Temporal>("projectile:Temporal");
+  this->_registry.get().register_component<Fragile>("projectile:Fragile");
 
   this->_registry.get().add_system<Temporal>(
       [this](Registry& r, const SparseArray<Temporal>&)

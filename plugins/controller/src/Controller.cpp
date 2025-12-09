@@ -8,6 +8,8 @@
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Controllable.hpp"
 #include "plugin/events/IoEvents.hpp"
+#include "plugin/events/LoggerEvent.hpp"
+#include "plugin/events/LoggerEvent.hpp"
 
 static const std::map<char, Key> mapping = {
     {'z', Key::Z},
@@ -43,7 +45,8 @@ Controller::Controller(Registry& r, EntityLoader& l)
 {
   this->_registry.get().register_component<Controllable>();
 
-  this->_registry.get().on<KeyPressedEvent>("KeyPressedEvent",
+  this->_registry.get().on<KeyPressedEvent>(
+      "KeyPressedEvent",
       [this](const KeyPressedEvent& c)
       {
         for (auto const& [key, active] : c.key_pressed) {
@@ -53,7 +56,8 @@ Controller::Controller(Registry& r, EntityLoader& l)
         }
       });
 
-  this->_registry.get().on<KeyReleasedEvent>("KeyReleasedEvent",
+  this->_registry.get().on<KeyReleasedEvent>(
+      "KeyReleasedEvent",
       [this](const KeyReleasedEvent& c)
       {
         for (auto const& [key, active] : c.key_released) {
