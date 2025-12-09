@@ -179,6 +179,8 @@ public:
       parseByteString(),
       parseByteString())
 
+  CHANGE_ENTITY_DEFAULT
+
   DEFAULT_SERIALIZE(
       map_to_byte<std::string, AnimationData>(
           this->animations,

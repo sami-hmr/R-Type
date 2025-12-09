@@ -16,8 +16,6 @@
 #include "NetworkShared.hpp"
 #include "plugin/Byte.hpp"
 
-// #include "plugin/events/Events.hpp"
-
 Server::Server(ServerLaunching const& s,
                SharedQueue<ComponentBuilder>& comp_queue,
                SharedQueue<EventBuilder>& event_queue,

@@ -8,10 +8,9 @@
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Follower.hpp"
+#include "plugin/components/InteractionZone.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Velocity.hpp"
-#include "plugin/events/EntityEvents.hpp"
-#include "plugin/events/Events.hpp"
 
 class Target : public APlugin
 {

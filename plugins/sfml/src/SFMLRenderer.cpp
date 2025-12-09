@@ -31,7 +31,7 @@
 #include "plugin/components/Drawable.hpp"
 #include "plugin/components/Sprite.hpp"
 #include "plugin/components/Text.hpp"
-#include "plugin/events/Events.hpp"
+#include "plugin/events/LoggerEvent.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
 
 static const std::map<sf::Keyboard::Key, Key> key_association = {

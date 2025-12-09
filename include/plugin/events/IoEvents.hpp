@@ -58,6 +58,8 @@ struct KeyPressedEvent
 
   CHANGE_ENTITY_DEFAULT
 
+  KeyPressedEvent() = default;
+
   KeyPressedEvent(std::unordered_map<Key, bool> kp,
                   std::optional<std::string> ku)
       : key_pressed(std::move(kp))
@@ -104,6 +106,8 @@ struct KeyReleasedEvent
   std::optional<std::string> key_unicode;
 
   CHANGE_ENTITY_DEFAULT
+
+  KeyReleasedEvent() = default;
 
   KeyReleasedEvent(std::unordered_map<Key, bool> kr, std::optional<std::string> ku)
       : key_released(std::move(kr))

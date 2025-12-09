@@ -41,6 +41,8 @@ struct Text
                     type_to_byte(this->scale.y),
                     string_to_byte(this->text))
 
+  CHANGE_ENTITY_DEFAULT
+
   std::string font_path;
   Vector2D scale;
   std::string text;

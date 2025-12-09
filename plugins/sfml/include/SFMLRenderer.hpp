@@ -28,7 +28,6 @@
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Sprite.hpp"
 #include "plugin/components/Text.hpp"
-#include "plugin/events/Events.hpp"
 #include "plugin/events/IoEvents.hpp"
 
 class SFMLRenderer : public APlugin

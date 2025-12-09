@@ -98,6 +98,8 @@ struct Background
   RenderType render_type;
   Parallax parallax;
 
+  CHANGE_ENTITY_DEFAULT
+
   DEFAULT_BYTE_CONSTRUCTOR(Background,
                            (
                                [](std::vector<std::vector<char>> textures_path,
