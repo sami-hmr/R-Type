@@ -16,6 +16,7 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
     , _sem(0)
 {
   this->_registry.get().on<ClientConnection>(
+      "ClientConnection",
       [this](ClientConnection const& c)
       {
         if (!this->_running) {
@@ -24,11 +25,12 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
           this->_thread =
               std::thread([this, c]() { this->connection_thread(c); });
         } else {
-            LOGGER("client", LogLevel::WARNING, "client already running");
+          LOGGER("client", LogLevel::WARNING, "client already running");
         }
       });
 
   this->_registry.get().on<ShutdownEvent>(
+      "ShutdownEvent",
       [this](ShutdownEvent const& event)
       {
         _running = false;
@@ -39,6 +41,7 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
       });
 
   this->_registry.get().on<CleanupEvent>(
+      "CleanupEvent",
       [this](CleanupEvent const&)
       {
         _running = false;
@@ -47,13 +50,17 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
       });
 
   this->_registry.get().on<EventBuilder>(
-      [this](EventBuilder c)
+      "EventBuilder",
+      [this](EventBuilder const& c)
       {
         if (!this->_running) {
           return;
         }
+        EventBuilder true_e(c.event_id,
+                            this->_registry.get().convert_event_entity(
+                                c.event_id, c.data, this->_server_indexes));
         this->_event_queue.lock.lock();
-        this->_event_queue.queue.push(std::move(c));
+        this->_event_queue.queue.push(std::move(true_e));
         this->_event_queue.lock.unlock();
         this->_sem.release();
       });
