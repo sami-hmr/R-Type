@@ -29,7 +29,7 @@ class NetworkServer : public APlugin
   private:
     void launch_server(ServerLaunching const& s);
 
-    std::vector<std::thread> _threads;
+    std::thread _thread;
     SharedQueue<ComponentBuilder> _components_to_update;
     SharedQueue<EventBuilder> _events_to_transmit;
     std::atomic<bool> _running = false;

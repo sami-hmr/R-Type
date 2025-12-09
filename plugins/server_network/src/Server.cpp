@@ -9,6 +9,7 @@
 #include <semaphore>
 
 #include "Server.hpp"
+#include <asio/system_error.hpp>
 
 #include "Network.hpp"
 #include "NetworkCommun.hpp"
@@ -45,7 +46,9 @@ void Server::close()
 Server::~Server()
 {
   this->_semaphore.get().release();
-  this->_queue_reader.join();
+  if (this->_queue_reader.joinable()) {
+    this->_queue_reader.join();
+  }
   _socket.close();
 }
 
@@ -134,7 +137,11 @@ void Server::send(ByteArray const& response,
 {
   ByteArray pkg = MAGIC_SEQUENCE + response + PROTOCOL_EOF;
 
-  _socket.send_to(asio::buffer(pkg), endpoint);
+  try {
+      _socket.send_to(asio::buffer(pkg), endpoint);
+  } catch (asio::system_error const&) {
+      this->remove_client_by_endpoint(endpoint);
+  }
 
   NETWORK_LOGGER("server",
                  std::uint8_t(LogLevel::DEBUG),

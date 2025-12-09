@@ -57,12 +57,12 @@ void CLI::run_cli()
     std::cout << "> " << std::flush;
 
     if (!std::getline(std::cin, line)) {
-      _registry.get().emit<ShutdownEvent>("Cli end", 0);
+     // _registry.get().emit<ShutdownEvent>("Cli end", 0);
       break;
     }
 
     if (!_running) {
-      _registry.get().emit<ShutdownEvent>("Error in cli", 0);
+     // _registry.get().emit<ShutdownEvent>("Error in cli", 0);
       break;
     }
 

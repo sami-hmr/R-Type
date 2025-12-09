@@ -31,7 +31,6 @@ Client::Client(ClientConnection const& c,
   _server_endpoint =
       asio::ip::udp::endpoint(asio::ip::address::from_string(c.host), c.port);
 
-  _running.get() = true;
   NETWORK_LOGGER("client",
                  LogLevel::INFO,
                  std::format("Connecting to {}:{}", c.host, c.port));
@@ -41,7 +40,9 @@ Client::Client(ClientConnection const& c,
 void Client::close()
 {
   this->_semaphore.get().release();
-  this->_queue_reader.join();
+  if (this->_queue_reader.joinable()) {
+      this->_queue_reader.join();
+  }
   if (_socket.is_open()) {
     _socket.close();
   }
@@ -49,6 +50,11 @@ void Client::close()
 
 Client::~Client()
 {
+  this->_running.get() = false;
+  this->_semaphore.get().release();
+  if (this->_queue_reader.joinable()) {
+      this->_queue_reader.join();
+  }
   _socket.close();
 }
 

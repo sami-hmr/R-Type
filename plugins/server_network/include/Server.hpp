@@ -89,6 +89,7 @@ private:
       ByteArray const& package);
 
   ClientInfo& find_client_by_endpoint(const asio::ip::udp::endpoint& endpoint);
+  void remove_client_by_endpoint(const asio::ip::udp::endpoint& endpoint);
 
   static const std::unordered_map<
       std::uint8_t,
@@ -107,6 +108,7 @@ private:
 
   std::mutex _client_mutex;
   std::vector<ClientInfo> _clients;
+  std::size_t _c_id_incrementator = 0;
   CircularBuffer<BUFFER_SIZE> _recv_buffer;
   std::uint32_t _server_id;
 

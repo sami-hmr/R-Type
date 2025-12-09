@@ -18,8 +18,14 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
   this->_registry.get().on<ClientConnection>(
       [this](ClientConnection const& c)
       {
-        this->_thread =
-            std::thread([this, c]() { this->connection_thread(c); });
+        if (!this->_running) {
+          _running = true;
+
+          this->_thread =
+              std::thread([this, c]() { this->connection_thread(c); });
+        } else {
+            LOGGER("client", LogLevel::WARNING, "client already running");
+        }
       });
 
   this->_registry.get().on<ShutdownEvent>(
@@ -62,8 +68,8 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
         while (!this->_component_queue.queue.empty()) {
           auto& e = this->_component_queue.queue.front();
           if (!this->_server_indexes.contains(e.entity)) {
-              auto new_entity = r.spawn_entity();
-              this->_server_indexes.insert_or_assign(e.entity, new_entity);
+            auto new_entity = r.spawn_entity();
+            this->_server_indexes.insert_or_assign(e.entity, new_entity);
           }
           auto true_entity = this->_server_indexes.at(e.entity);
           r.emplace_component(true_entity, e.id, e.data);
@@ -89,7 +95,9 @@ NetworkClient::~NetworkClient()
 {
   _running = false;
 
-  this->_thread.join();
+  if (this->_thread.joinable()) {
+    this->_thread.join();
+  }
 }
 
 void NetworkClient::connection_thread(ClientConnection const& c)

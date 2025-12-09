@@ -23,11 +23,12 @@ void Server::send_comp()
         if (it.state != ClientState::CONNECTED) {
           continue;
         }
-        this->send_connected(type_to_byte<std::uint8_t>(SENDCOMP) + type_to_byte(comp.entity)
-                       + string_to_byte(comp.id) + comp.data,
-                   it.endpoint);
-        this->_components_to_create.get().queue.pop();
+        this->send_connected(type_to_byte<std::uint8_t>(SENDCOMP)
+                                 + type_to_byte(comp.entity)
+                                 + string_to_byte(comp.id) + comp.data,
+                             it.endpoint);
       }
+      this->_components_to_create.get().queue.pop();
     }
     this->_client_mutex.unlock();
     this->_components_to_create.get().lock.unlock();

@@ -17,7 +17,7 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
   this->_registry.get().on<ServerLaunching>(
       [this](ServerLaunching const& s)
       {
-        this->_threads.emplace_back([this, s]() { this->launch_server(s); });
+        this->_thread = std::thread([this, s]() { this->launch_server(s); });
       });
 
   this->_registry.get().on<ShutdownEvent>(
@@ -65,8 +65,8 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
 NetworkServer::~NetworkServer()
 {
   _running = false;
-  for (auto& t : this->_threads) {
-    t.join();
+  if (this->_thread.joinable()) {
+      this->_thread.join();
   }
 }
 

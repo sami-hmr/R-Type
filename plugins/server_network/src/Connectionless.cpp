@@ -1,6 +1,9 @@
+#include <algorithm>
 #include <cstdint>
 #include <random>
+
 #include "Network.hpp"
+#include "NetworkCommun.hpp"
 #include "Server.hpp"
 
 const std::unordered_map<std::uint8_t,
@@ -122,8 +125,8 @@ void Server::handle_connect(ByteArray const& cmd,
       this->_client_mutex.unlock();
       return;
     }
-    uint8_t client_id = _clients.size();  // TODO: change to incrementator
-                                          // uint32 in the wrapper class
+    uint8_t client_id = this->_c_id_incrementator;
+    this->_c_id_incrementator++;
 
     client.client_id = client_id;
     client.player_name = parsed->player_name;
@@ -168,4 +171,17 @@ ClientInfo& Server::find_client_by_endpoint(
     }
   }
   throw ClientNotFound("client not found");
+}
+
+void Server::remove_client_by_endpoint(const asio::ip::udp::endpoint& endpoint)
+{
+  this->_client_mutex.lock();
+  auto it = std::find_if(this->_clients.begin(),
+               this->_clients.end(),
+               [endpoint](ClientInfo const& c)
+               { return c.endpoint == endpoint; });
+  if (it != this->_clients.end()) {
+      this->_clients.erase(it);
+  }
+  this->_client_mutex.unlock();
 }
