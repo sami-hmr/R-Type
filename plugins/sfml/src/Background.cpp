@@ -63,13 +63,13 @@ void SFMLRenderer::init_background(Registery::Entity const& entity,
   if (parallax_obj.has_value()) {
     const auto& active = get_value<Background, bool>(
         this->_registery.get(), parallax_obj.value(), entity, "active");
-    const auto& speed =
-        parse_vector2d<Background>(entity, parallax_obj.value(), "speed");
+    const auto& speed = get_value<Background, Vector2D>(
+        this->_registery, parallax_obj.value(), entity, "speed");
     const auto& framerate = get_value<Background, double>(
         this->_registery.get(), parallax_obj.value(), entity, "framerate");
 
-    if (active.has_value() && framerate.has_value()) {
-      parallax.speed = Vector2D(speed);
+    if (active.has_value() && framerate.has_value() && speed.has_value()) {
+      parallax.speed = Vector2D(speed.value());
       parallax.active = active.value();
       parallax.framerate = framerate.value();
     } else {

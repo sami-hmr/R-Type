@@ -57,8 +57,6 @@ private:
     auto vec = get_value<T, Vector2D>(
         this->_registery.get(), obj, entity, str, "width", "height");
 
-    std::cout << "vec: " << vec.value() << std::endl;
-
     return vec.value();
   }
 

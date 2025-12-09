@@ -3,6 +3,8 @@
 
 #include "plugin/APlugin.hpp"
 
+#include "Json/JsonParser.hpp"
+
 APlugin::APlugin(
     Registery& registery,
     EntityLoader& loader,
@@ -28,6 +30,9 @@ void APlugin::set_component(Registery::Entity entity,
   try {
     this->components.at(key)(entity, config);
   } catch (std::out_of_range const&) {
-    std::cerr << key << ": unknow component" << '\n';
+    std::cerr << key << ": unknown component with config: " << '\n';
+    for (auto i : std::get<JsonObject>(config)) {
+      std::cout << i.first << std::endl;
+    }
   }
 }

@@ -30,9 +30,13 @@ std::optional<AnimationData> SFMLRenderer::parse_animation_data(
   }
   animdata.texture_path = texture_path.value();
 
-  animdata.frame_size = parse_vector2d<AnimatedSprite>(e, obj, "frame_size");
+  animdata.frame_size = get_value<AnimatedSprite, Vector2D>(
+                            this->_registery.get(), obj, e, "frame_size")
+                            .value();
 
-  animdata.frame_pos = parse_vector2d<AnimatedSprite>(e, obj, "frame_pos");
+  animdata.frame_pos = get_value<AnimatedSprite, Vector2D>(
+                           this->_registery.get(), obj, e, "frame_pos")
+                           .value();
 
   auto const& framerate = get_value<AnimatedSprite, double>(
       this->_registery.get(), obj, e, "framerate");
@@ -42,7 +46,9 @@ std::optional<AnimationData> SFMLRenderer::parse_animation_data(
               << "\n";
     return std::nullopt;
   }
-  animdata.direction = parse_vector2d<AnimatedSprite>(e, obj, "direction");
+  animdata.direction = get_value<AnimatedSprite, Vector2D>(
+                           this->_registery.get(), obj, e, "direction")
+                           .value();
 
   animdata.framerate = framerate.value();
   animdata.sprite_size = parse_vector2d<AnimatedSprite>(e, obj, "sprite_size");
