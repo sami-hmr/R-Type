@@ -5,6 +5,7 @@
 #include "ByteParser/ByteParser.hpp"
 #include "Parser.hpp"
 #include "ParserUtils.hpp"
+#include "ecs/Registry.hpp"
 #include "plugin/Byte.hpp"
 
 struct Package

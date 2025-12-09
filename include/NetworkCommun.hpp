@@ -87,7 +87,8 @@ enum DisconnectedCommands : std::uint8_t
 enum ConnectedOpcodes : std::uint8_t
 {
     SENDEVENT = 0x01,
-    SENDCOMP
+    SENDCOMP = 0x02,
+    ENTITYCREATION = 0x05,
 };
 
 enum class ConnectionState : std::uint8_t

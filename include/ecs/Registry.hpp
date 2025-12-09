@@ -206,7 +206,8 @@ public:
                          std::string const& string_id,
                          ByteArray const& bytes)
   {
-    this->_emplace_functions.at(this->_index_getter.at(string_id))(to, bytes);
+    this->_emplace_functions.at(this->_index_getter.at_second(string_id))(
+        to, bytes);
   }
 
   /**
@@ -352,14 +353,14 @@ public:
   const Clock& clock() const { return _clock; }
 
   template<hookable T>
-  void register_hook(std::string name, Entity const &e)
+  void register_hook(std::string name, Entity const& e)
   {
     this->_hooked_components.insert_or_assign(
         name,
         [this, e](std::string const& key) -> std::optional<std::any>
         {
-          auto &array = this->get_components<T>();
-          auto &comp = array[e];
+          auto& array = this->get_components<T>();
+          auto& comp = array[e];
           if (!comp.has_value()) {
             return std::nullopt;
           }
@@ -371,9 +372,10 @@ public:
   std::optional<std::reference_wrapper<T>> get_hooked_value(
       std::string const& comp, std::string const& value)
   {
-    auto const &tmp = std::any_cast<std::optional<std::any>>(this->_hooked_components.at(comp)(value));
+    auto const& tmp = std::any_cast<std::optional<std::any>>(
+        this->_hooked_components.at(comp)(value));
     if (!tmp.has_value()) {
-        return std::nullopt;
+      return std::nullopt;
     }
     return std::any_cast<std::reference_wrapper<T>>(tmp.value());
   }
@@ -395,6 +397,10 @@ private:
       _emplace_functions;
   TwoWayMap<std::type_index, std::string> _index_getter;
 
+  std::unordered_map<std::string,
+                     std::function<ByteArray(ByteArray const&,
+                                             TwoWayMap<Entity, Entity> const&)>>
+      _envent_entity_converters;
   std::unordered_map<std::type_index, std::any> _event_handlers;
   std::vector<System<>> _frequent_systems;
   std::queue<Entity> _dead_entities;
