@@ -15,8 +15,9 @@
 
 #include "ByteParser/ByteParser.hpp"
 #include "ParserUtils.hpp"
-#include "ecs/Registry.hpp"
 #include "plugin/Byte.hpp"
+#include "plugin/Hooks.hpp"
+#include "ecs/Registry.hpp"
 
 struct CollisionEvent
 {
@@ -31,6 +32,11 @@ struct CollisionEvent
                          parseByte<Registry::Entity>())
 
   DEFAULT_SERIALIZE(type_to_byte(this->a), type_to_byte(this->b))
+
+  CollisionEvent(Registry& r, JsonObject const& e)
+      : a(get_value_copy<Registry::Entity>(r, e, "a").value())
+      , b(get_value_copy<Registry::Entity>(r, e, "b").value())
+  {}
 
   Registry::Entity a;
   Registry::Entity b;

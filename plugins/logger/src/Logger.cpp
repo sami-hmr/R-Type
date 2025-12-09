@@ -6,6 +6,7 @@
 
 #include "ecs/Registry.hpp"
 #include "plugin/EntityLoader.hpp"
+#include "plugin/events/Log.hpp"
 #include "plugin/events/Events.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
 

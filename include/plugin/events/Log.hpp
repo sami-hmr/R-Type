@@ -17,6 +17,7 @@
 #include "ParserUtils.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/Byte.hpp"
+#include "plugin/Hooks.hpp"
 
 enum class LogLevel : std::uint8_t
 {
@@ -41,6 +42,13 @@ struct LogEvent
                            parseByteString())
 
     DEFAULT_SERIALIZE(string_to_byte(this->name), type_to_byte(this->level), string_to_byte(this->message))
+
+    LogEvent(Registry& r, JsonObject const& e)
+        : name(get_value_copy<std::string>(r, e, "name").value())
+        , level(get_value_copy<LogLevel>(r, e, "level").value())
+        , message(get_value_copy<std::string>(r, e, "message").value())
+    {
+    }
 
     std::string name;
     LogLevel level;

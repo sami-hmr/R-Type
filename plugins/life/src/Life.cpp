@@ -40,12 +40,12 @@ Life::Life(Registry& r, EntityLoader& l)
       { this->update_cooldowns(r); },
       2);
 
-  this->_registry.get().on<DamageEvent>([this](const DamageEvent& event)
+  this->_registry.get().on<DamageEvent>("DamageEvent", [this](const DamageEvent& event)
                                          { this->on_damage(event); });
 
-  this->_registry.get().on<HealEvent>([this](const HealEvent& event)
+  this->_registry.get().on<HealEvent>("HealEvent", [this](const HealEvent& event)
                                        { this->on_heal(event); });
-  this->_registry.get().on<CollisionEvent>([this](const CollisionEvent& event)
+  this->_registry.get().on<CollisionEvent>("CollisionEvent", [this](const CollisionEvent& event)
                                             { this->on_collision(event); });
 }
 

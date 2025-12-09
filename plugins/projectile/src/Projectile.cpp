@@ -27,7 +27,7 @@ Projectile::Projectile(Registry& r, EntityLoader& l)
       { this->temporal_system(r); },
       2);
 
-  this->_registry.get().on<CollisionEvent>([this](const CollisionEvent& event)
+  this->_registry.get().on<CollisionEvent>("CollisionEvent", [this](const CollisionEvent& event)
                                             { this->on_collision(event); });
 }
 

@@ -15,8 +15,9 @@
 
 #include "ByteParser/ByteParser.hpp"
 #include "ParserUtils.hpp"
-#include "ecs/Registry.hpp"
 #include "plugin/Byte.hpp"
+#include "ecs/Registry.hpp"
+#include "plugin/Hooks.hpp"
 
 struct SceneChangeEvent
 {
@@ -32,6 +33,11 @@ struct SceneChangeEvent
 
   DEFAULT_SERIALIZE(string_to_byte(this->target_scene), string_to_byte(this->reason))
 
+  SceneChangeEvent(Registry& r, JsonObject const& e)
+      : target_scene(get_value_copy<std::string>(r, e, "target_scene").value())
+      , reason(get_value_copy<std::string>(r, e, "reason").value())
+  {
+  }
   std::string target_scene;
   std::string reason;
 };

@@ -331,7 +331,7 @@ public:
     _events_index_getter.insert(type_id, name);
     this->add_event_builder<EventType>();
 
-    return this->on<EventType>(handler);
+    return this->on<EventType>("EventType", handler);
   }
 
   template<typename EventType>

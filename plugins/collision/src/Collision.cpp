@@ -176,7 +176,7 @@ void Collision::interaction_zone_system(
       }
     }
     if (!detected_entities.empty()) {
-      this->_registry.get().emit<InteractionZoneEvent>(
+      this->_registry.get().emit<InteractionZone>(
           i, zone.radius, detected_entities);
     }
   }

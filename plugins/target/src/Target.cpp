@@ -23,8 +23,7 @@ Target::Target(Registry& r, EntityLoader& l)
              const SparseArray<Position>& positions,
              SparseArray<Velocity>& velocities)
       { this->target_system(r, followers, positions, velocities); });
-  this->_registry.get().on<InteractionZoneEvent>(
-      [this](const InteractionZoneEvent& event)
+  this->_registry.get().on<InteractionZone>("InteractionZone", [this](const InteractionZone& event)
       { this->on_interaction_zone(event); });
 }
 
@@ -60,7 +59,7 @@ void Target::target_system(Registry& reg,
   }
 }
 
-void Target::on_interaction_zone(const InteractionZoneEvent& event)
+void Target::on_interaction_zone(const InteractionZone& event)
 {
   const auto& positions = this->_registry.get().get_components<Position>();
   auto& followers = this->_registry.get().get_components<Follower>();

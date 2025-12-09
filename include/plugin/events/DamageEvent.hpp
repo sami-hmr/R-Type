@@ -15,8 +15,9 @@
 
 #include "ByteParser/ByteParser.hpp"
 #include "ParserUtils.hpp"
-#include "ecs/Registry.hpp"
 #include "plugin/Byte.hpp"
+#include "ecs/Registry.hpp"
+#include "plugin/Hooks.hpp"
 
 struct DamageEvent
 {
@@ -33,6 +34,11 @@ struct DamageEvent
                          parseByte<int>())
 
   DEFAULT_SERIALIZE(type_to_byte(this->target), type_to_byte(this->source), type_to_byte(this->amount))
+
+  DamageEvent(Registry& r, JsonObject const& e)
+      : target(get_value_copy<Registry::Entity>(r, e, "target").value())
+      , source(get_value_copy<Registry::Entity>(r, e, "source").value())
+  {}
 
   Registry::Entity target;
   Registry::Entity source;

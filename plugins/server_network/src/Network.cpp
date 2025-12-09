@@ -23,8 +23,7 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
         this->_thread = std::thread([this, s]() { this->launch_server(s); });
       });
 
-  this->_registry.get().on<ShutdownEvent>(
-      [this](ShutdownEvent const& event)
+  this->_registry.get().on<ShutdownEvent>("ShutdownEvent", [this](ShutdownEvent const& event)
       {
         _running = false;
         LOGGER("server",
@@ -33,16 +32,14 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
         // server.close();
       });
 
-  this->_registry.get().on<CleanupEvent>(
-      [this](CleanupEvent const&)
+  this->_registry.get().on<CleanupEvent>("CleanupEvent", [this](CleanupEvent const&)
       {
         _running = false;
         LOGGER("server", LogLevel::DEBUG, "Cleanup requested");
         // server.close();
       });
 
-  this->_registry.get().on<ComponentBuilder>(
-      [this](ComponentBuilder e)
+  this->_registry.get().on<ComponentBuilder>("ComponentBuilder", [this](ComponentBuilder e)
       {
         this->_components_to_update.lock.lock();
         this->_components_to_update.queue.push(std::move(e));

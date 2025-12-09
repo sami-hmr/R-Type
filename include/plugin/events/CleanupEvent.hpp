@@ -15,8 +15,9 @@
 
 #include "ByteParser/ByteParser.hpp"
 #include "ParserUtils.hpp"
-#include "ecs/Registry.hpp"
 #include "plugin/Byte.hpp"
+#include "ecs/Registry.hpp"
+#include "plugin/Hooks.hpp"
 #include "plugin/events/CleanupEvent.hpp"
 
 struct CleanupEvent
@@ -30,6 +31,10 @@ struct CleanupEvent
                          parseByteString())
 
   DEFAULT_SERIALIZE(string_to_byte(this->trigger))
+
+  CleanupEvent(Registry& r, JsonObject const& e)
+      : trigger(get_value_copy<std::string>(r, e, "trigger").value())
+  {}
 
   std::string trigger;
 };

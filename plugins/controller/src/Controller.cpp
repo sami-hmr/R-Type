@@ -43,7 +43,7 @@ Controller::Controller(Registry& r, EntityLoader& l)
 {
   this->_registry.get().register_component<Controllable>();
 
-  this->_registry.get().on<KeyPressedEvent>(
+  this->_registry.get().on<KeyPressedEvent>("KeyPressedEvent",
       [this](const KeyPressedEvent& c)
       {
         for (auto const& [key, active] : c.key_pressed) {

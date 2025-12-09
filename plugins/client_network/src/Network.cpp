@@ -30,7 +30,7 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
         }
       });
 
-  this->_registry.get().on<ShutdownEvent>(
+  this->_registry.get().on<ShutdownEvent>("ShutdownEvent",
       [this](ShutdownEvent const& event)
       {
         _running = false;

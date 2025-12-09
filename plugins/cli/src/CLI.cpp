@@ -24,21 +24,20 @@
 CLI::CLI(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config)
     : APlugin(r, l, {"logger", "server_network", "client_network"}, {}, config)
 {
-  _registry.get().on<ShutdownEvent>([this](const ShutdownEvent&)
+  _registry.get().on<ShutdownEvent>("ShutdownEvent", [this](const ShutdownEvent&)
                                      { _running = false; });
 
-  _registry.get().on<CleanupEvent>([this](const CleanupEvent&)
+  _registry.get().on<CleanupEvent>("CleanupEvent", [this](const CleanupEvent&)
                                     { _running = false; });
 
-  _registry.get().on<CliStart>(
-      [this](const CliStart&)
+  _registry.get().on<CliStart>("CliStart", [this](const CliStart&)
       {
         if (!this->_running) {
           _cli_thread = std::thread(&CLI::run_cli, this);
         }
       });
 
-  _registry.get().on<CliStop>([this](const CliStop&) { _running = false; });
+  _registry.get().on<CliStop>("CliStop", [this](const CliStop&) { _running = false; });
 
   _registry.get().emit<CliStart>();
 }
