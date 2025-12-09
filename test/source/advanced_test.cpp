@@ -14,13 +14,13 @@ TEST_CASE("TwoWayMap - bidirectional lookup", "[twowaymap]")
   map.insert(2, "two");
   map.insert(3, "three");
 
-  REQUIRE(map.at(1) == "one");
-  REQUIRE(map.at(2) == "two");
-  REQUIRE(map.at(3) == "three");
+  REQUIRE(map.at_first(1) == "one");
+  REQUIRE(map.at_first(2) == "two");
+  REQUIRE(map.at_first(3) == "three");
 
-  REQUIRE(map.at("one") == 1);
-  REQUIRE(map.at("two") == 2);
-  REQUIRE(map.at("three") == 3);
+  REQUIRE(map.at_second("one") == 1);
+  REQUIRE(map.at_second("two") == 2);
+  REQUIRE(map.at_second("three") == 3);
 }
 
 TEST_CASE("TwoWayMap - initializer list constructor", "[twowaymap]")
@@ -39,8 +39,8 @@ TEST_CASE("TwoWayMap - updates existing values", "[twowaymap]")
   map.insert(1, "one");
   map.insert(1, "uno");
 
-  REQUIRE(map.at(1) == "uno");
-  REQUIRE(map.at("uno") == 1);
+  REQUIRE(map.at_first(1) == "uno");
+  REQUIRE(map.at_second("uno") == 1);
 }
 
 TEST_CASE("TwoWayMap - throws on missing key", "[twowaymap]")
@@ -48,8 +48,8 @@ TEST_CASE("TwoWayMap - throws on missing key", "[twowaymap]")
   TwoWayMap<int, std::string> map;
   map.insert(1, "one");
 
-  REQUIRE_THROWS(map.at(999));
-  REQUIRE_THROWS(map.at("nonexistent"));
+  REQUIRE_THROWS(map.at_first(999));
+  REQUIRE_THROWS(map.at_second("nonexistent"));
 }
 
 TEST_CASE("TwoWayMap - overwrites update forward mapping", "[twowaymap]")
@@ -61,8 +61,8 @@ TEST_CASE("TwoWayMap - overwrites update forward mapping", "[twowaymap]")
 
   map.insert(1, "uno");
 
-  REQUIRE(map.at(1) == "uno");
-  REQUIRE(map.at("uno") == 1);
+  REQUIRE(map.at_first(1) == "uno");
+  REQUIRE(map.at_second("uno") == 1);
   // Note: TwoWayMap doesn't clean up old reverse mappings on overwrite
   // This is a known limitation of the current implementation
 }

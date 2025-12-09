@@ -49,7 +49,7 @@ void EntityLoader::load_scene(JsonObject& json_scene)
     std::string scene_state_tmp =
         std::get<std::string>(json_scene.at("state").value);
     try {
-      scene_state = SCENE_STATE_STR.at(scene_state_tmp);
+      scene_state = SCENE_STATE_STR.at_second(scene_state_tmp);
     } catch (std::out_of_range&) {
       std::cerr << "Scene: " << scene_state_tmp << " not found\n";
     }
