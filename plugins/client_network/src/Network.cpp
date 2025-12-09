@@ -17,7 +17,7 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
     : APlugin(r, l, {}, {})
     , _sem(0)
 {
-  this->_registry.get().on<ClientConnection>(
+  this->_registry.get().on<ClientConnection>("ClientConnection",
       [this](ClientConnection const& c)
       {
         if (!this->_running) {
@@ -40,7 +40,7 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
         // _client->close();
       });
 
-  this->_registry.get().on<CleanupEvent>(
+  this->_registry.get().on<CleanupEvent>("CleanupEvent",
       [this](CleanupEvent const&)
       {
         _running = false;
@@ -48,7 +48,7 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
         // _socket->close();
       });
 
-  this->_registry.get().on<EventBuilder>(
+  this->_registry.get().on<EventBuilder>("EventBuilder",
       [this](EventBuilder c)
       {
         if (!this->_running) {

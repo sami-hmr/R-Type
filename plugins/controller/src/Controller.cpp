@@ -53,7 +53,7 @@ Controller::Controller(Registry& r, EntityLoader& l)
         }
       });
 
-  this->_registry.get().on<KeyReleasedEvent>(
+  this->_registry.get().on<KeyReleasedEvent>("KeyReleasedEvent",
       [this](const KeyReleasedEvent& c)
       {
         for (auto const& [key, active] : c.key_released) {

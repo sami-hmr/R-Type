@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <map>
+#include <unordered_map>
 #include <optional>
 #include <string>
 #include <utility>
@@ -20,7 +21,7 @@
 #define LOGGER(category, level, message) \
   this->_registry.get().emit<LogEvent>(category, level, message);
 
-enum class Key
+enum Key : std::int8_t
 {
   Unknown = -1,
   SHIFT = 0,
@@ -43,19 +44,22 @@ enum class Key
 
 struct KeyPressedEvent
 {
-  // KeyPressedEvent(std::map<Key, bool> kp, std::optional<std::string> ku)
-  //   : key_pressed(std::move(kp))
-  //   , key_unicode(std::move(ku)) {}
+  KeyPressedEvent(std::unordered_map<Key, bool> kp, std::optional<std::string> ku)
+    : key_pressed(std::move(kp))
+    , key_unicode(std::move(ku)) {}
 
-  // DEFAULT_BYTE_CONSTRUCTOR(KeyPressedEvent,
-  //                        ([](std::map<Key, bool> const &kp, std::optional<std::string> const &ku)
-  //                         { return (KeyPressedEvent) {kp, ku}; }),
-  //                        parseByte<std::optional<std::string>>(),
-  //                        parseByteMap<std::unordered_map<Key, bool>>())
+  DEFAULT_BYTE_CONSTRUCTOR(KeyPressedEvent,
+                         ([](std::unordered_map<Key, bool> const &kp, std::optional<std::string> const &ku)
+                          { return (KeyPressedEvent) {kp, ku}; }),
+                         parseByteMap<Key, bool>(parseByte<Key>(), parseByte<bool>()), parseByteOptional(parseByteString()))
 
-  // DEFAULT_SERIALIZE(map_to_byte(this->key_pressed), type_to_byte(this->key_unicode))
+  // DEFAULT_SERIALIZE(
+  //   map_to_byte<Key, bool>(
+  //     this->key_pressed,
+  //     std::function<ByteArray(Key)>([]() {return type_to_byte<Key>();}),
+  //     std::function<ByteArray(bool)>(type_to_byte<bool>)))
 
-  std::map<Key, bool> key_pressed;
+  std::unordered_map<Key, bool> key_pressed;
   std::optional<std::string> key_unicode;
 };
 

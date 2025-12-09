@@ -44,9 +44,9 @@ Logger::Logger(Registry& r,
     }
   }
 
-  this->_registry.get().on<LogEvent>([this](const LogEvent& event)
+  this->_registry.get().on<LogEvent>("LogEvent", [this](const LogEvent& event)
                                       { this->on_log_event(event); });
-  this->_registry.get().on<ShutdownEvent>(
+  this->_registry.get().on<ShutdownEvent>("ShutdownEvent",
       [this](const ShutdownEvent& event)
       {
         this->_registry.get().emit<LogEvent>(

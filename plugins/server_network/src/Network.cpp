@@ -17,7 +17,7 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
     : APlugin(r, l, {}, {})
     , _event_semaphore(0)
 {
-  this->_registry.get().on<ServerLaunching>(
+  this->_registry.get().on<ServerLaunching>("ServerLaunching",
       [this](ServerLaunching const& s)
       {
         this->_thread = std::thread([this, s]() { this->launch_server(s); });
