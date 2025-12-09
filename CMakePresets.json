@@ -79,6 +79,22 @@
       }
     },
     {
+      "name": "release-tek",
+      "displayName": "Release epitech",
+      "description": "DEUUUUUUUX binaires",
+      "inherits": "vcpkg",
+      "binaryDir": "${sourceDir}/build/release-tek",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_STANDARD": "23",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "r-type_DEVELOPER_MODE": "OFF",
+        "BUILD_EPITECH_BINARIES": "ON"
+      }
+    },
+    {
       "name": "clang-tidy",
       "displayName": "Clang-Tidy",
       "description": "Development build with clang-tidy enabled",
@@ -104,6 +120,10 @@
     {
       "name": "release-build",
       "configurePreset": "release"
+    },
+    {
+      "name": "release-tek-build",
+      "configurePreset": "release-tek"
     }
   ],
   "testPresets": [
