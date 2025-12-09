@@ -17,10 +17,16 @@
 
 struct CliStart
 {
+    CliStart() = default;
+    EMPTY_BYTE_CONSTRUCTOR(CliStart)
+    DEFAULT_SERIALIZE(ByteArray{})
 };
 
 struct CliStop
 {
+    CliStop() = default;
+    EMPTY_BYTE_CONSTRUCTOR(CliStop)
+    DEFAULT_SERIALIZE(ByteArray{})
 };
 
 struct CliComp
