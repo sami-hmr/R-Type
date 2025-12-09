@@ -13,6 +13,7 @@
 
 enum class CollisionType
 {
+  Bounce,
   Push,
   Solid,
   Trigger

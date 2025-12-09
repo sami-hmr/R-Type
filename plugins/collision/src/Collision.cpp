@@ -86,6 +86,8 @@ void Collision::init_collision(Registery::Entity const& entity,
     type = CollisionType::Solid;
   } else if (type_text == "push") {
     type = CollisionType::Push;
+  } else if (type_text == "bounce") {
+    type = CollisionType::Bounce;
   }
 
   this->_registery.get().emplace_component<Collidable>(
@@ -198,8 +200,8 @@ void Collision::on_collision(const CollisionEvent& c)
   CollisionType type_a = collidables[c.a]->collision_type;
   CollisionType type_b = collidables[c.b]->collision_type;
 
-  if ((type_a != CollisionType::Solid && type_a != CollisionType::Push)
-      || (type_b != CollisionType::Solid && type_b != CollisionType::Push))
+  if ((type_a != CollisionType::Solid && type_a != CollisionType::Push && type_a != CollisionType::Bounce)
+      || (type_b != CollisionType::Solid && type_b != CollisionType::Push && type_b != CollisionType::Bounce))
   {
     return;
   }
@@ -208,6 +210,8 @@ void Collision::on_collision(const CollisionEvent& c)
   if (this->_registery.get().has_component<Velocity>(c.a)) {
     Vector2D movement =
         (velocities[c.a]->direction * dt).normalize() * velocities[c.a]->speed;
+    Vector2D collision_normal =
+          (positions[c.a]->pos - positions[c.b]->pos).normalize();
 
     if (this->_registery.get().has_component<Velocity>(c.b)
         && type_a == CollisionType::Push)
@@ -215,14 +219,19 @@ void Collision::on_collision(const CollisionEvent& c)
       positions[c.a]->pos -= movement;
       positions[c.b]->pos += movement;
     } else if (type_a == CollisionType::Solid) {
-      Vector2D collision_normal =
-          (positions[c.a]->pos - positions[c.b]->pos).normalize();
       double dot_product = movement.dot(collision_normal);
 
       if (dot_product < 0) {
         Vector2D perpendicular_vector = collision_normal * dot_product;
         positions[c.a]->pos -= perpendicular_vector;
       }
+    } else if (type_a == CollisionType::Bounce) {
+      double dot_product = velocities[c.a]->direction.dot(collision_normal);
+      Vector2D reflected_direction = 
+          velocities[c.a]->direction - (collision_normal * (2.0 * dot_product));
+
+      velocities[c.a]->direction = reflected_direction.normalize();
+      positions[c.a]->pos += collision_normal * 0.01;
     } else {
       positions[c.a]->pos -= movement;
     }
