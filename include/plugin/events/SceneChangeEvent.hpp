@@ -18,11 +18,12 @@
 #include "plugin/Byte.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/Hooks.hpp"
+#include "plugin/events/EventMacros.hpp"
 
 struct SceneChangeEvent
 {
   SceneChangeEvent() = default;
-  
+
   SceneChangeEvent(std::string t, std::string r)
     : target_scene(std::move(t))
     , reason(std::move(r)) {}
@@ -41,6 +42,9 @@ struct SceneChangeEvent
       , reason(get_value_copy<std::string>(r, e, "reason").value())
   {
   }
+
+  CHANGE_ENTITY_DEFAULT
+
   std::string target_scene;
   std::string state;
   std::string reason;

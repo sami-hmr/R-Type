@@ -1,22 +1,14 @@
 #include <vector>
 #include <string>
-#include <cstdint>
 #include <optional>
 #include <iostream>
-#include <unordered_map>
 
 #include "ecs/Scenes.hpp"
 #include "ecs/Registry.hpp"
-#include "plugin/Hooks.hpp"
 #include "Json/JsonParser.hpp"
 #include "plugin/EntityLoader.hpp"
-#include "plugin/components/Drawable.hpp"
 #include "plugin/events/ActionEvents.hpp"
-#include "plugin/events/EntityEvents.hpp"
-#include "plugin/events/Events.hpp"
-#include "plugin/components/Drawable.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
-#include "plugin/events/Shutdown.hpp"
 #include "plugin/libLoaders/ILibLoader.hpp"
 #include "plugin/events/SceneChangeEvent.hpp"
 

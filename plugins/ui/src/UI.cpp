@@ -1,20 +1,13 @@
 #include "UI.hpp"
 
 #include "plugin/components/Input.hpp"
-#include "plugin/events/Events.hpp"
 
 UI::UI(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config)
     : APlugin(r, l, {}, {COMP_INIT(input, Input, init_input)}, config)
 {
-<<<<<<< Updated upstream
   _registry.get().on<KeyPressedEvent>("KeyPressedEvent", [this](const KeyPressedEvent& event)
                                        { this->handle_key_pressed(event); });
-=======
-  _registry.get().on<KeyPressedEvent>("KeyPressedEvent",
-                                      [this](const KeyPressedEvent& event)
-                                      { this->handle_key_pressed(event); });
->>>>>>> Stashed changes
-  _registry.get().register_component<Input>("input");
+  _registry.get().register_component<Input>("ui:input");
 }
 
 void UI::init_input(Registry::Entity entity, const JsonVariant& config)
