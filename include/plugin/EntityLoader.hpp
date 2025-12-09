@@ -22,6 +22,7 @@ public:
   void load_file(std::string const& filepath);
 
   std::optional<Registry::Entity> load_entity(JsonObject const& config);
+  void load_components(Registry::Entity e, JsonObject const& config);
 
   void load_plugin(std::string const& plugin,
                    std::optional<JsonObject> const& config = std::nullopt);

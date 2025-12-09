@@ -12,6 +12,7 @@
 #include "ClientConnection.hpp"
 #include "NetworkShared.hpp"
 #include "ServerLaunch.hpp"
+#include "ecs/Scenes.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/components/Drawable.hpp"
 #include "plugin/components/Position.hpp"
@@ -191,9 +192,11 @@ void CLI::process_command(const std::string& cmd)
             Drawable draw;
             Sprite sprite("ça existe meme pas", {1, 1});
             Position pos(0, 0);
+            Scene scene("game", SceneState::ACTIVE);
             this->_registry.get().emit<ComponentBuilder>(42, "sfml:Drawable", draw.to_bytes());
             this->_registry.get().emit<ComponentBuilder>(42, "sfml:Sprite", sprite.to_bytes());
             this->_registry.get().emit<ComponentBuilder>(42, "moving:Position", pos.to_bytes());
+            this->_registry.get().emit<ComponentBuilder>(42, "scene", scene.to_bytes());
         }}},
 
       {"stop",

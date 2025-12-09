@@ -22,9 +22,8 @@ public:
   Moving(Registry& r, EntityLoader& l);
 
 private:
-  void init_pos(Registry::Entity const& entity, JsonObject const& obj);
-  void init_velocity(Registry::Entity const& entity,
-                     JsonObject const& obj);
+  void init_pos(Registry::Entity const& entity, JsonObject& obj);
+  void init_velocity(Registry::Entity const& entity, JsonObject& obj);
 
   void moving_system(Registry&,
                      SparseArray<Position>& positions,

@@ -11,15 +11,12 @@
 #include "ParserUtils.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/Byte.hpp"
+#include "plugin/Hooks.hpp"
+#include "plugin/components/ActionTrigger.hpp"
 #include "plugin/components/InteractionZone.hpp"
 
 struct ShutdownEvent
 {
-  ShutdownEvent(std::string r, int e)
-      : reason(std::move(r))
-      , exit_code(e)
-  {
-  }
   DEFAULT_BYTE_CONSTRUCTOR(ShutdownEvent,
                            ([](std::string const& r, int e)
                             { return (ShutdownEvent) {r, e}; }),
@@ -29,6 +26,18 @@ struct ShutdownEvent
   DEFAULT_SERIALIZE(string_to_byte(this->reason), type_to_byte(this->exit_code))
   std::string reason;
   int exit_code = 0;
+
+  ShutdownEvent(std::string reason, int exit_code)
+      : reason(std::move(reason))
+      , exit_code(exit_code)
+  {
+  }
+
+  ShutdownEvent(Registry& r, JsonObject const& e)
+      : reason(get_value_copy<std::string>(r, e, "reason").value())
+      , exit_code(get_value_copy<int>(r, e, "exit_code").value())
+  {
+  }
 };
 
 struct CleanupEvent
@@ -132,5 +141,13 @@ struct DamageEvent
 struct SceneChangeEvent
 {
   std::string target_scene;
+  std::string state;
   std::string reason;
+
+  SceneChangeEvent(Registry& r, JsonObject const& e)
+      : target_scene(get_value_copy<std::string>(r, e, "target_scene").value())
+      , state(get_value_copy<std::string>(r, e, "state").value())
+      , reason(get_value_copy<std::string>(r, e, "reason").value())
+  {
+  }
 };

@@ -21,7 +21,7 @@
       ],
       "entities": [
         {
-          "moving:Position": { "x": 0.0, "y": 0.0, "z": 2 },
+          "moving:Position": { "pos": { "x": 0.0, "y": 0.0, "z": 2 } },
           "sfml:Drawable": {},
           "moving:Velocity": {
             "speed": {
@@ -78,8 +78,10 @@
         },
         {
           "moving:Position": {
-            "x": -0.8,
-            "y": -0.8
+            "pos": {
+              "x": -0.8,
+              "y": -0.8
+            }
           },
           "sfml:Drawable": {},
           "sfml:Text": {

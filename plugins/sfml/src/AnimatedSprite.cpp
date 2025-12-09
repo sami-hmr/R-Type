@@ -11,16 +11,17 @@
 #include "Json/JsonParser.hpp"
 #include "SFMLRenderer.hpp"
 #include "ecs/Registry.hpp"
+#include "ecs/Scenes.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/Hooks.hpp"
 
 std::optional<AnimationData> SFMLRenderer::parse_animation_data(
-    JsonObject const& obj)
+    JsonObject const& obj, Registry::Entity const& e)
 {
   AnimationData animdata;
 
-  auto const& texture_path =
-      get_value<std::string>(this->_registry.get(), obj, "texture");
+  auto const& texture_path = get_value<AnimatedSprite, std::string>(
+      this->_registry.get(), obj, e, "texture");
   if (!texture_path) {
     std::cerr << "Error parsing animation data: \"texture\" field not "
                  "found or invalid"
@@ -28,58 +29,32 @@ std::optional<AnimationData> SFMLRenderer::parse_animation_data(
     return std::nullopt;
   }
   animdata.texture_path = texture_path.value();
-  auto const& frame_size_obj =
-      get_value<JsonObject>(this->_registry.get(), obj, "frame_size");
-  if (!frame_size_obj) {
-    std::cerr << "Error parsing animation data: \"frame_size\" field not found "
-                 "or invalid"
-              << "\n";
-    return std::nullopt;
-  }
-  Vector2D frame_size(frame_size_obj.value());
-  animdata.frame_size = frame_size;
 
-  auto const& frame_pos_obj =
-      get_value<JsonObject>(this->_registry.get(), obj, "frame_pos");
-  if (!frame_pos_obj) {
-    std::cerr << "Error parsing animation data: \"frame_pos\" field not found "
-                 "or invalid"
-              << "\n";
-    return std::nullopt;
-  }
-  Vector2D frame_pos(frame_pos_obj.value());
-  animdata.frame_pos = frame_pos;
-  auto const& framerate =
-      get_value<double>(this->_registry.get(), obj, "framerate");
+  animdata.frame_size = get_value<AnimatedSprite, Vector2D>(
+                            this->_registry.get(), obj, e, "frame_size")
+                            .value();
+
+  animdata.frame_pos = get_value<AnimatedSprite, Vector2D>(
+                           this->_registry.get(), obj, e, "frame_pos")
+                           .value();
+
+  auto const& framerate = get_value<AnimatedSprite, double>(
+      this->_registry.get(), obj, e, "framerate");
   if (!framerate) {
     std::cerr << "Error parsing animation data: \"framerate\" field not found "
                  "or invalid"
               << "\n";
     return std::nullopt;
   }
-  auto const& direction_obj =
-      get_value<JsonObject>(this->_registry.get(), obj, "direction");
-  if (!direction_obj) {
-    std::cerr << "Error parsing animation data: \"direction\" field not found "
-                 "or invalid"
-              << "\n";
-    return std::nullopt;
-  }
-  Vector2D direction(direction_obj.value());
-  animdata.direction = direction;
+  animdata.direction = get_value<AnimatedSprite, Vector2D>(
+                           this->_registry.get(), obj, e, "direction")
+                           .value();
 
   animdata.framerate = framerate.value();
-  auto const& sprite_size_obj =
-      get_value<JsonObject>(this->_registry.get(), obj, "sprite_size");
-  if (!sprite_size_obj) {
-    std::cerr << "Error parsing animation data: \"sprite_size\" field not "
-                 "found or invalid"
-              << "\n";
-    return std::nullopt;
-  }
-  animdata.sprite_size = parse_vector2d(sprite_size_obj.value());
-  auto const& nb_frames =
-      get_value<int>(this->_registry.get(), obj, "nb_frames");
+  animdata.sprite_size = parse_vector2d<AnimatedSprite>(e, obj, "sprite_size");
+
+  auto const& nb_frames = get_value<AnimatedSprite, int>(
+      this->_registry.get(), obj, e, "nb_frames");
   if (!nb_frames) {
     std::cerr << "Error parsing animation data: \"nb_frames\" field not found "
                  "or invalid"
@@ -87,7 +62,8 @@ std::optional<AnimationData> SFMLRenderer::parse_animation_data(
     return std::nullopt;
   }
   animdata.nb_frames = nb_frames.value();
-  auto const& loop = get_value<bool>(this->_registry.get(), obj, "loop");
+  auto const& loop =
+      get_value<AnimatedSprite, bool>(this->_registry.get(), obj, e, "loop");
   if (!loop) {
     std::cerr
         << "Error parsing animation data: \"loop\" field not found or invalid"
@@ -98,13 +74,14 @@ std::optional<AnimationData> SFMLRenderer::parse_animation_data(
   return animdata;
 }
 
-void SFMLRenderer::init_animated_sprite(Registry::Entity const entity,
+void SFMLRenderer::init_animated_sprite(Registry::Entity const& entity,
                                         const JsonObject& obj)
 {
   std::unordered_map<std::string, AnimationData> animations;
 
   std::optional<JsonArray> animations_obj =
-      get_value<JsonArray>(this->_registry.get(), obj, "animations");
+      get_value<AnimatedSprite, JsonArray>(
+          this->_registry.get(), obj, entity, "animations");
 
   if (!animations_obj) {
     std::cerr << "AnimatedSprite component requires animations array"
@@ -134,7 +111,7 @@ void SFMLRenderer::init_animated_sprite(Registry::Entity const entity,
           << '\n';
       return;
     }
-    animdata = parse_animation_data(animdata_obj);
+    animdata = parse_animation_data(animdata_obj, entity);
 
     if (!animdata) {
       std::cerr << "Error parsing animation data for animation: " << name
@@ -144,8 +121,8 @@ void SFMLRenderer::init_animated_sprite(Registry::Entity const entity,
     animations.insert_or_assign(name, animdata.value());
   }
   std::string default_animation = animations.begin()->first;
-  auto const& default_animation_value =
-      get_value<std::string>(this->_registry.get(), obj, "default_animation");
+  auto const& default_animation_value = get_value<AnimatedSprite, std::string>(
+      this->_registry.get(), obj, entity, "default_animation");
   if (default_animation_value) {
     default_animation = default_animation_value.value();
   }
@@ -155,6 +132,7 @@ void SFMLRenderer::init_animated_sprite(Registry::Entity const entity,
 
 void SFMLRenderer::animation_system(
     Registry& r,
+    const SparseArray<Scene>& scenes,
     const SparseArray<Position>& positions,
     const SparseArray<Drawable>& drawable,
     SparseArray<AnimatedSprite>& AnimatedSprites)
@@ -171,8 +149,12 @@ void SFMLRenderer::animation_system(
   drawables.reserve(AnimatedSprites.size());
   sf::Vector2u window_size = _window.getSize();
 
-  for (auto&& [pos, draw, anim] : Zipper(positions, drawable, AnimatedSprites))
+  for (auto&& [scene, pos, draw, anim] :
+       Zipper(scenes, positions, drawable, AnimatedSprites))
   {
+    if (scene.state == SceneState::DISABLED) {
+      continue;
+    }
     if (!draw.enabled) {
       continue;
     }

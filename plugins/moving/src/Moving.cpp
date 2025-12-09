@@ -41,19 +41,19 @@ void Moving::moving_system(Registry& reg,
   }
 }
 
-void Moving::init_pos(Registry::Entity const& entity, JsonObject const& obj)
+void Moving::init_pos(Registry::Entity const& entity, JsonObject& obj)
 {
-  auto const& x = get_value<double>(this->_registry.get(), obj, "x");
-  auto const& y = get_value<double>(this->_registry.get(), obj, "y");
+  auto values =
+      get_value<Position, Vector2D>(this->_registry.get(), obj, entity, "pos");
 
-  if (!x || !y) {
-    std::cerr << "Error loading Position component: unexpected value type "
-                 "(expected x: double and y: double)\n";
+  if (!values.has_value()) {
+    std::cerr << "Error creating Position component\n";
     return;
   }
   int z = 1;
   if (obj.contains("z")) {
-    auto const& z_value = get_value<int>(this->_registry.get(), obj, "z");
+    auto const& z_value =
+        get_value<Position, int>(this->_registry.get(), obj, entity, "z");
     if (z_value) {
       z = z_value.value();
     } else {
@@ -61,41 +61,35 @@ void Moving::init_pos(Registry::Entity const& entity, JsonObject const& obj)
                    "(expected z: int)\n";
     }
   }
-  this->_registry.get().emplace_component<Position>(
-      entity, x.value(), y.value(), z);
+  auto& pos_opt = this->_registry.get().emplace_component<Position>(
+      entity, values.value(), z);
+
+  if (!pos_opt.has_value()) {
+    std::cerr << "Error creating Position component\n";
+    return;
+  }
 }
 
-void Moving::init_velocity(Registry::Entity const& entity,
-                           JsonObject const& obj)
+void Moving::init_velocity(Registry::Entity const& entity, JsonObject& obj)
 {
-  auto const& speed_obj =
-      get_ref<JsonObject>(this->_registry.get(), obj, "speed");
-  auto const& dir_obj =
-      get_ref<JsonObject>(this->_registry.get(), obj, "direction");
+  auto speed = get_value<Velocity, Vector2D>(
+      this->_registry.get(), obj, entity, "speed");
+  auto dir = get_value<Velocity, Vector2D>(
+      this->_registry.get(), obj, entity, "direction");
 
-  if (!speed_obj || !dir_obj) {
+  if (!speed || !dir) {
     std::cerr << "Error loading velocity component: missing speed or direction "
                  "in JsonObject\n";
     return;
   }
 
-  auto const& speed_x =
-      get_value<double>(this->_registry.get(), speed_obj.value().get(), "x");
-  auto const& speed_y =
-      get_value<double>(this->_registry.get(), speed_obj.value().get(), "y");
-  auto const& dir_x =
-      get_value<double>(this->_registry.get(), dir_obj.value().get(), "x");
-  auto const& dir_y =
-      get_value<double>(this->_registry.get(), dir_obj.value().get(), "y");
+  auto& vel_opt = this->_registry.get().emplace_component<Velocity>(
+      entity, speed.value(), dir.value());
 
-  if (!speed_x || !speed_y || !dir_x || !dir_y) {
-    std::cerr << "Error loading velocity component: unexpected value type "
-                 "(expected speed.x, speed.y, direction.x, direction.y: double)\n";
+  if (!vel_opt.has_value()) {
+    std::cerr << "Error creating Velocity component\n";
     return;
   }
-
-  this->_registry.get().emplace_component<Velocity>(
-      entity, speed_x.value(), speed_y.value(), dir_x.value(), dir_y.value());
 }
 
 extern "C"
