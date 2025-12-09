@@ -27,4 +27,19 @@ struct SceneChangeEvent
       , reason(get_value_copy<std::string>(r, e, "reason").value())
   {
   }
+
+  SceneChangeEvent(std::string t, std::string s, std::string r)
+      : target_scene(std::move(t))
+      , state(std::move(s))
+      , reason(std::move(r))
+  {
+  }
+
+  DEFAULT_BYTE_CONSTRUCTOR(
+      SceneChangeEvent,
+      ([](std::string t, std::string s, std::string r)
+       { return SceneChangeEvent(std::move(t), std::move(s), std::move(r)); }),
+      parseByteString(),
+      parseByteString(),
+      parseByteString())
 };
