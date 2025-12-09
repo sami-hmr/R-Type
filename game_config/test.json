@@ -160,6 +160,30 @@
                 "nb_frames": 7,
                 "loop": true,
                 "rollback": true
+              },
+              {
+                "name": "death",
+                "texture": "assets/explosion.png",
+                "frame_size": {
+                  "x": 128.0,
+                  "y": 128.0
+                },
+                "frame_pos": {
+                  "x": 0.0,
+                  "y": 0.0
+                },
+                "direction": {
+                  "x": 1.0,
+                  "y": 0.0
+                },
+                "sprite_size": {
+                  "width": "20.0%",
+                  "height": "20.0%"
+                },
+                "framerate": 10.0,
+                "nb_frames": 12,
+                "loop": false,
+                "rollback": false
               }
             ],
             "default_animation": "idle"
@@ -198,7 +222,10 @@
               "x": 0.07,
               "y": 0.08
             },
-            "direction": "#player:direction"
+            "direction": {
+              "x": 0,
+              "y": 0
+            }
           },
           "moving:Position": {
             "x": 0.5,
@@ -221,6 +248,9 @@
             "hook": "prout",
             "current": 5,
             "max": 100
+          },
+          "life:Damage": {
+            "amount": 1
           },
           "life:Team": {
             "name": "test"

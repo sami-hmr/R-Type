@@ -141,3 +141,66 @@ struct SceneChangeEvent
   {
   }
 };
+
+struct AnimationEndEvent
+{
+  std::string name;
+  Registery::Entity entity;
+
+  AnimationEndEvent(std::string name, Registery::Entity entity)
+      : name(std::move(name))
+      , entity(entity) {};
+
+  AnimationEndEvent(Registery& r, JsonObject const& e)
+      : name(get_value_copy<std::string>(r, e, "name").value())
+      , entity(get_value_copy<int>(r, e, "entity").value())
+  {
+  }
+};
+
+struct AnimationStartEvent
+{
+  std::string name;
+  Registery::Entity entity;
+
+  AnimationStartEvent(std::string name, Registery::Entity entity)
+      : name(std::move(name))
+      , entity(entity) {};
+
+  AnimationStartEvent(Registery& r, JsonObject const& e)
+      : name(get_value_copy<std::string>(r, e, "name").value())
+      , entity(get_value_copy<int>(r, e, "entity").value())
+  {
+  }
+};
+
+struct PlayAnimationEvent
+{
+  std::string name;
+  Registery::Entity entity;
+  double framerate;
+  bool loop;
+  bool rollback;
+
+  PlayAnimationEvent(std::string name,
+                     Registery::Entity entity,
+                     double framerate,
+                     bool loop,
+                     bool rollback)
+      : name(std::move(name))
+      , entity(entity)
+      , framerate(framerate)
+      , loop(loop)
+      , rollback(rollback)
+  {
+  }
+
+  PlayAnimationEvent(Registery& r, JsonObject const& e)
+      : name(get_value_copy<std::string>(r, e, "name").value())
+      , entity(get_value_copy<int>(r, e, "entity").value())
+      , framerate(get_value_copy<double>(r, e, "framerate").value())
+      , loop(get_value_copy<bool>(r, e, "loop").value())
+      , rollback(get_value_copy<bool>(r, e, "rollback").value())
+  {
+  }
+};

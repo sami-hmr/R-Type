@@ -13,9 +13,11 @@
 
 #include "BaseTypes.hpp"
 #include "ByteParser/ByteParser.hpp"
+#include "ecs/Registery.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
+#include "plugin/events/Events.hpp"
 
 struct AnimationData
 {
@@ -54,6 +56,7 @@ struct AnimationData
   int current_frame = 0;
   bool loop = false;
   bool rollback = false;
+
 
   DEFAULT_BYTE_CONSTRUCTOR(AnimationData,
                            (
@@ -174,7 +177,13 @@ public:
 
   std::chrono::high_resolution_clock::time_point last_update;
 
-  void update_anim(std::chrono::high_resolution_clock::time_point now);
+  void update_anim(Registery& r,
+                   std::chrono::high_resolution_clock::time_point now,
+                   int entity);
+  static void on_death(Registery& r, const DamageEvent& event);
+  static void on_animation_end(Registery& r, const AnimationEndEvent& event);
+  static void on_play_animation(Registery& r, const PlayAnimationEvent& event);
+
   DEFAULT_BYTE_CONSTRUCTOR(
       AnimatedSprite,
       (

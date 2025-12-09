@@ -128,6 +128,16 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
   _registery.get().add_system<>([this](Registery&) { this->display(); });
   _textures.insert_or_assign(SFMLRenderer::placeholder_texture,
                              gen_placeholder());
+
+  _registery.get().on<PlayAnimationEvent>([this] (const PlayAnimationEvent& event) {
+    AnimatedSprite::on_play_animation(this->_registery.get(), event);
+  });
+  _registery.get().on<AnimationEndEvent>([this] (const AnimationEndEvent& event) {
+    AnimatedSprite::on_animation_end(this->_registery.get(), event);
+  });
+  _registery.get().on<DamageEvent>([this] (const DamageEvent& event) {
+    AnimatedSprite::on_death(this->_registery.get(), event);
+  });
 }
 
 SFMLRenderer::~SFMLRenderer()
