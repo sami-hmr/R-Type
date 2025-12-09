@@ -62,7 +62,7 @@ void Life::init_health(Registery::Entity entity, JsonObject const& obj)
     return;
   }
   this->_registery.get().emplace_component<Health>(
-      entity, current.value(), max.value());
+      entity, current.value(), max.value(), heal_cooldown, damage_cooldown);
 }
 
 void Life::init_damage(Registery::Entity entity, JsonObject const& obj)

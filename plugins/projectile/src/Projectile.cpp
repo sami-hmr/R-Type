@@ -25,6 +25,9 @@ Projectile::Projectile(Registery& r, EntityLoader& l)
       [this](Registery& r, const SparseArray<Temporal>&)
       { this->temporal_system(r); },
       2);
+  this->_registery.get().add_system<>(
+      [this](Registery& r)
+      { this->update_cooldown(r); });
 
   this->_registery.get().on<CollisionEvent>([this](const CollisionEvent& event)
                                             { this->on_collision(event); });
@@ -44,10 +47,18 @@ void Projectile::init_temporal(Registery::Entity entity, JsonObject const& obj)
   this->_registery.get().emplace_component<Temporal>(entity, lifetime.value());
 }
 
-void Projectile::init_fragile(Registery::Entity entity,
-                              JsonObject const& /*obj*/)
+void Projectile::init_fragile(Registery::Entity entity, JsonObject const& obj)
 {
-  this->_registery.get().emplace_component<Fragile>(entity);
+  auto const& hits =
+      get_value<Fragile, int>(this->_registery.get(), obj, entity, "hits");
+
+  if (!hits) {
+    std::cerr << "Error loading fragile component: unexpected value type or "
+                 "missing value in JsonObject\n";
+    return;
+  }
+  this->_registery.get().emplace_component<Fragile>(
+      entity, hits.value(), fragile_cooldown);
 }
 
 void Projectile::temporal_system(Registery& reg)
@@ -68,6 +79,8 @@ void Projectile::temporal_system(Registery& reg)
 
 void Projectile::on_collision(const CollisionEvent& event)
 {
+  auto& fragiles = this->_registery.get().get_components<Fragile>();
+
   if (!this->_registery.get().has_component<Fragile>(event.a)) {
     return;
   }
@@ -82,8 +95,27 @@ void Projectile::on_collision(const CollisionEvent& event)
     }
   }
 
-  if (!this->_registery.get().is_entity_dying(event.a)) {
-    this->_registery.get().kill_entity(event.a);
+  if (fragiles[event.a]->fragile_delta >= fragile_cooldown) {
+    fragiles[event.a]->fragile_delta = 0.0;
+    if (fragiles[event.a]->counter >= fragiles[event.a]->hits
+        && !this->_registery.get().is_entity_dying(event.a))
+    {
+      this->_registery.get().kill_entity(event.a);
+      return;
+    }
+    fragiles[event.a]->counter += 1;
+  }
+}
+
+void Projectile::update_cooldown(Registery& reg)
+{
+  double dt = reg.clock().delta_seconds();
+  auto& fragiles = reg.get_components<Fragile>();
+
+  for (auto&& [i, fragile] : ZipperIndex(fragiles)) {
+    if (!reg.is_entity_dying(i)) {
+      fragile.fragile_delta += dt;
+    }
   }
 }
 

@@ -17,7 +17,9 @@ public:
 private:
   void init_temporal(Registery::Entity entity, JsonObject const& obj);
   void init_fragile(Registery::Entity entity, JsonObject const& obj);
+  static constexpr double fragile_cooldown = 0.5;
 
   void temporal_system(Registery& reg);
   void on_collision(const CollisionEvent& c);
+  void update_cooldown(Registery& reg);
 };
