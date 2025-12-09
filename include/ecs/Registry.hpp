@@ -31,6 +31,9 @@
 template<typename T>
 concept component = bytable<T> && entity_convertible<T>;
 
+template<typename T>
+concept event = bytable<T> && entity_convertible<T> && json_buildable<T>;
+
 /**
  * @brief The Registry class is the core of the ECS (Entity-Component-System)
  * architecture.
@@ -76,26 +79,6 @@ public:
         [](ByteArray const& b, TwoWayMap<Entity, Entity> const& map)
         { return Component(b).change_entity(map).to_bytes(); });
     this->_index_getter.insert(ti, string_id);
-    return comp;
-  }
-
-  /**
-   * @brief Registers a component type in the registry (non-bytable overload).
-   *
-   * @tparam Component The type of the component to register.
-   * @return SparseArray<Component>& A reference to the sparse array of the
-   * registered component type.
-   */
-  template<class Component>
-  SparseArray<Component>& register_component()
-  {
-    std::type_index ti(typeid(Component));
-
-    this->_components.insert_or_assign(ti, SparseArray<Component>());
-    SparseArray<Component>& comp = this->get_components<Component>();
-
-    this->_delete_functions.insert_or_assign(
-        ti, [&comp](Entity const& e) { comp.erase(e); });
     return comp;
   }
 
@@ -330,7 +313,7 @@ public:
    */
   void clear_bindings() { _bindings.clear(); }
 
-  template<typename EventType>
+  template<event EventType>
   HandlerId on(std::string const& name,
                std::function<void(const EventType&)> handler)
   {
@@ -471,7 +454,7 @@ public:
     return std::any_cast<std::reference_wrapper<T>>(tmp.value());
   }
 
-  template<EventIsJsonBuilable T>
+  template<event T>
   void add_event_builder()
   {
     std::type_index type_id(typeid(T));
