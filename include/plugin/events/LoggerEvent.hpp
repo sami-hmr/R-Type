@@ -15,16 +15,20 @@
 #include "plugin/components/ActionTrigger.hpp"
 #include "plugin/components/InteractionZone.hpp"
 
-struct SceneChangeEvent
+enum class LogLevel : std::uint8_t
 {
-  std::string target_scene;
-  std::string state;
-  std::string reason;
-
-  SceneChangeEvent(Registry& r, JsonObject const& e)
-      : target_scene(get_value_copy<std::string>(r, e, "target_scene").value())
-      , state(get_value_copy<std::string>(r, e, "state").value())
-      , reason(get_value_copy<std::string>(r, e, "reason").value())
-  {
-  }
+  DEBUG,
+  INFO,
+  WARNING,
+  ERROR
 };
+
+struct LogEvent
+{
+  std::string name;
+  LogLevel level;
+  std::string message;
+};
+
+#define LOGGER(category, level, message) \
+  this->_registry.get().emit<LogEvent>(category, level, message);

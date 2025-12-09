@@ -15,16 +15,35 @@
 #include "plugin/components/ActionTrigger.hpp"
 #include "plugin/components/InteractionZone.hpp"
 
-struct SceneChangeEvent
+enum class Key
 {
-  std::string target_scene;
-  std::string state;
-  std::string reason;
+  Unknown = -1,
+  SHIFT = 0,
+  CTRL,
+  ALT,
+  ENTER,
+  LEFT,
+  RIGHT,
+  DOWN,
+  UP,
+  Z,
+  Q,
+  S,
+  D,
+  R,
+  ECHAP,
+  DELETE,
+  SPACE,
+};
 
-  SceneChangeEvent(Registry& r, JsonObject const& e)
-      : target_scene(get_value_copy<std::string>(r, e, "target_scene").value())
-      , state(get_value_copy<std::string>(r, e, "state").value())
-      , reason(get_value_copy<std::string>(r, e, "reason").value())
-  {
-  }
+struct KeyPressedEvent
+{
+  std::map<Key, bool> key_pressed;
+  std::optional<std::string> key_unicode;
+};
+
+struct KeyReleasedEvent
+{
+  std::map<Key, bool> key_released;
+  std::optional<std::string> key_unicode;
 };
