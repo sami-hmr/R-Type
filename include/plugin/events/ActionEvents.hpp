@@ -10,11 +10,14 @@
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/ActionTrigger.hpp"
+#include "plugin/events/EventMacros.hpp"
 
 struct SpawnEntityRequestEvent
 {
   std::string entity_template;
   JsonObject params;
+
+  CHANGE_ENTITY_DEFAULT
 
   SpawnEntityRequestEvent(std::string templ, JsonObject p)
       : entity_template(std::move(templ))
@@ -50,6 +53,8 @@ struct KillEntityRequestEvent
   Registry::Entity target;
   std::string reason;
 
+  CHANGE_ENTITY(result.target = map.at_second(target);)
+
   KillEntityRequestEvent(Registry::Entity t, std::string r)
       : target(t)
       , reason(std::move(r))
@@ -77,6 +82,8 @@ struct ModifyComponentRequestEvent
   Registry::Entity target;
   std::string component_name;
   JsonObject modifications;
+
+  CHANGE_ENTITY(result.target = map.at_second(target);)
 
   ModifyComponentRequestEvent(Registry::Entity t,
                               std::string comp,
@@ -109,7 +116,23 @@ struct TimerTickEvent
   double delta_time;
   std::chrono::steady_clock::time_point now;
 
+<<<<<<< Updated upstream
   TimerTickEvent(double dt): delta_time(dt) {}
 
   DEFAULT_BYTE_CONSTRUCTOR(TimerTickEvent, ([](double dt){return TimerTickEvent(dt);}), parseByte<double>())
+=======
+  CHANGE_ENTITY_DEFAULT
+
+  TimerTickEvent(double dt, std::chrono::steady_clock::time_point n)
+      : delta_time(dt)
+      , now(n)
+  {
+  }
+
+  TimerTickEvent(Registry& r, JsonObject const& e)
+      : delta_time(get_value_copy<double>(r, e, "delta_time").value())
+      , now(std::chrono::steady_clock::now())
+  {
+  }
+>>>>>>> Stashed changes
 };

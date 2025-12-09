@@ -10,6 +10,7 @@
 #include <string>
 
 #include "ByteParser/ByteParser.hpp"
+#include "EventMacros.hpp"
 #include "ParserUtils.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/Byte.hpp"
@@ -28,6 +29,8 @@ struct ShutdownEvent
 
   DEFAULT_SERIALIZE(string_to_byte(this->reason), type_to_byte(this->exit_code))
 
+  CHANGE_ENTITY_DEFAULT
+
   ShutdownEvent(std::string reason, int exit_code)
       : reason(std::move(reason))
       , exit_code(exit_code)
@@ -44,4 +47,23 @@ struct ShutdownEvent
 struct CleanupEvent
 {
   std::string trigger;
+
+  DEFAULT_BYTE_CONSTRUCTOR(CleanupEvent,
+                           ([](std::string const& t)
+                            { return (CleanupEvent) {t}; }),
+                           parseByteString())
+
+  DEFAULT_SERIALIZE(string_to_byte(this->trigger))
+
+  CHANGE_ENTITY_DEFAULT
+
+  CleanupEvent(std::string trigger)
+      : trigger(std::move(trigger))
+  {
+  }
+
+  CleanupEvent(Registry& r, JsonObject const& e)
+      : trigger(get_value_copy<std::string>(r, e, "trigger").value())
+  {
+  }
 };

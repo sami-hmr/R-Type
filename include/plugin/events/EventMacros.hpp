@@ -49,7 +49,7 @@
  *   )
  * };
  */
-#define DEFINE_CHANGE_ENTITY(...) \
+#define CHANGE_ENTITY(...) \
   auto change_entity(TwoWayMap<Registry::Entity, Registry::Entity> const& map) \
       const \
   { \
@@ -60,4 +60,11 @@
     } catch (std::out_of_range const&) { \
       return *this; \
     } \
+  }
+
+#define CHANGE_ENTITY_DEFAULT \
+  auto change_entity(TwoWayMap<Registry::Entity, Registry::Entity> const&) \
+      const \
+  { \
+    return *this; \
   }

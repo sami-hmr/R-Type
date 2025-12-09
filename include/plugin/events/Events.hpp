@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "ByteParser/ByteParser.hpp"
+#include "EventMacros.hpp"
 #include "ParserUtils.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/Byte.hpp"
@@ -20,6 +21,15 @@ struct SceneChangeEvent
   std::string target_scene;
   std::string state;
   std::string reason;
+
+  CHANGE_ENTITY_DEFAULT
+
+  SceneChangeEvent(std::string ts, std::string st, std::string r)
+      : target_scene(std::move(ts))
+      , state(std::move(st))
+      , reason(std::move(r))
+  {
+  }
 
   SceneChangeEvent(Registry& r, JsonObject const& e)
       : target_scene(get_value_copy<std::string>(r, e, "target_scene").value())

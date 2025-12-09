@@ -8,7 +8,9 @@
 #include <vector>
 
 #include "ByteParser/ByteParser.hpp"
+#include "EventMacros.hpp"
 #include "ParserUtils.hpp"
+#include "TwoWayMap.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
@@ -22,12 +24,35 @@ enum class LogLevel : std::uint8_t
   WARNING,
   ERROR
 };
+static const TwoWayMap<std::string, LogLevel> LOG_LEVEL_STR = {
+    {"DEBUG", LogLevel::DEBUG},
+    {"INFO", LogLevel::INFO},
+    {"WARNING", LogLevel::WARNING},
+    {"ERROR", LogLevel::ERROR},
+};
 
 struct LogEvent
 {
   std::string name;
   LogLevel level;
   std::string message;
+
+  CHANGE_ENTITY_DEFAULT
+
+  LogEvent(std::string n, LogLevel l, std::string m)
+      : name(std::move(n))
+      , level(l)
+      , message(std::move(m))
+  {
+  }
+
+  LogEvent(Registry& r, JsonObject const& e)
+      : name(get_value_copy<std::string>(r, e, "name").value())
+      , level(static_cast<LogLevel>(LOG_LEVEL_STR.at_first(
+            get_value_copy<std::string>(r, e, "level").value())))
+      , message(get_value_copy<std::string>(r, e, "message").value())
+  {
+  }
 };
 
 #define LOGGER(category, level, message) \
