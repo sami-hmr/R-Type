@@ -35,9 +35,11 @@ struct SceneChangeEvent
 
   SceneChangeEvent(Registry& r, JsonObject const& e)
       : target_scene(get_value_copy<std::string>(r, e, "target_scene").value())
+      , state(get_value_copy<std::string>(r, e, "state").value())
       , reason(get_value_copy<std::string>(r, e, "reason").value())
   {
   }
   std::string target_scene;
+  std::string state;
   std::string reason;
 };
