@@ -6,6 +6,8 @@
 #include "ByteParser/ByteParser.hpp"
 #include "TwoWayMap.hpp"
 #include "plugin/Byte.hpp"
+#include "plugin/events/EventMacros.hpp"
+
 enum class SceneState : std::uint8_t
 {
   ACTIVE,
@@ -28,6 +30,8 @@ struct Scene
       , state(state)
   {
   }
+
+  CHANGE_ENTITY_DEFAULT
 
   DEFAULT_BYTE_CONSTRUCTOR(
       Scene,

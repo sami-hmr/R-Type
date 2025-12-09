@@ -5,6 +5,7 @@
 #include <unordered_map>
 
 #include "ByteParser/ByteParser.hpp"
+#include "EventMacros.hpp"
 #include "Json/JsonParser.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/Byte.hpp"

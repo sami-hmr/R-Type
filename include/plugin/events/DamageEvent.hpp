@@ -14,6 +14,7 @@
 #include <utility>
 
 #include "ByteParser/ByteParser.hpp"
+#include "EventMacros.hpp"
 #include "ParserUtils.hpp"
 #include "plugin/Byte.hpp"
 #include "ecs/Registry.hpp"
@@ -26,6 +27,9 @@ struct DamageEvent
     , source(std::move(s))
     , amount(a) {}
 
+  CHANGE_ENTITY(result.target = map.at_second(target);
+                result.source = map.at_second(source);)
+
   DEFAULT_BYTE_CONSTRUCTOR(DamageEvent,
                          ([](Registry::Entity const &t, Registry::Entity const &s, int a)
                           { return (DamageEvent) {t, s, a}; }),
@@ -36,8 +40,11 @@ struct DamageEvent
   DEFAULT_SERIALIZE(type_to_byte(this->target), type_to_byte(this->source), type_to_byte(this->amount))
 
   DamageEvent(Registry& r, JsonObject const& e)
-      : target(get_value_copy<Registry::Entity>(r, e, "target").value())
-      , source(get_value_copy<Registry::Entity>(r, e, "source").value())
+      : target(static_cast<Registry::Entity>(
+            get_value_copy<double>(r, e, "target").value()))
+      , source(static_cast<Registry::Entity>(
+            get_value_copy<double>(r, e, "source").value()))
+      , amount(get_value_copy<int>(r, e, "amount").value())
   {}
 
   Registry::Entity target;

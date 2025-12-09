@@ -7,34 +7,36 @@
 
 #pragma once
 
-#include <cstdint>
-#include <map>
 #include <optional>
 #include <string>
 #include <utility>
 
 #include "ByteParser/ByteParser.hpp"
-#include "ParserUtils.hpp"
 #include "plugin/Byte.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/Hooks.hpp"
-#include "plugin/events/CleanupEvent.hpp"
+#include "plugin/events/EventMacros.hpp"
 
 struct CleanupEvent
 {
-  CleanupEvent(std::string t)
-    : trigger(std::move(t)) {}
+  std::string trigger;
 
   DEFAULT_BYTE_CONSTRUCTOR(CleanupEvent,
-                         ([](std::string const &t)
-                          { return (CleanupEvent) {t}; }),
-                         parseByteString())
+                           ([](std::string const& t)
+                            { return (CleanupEvent) {t}; }),
+                           parseByteString())
 
   DEFAULT_SERIALIZE(string_to_byte(this->trigger))
 
+  CHANGE_ENTITY_DEFAULT
+
+  CleanupEvent(std::string trigger)
+      : trigger(std::move(trigger))
+  {
+  }
+
   CleanupEvent(Registry& r, JsonObject const& e)
       : trigger(get_value_copy<std::string>(r, e, "trigger").value())
-  {}
-
-  std::string trigger;
+  {
+  }
 };

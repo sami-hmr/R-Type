@@ -2,6 +2,8 @@
 #include <format>
 #include <iostream>
 
+#include "Log.hpp"
+
 #include "ecs/Registry.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/events/Log.hpp"

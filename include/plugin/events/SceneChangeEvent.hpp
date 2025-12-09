@@ -21,6 +21,8 @@
 
 struct SceneChangeEvent
 {
+  SceneChangeEvent() = default;
+  
   SceneChangeEvent(std::string t, std::string r)
     : target_scene(std::move(t))
     , reason(std::move(r)) {}

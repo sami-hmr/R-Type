@@ -7,23 +7,26 @@
 
 #pragma once
 
-#include <cstdint>
-#include <map>
 #include <optional>
 #include <string>
 #include <utility>
 
-#include "ByteParser/ByteParser.hpp"
-#include "ParserUtils.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
 #include "ecs/Registry.hpp"
+#include "ByteParser/ByteParser.hpp"
+#include "plugin/events/EventMacros.hpp"
 
 struct CollisionEvent
 {
+  Registry::Entity a;
+  Registry::Entity b;
+
+  CHANGE_ENTITY(result.a = map.at_second(a); result.b = map.at_second(b);)
+
   CollisionEvent(Registry::Entity c, Registry::Entity d)
-    : a(std::move(c))
-    , b(std::move(d)) {}
+    : a(c)
+    , b(d) {}
 
   DEFAULT_BYTE_CONSTRUCTOR(CollisionEvent,
                          ([](Registry::Entity const &c, Registry::Entity const &d)
@@ -34,10 +37,10 @@ struct CollisionEvent
   DEFAULT_SERIALIZE(type_to_byte(this->a), type_to_byte(this->b))
 
   CollisionEvent(Registry& r, JsonObject const& e)
-      : a(get_value_copy<Registry::Entity>(r, e, "a").value())
-      , b(get_value_copy<Registry::Entity>(r, e, "b").value())
-  {}
-
-  Registry::Entity a;
-  Registry::Entity b;
+      : a(static_cast<Registry::Entity>(
+            get_value_copy<double>(r, e, "a").value()))
+      , b(static_cast<Registry::Entity>(
+            get_value_copy<double>(r, e, "b").value()))
+  {
+  }
 };
