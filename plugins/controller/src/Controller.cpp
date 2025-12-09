@@ -43,7 +43,7 @@ Controller::Controller(Registry& r, EntityLoader& l)
               {"moving"},
               {COMP_INIT(Controllable, Controllable, init_controller)})
 {
-  this->_registry.get().register_component<Controllable>();
+  this->_registry.get().register_component<Controllable>("controller:Controllable");
 
   this->_registry.get().on<KeyPressedEvent>(
       "KeyPressedEvent",

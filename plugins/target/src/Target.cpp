@@ -7,14 +7,14 @@
 #include "libs/Vector2D.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Follower.hpp"
-#include "plugin/components/InteractionZone.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Velocity.hpp"
+#include "plugin/events/InteractionZoneEvent.hpp"
 
 Target::Target(Registry& r, EntityLoader& l)
     : APlugin(r, l, {"moving"}, {COMP_INIT(Follower, Follower, init_follower)})
 {
-  this->_registry.get().register_component<Follower>();
+  this->_registry.get().register_component<Follower>("target:Follower");
 
   this->_registry.get().add_system<Follower, Position, Velocity>(
       [this](Registry& r,
@@ -22,7 +22,7 @@ Target::Target(Registry& r, EntityLoader& l)
              const SparseArray<Position>& positions,
              SparseArray<Velocity>& velocities)
       { this->target_system(r, followers, positions, velocities); });
-  this->_registry.get().on<InteractionZone>("InteractionZone", [this](const InteractionZone& event)
+  this->_registry.get().on<InteractionZoneEvent>("InteractionZoneEvent", [this](const InteractionZoneEvent& event)
       { this->on_interaction_zone(event); });
 }
 
@@ -58,7 +58,7 @@ void Target::target_system(Registry& reg,
   }
 }
 
-void Target::on_interaction_zone(const InteractionZone& event)
+void Target::on_interaction_zone(const InteractionZoneEvent& event)
 {
   const auto& positions = this->_registry.get().get_components<Position>();
   auto& followers = this->_registry.get().get_components<Follower>();

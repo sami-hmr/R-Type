@@ -79,7 +79,7 @@ template<typename T>
 ByteArray vector_to_byte(std::vector<T> const& v,
                          std::function<ByteArray(T const&)> f)
 {
-  ByteArray r = type_to_byte<u_int32_t>(v.size());
+  ByteArray r = type_to_byte<std::uint32_t>(v.size());
   for (auto const& it : v) {
     r = r + f(it);
   }

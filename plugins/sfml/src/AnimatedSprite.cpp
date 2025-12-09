@@ -72,7 +72,7 @@ std::optional<AnimationData> SFMLRenderer::parse_animation_data(
   }
   animdata.loop = loop.value();
   auto const& rollback = get_value<AnimatedSprite, bool>(
-      this->_registery.get(), obj, e, "rollback");
+      this->_registry.get(), obj, e, "rollback");
   if (!rollback) {
     std::cerr << "Error parsing animation data: \"rollback\" field not found or "
                  "invalid"

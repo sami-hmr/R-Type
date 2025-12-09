@@ -19,7 +19,7 @@ struct ComponentBuilder
   ByteArray data;
 
   ComponentBuilder() = default;
-  
+
   ComponentBuilder(std::size_t e, std::string i, ByteArray d)
     : entity(e)
     , id(std::move(i))
@@ -32,7 +32,7 @@ struct ComponentBuilder
                          parseByteString(),
                          parseByte<Byte>().many())
 
-  DEFAULT_SERIALIZE(type_to_byte<std::size_t>(this->entity), string_to_byte(this->id), type_to_byte<ByteArray>(this->data))
+  DEFAULT_SERIALIZE(type_to_byte<std::size_t>(this->entity), string_to_byte(this->id), this->data)
 
   CHANGE_ENTITY_DEFAULT
 
@@ -61,9 +61,9 @@ struct EventBuilder
 {
   std::string event_id;
   ByteArray data;
-  
+
   EventBuilder() = default;
-  
+
   EventBuilder(std::string i, ByteArray d)
     : event_id(std::move(i))
     , data(std::move(d)) {}
@@ -74,7 +74,7 @@ struct EventBuilder
                          parseByteString(),
                          parseByte<Byte>().many())
 
-  DEFAULT_SERIALIZE(string_to_byte(this->event_id), type_to_byte<ByteArray>(this->data))
+  DEFAULT_SERIALIZE(string_to_byte(this->event_id), this->data)
 
   CHANGE_ENTITY_DEFAULT
 

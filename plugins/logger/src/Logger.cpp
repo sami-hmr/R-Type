@@ -1,6 +1,7 @@
 #include <chrono>
 #include <format>
 #include <iostream>
+#include "Logger.hpp"
 
 #include "plugin/events/LoggerEvent.hpp"
 
@@ -37,16 +38,9 @@ Logger::Logger(Registry& r,
     }
   }
 
-<<<<<<< Updated upstream
   this->_registry.get().on<LogEvent>("LogEvent", [this](const LogEvent& event)
                                       { this->on_log_event(event); });
   this->_registry.get().on<ShutdownEvent>("ShutdownEvent",
-=======
-  this->_registry.get().on<LogEvent>(
-      "LogEvent", [this](const LogEvent& event) { this->on_log_event(event); });
-  this->_registry.get().on<ShutdownEvent>(
-      "ShutdownEvent",
->>>>>>> Stashed changes
       [this](const ShutdownEvent& event)
       {
         this->_registry.get().emit<LogEvent>(

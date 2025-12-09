@@ -11,6 +11,7 @@
 #include "plugin/components/InteractionZone.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Velocity.hpp"
+#include "plugin/events/InteractionZoneEvent.hpp"
 
 class Target : public APlugin
 {
@@ -19,7 +20,7 @@ public:
 
 private:
   void init_follower(Registry::Entity entity, JsonObject const& obj);
-  void on_interaction_zone(const InteractionZone& event);
+  void on_interaction_zone(const InteractionZoneEvent& event);
 
   void target_system(Registry& reg,
                      SparseArray<Follower>& followers,

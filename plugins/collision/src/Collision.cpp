@@ -17,6 +17,7 @@
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Velocity.hpp"
 #include "plugin/events/CollisionEvent.hpp"
+#include "plugin/events/InteractionZoneEvent.hpp"
 #include "plugin/events/LoggerEvent.hpp"
 
 Collision::Collision(Registry& r, EntityLoader& l)
@@ -177,7 +178,7 @@ void Collision::interaction_zone_system(
       }
     }
     if (!detected_entities.empty()) {
-      this->_registry.get().emit<InteractionZone>(
+      this->_registry.get().emit<InteractionZoneEvent>(
           i, zone.radius, detected_entities);
     }
   }

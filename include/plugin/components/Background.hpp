@@ -122,7 +122,7 @@ struct Background
   DEFAULT_SERIALIZE(vector_to_byte<std::string>(this->textures_path,
                                                 string_to_byte),
                     type_to_byte(static_cast<std::uint8_t>(this->render_type)),
-                    type_to_byte(this->parallax))
+                    parallax.to_bytes())
   HOOKABLE(Background, HOOK(textures_path), HOOK(render_type), HOOK(parallax));
 };
 

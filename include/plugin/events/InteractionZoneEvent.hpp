@@ -6,8 +6,6 @@
 #include "ecs/Registry.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
-#include "plugin/components/ActionTrigger.hpp"
-#include "plugin/components/InteractionZone.hpp"
 
 struct InteractionZoneEvent
 {

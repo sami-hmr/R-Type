@@ -195,7 +195,7 @@ void CLI::process_command(const std::string& cmd)
             [this](std::istringstream&)
         {
           Drawable draw;
-          Sprite sprite("ça existe meme pas", {1, 1});
+          Sprite sprite("assets/planet.png", {1, 1});
           Position pos(0, 0);
           Scene scene("game", SceneState::ACTIVE);
           this->_registry.get().emit<ComponentBuilder>(

@@ -98,5 +98,5 @@ void Client::handle_disconnect_response(ByteArray const& package)
 
   ShutdownEvent e(std::format("Server disconnected: {}", reason), 0);
   this->transmit_event(
-      EventBuilder {.event_id = "shutdown", .data = e.to_bytes()});
+      EventBuilder("shutdown", e.to_bytes()));
 }

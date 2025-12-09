@@ -40,7 +40,7 @@ struct Scene
       parseByteArray(parseAnyChar()),
       parseByte<SceneState>())
   DEFAULT_SERIALIZE(string_to_byte(this->scene_name),
-                    type_to_byte((uint8_t)this->state))
+                    type_to_byte((std::uint8_t)this->state))
 
   CHANGE_ENTITY_DEFAULT
 
