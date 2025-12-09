@@ -7,7 +7,7 @@ UI::UI(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config)
 {
   _registry.get().on<KeyPressedEvent>("KeyPressedEvent", [this](const KeyPressedEvent& event)
                                        { this->handle_key_pressed(event); });
-  _registry.get().register_component<Input>("ui:input");
+  _registry.get().register_component<Input>("input");
 }
 
 void UI::init_input(Registry::Entity entity, const JsonVariant& config)

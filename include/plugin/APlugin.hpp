@@ -3,7 +3,6 @@
 #include <functional>
 #include <optional>
 #include <string>
-#include <variant>
 
 #include "EntityLoader.hpp"
 #include "IPlugin.hpp"
