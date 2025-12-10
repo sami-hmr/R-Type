@@ -142,7 +142,7 @@ void SFMLRenderer::init_animated_sprite(Registry::Entity const& entity,
 }
 
 void SFMLRenderer::animation_system(
-    Registry& r,
+    Registry&/*unused*/,
     const SparseArray<Scene>& scenes,
     const SparseArray<Position>& positions,
     const SparseArray<Drawable>& drawable,
@@ -264,14 +264,13 @@ void AnimatedSprite::on_death(Registry& r, const DamageEvent& event)
     return;
   }
 
-  auto& animatedSprites = r.get_components<AnimatedSprite>();
+  auto& animated_sprites = r.get_components<AnimatedSprite>();
   auto& healths = r.get_components<Health>();
 
   if (healths[event.target]->current <= 0) {
-    AnimatedSprite& animSprite = animatedSprites[event.target].value();
-    if (animatedSprites[event.target].value().animations.contains("death")) {
+    if (animated_sprites[event.target].value().animations.contains("death")) {
       AnimationData& animdata =
-          animatedSprites[event.target].value().animations.at("death");
+          animated_sprites[event.target].value().animations.at("death");
       r.emit<PlayAnimationEvent>(
           "death", event.target, animdata.framerate, false, false);
     }
@@ -284,8 +283,6 @@ void AnimatedSprite::on_animation_end(Registry& r,
   if (!r.has_component<AnimatedSprite>(event.entity)) {
     return;
   }
-
-  auto& animatedSprites = r.get_components<AnimatedSprite>();
 
   if (event.name == "death") {
     r.kill_entity(event.entity);
