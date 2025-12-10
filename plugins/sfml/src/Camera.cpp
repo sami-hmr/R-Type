@@ -42,23 +42,18 @@ void SFMLRenderer::init_cam(Registry::Entity const &entity,
     return;
   }
   _registry.get().emplace_component<Camera>(entity, size, target, speed);
-}
-
-void SFMLRenderer::cam_target_event(const CamAggroEvent& e)
-{
-  Vector2D target = {0, 0};
-  SparseArray<Position> positions = _registry.get().get_components<Position>();
-
-  if (!this->_registry.get().has_component<Position>(e.target)) {
-    return;
-  }
-  target = positions.at(e.target).value().pos;
-  for (auto&& [pos, cam] : Zipper(_registry.get().get_components<Position>(),
-                                  _registry.get().get_components<Camera>()))
-  {
-    cam.target = target;
-    cam.moving = true;
-  }
+  _registry.get().on<CamAggroEvent>("CamAggroEvent", [this](const CamAggroEvent& e) {
+    this->cam_target_event(e);
+  });
+  _registry.get().on<CamZoomEvent>("CamZoomEvent", [this](const CamZoomEvent& e) {
+      this->cam_zoom_event(e);
+  });
+  _registry.get().on<CamRotateEvent>("CamRotateEvent", [this](const CamRotateEvent& e) {
+      this->cam_rotate_event(e);
+  });
+  _registry.get().on<CamSpeedEvent>("CamSpeedEvent", [this](const CamSpeedEvent& e) {
+      this->cam_speed_event(e);
+  });
 }
 
 static void move_cam(Position& pos, Camera& cam)
@@ -77,6 +72,7 @@ static void rotate_cam(Camera &cam)
   if (cam.rotating) {
     if (std::abs(cam.rotation - cam.next_rotation) <= cam.rotation_speed) {
       cam.rotation = cam.next_rotation;
+      cam.rotation_speed = 0;
       cam.rotating = false;
     } else if (cam.rotation < cam.next_rotation) {
       cam.rotation += cam.rotation_speed;

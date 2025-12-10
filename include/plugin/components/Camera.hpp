@@ -69,6 +69,7 @@ public:
   bool zooming = false;
   bool shaking = false;
   bool rotating = false;
+  std::reference_wrapper<Vector2D> target_ref = std::ref(target);
 
   DEFAULT_BYTE_CONSTRUCTOR(Camera,
                            (

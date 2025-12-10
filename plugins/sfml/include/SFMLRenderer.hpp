@@ -85,6 +85,9 @@ private:
                    const SparseArray<Text>& texts);
   void camera_system(Registry &r, SparseArray<Position> &positions, SparseArray<Camera> &cameras);
   void cam_target_event(const CamAggroEvent &e);
+  void cam_zoom_event(const CamZoomEvent &e);
+  void cam_rotate_event(const CamRotateEvent &e);
+  void cam_speed_event(const CamSpeedEvent &e);
 
   void background_system(Registry& r,
                          const SparseArray<Scene>& scenes,

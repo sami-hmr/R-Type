@@ -19,6 +19,7 @@
 #include "plugin/components/Heal.hpp"
 #include "plugin/components/Health.hpp"
 #include "plugin/components/Team.hpp"
+#include "plugin/events/CameraEvents.hpp"
 
 Life::Life(Registry& r, EntityLoader& l)
     : APlugin(r,

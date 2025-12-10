@@ -117,6 +117,7 @@
       "entities": [
         {
           "moving:Position": {
+            "hook": "playerpos",
             "pos": {
               "x": 0.0,
               "y": 0.0
@@ -179,6 +180,9 @@
             "current": 5,
             "max": 100
           },
+          "life:Damage": {
+            "amount": 10
+          },
           "life:Heal": {
             "amount": 1
           },
@@ -198,7 +202,10 @@
               "x": 0.07,
               "y": 0.08
             },
-            "direction": "#player:direction"
+            "direction": {
+              "x": 0.0,
+              "y": 0.0
+            }
           },
           "moving:Position": {
             "x": 0.5,
@@ -225,6 +232,9 @@
           "life:Team": {
             "name": "test"
           },
+          "life:Damage": {
+            "amount": 0
+          },
           "moving:Velocity": {
             "speed": {
               "x": 0.005,
@@ -234,10 +244,6 @@
               "x": 0.0,
               "y": 0.0
             }
-          },
-          "target:Follower": {},
-          "collision:InteractionZone": {
-            "radius": 0.9
           }
         },
         {
@@ -264,6 +270,7 @@
             "text": "#game_text:buffer"
           }
         },
+        
         {
           "actions:ActionTrigger": {
             "trigger": {
@@ -336,22 +343,24 @@
           }
         },
         {
-          "moving:Position" : {
-            "x": 0.0,
-            "y": 0.0
+          "moving:Position": {
+            "pos": {
+              "x": 0.0,
+              "y": 0.0
+            }
           },
           "sfml:Camera": {
             "size": {
-              "width": "50.0%",
-              "height": "50.0%"
-            },
-            "target": {
               "width": "100.0%",
               "height": "100.0%"
             },
+            "target": {
+              "x": "50.0%",
+              "y": "50.0%"
+            },
             "speed": {
-              "width": 3.8,
-              "height": 3.8
+              "x": 0.01,
+              "y": 0.01
             }
           }
         }
