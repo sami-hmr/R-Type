@@ -57,7 +57,6 @@ void Server::send_comp()
     while (!this->_components_to_create.get().queue.empty()) {
       auto const& comp = this->_components_to_create.get().queue.front();
       for (auto const& it : this->_clients) {
-          std::cout << "client state: " << (int)ClientState::CONNECTED << std::endl;
         if (it.state != ClientState::CONNECTED) {
           continue;
         }

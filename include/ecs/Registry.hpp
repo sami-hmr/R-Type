@@ -76,7 +76,7 @@ public:
         { comp.insert_at(e, bytes); });
     this->_comp_entity_converters.insert_or_assign(
         string_id,
-        [](ByteArray const& b, TwoWayMap<Entity, Entity> const& map)
+        [](ByteArray const& b, std::unordered_map<Entity, Entity> const& map)
         { return Component(b).change_entity(map).to_bytes(); });
     this->_index_getter.insert(ti, string_id);
     return comp;
@@ -327,7 +327,7 @@ public:
     if (!_event_entity_converters.contains(name)) {
       _event_entity_converters.insert_or_assign(
           name,
-          [](ByteArray const& b, TwoWayMap<Entity, Entity> const& map)
+          [](ByteArray const& b, std::unordered_map<Entity, Entity> const& map)
           { return EventType(b).change_entity(map).to_bytes(); });
     }
 
@@ -521,16 +521,16 @@ public:
 
   ByteArray convert_event_entity(std::string const& id,
                                  ByteArray const& event,
-                                 TwoWayMap<Entity, Entity> const& map)
+                                 std::unordered_map<Entity, Entity> const& map)
   {
     return this->_event_entity_converters.at(id)(event, map);
   }
 
   ByteArray convert_comp_entity(std::string const& id,
                                 ByteArray const& comp,
-                                TwoWayMap<Entity, Entity> const& map)
+                                 std::unordered_map<Entity, Entity> const& map)
   {
-    return this->_event_entity_converters.at(id)(comp, map);
+    return this->_comp_entity_converters.at(id)(comp, map);
   }
 
   template<event Event>
@@ -609,7 +609,7 @@ private:
 
   std::unordered_map<std::string,
                      std::function<ByteArray(ByteArray const&,
-                                             TwoWayMap<Entity, Entity> const&)>>
+                                             std::unordered_map<Entity, Entity> const&)>>
       _event_entity_converters;
 
   std::unordered_map<std::string, std::function<void(ByteArray const&)>>
@@ -617,7 +617,7 @@ private:
 
   std::unordered_map<std::string,
                      std::function<ByteArray(ByteArray const&,
-                                             TwoWayMap<Entity, Entity> const&)>>
+                                             std::unordered_map<Entity, Entity> const&)>>
       _comp_entity_converters;
 
   std::unordered_map<std::type_index, std::any> _event_handlers;

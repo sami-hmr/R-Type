@@ -6,7 +6,7 @@
  *
  * @example
  * DEFINE_CHANGE_ENTITY(
- *   result.source = map.at_second(source);
+ *   result.source = map.at(source);
  *   result.candidates = MAP_ENTITY_VECTOR(candidates);
  * )
  */
@@ -17,7 +17,7 @@
     std::transform(mapped_vec.begin(), \
                    mapped_vec.end(), \
                    mapped_vec.begin(), \
-                   [&](auto const& e) { return map.at_second(e); }); \
+                   [&](auto const& e) { return map.at(e); }); \
     return mapped_vec; \
   }()
 
@@ -38,13 +38,13 @@
  *   int value;
  *
  *   DEFINE_CHANGE_ENTITY(
- *     result.actor = map.at_second(actor);
- *     result.target = map.at_second(target);
+ *     result.actor = map.at(actor);
+ *     result.target = map.at(target);
  *   )
  * };
  */
 #define CHANGE_ENTITY(...) \
-  auto change_entity(TwoWayMap<Registry::Entity, Registry::Entity> const& map) \
+  auto change_entity(std::unordered_map<Registry::Entity, Registry::Entity> const& map) \
       const \
   { \
     try { \
@@ -57,7 +57,7 @@
   }
 
 #define CHANGE_ENTITY_DEFAULT \
-  auto change_entity(TwoWayMap<std::size_t, std::size_t> const&) \
+  auto change_entity(std::unordered_map<std::size_t, std::size_t> const&) \
       const \
   { \
     return *this; \

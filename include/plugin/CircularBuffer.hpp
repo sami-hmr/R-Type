@@ -26,15 +26,32 @@ public:
                           asio::ip::udp::endpoint& sender,
                           std::error_code& ec)
   {
-    // asio::io_context io;
-    // asio::basic_stream_socket<asio::ip::udp> test(io);
-
     std::size_t read_size =
-        socket.receive_from(asio::buffer(this->_array.data() + this->_write,
-                                         this->get_write_size()),
-                            sender,
-                            0,
-                            ec);
+        socket.receive_from(asio::buffer(_temporary_buffer), sender, 0, ec);
+    if (ec || read_size == 0) {
+      return 0;
+    }
+
+    std::size_t available_space = this->get_available_write_space();
+    if (read_size > available_space) {
+      ec = std::make_error_code(std::errc::no_buffer_space);
+      return 0;
+    }
+
+    std::size_t space_to_end = Size - this->_write;
+
+    if (read_size <= space_to_end) {
+      std::memcpy(this->_array.data() + this->_write,
+                  _temporary_buffer.data(),
+                  read_size);
+    } else {
+      std::memcpy(this->_array.data() + this->_write,
+                  _temporary_buffer.data(),
+                  space_to_end);
+      std::memcpy(this->_array.data(),
+                  _temporary_buffer.data() + space_to_end,
+                  read_size - space_to_end);
+    }
 
     this->_write = (this->_write + read_size) % Size;
     return read_size;
@@ -55,30 +72,42 @@ public:
     if (needle == tmp.end()) {
       return std::nullopt;
     }
-    this->_read = (this->_read + std::distance(tmp.begin(), needle) + eof.size()) % Size;
+    this->_read =
+        (this->_read + std::distance(tmp.begin(), needle) + eof.size()) % Size;
     tmp.erase(needle, tmp.end());
     return tmp;
   }
 
 private:
+  std::size_t get_available_write_space() const
+  {
+    if (_write >= _read) {
+      // Space: from _write to end, plus from start to _read-1
+      return (Size - 1) - (_write - _read);
+    }
+    // Space: from _write to _read-1
+    return _read - _write - 1;
+  }
+
   std::size_t get_write_size() const
   {
-      if (_write >= _read) {
-          return Size - 1 - _write;
-      }
-      // When write has wrapped: space is from _write to _read-1
-      return _read - _write - 1;
+    if (_write >= _read) {
+      return Size - 1 - _write;
+    }
+    // When write has wrapped: space is from _write to _read-1
+    return _read - _write - 1;
   }
 
   std::size_t get_available_size()
   {
-      if (_write >= _read) {
-          return _write - _read;
-      }
-      return Size - (_read - _write);
+    if (_write >= _read) {
+      return _write - _read;
+    }
+    return Size - (_read - _write);
   }
 
-  std::array<Byte, Size> _array;
+  std::array<Byte, 65536> _temporary_buffer {};
+  std::array<Byte, Size> _array {};
   std::size_t _read = 0;
   std::size_t _write = 0;
 };

@@ -13,7 +13,7 @@ struct InteractionZoneEvent
   double radius;
   std::vector<Registry::Entity> candidates;
 
-  CHANGE_ENTITY(result.source = map.at_second(source);
+  CHANGE_ENTITY(result.source = map.at(source);
                 result.candidates = MAP_ENTITY_VECTOR(candidates);)
 
   InteractionZoneEvent(Registry::Entity src,

@@ -61,9 +61,12 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
         if (!this->_running) {
           return;
         }
-        EventBuilder true_e(c.event_id,
-                            this->_registry.get().convert_event_entity(
-                                c.event_id, c.data, this->_server_indexes));
+        EventBuilder true_e(
+            c.event_id,
+            this->_registry.get().convert_event_entity(
+                c.event_id,
+                c.data,
+                this->_server_indexes.get_second()));  // CLIENT -> SERVER
         this->_event_to_server.lock.lock();
         this->_event_to_server.queue.push(std::move(true_e));
         this->_event_to_server.lock.unlock();
@@ -81,19 +84,20 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
           std::size_t index = std::get<0>(*zipper.begin());
 
           this->_server_indexes.insert(server.server_index, index);
-          return;
-        }
-        LOGGER("client",
+
+        } else {
+          LOGGER("client",
                  LogLevel::INFO,
                  "no bindings detected for client, default applicated (z q s "
                  "d, les bindings de thresh tu connais ? (le joueur de quake "
                  "pas le main de baptiste ahah mdr))");
 
-        std::size_t new_entity = this->_registry.get().spawn_entity();
+          std::size_t new_entity = this->_registry.get().spawn_entity();
 
-        this->_registry.get().emplace_component<Controllable>(
-            new_entity, 'Z', 'S', 'Q', 'D');
-        this->_server_indexes.insert(server.server_index, new_entity);
+          this->_registry.get().emplace_component<Controllable>(
+              new_entity, 'Z', 'S', 'Q', 'D');
+          this->_server_indexes.insert(server.server_index, new_entity);
+        }
         this->_registry.get().emit<EventBuilder>(
             "PlayerCreated", PlayerCreated(server.server_index).to_bytes());
       });
@@ -104,15 +108,26 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
         if (!this->_running) {
           return;
         }
+        if (!this->_running) {
+          return;
+        }
         this->_component_queue.lock.lock();
         while (!this->_component_queue.queue.empty()) {
           auto& server_comp = this->_component_queue.queue.front();
+
           if (!this->_server_indexes.contains_first(server_comp.entity)) {
             auto new_entity = r.spawn_entity();
             this->_server_indexes.insert(server_comp.entity, new_entity);
           }
+
           auto true_entity = this->_server_indexes.at_first(server_comp.entity);
-          r.emplace_component(true_entity, server_comp.id, server_comp.data);
+          r.emplace_component(true_entity,
+                              server_comp.id,
+                              this->_registry.get().convert_comp_entity(
+                                  server_comp.id,
+                                  server_comp.data,
+                                  this->_server_indexes.get_first()));
+
           this->_component_queue.queue.pop();
         }
         this->_component_queue.lock.unlock();
@@ -124,7 +139,11 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
         this->_event_from_server.lock.lock();
         while (!this->_event_from_server.queue.empty()) {
           auto& e = this->_event_from_server.queue.front();
-          r.emit(e.event_id, e.data);
+          r.emit(e.event_id,
+                 this->_registry.get().convert_event_entity(
+                     e.event_id,
+                     e.data,
+                     this->_server_indexes.get_first()));  // SERVER -> CLIENT
           this->_event_from_server.queue.pop();
         }
         this->_event_from_server.lock.unlock();

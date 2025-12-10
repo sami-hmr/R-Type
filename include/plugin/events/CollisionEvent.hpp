@@ -23,7 +23,7 @@ struct CollisionEvent
   Registry::Entity a;
   Registry::Entity b;
 
-  CHANGE_ENTITY(result.a = map.at_second(a); result.b = map.at_second(b);)
+  CHANGE_ENTITY(result.a = map.at(a); result.b = map.at(b);)
 
   CollisionEvent(Registry::Entity c, Registry::Entity d)
       : a(c)
@@ -55,7 +55,7 @@ struct UpdateVelocity
   double x_axis;
   double y_axis;
 
-  CHANGE_ENTITY(result.entity = map.at_second(entity))
+  CHANGE_ENTITY(result.entity = map.at(entity))
 
   UpdateVelocity(std::size_t e, double x, double y)
       : entity(e)

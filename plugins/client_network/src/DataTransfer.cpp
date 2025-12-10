@@ -17,18 +17,18 @@ void Client::transmit_event(EventBuilder&& to_transmit)
   this->_event_to_exec.get().lock.unlock();
 }
 
+void Client::send_evt()
+{
+  while (_running.get()) {
+    this->_semaphore.get().acquire();
+    this->_events_to_transmit.get().lock.lock();
+    auto& queue = this->_events_to_transmit.get().queue;
 
-void Client::send_evt() {
-    while (_running.get()) {
-        this->_semaphore.get().acquire();
-        this->_events_to_transmit.get().lock.lock();
-        auto &queue = this->_events_to_transmit.get().queue;
-
-        while (!queue.empty()) {
-            auto data = type_to_byte<Byte>(SENDEVENT) + queue.front().to_bytes();
-            this->send_connected(data);
-            queue.pop();
-        }
-        this->_events_to_transmit.get().lock.unlock();
+    while (!queue.empty()) {
+      auto data = type_to_byte<Byte>(SENDEVENT) + queue.front().to_bytes();
+      this->send_connected(data);
+      queue.pop();
     }
+    this->_events_to_transmit.get().lock.unlock();
+  }
 }
