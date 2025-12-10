@@ -1,139 +1,158 @@
 # R-Type Multiplayer Co-op UDP Protocol Specification
 
+The protocol is in big-endian.
+
+Table of types:
+
+- string: A byte (8 bits) list that start
+with the nb of elements (32-bit signed integer)
+- list<type>: 32 bits (4 bytes) signed integer corresponding to the number of <type> to be interpreted
+
+
 ## 1. Connectionless Packets
 
-Connectionless packets are identified by a magic sequence of 0x67676767 at the start.
+Connectionless packets are identified by a magic sequence of 0x67676767 at the end.
+[MAGIC_SEQUENCE] is a 4 bytes integer changing for each version that guarantee integrity of tha package.
 
 ### 1.1 Connectionless Packet Structure
 
-<!-- Magic=0x67676767:32;ASCII_Command:variable -->
-```
- 0                   1                   2                   3
- 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| Magic=0x67676767:32                                           |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|                                                               |
-+ ASCII_Command:variable                                        +
-|                                                               |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-```
+<!-- Magic=0x67676767:32;Command:32 -->
+
+Magic=0x67676767:32
+Command:variable
+End of Packet:8
 
 ### 1.2 Client-to-Server Connectionless Commands
 
 All connectionless commands follow the format:
-```
-0x67676767 "<command>;<arg1>;<arg2>;...;\0"
-```
-
-Arguments are ASCII strings separated by semicolons, terminated by a null byte.
-
-**getinfo**: Request basic server information
 
 ```
-0x67676767 "getinfo\0"
+[MAGIC_SEQUENCE] <command> <arg1> <arg2> ... 0x67676767
+```
+
+Arguments are sent in binary format.
+
+**getinfo**: Request basic server information (=> 0x01 : 8 bits)
+
+```
+[MAGIC_SEQUENCE] 0x01 0x67676767
 ```
 
 Server responds with infoResponse.
 
-**getstatus**: Request detailed server status including connected players
+**getstatus**: Request detailed server status including connected players (=> 0x02 : 8 bits)
 
 ```
-0x67676767 "getstatus\0"
+[MAGIC_SEQUENCE] 0x02 0x67676767
 ```
 
 Server responds with statusResponse.
 
-**getchallenge**: Request a challenge token for connection authentication
+**getchallenge**: Request a challenge token for connection authentication (=> 0x03 : 8 bits)
 
 ```
-0x67676767 "getchallenge\0"
+[MAGIC_SEQUENCE] 0x03 0x67676767
 ```
 
-Server responds with challengeResponse containing a 32-bit challenge number.
+Server responds with challengeResponse containing a 32-bits challenge number.
 
-**connect**: Initiate connection with challenge response and player information
+**connect**: Initiate connection with challenge response and player information (=> 0x04 : 8 bits)
 
 ```
-0x67676767 "connect;<protocol_version>;<challenge>;<player_name>\0"
+[MAGIC_SEQUENCE] 0x04 <challenge> <player_name> 0x67676767
 ```
 
 Arguments:
-- protocol_version: Integer (current version is 1)
-- challenge: 32-bit integer as ASCII decimal string (from challengeResponse)
-- player_name: ASCII string (max 32 characters)
 
-Example: `0x67676767 "connect;1;2847561;PlayerOne\0"`
+- challenge: 32-bits integer (from challengeResponse) (4-bytes)
+- player_name: string (cf. Table of types | Beginning of the documentation)
+
+Example: `[MAGIC_SEQUENCE] 0x04 2847561 toto 0x67676767`
 
 Server responds with connectResponse if successful.
 
 ### 1.3 Server-to-Client Connectionless Responses
 
-All connectionless responses follow the format:
-```
-0x67676767 "<command>;<arg1>;<arg2>;...;\0"
-```
-
-Arguments are ASCII strings separated by semicolons, terminated by a null byte.
-
-**infoResponse**: Basic server information response
+All connectionless commands follow the format:
 
 ```
-0x67676767 "infoResponse;<key1>;<value1>;<key2>;<value2>;...\0"
+[MAGIC_SEQUENCE] <command> <arg1> <arg2> ... 0x67676767
+```
+
+Arguments are sent in binary format.
+
+**infoResponse**: Basic server information response (=> 0x05 : 8 bits)
+
+```
+[MAGIC_SEQUENCE] 0x05 <value1> <value2>... 0x67676767
 ```
 
 Required keys:
-- hostname: Server display name (max 64 chars)
-- mapname: Current map identifier (max 32 chars)
-- gametype: Game type string (always "coop")
-- maxplayers: Maximum player count (integer 2-4 as ASCII)
-- protocol: Protocol version (integer 1 as ASCII)
 
-Example: `0x67676767 "infoResponse;hostname;MyServer;mapname;level1;gametype;coop;maxplayers;4;protocol;1\0"`
+- game: Game name : string
+- placesleft: Number of places left for the clients : 32-bits signed integer (4 bytes)
 
-**statusResponse**: Detailed status response with player list
+Example: `[MAGIC_SEQUENCE] 0x05 game placesleft 0x67676767`
+
+**statusResponse**: Detailed status response with player list (=> 0x06 : 8 bits)
 
 ```
-0x67676767 "statusResponse;<server_info>;<player1_info>;<player2_info>;...\0"
+[MAGIC_SEQUENCE] 0x06 <server_info> <player1_info> <player2_info> ... 0x67676767
 ```
 
 Format:
-- server_info: Same key-value pairs as infoResponse (semicolon-separated)
-- player_info entries: Each player as "score;ping;name"
 
-Player info format:
-- score: Integer score as ASCII
-- ping: Integer ping in milliseconds as ASCII
-- name: Player name (max 32 chars)
+- server_info: Same key-value pairs as infoResponse
+- player_info entries: list<player_info>
 
-Example: `0x67676767 "statusResponse;hostname;MyServer;maxplayers;4;12500;45;PlayerOne;8200;38;PlayerTwo\0"`
+player_info format:
 
-**challengeResponse**: Challenge token for connection authentication
+- name: Player name (max 256-bits) (= 32-bytes)
+- ping: Ping in milliseconds (32-bits integer) (= 4-bytes)
+
+Example: `[MAGIC_SEQUENCE] 0x06 game placesleft player1 40 player2 300 0x67676767`
+
+**challengeResponse**: Challenge token for connection authentication (=> 0x07 : 8 bits)
 
 ```
-0x67676767 "challengeResponse;<challenge_number>\0"
+[MAGIC_SEQUENCE] 0x07 <challenge_number>
+```
+
+Argument:
+
+- challenge_number: 32-bits unsigned integer
+
+The challenge number is a cryptographically random value generated by the server. Valid range: 1 to 4 294 967 295.
+
+Example: `[MAGIC_SEQUENCE] 0x07 2847561 0x67676767`
+
+**connectResponse**: Connection acknowledgment with client ID (=> 0x08 : 8 bits)
+
+```
+[MAGIC_SEQUENCE] 0x08 <client_id> <server_id> 0x67676767
 ```
 
 Arguments:
-- challenge_number: 32-bit unsigned integer as ASCII decimal string
 
-The challenge number is a cryptographically random value generated by the server. Valid range: 1 to 4294967295.
+- client_id: Player slot assigned to this client (8-bits integer 0-3)
+- server_id: Unique server instance identifier (32-bits unsigned integer)
 
-Example: `0x67676767 "challengeResponse;2847561\0"`
-
-**connectResponse**: Connection acknowledgment with client ID
-
-```
-0x67676767 "connectResponse;<client_id>;<server_id>\0"
-```
-
-Arguments:
-- client_id: Integer 0-3 as ASCII (player slot assigned to this client)
-- server_id: 32-bit unsigned integer as ASCII decimal (unique server instance identifier)
 
 After receiving this, the client transitions to connected mode and expects srv_gamestate.
 
-Example: `0x67676767 "connectResponse;0;19283746\0"`
+Example: `[MAGIC_SEQUENCE] 0x08 0 19283746 0x67676767`
+
+**disconnectResponse**: Refusal of client's connection (=> 0x09 : 8 bits)
+
+```
+[MAGIC_SEQUENCE] 0x09 <error_message>
+```
+
+Argument:
+
+- error_message: Reason why the server refused to let the client connect (256-bits) (32-bytes)
+
+Example: `[MAGIC_SEQUENCE] 0x09 "protocol version mismatched" 0x67676767`
 
 ## 2. Connected Packets
 
@@ -162,7 +181,6 @@ For `srv_command` and `cli_command` messages:
   - Retransmit every 200ms if not acknowledged
   - Maximum 5 retries (1 second total timeout)
   - After 5 failed retries, consider client disconnected
-  
 - **Client-to-Server Commands:**
   - Retransmit every 200ms if not acknowledged
   - Maximum 10 retries (2 seconds total timeout)
@@ -175,6 +193,7 @@ For `srv_command` and `cli_command` messages:
   - Multiple rapid sends increase delivery probability
 
 **Why 200ms:**
+
 - Good balance between responsiveness and network efficiency
 - Works well even with 100-150ms network latency
 - Not too fast (avoids spam), not too slow (user notices delay)
@@ -204,134 +223,65 @@ Time  Client                          Server
 
 ### 2.1 Server-to-Client Packet Structure
 
-All server-to-client packets begin with a 32-bit sequence number in little-endian format. If this sequence equals 0x67676767, the packet is connectionless (see section 1). Otherwise, the packet follows the connected format below.
+All server-to-client packets begin with a 32-bits sequence number in little-endian format. If this sequence equals 0x67676767, the packet is connectionless (see section 1). Otherwise, the packet follows the connected format below.
 
 PACKETS are always smaller than 2048 (eof and header included) otherwise the package is considered fragmented, another package with the same sequence will be sent until end of content byte is 1.
 
 **Header:**
-<!-- Sequence_Number:32;Reliable_Acknowledge:32 -->
 
 Fields:
+
 - Sequence Number (32 bits): Incrementing packet sequence (starts at 1, wraps at 2^32)
 - Reliable Acknowledge (32 bits): Highest cli_command sequence number received from this client
 - End of content (8 bits): (0/1), cf previous warning about packet size
 
 The Reliable Acknowledge field tells the client which commands have been successfully received. The client can stop retransmitting any cli_command with sequence <= Reliable Acknowledge.
 
-Following the header, the packet contains one or more server operation messages, each terminated by a srv_end operation (opcode 0).
+Following the header, the packet contains one server operation messages.
 
 **Server Operations:**
 
-##### **srv_gamestate (opcode 1):**
+Server must send the first srv_snapshot immediately after connectResponse.
 
-Transmits the complete initial game state to a newly connected client. This is the first message sent after connectResponse and contains all information needed to initialize the game.
+##### **srv_event (opcode 1):**
 
-<!-- Opcode=1:8;Server_Time:32;Client_Number:8;Gamestate_Operations:variable -->
+Sends an event from server to client.
 Fields:
+
 - Opcode=1:8
-- Server_Time:32
-- Client_Number:8
-- Gamestate_Operations
+- EventString:string
+- EventData:byte-list
 
-The Gamestate Operations section contains:
-1. Multiple gs_configstring operations (see below) to set up configuration
-2. Multiple gs_baseline operations (see below) to define initial entity states
-3. Terminated by **gs_end** (8 bits: opcode 0)
+##### **srv_snapshot (opcode 2):**
 
-Server must send srv_gamestate exactly once per client connection immediately after connectResponse.
+Transmits a game state snapshot entity updates. Snapshots are sent at regular intervals.
+They contain multiple gs_... until the gs_oef
 
-###### **gs_configstring (opcode 1):**
-
-Transmits a single configuration string as part of gamestate initialization.
-
-<!-- Opcode=1:8;Config_Index:8;Config_Value:variable -->
 Fields:
-- Opcode=1:8
-- Config_Index:8
-- Config_Value:variable
 
-Common config indices:
-- 0: Server name
-- 1: Map name
-- 2: Game type ("coop")
-- 3: Time limit
-- 4: Difficulty level
-- 8-11: Player names for slots 0-3
-
-The server sends multiple gs_configstring operations during gamestate initialization to set all necessary configuration values.
-
-###### **gs_baseline (opcode 2):**
-
-Defines the initial baseline state for an entity. Baselines are used as reference points for delta compression in later snapshots.
-
-<!-- Opcode=2:8;Entity_Number:32;component_string_id:variable;component_size:32;component_data:component_size -->
-Fields:
 - Opcode=2:8
-- Entity_Number:32
-- Components of said entity in this format:
-- - component_string_id:variable
-- - component_size:32
-- - component_data:component_size
-
-Baselines are sent for all entities that exist when the client connects.
-
-##### **srv_command (opcode 2):**
-
-Sends a command from server to client. Commands are acknowledged and retransmitted if lost.
-
-<!-- Opcode=2:8;Command_Sequence:32;Command:variable -->
-Fields:
-- Opcode=2:8
-- Command_Sequence:32
-- Command:variable
-
-Command format: `<command_name>;<arg1>;<arg2>;...`
-
-Arguments are separated by semicolons.
-
-Standard server commands:
-
-**print**: Display message to client
-- Format: `print;<message_text>`
-- Example: `print;Player PlayerTwo has joined`
-
-**chat**: Chat message from another player
-- Format: `chat;<player_id>;<message_text>`
-- Example: `chat;1;Hello everyone!`
-- player_id: Integer 0-3 identifying sender
-
-##### **srv_snapshot (opcode 3):**
-
-Transmits a game state snapshot entity updates. Snapshots are sent at regular intervals (20-30 Hz).
-
-<!-- Opcode=3:8;Server_Time:32;Delta_Frame:8 -->
-Fields:
-- Opcode=3:8
 - Server_Time:32
 - Delta_Frame:8
 
-<!-- Entity_Number:32 -->
 **gs_entity_remove** (opcode 1)
+
 - Entity_Number:32
 
-<!-- Entity_Number:32;component_string_id:variable;component_size:32;component_data:component_size -->
-**gs_entity_update** (opcode 2)
+**gs_entity_update/init** (opcode 2)
+
 - Entity_Number:32
 - Components of said entity in this format:
 - - component_string_id:variable
-- - component_size:32
 - - component_data:component_size
 
-**gs_configstring** (opcode 3)
-cf config string in baseline
-
-Must end with **gs_end** (8 bits: opcode 0)
+Must end with **gs_oef** (8 bits: 0x69696969)
 
 **Delta Compression:**
 
 When Delta Frame > 0, only components that have changed since the referenced snapshot are transmitted. The client must maintain a history of the last 32 snapshots to support delta decompression.
 
 If the client does not have the referenced snapshot (packet loss), it should:
+
 1. Request a full snapshot via cli_acknowledge with special flag
 2. Continue rendering using last known good state
 3. Extrapolate entity positions based on last known velocities
@@ -340,13 +290,13 @@ If the client does not have the referenced snapshot (packet loss), it should:
 
 Notifies client of disconnection with reason. After receiving this, the client should close the connection and return to the main menu.
 
-<!-- Opcode=4:8;Reason_Length:8;Reason:Reason_Length -->
 Fields:
+
 - Opcode=4:8
-- Reason_Length:8
-- Reason:Reason_Length
+- Reason:string
 
 Common disconnect reasons:
+
 - "Server shutting down": Normal server shutdown
 - "Kicked by admin": Player was kicked
 - "Timeout": Client stopped responding
@@ -356,47 +306,24 @@ Common disconnect reasons:
 
 The server should send srv_disconnect at least 3 times with 100ms intervals to ensure receipt, then close the socket. No acknowledgment is required - multiple rapid transmissions increase probability of delivery even with packet loss.
 
-##### **srv_end (opcode 0):**
+##### **srv_end (0x6767676767):**
 
 Marks the end of server operations in the packet. All server packets must end with this opcode.
 
-<!-- Opcode=0:8 -->
-```
- 0                   1                   2                   3
- 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| Opcode=0:8    |
-+-+-+-+-+-+-+-+-+
-```
-
 Fields:
-<!-- Opcode=0:8 -->
+
 - Opcode=0:8
 
 No additional data follows. The packet ends immediately after this opcode.
 
 ### 2.2 Client-to-Server Packet Structure
 
-All client-to-server packets begin with a 32-bit sequence number in little-endian format. If this sequence equals 0x67676767, the packet is connectionless (see section 1). Otherwise, the packet follows the connected format below.
+All client-to-server packets begin with a 32-bits sequence number in little-endian format. If this sequence equals 0x67676767, the packet is connectionless (see section 1). Otherwise, the packet follows the connected format below.
 
 **Header:**
-<!-- Sequence_Number:32;Server_ID:32;Server_Message_Sequence:32;Server_Command_Sequence:32 -->
-```
- 0                   1                   2                   3
- 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| Sequence_Number:32                                            |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| Server_ID:32                                                  |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| Server_Message_Sequence:32                                    |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| Server_Command_Sequence:32                                    |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-```
 
 Fields:
-<!-- Sequence_Number:32;Server_ID:32;Server_Message_Sequence:32;Server_Command_Sequence:32 -->
+
 - Sequence_Number:32
 - Server_ID:32
 - Server_Message_Sequence:32
@@ -410,43 +337,36 @@ Following the header, the packet contains one or more client operation messages,
 
 ##### **cli_command (opcode 1):**
 
+>[TODO]: Need to figure more specific commands the client could send
+
 Sends a reliable command from client to server. Commands are acknowledged via reliable_acknowledge field and retransmitted if lost.
 
-<!-- Opcode=1:8;Command_Sequence:32;Command:variable -->
-```
- 0                   1                   2                   3
- 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| Opcode=1:8    | Command_Sequence:32                           |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|                                                               |
-+ Command:variable                                              +
-|                                                               |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-```
-
 Fields:
+
 - Opcode=1:8
 - Command_Sequence:32
 - Command:variable
 
-Command format: `<command_name>;<arg1>;<arg2>;...`
+Command format: `<command_opcode>;<arg1>;<arg2>;...`
 
 Arguments are separated by semicolons.
 
 Standard client commands:
 
 **chat**: Send chat message
+
 - Format: `chat;<message_text>`
 - Example: `chat;Great teamwork!`
 - Max message length: 256 characters
 
 **disconnect**: Graceful disconnect request
+
 - Format: `disconnect`
 - No arguments
 - Server should respond with srv_disconnect acknowledgment
 
 Commands use the reliable acknowledgment mechanism:
+
 - Client tracks each command by its Command Sequence number
 - Client includes the highest received srv_command sequence in the Server Command Sequence field
 - Server sees this acknowledgment and stops retransmitting that command
@@ -457,40 +377,24 @@ Commands use the reliable acknowledgment mechanism:
 
 ##### **cli_move (opcode 2):**
 
+>[TOFIX]: not really sure what is the best way to process inputs yet
+
 Transmits player input commands. Multiple input samples can be included in a single packet for redundancy against packet loss.
-
-<!-- Opcode=2:8;Command_Count:8;Server_Time_Δ:8;Input_Mask:8;Input_Bits:variable -->
-```
- 0                   1                   2                   3
- 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| Opcode=2:8    | Command_Count:8                               |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+                               +
-| Input_Commands:variable                                       |
-|                                                               |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-```
-
 Fields:
+
 - Opcode=2:8
 - Command_Count:8
 
 Each input command in the sequence:
-<!-- Server_Time_Δ:8;Input_Mask:8;Input_Bits:variable -->
-```
- 0                   1                   2                   3
- 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| Server_Time_Δ:8 | Input_Mask:8  | Input_Bits:variable |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-```
 
 Fields:
-- Server_Time_Δ:8
+
+- Server*Time*Δ:8
 - Input_Mask:8
 - Input_Bits:variable
 
 Input mask bits (each corresponds to a 1-bit input flag if set):
+
 - Bit 0 (0x01): Input 1 (application-defined)
 - Bit 1 (0x02): Input 2 (application-defined)
 - Bit 2 (0x04): Input 3 (application-defined)
@@ -509,26 +413,19 @@ Clients should send the current input plus 2-3 previous inputs (Command Count = 
 
 Acknowledges receipt of a server snapshot. Used for reliability tracking and packet loss statistics.
 
-<!-- Opcode=3:8;Snapshot_Sequence:32 -->
-```
- 0                   1                   2                   3
- 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-| Opcode=3:8    | Snapshot_Sequence:32                          |
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-```
-
 Fields:
-<!-- Opcode=3:8;Snapshot_Sequence:32 -->
+
 - Opcode=3:8
 - Snapshot_Sequence:32
 
 Clients should send cli_acknowledge for every received snapshot to help server track:
+
 - Round-trip time (RTT) for lag compensation
 - Packet loss rate for adaptive quality adjustment
 - Client responsiveness for timeout detection
 
 Server uses acknowledgments to:
+
 - Calculate average RTT per client (exponential moving average)
 - Detect packet loss patterns
 - Adjust snapshot send rate if network conditions degrade
@@ -536,21 +433,12 @@ Server uses acknowledgments to:
 
 If client misses multiple consecutive snapshots (>5), it should send cli_acknowledge with sequence 0 to request a full snapshot (Delta Frame = 0) in the next transmission.
 
-##### **cli_end (opcode 0):**
+##### **cli_end (opcode 0x67676767):**
 
 Marks the end of client operations in the packet. All client packets must end with this opcode.
 
-<!-- Opcode=0:8 -->
-```
- 0                   1                   2                   3
- 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-|   Opcode=0    |
-+-+-+-+-+-+-+-+-+
-```
-
 Fields:
-<!-- Opcode=0:8 -->
-- Opcode (8 bits): Always 0
+
+- Opcode (8 bits): Always 0x67676767
 
 No additional data follows. The packet ends immediately after this opcode.

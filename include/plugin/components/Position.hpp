@@ -30,6 +30,9 @@ struct Position
   DEFAULT_SERIALIZE(type_to_byte(this->pos.x),
                     type_to_byte(this->pos.y),
                     type_to_byte(this->z))
+
+  CHANGE_ENTITY_DEFAULT
+
   Vector2D pos;
   int z;
   HOOKABLE(Position, HOOK(pos), HOOK(z))

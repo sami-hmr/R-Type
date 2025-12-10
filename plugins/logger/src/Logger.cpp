@@ -1,14 +1,18 @@
 #include <chrono>
 #include <format>
 #include <iostream>
-
 #include "Logger.hpp"
 
-#include "plugin/events/Events.hpp"
-#include "ecs/Registery.hpp"
-#include "plugin/EntityLoader.hpp"
+#include "plugin/events/LoggerEvent.hpp"
 
-Logger::Logger(Registery& r,
+#include "ecs/Registry.hpp"
+#include "plugin/EntityLoader.hpp"
+#include "plugin/events/LoggerEvent.hpp"
+#include "plugin/events/ShutdownEvent.hpp"
+#include "plugin/events/LoggerEvent.hpp"
+#include "plugin/events/ShutdownEvent.hpp"
+
+Logger::Logger(Registry& r,
                EntityLoader& l,
                std::optional<JsonObject> const& config)
     : APlugin(r, l, {}, {}, config)
@@ -25,15 +29,7 @@ Logger::Logger(Registery& r,
       if (config->contains("level")) {
         std::string level_str =
             std::get<std::string>(config->at("level").value);
-        if (level_str == "DEBUG") {
-          _min_log_level = LogLevel::DEBUG;
-        } else if (level_str == "INFO") {
-          _min_log_level = LogLevel::INFO;
-        } else if (level_str == "WARNING") {
-          _min_log_level = LogLevel::WARNING;
-        } else if (level_str == "ERROR") {
-          _min_log_level = LogLevel::ERROR;
-        }
+        _min_log_level = LOG_LEVEL_STR.at_first(level_str);
       }
     } catch (std::bad_variant_access const&) {
       std::cerr << "Error parsing logger config: unexpected value type\n";
@@ -42,12 +38,12 @@ Logger::Logger(Registery& r,
     }
   }
 
-  this->_registery.get().on<LogEvent>([this](const LogEvent& event)
+  this->_registry.get().on<LogEvent>("LogEvent", [this](const LogEvent& event)
                                       { this->on_log_event(event); });
-  this->_registery.get().on<ShutdownEvent>(
+  this->_registry.get().on<ShutdownEvent>("ShutdownEvent",
       [this](const ShutdownEvent& event)
       {
-        this->_registery.get().emit<LogEvent>(
+        this->_registry.get().emit<LogEvent>(
             "System",
             event.exit_code == 0 ? LogLevel::INFO : LogLevel::WARNING,
             std::format(
@@ -121,7 +117,7 @@ std::string Logger::level_to_string(LogLevel level)
 
 extern "C"
 {
-void* entry_point(Registery& r,
+void* entry_point(Registry& r,
                   EntityLoader& e,
                   std::optional<JsonObject> const& config)
 {

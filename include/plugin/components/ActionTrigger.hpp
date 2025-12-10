@@ -10,6 +10,7 @@
 #include "Json/JsonParser.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
+#include "plugin/events/EventMacros.hpp"
 
 struct ActionTrigger
 {
@@ -39,6 +40,8 @@ struct ActionTrigger
                            parseByte<bool>())
   DEFAULT_SERIALIZE(string_to_byte(this->event_trigger.first),
                     string_to_byte(this->event_trigger.first))
+
+  CHANGE_ENTITY_DEFAULT
 
   std::pair<std::string, JsonObject> event_trigger;
   std::vector<std::pair<std::string, JsonObject>> event_to_emit;

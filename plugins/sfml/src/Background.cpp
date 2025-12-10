@@ -8,16 +8,16 @@
 
 #include "Json/JsonParser.hpp"
 #include "SFMLRenderer.hpp"
-#include "ecs/Registery.hpp"
+#include "ecs/Registry.hpp"
 #include "ecs/Scenes.hpp"
 #include "ecs/zipper/Zipper.hpp"
 #include "libs/Vector2D.hpp"
 
-void SFMLRenderer::init_background(Registery::Entity const& entity,
+void SFMLRenderer::init_background(Registry::Entity const& entity,
                                    JsonObject const& obj)
 {
   auto const& textures_path = get_value<Background, JsonArray>(
-      this->_registery.get(), obj, entity, "layers");
+      this->_registry.get(), obj, entity, "layers");
 
   if (!textures_path) {
     std::cerr << "Error loading Background component: unexpected value type "
@@ -36,7 +36,7 @@ void SFMLRenderer::init_background(Registery::Entity const& entity,
       continue;
     }
     const auto& path_str = get_value<Background, std::string>(
-        this->_registery.get(), path_obj, entity, "path");
+        this->_registry.get(), path_obj, entity, "path");
 
     if (path_str.has_value()) {
       std::cout << "Adding background layer: " << path_str.value() << "\n";
@@ -46,7 +46,7 @@ void SFMLRenderer::init_background(Registery::Entity const& entity,
   Background::RenderType render_type = Background::RenderType::NOTHING;
 
   auto const& render_type_str = get_value<Background, std::string>(
-      this->_registery.get(), obj, entity, "render_type");
+      this->_registry.get(), obj, entity, "render_type");
   if (render_type_str.has_value()) {
     if (render_type_map.contains(render_type_str.value())) {
       render_type = render_type_map.at(render_type_str.value());
@@ -58,15 +58,15 @@ void SFMLRenderer::init_background(Registery::Entity const& entity,
   Parallax parallax;
   const std::optional<JsonObject>& parallax_obj =
       get_value<Background, JsonObject>(
-          this->_registery.get(), obj, entity, "parallax");
+          this->_registry.get(), obj, entity, "parallax");
 
   if (parallax_obj.has_value()) {
     const auto& active = get_value<Background, bool>(
-        this->_registery.get(), parallax_obj.value(), entity, "active");
+        this->_registry.get(), parallax_obj.value(), entity, "active");
     const auto& speed = get_value<Background, Vector2D>(
-        this->_registery, parallax_obj.value(), entity, "speed");
+        this->_registry, parallax_obj.value(), entity, "speed");
     const auto& framerate = get_value<Background, double>(
-        this->_registery.get(), parallax_obj.value(), entity, "framerate");
+        this->_registry.get(), parallax_obj.value(), entity, "framerate");
 
     if (active.has_value() && framerate.has_value() && speed.has_value()) {
       parallax.speed = Vector2D(speed.value());
@@ -77,11 +77,11 @@ void SFMLRenderer::init_background(Registery::Entity const& entity,
                    "value, using default (inactive)\n";
     }
   }
-  this->_registery.get().emplace_component<Background>(
+  this->_registry.get().emplace_component<Background>(
       entity, Background(paths, render_type, parallax));
 }
 
-void SFMLRenderer::background_system(Registery& r,
+void SFMLRenderer::background_system(Registry& r,
                                      const SparseArray<Scene>& scenes,
                                      const SparseArray<Drawable>& drawables,
                                      SparseArray<Background>& backgrounds)

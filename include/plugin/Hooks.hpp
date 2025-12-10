@@ -10,24 +10,8 @@
 #include <variant>
 
 #include "Json/JsonParser.hpp"
-#include "ecs/Registery.hpp"
+#include "ecs/Registry.hpp"
 
-#define HOOK_CUSTOM(key, var) \
-  {#key, \
-   [](Component& self) -> std::any \
-   { return std::reference_wrapper(self.var); }}
-
-#define HOOK(var) HOOK_CUSTOM(var, var)
-
-#define HOOKABLE(type, ...) \
-  using Component = type; \
-  static const auto& hook_map() \
-  { \
-    static const std::unordered_map<std::string, \
-                                    std::function<std::any(type&)>> \
-        map {__VA_ARGS__}; \
-    return map; \
-  }
 
 template<typename T>
 struct is_in_json_variant
@@ -44,7 +28,7 @@ template<typename T>
 inline constexpr bool is_in_json_variant_v = is_in_json_variant<T>::value;
 
 template<typename T>
-std::optional<std::reference_wrapper<const T>> get_ref(Registery& r,
+std::optional<std::reference_wrapper<const T>> get_ref(Registry& r,
                                                        JsonObject const& object,
                                                        std::string const& key)
 {
@@ -93,7 +77,7 @@ std::optional<std::reference_wrapper<const T>> get_ref(Registery& r,
  * accessible)
  */
 template<typename T, typename... Args>
-std::optional<T> get_value_copy(Registery& r,
+std::optional<T> get_value_copy(Registry& r,
                                 JsonObject const& object,
                                 std::string const& key,
                                 Args&&... args)
@@ -120,9 +104,9 @@ std::optional<T> get_value_copy(Registery& r,
  * to avoid ownsership issues
  */
 template<typename ComponentType, typename T, typename... Args>
-std::optional<T> get_value(Registery& r,
+std::optional<T> get_value(Registry& r,
                            JsonObject const& object,
-                           Registery::Entity entity,
+                           Registry::Entity entity,
                            std::string const& field_name,
                            Args&&... args)
 {

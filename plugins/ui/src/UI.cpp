@@ -1,17 +1,16 @@
 #include "UI.hpp"
 
 #include "plugin/components/Input.hpp"
-#include "plugin/events/Events.hpp"
 
-UI::UI(Registery& r, EntityLoader& l, std::optional<JsonObject> const& config)
+UI::UI(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config)
     : APlugin(r, l, {}, {COMP_INIT(input, Input, init_input)}, config)
 {
-  _registery.get().on<KeyPressedEvent>([this](const KeyPressedEvent& event)
+  _registry.get().on<KeyPressedEvent>("KeyPressedEvent", [this](const KeyPressedEvent& event)
                                        { this->handle_key_pressed(event); });
-  _registery.get().register_component<Input>("input");
+  _registry.get().register_component<Input>("input");
 }
 
-void UI::init_input(Registery::Entity entity, const JsonVariant& config)
+void UI::init_input(Registry::Entity entity, const JsonVariant& config)
 {
   bool enabled = false;
   std::string buffer;
@@ -25,14 +24,14 @@ void UI::init_input(Registery::Entity entity, const JsonVariant& config)
       buffer = std::get<std::string>(obj.at("buffer").value);
     }
 
-    _registery.get().emplace_component<Input>(entity, Input(enabled, buffer));
+    _registry.get().emplace_component<Input>(entity, Input(enabled, buffer));
   } catch (std::bad_variant_access const&) {
   }
 }
 
 void UI::handle_key_pressed(const KeyPressedEvent& event)
 {
-  auto& inputs = _registery.get().get_components<Input>();
+  auto& inputs = _registry.get().get_components<Input>();
 
   for (auto& input : inputs) {
     if (!input.has_value()) {
@@ -59,7 +58,7 @@ void UI::handle_key_pressed(const KeyPressedEvent& event)
 
 extern "C"
 {
-void* entry_point(Registery& r,
+void* entry_point(Registry& r,
                   EntityLoader& l,
                   std::optional<JsonObject> const& config)
 {

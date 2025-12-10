@@ -6,6 +6,9 @@
 #include "ByteParser/ByteParser.hpp"
 #include "TwoWayMap.hpp"
 #include "plugin/Byte.hpp"
+#include "plugin/HookMacros.hpp"
+#include "plugin/events/EventMacros.hpp"
+
 enum class SceneState : std::uint8_t
 {
   ACTIVE,
@@ -29,6 +32,7 @@ struct Scene
   {
   }
 
+
   DEFAULT_BYTE_CONSTRUCTOR(
       Scene,
       ([](std::vector<char> name, SceneState state)
@@ -36,7 +40,11 @@ struct Scene
       parseByteArray(parseAnyChar()),
       parseByte<SceneState>())
   DEFAULT_SERIALIZE(string_to_byte(this->scene_name),
-                    type_to_byte((uint8_t)this->state))
+                    type_to_byte((std::uint8_t)this->state))
+
+  CHANGE_ENTITY_DEFAULT
+
+  HOOKABLE(Scene, HOOK(scene_name), HOOK(state))
 
   std::string scene_name;
   SceneState state;

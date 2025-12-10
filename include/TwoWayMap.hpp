@@ -22,13 +22,16 @@ public:
     this->_left.insert_or_assign(b, a);
   }
 
-  B const& at(A const& a) const { return _right.at(a); }
+  B const& at_first(A const& a) const { return _right.at(a); }
 
-  B& at(A const& a) { return _right.at(a); }
+  B& at_first(A const& a) { return _right.at(a); }
 
-  A const& at(B const& b) const { return _left.at(b); }
+  A const& at_second(B const& b) const { return _left.at(b); }
 
-  A& at(B const& b) { return _left.at(b); }
+  A& at_second(B const& b) { return _left.at(b); }
+
+  bool contains_first(A const &a) {return _right.contains(a);}
+  bool contains_second(B const &a) {return _left.contains(a);}
 
 private:
   std::unordered_map<A, B> _right;

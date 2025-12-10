@@ -5,7 +5,12 @@ set(LIB_NAME client_network)
 find_package(asio CONFIG REQUIRED)
 
 add_library(${LIB_NAME} SHARED
+    src/CommandParsing.cpp
     src/Network.cpp
+    src/Client.cpp
+    src/Connectionless.cpp
+    src/Connected.cpp
+    src/DataTransfer.cpp
 )
 
 target_compile_features(${LIB_NAME} PRIVATE cxx_std_23)
