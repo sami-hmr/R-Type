@@ -22,6 +22,8 @@ struct Team
       parseByteArray(parseAnyChar()))
   DEFAULT_SERIALIZE(string_to_byte(this->name))
 
+  CHANGE_ENTITY_DEFAULT
+
   std::string name;
 
   HOOKABLE(Team, HOOK(name))

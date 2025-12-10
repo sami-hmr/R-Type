@@ -1,8 +1,6 @@
 #pragma once
 
-#include <cstdint>
-#include <functional>
-#include <string>
+#include <semaphore>
 #include <thread>
 #include <unordered_map>
 #include <vector>
@@ -10,56 +8,30 @@
 #include <asio/io_context.hpp>
 #include <asio/ip/udp.hpp>
 
-#include "ClientConnection.hpp"
-#include "ecs/Registery.hpp"
+#include "NetworkShared.hpp"
+#include "TwoWayMap.hpp"
+#include "ecs/Registry.hpp"
 #include "plugin/APlugin.hpp"
+#include "ClientConnection.hpp"
 #include "plugin/EntityLoader.hpp"
-
-#define MAGIC_SEQUENCE 0x67676767
-
-enum class ConnectionState
-{
-  DISCONNECTED,
-  CHALLENGING,
-  CONNECTING,
-  CONNECTED
-};
 
 class NetworkClient : public APlugin
 {
-public:
-  NetworkClient(Registery& r, EntityLoader& l);
-  ~NetworkClient() override;
+  public:
+    NetworkClient(Registry& r, EntityLoader& l);
+    ~NetworkClient() override;
 
-private:
-  void connection_thread(ClientConnection const& c);
-  void receive_loop();
+  private:
+    void connection_thread(ClientConnection const& c);
 
-  void send_connectionless(const std::string& command);
-  void handle_connectionless_response(const std::string& response);
+    SharedQueue<ComponentBuilder> _component_queue;
+    SharedQueue<EventBuilder> _exec_event_queue;
 
-  void send_getchallenge();
-  void send_connect(uint32_t challenge, const std::string& player_name);
+    TwoWayMap<Registry::Entity, Registry::Entity> _server_indexes;
 
-  void handle_challenge_response(const std::vector<std::string>& args);
-  void handle_connect_response(const std::vector<std::string>& args);
-  void handle_disconnect_response(const std::vector<std::string>& args);
+    std::counting_semaphore<> _sem;
+    SharedQueue<EventBuilder> _event_queue;
+    std::thread _thread;
 
-  std::vector<std::string> parse_args(const std::string& response);
-
-  static const std::unordered_map<std::string,
-                                  void (NetworkClient::*)(
-                                      const std::vector<std::string>&)>
-      _command_table;
-
-  asio::io_context _io_c;
-  std::unique_ptr<asio::ip::udp::socket> _socket;
-  asio::ip::udp::endpoint _server_endpoint;
-  std::vector<std::thread> _threads;
-
-  ConnectionState _state = ConnectionState::DISCONNECTED;
-  uint8_t _client_id = 0;
-  uint32_t _server_id = 0;
-  std::string _player_name;
-  bool _running = false;
+    std::atomic<bool> _running = false;
 };

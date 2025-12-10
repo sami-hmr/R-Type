@@ -24,6 +24,7 @@ Checks: "*,\
   -cppcoreguidelines-avoid-const-or-ref-data-members,\
   -portability-avoid-pragma-once,\
   -cppcoreguidelines-owning-memory,\
+  -bugprone-easily-swappable-parameters,\
   -misc-non-private-member-variables-in-classes"
 WarningsAsErrors: ''
 CheckOptions:

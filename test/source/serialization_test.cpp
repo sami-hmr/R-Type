@@ -8,7 +8,7 @@
 #include "plugin/components/Team.hpp"
 #include "plugin/components/Text.hpp"
 #include "plugin/components/Velocity.hpp"
-#include "plugin/events/Events.hpp"
+#include "plugin/events/CliEvents.hpp"
 
 // ==================== Serialization Tests ====================
 
@@ -177,8 +177,8 @@ TEST_CASE("Serialization - Position to_bytes", "[serialization]")
   Position pos(10.5, 20.5);
   ByteArray bytes = pos.to_bytes();
 
-  // Should contain 2 doubles
-  REQUIRE(bytes.size() == 2 * sizeof(double));
+  // Should contain 2 doubles + 1 int (x, y, z)
+  REQUIRE(bytes.size() == 2 * sizeof(double) + sizeof(int));
 }
 
 TEST_CASE("Serialization - Position round-trip", "[serialization]")

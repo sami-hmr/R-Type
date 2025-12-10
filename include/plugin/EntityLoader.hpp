@@ -8,20 +8,21 @@
 #include "CustomException.hpp"
 #include "Json/JsonParser.hpp"
 #include "TwoWayMap.hpp"
-#include "ecs/Registery.hpp"
+#include "ecs/Registry.hpp"
 #include "plugin/IPlugin.hpp"
 #include "plugin/libLoaders/ILibLoader.hpp"
 
 class EntityLoader
 {
 public:
-  explicit EntityLoader(Registery& registery);
+  explicit EntityLoader(Registry& registry);
 
   void load(std::string const& directory);
 
   void load_file(std::string const& filepath);
 
-  std::optional<Registery::Entity> load_entity(JsonObject const& config);
+  std::optional<Registry::Entity> load_entity(JsonObject const& config);
+  void load_components(Registry::Entity e, JsonObject const& config);
 
   void load_plugin(std::string const& plugin,
                    std::optional<JsonObject> const& config = std::nullopt);
@@ -32,7 +33,7 @@ private:
 
   std::unordered_map<std::string, std::unique_ptr<LibLoader<IPlugin>>> _loaders;
   std::unordered_map<std::string, std::unique_ptr<IPlugin>> _plugins;
-  std::reference_wrapper<Registery> _registery;
+  std::reference_wrapper<Registry> _registry;
 };
 
 CUSTOM_EXCEPTION(BadComponentDefinition)

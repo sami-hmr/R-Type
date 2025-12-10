@@ -1,4 +1,6 @@
 #pragma once
+#include <functional>
+#include <optional>
 #include <string>
 #include <vector>
 
@@ -27,16 +29,23 @@ struct Text
                                  return Text(
                                      std::string(font_path.begin(),
                                                  font_path.end()),
-                                     Vector2D{x, y},
+                                     Vector2D {x, y},
                                      std::string(text.begin(), text.end()));
                                }),
-                           parseByteArray(parseAnyChar()), parseByte<double>(), parseByte<double>(), parseByteArray(parseAnyChar()))
-  DEFAULT_SERIALIZE(string_to_byte(this->font_path), type_to_byte(this->scale.x), type_to_byte(this->scale.y), string_to_byte(this->text))
+                           parseByteArray(parseAnyChar()),
+                           parseByte<double>(),
+                           parseByte<double>(),
+                           parseByteArray(parseAnyChar()))
+  DEFAULT_SERIALIZE(string_to_byte(this->font_path),
+                    type_to_byte(this->scale.x),
+                    type_to_byte(this->scale.y),
+                    string_to_byte(this->text))
+
+  CHANGE_ENTITY_DEFAULT
 
   std::string font_path;
   Vector2D scale;
   std::string text;
 
   HOOKABLE(Text, HOOK(font_path), HOOK(scale), HOOK(text))
-
 };

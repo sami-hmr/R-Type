@@ -8,49 +8,53 @@
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/components/Position.hpp"
-#include "plugin/events/Events.hpp"
+#include "plugin/events/CameraEvents.hpp"
 
-void SFMLRenderer::init_cam(Registery::Entity const entity,
+void SFMLRenderer::init_cam(Registry::Entity const &entity,
                             JsonObject const& obj)
 {
   Vector2D size(0.5, 0.5);
   Vector2D target(0.0, 0.0);
   Vector2D speed(0.1, 0.1);
 
-  if (obj.contains("size")) {
-    size = this->parse_vector2d(obj.at("size").value);
+  auto sizeopt = get_value<Camera, Vector2D>(this->_registry.get(), obj, entity, "size", "width", "height");
+  if (sizeopt.has_value()) {
+    size = sizeopt.value();
   } else {
     std::cerr
         << "Camera component missing size field, using default (50%, 50%)\n";
     return;
   }
-  if (obj.contains("target")) {
-    target = this->parse_vector2d(obj.at("target").value);
+  auto targetopt = get_value<Camera, Vector2D>(this->_registry.get(), obj, entity, "target");
+  if (targetopt.has_value()) {
+    target = targetopt.value();
   } else {
     std::cerr
         << "Camera component missing target field, using default (0, 0)\n";
     return;
   }
-  if (obj.contains("speed")) {
-    speed = this->parse_vector2d(obj.at("speed").value);
+  auto speedopt = get_value<Camera, Vector2D>(this->_registry.get(), obj, entity, "speed", "x", "y");
+  if (speedopt.has_value()) {
+    speed = speedopt.value();
   } else {
     std::cerr
         << "Camera component missing speed field, using default (10%, 15%)\n";
     return;
   }
-  _registery.get().emplace_component<Camera>(entity, size, target, speed);
+  _registry.get().emplace_component<Camera>(entity, size, target, speed);
 }
 
 void SFMLRenderer::cam_target_event(const CamAggroEvent& e)
 {
   Vector2D target = {0, 0};
-  SparseArray<Position> positions = _registery.get().get_components<Position>();
+  SparseArray<Position> positions = _registry.get().get_components<Position>();
 
-  if (!this->_registery.get().has_component<Position>(e.target)) {
+  if (!this->_registry.get().has_component<Position>(e.target)) {
     return;
   }
-  for (auto&& [pos, cam] : Zipper(_registery.get().get_components<Position>(),
-                                  _registery.get().get_components<Camera>()))
+  target = positions.at(e.target).value().pos;
+  for (auto&& [pos, cam] : Zipper(_registry.get().get_components<Position>(),
+                                  _registry.get().get_components<Camera>()))
   {
     cam.target = target;
     cam.moving = true;
@@ -62,8 +66,7 @@ static void move_cam(Position& pos, Camera& cam)
   if (cam.moving) {
     if (pos.pos.distanceTo(cam.target) <= cam.speed.length()) {
       pos.pos = cam.target;
-    } else
-    {
+    } else {
       pos.pos += (cam.target - pos.pos).normalize() * cam.speed;
     }
   }
@@ -100,7 +103,7 @@ static void shake_cam(Camera &cam) {
   }
 }
 
-void SFMLRenderer::camera_system(Registery& r,
+void SFMLRenderer::camera_system(Registry& r,
                                  SparseArray<Position>& positions,
                                  SparseArray<Camera>& cameras)
 {

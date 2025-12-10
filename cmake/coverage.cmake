@@ -11,8 +11,9 @@ set(
     --exclude "/usr/include/*"
     --exclude "/usr/lib/*"
     --exclude "*/c++/*"
+    --exclude "*vcpkg*"
     --rc lcov_branch_coverage=1
-    --ignore-errors gcov,gcov,source,source,graph,graph,unused,unused,empty,empty,version,version,mismatch,mismatch,inconsistent,inconsistent,unsupported,unsupported
+    --ignore-errors gcov,gcov,source,source,graph,graph,unused,unused,empty,empty,version,version,mismatch,mismatch,inconsistent,inconsistent,unsupported,unsupported,format,format
 )
 
 set(

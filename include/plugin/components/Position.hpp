@@ -10,12 +10,14 @@ struct Position
   Position() = default;
 
   Position(double x, double y, int z = 1)
-      : pos(x, y), z(z)
+      : pos(x, y)
+      , z(z)
   {
   }
 
   Position(Vector2D pos, int z = 1)
-      : pos(pos), z(z)
+      : pos(pos)
+      , z(z)
   {
   }
 
@@ -25,7 +27,12 @@ struct Position
                            parseByte<double>(),
                            parseByte<double>(),
                            parseByte<int>())
-  DEFAULT_SERIALIZE(type_to_byte(this->pos.x), type_to_byte(this->pos.y), type_to_byte(this->z))
+  DEFAULT_SERIALIZE(type_to_byte(this->pos.x),
+                    type_to_byte(this->pos.y),
+                    type_to_byte(this->z))
+
+  CHANGE_ENTITY_DEFAULT
+
   Vector2D pos;
   int z;
   HOOKABLE(Position, HOOK(pos), HOOK(z))

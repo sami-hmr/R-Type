@@ -4,6 +4,7 @@
 #include "ParserUtils.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
+#include "plugin/events/EventMacros.hpp"
 
 struct Temporal
 {
@@ -29,6 +30,8 @@ struct Temporal
   DEFAULT_SERIALIZE(type_to_byte(this->lifetime), type_to_byte(this->elapsed))
 
   HOOKABLE(Temporal, HOOK(lifetime))
+
+  CHANGE_ENTITY_DEFAULT
 
   double lifetime;
   double elapsed;

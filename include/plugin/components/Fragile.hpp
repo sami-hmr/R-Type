@@ -3,20 +3,15 @@
 #include "ParserUtils.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
+#include "plugin/events/EventMacros.hpp"
 
 struct Fragile
 {
   Fragile() = default;
 
-  Fragile(bool enabled)
-      : enabled(enabled)
-  {
-  }
-
   EMPTY_BYTE_CONSTRUCTOR(Fragile)
   DEFAULT_SERIALIZE(ByteArray {})
+  CHANGE_ENTITY_DEFAULT
 
-  bool enabled = true;
-
-  HOOKABLE(Fragile, HOOK(enabled))
+  HOOKABLE(Fragile)
 };

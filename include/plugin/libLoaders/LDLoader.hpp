@@ -8,7 +8,7 @@
 
 #include "ILibLoader.hpp"
 #include "Json/JsonParser.hpp"
-#include "ecs/Registery.hpp"
+#include "ecs/Registry.hpp"
 #include "plugin/IPlugin.hpp"
 #include "plugin/libLoaders/ILibLoader.hpp"
 
@@ -44,13 +44,13 @@ public:
 
   std::unique_ptr<Module> get_instance(
       const std::string& entry_point,
-      Registery& r,
+      Registry& r,
       EntityLoader& e,
       std::optional<JsonObject> const& config) override
   {
     auto* function =
         (IPlugin
-         * (*)(Registery&, EntityLoader&, std::optional<JsonObject> const&))(
+         * (*)(Registry&, EntityLoader&, std::optional<JsonObject> const&))(
             dlsym(this->_lib, entry_point.c_str()));
 
     if (function == nullptr) {

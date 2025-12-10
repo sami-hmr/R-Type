@@ -12,7 +12,7 @@
 #include "libs/Vector2D.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
-#include "plugin/events/Events.hpp"
+#include "plugin/events/EventMacros.hpp"
 
 class Camera
 {
@@ -119,6 +119,8 @@ public:
                            parseByte<bool>(),
                            parseByte<bool>(),
                            parseByte<bool>())
+
+  CHANGE_ENTITY_DEFAULT
 
   DEFAULT_SERIALIZE(vector2DToByte(this->size),
                     vector2DToByte(this->target),
