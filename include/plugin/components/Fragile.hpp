@@ -3,6 +3,7 @@
 #include "ParserUtils.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
+#include "plugin/events/EventMacros.hpp"
 
 struct Fragile
 {
@@ -39,6 +40,8 @@ struct Fragile
   DEFAULT_SERIALIZE(type_to_byte(this->hits),
                     type_to_byte(this->counter),
                     type_to_byte(this->fragile_delta))
+
+  CHANGE_ENTITY_DEFAULT
 
   int hits;
   int counter;

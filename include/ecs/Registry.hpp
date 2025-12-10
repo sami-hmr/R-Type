@@ -28,14 +28,20 @@
 #include "plugin/HookConcept.hpp"
 #include "plugin/events/EventConcept.hpp"
 
+template<typename T>
+concept component = bytable<T> && entity_convertible<T>;
+
+template<typename T>
+concept event = bytable<T> && entity_convertible<T> && json_buildable<T>;
+
 /**
- * @brief The Registery class is the core of the ECS (Entity-Component-System)
+ * @brief The Registry class is the core of the ECS (Entity-Component-System)
  * architecture.
  *
  * It manages entities, their associated components, and the systems that
  * operate on them.
  */
-class Registery
+class Registry
 {
 public:
   /**
@@ -54,7 +60,7 @@ public:
    * @return SparseArray<Component>& A reference to the sparse array of the
    * registered component type.
    */
-  template<bytable Component>
+  template<component Component>
   SparseArray<Component>& register_component(std::string const& string_id)
   {
     std::type_index ti(typeid(Component));
@@ -68,27 +74,11 @@ public:
         ti,
         [&comp](Entity const& e, ByteArray const& bytes)
         { comp.insert_at(e, bytes); });
+    this->_comp_entity_converters.insert_or_assign(
+        string_id,
+        [](ByteArray const& b, TwoWayMap<Entity, Entity> const& map)
+        { return Component(b).change_entity(map).to_bytes(); });
     this->_index_getter.insert(ti, string_id);
-    return comp;
-  }
-
-  /**
-   * @brief Registers a component type in the registry (non-bytable overload).
-   *
-   * @tparam Component The type of the component to register.
-   * @return SparseArray<Component>& A reference to the sparse array of the
-   * registered component type.
-   */
-  template<class Component>
-  SparseArray<Component>& register_component()
-  {
-    std::type_index ti(typeid(Component));
-
-    this->_components.insert_or_assign(ti, SparseArray<Component>());
-    SparseArray<Component>& comp = this->get_components<Component>();
-
-    this->_delete_functions.insert_or_assign(
-        ti, [&comp](Entity const& e) { comp.erase(e); });
     return comp;
   }
 
@@ -150,7 +140,7 @@ public:
 
   bool is_entity_dying(Entity const& e) const
   {
-    return _entities_to_kill.find(e) != _entities_to_kill.end();
+    return _entities_to_kill.contains(e);
   }
 
   void process_entity_deletions()
@@ -209,7 +199,8 @@ public:
                          std::string const& string_id,
                          ByteArray const& bytes)
   {
-    this->_emplace_functions.at(this->_index_getter.at(string_id))(to, bytes);
+    this->_emplace_functions.at(this->_index_getter.at_second(string_id))(
+        to, bytes);
   }
 
   /**
@@ -322,35 +313,18 @@ public:
    */
   void clear_bindings() { _bindings.clear(); }
 
-  template<typename EventType>
-  HandlerId on(std::function<void(const EventType&)> handler)
-  {
-    std::type_index type_id(typeid(EventType));
-
-    HandlerId handler_id = generate_uuid();
-
-    if (!_event_handlers.contains(type_id)) {
-      _event_handlers.insert_or_assign(
-          type_id,
-          std::unordered_map<HandlerId,
-                             std::function<void(const EventType&)>>());
-    }
-
-    auto& handlers = std::any_cast<
-        std::unordered_map<HandlerId, std::function<void(const EventType&)>>&>(
-        _event_handlers[type_id]);
-
-    handlers[handler_id] = std::move(handler);
-
-    return handler_id;
-  }
-
-  template<EventIsJsonBuilable EventType>
+  template<event EventType>
   HandlerId on(std::string const& name,
                std::function<void(const EventType&)> handler)
   {
     std::type_index type_id(typeid(EventType));
     _events_index_getter.insert(type_id, name);
+    if (!_event_entity_converters.contains(name)) {
+        _event_entity_converters.insert_or_assign(
+            name,
+            [](ByteArray const& b, TwoWayMap<Entity, Entity> const& map)
+            { return EventType(b).change_entity(map).to_bytes(); });
+    }
     this->add_event_builder<EventType>();
 
     return this->on<EventType>(handler);
@@ -385,13 +359,13 @@ public:
 
   void emit(std::string const& name, JsonObject const& args)
   {
-    std::type_index type_id = _events_index_getter.at(name);
+    std::type_index type_id = _events_index_getter.at_second(name);
     if (!_event_handlers.contains(type_id)) {
       return;
     }
 
     auto builder =
-        std::any_cast<std::function<std::any(Registery&, JsonObject const&)>>(
+        std::any_cast<std::function<std::any(Registry&, JsonObject const&)>>(
             _event_builders.at(type_id));
     std::any event = builder(*this, args);
 
@@ -482,15 +456,15 @@ public:
     return std::any_cast<std::reference_wrapper<T>>(tmp.value());
   }
 
-  template<EventIsJsonBuilable T>
+  template<event T>
   void add_event_builder()
   {
     std::type_index type_id(typeid(T));
 
     _event_builders.insert_or_assign(
         type_id,
-        std::function<std::any(Registery&, JsonObject const&)>(
-            [](Registery& r, JsonObject const& e) -> std::any
+        std::function<std::any(Registry&, JsonObject const&)>(
+            [](Registry& r, JsonObject const& e) -> std::any
             { return T(r, e); }));
 
     _event_invokers.insert_or_assign(
@@ -527,7 +501,44 @@ public:
         == this->_current_scene;
   }
 
+  ByteArray convert_event_entity(std::string const& id,
+                                 ByteArray const& event,
+                                 TwoWayMap<Entity, Entity> const& map)
+  {
+    return this->_event_entity_converters.at(id)(event, map);
+  }
+
+  ByteArray convert_comp_entity(std::string const& id,
+                                ByteArray const& comp,
+                                TwoWayMap<Entity, Entity> const& map)
+  {
+    return this->_event_entity_converters.at(id)(comp, map);
+  }
+
 private:
+  template<typename EventType>
+  HandlerId on(std::function<void(const EventType&)> handler)
+  {
+    std::type_index type_id(typeid(EventType));
+
+    HandlerId handler_id = generate_uuid();
+
+    if (!_event_handlers.contains(type_id)) {
+      _event_handlers.insert_or_assign(
+          type_id,
+          std::unordered_map<HandlerId,
+                             std::function<void(const EventType&)>>());
+    }
+
+    auto& handlers = std::any_cast<
+        std::unordered_map<HandlerId, std::function<void(const EventType&)>>&>(
+        _event_handlers[type_id]);
+
+    handlers[handler_id] = std::move(handler);
+
+    return handler_id;
+  }
+
   struct Binding
   {
     Entity target_entity;
@@ -565,6 +576,16 @@ private:
                      std::function<void(Entity const&, ByteArray const&)>>
       _emplace_functions;
   TwoWayMap<std::type_index, std::string> _index_getter;
+
+  std::unordered_map<std::string,
+                     std::function<ByteArray(ByteArray const&,
+                                             TwoWayMap<Entity, Entity> const&)>>
+      _event_entity_converters;
+
+  std::unordered_map<std::string,
+                     std::function<ByteArray(ByteArray const&,
+                                             TwoWayMap<Entity, Entity> const&)>>
+      _comp_entity_converters;
 
   std::unordered_map<std::type_index, std::any> _event_handlers;
   TwoWayMap<std::type_index, std::string> _events_index_getter;

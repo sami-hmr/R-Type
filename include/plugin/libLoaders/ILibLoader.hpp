@@ -4,7 +4,7 @@
 #include <string>
 
 #include "CustomException.hpp"
-#include "ecs/Registery.hpp"
+#include "ecs/Registry.hpp"
 #include "plugin/IPlugin.hpp"
 
 class EntityLoader;
@@ -23,7 +23,7 @@ public:
   virtual ~LibLoader() = default;
   virtual std::unique_ptr<Module> get_instance(
       const std::string& entry_point,
-      Registery& r,
+      Registry& r,
       EntityLoader& e,
       std::optional<JsonObject> const& config) = 0;
 };

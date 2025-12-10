@@ -17,7 +17,7 @@
 #include <SFML/Window.hpp>
 
 #include "Json/JsonParser.hpp"
-#include "ecs/Registery.hpp"
+#include "ecs/Registry.hpp"
 #include "ecs/SparseArray.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
@@ -28,12 +28,12 @@
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Sprite.hpp"
 #include "plugin/components/Text.hpp"
-#include "plugin/events/Events.hpp"
+#include "plugin/events/IoEvents.hpp"
 
 class SFMLRenderer : public APlugin
 {
 public:
-  SFMLRenderer(Registery& r, EntityLoader& l);
+  SFMLRenderer(Registry& r, EntityLoader& l);
   ~SFMLRenderer() override;
 
   static constexpr sf::Vector2u window_size = {1080, 1080};
@@ -45,46 +45,46 @@ private:
   sf::Texture& load_texture(std::string const& path);
   sf::Font& load_font(std::string const& path);
 
-  void init_drawable(Registery::Entity const& entity, JsonObject const& obj);
-  void init_sprite(Registery::Entity const& entity, JsonObject const& obj);
-  void init_text(Registery::Entity const& entity, JsonObject const& obj);
+  void init_drawable(Registry::Entity const& entity, JsonObject const& obj);
+  void init_sprite(Registry::Entity const& entity, JsonObject const& obj);
+  void init_text(Registry::Entity const& entity, JsonObject const& obj);
 
   template<typename T>
-  Vector2D parse_vector2d(Registery::Entity const& entity,
+  Vector2D parse_vector2d(Registry::Entity const& entity,
                           JsonObject const& obj,
                           std::string const& str)
   {
     auto vec = get_value<T, Vector2D>(
-        this->_registery.get(), obj, entity, str, "width", "height");
+        this->_registry.get(), obj, entity, str, "width", "height");
 
     return vec.value();
   }
 
-  void init_background(Registery::Entity const& entity, JsonObject const& obj);
-  void init_animated_sprite(Registery::Entity const& entity,
+  void init_background(Registry::Entity const& entity, JsonObject const& obj);
+  void init_animated_sprite(Registry::Entity const& entity,
                             const JsonObject& obj);
 
   std::optional<AnimationData> parse_animation_data(JsonObject const& obj,
-                                                    Registery::Entity const& e);
+                                                    Registry::Entity const& e);
 
   void handle_events();
   void handle_resize();
-  void render_sprites(Registery& r,
+  void render_sprites(Registry& r,
                       const SparseArray<Scene>& scenes,
                       const SparseArray<Position>& positions,
                       const SparseArray<Drawable>& drawable,
                       const SparseArray<Sprite>& sprites);
-  void render_text(Registery& r,
+  void render_text(Registry& r,
                    const SparseArray<Scene>& scenes,
                    const SparseArray<Position>& positions,
                    const SparseArray<Drawable>& drawable,
                    const SparseArray<Text>& texts);
-  void background_system(Registery& r,
+  void background_system(Registry& r,
                          const SparseArray<Scene>& scenes,
                          const SparseArray<Drawable>& drawables,
                          SparseArray<Background>& backgrounds);
 
-  void animation_system(Registery& r,
+  void animation_system(Registry& r,
                         const SparseArray<Scene>& scenes,
                         const SparseArray<Position>& positions,
                         const SparseArray<Drawable>& drawable,
