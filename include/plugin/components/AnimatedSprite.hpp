@@ -57,7 +57,7 @@ struct AnimationData
 
   DEFAULT_BYTE_CONSTRUCTOR(AnimationData,
                            (
-                               [](std::vector<char> texture_path_vec,
+                               [](std::string texture,
                                   Vector2D frame_size,
                                   Vector2D frame_pos,
                                   Vector2D direction,
@@ -69,8 +69,7 @@ struct AnimationData
                                   bool rollback)
                                {
                                  return AnimationData(
-                                     std::string(texture_path_vec.begin(),
-                                                 texture_path_vec.end()),
+                                     texture,
                                      frame_size,
                                      frame_pos,
                                      direction,
@@ -81,7 +80,7 @@ struct AnimationData
                                      loop,
                                      rollback);
                                }),
-                           parseByteArray(parseAnyChar()),
+                           parseByteString(),
                            parseVector2D(),
                            parseVector2D(),
                            parseVector2D(),
@@ -95,6 +94,7 @@ struct AnimationData
   DEFAULT_SERIALIZE(string_to_byte(this->texture_path),
                     vector2DToByte(this->frame_size),
                     vector2DToByte(this->frame_pos),
+                    vector2DToByte(this->direction),
                     vector2DToByte(this->sprite_size),
                     type_to_byte(this->framerate),
                     type_to_byte(this->nb_frames),

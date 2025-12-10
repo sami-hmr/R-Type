@@ -39,7 +39,7 @@ Key Controller::char_to_key(char c)
 Controller::Controller(Registry& r, EntityLoader& l)
     : APlugin(r,
               l,
-              {"moving"},
+              {"logger","moving"},
               {COMP_INIT(Controllable, Controllable, init_controller)})
 {
   this->_registry.get().register_component<Controllable>(
@@ -71,6 +71,7 @@ Controller::Controller(Registry& r, EntityLoader& l)
 void Controller::init_controller(Registry::Entity const entity,
                                  JsonObject const& obj)
 {
+
   auto const& up_str =
       get_value<Controllable, std::string>(this->_registry, obj, entity, "UP");
   auto const& down_str = get_value<Controllable, std::string>(

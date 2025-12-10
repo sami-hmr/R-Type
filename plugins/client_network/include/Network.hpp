@@ -25,12 +25,12 @@ class NetworkClient : public APlugin
     void connection_thread(ClientConnection const& c);
 
     SharedQueue<ComponentBuilder> _component_queue;
-    SharedQueue<EventBuilder> _exec_event_queue;
+    SharedQueue<EventBuilder> _event_from_server;
 
     TwoWayMap<Registry::Entity, Registry::Entity> _server_indexes;
 
     std::counting_semaphore<> _sem;
-    SharedQueue<EventBuilder> _event_queue;
+    SharedQueue<EventBuilder> _event_to_server;
     std::thread _thread;
 
     std::atomic<bool> _running = false;
