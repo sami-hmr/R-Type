@@ -17,6 +17,8 @@ struct Heal
                            parseByte<int>())
   DEFAULT_SERIALIZE(type_to_byte(this->amount))
 
+  CHANGE_ENTITY_DEFAULT
+
   int amount;
 
   HOOKABLE(Heal, HOOK(amount))

@@ -35,6 +35,8 @@ struct Velocity
                     type_to_byte(this->direction.x),
                     type_to_byte(this->direction.y))
 
+  CHANGE_ENTITY_DEFAULT
+
   Vector2D speed;
   Vector2D direction;
 

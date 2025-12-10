@@ -13,11 +13,12 @@
 
 #include "BaseTypes.hpp"
 #include "ByteParser/ByteParser.hpp"
-#include "ecs/Registery.hpp"
+#include "ecs/Registry.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
-#include "plugin/events/Events.hpp"
+#include "plugin/events/AnimationEvents.hpp"
+#include "plugin/events/DamageEvent.hpp"
 
 struct AnimationData
 {
@@ -177,12 +178,12 @@ public:
 
   std::chrono::high_resolution_clock::time_point last_update;
 
-  void update_anim(Registery& r,
+  void update_anim(Registry& r,
                    std::chrono::high_resolution_clock::time_point now,
                    int entity);
-  static void on_death(Registery& r, const DamageEvent& event);
-  static void on_animation_end(Registery& r, const AnimationEndEvent& event);
-  static void on_play_animation(Registery& r, const PlayAnimationEvent& event);
+  static void on_death(Registry& r, const DamageEvent& event);
+  static void on_animation_end(Registry& r, const AnimationEndEvent& event);
+  static void on_play_animation(Registry& r, const PlayAnimationEvent& event);
 
   DEFAULT_BYTE_CONSTRUCTOR(
       AnimatedSprite,
@@ -198,6 +199,8 @@ public:
       parseByteMap(parseByteString(), parseAnimationData()),
       parseByteString(),
       parseByteString())
+
+  CHANGE_ENTITY_DEFAULT
 
   DEFAULT_SERIALIZE(
       map_to_byte<std::string, AnimationData>(

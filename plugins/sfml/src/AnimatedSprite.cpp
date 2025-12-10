@@ -10,21 +10,20 @@
 
 #include "Json/JsonParser.hpp"
 #include "SFMLRenderer.hpp"
-#include "ecs/Registery.hpp"
+#include "ecs/Registry.hpp"
 #include "ecs/Scenes.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Health.hpp"
-#include "plugin/events/Events.hpp"
 
 std::optional<AnimationData> SFMLRenderer::parse_animation_data(
-    JsonObject const& obj, Registery::Entity const& e)
+    JsonObject const& obj, Registry::Entity const& e)
 {
   AnimationData animdata;
 
   auto const& texture_path = get_value<AnimatedSprite, std::string>(
-      this->_registery.get(), obj, e, "texture");
+      this->_registry.get(), obj, e, "texture");
   if (!texture_path) {
     std::cerr << "Error parsing animation data: \"texture\" field not "
                  "found or invalid"
@@ -34,15 +33,15 @@ std::optional<AnimationData> SFMLRenderer::parse_animation_data(
   animdata.texture_path = texture_path.value();
 
   animdata.frame_size = get_value<AnimatedSprite, Vector2D>(
-                            this->_registery.get(), obj, e, "frame_size")
+                            this->_registry.get(), obj, e, "frame_size")
                             .value();
 
   animdata.frame_pos = get_value<AnimatedSprite, Vector2D>(
-                           this->_registery.get(), obj, e, "frame_pos")
+                           this->_registry.get(), obj, e, "frame_pos")
                            .value();
 
   auto const& framerate = get_value<AnimatedSprite, double>(
-      this->_registery.get(), obj, e, "framerate");
+      this->_registry.get(), obj, e, "framerate");
   if (!framerate) {
     std::cerr << "Error parsing animation data: \"framerate\" field not found "
                  "or invalid"
@@ -50,14 +49,14 @@ std::optional<AnimationData> SFMLRenderer::parse_animation_data(
     return std::nullopt;
   }
   animdata.direction = get_value<AnimatedSprite, Vector2D>(
-                           this->_registery.get(), obj, e, "direction")
+                           this->_registry.get(), obj, e, "direction")
                            .value();
 
   animdata.framerate = framerate.value();
   animdata.sprite_size = parse_vector2d<AnimatedSprite>(e, obj, "sprite_size");
 
   auto const& nb_frames = get_value<AnimatedSprite, int>(
-      this->_registery.get(), obj, e, "nb_frames");
+      this->_registry.get(), obj, e, "nb_frames");
   if (!nb_frames) {
     std::cerr << "Error parsing animation data: \"nb_frames\" field not found "
                  "or invalid"
@@ -66,7 +65,7 @@ std::optional<AnimationData> SFMLRenderer::parse_animation_data(
   }
   animdata.nb_frames = nb_frames.value();
   auto const& loop =
-      get_value<AnimatedSprite, bool>(this->_registery.get(), obj, e, "loop");
+      get_value<AnimatedSprite, bool>(this->_registry.get(), obj, e, "loop");
   if (!loop) {
     std::cerr
         << "Error parsing animation data: \"loop\" field not found or invalid"
@@ -75,7 +74,7 @@ std::optional<AnimationData> SFMLRenderer::parse_animation_data(
   }
   animdata.loop = loop.value();
   auto const& rollback = get_value<AnimatedSprite, bool>(
-      this->_registery.get(), obj, e, "rollback");
+      this->_registry.get(), obj, e, "rollback");
   if (!rollback) {
     std::cerr << "Error parsing animation data: \"rollback\" field not found "
                  "or " "invalid"
@@ -86,14 +85,14 @@ std::optional<AnimationData> SFMLRenderer::parse_animation_data(
   return animdata;
 }
 
-void SFMLRenderer::init_animated_sprite(Registery::Entity const& entity,
+void SFMLRenderer::init_animated_sprite(Registry::Entity const& entity,
                                         const JsonObject& obj)
 {
   std::unordered_map<std::string, AnimationData> animations;
 
   std::optional<JsonArray> animations_obj =
       get_value<AnimatedSprite, JsonArray>(
-          this->_registery.get(), obj, entity, "animations");
+          this->_registry.get(), obj, entity, "animations");
 
   if (!animations_obj) {
     std::cerr << "AnimatedSprite component requires animations array"
@@ -134,16 +133,16 @@ void SFMLRenderer::init_animated_sprite(Registery::Entity const& entity,
   }
   std::string default_animation = animations.begin()->first;
   auto const& default_animation_value = get_value<AnimatedSprite, std::string>(
-      this->_registery.get(), obj, entity, "default_animation");
+      this->_registry.get(), obj, entity, "default_animation");
   if (default_animation_value) {
     default_animation = default_animation_value.value();
   }
-  _registery.get().emplace_component<AnimatedSprite>(
+  _registry.get().emplace_component<AnimatedSprite>(
       entity, std::move(animations), default_animation, default_animation);
 }
 
 void SFMLRenderer::animation_system(
-    Registery& r,
+    Registry& r,
     const SparseArray<Scene>& scenes,
     const SparseArray<Position>& positions,
     const SparseArray<Drawable>& drawable,
@@ -176,7 +175,7 @@ void SFMLRenderer::animation_system(
     if (!anim.animations.contains(anim.current_animation)) {
       continue;
     }
-    anim.update_anim(this->_registery.get(), now, entity);
+    anim.update_anim(this->_registry.get(), now, entity);
     AnimationData anim_data = anim.animations.at(anim.current_animation);
 
     sf::Texture& texture = load_texture(anim_data.texture_path);
@@ -221,7 +220,7 @@ void SFMLRenderer::animation_system(
 }
 
 void AnimatedSprite::update_anim(
-    Registery& r,
+    Registry& r,
     std::chrono::high_resolution_clock::time_point now,
     int entity)
 {
@@ -257,7 +256,7 @@ void AnimatedSprite::update_anim(
   }
 }
 
-void AnimatedSprite::on_death(Registery& r, const DamageEvent& event)
+void AnimatedSprite::on_death(Registry& r, const DamageEvent& event)
 {
   if (!r.has_component<AnimatedSprite>(event.target)
       || !r.has_component<Health>(event.target))
@@ -279,7 +278,7 @@ void AnimatedSprite::on_death(Registery& r, const DamageEvent& event)
   }
 }
 
-void AnimatedSprite::on_animation_end(Registery& r,
+void AnimatedSprite::on_animation_end(Registry& r,
                                       const AnimationEndEvent& event)
 {
   if (!r.has_component<AnimatedSprite>(event.entity)) {
@@ -293,7 +292,7 @@ void AnimatedSprite::on_animation_end(Registery& r,
   }
 }
 
-void AnimatedSprite::on_play_animation(Registery& r,
+void AnimatedSprite::on_play_animation(Registry& r,
                                        const PlayAnimationEvent& event)
 {
   if (!r.has_component<AnimatedSprite>(event.entity)) {

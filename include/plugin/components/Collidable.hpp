@@ -10,6 +10,7 @@
 #include "ByteParser/ByteParser.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
+#include "plugin/events/EventMacros.hpp"
 
 enum class CollisionType
 {
@@ -65,6 +66,8 @@ struct Collidable
                     type_to_byte(this->height),
                     vector_to_byte<std::string>(this->exclude_entities,
                                                 string_to_byte))
+
+  CHANGE_ENTITY_DEFAULT
 
   double width = 0.0;
   double height = 0.0;

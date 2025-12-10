@@ -1,21 +1,18 @@
-#include <cstdint>
-#include <iostream>
-#include <optional>
-#include <string>
-#include <unordered_map>
 #include <vector>
+#include <string>
+#include <optional>
+#include <iostream>
 
-#include "Json/JsonParser.hpp"
-#include "ecs/Registery.hpp"
 #include "ecs/Scenes.hpp"
+#include "ecs/Registry.hpp"
+#include "Json/JsonParser.hpp"
 #include "plugin/EntityLoader.hpp"
-#include "plugin/Hooks.hpp"
-#include "plugin/components/Drawable.hpp"
 #include "plugin/events/ActionEvents.hpp"
-#include "plugin/events/Events.hpp"
+#include "plugin/events/ShutdownEvent.hpp"
 #include "plugin/libLoaders/ILibLoader.hpp"
+#include "plugin/events/SceneChangeEvent.hpp"
 
-static int true_main(Registery& r,
+static int true_main(Registry& r,
                      EntityLoader& e,
                      const std::vector<std::string>& argv)
 {
@@ -34,14 +31,15 @@ static int true_main(Registery& r,
   r.on<SceneChangeEvent>("SceneChangeEvent",
                          [&r](const SceneChangeEvent& event)
                          {
-                           r.set_current_scene(event.target_scene,
-                                               SCENE_STATE_STR.at(event.state));
+                           r.set_current_scene(
+                               event.target_scene,
+                               SCENE_STATE_STR.at_second(event.state));
                          });
 
   r.on<SpawnEntityRequestEvent>("SpawnEntity",
                                 [&r, &e](const SpawnEntityRequestEvent& event)
                                 {
-                                  Registery::Entity entity = r.spawn_entity();
+                                  Registry::Entity entity = r.spawn_entity();
                                   JsonObject base =
                                       r.get_template(event.entity_template);
                                   e.load_components(entity, base);
@@ -65,7 +63,7 @@ static int true_main(Registery& r,
 
 int main(int argc, char* argv[])
 {
-  std::optional<Registery> r;
+  std::optional<Registry> r;
   r.emplace();
   EntityLoader e(*r);
 #ifdef RTYPE_EPITECH_CLIENT

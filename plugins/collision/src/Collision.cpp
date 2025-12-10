@@ -7,7 +7,7 @@
 
 #include "Json/JsonParser.hpp"
 #include "algorithm/QuadTreeCollision.hpp"
-#include "ecs/Registery.hpp"
+#include "ecs/Registry.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/EntityLoader.hpp"
@@ -16,9 +16,11 @@
 #include "plugin/components/InteractionZone.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Velocity.hpp"
-#include "plugin/events/Events.hpp"
+#include "plugin/events/CollisionEvent.hpp"
+#include "plugin/events/InteractionZoneEvent.hpp"
+#include "plugin/events/LoggerEvent.hpp"
 
-Collision::Collision(Registery& r, EntityLoader& l)
+Collision::Collision(Registry& r, EntityLoader& l)
     : APlugin(
           r,
           l,
@@ -26,8 +28,8 @@ Collision::Collision(Registery& r, EntityLoader& l)
           {COMP_INIT(Collidable, Collidable, init_collision),
            COMP_INIT(InteractionZone, InteractionZone, init_interaction_zone)})
 {
-  _registery.get().register_component<Collidable>("collision:Collidable");
-  _registery.get().register_component<InteractionZone>(
+  _registry.get().register_component<Collidable>("collision:Collidable");
+  _registry.get().register_component<InteractionZone>(
       "collision:InteractionZone");
 
   _collision_algo = std::make_unique<QuadTreeCollision>(2.0, 2.0);
@@ -36,21 +38,22 @@ Collision::Collision(Registery& r, EntityLoader& l)
     LOGGER("COLLISION", LogLevel::ERROR, "Error loading collision algorithm")
   }
 
-  _registery.get().add_system<Position, Collidable>(
-      [this](Registery& r,
+  _registry.get().add_system<Position, Collidable>(
+      [this](Registry& r,
              const SparseArray<Position>& pos,
              const SparseArray<Collidable>& col)
       { this->collision_system(r, pos, col); },
       3);
-  _registery.get().add_system<Position, InteractionZone>(
-      [this](Registery& r,
+  _registry.get().add_system<Position, InteractionZone>(
+      [this](Registry& r,
              const SparseArray<Position>& pos,
              const SparseArray<InteractionZone>& zone)
       { this->interaction_zone_system(r, pos, zone); },
       4);
 
-  this->_registery.get().on<CollisionEvent>([this](const CollisionEvent& c)
-                                            { this->on_collision(c); });
+  this->_registry.get().on<CollisionEvent>("CollisionEvent",
+                                           [this](const CollisionEvent& c)
+                                           { this->on_collision(c); });
 }
 
 void Collision::set_algorithm(std::unique_ptr<ICollisionAlgorithm> algo)
@@ -58,15 +61,15 @@ void Collision::set_algorithm(std::unique_ptr<ICollisionAlgorithm> algo)
   _collision_algo = std::move(algo);
 }
 
-void Collision::init_collision(Registery::Entity const& entity,
+void Collision::init_collision(Registry::Entity const& entity,
                                JsonObject const& obj)
 {
   auto const& width = get_value<Collidable, double>(
-      this->_registery.get(), obj, entity, "width");
+      this->_registry.get(), obj, entity, "width");
   auto const& height = get_value<Collidable, double>(
-      this->_registery.get(), obj, entity, "height");
+      this->_registry.get(), obj, entity, "height");
   auto const& type_str = get_value<Collidable, std::string>(
-      this->_registery.get(), obj, entity, "collision_type");
+      this->_registry.get(), obj, entity, "collision_type");
 
   if (!width || !height || !type_str) {
     std::cerr
@@ -88,26 +91,26 @@ void Collision::init_collision(Registery::Entity const& entity,
     type = CollisionType::Push;
   }
 
-  this->_registery.get().emplace_component<Collidable>(
+  this->_registry.get().emplace_component<Collidable>(
       entity, width.value(), height.value(), type, true);
 }
 
-void Collision::init_interaction_zone(Registery::Entity const& entity,
+void Collision::init_interaction_zone(Registry::Entity const& entity,
                                       JsonObject const& obj)
 {
   auto const& radius = get_value<Collidable, double>(
-      this->_registery.get(), obj, entity, "radius");
+      this->_registry.get(), obj, entity, "radius");
 
   if (!radius) {
     std::cerr << "Error loading InteractionZone: missing radius\n";
     return;
   }
 
-  this->_registery.get().emplace_component<InteractionZone>(entity,
-                                                            radius.value());
+  this->_registry.get().emplace_component<InteractionZone>(entity,
+                                                           radius.value());
 }
 
-void Collision::collision_system(Registery& /*r*/,
+void Collision::collision_system(Registry& /*r*/,
                                  const SparseArray<Position>& positions,
                                  const SparseArray<Collidable>& collidables)
 {
@@ -136,13 +139,13 @@ void Collision::collision_system(Registery& /*r*/,
     std::size_t entity_a = collision.entity_a;
     std::size_t entity_b = collision.entity_b;
 
-    this->_registery.get().emit<CollisionEvent>(entity_a, entity_b);
-    this->_registery.get().emit<CollisionEvent>(entity_b, entity_a);
+    this->_registry.get().emit<CollisionEvent>(entity_a, entity_b);
+    this->_registry.get().emit<CollisionEvent>(entity_b, entity_a);
   }
 }
 
 void Collision::interaction_zone_system(
-    Registery& /*r*/,
+    Registry& /*r*/,
     const SparseArray<Position>& positions,
     const SparseArray<InteractionZone>& zones)
 {
@@ -161,7 +164,7 @@ void Collision::interaction_zone_system(
 
     std::vector<ICollisionAlgorithm::CollisionEntity> candidates =
         _collision_algo->detect_range_collisions(range);
-    std::vector<Registery::Entity> detected_entities;
+    std::vector<Registry::Entity> detected_entities;
     detected_entities.reserve(candidates.size());
 
     for (const auto& candidate : candidates) {
@@ -175,7 +178,7 @@ void Collision::interaction_zone_system(
       }
     }
     if (!detected_entities.empty()) {
-      this->_registery.get().emit<InteractionZoneEvent>(
+      this->_registry.get().emit<InteractionZoneEvent>(
           i, zone.radius, detected_entities);
     }
   }
@@ -183,14 +186,14 @@ void Collision::interaction_zone_system(
 
 void Collision::on_collision(const CollisionEvent& c)
 {
-  auto& velocities = this->_registery.get().get_components<Velocity>();
-  auto& positions = this->_registery.get().get_components<Position>();
-  auto const& collidables = this->_registery.get().get_components<Collidable>();
+  auto& velocities = this->_registry.get().get_components<Velocity>();
+  auto& positions = this->_registry.get().get_components<Position>();
+  auto const& collidables = this->_registry.get().get_components<Collidable>();
 
-  if (!this->_registery.get().has_component<Collidable>(c.a)
-      || !this->_registery.get().has_component<Collidable>(c.b)
-      || !this->_registery.get().has_component<Position>(c.a)
-      || !this->_registery.get().has_component<Position>(c.b))
+  if (!this->_registry.get().has_component<Collidable>(c.a)
+      || !this->_registry.get().has_component<Collidable>(c.b)
+      || !this->_registry.get().has_component<Position>(c.a)
+      || !this->_registry.get().has_component<Position>(c.b))
   {
     return;
   }
@@ -203,13 +206,13 @@ void Collision::on_collision(const CollisionEvent& c)
   {
     return;
   }
-  double dt = this->_registery.get().clock().delta_seconds();
+  double dt = this->_registry.get().clock().delta_seconds();
 
-  if (this->_registery.get().has_component<Velocity>(c.a)) {
+  if (this->_registry.get().has_component<Velocity>(c.a)) {
     Vector2D movement =
         (velocities[c.a]->direction * dt).normalize() * velocities[c.a]->speed;
 
-    if (this->_registery.get().has_component<Velocity>(c.b)
+    if (this->_registry.get().has_component<Velocity>(c.b)
         && type_a == CollisionType::Push)
     {
       positions[c.a]->pos -= movement;
@@ -231,7 +234,7 @@ void Collision::on_collision(const CollisionEvent& c)
 
 extern "C"
 {
-void* entry_point(Registery& r, EntityLoader& e)
+void* entry_point(Registry& r, EntityLoader& e)
 {
   return new Collision(r, e);
 }

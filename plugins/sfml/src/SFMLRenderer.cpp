@@ -17,7 +17,8 @@
 #include <SFML/Window/Keyboard.hpp>
 
 #include "Json/JsonParser.hpp"
-#include "ecs/Registery.hpp"
+#include "ServerLaunch.hpp"
+#include "ecs/Registry.hpp"
 #include "ecs/Scenes.hpp"
 #include "ecs/SparseArray.hpp"
 #include "ecs/zipper/Zipper.hpp"
@@ -30,7 +31,8 @@
 #include "plugin/components/Drawable.hpp"
 #include "plugin/components/Sprite.hpp"
 #include "plugin/components/Text.hpp"
-#include "plugin/events/Events.hpp"
+#include "plugin/events/LoggerEvent.hpp"
+#include "plugin/events/ShutdownEvent.hpp"
 
 static const std::map<sf::Keyboard::Key, Key> key_association = {
     {sf::Keyboard::Key::Enter, Key::ENTER},
@@ -68,7 +70,7 @@ static sf::Texture gen_placeholder()
   return sf::Texture(image);
 }
 
-SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
+SFMLRenderer::SFMLRenderer(Registry& r, EntityLoader& l)
     : APlugin(r,
               l,
               {"moving", "client_network", "server_network"},
@@ -82,41 +84,41 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
       sf::RenderWindow(sf::VideoMode(window_size), "R-Type - SFML Renderer");
   _window.setFramerateLimit(window_rate);
 
-  _registery.get().register_component<Drawable>("sfml:Drawable");
-  _registery.get().register_component<Sprite>("sfml:Sprite");
-  _registery.get().register_component<Text>("sfml:Text");
-  _registery.get().register_component<Background>("sfml:Background");
-  _registery.get().register_component<AnimatedSprite>("sfml:AnimatedSprite");
+  _registry.get().register_component<Drawable>("sfml:Drawable");
+  _registry.get().register_component<Sprite>("sfml:Sprite");
+  _registry.get().register_component<Text>("sfml:Text");
+  _registry.get().register_component<Background>("sfml:Background");
+  _registry.get().register_component<AnimatedSprite>("sfml:AnimatedSprite");
 
-  _registery.get().add_system<>([this](Registery&) { this->handle_events(); },
+  _registry.get().add_system<>([this](Registry&) { this->handle_events(); },
                                 1);
-  _registery.get().add_system<>([this](Registery&)
+  _registry.get().add_system<>([this](Registry&)
                                 { _window.clear(sf::Color::Black); });
-  _registery.get().add_system<Scene, Drawable, Background>(
-      [this](Registery& r,
+  _registry.get().add_system<Scene, Drawable, Background>(
+      [this](Registry& r,
              const SparseArray<Scene>& scenes,
              const SparseArray<Drawable>& drawables,
              SparseArray<Background>& backgrounds)
       { this->background_system(r, scenes, drawables, backgrounds); });
 
-  _registery.get().add_system<Scene, Position, Drawable, Sprite>(
-      [this](Registery& r,
+  _registry.get().add_system<Scene, Position, Drawable, Sprite>(
+      [this](Registry& r,
              SparseArray<Scene>& scenes,
              SparseArray<Position>& pos,
              SparseArray<Drawable>& draw,
              SparseArray<Sprite>& spr)
       { this->render_sprites(r, scenes, pos, draw, spr); });
 
-  _registery.get().add_system<Scene, Position, Drawable, Text>(
-      [this](Registery& r,
+  _registry.get().add_system<Scene, Position, Drawable, Text>(
+      [this](Registry& r,
              const SparseArray<Scene>& scenes,
              const SparseArray<Position>& pos,
              const SparseArray<Drawable>& draw,
              const SparseArray<Text>& txt)
       { this->render_text(r, scenes, pos, draw, txt); });
 
-  _registery.get().add_system<Scene, Position, Drawable, AnimatedSprite>(
-      [this](Registery& r,
+  _registry.get().add_system<Scene, Position, Drawable, AnimatedSprite>(
+      [this](Registry& r,
              const SparseArray<Scene>& scenes,
              const SparseArray<Position>& positions,
              const SparseArray<Drawable>& drawable,
@@ -125,18 +127,18 @@ SFMLRenderer::SFMLRenderer(Registery& r, EntityLoader& l)
         this->animation_system(r, scenes, positions, drawable, AnimatedSprites);
       });
 
-  _registery.get().add_system<>([this](Registery&) { this->display(); });
+  _registry.get().add_system<>([this](Registry&) { this->display(); });
   _textures.insert_or_assign(SFMLRenderer::placeholder_texture,
                              gen_placeholder());
 
-  _registery.get().on<PlayAnimationEvent>([this] (const PlayAnimationEvent& event) {
-    AnimatedSprite::on_play_animation(this->_registery.get(), event);
+  _registry.get().on<PlayAnimationEvent>("PlayAnimationEvent", [this] (const PlayAnimationEvent& event) {
+    AnimatedSprite::on_play_animation(this->_registry.get(), event);
   });
-  _registery.get().on<AnimationEndEvent>([this] (const AnimationEndEvent& event) {
-    AnimatedSprite::on_animation_end(this->_registery.get(), event);
+  _registry.get().on<AnimationEndEvent>("AnimationEndEvent", [this] (const AnimationEndEvent& event) {
+    AnimatedSprite::on_animation_end(this->_registry.get(), event);
   });
-  _registery.get().on<DamageEvent>([this] (const DamageEvent& event) {
-    AnimatedSprite::on_death(this->_registery.get(), event);
+  _registry.get().on<DamageEvent>("DamageEvent", [this] (const DamageEvent& event) {
+    AnimatedSprite::on_death(this->_registry.get(), event);
   });
 }
 
@@ -175,17 +177,17 @@ sf::Font& SFMLRenderer::load_font(std::string const& path)
   return _fonts.at(path);
 }
 
-void SFMLRenderer::init_drawable(Registery::Entity const& entity,
+void SFMLRenderer::init_drawable(Registry::Entity const& entity,
                                  JsonObject const&)
 {
-  _registery.get().emplace_component<Drawable>(entity);
+  _registry.get().emplace_component<Drawable>(entity);
 }
 
-void SFMLRenderer::init_sprite(Registery::Entity const& entity,
+void SFMLRenderer::init_sprite(Registry::Entity const& entity,
                                JsonObject const& obj)
 {
   auto const& texture_path = get_value<Sprite, std::string>(
-      this->_registery.get(), obj, entity, "texture");
+      this->_registry.get(), obj, entity, "texture");
 
   if (!texture_path) {
     std::cerr << "Error loading sprite component: unexpected value type "
@@ -197,15 +199,15 @@ void SFMLRenderer::init_sprite(Registery::Entity const& entity,
   if (obj.contains("size")) {
     scale = this->parse_vector2d<Sprite>(entity, obj, "size");
   }
-  _registery.get().emplace_component<Sprite>(
+  _registry.get().emplace_component<Sprite>(
       entity, texture_path.value(), scale);
 }
 
-void SFMLRenderer::init_text(Registery::Entity const& entity,
+void SFMLRenderer::init_text(Registry::Entity const& entity,
                              JsonObject const& obj)
 {
   auto const& font_path =
-      get_value<Text, std::string>(this->_registery.get(), obj, entity, "font");
+      get_value<Text, std::string>(this->_registry.get(), obj, entity, "font");
 
   if (!font_path) {
     std::cerr << "Error loading text component: unexpected value type (font: "
@@ -218,12 +220,12 @@ void SFMLRenderer::init_text(Registery::Entity const& entity,
     scale = this->parse_vector2d<Text>(entity, obj, "size");
   }
 
-  auto& text_opt = _registery.get().emplace_component<Text>(
+  auto& text_opt = _registry.get().emplace_component<Text>(
       entity, font_path.value(), scale, "");
 
   if (text_opt.has_value()) {
     auto text_val = get_value<Text, std::string>(
-        this->_registery.get(), obj, entity, "text");
+        this->_registry.get(), obj, entity, "text");
     if (text_val) {
       text_opt.value().text = text_val.value();
     }
@@ -268,7 +270,7 @@ void SFMLRenderer::handle_events()
   while (const std::optional event = _window.pollEvent()) {
     if (event->is<sf::Event::Closed>()) {
       _window.close();
-      _registery.get().emit<ShutdownEvent>("Window closed", 0);
+      _registry.get().emit<ShutdownEvent>("Window closed", 0);
     }
     if (const auto* key_pressed = event->getIf<sf::Event::KeyPressed>()) {
       auto key = sfml_key_to_key(key_pressed->code);
@@ -297,10 +299,10 @@ void SFMLRenderer::handle_events()
   }
   if (!_key_pressed.key_pressed.empty() || _key_pressed.key_unicode.has_value())
   {
-    _registery.get().emit<KeyPressedEvent>(_key_pressed);
+    _registry.get().emit<KeyPressedEvent>(_key_pressed);
   }
   if (!_key_released.key_released.empty()) {
-    _registery.get().emit<KeyReleasedEvent>(_key_released);
+    _registry.get().emit<KeyReleasedEvent>(_key_released);
   }
 }
 
@@ -312,7 +314,7 @@ void SFMLRenderer::display()
   _window.display();
 }
 
-void SFMLRenderer::render_sprites(Registery& /*unused*/,
+void SFMLRenderer::render_sprites(Registry& /*unused*/,
                                   const SparseArray<Scene>& scenes,
                                   const SparseArray<Position>& positions,
                                   const SparseArray<Drawable>& drawable,
@@ -372,7 +374,7 @@ void SFMLRenderer::render_sprites(Registery& /*unused*/,
   }
 }
 
-void SFMLRenderer::render_text(Registery& /*unused*/,
+void SFMLRenderer::render_text(Registry& /*unused*/,
                                const SparseArray<Scene>& scenes,
                                const SparseArray<Position>& positions,
                                const SparseArray<Drawable>& drawable,
@@ -410,7 +412,7 @@ void SFMLRenderer::render_text(Registery& /*unused*/,
 
 extern "C"
 {
-void* entry_point(Registery& r, EntityLoader& e)
+void* entry_point(Registry& r, EntityLoader& e)
 {
   return new SFMLRenderer(r, e);
 }

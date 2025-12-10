@@ -3,6 +3,7 @@
 #include "ByteParser/ByteParser.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
+#include "plugin/events/EventMacros.hpp"
 
 struct Health
 {
@@ -35,6 +36,8 @@ struct Health
                     type_to_byte(this->max),
                     type_to_byte(this->heal_delta),
                     type_to_byte(this->damage_delta))
+
+  CHANGE_ENTITY_DEFAULT
 
   int current;
   int max;

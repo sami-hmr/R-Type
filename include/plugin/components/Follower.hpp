@@ -5,6 +5,7 @@
 #include "ParserUtils.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
+#include "plugin/events/EventMacros.hpp"
 
 struct Follower
 {
@@ -32,6 +33,8 @@ struct Follower
                            parseByte<std::size_t>(),
                            parseByte<bool>())
   DEFAULT_SERIALIZE(type_to_byte(this->target), type_to_byte(this->lost_target))
+
+  CHANGE_ENTITY(result.target = map.at_second(target))
 
   HOOKABLE(Follower, HOOK(target), HOOK(lost_target))
 
