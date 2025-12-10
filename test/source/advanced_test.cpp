@@ -27,9 +27,9 @@ TEST_CASE("TwoWayMap - initializer list constructor", "[twowaymap]")
 {
   TwoWayMap<int, std::string> map {{1, "one"}, {2, "two"}, {3, "three"}};
 
-  REQUIRE(map.at(1) == "one");
-  REQUIRE(map.at("two") == 2);
-  REQUIRE(map.at(3) == "three");
+  REQUIRE(map.at_first(1) == "one");
+  REQUIRE(map.at_second("two") == 2);
+  REQUIRE(map.at_first(3) == "three");
 }
 
 TEST_CASE("TwoWayMap - updates existing values", "[twowaymap]")

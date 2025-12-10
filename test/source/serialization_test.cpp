@@ -8,6 +8,7 @@
 #include "plugin/components/Team.hpp"
 #include "plugin/components/Text.hpp"
 #include "plugin/components/Velocity.hpp"
+#include "plugin/events/CliEvents.hpp"
 
 // ==================== Serialization Tests ====================
 
