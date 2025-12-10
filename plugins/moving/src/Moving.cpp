@@ -3,12 +3,15 @@
 #include "Moving.hpp"
 
 #include "Json/JsonParser.hpp"
+#include "NetworkShared.hpp"
 #include "ecs/Registry.hpp"
+#include "ecs/zipper/ZipperIndex.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Velocity.hpp"
+#include "plugin/events/CollisionEvent.hpp"
 
 Moving::Moving(Registry& r, EntityLoader& l)
     : APlugin(r,
@@ -26,6 +29,28 @@ Moving::Moving(Registry& r, EntityLoader& l)
              const SparseArray<Velocity>& vel)
       { this->moving_system(r, pos, vel); },
       4);
+
+  // this->_registry.get().on<ComponentBuilder>("ComponentBuilder", [](ComponentBuilder const &data) {
+  //     std::cerr << "ça build un component " << data.id << "\n";
+  // });
+
+  // this->_registry.get().on<EventBuilder>("EventBuilder", [](EventBuilder const &data) {
+  //     std::cerr << "ça build un event " << data.event_id << "\n";
+  // });
+  this->_registry.get().on<UpdateVelocity>(
+      "UpdateVelocity",
+      [this](UpdateVelocity const& data)
+      {
+        auto& comp =
+            this->_registry.get().get_components<Velocity>()[data.entity];
+        if (!comp) {
+          return;
+        }
+        this->_registry.get().emit<EventBuilder>("UpdateVelocity",
+                                                 data.to_bytes());
+        comp->direction.x = data.x_axis;
+        comp->direction.y = data.y_axis;
+      });
 }
 
 void Moving::moving_system(Registry& reg,
@@ -34,9 +59,14 @@ void Moving::moving_system(Registry& reg,
 {
   double dt = reg.clock().delta_seconds();
 
-  for (auto&& [position, velocity] : Zipper(positions, velocities)) {
+  for (auto&& [index, position, velocity] : ZipperIndex(positions, velocities))
+  {
     Vector2D movement = (velocity.direction * dt).normalize() * velocity.speed;
     position.pos += movement;
+    if (movement.length() != 0) {
+      reg.emit<ComponentBuilder>(
+          index, reg.get_component_key<Position>(), position.to_bytes());
+    }
   }
 }
 

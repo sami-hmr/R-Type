@@ -1,12 +1,15 @@
+#include <format>
 #include <iterator>
 
 #include "Controller.hpp"
 
 #include "Json/JsonParser.hpp"
 #include "ecs/Registry.hpp"
+#include "ecs/zipper/ZipperIndex.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Controllable.hpp"
+#include "plugin/events/CollisionEvent.hpp"
 #include "plugin/events/IoEvents.hpp"
 #include "plugin/events/LoggerEvent.hpp"
 
@@ -39,7 +42,7 @@ Key Controller::char_to_key(char c)
 Controller::Controller(Registry& r, EntityLoader& l)
     : APlugin(r,
               l,
-              {"logger","moving"},
+              {"logger", "moving"},
               {COMP_INIT(Controllable, Controllable, init_controller)})
 {
   this->_registry.get().register_component<Controllable>(
@@ -71,7 +74,6 @@ Controller::Controller(Registry& r, EntityLoader& l)
 void Controller::init_controller(Registry::Entity const entity,
                                  JsonObject const& obj)
 {
-
   auto const& up_str =
       get_value<Controllable, std::string>(this->_registry, obj, entity, "UP");
   auto const& down_str = get_value<Controllable, std::string>(
@@ -111,14 +113,18 @@ void Controller::handle_key_change(Key key, bool is_pressed)
   auto const& controllers =
       this->_registry.get().get_components<Controllable>();
 
-  for (auto&& [controller, velocity] : Zipper(controllers, velocities)) {
+  for (auto&& [index, controller, velocity] :
+       ZipperIndex(controllers, velocities))
+  {
     Key up_key = this->char_to_key(controller.up);
     Key down_key = this->char_to_key(controller.down);
     Key left_key = this->char_to_key(controller.left);
     Key right_key = this->char_to_key(controller.right);
 
-    velocity.direction.y = this->compute_axis(up_key, down_key);
-    velocity.direction.x = this->compute_axis(left_key, right_key);
+    this->_registry.get().emit<UpdateVelocity>(
+        index,
+        this->compute_axis(left_key, right_key),
+        this->compute_axis(up_key, down_key));
   }
 };
 

@@ -81,6 +81,7 @@ void Client::receive_loop()
                        std::format("received buffer, size : {}", len));
       }
 
+
       if (ec) {
         if (_running.get()) {
           NETWORK_LOGGER("client",
@@ -90,6 +91,7 @@ void Client::receive_loop()
         break;
       }
 
+
       while (std::optional<ByteArray> p = recv_buf.extract(PROTOCOL_EOF)) {
         NETWORK_LOGGER("client", LogLevel::DEBUG, "package extracted");
         // std::cout << "[";
@@ -97,6 +99,7 @@ void Client::receive_loop()
         //     std::cout << " " << (unsigned int)i << ",";
         // }
         // std::cout << "]\n";
+
         this->handle_package(*p);
       }
 
