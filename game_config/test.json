@@ -223,8 +223,8 @@
               "y": 0.08
             },
             "direction": {
-              "x": 0,
-              "y": 0
+              "x": 0.0,
+              "y": 0.0
             }
           },
           "moving:Position": {
@@ -264,10 +264,6 @@
               "x": 0.0,
               "y": 0.0
             }
-          },
-          "target:Follower": {},
-          "collision:InteractionZone": {
-            "radius": 0.9
           }
         },
         {
