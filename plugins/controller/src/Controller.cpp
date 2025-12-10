@@ -9,7 +9,6 @@
 #include "plugin/components/Controllable.hpp"
 #include "plugin/events/IoEvents.hpp"
 #include "plugin/events/LoggerEvent.hpp"
-#include "plugin/events/LoggerEvent.hpp"
 
 static const std::map<char, Key> mapping = {
     {'z', Key::Z},
@@ -43,7 +42,8 @@ Controller::Controller(Registry& r, EntityLoader& l)
               {"moving"},
               {COMP_INIT(Controllable, Controllable, init_controller)})
 {
-  this->_registry.get().register_component<Controllable>("controller:Controllable");
+  this->_registry.get().register_component<Controllable>(
+      "controller:Controllable");
 
   this->_registry.get().on<KeyPressedEvent>(
       "KeyPressedEvent",
