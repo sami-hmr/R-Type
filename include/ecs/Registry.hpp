@@ -2,14 +2,13 @@
 
 #include <algorithm>
 #include <any>
-#include <chrono>
 #include <cstddef>
 #include <functional>
 #include <iostream>
-#include <map>
 #include <optional>
 #include <queue>
 #include <random>
+#include <stdexcept>
 #include <string>
 #include <typeindex>
 #include <unordered_map>
@@ -19,6 +18,7 @@
 
 #include "Clock.hpp"
 #include "Json/JsonParser.hpp"
+// #include "NetworkShared.hpp"
 #include "SparseArray.hpp"
 #include "TwoWayMap.hpp"
 #include "ecs/Scenes.hpp"
@@ -76,7 +76,7 @@ public:
         { comp.insert_at(e, bytes); });
     this->_comp_entity_converters.insert_or_assign(
         string_id,
-        [](ByteArray const& b, TwoWayMap<Entity, Entity> const& map)
+        [](ByteArray const& b, std::unordered_map<Entity, Entity> const& map)
         { return Component(b).change_entity(map).to_bytes(); });
     this->_index_getter.insert(ti, string_id);
     return comp;
@@ -162,7 +162,8 @@ public:
    * @param c The component to add.
    * @return SparseArray<Component>::Ref A reference to the added component.
    */
-  template<typename Component>
+
+  template<component Component>
   typename SparseArray<Component>::Ref add_component(Entity const& to,
                                                      Component&& c)
   {
@@ -199,8 +200,12 @@ public:
                          std::string const& string_id,
                          ByteArray const& bytes)
   {
-    this->_emplace_functions.at(this->_index_getter.at_second(string_id))(
-        to, bytes);
+    try {
+      this->_emplace_functions.at(this->_index_getter.at_second(string_id))(
+          to, bytes);
+    } catch (std::out_of_range const &) {
+      std::cerr << "error: unknow component :" << string_id << "\n";
+    }
   }
 
   /**
@@ -320,11 +325,19 @@ public:
     std::type_index type_id(typeid(EventType));
     _events_index_getter.insert(type_id, name);
     if (!_event_entity_converters.contains(name)) {
-        _event_entity_converters.insert_or_assign(
-            name,
-            [](ByteArray const& b, TwoWayMap<Entity, Entity> const& map)
-            { return EventType(b).change_entity(map).to_bytes(); });
+      _event_entity_converters.insert_or_assign(
+          name,
+          [](ByteArray const& b, std::unordered_map<Entity, Entity> const& map)
+          { return EventType(b).change_entity(map).to_bytes(); });
     }
+
+    if (!_byte_event_emitter.contains(name)) {
+      _byte_event_emitter.insert_or_assign(
+          name,
+          [this](ByteArray const& data)
+          { return this->emit<EventType>(EventType(data)); });
+    }
+
     this->add_event_builder<EventType>();
 
     return this->on<EventType>(handler);
@@ -392,6 +405,11 @@ public:
     for (auto const& [id, handler] : handlers_copy) {
       handler(event);
     }
+  }
+
+  void emit(std::string const& name, ByteArray const& data)
+  {
+    this->_byte_event_emitter.at(name)(data);
   }
 
   void add_scene(std::string const& scene_name, SceneState state)
@@ -503,17 +521,29 @@ public:
 
   ByteArray convert_event_entity(std::string const& id,
                                  ByteArray const& event,
-                                 TwoWayMap<Entity, Entity> const& map)
+                                 std::unordered_map<Entity, Entity> const& map)
   {
     return this->_event_entity_converters.at(id)(event, map);
   }
 
   ByteArray convert_comp_entity(std::string const& id,
                                 ByteArray const& comp,
-                                TwoWayMap<Entity, Entity> const& map)
+                                 std::unordered_map<Entity, Entity> const& map)
   {
-    return this->_event_entity_converters.at(id)(comp, map);
+    return this->_comp_entity_converters.at(id)(comp, map);
   }
+
+  template<event Event>
+  std::string get_event_key()
+  {
+    return this->_events_index_getter.at_first(typeid(Event));
+  }
+  template<component Component>
+  std::string get_component_key()
+  {
+    return this->_index_getter.at_first(typeid(Component));
+  }
+
 
 private:
   template<typename EventType>
@@ -579,12 +609,15 @@ private:
 
   std::unordered_map<std::string,
                      std::function<ByteArray(ByteArray const&,
-                                             TwoWayMap<Entity, Entity> const&)>>
+                                             std::unordered_map<Entity, Entity> const&)>>
       _event_entity_converters;
+
+  std::unordered_map<std::string, std::function<void(ByteArray const&)>>
+      _byte_event_emitter;
 
   std::unordered_map<std::string,
                      std::function<ByteArray(ByteArray const&,
-                                             TwoWayMap<Entity, Entity> const&)>>
+                                             std::unordered_map<Entity, Entity> const&)>>
       _comp_entity_converters;
 
   std::unordered_map<std::type_index, std::any> _event_handlers;
@@ -609,4 +642,5 @@ private:
   std::vector<Binding> _bindings;
 
   std::unordered_map<std::string, JsonObject> _entities_templates;
+
 };

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <optional>
 #include <stdexcept>
 #include <vector>
@@ -46,7 +47,8 @@ public:
   Ref insert_at(SizeType pos, Component&& v)
   {
     this->reserve_init(pos);
-    return *this->emplace(this->begin() + pos, v);
+    (*this)[pos] = std::move(v);
+    return (*this)[pos];
   }
 
   /**
@@ -61,7 +63,8 @@ public:
   Ref insert_at(SizeType pos, Params&&... params)
   {
     this->reserve_init(pos);
-    return *this->emplace(this->begin() + pos, Component(params...));
+    (*this)[pos] = Component(std::forward<Params>(params)...);
+    return (*this)[pos];
   }
 
   /**
@@ -74,7 +77,8 @@ public:
   Ref insert_at(SizeType pos, Component const& v)
   {
     this->reserve_init(pos);
-    return *this->emplace(this->begin() + pos, v);
+    (*this)[pos] = v;
+    return (*this)[pos];
   }
 
   /**

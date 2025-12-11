@@ -6,6 +6,7 @@
 const std::unordered_map<std::uint8_t, void (Client::*)(ByteArray const&)>
     Client::connected_table = {
         {SENDCOMP, &Client::handle_component_update},
+        {SENDEVENT, &Client::handle_event_creation}
 };
 
 void Client::handle_connected_package(ConnectedPackage const& package) {
@@ -44,5 +45,14 @@ void Client::handle_component_update(ByteArray const &package) {
     if (!parsed) {
         return;
     }
-    this->transmit_component(std::move(parsed.value()));
+    this->transmit_component(std::move(*parsed));
+}
+
+void Client::handle_event_creation(ByteArray const &package) {
+    auto parsed = parse_event_build_cmd(package);
+
+    if (!parsed) {
+        return;
+    }
+    this->transmit_event(std::move(*parsed));
 }

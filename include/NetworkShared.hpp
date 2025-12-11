@@ -2,15 +2,16 @@
 
 #include <cstddef>
 #include <mutex>
+#include <optional>
 #include <queue>
 #include <string>
 #include <tuple>
 
 #include "ByteParser/ByteParser.hpp"
 #include "ParserUtils.hpp"
-#include "ecs/Registry.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
+#include "plugin/events/EventMacros.hpp"
 
 struct ComponentBuilder
 {
@@ -21,18 +22,23 @@ struct ComponentBuilder
   ComponentBuilder() = default;
 
   ComponentBuilder(std::size_t e, std::string i, ByteArray d)
-    : entity(e)
-    , id(std::move(i))
-    , data(std::move(d)) {}
+      : entity(e)
+      , id(std::move(i))
+      , data(std::move(d))
+  {
+  }
 
-  DEFAULT_BYTE_CONSTRUCTOR(ComponentBuilder,
-                         ([](std::size_t e, std::string const &i, ByteArray const &d)
-                          { return ComponentBuilder(e, i, d); }),
-                         parseByte<std::size_t>(),
-                         parseByteString(),
-                         parseByte<Byte>().many())
+  DEFAULT_BYTE_CONSTRUCTOR(
+      ComponentBuilder,
+      ([](std::size_t e, std::string const& i, ByteArray const& d)
+       { return ComponentBuilder(e, i, d); }),
+      parseByte<std::size_t>(),
+      parseByteString(),
+      parseByte<Byte>().many())
 
-  DEFAULT_SERIALIZE(type_to_byte<std::size_t>(this->entity), string_to_byte(this->id), this->data)
+  DEFAULT_SERIALIZE(type_to_byte<std::size_t>(this->entity),
+                    string_to_byte(this->id),
+                    this->data)
 
   CHANGE_ENTITY_DEFAULT
 
@@ -47,11 +53,8 @@ struct ComponentBuilder
 inline Parser<ComponentBuilder> parse_component_builder()
 {
   return apply(
-      [](std::size_t entity, std::string const &id, ByteArray const &data)
-      {
-        return ComponentBuilder(
-             entity, std::move(id), std::move(data));
-      },
+      [](std::size_t entity, std::string const& id, ByteArray const& data)
+      { return ComponentBuilder(entity, std::move(id), std::move(data)); },
       parseByte<std::size_t>(),
       parseByteString(),
       parseByte<Byte>().many());
@@ -65,14 +68,16 @@ struct EventBuilder
   EventBuilder() = default;
 
   EventBuilder(std::string i, ByteArray d)
-    : event_id(std::move(i))
-    , data(std::move(d)) {}
+      : event_id(std::move(i))
+      , data(std::move(d))
+  {
+  }
 
   DEFAULT_BYTE_CONSTRUCTOR(EventBuilder,
-                         ([](std::string const &i, ByteArray const &d)
-                          { return EventBuilder(i, d); }),
-                         parseByteString(),
-                         parseByte<Byte>().many())
+                           ([](std::string const& i, ByteArray const& d)
+                            { return EventBuilder(i, d); }),
+                           parseByteString(),
+                           parseByte<Byte>().many())
 
   DEFAULT_SERIALIZE(string_to_byte(this->event_id), this->data)
 
@@ -87,18 +92,134 @@ struct EventBuilder
 
 inline Parser<EventBuilder> parse_event_builder()
 {
-  return apply(
-      [](std::string const &id, ByteArray const &data)
-      {
-        return EventBuilder(id, data);
-      },
-      parseByteString(),
-      parseByte<Byte>().many());
+  return apply([](std::string const& id, ByteArray const& data)
+               { return EventBuilder(id, data); },
+               parseByteString(),
+               parseByte<Byte>().many());
 }
+
+struct EventBuilderId
+{
+  std::optional<std::size_t> client;
+  EventBuilder event;
+
+  EventBuilderId() = default;
+
+  EventBuilderId(std::optional<std::size_t> const& c,
+                 std::string const& i,
+                 ByteArray const& d)
+      : client(c)
+      , event(i, d)
+  {
+  }
+
+  DEFAULT_BYTE_CONSTRUCTOR(EventBuilderId,
+                           ([](std::optional<std::size_t> c,
+                               std::string const& i,
+                               ByteArray const& d)
+                            { return EventBuilderId(c, i, d); }),
+                           parseByteOptional(parseByte<std::size_t>()),
+                           parseByteString(),
+                           parseByte<Byte>().many())
+
+  DEFAULT_SERIALIZE(optional_to_byte<std::size_t>(
+                        client,
+                        std::function<ByteArray(std::size_t const&)>(
+                            [](std::size_t const& b)
+                            { return type_to_byte(b); })),
+                    event.to_bytes())
+
+  CHANGE_ENTITY_DEFAULT
+
+  EventBuilderId(Registry& r, JsonObject const& e)
+      : client(get_value_copy<std::size_t>(r, e, "client").value())
+      , event(get_value_copy<std::string>(r, e, "event_id").value(),
+              get_value_copy<ByteArray>(r, e, "data").value())
+  {
+  }
+};
+
+struct EntityCreation
+{
+  std::size_t client;
+
+  EntityCreation() = default;
+
+  EntityCreation(std::size_t c)
+      : client(c)
+  {
+  }
+
+  DEFAULT_BYTE_CONSTRUCTOR(EntityCreation,
+                           ([](std::size_t c) { return EntityCreation(c); }),
+                           parseByte<std::size_t>())
+
+  DEFAULT_SERIALIZE(type_to_byte(client))
+
+  CHANGE_ENTITY_DEFAULT
+
+  EntityCreation(Registry& r, JsonObject const& e)
+      : client(get_value_copy<std::size_t>(r, e, "client").value())
+  {
+  }
+};
+
+struct PlayerCreated
+{
+  std::size_t server_index;
+
+  PlayerCreated() = default;
+
+  PlayerCreated(std::size_t server_index)
+      : server_index(server_index)
+  {
+  }
+
+  DEFAULT_BYTE_CONSTRUCTOR(PlayerCreated,
+                           ([](std::size_t i)
+                            { return PlayerCreated(i); }),
+
+                           parseByte<std::size_t>())
+
+  DEFAULT_SERIALIZE(type_to_byte(server_index))
+
+  CHANGE_ENTITY_DEFAULT
+
+  PlayerCreated(Registry& r, JsonObject const& e)
+      : server_index(get_value_copy<std::size_t>(r, e, "server_index").value())
+  {
+  }
+};
 
 template<typename T>
 struct SharedQueue
 {
   std::mutex lock;
   std::queue<T> queue;
+};
+
+struct PlayerCreation
+{
+  std::size_t server_index;
+
+  PlayerCreation() = default;
+
+  PlayerCreation(std::size_t server_index)
+      : server_index(server_index)
+  {
+  }
+
+  DEFAULT_BYTE_CONSTRUCTOR(PlayerCreation,
+                           ([](std::size_t i) { return PlayerCreation(i); }),
+
+                           parseByte<std::size_t>())
+
+  DEFAULT_SERIALIZE(type_to_byte(server_index))
+
+  CHANGE_ENTITY_DEFAULT
+
+  PlayerCreation(Registry& r, JsonObject const& e)
+      : server_index(get_value_copy<std::size_t>(r, e, "server_index").value())
+  {
+  }
 };

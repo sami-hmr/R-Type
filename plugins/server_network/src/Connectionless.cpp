@@ -4,6 +4,7 @@
 
 #include "Network.hpp"
 #include "NetworkCommun.hpp"
+#include "NetworkShared.hpp"
 #include "Server.hpp"
 
 const std::unordered_map<std::uint8_t,
@@ -144,7 +145,8 @@ void Server::handle_connect(ByteArray const& cmd,
         + type_to_byte<std::uint32_t>(_server_id);
 
     send(pkg, sender);
-
+    this->transmit_event_to_server(
+        EventBuilder("EntityCreation", EntityCreation(client_id).to_bytes()));
   } catch (ClientNotFound&) {
     NETWORK_LOGGER(
         "server", std::uint8_t(LogLevel::WARNING), "Invalid challenge");
@@ -173,15 +175,25 @@ ClientInfo& Server::find_client_by_endpoint(
   throw ClientNotFound("client not found");
 }
 
+ClientInfo& Server::find_client_by_id(std::size_t id)
+{
+  for (auto& client : _clients) {
+    if (client.state != ClientState::DISCONNECTED && client.client_id == id) {
+      return client;
+    }
+  }
+  throw ClientNotFound("client not found");
+}
+
 void Server::remove_client_by_endpoint(const asio::ip::udp::endpoint& endpoint)
 {
   this->_client_mutex.lock();
   auto it = std::find_if(this->_clients.begin(),
-               this->_clients.end(),
-               [endpoint](ClientInfo const& c)
-               { return c.endpoint == endpoint; });
+                         this->_clients.end(),
+                         [endpoint](ClientInfo const& c)
+                         { return c.endpoint == endpoint; });
   if (it != this->_clients.end()) {
-      this->_clients.erase(it);
+    this->_clients.erase(it);
   }
   this->_client_mutex.unlock();
 }
