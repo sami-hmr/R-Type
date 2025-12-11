@@ -60,7 +60,6 @@ void Server::send_comp()
         if (it.state != ClientState::CONNECTED) {
           continue;
         }
-        //std::cout << "SEND TO " << (int)it.client_id  << "  queue size: " << this->_components_to_create.get().queue.size() << std::endl;
         this->send_connected(type_to_byte<std::uint8_t>(SENDCOMP)
                                  + type_to_byte(comp.entity)
                                  + string_to_byte(comp.id) + comp.data,

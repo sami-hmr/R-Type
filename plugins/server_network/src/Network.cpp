@@ -102,6 +102,7 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
         init_component(this->_registry.get(),
                        data.server_index,
                        Velocity(0.01, 0.01, 0, 0));
+
         init_component(this->_registry.get(),
                        data.server_index,
                        AnimatedSprite({{"idle",
@@ -117,6 +118,7 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
                                                       true)}},
                                       "idle",
                                       "idle"));
+
         init_component(this->_registry.get(),
                        data.server_index,
                        Collidable(0.02, 0.02, CollisionType::Solid));

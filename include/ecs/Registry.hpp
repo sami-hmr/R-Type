@@ -642,4 +642,5 @@ private:
   std::vector<Binding> _bindings;
 
   std::unordered_map<std::string, JsonObject> _entities_templates;
+
 };

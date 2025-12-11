@@ -12,6 +12,7 @@
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Controllable.hpp"
+#include "plugin/components/Position.hpp"
 #include "plugin/events/CleanupEvent.hpp"
 #include "plugin/events/LoggerEvent.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
@@ -56,7 +57,7 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
 
   this->_registry.get().on<EventBuilder>(
       "EventBuilder",
-      [this](EventBuilder c)
+      [this](EventBuilder const& c)
       {
         if (!this->_running) {
           return;
@@ -89,14 +90,14 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
           LOGGER("client",
                  LogLevel::INFO,
                  "no bindings detected for client, default applicated (z q s "
-                 "d, les bindings de thresh tu connais ? (le joueur de quake "
+                 "d, les bindings de thresh tu connais (de la dinde) ? (le joueur de quake "
                  "pas le main de baptiste ahah mdr))");
 
           std::size_t new_entity = this->_registry.get().spawn_entity();
 
           this->_registry.get().emplace_component<Controllable>(
               new_entity, 'Z', 'S', 'Q', 'D');
-          this->_server_indexes.insert(server.server_index, new_entity);
+          this->_server_indexes.insert(server.server_index, new_entity); // SERVER -> CLIENT
         }
         this->_registry.get().emit<EventBuilder>(
             "PlayerCreated", PlayerCreated(server.server_index).to_bytes());
@@ -108,9 +109,6 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
         if (!this->_running) {
           return;
         }
-        if (!this->_running) {
-          return;
-        }
         this->_component_queue.lock.lock();
         while (!this->_component_queue.queue.empty()) {
           auto& server_comp = this->_component_queue.queue.front();
@@ -119,8 +117,8 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
             auto new_entity = r.spawn_entity();
             this->_server_indexes.insert(server_comp.entity, new_entity);
           }
-
           auto true_entity = this->_server_indexes.at_first(server_comp.entity);
+
           r.emplace_component(true_entity,
                               server_comp.id,
                               this->_registry.get().convert_comp_entity(

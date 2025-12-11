@@ -27,7 +27,7 @@ class NetworkClient : public APlugin
     SharedQueue<ComponentBuilder> _component_queue;
     SharedQueue<EventBuilder> _event_from_server;
 
-    TwoWayMap<Registry::Entity, Registry::Entity> _server_indexes;
+    TwoWayMap<Registry::Entity /*server */, Registry::Entity /*client */> _server_indexes;
 
     std::counting_semaphore<> _sem;
     SharedQueue<EventBuilder> _event_to_server;
