@@ -37,6 +37,7 @@ struct AnimationData
       : texture_path(std::move(texture_path))
       , frame_size(frame_size)
       , frame_pos(frame_pos)
+      , initial_frame_pos(frame_pos)
       , direction(direction)
       , sprite_size(sprite_size)
       , framerate(framerate)
@@ -50,6 +51,7 @@ struct AnimationData
   std::string texture_path;
   Vector2D frame_size;
   Vector2D frame_pos;
+  Vector2D initial_frame_pos;
   Vector2D direction;
   Vector2D sprite_size;
   double framerate = 0;

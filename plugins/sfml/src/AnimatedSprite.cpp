@@ -248,7 +248,7 @@ void AnimatedSprite::update_anim(
         animation.direction = animation.direction * -1;
         animation.frame_pos += animation.direction * animation.frame_size;
       } else {
-        animation.frame_pos = Vector2D(0, 0);
+        animation.frame_pos = animation.initial_frame_pos;
       }
       animation.current_frame = 0;
     }
