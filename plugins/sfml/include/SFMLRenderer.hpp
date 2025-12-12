@@ -22,6 +22,7 @@
 #include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
+#include "plugin/components/Camera.hpp"
 #include "plugin/components/AnimatedSprite.hpp"
 #include "plugin/components/Background.hpp"
 #include "plugin/components/Drawable.hpp"
@@ -29,6 +30,7 @@
 #include "plugin/components/Sprite.hpp"
 #include "plugin/components/Text.hpp"
 #include "plugin/events/IoEvents.hpp"
+#include "plugin/events/CameraEvents.hpp"
 
 class SFMLRenderer : public APlugin
 {
@@ -50,6 +52,7 @@ private:
   void render_sprites(Registry& r);
   void render_text(Registry& r);
   void background_system(Registry& r);
+  void camera_system(Registry &r);
 
   void animation_system(Registry& r);
   void display();
@@ -82,6 +85,7 @@ private:
            [this](Background& background)
            { this->draw_stretch_background(background); }},
       };
+
 
   KeyPressedEvent _key_pressed;
   KeyReleasedEvent _key_released;

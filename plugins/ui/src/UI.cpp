@@ -1,9 +1,11 @@
 #include "UI.hpp"
 
 #include "libs/Vector2D.hpp"
+#include "plugin/APlugin.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/AnimatedSprite.hpp"
 #include "plugin/components/Background.hpp"
+#include "plugin/components/Camera.hpp"
 #include "plugin/components/Drawable.hpp"
 #include "plugin/components/Input.hpp"
 #include "plugin/components/Sprite.hpp"
@@ -17,6 +19,7 @@ UI::UI(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config)
                COMP_INIT(Drawable, Drawable, init_drawable),
                COMP_INIT(Sprite, Sprite, init_sprite),
                COMP_INIT(Text, Text, init_text),
+                COMP_INIT(Camera, Camera, init_cam),
                COMP_INIT(Background, Background, init_background),
                COMP_INIT(AnimatedSprite, AnimatedSprite, init_animated_sprite)},
               config)
@@ -29,6 +32,7 @@ UI::UI(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config)
 
   _registry.get().register_component<Sprite>("ui:Sprite");
   _registry.get().register_component<Text>("ui:Text");
+  _registry.get().register_component<Camera>("ui:Camera");
   _registry.get().register_component<Background>("ui:Background");
   _registry.get().register_component<AnimatedSprite>("ui:AnimatedSprite");
 }
@@ -328,6 +332,53 @@ void UI::init_animated_sprite(Registry::Entity const& entity,
   _registry.get().emplace_component<AnimatedSprite>(
       entity, std::move(animations), default_animation, default_animation);
 }
+
+void UI::init_cam(Registry::Entity const &entity,
+                            JsonObject const& obj)
+{
+  Vector2D size(0.5, 0.5);
+  Vector2D target(0.0, 0.0);
+  Vector2D speed(0.1, 0.1);
+
+  auto sizeopt = get_value<Camera, Vector2D>(this->_registry.get(), obj, entity, "size", "width", "height");
+  if (sizeopt.has_value()) {
+    size = sizeopt.value();
+  } else {
+    std::cerr
+        << "Camera component missing size field, using default (50%, 50%)\n";
+    return;
+  }
+  auto targetopt = get_value<Camera, Vector2D>(this->_registry.get(), obj, entity, "target");
+  if (targetopt.has_value()) {
+    target = targetopt.value();
+  } else {
+    std::cerr
+        << "Camera component missing target field, using default (0, 0)\n";
+    return;
+  }
+  auto speedopt = get_value<Camera, Vector2D>(this->_registry.get(), obj, entity, "speed", "x", "y");
+  if (speedopt.has_value()) {
+    speed = speedopt.value();
+  } else {
+    std::cerr
+        << "Camera component missing speed field, using default (10%, 15%)\n";
+    return;
+  }
+  _registry.get().emplace_component<Camera>(entity, size, target, speed);
+  _registry.get().on<CamAggroEvent>("CamAggroEvent", [this](const CamAggroEvent& e) {
+    this->cam_target_event(e);
+  });
+  _registry.get().on<CamZoomEvent>("CamZoomEvent", [this](const CamZoomEvent& e) {
+      this->cam_zoom_event(e);
+  });
+  _registry.get().on<CamRotateEvent>("CamRotateEvent", [this](const CamRotateEvent& e) {
+      this->cam_rotate_event(e);
+  });
+  _registry.get().on<CamSpeedEvent>("CamSpeedEvent", [this](const CamSpeedEvent& e) {
+      this->cam_speed_event(e);
+  });
+}
+
 
 extern "C"
 {

@@ -1,5 +1,6 @@
 
 #include <algorithm>
+#include <cstdio>
 #include <functional>
 #include <iostream>
 #include <stdexcept>
@@ -9,6 +10,7 @@
 
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Image.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/View.hpp>
@@ -25,6 +27,7 @@
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/AnimatedSprite.hpp"
 #include "plugin/components/Background.hpp"
+#include "plugin/components/Camera.hpp"
 #include "plugin/components/Drawable.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Sprite.hpp"
@@ -95,7 +98,9 @@ SFMLRenderer::SFMLRenderer(Registry& r, EntityLoader& l)
       {
         this->animation_system(r);
       });
-
+  _registry.get().add_system(
+      [this](Registry& r)
+      { this->camera_system(r); });
   _registry.get().add_system<>([this](Registry&) { this->display(); });
   _textures.insert_or_assign(SFMLRenderer::placeholder_texture,
                              gen_placeholder());
