@@ -10,52 +10,6 @@
 #include "plugin/components/Position.hpp"
 #include "plugin/events/CameraEvents.hpp"
 
-void SFMLRenderer::init_cam(Registry::Entity const &entity,
-                            JsonObject const& obj)
-{
-  Vector2D size(0.5, 0.5);
-  Vector2D target(0.0, 0.0);
-  Vector2D speed(0.1, 0.1);
-
-  auto sizeopt = get_value<Camera, Vector2D>(this->_registry.get(), obj, entity, "size", "width", "height");
-  if (sizeopt.has_value()) {
-    size = sizeopt.value();
-  } else {
-    std::cerr
-        << "Camera component missing size field, using default (50%, 50%)\n";
-    return;
-  }
-  auto targetopt = get_value<Camera, Vector2D>(this->_registry.get(), obj, entity, "target");
-  if (targetopt.has_value()) {
-    target = targetopt.value();
-  } else {
-    std::cerr
-        << "Camera component missing target field, using default (0, 0)\n";
-    return;
-  }
-  auto speedopt = get_value<Camera, Vector2D>(this->_registry.get(), obj, entity, "speed", "x", "y");
-  if (speedopt.has_value()) {
-    speed = speedopt.value();
-  } else {
-    std::cerr
-        << "Camera component missing speed field, using default (10%, 15%)\n";
-    return;
-  }
-  _registry.get().emplace_component<Camera>(entity, size, target, speed);
-  _registry.get().on<CamAggroEvent>("CamAggroEvent", [this](const CamAggroEvent& e) {
-    this->cam_target_event(e);
-  });
-  _registry.get().on<CamZoomEvent>("CamZoomEvent", [this](const CamZoomEvent& e) {
-      this->cam_zoom_event(e);
-  });
-  _registry.get().on<CamRotateEvent>("CamRotateEvent", [this](const CamRotateEvent& e) {
-      this->cam_rotate_event(e);
-  });
-  _registry.get().on<CamSpeedEvent>("CamSpeedEvent", [this](const CamSpeedEvent& e) {
-      this->cam_speed_event(e);
-  });
-}
-
 static void move_cam(Position& pos, Camera& cam)
 {
   if (cam.moving) {

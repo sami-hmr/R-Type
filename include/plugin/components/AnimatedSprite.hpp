@@ -13,9 +13,12 @@
 
 #include "BaseTypes.hpp"
 #include "ByteParser/ByteParser.hpp"
+#include "ecs/Registry.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
+#include "plugin/events/AnimationEvents.hpp"
+#include "plugin/events/DamageEvent.hpp"
 
 struct AnimationData
 {
@@ -34,6 +37,7 @@ struct AnimationData
       : texture_path(std::move(texture_path))
       , frame_size(frame_size)
       , frame_pos(frame_pos)
+      , initial_frame_pos(frame_pos)
       , direction(direction)
       , sprite_size(sprite_size)
       , framerate(framerate)
@@ -47,6 +51,7 @@ struct AnimationData
   std::string texture_path;
   Vector2D frame_size;
   Vector2D frame_pos;
+  Vector2D initial_frame_pos;
   Vector2D direction;
   Vector2D sprite_size;
   double framerate = 0;
@@ -55,9 +60,10 @@ struct AnimationData
   bool loop = false;
   bool rollback = false;
 
+
   DEFAULT_BYTE_CONSTRUCTOR(AnimationData,
                            (
-                               [](std::vector<char> texture_path_vec,
+                               [](std::string texture,
                                   Vector2D frame_size,
                                   Vector2D frame_pos,
                                   Vector2D direction,
@@ -69,8 +75,7 @@ struct AnimationData
                                   bool rollback)
                                {
                                  return AnimationData(
-                                     std::string(texture_path_vec.begin(),
-                                                 texture_path_vec.end()),
+                                     texture,
                                      frame_size,
                                      frame_pos,
                                      direction,
@@ -81,7 +86,7 @@ struct AnimationData
                                      loop,
                                      rollback);
                                }),
-                           parseByteArray(parseAnyChar()),
+                           parseByteString(),
                            parseVector2D(),
                            parseVector2D(),
                            parseVector2D(),
@@ -95,6 +100,7 @@ struct AnimationData
   DEFAULT_SERIALIZE(string_to_byte(this->texture_path),
                     vector2DToByte(this->frame_size),
                     vector2DToByte(this->frame_pos),
+                    vector2DToByte(this->direction),
                     vector2DToByte(this->sprite_size),
                     type_to_byte(this->framerate),
                     type_to_byte(this->nb_frames),
@@ -174,7 +180,13 @@ public:
 
   std::chrono::high_resolution_clock::time_point last_update;
 
-  void update_anim(std::chrono::high_resolution_clock::time_point now);
+  void update_anim(Registry& r,
+                   std::chrono::high_resolution_clock::time_point now,
+                   int entity);
+  static void on_death(Registry& r, const DamageEvent& event);
+  static void on_animation_end(Registry& r, const AnimationEndEvent& event);
+  static void on_play_animation(Registry& r, const PlayAnimationEvent& event);
+
   DEFAULT_BYTE_CONSTRUCTOR(
       AnimatedSprite,
       (

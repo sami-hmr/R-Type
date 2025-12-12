@@ -199,9 +199,9 @@ void CLI::process_command(const std::string& cmd)
           Position pos(0, 0);
           Scene scene("game", SceneState::ACTIVE);
           this->_registry.get().emit<ComponentBuilder>(
-              42, "sfml:Drawable", draw.to_bytes());
+              42, "ui:Drawable", draw.to_bytes());
           this->_registry.get().emit<ComponentBuilder>(
-              42, "sfml:Sprite", sprite.to_bytes());
+              42, "ui:Sprite", sprite.to_bytes());
           this->_registry.get().emit<ComponentBuilder>(
               42, "moving:Position", pos.to_bytes());
           this->_registry.get().emit<ComponentBuilder>(

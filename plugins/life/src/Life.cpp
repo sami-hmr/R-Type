@@ -15,6 +15,7 @@
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
+#include "plugin/components/AnimatedSprite.hpp"
 #include "plugin/components/Damage.hpp"
 #include "plugin/components/Heal.hpp"
 #include "plugin/components/Health.hpp"
@@ -178,7 +179,9 @@ void Life::on_damage(const DamageEvent& event)
         LogLevel::WARNING,
         std::format("Entity {} died!", event.target));
 
-    this->_registry.get().kill_entity(event.target);
+        if (!this->_registry.get().has_component<AnimatedSprite>(event.target)) {
+          this->_registry.get().kill_entity(event.target);
+        }
   }
 }
 

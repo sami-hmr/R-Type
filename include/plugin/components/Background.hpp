@@ -31,9 +31,7 @@ struct Parallax
   Parallax(bool active,
            double x,
            double y,
-           double framerate,
-           double posx,
-           double posy)
+           double framerate)
       : active(active)
       , speed(x, y)
       , framerate(framerate)
@@ -57,22 +55,16 @@ struct Parallax
       ([](bool active,
           double x,
           double y,
-          double framerate,
-          double posx,
-          double posy)
-       { return Parallax(active, x, y, framerate, posx, posy); }),
+          double framerate)
+       { return Parallax(active, x, y, framerate); }),
       parseByte<bool>(),
-      parseByte<double>(),
-      parseByte<double>(),
       parseByte<double>(),
       parseByte<double>(),
       parseByte<double>())
   DEFAULT_SERIALIZE(type_to_byte(this->active),
                     type_to_byte(this->speed.x),
                     type_to_byte(this->speed.y),
-                    type_to_byte(this->framerate),
-                    type_to_byte(this->pos.x),
-                    type_to_byte(this->pos.y))
+                    type_to_byte(this->framerate))
   HOOKABLE(Parallax, HOOK(active), HOOK(speed), HOOK(framerate), HOOK(pos));
 };
 

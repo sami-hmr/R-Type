@@ -10,6 +10,7 @@
 
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Image.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/View.hpp>
@@ -73,26 +74,11 @@ static sf::Texture gen_placeholder()
 }
 
 SFMLRenderer::SFMLRenderer(Registry& r, EntityLoader& l)
-    : APlugin(r,
-              l,
-              {"moving", "client_network", "server_network"},
-              {COMP_INIT(Drawable, Drawable, init_drawable),
-               COMP_INIT(Sprite, Sprite, init_sprite),
-               COMP_INIT(Text, Text, init_text),
-               COMP_INIT(Camera, Camera, init_cam),
-               COMP_INIT(Background, Background, init_background),
-               COMP_INIT(AnimatedSprite, AnimatedSprite, init_animated_sprite)})
+    : APlugin(r, l, {"moving", "ui", "client_network", "server_network"}, {})
 {
   _window =
       sf::RenderWindow(sf::VideoMode(window_size), "R-Type - SFML Renderer");
   _window.setFramerateLimit(window_rate);
-
-  _registry.get().register_component<Drawable>("sfml:Drawable");
-  _registry.get().register_component<Sprite>("sfml:Sprite");
-  _registry.get().register_component<Text>("sfml:Text");
-  _registry.get().register_component<Background>("sfml:Background");
-  _registry.get().register_component<AnimatedSprite>("sfml:AnimatedSprite");
-  _registry.get().register_component<Camera>("sfml:Camera");
 
   _registry.get().add_system<>([this](Registry&) { this->handle_events(); }, 1);
   _registry.get().add_system<>([this](Registry&)
@@ -137,6 +123,19 @@ SFMLRenderer::SFMLRenderer(Registry& r, EntityLoader& l)
   _registry.get().add_system<>([this](Registry&) { this->display(); });
   _textures.insert_or_assign(SFMLRenderer::placeholder_texture,
                              gen_placeholder());
+
+  _registry.get().on<PlayAnimationEvent>(
+      "PlayAnimationEvent",
+      [this](const PlayAnimationEvent& event)
+      { AnimatedSprite::on_play_animation(this->_registry.get(), event); });
+  _registry.get().on<AnimationEndEvent>(
+      "AnimationEndEvent",
+      [this](const AnimationEndEvent& event)
+      { AnimatedSprite::on_animation_end(this->_registry.get(), event); });
+  _registry.get().on<DamageEvent>(
+      "DamageEvent",
+      [this](const DamageEvent& event)
+      { AnimatedSprite::on_death(this->_registry.get(), event); });
 }
 
 SFMLRenderer::~SFMLRenderer()
@@ -172,62 +171,6 @@ sf::Font& SFMLRenderer::load_font(std::string const& path)
   }
   _fonts.insert_or_assign(path, std::move(font));
   return _fonts.at(path);
-}
-
-void SFMLRenderer::init_drawable(Registry::Entity const& entity,
-                                 JsonObject const&)
-{
-  _registry.get().emplace_component<Drawable>(entity);
-}
-
-
-void SFMLRenderer::init_sprite(Registry::Entity const& entity,
-                               JsonObject const& obj)
-{
-  auto const& texture_path = get_value<Sprite, std::string>(
-      this->_registry.get(), obj, entity, "texture");
-
-  if (!texture_path) {
-    std::cerr << "Error loading sprite component: unexpected value type "
-                 "(texture: string)\n";
-    return;
-  }
-
-  Vector2D scale(0.1, 0.1);
-  if (obj.contains("size")) {
-    scale = this->parse_vector2d<Sprite>(entity, obj, "size");
-  }
-  _registry.get().emplace_component<Sprite>(
-      entity, texture_path.value(), scale);
-}
-
-void SFMLRenderer::init_text(Registry::Entity const& entity,
-                             JsonObject const& obj)
-{
-  auto const& font_path =
-      get_value<Text, std::string>(this->_registry.get(), obj, entity, "font");
-
-  if (!font_path) {
-    std::cerr << "Error loading text component: unexpected value type (font: "
-                 "string)\n";
-    return;
-  }
-
-  Vector2D scale(0.1, 0.1);
-  if (obj.contains("size")) {
-    scale = this->parse_vector2d<Text>(entity, obj, "size");
-  }
-
-  auto& text_opt = _registry.get().emplace_component<Text>(
-      entity, font_path.value(), scale, "");
-
-  if (text_opt.has_value()) {
-    auto text_val = get_value<Text, std::string>(
-        this->_registry.get(), obj, entity, "text");
-    if (text_val) {
-      text_opt.value().text = text_val.value();
-    }
-  }
 }
 
 std::optional<Key> SFMLRenderer::sfml_key_to_key(sf::Keyboard::Key sfml_key)
@@ -323,6 +266,9 @@ void SFMLRenderer::render_sprites(Registry& /*unused*/,
           tuple<std::reference_wrapper<sf::Texture>, double, sf::Vector2f, int>>
       drawables;
   sf::Vector2u window_size = _window.getSize();
+  sf::Vector2f view_size = this->_view.getSize();
+  sf::Vector2f view_pos = this->_view.getCenter();
+
   float min_dimension =
       static_cast<float>(std::min(window_size.x, window_size.y));
 
@@ -339,6 +285,20 @@ void SFMLRenderer::render_sprites(Registry& /*unused*/,
       continue;
     }
 
+    sf::Vector2f new_pos(
+        static_cast<float>((pos.pos.x + 1.0) * min_dimension / 2.0f),
+        static_cast<float>((pos.pos.y + 1.0) * min_dimension / 2.0f));
+
+    if (new_pos.x < view_pos.x - (view_size.x / 2)
+        || new_pos.x > view_pos.x + (view_size.x / 2))
+    {
+      continue;
+    }
+    if (new_pos.y < view_pos.y - (view_size.y / 2)
+        || new_pos.y > view_pos.y + (view_size.y / 2))
+    {
+      continue;
+    }
     sf::Texture& texture = load_texture(spr.texture_path);
 
     float scale_x =
@@ -347,9 +307,6 @@ void SFMLRenderer::render_sprites(Registry& /*unused*/,
         static_cast<float>(window_size.y * spr.scale.y) / texture.getSize().y;
     float uniform_scale = std::min(scale_x, scale_y);
 
-    sf::Vector2f new_pos(
-        static_cast<float>((pos.pos.x + 1.0) * min_dimension / 2.0f),
-        static_cast<float>((pos.pos.y + 1.0) * min_dimension / 2.0f));
     drawables.emplace_back(std::ref(texture), uniform_scale, new_pos, pos.z);
   }
   std::sort(drawables.begin(),
@@ -369,6 +326,18 @@ void SFMLRenderer::render_sprites(Registry& /*unused*/,
     this->_sprite->setScale(sf::Vector2f(scale, scale));
     this->_sprite->setPosition(new_pos);
     _window.draw(*this->_sprite);
+  }
+
+  sf::RectangleShape debugRect;
+  debugRect.setFillColor(sf::Color(255, 0, 0, 100));
+
+  for (const auto &[texture, scale, new_pos, z] : drawables) {
+    debugRect.setSize(sf::Vector2f(
+        static_cast<float>(texture.get().getSize().x) * scale,
+        static_cast<float>(texture.get().getSize().y) * scale));
+    debugRect.setOrigin(debugRect.getSize() / 2.0f);
+    debugRect.setPosition(new_pos);
+    _window.draw(debugRect);
   }
 }
 

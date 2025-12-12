@@ -1,8 +1,11 @@
 
 #include "plugin/events/CameraEvents.hpp"
-#include "SFMLRenderer.hpp"
+#include "UI.hpp"
+#include "plugin/components/Camera.hpp"
+#include "plugin/components/Position.hpp"
 
-void SFMLRenderer::cam_target_event(const CamAggroEvent& e)
+
+void UI::cam_target_event(const CamAggroEvent& e)
 {
   Vector2D target = {0, 0};
   SparseArray<Position> positions = _registry.get().get_components<Position>();
@@ -19,7 +22,7 @@ void SFMLRenderer::cam_target_event(const CamAggroEvent& e)
   }
 }
 
-void SFMLRenderer::cam_zoom_event(const CamZoomEvent &e)
+void UI::cam_zoom_event(const CamZoomEvent &e)
 {
     for (auto&& [cam] : Zipper(_registry.get().get_components<Camera>()))
     {
@@ -28,7 +31,7 @@ void SFMLRenderer::cam_zoom_event(const CamZoomEvent &e)
     }
 }
 
-void SFMLRenderer::cam_speed_event(const CamSpeedEvent &e)
+void UI::cam_speed_event(const CamSpeedEvent &e)
 {
     for (auto&& [cam] : Zipper(_registry.get().get_components<Camera>()))
     {
@@ -36,7 +39,7 @@ void SFMLRenderer::cam_speed_event(const CamSpeedEvent &e)
     }
 }
 
-void SFMLRenderer::cam_rotate_event(const CamRotateEvent &e)
+void UI::cam_rotate_event(const CamRotateEvent &e)
 {
     for (auto&& [cam] : Zipper(_registry.get().get_components<Camera>()))
     {

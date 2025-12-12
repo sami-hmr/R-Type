@@ -1,4 +1,4 @@
-{
+  {
   "entities_template": [
     {
       "name": "menu",
@@ -9,8 +9,8 @@
             "y": -0.5
           }
         },
-        "sfml:Drawable": {},
-        "sfml:Text": {
+        "ui:Drawable": {},
+        "ui:Text": {
           "font": "assets/fonts/roboto.ttf",
           "size": {
             "width": 40.0,
@@ -35,6 +35,10 @@
         {
           "name": "actions",
           "config": {}
+        },
+        {
+          "name": "sfml",
+          "config": {}
         }
       ],
       "entities": [
@@ -48,8 +52,8 @@
               "y": 0.0
             }
           },
-          "sfml:Drawable": {},
-          "sfml:Text": {
+          "ui:Drawable": {},
+          "ui:Text": {
             "font": "assets/fonts/roboto.ttf",
             "size": {
               "width": 30.0,
@@ -65,8 +69,8 @@
               "y": 0.3
             }
           },
-          "sfml:Drawable": {},
-          "sfml:Text": {
+          "ui:Drawable": {},
+          "ui:Text": {
             "font": "assets/fonts/roboto.ttf",
             "size": {
               "width": 25.0,
@@ -124,7 +128,7 @@
             },
             "z": 2
           },
-          "sfml:Drawable": {},
+          "ui:Drawable": {},
           "moving:Velocity": {
             "hook": "player",
             "speed": {
@@ -136,7 +140,7 @@
               "y": 0.0
             }
           },
-          "sfml:AnimatedSprite": {
+          "ui:AnimatedSprite": {
             "animations": [
               {
                 "name": "idle",
@@ -161,6 +165,30 @@
                 "nb_frames": 7,
                 "loop": true,
                 "rollback": true
+              },
+              {
+                "name": "death",
+                "texture": "assets/explosion.png",
+                "frame_size": {
+                  "x": 128.0,
+                  "y": 128.0
+                },
+                "frame_pos": {
+                  "x": 0.0,
+                  "y": 0.0
+                },
+                "direction": {
+                  "x": 1.0,
+                  "y": 0.0
+                },
+                "sprite_size": {
+                  "width": "20.0%",
+                  "height": "20.0%"
+                },
+                "framerate": 10.0,
+                "nb_frames": 12,
+                "loop": false,
+                "rollback": false
               }
             ],
             "default_animation": "idle"
@@ -176,12 +204,8 @@
             "LEFT": "Q",
             "RIGHT": "D"
           },
-          "life:Health": {
-            "current": 5,
-            "max": 100
-          },
           "life:Damage": {
-            "amount": 10
+            "amount": 0
           },
           "life:Heal": {
             "amount": 1
@@ -197,22 +221,8 @@
               "y": -0.3
             }
           },
-          "moving:Velocity": {
-            "speed": {
-              "x": 0.07,
-              "y": 0.08
-            },
-            "direction": {
-              "x": 0.0,
-              "y": 0.0
-            }
-          },
-          "moving:Position": {
-            "x": 0.5,
-            "y": -0.9
-          },
-          "sfml:Drawable": {},
-          "sfml:Sprite": {
+          "ui:Drawable": {},
+          "ui:Sprite": {
             "texture": "assets/enemy.png",
             "size": {
               "width": "20.0%",
@@ -222,18 +232,18 @@
           "collision:Collidable": {
             "width": 0.2,
             "height": 0.2,
-            "collision_type": "trigger"
+            "collision_type": "solid"
           },
           "life:Health": {
             "hook": "prout",
-            "current": 5,
+            "current": 20,
             "max": 100
           },
           "life:Team": {
             "name": "test"
           },
           "life:Damage": {
-            "amount": 0
+            "amount": 1
           },
           "moving:Velocity": {
             "speed": {
@@ -260,8 +270,8 @@
               "y": -0.8
             }
           },
-          "sfml:Drawable": {},
-          "sfml:Text": {
+          "ui:Drawable": {},
+          "ui:Text": {
             "font": "assets/fonts/roboto.ttf",
             "size": {
               "width": 30.0,
@@ -300,8 +310,8 @@
           }
         },
         {
-          "sfml:Drawable": {},
-          "sfml:Background": {
+          "ui:Drawable": {},
+          "ui:Background": {
             "layers": [
               {
                 "path": "assets/backgrounds/skies/Sky_sky.png"
@@ -349,7 +359,7 @@
               "y": 0.0
             }
           },
-          "sfml:Camera": {
+          "ui:Camera": {
             "size": {
               "width": "100.0%",
               "height": "100.0%"

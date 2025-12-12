@@ -11,7 +11,7 @@ struct CamAggroEvent
 {
   Registry::Entity target;
 
-  CHANGE_ENTITY(result.target = map.at_second(target))
+  CHANGE_ENTITY(result.target = map.at(target))
 
   CamAggroEvent(Registry::Entity t)
       : target(t)

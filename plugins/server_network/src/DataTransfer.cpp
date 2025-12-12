@@ -4,11 +4,48 @@
 #include "Server.hpp"
 #include "plugin/Byte.hpp"
 
-void Server::transmit_event(EventBuilder&& to_transmit)
+void Server::transmit_event_to_client(EventBuilderId&& to_transmit)
 {
   this->_events_to_transmit.get().lock.lock();
   this->_events_to_transmit.get().queue.push(std::move(to_transmit));
   this->_events_to_transmit.get().lock.unlock();
+  this->_semaphore_event.get().release();
+}
+
+void Server::transmit_event_to_server(EventBuilder&& to_transmit)
+{
+  this->_events_queue.get().lock.lock();
+  this->_events_queue.get().queue.push(std::move(to_transmit));
+  this->_events_queue.get().lock.unlock();
+  this->_semaphore.get().release();
+}
+
+void Server::send_event_to_client()
+{
+  while (this->_running) {
+    this->_semaphore_event.get().acquire();
+    this->_events_to_transmit.get().lock.lock();
+    this->_client_mutex.lock();
+    auto& queue = this->_events_to_transmit.get().queue;
+    while (!queue.empty()) {
+      auto const& evt = queue.front();
+      ByteArray data = type_to_byte(SENDEVENT) + evt.event.to_bytes();
+      if (evt.client) {
+        auto const& client = this->find_client_by_id(*evt.client);
+        this->send_connected(data, client.endpoint);
+      } else {
+        for (auto const& it : this->_clients) {
+          if (it.state != ClientState::CONNECTED) {
+            continue;
+          }
+          this->send_connected(data, it.endpoint);
+        }
+      }
+      queue.pop();
+    }
+    this->_events_to_transmit.get().lock.unlock();
+    this->_client_mutex.unlock();
+  }
 }
 
 void Server::send_comp()

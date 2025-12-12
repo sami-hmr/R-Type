@@ -47,30 +47,6 @@ private:
   sf::Texture& load_texture(std::string const& path);
   sf::Font& load_font(std::string const& path);
 
-  void init_drawable(Registry::Entity const& entity, JsonObject const& obj);
-  void init_sprite(Registry::Entity const& entity, JsonObject const& obj);
-  void init_text(Registry::Entity const& entity, JsonObject const& obj);
-  void init_cam(Registry::Entity const &entity, JsonObject const& obj);
-
-
-  template<typename T>
-  Vector2D parse_vector2d(Registry::Entity const& entity,
-                          JsonObject const& obj,
-                          std::string const& str)
-  {
-    auto vec = get_value<T, Vector2D>(
-        this->_registry.get(), obj, entity, str, "width", "height");
-
-    return vec.value();
-  }
-
-  void init_background(Registry::Entity const& entity, JsonObject const& obj);
-  void init_animated_sprite(Registry::Entity const& entity,
-                            const JsonObject& obj);
-
-  std::optional<AnimationData> parse_animation_data(JsonObject const& obj,
-                                                    Registry::Entity const& e);
-
   void handle_events();
   void handle_resize();
   void render_sprites(Registry& r,
@@ -84,10 +60,6 @@ private:
                    const SparseArray<Drawable>& drawable,
                    const SparseArray<Text>& texts);
   void camera_system(Registry &r, SparseArray<Position> &positions, SparseArray<Camera> &cameras);
-  void cam_target_event(const CamAggroEvent &e);
-  void cam_zoom_event(const CamZoomEvent &e);
-  void cam_rotate_event(const CamRotateEvent &e);
-  void cam_speed_event(const CamSpeedEvent &e);
 
   void background_system(Registry& r,
                          const SparseArray<Scene>& scenes,
