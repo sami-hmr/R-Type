@@ -34,7 +34,7 @@ class Server
 {
 public:
   Server(ServerLaunching const& s,
-         SharedQueue<ComponentBuilder>& comp_queue,
+         SharedQueue<ComponentBuilderId>& comp_queue,
          SharedQueue<EventBuilderId>& event_to_client,
          SharedQueue<EventBuilder>& event_to_server,
          std::atomic<bool>& running,
@@ -118,7 +118,7 @@ private:
   std::string _mapname = "level1";
   int _max_players = MAX_PLAYERS;
 
-  std::reference_wrapper<SharedQueue<ComponentBuilder>> _components_to_create;
+  std::reference_wrapper<SharedQueue<ComponentBuilderId>> _components_to_create;
 
   void transmit_event_to_client(EventBuilderId&& to_transmit);
   void send_event_to_client();

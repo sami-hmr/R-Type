@@ -31,7 +31,7 @@ class NetworkServer : public APlugin
 
     std::thread _thread;
     std::counting_semaphore<> _comp_semaphore;
-    SharedQueue<ComponentBuilder> _components_to_update;
+    SharedQueue<ComponentBuilderId> _components_to_update;
     std::atomic<bool> _running = false;
     SharedQueue<EventBuilder> _event_queue;
     std::counting_semaphore<> _event_semaphore;

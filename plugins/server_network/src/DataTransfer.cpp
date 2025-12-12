@@ -56,14 +56,19 @@ void Server::send_comp()
     this->_client_mutex.lock();
     while (!this->_components_to_create.get().queue.empty()) {
       auto const& comp = this->_components_to_create.get().queue.front();
-      for (auto const& it : this->_clients) {
-        if (it.state != ClientState::CONNECTED) {
-          continue;
+      ByteArray data = type_to_byte<std::uint8_t>(SENDCOMP)
+          + type_to_byte(comp.component.entity)
+          + string_to_byte(comp.component.id) + comp.component.data;
+      if (comp.client) {
+        this->send_connected(
+            data, this->find_client_by_id(comp.client.value()).endpoint);
+      } else {
+        for (auto const& it : this->_clients) {
+          if (it.state != ClientState::CONNECTED) {
+            continue;
+          }
+          this->send_connected(data, it.endpoint);
         }
-        this->send_connected(type_to_byte<std::uint8_t>(SENDCOMP)
-                                 + type_to_byte(comp.entity)
-                                 + string_to_byte(comp.id) + comp.data,
-                             it.endpoint);
       }
       this->_components_to_create.get().queue.pop();
     }

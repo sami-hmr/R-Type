@@ -30,11 +30,13 @@ Moving::Moving(Registry& r, EntityLoader& l)
       { this->moving_system(r, pos, vel); },
       4);
 
-  // this->_registry.get().on<ComponentBuilder>("ComponentBuilder", [](ComponentBuilder const &data) {
+  // this->_registry.get().on<ComponentBuilder>("ComponentBuilder",
+  // [](ComponentBuilder const &data) {
   //     std::cerr << "ça build un component " << data.id << "\n";
   // });
 
-  // this->_registry.get().on<EventBuilder>("EventBuilder", [](EventBuilder const &data) {
+  // this->_registry.get().on<EventBuilder>("EventBuilder", [](EventBuilder
+  // const &data) {
   //     std::cerr << "ça build un event " << data.event_id << "\n";
   // });
   this->_registry.get().on<UpdateVelocity>(
@@ -62,7 +64,7 @@ void Moving::moving_system(Registry& reg,
   for (auto&& [index, position, velocity] : ZipperIndex(positions, velocities))
   {
     Vector2D movement = (velocity.direction * dt).normalize() * velocity.speed;
-        position.pos += movement;
+    position.pos += movement;
     if (movement.length() != 0) {
       reg.emit<ComponentBuilder>(
           index, reg.get_component_key<Position>(), position.to_bytes());

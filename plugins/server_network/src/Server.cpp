@@ -19,7 +19,7 @@
 #include "plugin/Byte.hpp"
 
 Server::Server(ServerLaunching const& s,
-               SharedQueue<ComponentBuilder>& comp_queue,
+               SharedQueue<ComponentBuilderId>& comp_queue,
                SharedQueue<EventBuilderId>& event_to_client,
                SharedQueue<EventBuilder>& event_to_server,
                std::atomic<bool>& running,

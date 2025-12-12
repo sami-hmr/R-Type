@@ -50,6 +50,58 @@ struct ComponentBuilder
   }
 };
 
+struct ComponentBuilderId
+{
+  std::optional<std::size_t> client;
+  ComponentBuilder component;
+
+  ComponentBuilderId() = default;
+
+  ComponentBuilderId(std::optional<std::size_t> const& c,
+                     ComponentBuilder component)
+      : client(c)
+      , component(std::move(component))
+  {
+  }
+
+  ComponentBuilderId(std::optional<std::size_t> const& c,
+                     std::size_t e,
+                     std::string const& i,
+                     ByteArray const& d)
+      : client(c)
+      , component(e, i, d)
+  {
+  }
+
+  DEFAULT_BYTE_CONSTRUCTOR(ComponentBuilderId,
+                           ([](std::optional<std::size_t> c,
+                               std::size_t e,
+                               std::string const& i,
+                               ByteArray const& d)
+                            { return ComponentBuilderId(c, e, i, d); }),
+                           parseByteOptional(parseByte<std::size_t>()),
+                           parseByte<std::size_t>(),
+                           parseByteString(),
+                           parseByte<Byte>().many())
+
+  DEFAULT_SERIALIZE(optional_to_byte<std::size_t>(
+                        client,
+                        std::function<ByteArray(std::size_t const&)>(
+                            [](std::size_t const& b)
+                            { return type_to_byte(b); })),
+                    component.to_bytes())
+
+  CHANGE_ENTITY_DEFAULT
+
+  ComponentBuilderId(Registry& r, JsonObject const& e)
+      : client(get_value_copy<std::size_t>(r, e, "client").value())
+      , component(get_value_copy<std::size_t>(r, e, "entity").value(),
+                  get_value_copy<std::string>(r, e, "event_id").value(),
+                  get_value_copy<ByteArray>(r, e, "data").value())
+  {
+  }
+};
+
 inline Parser<ComponentBuilder> parse_component_builder()
 {
   return apply(
@@ -167,21 +219,22 @@ struct EntityCreation
 struct PlayerCreated
 {
   std::size_t server_index;
+  std::size_t client_id;
 
   PlayerCreated() = default;
 
-  PlayerCreated(std::size_t server_index)
+  PlayerCreated(std::size_t server_index, std::size_t client_id)
       : server_index(server_index)
+      , client_id(client_id)
   {
   }
 
   DEFAULT_BYTE_CONSTRUCTOR(PlayerCreated,
-                           ([](std::size_t i)
-                            { return PlayerCreated(i); }),
-
+                           ([](std::size_t i, std::size_t id) { return PlayerCreated(i, id); }),
+                           parseByte<std::size_t>(),
                            parseByte<std::size_t>())
 
-  DEFAULT_SERIALIZE(type_to_byte(server_index))
+  DEFAULT_SERIALIZE(type_to_byte(server_index), type_to_byte(client_id))
 
   CHANGE_ENTITY_DEFAULT
 
@@ -201,25 +254,29 @@ struct SharedQueue
 struct PlayerCreation
 {
   std::size_t server_index;
+  std::size_t server_id;
 
   PlayerCreation() = default;
 
-  PlayerCreation(std::size_t server_index)
+  PlayerCreation(std::size_t server_index, std::size_t server_id)
       : server_index(server_index)
+      , server_id(server_id)
   {
   }
 
   DEFAULT_BYTE_CONSTRUCTOR(PlayerCreation,
-                           ([](std::size_t i) { return PlayerCreation(i); }),
-
+                           ([](std::size_t i, std::size_t id)
+                            { return PlayerCreation(i, id); }),
+                           parseByte<std::size_t>(),
                            parseByte<std::size_t>())
 
-  DEFAULT_SERIALIZE(type_to_byte(server_index))
+  DEFAULT_SERIALIZE(type_to_byte(server_index), type_to_byte(server_id))
 
   CHANGE_ENTITY_DEFAULT
 
   PlayerCreation(Registry& r, JsonObject const& e)
       : server_index(get_value_copy<std::size_t>(r, e, "server_index").value())
+      , server_id(get_value_copy<std::size_t>(r, e, "server_id").value())
   {
   }
 };

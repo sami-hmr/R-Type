@@ -1,6 +1,7 @@
 #include <chrono>
 #include <format>
 #include <functional>
+#include <optional>
 #include <thread>
 
 #include "Network.hpp"
@@ -9,6 +10,7 @@
 
 #include "NetworkShared.hpp"
 #include "Server.hpp"
+#include "ecs/ComponentState.hpp"
 #include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/Scenes.hpp"
@@ -23,6 +25,7 @@
 #include "plugin/components/Velocity.hpp"
 #include "plugin/events/CleanupEvent.hpp"
 #include "plugin/events/LoggerEvent.hpp"
+#include "plugin/events/NetworkEvents.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
 
 NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
@@ -59,10 +62,15 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
 
   this->_registry.get().on<ComponentBuilder>(
       "ComponentBuilder",
-      [this](ComponentBuilder e)
+      [this](ComponentBuilder const& e)
+      { this->_registry.get().emit<ComponentBuilderId>(std::nullopt, e); });
+
+  this->_registry.get().on<ComponentBuilderId>(
+      "ComponentBuilder",
+      [this](ComponentBuilderId const& e)
       {
         this->_components_to_update.lock.lock();
-        this->_components_to_update.queue.push(std::move(e));
+        this->_components_to_update.queue.push(e);
         this->_components_to_update.lock.unlock();
         this->_comp_semaphore.release();
       });
@@ -87,7 +95,9 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
 
         this->_event_queue_to_client.lock.lock();
         this->_event_queue_to_client.queue.emplace(
-            e.client, "PlayerCreation", PlayerCreation(entity).to_bytes());
+            e.client,
+            "PlayerCreation",
+            PlayerCreation(entity, e.client).to_bytes());
         this->_event_queue_to_client.lock.unlock();
         this->_event_semaphore.release();
       });
@@ -96,6 +106,7 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
       "PlayerCreated",
       [this](PlayerCreated const& data)
       {
+        this->_registry.get().emit<StateTransfer>(data.client_id);
         init_component(
             this->_registry.get(), data.server_index, Position(0, 0, 2));
         init_component(this->_registry.get(), data.server_index, Drawable());
@@ -128,6 +139,16 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
         init_component(this->_registry.get(),
                        data.server_index,
                        Scene("game", SceneState::ACTIVE));
+      });
+
+      this->_registry.get().on<StateTransfer>("StateTransfer", [this](const StateTransfer &data) {
+          std::vector<ComponentState> s = this->_registry.get().get_state();
+
+          for (auto const &it : s) {
+              for (auto const &i : it.comps) {
+                  this->_registry.get().emit<ComponentBuilderId>(data.client_id, ComponentBuilder(i.first, it.id, i.second));
+              }
+          }
       });
 }
 

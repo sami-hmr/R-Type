@@ -78,6 +78,7 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
       "PlayerCreation",
       [this](PlayerCreation const& server)
       {
+        this->_id_in_server = server.server_id;
         auto zipper =
             ZipperIndex(this->_registry.get().get_components<Controllable>());
 
@@ -100,7 +101,7 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
           this->_server_indexes.insert(server.server_index, new_entity); // SERVER -> CLIENT
         }
         this->_registry.get().emit<EventBuilder>(
-            "PlayerCreated", PlayerCreated(server.server_index).to_bytes());
+            "PlayerCreated", PlayerCreated(server.server_index, this->_id_in_server).to_bytes());
       });
 
   this->_registry.get().add_system<>(

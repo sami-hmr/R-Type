@@ -21,6 +21,7 @@
 // #include "NetworkShared.hpp"
 #include "SparseArray.hpp"
 #include "TwoWayMap.hpp"
+#include "ecs/ComponentState.hpp"
 #include "ecs/Scenes.hpp"
 #include "ecs/Systems.hpp"
 #include "ecs/zipper/Zipper.hpp"
@@ -78,6 +79,18 @@ public:
         string_id,
         [](ByteArray const& b, std::unordered_map<Entity, Entity> const& map)
         { return Component(b).change_entity(map).to_bytes(); });
+    this->_state_getters.insert_or_assign(
+        ti,
+        [&comp, string_id]()
+        {
+          ComponentState r(string_id);
+          for (std::size_t i = 0; i < comp.size(); i++) {
+            if (comp[i]) {
+              r.comps.emplace_back(i, comp[i]->to_bytes());
+            }
+          }
+          return r;
+        });
     this->_index_getter.insert(ti, string_id);
     return comp;
   }
@@ -203,7 +216,7 @@ public:
     try {
       this->_emplace_functions.at(this->_index_getter.at_second(string_id))(
           to, bytes);
-    } catch (std::out_of_range const &) {
+    } catch (std::out_of_range const&) {
       std::cerr << "error: unknow component :" << string_id << "\n";
     }
   }
@@ -528,7 +541,7 @@ public:
 
   ByteArray convert_comp_entity(std::string const& id,
                                 ByteArray const& comp,
-                                 std::unordered_map<Entity, Entity> const& map)
+                                std::unordered_map<Entity, Entity> const& map)
   {
     return this->_comp_entity_converters.at(id)(comp, map);
   }
@@ -538,12 +551,21 @@ public:
   {
     return this->_events_index_getter.at_first(typeid(Event));
   }
+
   template<component Component>
   std::string get_component_key()
   {
     return this->_index_getter.at_first(typeid(Component));
   }
 
+  std::vector<ComponentState> get_state()
+  {
+    std::vector<ComponentState> r(this->_state_getters.size());
+    for (auto const& it : this->_components) {
+      r.emplace_back(this->_state_getters.at(it.first)());
+    }
+    return r;
+  }
 
 private:
   template<typename EventType>
@@ -605,19 +627,23 @@ private:
   std::unordered_map<std::type_index,
                      std::function<void(Entity const&, ByteArray const&)>>
       _emplace_functions;
+  std::unordered_map<std::type_index, std::function<ComponentState()>>
+      _state_getters;
   TwoWayMap<std::type_index, std::string> _index_getter;
 
-  std::unordered_map<std::string,
-                     std::function<ByteArray(ByteArray const&,
-                                             std::unordered_map<Entity, Entity> const&)>>
+  std::unordered_map<
+      std::string,
+      std::function<ByteArray(ByteArray const&,
+                              std::unordered_map<Entity, Entity> const&)>>
       _event_entity_converters;
 
   std::unordered_map<std::string, std::function<void(ByteArray const&)>>
       _byte_event_emitter;
 
-  std::unordered_map<std::string,
-                     std::function<ByteArray(ByteArray const&,
-                                             std::unordered_map<Entity, Entity> const&)>>
+  std::unordered_map<
+      std::string,
+      std::function<ByteArray(ByteArray const&,
+                              std::unordered_map<Entity, Entity> const&)>>
       _comp_entity_converters;
 
   std::unordered_map<std::type_index, std::any> _event_handlers;
@@ -642,5 +668,4 @@ private:
   std::vector<Binding> _bindings;
 
   std::unordered_map<std::string, JsonObject> _entities_templates;
-
 };

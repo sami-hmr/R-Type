@@ -109,13 +109,10 @@ void Controller::handle_key_change(Key key, bool is_pressed)
 {
   this->_key_states[key] = is_pressed;
 
-  auto& velocities = this->_registry.get().get_components<Velocity>();
   auto const& controllers =
       this->_registry.get().get_components<Controllable>();
 
-  for (auto&& [index, controller, velocity] :
-       ZipperIndex(controllers, velocities))
-  {
+  for (auto&& [index, controller] : ZipperIndex(controllers)) {
     Key up_key = this->char_to_key(controller.up);
     Key down_key = this->char_to_key(controller.down);
     Key left_key = this->char_to_key(controller.left);
