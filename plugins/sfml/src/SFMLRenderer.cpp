@@ -327,18 +327,6 @@ void SFMLRenderer::render_sprites(Registry& /*unused*/,
     this->_sprite->setPosition(new_pos);
     _window.draw(*this->_sprite);
   }
-
-  sf::RectangleShape debugRect;
-  debugRect.setFillColor(sf::Color(255, 0, 0, 100));
-
-  for (const auto &[texture, scale, new_pos, z] : drawables) {
-    debugRect.setSize(sf::Vector2f(
-        static_cast<float>(texture.get().getSize().x) * scale,
-        static_cast<float>(texture.get().getSize().y) * scale));
-    debugRect.setOrigin(debugRect.getSize() / 2.0f);
-    debugRect.setPosition(new_pos);
-    _window.draw(debugRect);
-  }
 }
 
 void SFMLRenderer::render_text(Registry& /*unused*/,

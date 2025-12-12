@@ -109,18 +109,6 @@ void SFMLRenderer::animation_system(
     this->_sprite->setPosition(new_pos);
     _window.draw(*this->_sprite);
   }
-
-  sf::RectangleShape debugRect;
-  debugRect.setFillColor(sf::Color(255, 0, 0, 100));
-
-  for (const auto &[texture, scale, new_pos, z, anim_data] : drawables) {
-      debugRect.setSize(sf::Vector2f(
-          static_cast<float>(anim_data.frame_size.x) * scale,
-          static_cast<float>(anim_data.frame_size.y) * scale));
-      debugRect.setOrigin(debugRect.getSize() / 2.0f);
-      debugRect.setPosition(new_pos);
-      _window.draw(debugRect);
-  }
 }
 
 void AnimatedSprite::update_anim(
