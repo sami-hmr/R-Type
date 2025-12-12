@@ -11,9 +11,9 @@
 #include <cmath>
 #include <iostream>
 #include <ostream>
-
 #include "ByteParser/ByteParser.hpp"
 #include "Json/JsonParser.hpp"
+#include "Parser.hpp"
 #include "plugin/Byte.hpp"
 
 class Vector2D
@@ -103,6 +103,26 @@ public:
 
   bool operator!=(const Vector2D& other) const { return !(*this == other); };
 
+  bool operator<=(const Vector2D& other) const
+  {
+    return (this->x <= other.x && this->y <= other.y);
+  };
+
+  bool operator>=(const Vector2D& other) const
+  {
+    return (this->x >= other.x && this->y >= other.y);
+  };
+
+  bool operator<(const Vector2D& other) const
+  {
+    return (this->x < other.x && this->y < other.y);
+  };
+
+  bool operator>(const Vector2D& other) const
+  {
+    return (this->x > other.x && this->y > other.y);
+  };
+
   double length() const
   {
     return std::sqrt((this->x * this->x) + (this->y * this->y));
@@ -116,6 +136,11 @@ public:
       return {0, 0};
     }
     return {this->x / len, this->y / len};
+  }
+
+  double distanceTo(const Vector2D& other) const
+  {
+    return (*this - other).length();
   }
 
   double dot(const Vector2D& other) const

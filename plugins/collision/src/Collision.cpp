@@ -124,10 +124,12 @@ void Collision::collision_system(Registry& /*r*/,
     if (!collidables[i]->is_active) {
       continue;
     }
+    double rect_x = position.pos.x - (collidable.width / 2.0);
+    double rect_y = position.pos.y - (collidable.height / 2.0);
     entities.push_back(ICollisionAlgorithm::CollisionEntity {
         .entity_id = i,
-        .bounds = Rect {.x = position.pos.x,
-                        .y = position.pos.y,
+        .bounds = Rect {.x = rect_x,
+                        .y = rect_y,
                         .width = collidable.width,
                         .height = collidable.height}});
   }
@@ -173,7 +175,7 @@ void Collision::interaction_zone_system(
       }
       Vector2D distance = positions[candidate.entity_id]->pos - position.pos;
 
-      if (distance.length() <= zone.radius * zone.radius) {
+      if (distance.length() <= zone.radius) {
         detected_entities.push_back(candidate.entity_id);
       }
     }

@@ -121,6 +121,7 @@
       "entities": [
         {
           "moving:Position": {
+            "hook": "playerpos",
             "pos": {
               "x": 0.0,
               "y": 0.0
@@ -203,9 +204,8 @@
             "LEFT": "Q",
             "RIGHT": "D"
           },
-          "life:Health": {
-            "current": 5,
-            "max": 100
+          "life:Damage": {
+            "amount": 0
           },
           "life:Heal": {
             "amount": 1
@@ -232,18 +232,18 @@
           "collision:Collidable": {
             "width": 0.2,
             "height": 0.2,
-            "collision_type": "trigger"
+            "collision_type": "solid"
           },
           "life:Health": {
             "hook": "prout",
             "current": 20,
             "max": 100
           },
-          "life:Damage": {
-            "amount": 100
-          },
           "life:Team": {
             "name": "test"
+          },
+          "life:Damage": {
+            "amount": 1
           },
           "moving:Velocity": {
             "speed": {
@@ -280,6 +280,7 @@
             "text": "#game_text:buffer"
           }
         },
+        
         {
           "actions:ActionTrigger": {
             "trigger": {
@@ -348,6 +349,28 @@
                 "y": 0.0
               },
               "framerate": 60.0
+            }
+          }
+        },
+        {
+          "moving:Position": {
+            "pos": {
+              "x": 0.0,
+              "y": 0.0
+            }
+          },
+          "ui:Camera": {
+            "size": {
+              "width": "100.0%",
+              "height": "100.0%"
+            },
+            "target": {
+              "x": "50.0%",
+              "y": "50.0%"
+            },
+            "speed": {
+              "x": 0.01,
+              "y": 0.01
             }
           }
         }
