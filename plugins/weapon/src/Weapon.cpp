@@ -29,21 +29,13 @@ void Weapon::on_fire(Registry &r, const KeyPressedEvent &e)
   if (!e.key_pressed.contains(Key::SPACE)) {
     return;
   }
-
-  SparseArray<Scene> scenes = r.get_components<Scene>();
-  SparseArray<BasicWeapon> weapons = r.get_components<BasicWeapon>();
-
-  SparseArray<Controllable> controllables = r.get_components<Controllable>();
   Registry::Entity player = 0;
-  
-  for (auto &&[i, _]: ZipperIndex(controllables)) {
+
+  for (auto &&[i, _]: ZipperIndex<Controllable>(r)) {
     player = i;
   }
 
-  for (auto &&[scene, weapon] : Zipper(scenes, weapons)) {
-    if (scene.state != SceneState::MAIN) {
-        continue;
-    }
+  for (auto &&[weapon] : Zipper<BasicWeapon>(r)) {
     std::optional<Registry::Entity> bullet = this->entity_loader.load_entity(JsonObject({{"template", JsonValue(weapon.bullet_type)}}));
     if (!bullet) {
         continue;

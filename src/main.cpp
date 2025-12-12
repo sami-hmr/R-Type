@@ -5,7 +5,6 @@
 #include <optional>
 #include <iostream>
 
-#include "ecs/Scenes.hpp"
 #include "ecs/Registry.hpp"
 #include "Json/JsonParser.hpp"
 #include "plugin/EntityLoader.hpp"
@@ -34,8 +33,8 @@ static int true_main(Registry& r,
                          [&r](const SceneChangeEvent& event)
                          {
                            r.set_current_scene(
-                               event.target_scene,
-                               SCENE_STATE_STR.at_second(event.state));
+                               event.target_scene);
+                           r.remove_current_scene("menu"); // a voir comment on fait
                          });
 
   r.on<SpawnEntityRequestEvent>("SpawnEntity",

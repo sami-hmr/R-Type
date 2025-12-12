@@ -1,5 +1,6 @@
 
 
+#include "plugin/components/Camera.hpp"
 #include <SFML/System/Angle.hpp>
 #include <SFML/System/Vector2.hpp>
 
@@ -53,13 +54,11 @@ static void shake_cam(Camera &cam) {
   }
 }
 
-void SFMLRenderer::camera_system(Registry& r,
-                                 SparseArray<Position>& positions,
-                                 SparseArray<Camera>& cameras)
+void SFMLRenderer::camera_system(Registry& r)
 {
   sf::Vector2u window_size = _window.getSize();
 
-  for (auto&& [pos, cam] : Zipper(positions, cameras)) {
+  for (auto&& [pos, cam] : Zipper<Position, Camera>(r)) {
     move_cam(pos, cam);
     rotate_cam(cam);
     zoom_cam(cam);

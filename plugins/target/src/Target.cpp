@@ -16,13 +16,11 @@ Target::Target(Registry& r, EntityLoader& l)
 {
   this->_registry.get().register_component<Follower>("target:Follower");
 
-  this->_registry.get().add_system<Follower, Position, Velocity>(
-      [this](Registry& r,
-             SparseArray<Follower>& followers,
-             const SparseArray<Position>& positions,
-             SparseArray<Velocity>& velocities)
-      { this->target_system(r, followers, positions, velocities); });
-  this->_registry.get().on<InteractionZoneEvent>("InteractionZoneEvent", [this](const InteractionZoneEvent& event)
+  this->_registry.get().add_system([this](Registry& r)
+                                   { this->target_system(r); });
+  this->_registry.get().on<InteractionZoneEvent>(
+      "InteractionZoneEvent",
+      [this](const InteractionZoneEvent& event)
       { this->on_interaction_zone(event); });
 }
 
@@ -31,13 +29,11 @@ void Target::init_follower(Registry::Entity entity, JsonObject const& obj)
   this->_registry.get().emplace_component<Follower>(entity);
 }
 
-void Target::target_system(Registry& reg,
-                           SparseArray<Follower>& followers,
-                           const SparseArray<Position>& positions,
-                           SparseArray<Velocity>& velocities)
+void Target::target_system(Registry& reg)
 {
+  auto const& positions = reg.get_components<Position>();
   for (auto&& [i, follower, position, velocity] :
-       ZipperIndex(followers, positions, velocities))
+       ZipperIndex<Follower, Position, Velocity>(reg))
   {
     if (reg.is_entity_dying(i) || follower.lost_target) {
       continue;
