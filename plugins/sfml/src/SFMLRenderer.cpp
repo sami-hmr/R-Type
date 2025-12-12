@@ -178,7 +178,7 @@ sf::Font& SFMLRenderer::load_font(std::string const& path)
 }
 
 void SFMLRenderer::init_drawable(Registry::Entity const& entity,
-                                 JsonObject const&)
+                                 JsonObject const&/*unused*/)
 {
   _registry.get().emplace_component<Drawable>(entity);
 }

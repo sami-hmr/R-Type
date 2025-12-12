@@ -39,7 +39,6 @@ void SFMLRenderer::init_background(Registry::Entity const& entity,
         this->_registry.get(), path_obj, entity, "path");
 
     if (path_str.has_value()) {
-      std::cout << "Adding background layer: " << path_str.value() << "\n";
       paths.push_back(path_str.value());
     }
   }

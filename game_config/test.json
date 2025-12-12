@@ -232,11 +232,11 @@
           },
           "life:Health": {
             "hook": "prout",
-            "current": 5,
+            "current": 20,
             "max": 100
           },
           "life:Damage": {
-            "amount": 1
+            "amount": 100
           },
           "life:Team": {
             "name": "test"

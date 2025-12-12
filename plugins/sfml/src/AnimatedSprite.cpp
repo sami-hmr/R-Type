@@ -16,6 +16,7 @@
 #include "libs/Vector2D.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Health.hpp"
+#include "plugin/events/LoggerEvent.hpp"
 
 std::optional<AnimationData> SFMLRenderer::parse_animation_data(
     JsonObject const& obj, Registry::Entity const& e)
@@ -273,6 +274,8 @@ void AnimatedSprite::on_death(Registry& r, const DamageEvent& event)
           animated_sprites[event.target].value().animations.at("death");
       r.emit<PlayAnimationEvent>(
           "death", event.target, animdata.framerate, false, false);
+    } else {
+      r.kill_entity(event.target);
     }
   }
 }
