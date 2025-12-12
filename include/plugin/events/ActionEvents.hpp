@@ -54,7 +54,7 @@ struct KillEntityRequestEvent
   Registry::Entity target;
   std::string reason;
 
-  CHANGE_ENTITY(result.target = map.at_second(target);)
+  CHANGE_ENTITY(result.target = map.at(target);)
 
   KillEntityRequestEvent(Registry::Entity t, std::string r)
       : target(t)
@@ -84,7 +84,7 @@ struct ModifyComponentRequestEvent
   std::string component_name;
   JsonObject modifications;
 
-  CHANGE_ENTITY(result.target = map.at_second(target);)
+  CHANGE_ENTITY(result.target = map.at(target);)
 
   ModifyComponentRequestEvent(Registry::Entity t,
                               std::string comp,

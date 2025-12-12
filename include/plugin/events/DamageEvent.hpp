@@ -27,8 +27,8 @@ struct DamageEvent
     , source(std::move(s))
     , amount(a) {}
 
-  CHANGE_ENTITY(result.target = map.at_second(target);
-                result.source = map.at_second(source);)
+  CHANGE_ENTITY(result.target = map.at(target);
+                result.source = map.at(source);)
 
   DEFAULT_BYTE_CONSTRUCTOR(DamageEvent,
                          ([](Registry::Entity const &t, Registry::Entity const &s, int a)

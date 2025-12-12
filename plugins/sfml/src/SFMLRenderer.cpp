@@ -71,29 +71,15 @@ static sf::Texture gen_placeholder()
 }
 
 SFMLRenderer::SFMLRenderer(Registry& r, EntityLoader& l)
-    : APlugin(r,
-              l,
-              {"moving", "client_network", "server_network"},
-              {COMP_INIT(Drawable, Drawable, init_drawable),
-               COMP_INIT(Sprite, Sprite, init_sprite),
-               COMP_INIT(Text, Text, init_text),
-               COMP_INIT(Background, Background, init_background),
-               COMP_INIT(AnimatedSprite, AnimatedSprite, init_animated_sprite)})
+    : APlugin(r, l, {"moving", "ui", "client_network", "server_network"}, {})
 {
   _window =
       sf::RenderWindow(sf::VideoMode(window_size), "R-Type - SFML Renderer");
   _window.setFramerateLimit(window_rate);
 
-  _registry.get().register_component<Drawable>("sfml:Drawable");
-  _registry.get().register_component<Sprite>("sfml:Sprite");
-  _registry.get().register_component<Text>("sfml:Text");
-  _registry.get().register_component<Background>("sfml:Background");
-  _registry.get().register_component<AnimatedSprite>("sfml:AnimatedSprite");
-
-  _registry.get().add_system<>([this](Registry&) { this->handle_events(); },
-                                1);
+  _registry.get().add_system<>([this](Registry&) { this->handle_events(); }, 1);
   _registry.get().add_system<>([this](Registry&)
-                                { _window.clear(sf::Color::Black); });
+                               { _window.clear(sf::Color::Black); });
   _registry.get().add_system<Scene, Drawable, Background>(
       [this](Registry& r,
              const SparseArray<Scene>& scenes,
@@ -175,61 +161,6 @@ sf::Font& SFMLRenderer::load_font(std::string const& path)
   }
   _fonts.insert_or_assign(path, std::move(font));
   return _fonts.at(path);
-}
-
-void SFMLRenderer::init_drawable(Registry::Entity const& entity,
-                                 JsonObject const&/*unused*/)
-{
-  _registry.get().emplace_component<Drawable>(entity);
-}
-
-void SFMLRenderer::init_sprite(Registry::Entity const& entity,
-                               JsonObject const& obj)
-{
-  auto const& texture_path = get_value<Sprite, std::string>(
-      this->_registry.get(), obj, entity, "texture");
-
-  if (!texture_path) {
-    std::cerr << "Error loading sprite component: unexpected value type "
-                 "(texture: string)\n";
-    return;
-  }
-
-  Vector2D scale(0.1, 0.1);
-  if (obj.contains("size")) {
-    scale = this->parse_vector2d<Sprite>(entity, obj, "size");
-  }
-  _registry.get().emplace_component<Sprite>(
-      entity, texture_path.value(), scale);
-}
-
-void SFMLRenderer::init_text(Registry::Entity const& entity,
-                             JsonObject const& obj)
-{
-  auto const& font_path =
-      get_value<Text, std::string>(this->_registry.get(), obj, entity, "font");
-
-  if (!font_path) {
-    std::cerr << "Error loading text component: unexpected value type (font: "
-                 "string)\n";
-    return;
-  }
-
-  Vector2D scale(0.1, 0.1);
-  if (obj.contains("size")) {
-    scale = this->parse_vector2d<Text>(entity, obj, "size");
-  }
-
-  auto& text_opt = _registry.get().emplace_component<Text>(
-      entity, font_path.value(), scale, "");
-
-  if (text_opt.has_value()) {
-    auto text_val = get_value<Text, std::string>(
-        this->_registry.get(), obj, entity, "text");
-    if (text_val) {
-      text_opt.value().text = text_val.value();
-    }
-  }
 }
 
 std::optional<Key> SFMLRenderer::sfml_key_to_key(sf::Keyboard::Key sfml_key)

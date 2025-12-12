@@ -13,7 +13,7 @@ struct AnimationEndEvent
   std::string name;
   Registry::Entity entity;
 
-  CHANGE_ENTITY(result.entity = map.at_second(entity);)
+  CHANGE_ENTITY(result.entity = map.at(entity);)
 
   AnimationEndEvent(std::string name, Registry::Entity entity)
       : name(std::move(name))
@@ -39,7 +39,7 @@ struct AnimationStartEvent
   std::string name;
   Registry::Entity entity;
 
-  CHANGE_ENTITY(result.entity = map.at_second(entity);)
+  CHANGE_ENTITY(result.entity = map.at(entity);)
 
   AnimationStartEvent(std::string name, Registry::Entity entity)
       : name(std::move(name))
@@ -68,7 +68,7 @@ struct PlayAnimationEvent
   bool loop;
   bool rollback;
 
-  CHANGE_ENTITY(result.entity = map.at_second(entity);)
+  CHANGE_ENTITY(result.entity = map.at(entity);)
 
   PlayAnimationEvent(std::string name,
                      Registry::Entity entity,

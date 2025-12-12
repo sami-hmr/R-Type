@@ -53,11 +53,11 @@ ByteArray& operator+=(ByteArray& first, ByteArray const& second);
 template<std::same_as<ByteArray>... Args>
 ByteArray byte_array_join(Args... arrays)
 {
-  return ((std::cout << arrays.size() << std::endl, arrays) + ...);
+  return (arrays + ...);
 }
 
 #define DEFAULT_SERIALIZE(...) \
-  ByteArray to_bytes() \
+  ByteArray to_bytes() const \
   { \
     return (byte_array_join(__VA_ARGS__)); \
   }

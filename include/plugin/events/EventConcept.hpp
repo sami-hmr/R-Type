@@ -2,6 +2,7 @@
 
 #include <concepts>
 #include <cstddef>
+#include <unordered_map>
 
 #include "Json/JsonParser.hpp"
 #include "plugin/Byte.hpp"
@@ -34,6 +35,6 @@ concept json_buildable = requires(Registry& r, JsonObject const& j) {
  */
 template<typename T>
 concept entity_convertible =
-    requires(T const& event, TwoWayMap<std::size_t, std::size_t> const& map) {
+    requires(T const& event, std::unordered_map<std::size_t, std::size_t> const& map) {
       { event.change_entity(map) } -> std::same_as<T>;
     };

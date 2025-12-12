@@ -63,5 +63,5 @@ void Server::handle_event_receive(ByteArray const& package,
   if (!parsed) {
     return;
   }
-  this->transmit_event(std::move(parsed.value()));
+  this->transmit_event_to_server(std::move(parsed.value()));
 }

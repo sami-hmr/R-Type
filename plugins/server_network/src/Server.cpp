@@ -7,8 +7,10 @@
 #include <atomic>
 #include <queue>
 #include <semaphore>
+#include <vector>
 
 #include "Server.hpp"
+
 #include <asio/system_error.hpp>
 
 #include "Network.hpp"
@@ -18,16 +20,21 @@
 
 Server::Server(ServerLaunching const& s,
                SharedQueue<ComponentBuilder>& comp_queue,
-               SharedQueue<EventBuilder>& event_queue,
+               SharedQueue<EventBuilderId>& event_to_client,
+               SharedQueue<EventBuilder>& event_to_server,
                std::atomic<bool>& running,
-               std::counting_semaphore<>& sem)
+               std::counting_semaphore<>& comp_sem,
+               std::counting_semaphore<>& event_sem)
     : _socket(_io_c, asio::ip::udp::endpoint(asio::ip::udp::v4(), s.port))
     , _components_to_create(std::ref(comp_queue))
-    , _events_to_transmit(std::ref(event_queue))
+    , _semaphore_event(std::ref(event_sem))
+    , _events_to_transmit(std::ref(event_to_client))
+    , _events_queue(std::ref(event_to_server))
     , _running(running)
-    , _semaphore(std::ref(sem))
-    , _queue_reader([this]() { this->send_comp(); })
+    , _semaphore(std::ref(comp_sem))
 {
+  this->_queue_readers.emplace_back([this]() { this->send_comp(); });
+  this->_queue_readers.emplace_back([this]() { this->send_event_to_client(); });
   std::random_device rd;
   std::mt19937 gen(rd());
   std::uniform_int_distribution<uint32_t> dis;
@@ -44,8 +51,11 @@ void Server::close()
 Server::~Server()
 {
   this->_semaphore.get().release();
-  if (this->_queue_reader.joinable()) {
-    this->_queue_reader.join();
+  this->_semaphore_event.get().release();
+  for (auto& it : this->_queue_readers) {
+    if (it.joinable()) {
+      it.join();
+    }
   }
   _socket.close();
 }
@@ -136,9 +146,9 @@ void Server::send(ByteArray const& response,
   ByteArray pkg = MAGIC_SEQUENCE + response + PROTOCOL_EOF;
 
   try {
-      _socket.send_to(asio::buffer(pkg), endpoint);
+    _socket.send_to(asio::buffer(pkg), endpoint);
   } catch (asio::system_error const&) {
-      this->remove_client_by_endpoint(endpoint);
+    this->remove_client_by_endpoint(endpoint);
   }
 
   NETWORK_LOGGER("server",

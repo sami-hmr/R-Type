@@ -9,8 +9,8 @@
             "y": -0.5
           }
         },
-        "sfml:Drawable": {},
-        "sfml:Text": {
+        "ui:Drawable": {},
+        "ui:Text": {
           "font": "assets/fonts/roboto.ttf",
           "size": {
             "width": 40.0,
@@ -35,6 +35,10 @@
         {
           "name": "actions",
           "config": {}
+        },
+        {
+          "name": "sfml",
+          "config": {}
         }
       ],
       "entities": [
@@ -48,8 +52,8 @@
               "y": 0.0
             }
           },
-          "sfml:Drawable": {},
-          "sfml:Text": {
+          "ui:Drawable": {},
+          "ui:Text": {
             "font": "assets/fonts/roboto.ttf",
             "size": {
               "width": 30.0,
@@ -65,8 +69,8 @@
               "y": 0.3
             }
           },
-          "sfml:Drawable": {},
-          "sfml:Text": {
+          "ui:Drawable": {},
+          "ui:Text": {
             "font": "assets/fonts/roboto.ttf",
             "size": {
               "width": 25.0,
@@ -123,7 +127,7 @@
             },
             "z": 2
           },
-          "sfml:Drawable": {},
+          "ui:Drawable": {},
           "moving:Velocity": {
             "hook": "player",
             "speed": {
@@ -135,7 +139,7 @@
               "y": 0.0
             }
           },
-          "sfml:AnimatedSprite": {
+          "ui:AnimatedSprite": {
             "animations": [
               {
                 "name": "idle",
@@ -217,8 +221,8 @@
               "y": -0.3
             }
           },
-          "sfml:Drawable": {},
-          "sfml:Sprite": {
+          "ui:Drawable": {},
+          "ui:Sprite": {
             "texture": "assets/enemy.png",
             "size": {
               "width": "20.0%",
@@ -266,8 +270,8 @@
               "y": -0.8
             }
           },
-          "sfml:Drawable": {},
-          "sfml:Text": {
+          "ui:Drawable": {},
+          "ui:Text": {
             "font": "assets/fonts/roboto.ttf",
             "size": {
               "width": 30.0,
@@ -305,8 +309,8 @@
           }
         },
         {
-          "sfml:Drawable": {},
-          "sfml:Background": {
+          "ui:Drawable": {},
+          "ui:Background": {
             "layers": [
               {
                 "path": "assets/backgrounds/skies/Sky_sky.png"
