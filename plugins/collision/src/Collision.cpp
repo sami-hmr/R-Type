@@ -15,6 +15,7 @@
 #include "plugin/components/Collidable.hpp"
 #include "plugin/components/InteractionZone.hpp"
 #include "plugin/components/Position.hpp"
+#include "plugin/components/Team.hpp"
 #include "plugin/components/Velocity.hpp"
 #include "plugin/events/CollisionEvent.hpp"
 #include "plugin/events/InteractionZoneEvent.hpp"
@@ -190,7 +191,15 @@ void Collision::on_collision(const CollisionEvent& c)
 {
   auto& velocities = this->_registry.get().get_components<Velocity>();
   auto& positions = this->_registry.get().get_components<Position>();
+  auto const& teams = this->_registry.get().get_components<Team>();
   auto const& collidables = this->_registry.get().get_components<Collidable>();
+
+  if (this->_registry.get().has_component<Team>(c.a)
+      && this->_registry.get().has_component<Team>(c.b)
+      && teams[c.a]->name == teams[c.b]->name)
+  {
+    return;
+  }
 
   if (!this->_registry.get().has_component<Collidable>(c.a)
       || !this->_registry.get().has_component<Collidable>(c.b)
@@ -203,8 +212,10 @@ void Collision::on_collision(const CollisionEvent& c)
   CollisionType type_a = collidables[c.a]->collision_type;
   CollisionType type_b = collidables[c.b]->collision_type;
 
-  if ((type_a != CollisionType::Solid && type_a != CollisionType::Push && type_a != CollisionType::Bounce)
-      || (type_b != CollisionType::Solid && type_b != CollisionType::Push && type_b != CollisionType::Bounce))
+  if ((type_a != CollisionType::Solid && type_a != CollisionType::Push
+       && type_a != CollisionType::Bounce)
+      || (type_b != CollisionType::Solid && type_b != CollisionType::Push
+          && type_b != CollisionType::Bounce))
   {
     return;
   }
@@ -214,7 +225,7 @@ void Collision::on_collision(const CollisionEvent& c)
     Vector2D movement =
         (velocities[c.a]->direction * dt).normalize() * velocities[c.a]->speed;
     Vector2D collision_normal =
-          (positions[c.a]->pos - positions[c.b]->pos).normalize();
+        (positions[c.a]->pos - positions[c.b]->pos).normalize();
 
     if (this->_registry.get().has_component<Velocity>(c.b)
         && type_a == CollisionType::Push)
@@ -230,7 +241,7 @@ void Collision::on_collision(const CollisionEvent& c)
       }
     } else if (type_a == CollisionType::Bounce) {
       double dot_product = velocities[c.a]->direction.dot(collision_normal);
-      Vector2D reflected_direction = 
+      Vector2D reflected_direction =
           velocities[c.a]->direction - (collision_normal * (2.0 * dot_product));
 
       velocities[c.a]->direction = reflected_direction.normalize();
