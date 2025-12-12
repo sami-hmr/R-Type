@@ -19,7 +19,7 @@
 #include "plugin/events/LoggerEvent.hpp"
 
 void SFMLRenderer::animation_system(
-    Registry&/*unused*/,
+    Registry& /*unused*/,
     const SparseArray<Scene>& scenes,
     const SparseArray<Position>& positions,
     const SparseArray<Drawable>& drawable,
@@ -37,6 +37,8 @@ void SFMLRenderer::animation_system(
   sf::Vector2u window_size = _window.getSize();
   float min_dimension =
       static_cast<float>(std::min(window_size.x, window_size.y));
+  sf::Vector2f view_size = this->_view.getSize();
+  sf::Vector2f view_pos = this->_view.getCenter();
 
   drawables.reserve(AnimatedSprites.size());
 
@@ -52,6 +54,20 @@ void SFMLRenderer::animation_system(
     if (!anim.animations.contains(anim.current_animation)) {
       continue;
     }
+    sf::Vector2f new_pos(
+        static_cast<float>((pos.pos.x + 1.0) * min_dimension / 2.0),
+        static_cast<float>((pos.pos.y + 1.0) * min_dimension / 2.0));
+    if (new_pos.x < view_pos.x - (view_size.x / 2)
+        || new_pos.x > view_pos.x + (view_size.x / 2))
+    {
+      continue;
+    }
+    if (new_pos.y < view_pos.y - (view_size.y / 2)
+        || new_pos.y > view_pos.y + (view_size.y / 2))
+    {
+      continue;
+    }
+
     anim.update_anim(this->_registry.get(), now, entity);
     AnimationData anim_data = anim.animations.at(anim.current_animation);
 
@@ -63,12 +79,10 @@ void SFMLRenderer::animation_system(
         / anim_data.frame_size.y;
     float uniform_scale = std::min(scale_x, scale_y);
 
-    sf::Vector2f new_pos(
-        static_cast<float>((pos.pos.x + 1.0) * min_dimension / 2.0),
-        static_cast<float>((pos.pos.y + 1.0) * min_dimension / 2.0));
     drawables.emplace_back(
         std::ref(texture), uniform_scale, new_pos, pos.z, anim_data);
   }
+
   std::sort(drawables.begin(),
             drawables.end(),
             [](auto const& a, auto const& b)
@@ -97,9 +111,7 @@ void SFMLRenderer::animation_system(
 }
 
 void AnimatedSprite::update_anim(
-    Registry& r,
-    std::chrono::high_resolution_clock::time_point now,
-    int entity)
+    Registry& r, std::chrono::high_resolution_clock::time_point now, int entity)
 {
   AnimationData& animation = this->animations.at(this->current_animation);
 

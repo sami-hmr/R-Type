@@ -117,15 +117,18 @@ SFMLRenderer::SFMLRenderer(Registry& r, EntityLoader& l)
   _textures.insert_or_assign(SFMLRenderer::placeholder_texture,
                              gen_placeholder());
 
-  _registry.get().on<PlayAnimationEvent>("PlayAnimationEvent", [this] (const PlayAnimationEvent& event) {
-    AnimatedSprite::on_play_animation(this->_registry.get(), event);
-  });
-  _registry.get().on<AnimationEndEvent>("AnimationEndEvent", [this] (const AnimationEndEvent& event) {
-    AnimatedSprite::on_animation_end(this->_registry.get(), event);
-  });
-  _registry.get().on<DamageEvent>("DamageEvent", [this] (const DamageEvent& event) {
-    AnimatedSprite::on_death(this->_registry.get(), event);
-  });
+  _registry.get().on<PlayAnimationEvent>(
+      "PlayAnimationEvent",
+      [this](const PlayAnimationEvent& event)
+      { AnimatedSprite::on_play_animation(this->_registry.get(), event); });
+  _registry.get().on<AnimationEndEvent>(
+      "AnimationEndEvent",
+      [this](const AnimationEndEvent& event)
+      { AnimatedSprite::on_animation_end(this->_registry.get(), event); });
+  _registry.get().on<DamageEvent>(
+      "DamageEvent",
+      [this](const DamageEvent& event)
+      { AnimatedSprite::on_death(this->_registry.get(), event); });
 }
 
 SFMLRenderer::~SFMLRenderer()
@@ -256,6 +259,9 @@ void SFMLRenderer::render_sprites(Registry& /*unused*/,
           tuple<std::reference_wrapper<sf::Texture>, double, sf::Vector2f, int>>
       drawables;
   sf::Vector2u window_size = _window.getSize();
+  sf::Vector2f view_size = this->_view.getSize();
+  sf::Vector2f view_pos = this->_view.getCenter();
+
   float min_dimension =
       static_cast<float>(std::min(window_size.x, window_size.y));
 
@@ -272,6 +278,20 @@ void SFMLRenderer::render_sprites(Registry& /*unused*/,
       continue;
     }
 
+    sf::Vector2f new_pos(
+        static_cast<float>((pos.pos.x + 1.0) * min_dimension / 2.0f),
+        static_cast<float>((pos.pos.y + 1.0) * min_dimension / 2.0f));
+
+    if (new_pos.x < view_pos.x - (view_size.x / 2)
+        || new_pos.x > view_pos.x + (view_size.x / 2))
+    {
+      continue;
+    }
+    if (new_pos.y < view_pos.y - (view_size.y / 2)
+        || new_pos.y > view_pos.y + (view_size.y / 2))
+    {
+      continue;
+    }
     sf::Texture& texture = load_texture(spr.texture_path);
 
     float scale_x =
@@ -280,9 +300,6 @@ void SFMLRenderer::render_sprites(Registry& /*unused*/,
         static_cast<float>(window_size.y * spr.scale.y) / texture.getSize().y;
     float uniform_scale = std::min(scale_x, scale_y);
 
-    sf::Vector2f new_pos(
-        static_cast<float>((pos.pos.x + 1.0) * min_dimension / 2.0f),
-        static_cast<float>((pos.pos.y + 1.0) * min_dimension / 2.0f));
     drawables.emplace_back(std::ref(texture), uniform_scale, new_pos, pos.z);
   }
   std::sort(drawables.begin(),
