@@ -79,7 +79,7 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
       [this](PlayerCreation const& server)
       {
         auto zipper =
-            ZipperIndex(this->_registry.get().get_components<Controllable>());
+            ZipperIndex<Controllable>(this->_registry.get());
 
         if (zipper.begin() != zipper.end()) {
           std::size_t index = std::get<0>(*zipper.begin());

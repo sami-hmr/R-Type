@@ -27,12 +27,8 @@ private:
   void init_interaction_zone(Registry::Entity const& entity,
                              JsonObject const& obj);
 
-  void collision_system(Registry& r,
-                        const SparseArray<Position>& positions,
-                        const SparseArray<Collidable>& collidables);
-  void interaction_zone_system(Registry& r,
-                               const SparseArray<Position>& positions,
-                               const SparseArray<InteractionZone>& zones);
+  void collision_system(Registry& r);
+  void interaction_zone_system(Registry& r);
   void on_collision(const CollisionEvent& c);
 
   std::unique_ptr<ICollisionAlgorithm> _collision_algo;

@@ -47,26 +47,11 @@ private:
 
   void handle_events();
   void handle_resize();
-  void render_sprites(Registry& r,
-                      const SparseArray<Scene>& scenes,
-                      const SparseArray<Position>& positions,
-                      const SparseArray<Drawable>& drawable,
-                      const SparseArray<Sprite>& sprites);
-  void render_text(Registry& r,
-                   const SparseArray<Scene>& scenes,
-                   const SparseArray<Position>& positions,
-                   const SparseArray<Drawable>& drawable,
-                   const SparseArray<Text>& texts);
-  void background_system(Registry& r,
-                         const SparseArray<Scene>& scenes,
-                         const SparseArray<Drawable>& drawables,
-                         SparseArray<Background>& backgrounds);
+  void render_sprites(Registry& r);
+  void render_text(Registry& r);
+  void background_system(Registry& r);
 
-  void animation_system(Registry& r,
-                        const SparseArray<Scene>& scenes,
-                        const SparseArray<Position>& positions,
-                        const SparseArray<Drawable>& drawable,
-                        SparseArray<AnimatedSprite>& AnimatedSprites);
+  void animation_system(Registry& r);
   void display();
 
   std::optional<Key> sfml_key_to_key(sf::Keyboard::Key sfml_key);

@@ -38,18 +38,10 @@ Collision::Collision(Registry& r, EntityLoader& l)
     LOGGER("COLLISION", LogLevel::ERROR, "Error loading collision algorithm")
   }
 
-  _registry.get().add_system<Position, Collidable>(
-      [this](Registry& r,
-             const SparseArray<Position>& pos,
-             const SparseArray<Collidable>& col)
-      { this->collision_system(r, pos, col); },
-      3);
-  _registry.get().add_system<Position, InteractionZone>(
-      [this](Registry& r,
-             const SparseArray<Position>& pos,
-             const SparseArray<InteractionZone>& zone)
-      { this->interaction_zone_system(r, pos, zone); },
-      4);
+  _registry.get().add_system([this](Registry& r) { this->collision_system(r); },
+                             3);
+  _registry.get().add_system(
+      [this](Registry& r) { this->interaction_zone_system(r); }, 4);
 
   this->_registry.get().on<CollisionEvent>("CollisionEvent",
                                            [this](const CollisionEvent& c)
@@ -110,9 +102,7 @@ void Collision::init_interaction_zone(Registry::Entity const& entity,
                                                            radius.value());
 }
 
-void Collision::collision_system(Registry& /*r*/,
-                                 const SparseArray<Position>& positions,
-                                 const SparseArray<Collidable>& collidables)
+void Collision::collision_system(Registry& r)
 {
   if (!_collision_algo) {
     return;
@@ -120,8 +110,9 @@ void Collision::collision_system(Registry& /*r*/,
 
   std::vector<ICollisionAlgorithm::CollisionEntity> entities;
 
-  for (auto&& [i, position, collidable] : ZipperIndex(positions, collidables)) {
-    if (!collidables[i]->is_active) {
+  for (auto&& [i, position, collidable] : ZipperIndex<Position, Collidable>(r))
+  {
+    if (!collidable.is_active) {
       continue;
     }
     entities.push_back(ICollisionAlgorithm::CollisionEntity {
@@ -144,15 +135,14 @@ void Collision::collision_system(Registry& /*r*/,
   }
 }
 
-void Collision::interaction_zone_system(
-    Registry& /*r*/,
-    const SparseArray<Position>& positions,
-    const SparseArray<InteractionZone>& zones)
+void Collision::interaction_zone_system(Registry& r)
 {
   if (!_collision_algo) {
     return;
   }
-  for (auto&& [i, position, zone] : ZipperIndex(positions, zones)) {
+
+  auto const& positions = r.get_components<Position>();
+  for (auto&& [i, position, zone] : ZipperIndex<Position, InteractionZone>(r)) {
     if (!zone.enabled) {
       continue;
     }

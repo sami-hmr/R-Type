@@ -23,11 +23,9 @@ Moving::Moving(Registry& r, EntityLoader& l)
   this->_registry.get().register_component<Position>("moving:Position");
   this->_registry.get().register_component<Velocity>("moving:Velocity");
 
-  this->_registry.get().add_system<Position, Velocity>(
-      [this](Registry& r,
-             SparseArray<Position>& pos,
-             const SparseArray<Velocity>& vel)
-      { this->moving_system(r, pos, vel); },
+  this->_registry.get().add_system(
+      [this](Registry& r)
+      { this->moving_system(r); },
       4);
 
   // this->_registry.get().on<ComponentBuilder>("ComponentBuilder", [](ComponentBuilder const &data) {
@@ -53,13 +51,11 @@ Moving::Moving(Registry& r, EntityLoader& l)
       });
 }
 
-void Moving::moving_system(Registry& reg,
-                           SparseArray<Position>& positions,
-                           const SparseArray<Velocity>& velocities)
+void Moving::moving_system(Registry& reg)
 {
   double dt = reg.clock().delta_seconds();
 
-  for (auto&& [index, position, velocity] : ZipperIndex(positions, velocities))
+  for (auto&& [index, position, velocity] : ZipperIndex<Position, Velocity>(reg))
   {
     Vector2D movement = (velocity.direction * dt).normalize() * velocity.speed;
         position.pos += movement;

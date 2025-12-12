@@ -1,7 +1,6 @@
 #include "Projectile.hpp"
 
 #include "Json/JsonParser.hpp"
-#include "Logger.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/SparseArray.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
@@ -52,12 +51,11 @@ void Projectile::init_fragile(Registry::Entity entity,
 
 void Projectile::temporal_system(Registry& reg)
 {
-  auto& temporals = reg.get_components<Temporal>();
   double dt = reg.clock().delta_seconds();
 
-  for (auto&& [i, temporal] : ZipperIndex(temporals)) {
+  for (auto&& [i, temporal] : ZipperIndex<Temporal>(reg)) {
     if (!reg.is_entity_dying(i)) {
-      temporals[i]->elapsed += dt;
+      temporal.elapsed += dt;
 
       if (temporal.elapsed >= temporal.lifetime) {
         reg.kill_entity(i);

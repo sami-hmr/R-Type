@@ -22,8 +22,5 @@ private:
   void init_follower(Registry::Entity entity, JsonObject const& obj);
   void on_interaction_zone(const InteractionZoneEvent& event);
 
-  void target_system(Registry& reg,
-                     SparseArray<Follower>& followers,
-                     const SparseArray<Position>& positions,
-                     SparseArray<Velocity>& velocities);
+  void target_system(Registry& reg);
 };

@@ -17,7 +17,5 @@ private:
   void init_pos(Registry::Entity const& entity, JsonObject& obj);
   void init_velocity(Registry::Entity const& entity, JsonObject& obj);
 
-  void moving_system(Registry&,
-                     SparseArray<Position>& positions,
-                     const SparseArray<Velocity>& velocities);
+  void moving_system(Registry&);
 };
