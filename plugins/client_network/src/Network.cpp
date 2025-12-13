@@ -15,6 +15,7 @@
 #include "plugin/components/Position.hpp"
 #include "plugin/events/CleanupEvent.hpp"
 #include "plugin/events/LoggerEvent.hpp"
+#include "plugin/events/NetworkEvents.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
 
 NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
@@ -78,8 +79,8 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
       "PlayerCreation",
       [this](PlayerCreation const& server)
       {
-        auto zipper =
-            ZipperIndex<Controllable>(this->_registry.get());
+        this->_id_in_server = server.server_id;
+        auto zipper = ZipperIndex<Controllable>(this->_registry.get());
 
         if (zipper.begin() != zipper.end()) {
           std::size_t index = std::get<0>(*zipper.begin());
@@ -97,10 +98,21 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
 
           this->_registry.get().emplace_component<Controllable>(
               new_entity, 'Z', 'S', 'Q', 'D');
-          this->_server_indexes.insert(server.server_index, new_entity); // SERVER -> CLIENT
+          this->_server_indexes.insert(server.server_index,
+                                       new_entity);  // SERVER -> CLIENT
         }
         this->_registry.get().emit<EventBuilder>(
-            "PlayerCreated", PlayerCreated(server.server_index).to_bytes());
+            "PlayerCreated",
+            PlayerCreated(server.server_index, this->_id_in_server).to_bytes());
+      });
+
+  this->_registry.get().on<WantReady>(
+      "WantReady",
+      [this](WantReady const&)
+      {
+        std::cout << "TOUCHE COMPRISE" << std::endl;
+        this->_registry.get().emit<EventBuilder>(
+            "PlayerReady", PlayerReady(this->_id_in_server).to_bytes());
       });
 
   this->_registry.get().add_system<>(
@@ -119,6 +131,10 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
           }
           auto true_entity = this->_server_indexes.at_first(server_comp.entity);
 
+          for (auto i : server_comp.data) {
+              std::cout << (int)i << ", ";
+          }
+          std::cout << std::endl;
           r.emplace_component(true_entity,
                               server_comp.id,
                               this->_registry.get().convert_comp_entity(
