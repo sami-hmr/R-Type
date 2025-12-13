@@ -6,6 +6,7 @@
 #include "Collision.hpp"
 
 #include "Json/JsonParser.hpp"
+#include "NetworkShared.hpp"
 #include "algorithm/QuadTreeCollision.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
@@ -224,6 +225,10 @@ void Collision::on_collision(const CollisionEvent& c)
     {
       positions[c.a]->pos -= movement;
       positions[c.b]->pos += movement;
+      this->_registry.get().emit<ComponentBuilder>(
+          c.b,
+          this->_registry.get().get_component_key<Position>(),
+          positions[c.b]->to_bytes());
     } else if (type_a == CollisionType::Solid) {
       double dot_product = movement.dot(collision_normal);
 
@@ -241,6 +246,11 @@ void Collision::on_collision(const CollisionEvent& c)
     } else {
       positions[c.a]->pos -= movement;
     }
+
+    this->_registry.get().emit<ComponentBuilder>(
+        c.a,
+        this->_registry.get().get_component_key<Position>(),
+        positions[c.a]->to_bytes());
   }
 }
 

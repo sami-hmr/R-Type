@@ -1,6 +1,7 @@
 #include "Projectile.hpp"
 
 #include "Json/JsonParser.hpp"
+#include "NetworkShared.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/SparseArray.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
@@ -21,15 +22,13 @@ Projectile::Projectile(Registry& r, EntityLoader& l)
   this->_registry.get().register_component<Fragile>("projectile:Fragile");
 
   this->_registry.get().add_system<>(
-      [this](Registry& r)
-      { this->temporal_system(r); },
-      2);
-  this->_registry.get().add_system<>(
-      [this](Registry& r)
-      { this->fragile_system(r); });
+      [this](Registry& r) { this->temporal_system(r); }, 2);
+  this->_registry.get().add_system<>([this](Registry& r)
+                                     { this->fragile_system(r); });
 
-  this->_registry.get().on<CollisionEvent>("CollisionEvent", [this](const CollisionEvent& event)
-                                            { this->on_collision(event); });
+  this->_registry.get().on<CollisionEvent>("CollisionEvent",
+                                           [this](const CollisionEvent& event)
+                                           { this->on_collision(event); });
 }
 
 void Projectile::init_temporal(Registry::Entity entity, JsonObject const& obj)
@@ -68,6 +67,11 @@ void Projectile::temporal_system(Registry& reg)
     if (!reg.is_entity_dying(i)) {
       temporal.elapsed += dt;
 
+      this->_registry.get().emit<ComponentBuilder>(
+          i,
+          this->_registry.get().get_component_key<Temporal>(),
+          temporal.to_bytes());
+
       if (temporal.elapsed >= temporal.lifetime) {
         reg.kill_entity(i);
       }
@@ -82,6 +86,11 @@ void Projectile::fragile_system(Registry& reg)
   for (auto&& [i, fragile] : ZipperIndex<Fragile>(reg)) {
     if (!reg.is_entity_dying(i)) {
       fragile.fragile_delta += dt;
+
+      this->_registry.get().emit<ComponentBuilder>(
+          i,
+          this->_registry.get().get_component_key<Fragile>(),
+          fragile.to_bytes());
     }
   }
 }
@@ -106,6 +115,12 @@ void Projectile::on_collision(const CollisionEvent& event)
 
   if (fragiles[event.a]->fragile_delta >= fragile_cooldown) {
     fragiles[event.a]->fragile_delta = 0.0;
+
+    this->_registry.get().emit<ComponentBuilder>(
+        event.a,
+        this->_registry.get().get_component_key<Fragile>(),
+        fragiles[event.a]->to_bytes());
+
     if (fragiles[event.a]->counter >= fragiles[event.a]->hits
         && !this->_registry.get().is_entity_dying(event.a))
     {
@@ -113,6 +128,11 @@ void Projectile::on_collision(const CollisionEvent& event)
       return;
     }
     fragiles[event.a]->counter += 1;
+
+    this->_registry.get().emit<ComponentBuilder>(
+        event.a,
+        this->_registry.get().get_component_key<Fragile>(),
+        fragiles[event.a]->to_bytes());
   }
 }
 

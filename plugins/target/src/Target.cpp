@@ -1,6 +1,7 @@
 #include "Target.hpp"
 
 #include "Json/JsonParser.hpp"
+#include "NetworkShared.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/SparseArray.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
@@ -44,6 +45,11 @@ void Target::target_system(Registry& reg)
         || !reg.has_component<Position>(target_id))
     {
       follower.lost_target = true;
+
+      this->_registry.get().emit<ComponentBuilder>(
+          i,
+          this->_registry.get().get_component_key<Follower>(),
+          follower.to_bytes());
       continue;
     }
 
@@ -51,6 +57,11 @@ void Target::target_system(Registry& reg)
     Vector2D vect = target_position - position.pos;
 
     velocity.direction = vect.normalize();
+
+    this->_registry.get().emit<ComponentBuilder>(
+        i,
+        this->_registry.get().get_component_key<Velocity>(),
+        velocity.to_bytes());
   }
 }
 
@@ -80,6 +91,11 @@ void Target::on_interaction_zone(const InteractionZoneEvent& event)
   }
   if (closest_entity.has_value()) {
     followers[event.source] = closest_entity;
+
+    this->_registry.get().emit<ComponentBuilder>(
+        event.source,
+        this->_registry.get().get_component_key<Follower>(),
+        followers[event.source]->to_bytes());
   }
 }
 
