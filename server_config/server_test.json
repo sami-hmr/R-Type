@@ -51,7 +51,7 @@
             "height": 0.1,
             "collision_type": "Solid"
           },
-          "life:Health": { "current": 5, "max": 100 },
+          "life:Health": { "current": 5.0, "max": 100.0 },
           "life:Team": { "name": "test" }
         },
         {
@@ -107,7 +107,7 @@
             "height": 0.1,
             "collision_type": "Solid"
           },
-          "life:Health": { "current": 5, "max": 100 },
+          "life:Health": { "current": 5.0, "max": 100.0 },
           "life:Team": { "name": "test" }
         },
         {
@@ -125,7 +125,7 @@
             "height": 0.1,
             "collision_type": "Solid"
           },
-          "life:Health": { "current": 5, "max": 100 },
+          "life:Health": { "current": 5.0, "max": 100.0 },
           "life:Team": { "name": "test" }
         },
         {

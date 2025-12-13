@@ -1,401 +1,418 @@
   {
-  "entities_template": [
-    {
-      "name": "menu",
-      "components": {
-        "moving:Position": {
-          "pos": {
-            "x": 0.0,
-            "y": -0.5
-          }
-        },
-        "ui:Drawable": {},
-        "ui:Text": {
-          "font": "assets/fonts/roboto.ttf",
-          "size": {
-            "width": 40.0,
-            "height": 40.0
+    "entities_template": [
+      {
+        "name": "menu",
+        "components": {
+          "moving:Position": {
+            "pos": {
+              "x": 0.0,
+              "y": -0.5
+            }
           },
-          "text": "R-TYPE MENU"
+          "ui:Drawable": {},
+          "ui:Text": {
+            "font": "assets/fonts/roboto.ttf",
+            "size": {
+              "width": 40.0,
+              "height": 40.0
+            },
+            "text": "R-TYPE MENU"
+          }
         }
       }
-    }
-  ],
-  "scenes": [
-    {
-      "name": "menu",
-      "state": "main",
-      "plugins": [
-        {
-          "name": "logger",
-          "config": {
-            "level": "DEBUG"
-          }
-        },
-        {
-          "name": "actions",
-          "config": {}
-        },
-        {
-          "name": "sfml",
-          "config": {}
-        }
-      ],
-      "entities": [
-        {
-          "template": "menu"
-        },
-        {
-          "moving:Position": {
-            "pos": {
-              "x": 0.0,
-              "y": 0.0
+    ],
+    "scenes": [
+      {
+        "name": "menu",
+        "state": "disabled",
+        "plugins": [
+          {
+            "name": "logger",
+            "config": {
+              "level": "DEBUG"
             }
           },
-          "ui:Drawable": {},
-          "ui:Text": {
-            "font": "assets/fonts/roboto.ttf",
-            "size": {
-              "width": 30.0,
-              "height": 30.0
-            },
-            "text": "Press ENTER to start game"
-          }
-        },
-        {
-          "moving:Position": {
-            "pos": {
-              "x": 0.0,
-              "y": 0.3
-            }
+          {
+            "name": "actions",
+            "config": {}
           },
-          "ui:Drawable": {},
-          "ui:Text": {
-            "font": "assets/fonts/roboto.ttf",
-            "size": {
-              "width": 25.0,
-              "height": 25.0
-            },
-            "text": "Press R to return to menu"
+          {
+            "name": "moving",
+            "config": {}
+          },
+          {
+            "name": "ui",
+            "config": {}
+          },
+          {
+            "name": "sfml",
+            "config": {}
           }
-        },
-        {
-          "actions:ActionTrigger": {
-            "trigger": {
-              "type": "KeyPressed",
-              "params": {
-                "key": "ENTER"
+        ],
+        "entities": [
+          {
+            "template": "menu"
+          },
+          {
+            "moving:Position": {
+              "pos": {
+                "x": 0.0,
+                "y": 0.0
               }
             },
-            "to_emit": [
-              {
-                "name": "SceneChangeEvent",
-                "params": {
-                  "target_scene": "game",
-                  "state": "main",
-                  "reason": "User pressed enter"
-                }
+            "ui:Drawable": {},
+            "ui:Text": {
+              "font": "assets/fonts/roboto.ttf",
+              "size": {
+                "width": 30.0,
+                "height": 30.0
               },
-              {
-                "name": "SceneChangeEvent",
-                "params": {
-                  "target_scene": "menu",
-                  "state": "disabled",
-                  "reason": "User pressed R"
-                }
-              }
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "game",
-      "state": "disabled",
-      "plugins": [
-        {
-          "name": "actions",
-          "config": {}
-        }
-      ],
-      "entities": [
-        {
-          "moving:Position": {
-            "hook": "playerpos",
-            "pos": {
-              "x": 0.0,
-              "y": 0.0
-            },
-            "z": 2
-          },
-          "ui:Drawable": {},
-          "moving:Velocity": {
-            "hook": "player",
-            "speed": {
-              "x": 0.01,
-              "y": 0.01
-            },
-            "direction": {
-              "x": 0.0,
-              "y": 0.0
+              "text": "Press ENTER to start game"
             }
           },
-          "ui:AnimatedSprite": {
-            "animations": [
-              {
-                "name": "idle",
-                "texture": "assets/player.png",
-                "frame_size": {
-                  "x": 350.0,
-                  "y": 150.0
-                },
-                "frame_pos": {
-                  "x": 0.0,
-                  "y": 0.0
-                },
-                "direction": {
-                  "x": 1.0,
-                  "y": 0.0
-                },
-                "sprite_size": {
-                  "width": "20.0%",
-                  "height": "20.0%"
-                },
-                "framerate": 10.0,
-                "nb_frames": 7,
-                "loop": true,
-                "rollback": true
-              },
-              {
-                "name": "death",
-                "texture": "assets/explosion.png",
-                "frame_size": {
-                  "x": 128.0,
-                  "y": 128.0
-                },
-                "frame_pos": {
-                  "x": 0.0,
-                  "y": 0.0
-                },
-                "direction": {
-                  "x": 1.0,
-                  "y": 0.0
-                },
-                "sprite_size": {
-                  "width": "20.0%",
-                  "height": "20.0%"
-                },
-                "framerate": 10.0,
-                "nb_frames": 12,
-                "loop": false,
-                "rollback": false
-              }
-            ],
-            "default_animation": "idle"
-          },
-          "collision:Collidable": {
-            "width": 0.2,
-            "height": 0.2,
-            "collision_type": "solid"
-          },
-          "controller:Controllable": {
-            "UP": "Z",
-            "DOWN": "S",
-            "LEFT": "Q",
-            "RIGHT": "D"
-          },
-          "life:Damage": {
-            "amount": 0
-          },
-          "life:Heal": {
-            "amount": 1
-          },
-          "life:Team": {
-            "name": "test1"
-          }
-        },
-        {
-          "moving:Position": {
-            "hook": "enemy_pos",
-            "pos": {
-              "x": 0.5,
-              "y": -0.3
-            }
-          },
-          "ui:Drawable": {},
-          "ui:Sprite": {
-            "texture": "assets/enemy.png",
-            "size": {
-              "width": "20.0%",
-              "height": "20.0%"
-            }
-          },
-          "life:Health": {
-            "hook": "enemy_health",
-            "current": 100.0,
-            "max": 100.0
-          },
-          "ath:Bar": {
-            "size": {
-              "x": "10.0%",
-              "y": "1.0%"
-            },
-            "max_value": "#enemy_health:max",
-            "current_value": "#enemy_health:current",
-            "offset": {
-              "x": 0.0,
-              "y": -0.12
-            },
-            "color": {
-              "r": 255,
-              "g": 255,
-              "b": 255,
-              "a": 255
-            },
-            "outline": false,
-            "texture_path": "/home/sami/EPITECH/tek3/RType/R-Type/assets/backgrounds/background.png"
-          },
-          "collision:Collidable": {
-            "width": 0.2,
-            "height": 0.2,
-            "collision_type": "solid"
-          },
-          "life:Team": {
-            "name": "test"
-          },
-          "life:Damage": {
-            "amount": 1
-          },
-          "moving:Velocity": {
-            "speed": {
-              "x": 0.005,
-              "y": 0.005
-            },
-            "direction": {
-              "x": 0.0,
-              "y": 0.0
-            }
-          }
-        },
-        {
-          "ui:input": {
-            "hook": "game_text",
-            "buffer": "static hook wewewe",
-            "enabled": true
-          }
-        },
-        {
-          "moving:Position": {
-            "pos": {
-              "x": -0.8,
-              "y": -0.8
-            }
-          },
-          "ui:Drawable": {},
-          "ui:Text": {
-            "font": "assets/fonts/roboto.ttf",
-            "size": {
-              "width": 30.0,
-              "height": 30.0
-            },
-            "text": "%game_text:buffer"
-          }
-        },
-        
-        {
-          "actions:ActionTrigger": {
-            "trigger": {
-              "type": "KeyPressed",
-              "params": {
-                "key": "R"
+          {
+            "moving:Position": {
+              "pos": {
+                "x": 0.0,
+                "y": 0.3
               }
             },
-            "to_emit": [
-              {
-                "name": "SceneChangeEvent",
-                "params": {
-                  "target_scene": "menu",
-                  "state": "main",
-                  "reason": "User pressed R"
-                }
+            "ui:Drawable": {},
+            "ui:Text": {
+              "font": "assets/fonts/roboto.ttf",
+              "size": {
+                "width": 25.0,
+                "height": 25.0
               },
-              {
-                "name": "SceneChangeEvent",
-                "params": {
-                  "target_scene": "game",
-                  "state": "disabled",
-                  "reason": "User pressed R"
-                }
-              }
-            ]
+              "text": "Press R to return to menu"
+            }
           }
-        },
-        {
-          "ui:Drawable": {},
-          "ui:Background": {
-            "layers": [
-              {
-                "path": "assets/backgrounds/skies/Sky_sky.png"
-              },
-              {
-                "path": "assets/backgrounds/skies/sky_moon.png"
-              },
-              {
-                "path": "assets/backgrounds/skies/Sky_back_mountain.png"
-              },
-              {
-                "path": "assets/backgrounds/skies/sky_front_mountain.png"
-              },
-              {
-                "path": "assets/backgrounds/skies/sky_clouds.png"
-              },
-              {
-                "path": "assets/backgrounds/skies/Sky_cloud_single.png"
-              },
-              {
-                "path": "assets/backgrounds/skies/Sky_front_cloud.png"
-              },
-              {
-                "path": "assets/backgrounds/skies/sky_cloud_floor.png"
-              },
-              {
-                "path": "assets/backgrounds/skies/sky_cloud_floor_2.png"
-              }
-            ],
-            "render_type": "STRETCH",
-            "parallax": {
-              "active": true,
-              "speed": {
-                "x": -1000.0,
+        ]
+      },
+      {
+        "name": "game",
+        "state": "active",
+        "plugins": [
+          {
+            "name": "actions",
+            "config": {}
+          },
+          {
+            "name": "moving",
+            "config": {}
+          },
+          {
+            "name": "collision",
+            "config": {}
+          },
+          {
+            "name": "controller",
+            "config": {}
+          },
+          {
+            "name": "life",
+            "config": {}
+          },
+          {
+            "name": "ath",
+            "config": {}
+          },
+          {
+            "name": "weapon",
+            "config": {}
+          },
+          {
+            "name": "ui",
+            "config": {}
+          },
+          {
+            "name": "sfml",
+            "config": {}
+          }
+        ],
+        "entities": [
+          {
+            "moving:Position": {
+              "hook": "playerpos",
+              "pos": {
+                "x": 0.0,
                 "y": 0.0
               },
-              "framerate": 60.0
-            }
-          }
-        },
-        {
-          "moving:Position": {
-            "pos": {
-              "x": 0.0,
-              "y": 0.0
+              "z": 2
+            },
+            "ui:Drawable": {},
+            "moving:Velocity": {
+              "hook": "player",
+              "speed": {
+                "x": 0.01,
+                "y": 0.01
+              },
+              "direction": {
+                "x": 0.0,
+                "y": 0.0
+              }
+            },
+            "weapon:BasicWeapon": {
+              "bullet_type": "basic_bullet",
+              "magazine_size": 6,
+              "magazine_nb": 3,
+              "reload_time": 2.0
+            },
+            "ui:AnimatedSprite": {
+              "animations": [
+                {
+                  "name": "idle",
+                  "texture": "assets/player.png",
+                  "frame_size": {
+                    "x": 350.0,
+                    "y": 150.0
+                  },
+                  "frame_pos": {
+                    "x": 0.0,
+                    "y": 0.0
+                  },
+                  "direction": {
+                    "x": 1.0,
+                    "y": 0.0
+                  },
+                  "sprite_size": {
+                    "width": "20.0%",
+                    "height": "20.0%"
+                  },
+                  "framerate": 10.0,
+                  "nb_frames": 7,
+                  "loop": true,
+                  "rollback": true
+                },
+                {
+                  "name": "death",
+                  "texture": "assets/explosion.png",
+                  "frame_size": {
+                    "x": 128.0,
+                    "y": 128.0
+                  },
+                  "frame_pos": {
+                    "x": 0.0,
+                    "y": 0.0
+                  },
+                  "direction": {
+                    "x": 1.0,
+                    "y": 0.0
+                  },
+                  "sprite_size": {
+                    "width": "20.0%",
+                    "height": "20.0%"
+                  },
+                  "framerate": 10.0,
+                  "nb_frames": 12,
+                  "loop": false,
+                  "rollback": false
+                }
+              ],
+              "default_animation": "idle"
+            },
+            "collision:Collidable": {
+              "width": 0.2,
+              "height": 0.2,
+              "collision_type": "solid"
+            },
+            "controller:Controllable": {
+              "UP": "Z",
+              "DOWN": "S",
+              "LEFT": "Q",
+              "RIGHT": "D"
+            },
+            "life:Damage": {
+              "amount": 0
+            },
+            "life:Heal": {
+              "amount": 1
+            },
+            "life:Team": {
+              "name": "test1"
             }
           },
-          "ui:Camera": {
-            "size": {
-              "width": "100.0%",
-              "height": "100.0%"
+          {
+            "moving:Position": {
+              "hook": "enemy_pos",
+              "pos": {
+                "x": 0.5,
+                "y": -0.3
+              }
             },
-            "target": {
-              "x": "50.0%",
-              "y": "50.0%"
+            "ui:Drawable": {},
+            "ui:Sprite": {
+              "texture": "assets/enemy.png",
+              "size": {
+                "width": "20.0%",
+                "height": "20.0%"
+              }
             },
-            "speed": {
-              "x": 0.01,
-              "y": 0.01
+            "life:Health": {
+              "hook": "enemy_health",
+              "current": 100.0,
+              "max": 100.0
+            },
+            "ath:Bar": {
+              "size": {
+                "x": "10.0%",
+                "y": "1.0%"
+              },
+              "max_value": "#enemy_health:max",
+              "current_value": "#enemy_health:current",
+              "offset": {
+                "x": 0.0,
+                "y": -0.12
+              },
+              "color": {
+                "r": 255,
+                "g": 255,
+                "b": 255,
+                "a": 255
+              },
+              "outline": false,
+              "texture_path": "/home/sami/EPITECH/tek3/RType/R-Type/assets/backgrounds/background.png"
+            },
+            "collision:Collidable": {
+              "width": 0.2,
+              "height": 0.2,
+              "collision_type": "solid"
+            },
+            "life:Team": {
+              "name": "test"
+            },
+            "life:Damage": {
+              "amount": 1
+            },
+            "moving:Velocity": {
+              "speed": {
+                "x": 0.005,
+                "y": 0.005
+              },
+              "direction": {
+                "x": 0.0,
+                "y": 0.0
+              }
+            }
+          },
+          {
+            "ui:input": {
+              "hook": "game_text",
+              "buffer": "static hook wewewe",
+              "enabled": true
+            }
+          },
+          {
+            "moving:Position": {
+              "pos": {
+                "x": -0.8,
+                "y": -0.8
+              }
+            },
+            "ui:Drawable": {},
+            "ui:Text": {
+              "font": "assets/fonts/roboto.ttf",
+              "size": {
+                "width": 30.0,
+                "height": 30.0
+              },
+              "text": "%game_text:buffer"
+            }
+          },
+          {
+            "actions:ActionTrigger": {
+              "trigger": {
+                "type": "KeyPressed",
+                "params": {
+                  "key": "R"
+                }
+              },
+              "to_emit": [
+                {
+                  "name": "SceneChangeEvent",
+                  "params": {
+                    "target_scene": "menu",
+                    "state": "main",
+                    "reason": "User pressed R"
+                  }
+                },
+                {
+                  "name": "SceneChangeEvent",
+                  "params": {
+                    "target_scene": "game",
+                    "state": "disabled",
+                    "reason": "User pressed R"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "ui:Drawable": {},
+            "ui:Background": {
+              "layers": [
+                {
+                  "path": "assets/backgrounds/skies/Sky_sky.png"
+                },
+                {
+                  "path": "assets/backgrounds/skies/sky_moon.png"
+                },
+                {
+                  "path": "assets/backgrounds/skies/Sky_back_mountain.png"
+                },
+                {
+                  "path": "assets/backgrounds/skies/sky_front_mountain.png"
+                },
+                {
+                  "path": "assets/backgrounds/skies/sky_clouds.png"
+                },
+                {
+                  "path": "assets/backgrounds/skies/Sky_cloud_single.png"
+                },
+                {
+                  "path": "assets/backgrounds/skies/Sky_front_cloud.png"
+                },
+                {
+                  "path": "assets/backgrounds/skies/sky_cloud_floor.png"
+                },
+                {
+                  "path": "assets/backgrounds/skies/sky_cloud_floor_2.png"
+                }
+              ],
+              "render_type": "STRETCH",
+              "parallax": {
+                "active": true,
+                "speed": {
+                  "x": -1000.0,
+                  "y": 0.0
+                },
+                "framerate": 60.0
+              }
+            }
+          },
+          {
+            "moving:Position": {
+              "pos": {
+                "x": 0.0,
+                "y": 0.0
+              }
+            },
+            "ui:Camera": {
+              "size": {
+                "width": "100.0%",
+                "height": "100.0%"
+              },
+              "target": {
+                "x": "50.0%",
+                "y": "50.0%"
+              },
+              "speed": {
+                "x": 0.01,
+                "y": 0.01
+              }
             }
           }
-        }
-      ]
-    }
-  ]
-}
+        ]
+      }
+    ]
+  }

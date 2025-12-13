@@ -94,15 +94,9 @@
     "scenes": [
         {
             "name": "game",
-            "state": "disabled",
+            "state": "active",
             "entities": [
-                {
-                    "weapon:BasicWeapon": {
-                        "bullet_type": "basic_bullet",
-                        "magazine_size": 6,
-                        "magazine_nb": 3
-                    }
-                }
+                {}
             ]
         }
     ]

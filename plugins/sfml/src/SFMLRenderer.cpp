@@ -72,7 +72,7 @@ static sf::Texture gen_placeholder()
 }
 
 SFMLRenderer::SFMLRenderer(Registry& r, EntityLoader& l)
-    : APlugin(r, l, {"moving", "ui", "client_network", "server_network"}, {})
+    : APlugin(r, l, {"moving", "ath", "ui", "client_network", "server_network"}, {})
 {
   _window =
       sf::RenderWindow(sf::VideoMode(window_size), "R-Type - SFML Renderer");
@@ -120,6 +120,7 @@ SFMLRenderer::SFMLRenderer(Registry& r, EntityLoader& l)
       "DamageEvent",
       [this](const DamageEvent& event)
       { AnimatedSprite::on_death(this->_registry.get(), event); });
+    LOGGER("SFML", LogLevel::INFO, "Loaded SFML Plugin")
 }
 
 SFMLRenderer::~SFMLRenderer()

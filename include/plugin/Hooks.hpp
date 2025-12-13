@@ -71,7 +71,7 @@ std::optional<std::reference_wrapper<const T>> get_ref(Registry& r,
   return std::nullopt;
 }
 
-/*
+/**
  *@brief Gets the value at a given key from a JsonObject for a component ALSO
  * register the component for a **static** hook (usefull for when entity isn't
  * accessible)
@@ -98,8 +98,8 @@ std::optional<T> get_value_copy(Registry& r,
   return std::nullopt;
 }
 
-/*
- *@brief Gets the value at a given key from a JsonObject for a component ALSO
+/**
+ * @brief Gets the value at a given key from a JsonObject for a component ALSO
  * register the component for a **dynamic** hook ALWAYS prefer to get_value_copy
  * to avoid ownsership issues
  */
