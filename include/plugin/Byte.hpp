@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "CustomException.hpp"
+#include "Json/JsonParser.hpp"
 
 using Byte = unsigned char;
 using ByteArray = std::vector<Byte>;
@@ -39,10 +40,16 @@ concept bytable = serializable<T> && unserializable<T>;
 #define DEFAULT_BYTE_CONSTRUCTOR(classname, construct, ...) \
   classname(ByteArray const& array) \
   { \
-    Result<classname> r = apply((construct), __VA_ARGS__)( \
-        Rest(std::string(array.begin(), array.end()))); \
+    Result<classname> r = \
+        apply((construct), __VA_ARGS__)(Rest(array)); \
     if (r.index() == ERROR) { \
-      throw InvalidPackage(#classname); \
+      auto const& err = std::get<ERROR>(r); \
+      throw InvalidPackage(std::format("{}: {}, {}, line {} col {}", \
+                                       #classname, \
+                                       err.context, \
+                                       err.message, \
+                                       err.rest.lines, \
+                                       err.rest.columns)); \
     } \
     *this = std::get<SUCCESS>(r).value; \
   }
@@ -115,5 +122,7 @@ ByteArray optional_to_byte(std::optional<T> const& m,
 }
 
 ByteArray string_to_byte(std::string const& str);
+ByteArray json_value_to_byte(JsonValue const &v);
+ByteArray json_object_to_byte(JsonObject const& object);
 
 CUSTOM_EXCEPTION(InvalidPackage)

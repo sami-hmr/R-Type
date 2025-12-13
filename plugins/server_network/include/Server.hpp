@@ -34,12 +34,13 @@ class Server
 {
 public:
   Server(ServerLaunching const& s,
-         SharedQueue<ComponentBuilder>& comp_queue,
+         SharedQueue<ComponentBuilderId>& comp_queue,
          SharedQueue<EventBuilderId>& event_to_client,
          SharedQueue<EventBuilder>& event_to_server,
          std::atomic<bool>& running,
          std::counting_semaphore<>& comp_sem,
-         std::counting_semaphore<>& event_sem);
+         std::counting_semaphore<>& event_sem,
+         std::counting_semaphore<>& event_to_serv_sem);
   ~Server();
 
   void close();
@@ -118,15 +119,16 @@ private:
   std::string _mapname = "level1";
   int _max_players = MAX_PLAYERS;
 
-  std::reference_wrapper<SharedQueue<ComponentBuilder>> _components_to_create;
+  std::reference_wrapper<SharedQueue<ComponentBuilderId>> _components_to_create;
 
   void transmit_event_to_client(EventBuilderId&& to_transmit);
   void send_event_to_client();
-  std::reference_wrapper<std::counting_semaphore<>> _semaphore_event;
-  std::reference_wrapper<SharedQueue<EventBuilderId>> _events_to_transmit;
+  std::reference_wrapper<std::counting_semaphore<>> _semaphore_event_to_client;
+  std::reference_wrapper<SharedQueue<EventBuilderId>> _events_queue_to_client;
 
   void transmit_event_to_server(EventBuilder&& to_transmit);
-  std::reference_wrapper<SharedQueue<EventBuilder>> _events_queue;
+  std::reference_wrapper<std::counting_semaphore<>> _semaphore_event_to_server;
+  std::reference_wrapper<SharedQueue<EventBuilder>> _events_queue_to_serv;
 
   std::atomic<bool>& _running;
 

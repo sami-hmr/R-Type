@@ -2,7 +2,7 @@
   "scenes": [
     {
       "name": "game",
-      "state": "main",
+      "state": "disabled",
       "plugins": [
         {
           "name": "logger",
@@ -37,45 +37,17 @@
         {
           "name": "sfml",
           "config": {}
-        }
-      ],
-      "entities": [
-        {
-          "moving:Position": { "pos": { "x": 0.5, "y": -0.3 } },
-          "ui:Drawable": {},
-          "ui:Sprite": {
-            "texture": "assets/enemy.png",
-            "size": {
-              "width": "20.0%",
-              "height": "20.0%"
-            }
-          },
-          "collision:Collidable": {
-            "width": 0.1,
-            "height": 0.1,
-            "collision_type": "Solid"
-          },
-          "life:Health": { "hook": "prout", "current": 5, "max": 100 },
-          "life:Team": { "name": "test" }
         },
         {
-          "moving:Position": {
-            "pos": {
-              "x": -0.8,
-              "y": -0.8
-            }
-          },
-          "ui:Drawable": {},
-          "ui:Text": {
-            "font": "assets/fonts/roboto.ttf",
-            "size": {
-              "width": 30.0,
-              "height": 30.0
-            },
-            "text": "Hello, World!"
-          }
+          "name": "ui",
+          "config": {}
+        },
+        {
+          "name": "actions",
+          "config": {}
         }
-      ]
+      ],
+      "entities": []
     }
   ]
 }

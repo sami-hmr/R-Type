@@ -32,9 +32,12 @@ static int true_main(Registry& r,
   r.on<SceneChangeEvent>("SceneChangeEvent",
                          [&r](const SceneChangeEvent& event)
                          {
+                             std::cout << event.target_scene << std::endl;;
+                             if (event.force) {
+                                 r.remove_all_scenes();
+                             }
                            r.set_current_scene(
                                event.target_scene);
-                           r.remove_current_scene("menu"); // a voir comment on fait
                          });
 
   r.on<SpawnEntityRequestEvent>("SpawnEntity",

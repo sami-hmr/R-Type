@@ -39,15 +39,13 @@ Actions::Actions(Registry& r, EntityLoader& l)
       "KeyPressedEvent",
       [this](KeyPressedEvent const& evt)
       {
-
         for (auto&& [entity, action] : ZipperIndex<ActionTrigger>(this->_registry.get())) {
           if (action.event_trigger.first != "KeyPressed") {
             continue;
           }
           std::string key = std::get<std::string>(
               action.event_trigger.second.at("key").value);
-          if (std::any_cast<KeyPressedEvent>(evt).key_pressed.contains(
-                  KEY_MAPPING.at_first(key)))
+          if (evt.key_pressed.contains(KEY_MAPPING.at_first(key)))
           {
             for (auto& i : action.event_to_emit) {
               this->_registry.get().emit(i.first, i.second);
