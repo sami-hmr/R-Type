@@ -124,7 +124,6 @@ std::optional<T> get_value(Registry& r,
           return hooked_val->get();
         }
       } catch (...) {
-        // Hook not available yet - return default value
       }
       return T{};
     }
