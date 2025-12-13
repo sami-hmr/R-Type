@@ -16,15 +16,13 @@
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/Hooks.hpp"
+#include "plugin/components/Drawable.hpp"
 #include "plugin/components/Health.hpp"
+#include "plugin/components/Position.hpp"
 #include "plugin/events/LoggerEvent.hpp"
 
 void SFMLRenderer::animation_system(
-    Registry& /*unused*/,
-    const SparseArray<Scene>& scenes,
-    const SparseArray<Position>& positions,
-    const SparseArray<Drawable>& drawable,
-    SparseArray<AnimatedSprite>& AnimatedSprites)
+    Registry& r)
 {
   auto now = std::chrono::high_resolution_clock::now();
 
@@ -41,14 +39,11 @@ void SFMLRenderer::animation_system(
   sf::Vector2f view_size = this->_view.getSize();
   sf::Vector2f view_pos = this->_view.getCenter();
 
-  drawables.reserve(AnimatedSprites.size());
+  drawables.reserve(r.get_components<AnimatedSprite>().size());
 
-  for (auto&& [entity, scene, pos, draw, anim] :
-       ZipperIndex(scenes, positions, drawable, AnimatedSprites))
+  for (auto&& [entity, pos, draw, anim] :
+       ZipperIndex<Position, Drawable, AnimatedSprite>(r))
   {
-    if (scene.state == SceneState::DISABLED) {
-      continue;
-    }
     if (!draw.enabled) {
       continue;
     }

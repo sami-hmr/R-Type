@@ -11,7 +11,6 @@
 #include "Logger.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/SparseArray.hpp"
-#include "ecs/zipper/Zipper.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
@@ -215,9 +214,8 @@ void Life::on_heal(const HealEvent& event)
 void Life::update_cooldowns(Registry& reg)
 {
   double dt = reg.clock().delta_seconds();
-  auto& healths = reg.get_components<Health>();
 
-  for (auto&& [i, health] : ZipperIndex(healths)) {
+  for (auto&& [i, health] : ZipperIndex<Health>(reg)) {
     if (!reg.is_entity_dying(i)) {
       health.damage_delta += dt;
       health.heal_delta += dt;

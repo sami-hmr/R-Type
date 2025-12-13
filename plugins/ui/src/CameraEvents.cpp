@@ -1,6 +1,7 @@
 
 #include "plugin/events/CameraEvents.hpp"
 #include "UI.hpp"
+#include "ecs/zipper/Zipper.hpp"
 #include "plugin/components/Camera.hpp"
 #include "plugin/components/Position.hpp"
 
@@ -14,8 +15,7 @@ void UI::cam_target_event(const CamAggroEvent& e)
     return;
   }
   target = positions.at(e.target).value().pos;
-  for (auto&& [pos, cam] : Zipper(_registry.get().get_components<Position>(),
-                                  _registry.get().get_components<Camera>()))
+  for (auto&& [pos, cam] : Zipper<Position, Camera>(this->_registry.get()))
   {
     cam.target = target;
     cam.moving = true;
@@ -24,7 +24,7 @@ void UI::cam_target_event(const CamAggroEvent& e)
 
 void UI::cam_zoom_event(const CamZoomEvent &e)
 {
-    for (auto&& [cam] : Zipper(_registry.get().get_components<Camera>()))
+    for (auto&& [cam] : Zipper<Camera>(this->_registry.get()))
     {
         cam.next_size = e.next_size;
         cam.zooming = true;
@@ -33,7 +33,7 @@ void UI::cam_zoom_event(const CamZoomEvent &e)
 
 void UI::cam_speed_event(const CamSpeedEvent &e)
 {
-    for (auto&& [cam] : Zipper(_registry.get().get_components<Camera>()))
+    for (auto&& [cam] : Zipper<Camera>(this->_registry.get()))
     {
         cam.speed = e.speed;
     }
@@ -41,7 +41,7 @@ void UI::cam_speed_event(const CamSpeedEvent &e)
 
 void UI::cam_rotate_event(const CamRotateEvent &e)
 {
-    for (auto&& [cam] : Zipper(_registry.get().get_components<Camera>()))
+    for (auto&& [cam] : Zipper<Camera>(this->_registry.get()))
     {
         cam.next_rotation = e.next_rotation;
         cam.rotation_speed = e.speed;

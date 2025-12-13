@@ -51,37 +51,13 @@ private:
 
   void handle_events();
   void handle_resize();
-  void render_sprites(Registry& r,
-                      const SparseArray<Scene>& scenes,
-                      const SparseArray<Position>& positions,
-                      const SparseArray<Drawable>& drawable,
-                      const SparseArray<Sprite>& sprites);
-  void render_text(Registry& r,
-                   const SparseArray<Scene>& scenes,
-                   const SparseArray<Position>& positions,
-                   const SparseArray<Drawable>& drawable,
-                   const SparseArray<Text>& texts);
-  void camera_system(Registry& r,
-                     SparseArray<Position>& positions,
-                     SparseArray<Camera>& cameras);
+  void render_sprites(Registry& r);
+  void render_text(Registry& r);
+  void background_system(Registry& r);
+  void camera_system(Registry &r);
+  void bar_system(Registry &r);
 
-  void background_system(Registry& r,
-                         const SparseArray<Scene>& scenes,
-                         const SparseArray<Drawable>& drawables,
-                         SparseArray<Background>& backgrounds);
-
-  void animation_system(Registry& r,
-                        const SparseArray<Scene>& scenes,
-                        const SparseArray<Position>& positions,
-                        const SparseArray<Drawable>& drawable,
-                        SparseArray<AnimatedSprite>& AnimatedSprites);
-
-  void bar_system(Registry& r,
-                  const SparseArray<Scene>& scenes,
-                  const SparseArray<Drawable>& drawables,
-                  const SparseArray<Position>& positions,
-                  SparseArray<Bar>& bars);
-
+  void animation_system(Registry& r);
   void display();
 
   std::optional<Key> sfml_key_to_key(sf::Keyboard::Key sfml_key);

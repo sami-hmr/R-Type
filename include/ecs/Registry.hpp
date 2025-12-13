@@ -23,7 +23,6 @@
 #include "TwoWayMap.hpp"
 #include "ecs/Scenes.hpp"
 #include "ecs/Systems.hpp"
-#include "ecs/zipper/Zipper.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/HookConcept.hpp"
 #include "plugin/events/EventConcept.hpp"
@@ -203,7 +202,7 @@ public:
     try {
       this->_emplace_functions.at(this->_index_getter.at_second(string_id))(
           to, bytes);
-    } catch (std::out_of_range const &) {
+    } catch (std::out_of_range const&) {
       std::cerr << "error: unknow component :" << string_id << "\n";
     }
   }
@@ -422,25 +421,29 @@ public:
   void setup_scene_systems()
   {
     for (const auto& [name, state] : _scenes) {
-      if (state == SceneState::MAIN) {
-        _current_scene = name;
+      if (state == SceneState::MAIN || state == SceneState::ACTIVE) {
+        _current_scene.push_back(name);
         break;
       }
     }
   }
 
-  void set_current_scene(std::string const& scene_name,
-                         SceneState state = SceneState::MAIN)
+  void set_current_scene(std::string const& scene_name)
   {
-    _current_scene = scene_name;
-    for (auto&& [sc] : Zipper(this->get_components<Scene>())) {
-      if (sc.scene_name == scene_name) {
-        sc.state = state;
-      }
-    }
+    _current_scene.push_back(scene_name);
   }
 
-  std::string const& get_current_scene() const { return _current_scene; }
+  void remove_current_scene(std::string const& scene_name)
+  {
+    _current_scene.erase(
+        std::remove(_current_scene.begin(), _current_scene.end(), scene_name),
+        _current_scene.end());
+  }
+
+  std::vector<std::string> const& get_current_scene() const
+  {
+    return _current_scene;
+  }
 
   Clock& clock() { return _clock; }
 
@@ -513,10 +516,12 @@ public:
     return _entities_templates.find(name)->second;
   }
 
-  bool is_current_cene(Entity e)
+  bool is_in_current_cene(Entity e)
   {
-    return this->get_components<Scene>()[e].value().scene_name
-        == this->_current_scene;
+    return std::find(this->_current_scene.begin(),
+                     this->_current_scene.end(),
+                     this->get_components<Scene>()[e].value().scene_name)
+        != this->_current_scene.end();
   }
 
   ByteArray convert_event_entity(std::string const& id,
@@ -528,7 +533,7 @@ public:
 
   ByteArray convert_comp_entity(std::string const& id,
                                 ByteArray const& comp,
-                                 std::unordered_map<Entity, Entity> const& map)
+                                std::unordered_map<Entity, Entity> const& map)
   {
     return this->_comp_entity_converters.at(id)(comp, map);
   }
@@ -538,12 +543,12 @@ public:
   {
     return this->_events_index_getter.at_first(typeid(Event));
   }
+
   template<component Component>
   std::string get_component_key()
   {
     return this->_index_getter.at_first(typeid(Component));
   }
-
 
 private:
   template<typename EventType>
@@ -607,17 +612,19 @@ private:
       _emplace_functions;
   TwoWayMap<std::type_index, std::string> _index_getter;
 
-  std::unordered_map<std::string,
-                     std::function<ByteArray(ByteArray const&,
-                                             std::unordered_map<Entity, Entity> const&)>>
+  std::unordered_map<
+      std::string,
+      std::function<ByteArray(ByteArray const&,
+                              std::unordered_map<Entity, Entity> const&)>>
       _event_entity_converters;
 
   std::unordered_map<std::string, std::function<void(ByteArray const&)>>
       _byte_event_emitter;
 
-  std::unordered_map<std::string,
-                     std::function<ByteArray(ByteArray const&,
-                                             std::unordered_map<Entity, Entity> const&)>>
+  std::unordered_map<
+      std::string,
+      std::function<ByteArray(ByteArray const&,
+                              std::unordered_map<Entity, Entity> const&)>>
       _comp_entity_converters;
 
   std::unordered_map<std::type_index, std::any> _event_handlers;
@@ -634,7 +641,7 @@ private:
   std::size_t _max = 0;
 
   std::unordered_map<std::string, SceneState> _scenes;
-  std::string _current_scene;
+  std::vector<std::string> _current_scene;
 
   std::unordered_map<std::string,
                      std::function<std::optional<std::any>(std::string const&)>>
@@ -642,5 +649,4 @@ private:
   std::vector<Binding> _bindings;
 
   std::unordered_map<std::string, JsonObject> _entities_templates;
-
 };

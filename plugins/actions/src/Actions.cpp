@@ -39,9 +39,8 @@ Actions::Actions(Registry& r, EntityLoader& l)
       "KeyPressedEvent",
       [this](KeyPressedEvent const& evt)
       {
-        auto& actions = this->_registry.get().get_components<ActionTrigger>();
 
-        for (auto&& [entity, action] : ZipperIndex(actions)) {
+        for (auto&& [entity, action] : ZipperIndex<ActionTrigger>(this->_registry.get())) {
           if (action.event_trigger.first != "KeyPressed") {
             continue;
           }

@@ -5,12 +5,13 @@
 #include <tuple>
 
 #include "Zipper.hpp"
+#include "ecs/Registry.hpp"
 
 /**
  * @class ZipperIndexIterator
- * @brief Iterator that zips multiple containers and includes the current index
+ * @brief Iterator that zips multiple Comps and includes the current index
  * in the result.
- * @tparam Containers Variadic template parameter pack of container types to
+ * @tparam Comps Variadic template parameter pack of container types to
  * iterate over.
  *
  * This iterator extends ZipperIterator by prepending the current iteration
@@ -33,12 +34,12 @@
  * }
  * @endcode
  */
-template<class... Containers>
+template<class... Comps>
 class ZipperIndexIterator
 {
 public:
   /** @brief Base iterator type (ZipperIterator) used internally. */
-  using Base = ZipperIterator<Containers...>;
+  using Base = ZipperIterator<Comps...>;
 
   /**
    * @typedef Value
@@ -49,8 +50,8 @@ public:
   using Value = typename Base::template Value<Container>;
 
   /** @brief Tuple type containing the index followed by values from all
-   * containers. */
-  using ValueType = std::tuple<std::size_t, Value<Containers>...>;
+   * Comps. */
+  using ValueType = std::tuple<std::size_t, Value<Comps>...>;
 
   /**
    * @brief Constructs a zipper index iterator by forwarding arguments to the
@@ -91,7 +92,7 @@ public:
 
   /**
    * @brief Dereference operator. Returns tuple with index and values from all
-   * containers.
+   * Comps.
    * @return Tuple where the first element is the current index, followed by
    * values from each container.
    */
@@ -102,7 +103,7 @@ public:
 
   /**
    * @brief Arrow operator. Returns tuple with index and values from all
-   * containers.
+   * Comps.
    * @return Same as operator*, since we return tuples by value.
    */
   ValueType operator->() { return *(*this); }
@@ -133,9 +134,9 @@ private:
 
 /**
  * @class ZipperIndex
- * @brief Range adapter that zips multiple containers and includes indices in
+ * @brief Range adapter that zips multiple Comps and includes indices in
  * the iteration.
- * @tparam Containers Variadic template parameter pack of container types to zip
+ * @tparam Comps Variadic template parameter pack of container types to zip
  * together.
  *
  * This class extends the functionality of Zipper by including the current
@@ -158,28 +159,30 @@ private:
  * }
  * @endcode
  */
-template<class... Containers>
+template<class... Comps>
 class ZipperIndex
 {
 public:
   /** @brief Iterator type for this indexed zipper. */
-  using Iterator = ZipperIndexIterator<Containers...>;
+  using Iterator = ZipperIndexIterator<Comps...>;
 
-  /** @brief Tuple type containing iterators for all containers. */
+  /** @brief Tuple type containing iterators for all Comps. */
   using IteratorTuple = typename Iterator::Base::iterator_tuple;
 
   /**
    * @brief Constructs an indexed zipper from multiple container references.
    * @param cs Variadic pack of container references to zip together.
    *
-   * Computes the minimum size among all containers and creates begin/end
+   * Computes the minimum size among all Comps and creates begin/end
    * iterator tuples. The zipper will iterate up to the size of the smallest
    * container, yielding tuples that include the iteration index.
    */
-  ZipperIndex(Containers&... cs)
-      : _size(compute_size(cs...))
-      , _begin(std::make_tuple(cs.begin()...))
-      , _end(compute_end(cs...))
+  ZipperIndex(Registry& r)
+      : _size(compute_size(r))
+      , _begin(std::make_tuple(r.get_components<Comps>().begin()...))
+      , _end(compute_end(r))
+      , _scenes(r.get_components<Scene>())
+      , _active_scenes(r.get_current_scene())
   {
   }
 
@@ -192,7 +195,8 @@ public:
    */
   Iterator begin()
   {
-    return ZipperIndexIterator<Containers...>(this->_begin, this->_size);
+    return ZipperIndexIterator<Comps...>(
+        this->_begin, this->_scenes, this->_active_scenes, this->_size);
   }
 
   /**
@@ -201,33 +205,38 @@ public:
    */
   Iterator end()
   {
-    return ZipperIndexIterator<Containers...>(
-        this->_end, this->_size, this->_size);
+    return ZipperIndexIterator<Comps...>(this->_end,
+                                         this->_scenes,
+                                         this->_active_scenes,
+                                         this->_size,
+                                         this->_size);
   }
 
 private:
   /**
-   * @brief Computes the minimum size among all provided containers.
-   * @param containers Variadic pack of container references.
+   * @brief Computes the minimum size among all provided Comps.
+   * @param Comps Variadic pack of container references.
    * @return Size of the smallest container.
    */
-  static std::size_t compute_size(Containers&... containers)
+  static std::size_t compute_size(Registry const& r)
   {
-    return std::min({containers.size()...});
+    return std::min({r.get_components<Comps>().size()...});
   }
 
   /**
-   * @brief Computes the end iterator tuple for all containers.
-   * @param containers Variadic pack of container references.
+   * @brief Computes the end iterator tuple for all Comps.
+   * @param Comps Variadic pack of container references.
    * @return Tuple of iterators, each positioned at begin() + min_size for its
    * container.
    */
-  static IteratorTuple compute_end(Containers&... containers)
+  IteratorTuple compute_end(Registry& r)
   {
-    return std::make_tuple(containers.begin() + compute_size(containers...)...);
+    return std::make_tuple(r.get_components<Comps>().begin() + _size...);
   }
 
-  std::size_t _size;  ///< Size of the smallest container (iteration limit).
-  IteratorTuple _begin;  ///< Tuple of begin iterators for all containers.
-  IteratorTuple _end;  ///< Tuple of end iterators for all containers.
+  std::size_t _size;  ///< Size of the smallest Comp (iteration limit).
+  IteratorTuple _begin;  ///< Tuple of begin iterators for all Comps.
+  IteratorTuple _end;  ///< Tuple of end iterators for all Comps.
+  SparseArray<Scene>& _scenes;
+  std::vector<std::string> _active_scenes;
 };
