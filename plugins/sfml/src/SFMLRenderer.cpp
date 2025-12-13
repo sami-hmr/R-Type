@@ -1,5 +1,6 @@
 
 #include <algorithm>
+#include <cstdio>
 #include <functional>
 #include <iostream>
 #include <stdexcept>
@@ -9,6 +10,7 @@
 
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Image.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/View.hpp>
@@ -16,19 +18,18 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
 
-#include "Json/JsonParser.hpp"
-#include "ServerLaunch.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/Scenes.hpp"
 #include "ecs/SparseArray.hpp"
 #include "ecs/zipper/Zipper.hpp"
-#include "libs/Vector2D.hpp"
+#include "ecs/zipper/ZipperIndex.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
-#include "plugin/Hooks.hpp"
 #include "plugin/components/AnimatedSprite.hpp"
 #include "plugin/components/Background.hpp"
+#include "plugin/components/Camera.hpp"
 #include "plugin/components/Drawable.hpp"
+#include "plugin/components/Position.hpp"
 #include "plugin/components/Sprite.hpp"
 #include "plugin/components/Text.hpp"
 #include "plugin/events/LoggerEvent.hpp"
@@ -71,65 +72,51 @@ static sf::Texture gen_placeholder()
 }
 
 SFMLRenderer::SFMLRenderer(Registry& r, EntityLoader& l)
-    : APlugin(r,
-              l,
-              {"moving", "client_network", "server_network"},
-              {COMP_INIT(Drawable, Drawable, init_drawable),
-               COMP_INIT(Sprite, Sprite, init_sprite),
-               COMP_INIT(Text, Text, init_text),
-               COMP_INIT(Background, Background, init_background),
-               COMP_INIT(AnimatedSprite, AnimatedSprite, init_animated_sprite)})
+    : APlugin(r, l, {"moving", "ui", "client_network", "server_network"}, {})
 {
   _window =
       sf::RenderWindow(sf::VideoMode(window_size), "R-Type - SFML Renderer");
   _window.setFramerateLimit(window_rate);
 
-  _registry.get().register_component<Drawable>("sfml:Drawable");
-  _registry.get().register_component<Sprite>("sfml:Sprite");
-  _registry.get().register_component<Text>("sfml:Text");
-  _registry.get().register_component<Background>("sfml:Background");
-  _registry.get().register_component<AnimatedSprite>("sfml:AnimatedSprite");
+  _registry.get().add_system([this](Registry&) { this->handle_events(); }, 1);
+  _registry.get().add_system([this](Registry&)
+                               { _window.clear(sf::Color::Black); });
+  _registry.get().add_system(
+      [this](Registry& r)
+      { this->background_system(r); });
 
-  _registry.get().add_system<>([this](Registry&) { this->handle_events(); },
-                                1);
-  _registry.get().add_system<>([this](Registry&)
-                                { _window.clear(sf::Color::Black); });
-  _registry.get().add_system<Scene, Drawable, Background>(
-      [this](Registry& r,
-             const SparseArray<Scene>& scenes,
-             const SparseArray<Drawable>& drawables,
-             SparseArray<Background>& backgrounds)
-      { this->background_system(r, scenes, drawables, backgrounds); });
+  _registry.get().add_system(
+      [this](Registry& r)
+      { this->render_sprites(r); });
 
-  _registry.get().add_system<Scene, Position, Drawable, Sprite>(
-      [this](Registry& r,
-             SparseArray<Scene>& scenes,
-             SparseArray<Position>& pos,
-             SparseArray<Drawable>& draw,
-             SparseArray<Sprite>& spr)
-      { this->render_sprites(r, scenes, pos, draw, spr); });
+  _registry.get().add_system(
+      [this](Registry& r)
+      { this->render_text(r); });
 
-  _registry.get().add_system<Scene, Position, Drawable, Text>(
-      [this](Registry& r,
-             const SparseArray<Scene>& scenes,
-             const SparseArray<Position>& pos,
-             const SparseArray<Drawable>& draw,
-             const SparseArray<Text>& txt)
-      { this->render_text(r, scenes, pos, draw, txt); });
-
-  _registry.get().add_system<Scene, Position, Drawable, AnimatedSprite>(
-      [this](Registry& r,
-             const SparseArray<Scene>& scenes,
-             const SparseArray<Position>& positions,
-             const SparseArray<Drawable>& drawable,
-             SparseArray<AnimatedSprite>& AnimatedSprites)
+  _registry.get().add_system(
+      [this](Registry& r)
       {
-        this->animation_system(r, scenes, positions, drawable, AnimatedSprites);
+        this->animation_system(r);
       });
-
+  _registry.get().add_system(
+      [this](Registry& r)
+      { this->camera_system(r); });
   _registry.get().add_system<>([this](Registry&) { this->display(); });
   _textures.insert_or_assign(SFMLRenderer::placeholder_texture,
                              gen_placeholder());
+
+  _registry.get().on<PlayAnimationEvent>(
+      "PlayAnimationEvent",
+      [this](const PlayAnimationEvent& event)
+      { AnimatedSprite::on_play_animation(this->_registry.get(), event); });
+  _registry.get().on<AnimationEndEvent>(
+      "AnimationEndEvent",
+      [this](const AnimationEndEvent& event)
+      { AnimatedSprite::on_animation_end(this->_registry.get(), event); });
+  _registry.get().on<DamageEvent>(
+      "DamageEvent",
+      [this](const DamageEvent& event)
+      { AnimatedSprite::on_death(this->_registry.get(), event); });
 }
 
 SFMLRenderer::~SFMLRenderer()
@@ -165,61 +152,6 @@ sf::Font& SFMLRenderer::load_font(std::string const& path)
   }
   _fonts.insert_or_assign(path, std::move(font));
   return _fonts.at(path);
-}
-
-void SFMLRenderer::init_drawable(Registry::Entity const& entity,
-                                 JsonObject const&)
-{
-  _registry.get().emplace_component<Drawable>(entity);
-}
-
-void SFMLRenderer::init_sprite(Registry::Entity const& entity,
-                               JsonObject const& obj)
-{
-  auto const& texture_path = get_value<Sprite, std::string>(
-      this->_registry.get(), obj, entity, "texture");
-
-  if (!texture_path) {
-    std::cerr << "Error loading sprite component: unexpected value type "
-                 "(texture: string)\n";
-    return;
-  }
-
-  Vector2D scale(0.1, 0.1);
-  if (obj.contains("size")) {
-    scale = this->parse_vector2d<Sprite>(entity, obj, "size");
-  }
-  _registry.get().emplace_component<Sprite>(
-      entity, texture_path.value(), scale);
-}
-
-void SFMLRenderer::init_text(Registry::Entity const& entity,
-                             JsonObject const& obj)
-{
-  auto const& font_path =
-      get_value<Text, std::string>(this->_registry.get(), obj, entity, "font");
-
-  if (!font_path) {
-    std::cerr << "Error loading text component: unexpected value type (font: "
-                 "string)\n";
-    return;
-  }
-
-  Vector2D scale(0.1, 0.1);
-  if (obj.contains("size")) {
-    scale = this->parse_vector2d<Text>(entity, obj, "size");
-  }
-
-  auto& text_opt = _registry.get().emplace_component<Text>(
-      entity, font_path.value(), scale, "");
-
-  if (text_opt.has_value()) {
-    auto text_val = get_value<Text, std::string>(
-        this->_registry.get(), obj, entity, "text");
-    if (text_val) {
-      text_opt.value().text = text_val.value();
-    }
-  }
 }
 
 std::optional<Key> SFMLRenderer::sfml_key_to_key(sf::Keyboard::Key sfml_key)
@@ -304,33 +236,43 @@ void SFMLRenderer::display()
   _window.display();
 }
 
-void SFMLRenderer::render_sprites(Registry& /*unused*/,
-                                  const SparseArray<Scene>& scenes,
-                                  const SparseArray<Position>& positions,
-                                  const SparseArray<Drawable>& drawable,
-                                  const SparseArray<Sprite>& sprites)
+void SFMLRenderer::render_sprites(Registry& r)
 {
   std::vector<
       std::
           tuple<std::reference_wrapper<sf::Texture>, double, sf::Vector2f, int>>
       drawables;
   sf::Vector2u window_size = _window.getSize();
+  sf::Vector2f view_size = this->_view.getSize();
+  sf::Vector2f view_pos = this->_view.getCenter();
+
   float min_dimension =
       static_cast<float>(std::min(window_size.x, window_size.y));
 
-  drawables.reserve(
-      std::max({positions.size(), drawable.size(), sprites.size()}));
+  drawables.reserve(std::max({r.get_components<Position>().size(),
+                              r.get_components<Drawable>().size(),
+                              r.get_components<Sprite>().size()}));
 
-  for (auto&& [scene, pos, draw, spr] :
-       Zipper(scenes, positions, drawable, sprites))
+  for (auto&& [pos, draw, spr] :
+       Zipper<Position, Drawable, Sprite>(r))
   {
     if (!draw.enabled) {
       continue;
     }
-    if (scene.state == SceneState::DISABLED) {
+    sf::Vector2f new_pos(
+        static_cast<float>((pos.pos.x + 1.0) * min_dimension / 2.0f),
+        static_cast<float>((pos.pos.y + 1.0) * min_dimension / 2.0f));
+
+    if (new_pos.x < view_pos.x - (view_size.x / 2)
+        || new_pos.x > view_pos.x + (view_size.x / 2))
+    {
       continue;
     }
-
+    if (new_pos.y < view_pos.y - (view_size.y / 2)
+        || new_pos.y > view_pos.y + (view_size.y / 2))
+    {
+      continue;
+    }
     sf::Texture& texture = load_texture(spr.texture_path);
 
     float scale_x =
@@ -339,9 +281,6 @@ void SFMLRenderer::render_sprites(Registry& /*unused*/,
         static_cast<float>(window_size.y * spr.scale.y) / texture.getSize().y;
     float uniform_scale = std::min(scale_x, scale_y);
 
-    sf::Vector2f new_pos(
-        static_cast<float>((pos.pos.x + 1.0) * min_dimension / 2.0f),
-        static_cast<float>((pos.pos.y + 1.0) * min_dimension / 2.0f));
     drawables.emplace_back(std::ref(texture), uniform_scale, new_pos, pos.z);
   }
   std::sort(drawables.begin(),
@@ -364,19 +303,12 @@ void SFMLRenderer::render_sprites(Registry& /*unused*/,
   }
 }
 
-void SFMLRenderer::render_text(Registry& /*unused*/,
-                               const SparseArray<Scene>& scenes,
-                               const SparseArray<Position>& positions,
-                               const SparseArray<Drawable>& drawable,
-                               const SparseArray<Text>& texts)
+void SFMLRenderer::render_text(Registry& r)
 {
-  for (auto&& [scene, pos, draw, txt] :
-       Zipper(scenes, positions, drawable, texts))
+  for (auto&& [i, pos, draw, txt] :
+       ZipperIndex<Position, Drawable, Text>(r))
   {
     if (!draw.enabled) {
-      continue;
-    }
-    if (scene.state == SceneState::DISABLED) {
       continue;
     }
 

@@ -2,14 +2,13 @@
 
 #include <algorithm>
 #include <any>
-#include <chrono>
 #include <cstddef>
 #include <functional>
 #include <iostream>
-#include <map>
 #include <optional>
 #include <queue>
 #include <random>
+#include <stdexcept>
 #include <string>
 #include <typeindex>
 #include <unordered_map>
@@ -19,11 +18,11 @@
 
 #include "Clock.hpp"
 #include "Json/JsonParser.hpp"
+// #include "NetworkShared.hpp"
 #include "SparseArray.hpp"
 #include "TwoWayMap.hpp"
 #include "ecs/Scenes.hpp"
 #include "ecs/Systems.hpp"
-#include "ecs/zipper/Zipper.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/HookConcept.hpp"
 #include "plugin/events/EventConcept.hpp"
@@ -76,7 +75,7 @@ public:
         { comp.insert_at(e, bytes); });
     this->_comp_entity_converters.insert_or_assign(
         string_id,
-        [](ByteArray const& b, TwoWayMap<Entity, Entity> const& map)
+        [](ByteArray const& b, std::unordered_map<Entity, Entity> const& map)
         { return Component(b).change_entity(map).to_bytes(); });
     this->_index_getter.insert(ti, string_id);
     return comp;
@@ -162,7 +161,8 @@ public:
    * @param c The component to add.
    * @return SparseArray<Component>::Ref A reference to the added component.
    */
-  template<typename Component>
+
+  template<component Component>
   typename SparseArray<Component>::Ref add_component(Entity const& to,
                                                      Component&& c)
   {
@@ -199,8 +199,12 @@ public:
                          std::string const& string_id,
                          ByteArray const& bytes)
   {
-    this->_emplace_functions.at(this->_index_getter.at_second(string_id))(
-        to, bytes);
+    try {
+      this->_emplace_functions.at(this->_index_getter.at_second(string_id))(
+          to, bytes);
+    } catch (std::out_of_range const&) {
+      std::cerr << "error: unknow component :" << string_id << "\n";
+    }
   }
 
   /**
@@ -320,11 +324,19 @@ public:
     std::type_index type_id(typeid(EventType));
     _events_index_getter.insert(type_id, name);
     if (!_event_entity_converters.contains(name)) {
-        _event_entity_converters.insert_or_assign(
-            name,
-            [](ByteArray const& b, TwoWayMap<Entity, Entity> const& map)
-            { return EventType(b).change_entity(map).to_bytes(); });
+      _event_entity_converters.insert_or_assign(
+          name,
+          [](ByteArray const& b, std::unordered_map<Entity, Entity> const& map)
+          { return EventType(b).change_entity(map).to_bytes(); });
     }
+
+    if (!_byte_event_emitter.contains(name)) {
+      _byte_event_emitter.insert_or_assign(
+          name,
+          [this](ByteArray const& data)
+          { return this->emit<EventType>(EventType(data)); });
+    }
+
     this->add_event_builder<EventType>();
 
     return this->on<EventType>(handler);
@@ -394,6 +406,11 @@ public:
     }
   }
 
+  void emit(std::string const& name, ByteArray const& data)
+  {
+    this->_byte_event_emitter.at(name)(data);
+  }
+
   void add_scene(std::string const& scene_name, SceneState state)
   {
     _scenes.insert_or_assign(scene_name, state);
@@ -404,25 +421,29 @@ public:
   void setup_scene_systems()
   {
     for (const auto& [name, state] : _scenes) {
-      if (state == SceneState::MAIN) {
-        _current_scene = name;
+      if (state == SceneState::MAIN || state == SceneState::ACTIVE) {
+        _current_scene.push_back(name);
         break;
       }
     }
   }
 
-  void set_current_scene(std::string const& scene_name,
-                         SceneState state = SceneState::MAIN)
+  void set_current_scene(std::string const& scene_name)
   {
-    _current_scene = scene_name;
-    for (auto&& [sc] : Zipper(this->get_components<Scene>())) {
-      if (sc.scene_name == scene_name) {
-        sc.state = state;
-      }
-    }
+    _current_scene.push_back(scene_name);
   }
 
-  std::string const& get_current_scene() const { return _current_scene; }
+  void remove_current_scene(std::string const& scene_name)
+  {
+    _current_scene.erase(
+        std::remove(_current_scene.begin(), _current_scene.end(), scene_name),
+        _current_scene.end());
+  }
+
+  std::vector<std::string> const& get_current_scene() const
+  {
+    return _current_scene;
+  }
 
   Clock& clock() { return _clock; }
 
@@ -495,24 +516,38 @@ public:
     return _entities_templates.find(name)->second;
   }
 
-  bool is_current_cene(Entity e)
+  bool is_in_current_cene(Entity e)
   {
-    return this->get_components<Scene>()[e].value().scene_name
-        == this->_current_scene;
+    return std::find(this->_current_scene.begin(),
+                     this->_current_scene.end(),
+                     this->get_components<Scene>()[e].value().scene_name)
+        != this->_current_scene.end();
   }
 
   ByteArray convert_event_entity(std::string const& id,
                                  ByteArray const& event,
-                                 TwoWayMap<Entity, Entity> const& map)
+                                 std::unordered_map<Entity, Entity> const& map)
   {
     return this->_event_entity_converters.at(id)(event, map);
   }
 
   ByteArray convert_comp_entity(std::string const& id,
                                 ByteArray const& comp,
-                                TwoWayMap<Entity, Entity> const& map)
+                                std::unordered_map<Entity, Entity> const& map)
   {
-    return this->_event_entity_converters.at(id)(comp, map);
+    return this->_comp_entity_converters.at(id)(comp, map);
+  }
+
+  template<event Event>
+  std::string get_event_key()
+  {
+    return this->_events_index_getter.at_first(typeid(Event));
+  }
+
+  template<component Component>
+  std::string get_component_key()
+  {
+    return this->_index_getter.at_first(typeid(Component));
   }
 
 private:
@@ -577,14 +612,19 @@ private:
       _emplace_functions;
   TwoWayMap<std::type_index, std::string> _index_getter;
 
-  std::unordered_map<std::string,
-                     std::function<ByteArray(ByteArray const&,
-                                             TwoWayMap<Entity, Entity> const&)>>
+  std::unordered_map<
+      std::string,
+      std::function<ByteArray(ByteArray const&,
+                              std::unordered_map<Entity, Entity> const&)>>
       _event_entity_converters;
 
-  std::unordered_map<std::string,
-                     std::function<ByteArray(ByteArray const&,
-                                             TwoWayMap<Entity, Entity> const&)>>
+  std::unordered_map<std::string, std::function<void(ByteArray const&)>>
+      _byte_event_emitter;
+
+  std::unordered_map<
+      std::string,
+      std::function<ByteArray(ByteArray const&,
+                              std::unordered_map<Entity, Entity> const&)>>
       _comp_entity_converters;
 
   std::unordered_map<std::type_index, std::any> _event_handlers;
@@ -601,7 +641,7 @@ private:
   std::size_t _max = 0;
 
   std::unordered_map<std::string, SceneState> _scenes;
-  std::string _current_scene;
+  std::vector<std::string> _current_scene;
 
   std::unordered_map<std::string,
                      std::function<std::optional<std::any>(std::string const&)>>

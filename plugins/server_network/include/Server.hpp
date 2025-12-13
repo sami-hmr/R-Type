@@ -34,10 +34,12 @@ class Server
 {
 public:
   Server(ServerLaunching const& s,
-         SharedQueue<ComponentBuilder>&,
-         SharedQueue<EventBuilder>&,
+         SharedQueue<ComponentBuilder>& comp_queue,
+         SharedQueue<EventBuilderId>& event_to_client,
+         SharedQueue<EventBuilder>& event_to_server,
          std::atomic<bool>& running,
-         std::counting_semaphore<> &);
+         std::counting_semaphore<>& comp_sem,
+         std::counting_semaphore<>& event_sem);
   ~Server();
 
   void close();
@@ -52,10 +54,9 @@ private:
   void handle_connected_command(ConnectedCommand const& command,
                                 const asio::ip::udp::endpoint& sender);
 
-  void send(ByteArray const& response,
-                           const asio::ip::udp::endpoint& endpoint);
+  void send(ByteArray const& response, const asio::ip::udp::endpoint& endpoint);
   void send_connected(ByteArray const& response,
-                           const asio::ip::udp::endpoint& endpoint);
+                      const asio::ip::udp::endpoint& endpoint);
 
   void handle_getinfo(ByteArray const& cmd,
                       const asio::ip::udp::endpoint& sender);
@@ -89,6 +90,7 @@ private:
   static std::optional<ComponentBuilder> parse_component_build_cmd(
       ByteArray const& package);
   ClientInfo& find_client_by_endpoint(const asio::ip::udp::endpoint& endpoint);
+  ClientInfo& find_client_by_id(std::size_t id);
   void remove_client_by_endpoint(const asio::ip::udp::endpoint& endpoint);
 
   static const std::unordered_map<
@@ -118,8 +120,14 @@ private:
 
   std::reference_wrapper<SharedQueue<ComponentBuilder>> _components_to_create;
 
-  void transmit_event(EventBuilder &&to_transmit);
-  std::reference_wrapper<SharedQueue<EventBuilder>> _events_to_transmit;
+  void transmit_event_to_client(EventBuilderId&& to_transmit);
+  void send_event_to_client();
+  std::reference_wrapper<std::counting_semaphore<>> _semaphore_event;
+  std::reference_wrapper<SharedQueue<EventBuilderId>> _events_to_transmit;
+
+  void transmit_event_to_server(EventBuilder&& to_transmit);
+  std::reference_wrapper<SharedQueue<EventBuilder>> _events_queue;
+
   std::atomic<bool>& _running;
 
   std::unordered_map<FragmentedPackage, ByteArray, FragmentedPackage::Hash>
@@ -127,5 +135,5 @@ private:
 
   void send_comp();
   std::reference_wrapper<std::counting_semaphore<>> _semaphore;
-  std::thread _queue_reader;
+  std::vector<std::thread> _queue_readers;
 };

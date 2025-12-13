@@ -1,9 +1,10 @@
+#include <chrono>
+#include <thread>
 #include <vector>
 #include <string>
 #include <optional>
 #include <iostream>
 
-#include "ecs/Scenes.hpp"
 #include "ecs/Registry.hpp"
 #include "Json/JsonParser.hpp"
 #include "plugin/EntityLoader.hpp"
@@ -32,8 +33,8 @@ static int true_main(Registry& r,
                          [&r](const SceneChangeEvent& event)
                          {
                            r.set_current_scene(
-                               event.target_scene,
-                               SCENE_STATE_STR.at_second(event.state));
+                               event.target_scene);
+                           r.remove_current_scene("menu"); // a voir comment on fait
                          });
 
   r.on<SpawnEntityRequestEvent>("SpawnEntity",
@@ -54,9 +55,30 @@ static int true_main(Registry& r,
 
   r.setup_scene_systems();
 
+  const auto frame_duration = std::chrono::microseconds(1000000 / 120); // ~33333 microseconds
+  auto next_frame_time = std::chrono::duration_cast<std::chrono::microseconds>(
+      r.clock().now().time_since_epoch());
+
   while (!should_exit) {
-    r.run_systems();
+      r.run_systems();
+
+      // Calculate when the next frame should start
+      next_frame_time += frame_duration;
+
+      // Get current time
+      auto current_time = std::chrono::duration_cast<std::chrono::microseconds>(
+          r.clock().now().time_since_epoch());
+
+      // Sleep until next frame time
+      if (next_frame_time > current_time) {
+          auto sleep_duration = next_frame_time - current_time;
+          std::this_thread::sleep_for(std::chrono::microseconds(sleep_duration));
+      } else {
+          // Frame took too long, reset timing to avoid catch-up spiral
+          next_frame_time = current_time;
+      }
   }
+
 
   return exit_code;
 }

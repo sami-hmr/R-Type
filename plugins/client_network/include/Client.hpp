@@ -42,13 +42,15 @@ public:
 
 private:
   void receive_loop();
-  void send_connectionless(ByteArray const& command);
+  void send(ByteArray const& command);
+  void send_connected(ByteArray const& response);
   void handle_connectionless_response(ConnectionlessCommand const& response);
   void handle_connected_package(ConnectedPackage const& package);
   void handle_connected_command(ConnectedCommand const& command);
   void handle_package(ByteArray const& package);
 
   void handle_component_update(ByteArray const& package);
+  void handle_event_creation(ByteArray const& package);
 
   void send_getchallenge();
   void send_connect(std::uint32_t challenge);
@@ -105,4 +107,6 @@ private:
   void send_evt();
   std::reference_wrapper<std::counting_semaphore<>> _semaphore;
   std::thread _queue_reader;
+
+  std::uint32_t _current_index_sequence = 0;
 };

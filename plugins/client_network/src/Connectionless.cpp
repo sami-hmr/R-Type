@@ -11,7 +11,7 @@ const std::unordered_map<std::uint8_t, void (Client::*)(ByteArray const&)>
         {DISCONNECT, &Client::handle_disconnect_response},
 };
 
-void Client::send_connectionless(ByteArray const& command)
+void Client::send(ByteArray const& command)
 {
   ByteArray pkg = MAGIC_SEQUENCE + command + PROTOCOL_EOF;
 
@@ -20,7 +20,16 @@ void Client::send_connectionless(ByteArray const& command)
   NETWORK_LOGGER(
       "client",
       LogLevel::DEBUG,
-      std::format("Sent connectionless package of size: {}", pkg.size()));
+      std::format("Sent package of size: {}", pkg.size()));
+}
+
+void Client::send_connected(ByteArray const& response)
+{
+    ByteArray pkg = type_to_byte(this->_current_index_sequence)
+        + type_to_byte<std::uint32_t>(0) + type_to_byte<bool>(true) + response;
+
+    this->_current_index_sequence += 1;
+    this->send(pkg);
 }
 
 void Client::handle_connectionless_response(
@@ -38,7 +47,7 @@ void Client::handle_connectionless_response(
 
 void Client::send_getchallenge()
 {
-  send_connectionless(type_to_byte<Byte>(GETCHALLENGE));
+  send(type_to_byte<Byte>(GETCHALLENGE));
 }
 
 void Client::send_connect(std::uint32_t challenge)
@@ -46,7 +55,7 @@ void Client::send_connect(std::uint32_t challenge)
   ByteArray msg = type_to_byte<Byte>(CONNECT) + type_to_byte(challenge)
       + string_to_byte(_player_name);
 
-  send_connectionless(msg);
+  send(msg);
 }
 
 void Client::handle_challenge_response(ByteArray const& package)

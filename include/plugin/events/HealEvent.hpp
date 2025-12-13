@@ -19,8 +19,8 @@ struct HealEvent
   Registry::Entity source;
   int amount;
 
-  CHANGE_ENTITY(result.target = map.at_second(target);
-                result.source = map.at_second(source);)
+  CHANGE_ENTITY(result.target = map.at(target);
+                result.source = map.at(source);)
 
   HealEvent(Registry::Entity t, Registry::Entity s, int a)
     : target(t)

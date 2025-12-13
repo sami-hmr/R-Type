@@ -30,11 +30,12 @@ class NetworkServer : public APlugin
     void launch_server(ServerLaunching const& s);
 
     std::thread _thread;
+    std::counting_semaphore<> _comp_semaphore;
     SharedQueue<ComponentBuilder> _components_to_update;
-    SharedQueue<EventBuilder> _events_to_transmit;
     std::atomic<bool> _running = false;
     SharedQueue<EventBuilder> _event_queue;
     std::counting_semaphore<> _event_semaphore;
+    SharedQueue<EventBuilderId> _event_queue_to_client;
 };
 
 CUSTOM_EXCEPTION(ClientNotFound)

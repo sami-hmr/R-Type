@@ -22,6 +22,7 @@
 #include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
+#include "plugin/components/Camera.hpp"
 #include "plugin/components/AnimatedSprite.hpp"
 #include "plugin/components/Background.hpp"
 #include "plugin/components/Drawable.hpp"
@@ -29,6 +30,7 @@
 #include "plugin/components/Sprite.hpp"
 #include "plugin/components/Text.hpp"
 #include "plugin/events/IoEvents.hpp"
+#include "plugin/events/CameraEvents.hpp"
 
 class SFMLRenderer : public APlugin
 {
@@ -45,50 +47,14 @@ private:
   sf::Texture& load_texture(std::string const& path);
   sf::Font& load_font(std::string const& path);
 
-  void init_drawable(Registry::Entity const& entity, JsonObject const& obj);
-  void init_sprite(Registry::Entity const& entity, JsonObject const& obj);
-  void init_text(Registry::Entity const& entity, JsonObject const& obj);
-
-  template<typename T>
-  Vector2D parse_vector2d(Registry::Entity const& entity,
-                          JsonObject const& obj,
-                          std::string const& str)
-  {
-    auto vec = get_value<T, Vector2D>(
-        this->_registry.get(), obj, entity, str, "width", "height");
-
-    return vec.value();
-  }
-
-  void init_background(Registry::Entity const& entity, JsonObject const& obj);
-  void init_animated_sprite(Registry::Entity const& entity,
-                            const JsonObject& obj);
-
-  std::optional<AnimationData> parse_animation_data(JsonObject const& obj,
-                                                    Registry::Entity const& e);
-
   void handle_events();
   void handle_resize();
-  void render_sprites(Registry& r,
-                      const SparseArray<Scene>& scenes,
-                      const SparseArray<Position>& positions,
-                      const SparseArray<Drawable>& drawable,
-                      const SparseArray<Sprite>& sprites);
-  void render_text(Registry& r,
-                   const SparseArray<Scene>& scenes,
-                   const SparseArray<Position>& positions,
-                   const SparseArray<Drawable>& drawable,
-                   const SparseArray<Text>& texts);
-  void background_system(Registry& r,
-                         const SparseArray<Scene>& scenes,
-                         const SparseArray<Drawable>& drawables,
-                         SparseArray<Background>& backgrounds);
+  void render_sprites(Registry& r);
+  void render_text(Registry& r);
+  void background_system(Registry& r);
+  void camera_system(Registry &r);
 
-  void animation_system(Registry& r,
-                        const SparseArray<Scene>& scenes,
-                        const SparseArray<Position>& positions,
-                        const SparseArray<Drawable>& drawable,
-                        SparseArray<AnimatedSprite>& AnimatedSprites);
+  void animation_system(Registry& r);
   void display();
 
   std::optional<Key> sfml_key_to_key(sf::Keyboard::Key sfml_key);
@@ -119,6 +85,7 @@ private:
            [this](Background& background)
            { this->draw_stretch_background(background); }},
       };
+
 
   KeyPressedEvent _key_pressed;
   KeyReleasedEvent _key_released;
