@@ -18,5 +18,5 @@ private:
 
   void temporal_system(Registry& reg);
   void on_collision(const CollisionEvent& c);
-  void update_cooldown(Registry& reg);
+  void fragile_system(Registry& reg);
 };

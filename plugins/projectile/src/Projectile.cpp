@@ -21,13 +21,13 @@ Projectile::Projectile(Registry& r, EntityLoader& l)
   this->_registry.get().register_component<Temporal>("projectile:Temporal");
   this->_registry.get().register_component<Fragile>("projectile:Fragile");
 
-  this->_registry.get().add_system<Temporal>(
-      [this](Registry& r, const SparseArray<Temporal>&)
+  this->_registry.get().add_system<>(
+      [this](Registry& r)
       { this->temporal_system(r); },
       2);
   this->_registry.get().add_system<>(
       [this](Registry& r)
-      { this->update_cooldown(r); });
+      { this->fragile_system(r); });
 
   this->_registry.get().on<CollisionEvent>("CollisionEvent", [this](const CollisionEvent& event)
                                             { this->on_collision(event); });
@@ -77,6 +77,18 @@ void Projectile::temporal_system(Registry& reg)
   }
 }
 
+void Projectile::fragile_system(Registry& reg)
+{
+  double dt = reg.clock().delta_seconds();
+  auto& fragiles = reg.get_components<Fragile>();
+
+  for (auto&& [i, fragile] : ZipperIndex(fragiles)) {
+    if (!reg.is_entity_dying(i)) {
+      fragile.fragile_delta += dt;
+    }
+  }
+}
+
 void Projectile::on_collision(const CollisionEvent& event)
 {
   auto& fragiles = this->_registry.get().get_components<Fragile>();
@@ -104,18 +116,6 @@ void Projectile::on_collision(const CollisionEvent& event)
       return;
     }
     fragiles[event.a]->counter += 1;
-  }
-}
-
-void Projectile::update_cooldown(Registry& reg)
-{
-  double dt = reg.clock().delta_seconds();
-  auto& fragiles = reg.get_components<Fragile>();
-
-  for (auto&& [i, fragile] : ZipperIndex(fragiles)) {
-    if (!reg.is_entity_dying(i)) {
-      fragile.fragile_delta += dt;
-    }
   }
 }
 
