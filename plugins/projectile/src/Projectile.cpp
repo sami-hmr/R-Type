@@ -78,9 +78,8 @@ void Projectile::temporal_system(Registry& reg)
 void Projectile::fragile_system(Registry& reg)
 {
   double dt = reg.clock().delta_seconds();
-  auto& fragiles = reg.get_components<Fragile>();
 
-  for (auto&& [i, fragile] : ZipperIndex(fragiles)) {
+  for (auto&& [i, fragile] : ZipperIndex<Fragile>(reg)) {
     if (!reg.is_entity_dying(i)) {
       fragile.fragile_delta += dt;
     }
