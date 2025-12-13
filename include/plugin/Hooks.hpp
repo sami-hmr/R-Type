@@ -117,6 +117,15 @@ std::optional<T> get_value(Registry& r,
       r.template register_binding<ComponentType, T>(
           entity, field_name, stripped);
     }
+    else if (value_str.starts_with('%')) {
+      std::string comp = value_str.substr(1, value_str.find(':') - 1);;
+      std::string value = value_str.substr(value_str.find(':') + 1);
+      auto hooked_val = r.get_hooked_value<T>(comp, value);
+      if (hooked_val) {
+        return hooked_val->get();
+      }
+    }
+    
   } catch (std::bad_variant_access const&) {  // NOLINT intentional fallthrough
   }
 

@@ -259,7 +259,7 @@
         {
           "ui:input": {
             "hook": "game_text",
-            "buffer": "test",
+            "buffer": "static hook wewewe",
             "enabled": true
           }
         },
@@ -277,7 +277,7 @@
               "width": 30.0,
               "height": 30.0
             },
-            "text": "#game_text:buffer"
+            "text": "%game_text:buffer"
           }
         },
         
