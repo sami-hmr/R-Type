@@ -67,12 +67,19 @@ void Target::target_system(Registry& reg)
     Vector2D target_position = positions[target_id].value().pos;
     Vector2D vect = target_position - position.pos;
 
-    velocity.direction = vect.normalize();
+    Vector2D new_direction = vect.normalize();
 
-    this->_registry.get().emit<ComponentBuilder>(
-        i,
-        this->_registry.get().get_component_key<Velocity>(),
-        velocity.to_bytes());
+    Vector2D direction_diff = new_direction - velocity.direction;
+    double direction_change = direction_diff.length();
+    
+    if (direction_change > DIRECTION_TOLERANCE) {
+      velocity.direction = new_direction;
+
+      this->_registry.get().emit<ComponentBuilder>(
+          i,
+          this->_registry.get().get_component_key<Velocity>(),
+          velocity.to_bytes());
+    }
   }
 }
 
@@ -103,7 +110,7 @@ void Target::on_interaction_zone(const InteractionZoneEvent& event)
       closest_entity = candidate;
     }
   }
-  if (closest_entity.has_value()) {
+  if (closest_entity.has_value() && closest_entity != followers[event.source]->target) {
     followers[event.source]->target = closest_entity.value();
     followers[event.source]->lost_target = false;
 

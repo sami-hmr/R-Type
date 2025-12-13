@@ -43,7 +43,7 @@ Collision::Collision(Registry& r, EntityLoader& l)
   _registry.get().add_system([this](Registry& r) { this->collision_system(r); },
                              3);
   _registry.get().add_system(
-      [this](Registry& r) { this->interaction_zone_system(r); }, 4);
+      [this](Registry& r) { this->interaction_zone_system(r); }, 3);
 
   this->_registry.get().on<CollisionEvent>("CollisionEvent",
                                            [this](const CollisionEvent& c)
