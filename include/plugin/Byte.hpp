@@ -39,10 +39,16 @@ concept bytable = serializable<T> && unserializable<T>;
 #define DEFAULT_BYTE_CONSTRUCTOR(classname, construct, ...) \
   classname(ByteArray const& array) \
   { \
-    Result<classname> r = apply((construct), __VA_ARGS__)( \
-        Rest(std::string(array.begin(), array.end()))); \
+    Result<classname> r = \
+        apply((construct), __VA_ARGS__)(Rest(array)); \
     if (r.index() == ERROR) { \
-      throw InvalidPackage(#classname); \
+      auto const& err = std::get<ERROR>(r); \
+      throw InvalidPackage(std::format("{}: {}, {}, line {} col {}", \
+                                       #classname, \
+                                       err.context, \
+                                       err.message, \
+                                       err.rest.lines, \
+                                       err.rest.columns)); \
     } \
     *this = std::get<SUCCESS>(r).value; \
   }

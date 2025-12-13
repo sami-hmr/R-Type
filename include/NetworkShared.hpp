@@ -6,6 +6,7 @@
 #include <queue>
 #include <string>
 #include <tuple>
+#include <unordered_map>
 
 #include "ByteParser/ByteParser.hpp"
 #include "ParserUtils.hpp"
@@ -249,6 +250,13 @@ struct SharedQueue
 {
   std::mutex lock;
   std::queue<T> queue;
+};
+
+template<typename K, typename V>
+struct SharedMap
+{
+  std::mutex lock;
+  std::unordered_map<K, V> map;
 };
 
 struct PlayerCreation

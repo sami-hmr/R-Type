@@ -19,23 +19,18 @@ struct Text
   {
   }
 
-  DEFAULT_BYTE_CONSTRUCTOR(Text,
-                           (
-                               [](std::vector<char> font_path,
-                                  double x,
-                                  double y,
-                                  std::vector<char> text)
-                               {
-                                 return Text(
-                                     std::string(font_path.begin(),
-                                                 font_path.end()),
-                                     Vector2D {x, y},
-                                     std::string(text.begin(), text.end()));
-                               }),
-                           parseByteArray(parseAnyChar()),
-                           parseByte<double>(),
-                           parseByte<double>(),
-                           parseByteArray(parseAnyChar()))
+  DEFAULT_BYTE_CONSTRUCTOR(
+      Text,
+      (
+          [](std::string font_path, double x, double y, std::string text)
+          {
+            return Text(std::move(font_path), Vector2D {x, y}, std::move(text));
+          }),
+      parseByteString(),
+      parseByte<double>(),
+      parseByte<double>(),
+      parseByteString())
+
   DEFAULT_SERIALIZE(string_to_byte(this->font_path),
                     type_to_byte(this->scale.x),
                     type_to_byte(this->scale.y),

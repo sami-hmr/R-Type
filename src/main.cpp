@@ -5,7 +5,6 @@
 #include <optional>
 #include <iostream>
 
-#include "ecs/Scenes.hpp"
 #include "ecs/Registry.hpp"
 #include "Json/JsonParser.hpp"
 #include "plugin/EntityLoader.hpp"
@@ -33,9 +32,12 @@ static int true_main(Registry& r,
   r.on<SceneChangeEvent>("SceneChangeEvent",
                          [&r](const SceneChangeEvent& event)
                          {
+                             std::cout << event.target_scene << std::endl;;
+                             if (event.force) {
+                                 r.remove_all_scenes();
+                             }
                            r.set_current_scene(
-                               event.target_scene,
-                               SCENE_STATE_STR.at_second(event.state));
+                               event.target_scene);
                          });
 
   r.on<SpawnEntityRequestEvent>("SpawnEntity",
@@ -56,7 +58,7 @@ static int true_main(Registry& r,
 
   r.setup_scene_systems();
 
-  const auto frame_duration = std::chrono::microseconds(1000000 / 30); // ~33333 microseconds
+  const auto frame_duration = std::chrono::microseconds(1000000 / 120); // ~33333 microseconds
   auto next_frame_time = std::chrono::duration_cast<std::chrono::microseconds>(
       r.clock().now().time_since_epoch());
 

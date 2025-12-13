@@ -15,6 +15,7 @@
 #include "plugin/components/Position.hpp"
 #include "plugin/events/CleanupEvent.hpp"
 #include "plugin/events/LoggerEvent.hpp"
+#include "plugin/events/NetworkEvents.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
 
 NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
@@ -79,8 +80,7 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
       [this](PlayerCreation const& server)
       {
         this->_id_in_server = server.server_id;
-        auto zipper =
-            ZipperIndex(this->_registry.get().get_components<Controllable>());
+        auto zipper = ZipperIndex<Controllable>(this->_registry.get());
 
         if (zipper.begin() != zipper.end()) {
           std::size_t index = std::get<0>(*zipper.begin());
@@ -98,10 +98,21 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
 
           this->_registry.get().emplace_component<Controllable>(
               new_entity, 'Z', 'S', 'Q', 'D');
-          this->_server_indexes.insert(server.server_index, new_entity); // SERVER -> CLIENT
+          this->_server_indexes.insert(server.server_index,
+                                       new_entity);  // SERVER -> CLIENT
         }
         this->_registry.get().emit<EventBuilder>(
-            "PlayerCreated", PlayerCreated(server.server_index, this->_id_in_server).to_bytes());
+            "PlayerCreated",
+            PlayerCreated(server.server_index, this->_id_in_server).to_bytes());
+      });
+
+  this->_registry.get().on<WantReady>(
+      "WantReady",
+      [this](WantReady const&)
+      {
+        std::cout << "TOUCHE COMPRISE" << std::endl;
+        this->_registry.get().emit<EventBuilder>(
+            "PlayerReady", PlayerReady(this->_id_in_server).to_bytes());
       });
 
   this->_registry.get().add_system<>(

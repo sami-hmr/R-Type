@@ -6,27 +6,27 @@
 
 void Server::transmit_event_to_client(EventBuilderId&& to_transmit)
 {
-  this->_events_to_transmit.get().lock.lock();
-  this->_events_to_transmit.get().queue.push(std::move(to_transmit));
-  this->_events_to_transmit.get().lock.unlock();
-  this->_semaphore_event.get().release();
+  this->_events_queue_to_client.get().lock.lock();
+  this->_events_queue_to_client.get().queue.push(std::move(to_transmit));
+  this->_events_queue_to_client.get().lock.unlock();
+  this->_semaphore_event_to_client.get().release();
 }
 
 void Server::transmit_event_to_server(EventBuilder&& to_transmit)
 {
-  this->_events_queue.get().lock.lock();
-  this->_events_queue.get().queue.push(std::move(to_transmit));
-  this->_events_queue.get().lock.unlock();
-  this->_semaphore.get().release();
+  this->_events_queue_to_serv.get().lock.lock();
+  this->_events_queue_to_serv.get().queue.push(std::move(to_transmit));
+  this->_events_queue_to_serv.get().lock.unlock();
+  this->_semaphore_event_to_server.get().release();
 }
 
 void Server::send_event_to_client()
 {
   while (this->_running) {
-    this->_semaphore_event.get().acquire();
-    this->_events_to_transmit.get().lock.lock();
+    this->_semaphore_event_to_client.get().acquire();
+    this->_events_queue_to_client.get().lock.lock();
     this->_client_mutex.lock();
-    auto& queue = this->_events_to_transmit.get().queue;
+    auto& queue = this->_events_queue_to_client.get().queue;
     while (!queue.empty()) {
       auto const& evt = queue.front();
       ByteArray data = type_to_byte(SENDEVENT) + evt.event.to_bytes();
@@ -43,7 +43,7 @@ void Server::send_event_to_client()
       }
       queue.pop();
     }
-    this->_events_to_transmit.get().lock.unlock();
+    this->_events_queue_to_client.get().lock.unlock();
     this->_client_mutex.unlock();
   }
 }

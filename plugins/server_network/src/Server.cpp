@@ -24,12 +24,14 @@ Server::Server(ServerLaunching const& s,
                SharedQueue<EventBuilder>& event_to_server,
                std::atomic<bool>& running,
                std::counting_semaphore<>& comp_sem,
-               std::counting_semaphore<>& event_sem)
+               std::counting_semaphore<>& event_sem,
+               std::counting_semaphore<>& event_to_serv_sem)
     : _socket(_io_c, asio::ip::udp::endpoint(asio::ip::udp::v4(), s.port))
     , _components_to_create(std::ref(comp_queue))
-    , _semaphore_event(std::ref(event_sem))
-    , _events_to_transmit(std::ref(event_to_client))
-    , _events_queue(std::ref(event_to_server))
+    , _semaphore_event_to_client(std::ref(event_sem))
+    , _events_queue_to_client(std::ref(event_to_client))
+    , _semaphore_event_to_server(std::ref(event_to_serv_sem))
+    , _events_queue_to_serv(std::ref(event_to_server))
     , _running(running)
     , _semaphore(std::ref(comp_sem))
 {
@@ -51,7 +53,8 @@ void Server::close()
 Server::~Server()
 {
   this->_semaphore.get().release();
-  this->_semaphore_event.get().release();
+  this->_semaphore_event_to_client.get().release();
+  this->_semaphore_event_to_server.get().release();
   for (auto& it : this->_queue_readers) {
     if (it.joinable()) {
       it.join();

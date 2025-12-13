@@ -11,14 +11,15 @@
 #include "Logger.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/SparseArray.hpp"
-#include "ecs/zipper/Zipper.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
+#include "plugin/components/AnimatedSprite.hpp"
 #include "plugin/components/Damage.hpp"
 #include "plugin/components/Heal.hpp"
 #include "plugin/components/Health.hpp"
 #include "plugin/components/Team.hpp"
+#include "plugin/events/CameraEvents.hpp"
 
 Life::Life(Registry& r, EntityLoader& l)
     : APlugin(r,
@@ -177,7 +178,9 @@ void Life::on_damage(const DamageEvent& event)
         LogLevel::WARNING,
         std::format("Entity {} died!", event.target));
 
-    this->_registry.get().kill_entity(event.target);
+        if (!this->_registry.get().has_component<AnimatedSprite>(event.target)) {
+          this->_registry.get().kill_entity(event.target);
+        }
   }
 }
 
@@ -211,9 +214,8 @@ void Life::on_heal(const HealEvent& event)
 void Life::update_cooldowns(Registry& reg)
 {
   double dt = reg.clock().delta_seconds();
-  auto& healths = reg.get_components<Health>();
 
-  for (auto&& [i, health] : ZipperIndex(healths)) {
+  for (auto&& [i, health] : ZipperIndex<Health>(reg)) {
     if (!reg.is_entity_dying(i)) {
       health.damage_delta += dt;
       health.heal_delta += dt;

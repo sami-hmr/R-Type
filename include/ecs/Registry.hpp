@@ -24,7 +24,6 @@
 #include "ecs/ComponentState.hpp"
 #include "ecs/Scenes.hpp"
 #include "ecs/Systems.hpp"
-#include "ecs/zipper/Zipper.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/HookConcept.hpp"
 #include "plugin/events/EventConcept.hpp"
@@ -435,25 +434,33 @@ public:
   void setup_scene_systems()
   {
     for (const auto& [name, state] : _scenes) {
-      if (state == SceneState::MAIN) {
-        _current_scene = name;
+      if (state == SceneState::MAIN || state == SceneState::ACTIVE) {
+        _current_scene.push_back(name);
         break;
       }
     }
   }
 
-  void set_current_scene(std::string const& scene_name,
-                         SceneState state = SceneState::MAIN)
+  void set_current_scene(std::string const& scene_name)
   {
-    _current_scene = scene_name;
-    for (auto&& [sc] : Zipper(this->get_components<Scene>())) {
-      if (sc.scene_name == scene_name) {
-        sc.state = state;
-      }
-    }
+    _current_scene.push_back(scene_name);
   }
 
-  std::string const& get_current_scene() const { return _current_scene; }
+  void remove_current_scene(std::string const& scene_name)
+  {
+    _current_scene.erase(
+        std::remove(_current_scene.begin(), _current_scene.end(), scene_name),
+        _current_scene.end());
+  }
+
+  void remove_all_scenes() {
+      this->_current_scene.clear();
+  }
+
+  std::vector<std::string> const& get_current_scene() const
+  {
+    return _current_scene;
+  }
 
   Clock& clock() { return _clock; }
 
@@ -526,10 +533,12 @@ public:
     return _entities_templates.find(name)->second;
   }
 
-  bool is_current_cene(Entity e)
+  bool is_in_current_cene(Entity e)
   {
-    return this->get_components<Scene>()[e].value().scene_name
-        == this->_current_scene;
+    return std::find(this->_current_scene.begin(),
+                     this->_current_scene.end(),
+                     this->get_components<Scene>()[e].value().scene_name)
+        != this->_current_scene.end();
   }
 
   ByteArray convert_event_entity(std::string const& id,
@@ -660,7 +669,7 @@ private:
   std::size_t _max = 0;
 
   std::unordered_map<std::string, SceneState> _scenes;
-  std::string _current_scene;
+  std::vector<std::string> _current_scene;
 
   std::unordered_map<std::string,
                      std::function<std::optional<std::any>(std::string const&)>>

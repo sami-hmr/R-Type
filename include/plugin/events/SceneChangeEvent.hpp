@@ -15,8 +15,8 @@
 
 #include "ByteParser/ByteParser.hpp"
 #include "ParserUtils.hpp"
-#include "plugin/Byte.hpp"
 #include "ecs/Registry.hpp"
+#include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/events/EventMacros.hpp"
 
@@ -24,22 +24,30 @@ struct SceneChangeEvent
 {
   SceneChangeEvent() = default;
 
-  SceneChangeEvent(std::string t, std::string r)
-    : target_scene(std::move(t))
-    , reason(std::move(r)) {}
+  SceneChangeEvent(std::string t, std::string r, bool f)
+      : target_scene(std::move(t))
+      , reason(std::move(r))
+      , force(f)
+  {
+  }
 
-  DEFAULT_BYTE_CONSTRUCTOR(SceneChangeEvent,
-                         ([](std::string const &t, std::string const &r)
-                          { return (SceneChangeEvent) {t, r}; }),
-                         parseByteString(),
-                         parseByteString())
+  DEFAULT_BYTE_CONSTRUCTOR(
+      SceneChangeEvent,
+      ([](std::string const& t, std::string const& r, bool f)
+       { return (SceneChangeEvent) {t, r, f}; }),
+      parseByteString(),
+      parseByteString(),
+      parseByte<bool>())
 
-  DEFAULT_SERIALIZE(string_to_byte(this->target_scene), string_to_byte(this->reason))
+  DEFAULT_SERIALIZE(string_to_byte(this->target_scene),
+                    string_to_byte(this->reason),
+                    type_to_byte(this->force))
 
   SceneChangeEvent(Registry& r, JsonObject const& e)
       : target_scene(get_value_copy<std::string>(r, e, "target_scene").value())
       , state(get_value_copy<std::string>(r, e, "state").value())
       , reason(get_value_copy<std::string>(r, e, "reason").value())
+      , force(get_value_copy<bool>(r, e, "force").value())
   {
   }
 
@@ -48,4 +56,5 @@ struct SceneChangeEvent
   std::string target_scene;
   std::string state;
   std::string reason;
+  bool force;
 };

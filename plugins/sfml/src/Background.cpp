@@ -12,18 +12,13 @@
 #include "ecs/Scenes.hpp"
 #include "ecs/zipper/Zipper.hpp"
 #include "libs/Vector2D.hpp"
+#include "plugin/components/Drawable.hpp"
 
-void SFMLRenderer::background_system(Registry& r,
-                                     const SparseArray<Scene>& scenes,
-                                     const SparseArray<Drawable>& drawables,
-                                     SparseArray<Background>& backgrounds)
+void SFMLRenderer::background_system(Registry& r)
 {
-  for (const auto&& [scene, draw, background] :
-       Zipper(scenes, drawables, backgrounds))
+  for (const auto&& [draw, background] :
+       Zipper<Drawable, Background>(r))
   {
-    if (scene.state == SceneState::DISABLED) {
-      continue;
-    }
     if (!draw.enabled) {
       continue;
     }

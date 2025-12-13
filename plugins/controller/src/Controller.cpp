@@ -9,6 +9,7 @@
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Controllable.hpp"
+#include "plugin/components/Velocity.hpp"
 #include "plugin/events/CollisionEvent.hpp"
 #include "plugin/events/IoEvents.hpp"
 #include "plugin/events/LoggerEvent.hpp"
@@ -109,10 +110,9 @@ void Controller::handle_key_change(Key key, bool is_pressed)
 {
   this->_key_states[key] = is_pressed;
 
-  auto const& controllers =
-      this->_registry.get().get_components<Controllable>();
-
-  for (auto&& [index, controller] : ZipperIndex(controllers)) {
+  for (auto&& [index, controller, velocity] :
+       ZipperIndex<Controllable, Velocity>(this->_registry.get()))
+  {
     Key up_key = this->char_to_key(controller.up);
     Key down_key = this->char_to_key(controller.down);
     Key left_key = this->char_to_key(controller.left);
