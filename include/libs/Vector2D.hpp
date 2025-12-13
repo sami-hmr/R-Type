@@ -11,9 +11,9 @@
 #include <cmath>
 #include <iostream>
 #include <ostream>
-#include "ByteParser/ByteParser.hpp"
 #include "Json/JsonParser.hpp"
 #include "Parser.hpp"
+#include "ByteParser/ByteParser.hpp"
 #include "plugin/Byte.hpp"
 
 class Vector2D

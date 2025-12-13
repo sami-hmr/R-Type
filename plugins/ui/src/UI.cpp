@@ -29,7 +29,6 @@ UI::UI(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config)
                                       { this->handle_key_pressed(event); });
   _registry.get().register_component<Drawable>("ui:Drawable");
   _registry.get().register_component<Input>("ui:input");
-
   _registry.get().register_component<Sprite>("ui:Sprite");
   _registry.get().register_component<Text>("ui:Text");
   _registry.get().register_component<Camera>("ui:Camera");

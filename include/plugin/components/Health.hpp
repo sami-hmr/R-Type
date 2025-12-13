@@ -9,7 +9,7 @@ struct Health
 {
   Health() = default;
 
-  Health(int c, int m, double h, double d)
+  Health(double c, double m, double h, double d)
       : current(c)
       , max(m)
       , heal_delta(h)
@@ -17,7 +17,7 @@ struct Health
   {
   }
 
-  Health(int current, int max)
+  Health(double current, double max)
       : current(current)
       , max(max)
       , heal_delta(0.0)
@@ -26,10 +26,10 @@ struct Health
   }
 
   DEFAULT_BYTE_CONSTRUCTOR(Health,
-                           ([](int c, int max, double h_d, double d_d)
+                           ([](double c, double max, double h_d, double d_d)
                             { return (Health) {c, max, h_d, d_d}; }),
-                           parseByte<int>(),
-                           parseByte<int>(),
+                           parseByte<double>(),
+                           parseByte<double>(),
                            parseByte<double>(),
                            parseByte<double>())
   DEFAULT_SERIALIZE(type_to_byte(this->current),
@@ -39,8 +39,8 @@ struct Health
 
   CHANGE_ENTITY_DEFAULT
 
-  int current;
-  int max;
+  double current;
+  double max;
   double heal_delta;
   double damage_delta;
 

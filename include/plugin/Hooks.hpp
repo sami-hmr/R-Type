@@ -116,6 +116,17 @@ std::optional<T> get_value(Registry& r,
       std::string stripped = value_str.substr(1);
       r.template register_binding<ComponentType, T>(
           entity, field_name, stripped);
+      std::string comp = stripped.substr(0, stripped.find(':'));
+      std::string value = stripped.substr(stripped.find(':') + 1);
+      try {
+        auto hooked_val = r.template get_hooked_value<T>(comp, value);
+        if (hooked_val) {
+          return hooked_val->get();
+        }
+      } catch (...) {
+        // Hook not available yet - return default value
+      }
+      return T{};
     }
     else if (value_str.starts_with('%')) {
       std::string comp = value_str.substr(1, value_str.find(':') - 1);;

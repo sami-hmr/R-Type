@@ -7,6 +7,7 @@
 
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
@@ -22,15 +23,16 @@
 #include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
-#include "plugin/components/Camera.hpp"
 #include "plugin/components/AnimatedSprite.hpp"
 #include "plugin/components/Background.hpp"
+#include "plugin/components/Bar.hpp"
+#include "plugin/components/Camera.hpp"
 #include "plugin/components/Drawable.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Sprite.hpp"
 #include "plugin/components/Text.hpp"
-#include "plugin/events/IoEvents.hpp"
 #include "plugin/events/CameraEvents.hpp"
+#include "plugin/events/IoEvents.hpp"
 
 class SFMLRenderer : public APlugin
 {
@@ -59,7 +61,9 @@ private:
                    const SparseArray<Position>& positions,
                    const SparseArray<Drawable>& drawable,
                    const SparseArray<Text>& texts);
-  void camera_system(Registry &r, SparseArray<Position> &positions, SparseArray<Camera> &cameras);
+  void camera_system(Registry& r,
+                     SparseArray<Position>& positions,
+                     SparseArray<Camera>& cameras);
 
   void background_system(Registry& r,
                          const SparseArray<Scene>& scenes,
@@ -71,6 +75,13 @@ private:
                         const SparseArray<Position>& positions,
                         const SparseArray<Drawable>& drawable,
                         SparseArray<AnimatedSprite>& AnimatedSprites);
+
+  void bar_system(Registry& r,
+                  const SparseArray<Scene>& scenes,
+                  const SparseArray<Drawable>& drawables,
+                  const SparseArray<Position>& positions,
+                  SparseArray<Bar>& bars);
+
   void display();
 
   std::optional<Key> sfml_key_to_key(sf::Keyboard::Key sfml_key);
@@ -83,6 +94,8 @@ private:
 
   std::optional<sf::Sprite> _sprite;
   std::optional<sf::Text> _text;
+  sf::RectangleShape _rectangle;
+
   sf::View _view;
 
   void draw_nothing_background(Background& background);
@@ -101,7 +114,6 @@ private:
            [this](Background& background)
            { this->draw_stretch_background(background); }},
       };
-
 
   KeyPressedEvent _key_pressed;
   KeyReleasedEvent _key_released;
