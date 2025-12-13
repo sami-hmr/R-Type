@@ -21,6 +21,7 @@
 // #include "NetworkShared.hpp"
 #include "SparseArray.hpp"
 #include "TwoWayMap.hpp"
+#include "ecs/ComponentState.hpp"
 #include "ecs/Scenes.hpp"
 #include "ecs/Systems.hpp"
 #include "plugin/Byte.hpp"
@@ -77,6 +78,18 @@ public:
         string_id,
         [](ByteArray const& b, std::unordered_map<Entity, Entity> const& map)
         { return Component(b).change_entity(map).to_bytes(); });
+    this->_state_getters.insert_or_assign(
+        ti,
+        [&comp, string_id]()
+        {
+          ComponentState r(string_id);
+          for (std::size_t i = 0; i < comp.size(); i++) {
+            if (comp[i]) {
+              r.comps.emplace_back(i, comp[i]->to_bytes());
+            }
+          }
+          return r;
+        });
     this->_index_getter.insert(ti, string_id);
     return comp;
   }
@@ -440,6 +453,10 @@ public:
         _current_scene.end());
   }
 
+  void remove_all_scenes() {
+      this->_current_scene.clear();
+  }
+
   std::vector<std::string> const& get_current_scene() const
   {
     return _current_scene;
@@ -550,6 +567,15 @@ public:
     return this->_index_getter.at_first(typeid(Component));
   }
 
+  std::vector<ComponentState> get_state()
+  {
+    std::vector<ComponentState> r(this->_state_getters.size());
+    for (auto const& it : this->_components) {
+      r.emplace_back(this->_state_getters.at(it.first)());
+    }
+    return r;
+  }
+
 private:
   template<typename EventType>
   HandlerId on(std::function<void(const EventType&)> handler)
@@ -610,6 +636,8 @@ private:
   std::unordered_map<std::type_index,
                      std::function<void(Entity const&, ByteArray const&)>>
       _emplace_functions;
+  std::unordered_map<std::type_index, std::function<ComponentState()>>
+      _state_getters;
   TwoWayMap<std::type_index, std::string> _index_getter;
 
   std::unordered_map<

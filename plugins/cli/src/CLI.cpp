@@ -17,10 +17,11 @@
 #include "plugin/components/Drawable.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Sprite.hpp"
-#include "plugin/events/CliEvents.hpp"
 #include "plugin/events/CleanupEvent.hpp"
-#include "plugin/events/ShutdownEvent.hpp"
+#include "plugin/events/CliEvents.hpp"
 #include "plugin/events/LoggerEvent.hpp"
+#include "plugin/events/NetworkEvents.hpp"
+#include "plugin/events/ShutdownEvent.hpp"
 
 CLI::CLI(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config)
     : APlugin(r, l, {"logger", "server_network", "client_network"}, {}, config)
@@ -187,6 +188,15 @@ void CLI::process_command(const std::string& cmd)
           }
           _registry.get().emit<ClientConnection>(host, port);
           std::cout << "Connecting to " << host << ":" << port << "\n";
+        }}},
+      {"ready",
+       {.usage = "ready",
+        .description = "ready",
+        .handler =
+            [this](std::istringstream&)
+        {
+          _registry.get().emit<WantReady>();
+          std::cout << "ready\n";
         }}},
       {"spawn",
        {.usage = "spawn",

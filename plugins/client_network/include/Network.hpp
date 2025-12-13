@@ -33,5 +33,7 @@ class NetworkClient : public APlugin
     SharedQueue<EventBuilder> _event_to_server;
     std::thread _thread;
 
+    std::size_t _id_in_server;
+
     std::atomic<bool> _running = false;
 };

@@ -1,6 +1,8 @@
+#include <algorithm>
 #include <chrono>
 #include <format>
 #include <functional>
+#include <optional>
 #include <thread>
 
 #include "Network.hpp"
@@ -9,6 +11,7 @@
 
 #include "NetworkShared.hpp"
 #include "Server.hpp"
+#include "ecs/ComponentState.hpp"
 #include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/Scenes.hpp"
@@ -23,11 +26,14 @@
 #include "plugin/components/Velocity.hpp"
 #include "plugin/events/CleanupEvent.hpp"
 #include "plugin/events/LoggerEvent.hpp"
+#include "plugin/events/NetworkEvents.hpp"
+#include "plugin/events/SceneChangeEvent.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
 
 NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
     : APlugin(r, l, {}, {})
     , _comp_semaphore(0)
+    , _semaphore_event_to_server(0)
     , _event_semaphore(0)
 {
   this->_registry.get().on<ServerLaunching>(
@@ -59,12 +65,27 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
 
   this->_registry.get().on<ComponentBuilder>(
       "ComponentBuilder",
-      [this](ComponentBuilder e)
+      [this](ComponentBuilder const& e)
+      { this->_registry.get().emit<ComponentBuilderId>(std::nullopt, e); });
+
+  this->_registry.get().on<ComponentBuilderId>(
+      "ComponentBuilder",
+      [this](ComponentBuilderId const& e)
       {
         this->_components_to_update.lock.lock();
-        this->_components_to_update.queue.push(std::move(e));
+        this->_components_to_update.queue.push(e);
         this->_components_to_update.lock.unlock();
         this->_comp_semaphore.release();
+      });
+
+  this->_registry.get().on<EventBuilderId>(
+      "EventBuilderId",
+      [this](EventBuilderId const& e)
+      {
+        this->_event_queue_to_client.lock.lock();
+        this->_event_queue_to_client.queue.push(e);
+        this->_event_queue_to_client.lock.unlock();
+        this->_event_semaphore.release();
       });
 
   this->_registry.get().add_system<>(
@@ -85,17 +106,25 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
       {
         std::size_t entity = this->_registry.get().spawn_entity();
 
-        this->_event_queue_to_client.lock.lock();
-        this->_event_queue_to_client.queue.emplace(
-            e.client, "PlayerCreation", PlayerCreation(entity).to_bytes());
-        this->_event_queue_to_client.lock.unlock();
-        this->_event_semaphore.release();
+        this->_registry.get().emit<EventBuilderId>(
+            e.client,
+            "PlayerCreation",
+            PlayerCreation(entity, e.client).to_bytes());
+
+        this->_player_ready[e.client] = false;
       });
 
   this->_registry.get().on<PlayerCreated>(
       "PlayerCreated",
       [this](PlayerCreated const& data)
       {
+        this->_registry.get().emit<StateTransfer>(data.client_id);
+
+        this->_registry.get().emit<EventBuilderId>(
+            data.client_id,
+            "SceneChangeEvent",
+            SceneChangeEvent("loby", "", true).to_bytes());
+
         init_component(
             this->_registry.get(), data.server_index, Position(0, 0, 2));
         init_component(this->_registry.get(), data.server_index, Drawable());
@@ -129,6 +158,49 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
                        data.server_index,
                        Scene("game", SceneState::ACTIVE));
       });
+
+  this->_registry.get().on<StateTransfer>(
+      "StateTransfer",
+      [this](const StateTransfer& data)
+      {
+        std::vector<ComponentState> s = this->_registry.get().get_state();
+
+        for (auto const& it : s) {
+          for (auto const& i : it.comps) {
+            this->_registry.get().emit<ComponentBuilderId>(
+                data.client_id, ComponentBuilder(i.first, it.id, i.second));
+          }
+        }
+      });
+
+  this->_registry.get().on<PlayerReady>(
+      "PlayerReady",
+      [this](const PlayerReady& data)
+      {
+        std::cout << "READY" << std::endl;
+        if (!this->_player_ready.contains(data.client_id)) {
+          return;
+        }
+        this->_player_ready[data.client_id] = true;
+
+        this->_registry.get().emit<EventBuilderId>(
+            data.client_id,
+            "SceneChangeEvent",
+            SceneChangeEvent("ready", "", true).to_bytes());
+
+        if (std::find_if(this->_player_ready.begin(),
+                         this->_player_ready.end(),
+                         [](auto const& p) { return !p.second; })
+            == this->_player_ready.end())
+        {
+          this->_registry.get().emit<SceneChangeEvent>("game", "", true);
+          LOGGER("server", LogLevel::DEBUG, "POURQUOI çA PASSE ICI")
+          this->_registry.get().emit<EventBuilderId>(
+              std::nullopt,
+              "SceneChangeEvent",
+              SceneChangeEvent("game", "", true).to_bytes());
+        }
+      });
 }
 
 NetworkServer::~NetworkServer()
@@ -150,7 +222,8 @@ void NetworkServer::launch_server(ServerLaunching const& s)
                   _event_queue,
                   _running,
                   _comp_semaphore,
-                  _event_semaphore);
+                  _event_semaphore,
+                  _semaphore_event_to_server);
 
     LOGGER("server",
            LogLevel::INFO,

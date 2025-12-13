@@ -1,8 +1,8 @@
 {
   "scenes": [
     {
-      "name": "server",
-      "state": "main",
+      "name": "loby",
+      "state": "active",
       "plugins": [
         {
           "name": "logger",
@@ -37,7 +37,137 @@
       ],
       "entities": [
         {
-          "moving:Position": { "pos": { "x": 0.0, "y": 0.0 } }
+          "moving:Position": { "pos": { "x": 0.5, "y": -0.3 } },
+          "ui:Drawable": {},
+          "ui:Sprite": {
+            "texture": "assets/enemy.png",
+            "size": {
+              "width": "20.0%",
+              "height": "20.0%"
+            }
+          },
+          "collision:Collidable": {
+            "width": 0.1,
+            "height": 0.1,
+            "collision_type": "Solid"
+          },
+          "life:Health": { "current": 5, "max": 100 },
+          "life:Team": { "name": "test" }
+        },
+        {
+          "moving:Position": {
+            "pos": {
+              "x": -0.5,
+              "y": 0.0
+            }
+          },
+          "ui:Drawable": {},
+          // "ui:Text": {
+          //   "font": "assets/fonts/roboto.ttf",
+          //   "size": {
+          //     "width": 30.0,
+          //     "height": 30.0
+          //   },
+          //   "text": "LOBY: press r to get ready"
+          // },
+          "actions:ActionTrigger": {
+            "trigger": {
+              "type": "KeyPressed",
+              "params": {
+                "key": "R"
+              }
+            },
+            "to_emit": [
+              {
+                "name": "WantReady",
+                "params": {}
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "ready",
+      "state": "active",
+      "plugins": [],
+      "entities": [
+        {
+          "moving:Position": { "pos": { "x": 0.5, "y": -0.3 } },
+          "ui:Drawable": {},
+          "ui:Sprite": {
+            "texture": "assets/enemy.png",
+            "size": {
+              "width": "20.0%",
+              "height": "20.0%"
+            }
+          },
+          "collision:Collidable": {
+            "width": 0.1,
+            "height": 0.1,
+            "collision_type": "Solid"
+          },
+          "life:Health": { "current": 5, "max": 100 },
+          "life:Team": { "name": "test" }
+        },
+        {
+          "moving:Position": { "pos": { "x": 0.5, "y": -0.3 } },
+          "ui:Drawable": {},
+          "ui:Sprite": {
+            "texture": "assets/enemy.png",
+            "size": {
+              "width": "20.0%",
+              "height": "20.0%"
+            }
+          },
+          "collision:Collidable": {
+            "width": 0.1,
+            "height": 0.1,
+            "collision_type": "Solid"
+          },
+          "life:Health": { "current": 5, "max": 100 },
+          "life:Team": { "name": "test" }
+        },
+        {
+          "moving:Position": {
+            "pos": {
+              "x": -0.5,
+              "y": 0.0
+            }
+          },
+          "ui:Drawable": {},
+          "ui:Text": {
+            "font": "assets/fonts/roboto.ttf",
+            "size": {
+              "width": 30.0,
+              "height": 30.0
+            },
+            "text": "ready"
+          }
+        }
+      ]
+    },
+    {
+      "name": "game",
+      "state": "disabled",
+      "plugins": [],
+      "entities": [
+        {
+          "moving:Position": {
+            "pos": {
+              "x": -0.5,
+              "y": 0.0
+            }
+          }
+          // "ui:Drawable": {},
+          // "ui:Text": {
+          //   "font": "assets/fonts/roboto.ttf",
+          //   "size": {
+          //     "width": 30.0,
+          //     "height": 30.0
+          //   },
+          //   "text": "this is the game"
+          // }
         }
       ]
     }
