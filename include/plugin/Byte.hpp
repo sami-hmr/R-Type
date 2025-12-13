@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "CustomException.hpp"
+#include "Json/JsonParser.hpp"
 
 using Byte = unsigned char;
 using ByteArray = std::vector<Byte>;
@@ -121,5 +122,7 @@ ByteArray optional_to_byte(std::optional<T> const& m,
 }
 
 ByteArray string_to_byte(std::string const& str);
+ByteArray json_value_to_byte(JsonValue const &v);
+ByteArray json_object_to_byte(JsonObject const& object);
 
 CUSTOM_EXCEPTION(InvalidPackage)

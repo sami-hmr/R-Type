@@ -131,6 +131,10 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
           }
           auto true_entity = this->_server_indexes.at_first(server_comp.entity);
 
+          for (auto i : server_comp.data) {
+              std::cout << (int)i << ", ";
+          }
+          std::cout << std::endl;
           r.emplace_component(true_entity,
                               server_comp.id,
                               this->_registry.get().convert_comp_entity(
