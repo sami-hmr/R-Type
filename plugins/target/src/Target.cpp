@@ -80,7 +80,6 @@ void Target::on_interaction_zone(const InteractionZoneEvent& event)
 {
   const auto& positions = this->_registry.get().get_components<Position>();
   auto& followers = this->_registry.get().get_components<Follower>();
-  const auto& teams = this->_registry.get().get_components<Team>();
 
   if (!this->_registry.get().has_component<Follower>(event.source)
       || !followers[event.source]->lost_target)
@@ -92,9 +91,7 @@ void Target::on_interaction_zone(const InteractionZoneEvent& event)
   double closest_distance_sq = event.radius * event.radius;
 
   for (const Registry::Entity& candidate : event.candidates) {
-    if (!this->_registry.get().has_component<Health>(candidate) ||
-      (this->_registry.get().has_component<Team>(event.source) && this->_registry.get().has_component<Team>(candidate) &&
-      teams[event.source]->name != teams[candidate]->name)) {
+    if (!this->_registry.get().has_component<Health>(candidate)) {
       continue;
     }
     Vector2D distance =
