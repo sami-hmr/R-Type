@@ -8,12 +8,14 @@
 #include "libs/Vector2D.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Follower.hpp"
+#include "plugin/components/Health.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Velocity.hpp"
+#include "plugin/components/Team.hpp"
 #include "plugin/events/InteractionZoneEvent.hpp"
 
 Target::Target(Registry& r, EntityLoader& l)
-    : APlugin(r, l, {"moving"}, {COMP_INIT(Follower, Follower, init_follower)})
+    : APlugin(r, l, {"moving", "life"}, {COMP_INIT(Follower, Follower, init_follower)})
 {
   this->_registry.get().register_component<Follower>("target:Follower");
 
@@ -41,6 +43,15 @@ void Target::target_system(Registry& reg)
     }
     std::size_t target_id = follower.target;
 
+    if (target_id == i) {
+      follower.lost_target = true;
+      this->_registry.get().emit<ComponentBuilder>(
+          i,
+          this->_registry.get().get_component_key<Follower>(),
+          follower.to_bytes());
+      continue;
+    }
+
     if (reg.is_entity_dying(target_id)
         || !reg.has_component<Position>(target_id))
     {
@@ -53,7 +64,7 @@ void Target::target_system(Registry& reg)
       continue;
     }
 
-    Vector2D target_position = positions[follower.target].value().pos;
+    Vector2D target_position = positions[target_id].value().pos;
     Vector2D vect = target_position - position.pos;
 
     velocity.direction = vect.normalize();
@@ -69,6 +80,7 @@ void Target::on_interaction_zone(const InteractionZoneEvent& event)
 {
   const auto& positions = this->_registry.get().get_components<Position>();
   auto& followers = this->_registry.get().get_components<Follower>();
+  const auto& teams = this->_registry.get().get_components<Team>();
 
   if (!this->_registry.get().has_component<Follower>(event.source)
       || !followers[event.source]->lost_target)
@@ -80,6 +92,11 @@ void Target::on_interaction_zone(const InteractionZoneEvent& event)
   double closest_distance_sq = event.radius * event.radius;
 
   for (const Registry::Entity& candidate : event.candidates) {
+    if (!this->_registry.get().has_component<Health>(candidate) ||
+      (this->_registry.get().has_component<Team>(event.source) && this->_registry.get().has_component<Team>(candidate) &&
+      teams[event.source]->name != teams[candidate]->name)) {
+      continue;
+    }
     Vector2D distance =
         positions[candidate]->pos - positions[event.source]->pos;
     double distance_sq = distance.length();
@@ -90,7 +107,8 @@ void Target::on_interaction_zone(const InteractionZoneEvent& event)
     }
   }
   if (closest_entity.has_value()) {
-    followers[event.source] = closest_entity;
+    followers[event.source]->target = closest_entity.value();
+    followers[event.source]->lost_target = false;
 
     this->_registry.get().emit<ComponentBuilder>(
         event.source,
