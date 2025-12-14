@@ -4,11 +4,11 @@
 
 #include "libs/Vector2D.hpp"
 
-struct SpawnPoint
+struct Spawner
 {
-  SpawnPoint() = default;
+  Spawner() = default;
 
-  SpawnPoint(Vector2D spawn_position,
+  Spawner(Vector2D spawn_position,
              std::string entity_template,
              double spawn_interval,
              int max_spawns)

@@ -5,7 +5,7 @@
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Enemy.hpp"
-#include "plugin/components/SpawnPoint.hpp"
+#include "plugin/components/Spawner.hpp"
 
 class Enemy : public APlugin
 {

@@ -10,10 +10,10 @@ Enemy::Enemy(Registry& r, EntityLoader& l)
           l,
           {},
           {COMP_INIT(Enemy, Enemy, init_enemy),
-           COMP_INIT(SpawnPoint, SpawnPoint, init_spawn_point)})
+           COMP_INIT(Spawner, Spawner, init_spawn_point)})
 {
   _registry.get().register_component<::Enemy>("enemy:Enemy");
-  _registry.get().register_component<SpawnPoint>("enemy:SpawnPoint");
+  _registry.get().register_component<Spawner>("enemy:Spawner");
 
   _registry.get().add_system([this](Registry& r) { spawn_point_system(r); });
 }
