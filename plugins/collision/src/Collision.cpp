@@ -10,6 +10,7 @@
 #include "ecs/Registry.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "libs/Vector2D.hpp"
+#include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Collidable.hpp"
@@ -22,15 +23,15 @@
 
 Collision::Collision(Registry& r, EntityLoader& l)
     : APlugin(
+          "collision",
           r,
           l,
           {"moving"},
           {COMP_INIT(Collidable, Collidable, init_collision),
            COMP_INIT(InteractionZone, InteractionZone, init_interaction_zone)})
 {
-  _registry.get().register_component<Collidable>("collision:Collidable");
-  _registry.get().register_component<InteractionZone>(
-      "collision:InteractionZone");
+  REGISTER_COMPONENT(Collidable)
+  REGISTER_COMPONENT(InteractionZone)
 
   _collision_algo = std::make_unique<QuadTreeCollision>(2.0, 2.0);
 
@@ -43,9 +44,7 @@ Collision::Collision(Registry& r, EntityLoader& l)
   _registry.get().add_system(
       [this](Registry& r) { this->interaction_zone_system(r); }, 4);
 
-  this->_registry.get().on<CollisionEvent>("CollisionEvent",
-                                           [this](const CollisionEvent& c)
-                                           { this->on_collision(c); });
+  SUBSCRIBE_EVENT(CollisionEvent, { this->on_collision(event); })
 }
 
 void Collision::set_algorithm(std::unique_ptr<ICollisionAlgorithm> algo)

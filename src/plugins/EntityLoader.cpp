@@ -83,7 +83,7 @@ void EntityLoader::load_scene(JsonObject& json_scene)
           this->load_entity(std::get<JsonObject>(it.value));
       if (new_e.has_value()) {
         this->_registry.get().add_component(new_e.value(),
-                                             Scene(scene, scene_state));
+                                            Scene(scene, scene_state));
       }
     }
   }
@@ -152,8 +152,7 @@ void EntityLoader::load_plugin(std::string const& plugin,
   }
 }
 
-void EntityLoader::load_components(Registry::Entity e,
-                                   JsonObject const& config)
+void EntityLoader::load_components(Registry::Entity e, JsonObject const& config)
 {
   if (config.contains("template")) {
     std::string name = std::get<std::string>(config.at("template").value);
@@ -213,5 +212,21 @@ void EntityLoader::get_loader(std::string const& plugin)
     }
   } catch (NotExistingLib const& e) {
     std::cerr << e.what() << '\n';
+  }
+}
+
+void EntityLoader::load_byte_component(
+    Registry::Entity entity,
+    ComponentBuilder const& component,
+    TwoWayMap<Registry::Entity, Registry::Entity> const& indexes)
+{
+  std::string plugin = component.id.substr(0, component.id.find(':'));
+  this->get_loader(plugin);
+  if (this->_plugins.contains(plugin)) {
+    this->_registry.get().emplace_component(
+        entity,
+        component.id,
+        this->_registry.get().convert_comp_entity(
+            component.id, component.data, indexes.get_first()));
   }
 }

@@ -7,9 +7,11 @@
 #include "Network.hpp"
 
 #include "Client.hpp"
+#include "ClientConnection.hpp"
 #include "NetworkShared.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
+#include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Controllable.hpp"
 #include "plugin/components/Position.hpp"
@@ -19,101 +21,82 @@
 #include "plugin/events/ShutdownEvent.hpp"
 
 NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
-    : APlugin(r, l, {}, {})
+    : APlugin("network_client", r, l, {}, {})
     , _sem(0)
 {
-  this->_registry.get().on<ClientConnection>(
-      "ClientConnection",
-      [this](ClientConnection const& c)
-      {
-        if (!this->_running) {
-          _running = true;
+  SUBSCRIBE_EVENT(ClientConnection, {
+    if (!this->_running) {
+      _running = true;
 
-          this->_thread =
-              std::thread([this, c]() { this->connection_thread(c); });
-        } else {
-          LOGGER("client", LogLevel::WARNING, "client already running");
-        }
-      });
+      this->_thread =
+          std::thread([this, event]() { this->connection_thread(event); });
+    } else {
+      LOGGER("client", LogLevel::WARNING, "client already running");
+    }
+  })
 
-  this->_registry.get().on<ShutdownEvent>(
-      "ShutdownEvent",
-      [this](ShutdownEvent const& event)
-      {
-        _running = false;
-        LOGGER("client",
-               LogLevel::INFO,
-               std::format("Shutdown requested: {}", event.reason));
-        // _client->close();
-      });
+  SUBSCRIBE_EVENT(ShutdownEvent, {
+    _running = false;
+    LOGGER("client",
+           LogLevel::INFO,
+           std::format("Shutdown requested: {}", event.reason));
+    // _client->close();
+  })
 
-  this->_registry.get().on<CleanupEvent>(
-      "CleanupEvent",
-      [this](CleanupEvent const&)
-      {
-        _running = false;
-        LOGGER("client", LogLevel::DEBUG, "Cleanup requested");
-        // _socket->close();
-      });
+  SUBSCRIBE_EVENT(CleanupEvent, {
+    _running = false;
+    LOGGER("client", LogLevel::DEBUG, "Cleanup requested");
+    // _socket->close();
+  })
 
-  this->_registry.get().on<EventBuilder>(
-      "EventBuilder",
-      [this](EventBuilder const& c)
-      {
-        if (!this->_running) {
-          return;
-        }
-        EventBuilder true_e(
-            c.event_id,
-            this->_registry.get().convert_event_entity(
-                c.event_id,
-                c.data,
-                this->_server_indexes.get_second()));  // CLIENT -> SERVER
-        this->_event_to_server.lock.lock();
-        this->_event_to_server.queue.push(std::move(true_e));
-        this->_event_to_server.lock.unlock();
-        this->_sem.release();
-      });
+  SUBSCRIBE_EVENT(EventBuilder, {
+    if (!this->_running) {
+      return;
+    }
+    EventBuilder true_e(
+        event.event_id,
+        this->_registry.get().convert_event_entity(
+            event.event_id,
+            event.data,
+            this->_server_indexes.get_second()));  // CLIENT -> SERVER
+    this->_event_to_server.lock.lock();
+    this->_event_to_server.queue.push(std::move(true_e));
+    this->_event_to_server.lock.unlock();
+    this->_sem.release();
+  })
 
-  this->_registry.get().on<PlayerCreation>(
-      "PlayerCreation",
-      [this](PlayerCreation const& server)
-      {
-        this->_id_in_server = server.server_id;
-        auto zipper = ZipperIndex<Controllable>(this->_registry.get());
+  SUBSCRIBE_EVENT(PlayerCreation, {
+    this->_id_in_server = event.server_id;
+    auto zipper = ZipperIndex<Controllable>(this->_registry.get());
 
-        if (zipper.begin() != zipper.end()) {
-          std::size_t index = std::get<0>(*zipper.begin());
+    if (zipper.begin() != zipper.end()) {
+      std::size_t index = std::get<0>(*zipper.begin());
 
-          this->_server_indexes.insert(server.server_index, index);
+      this->_server_indexes.insert(event.server_index, index);
 
-        } else {
-          LOGGER("client",
-                 LogLevel::INFO,
-                 "no bindings detected for client, default applicated (z q s "
-                 "d, les bindings de thresh tu connais (de la dinde) ? (le joueur de quake "
-                 "pas le main de baptiste ahah mdr))");
+    } else {
+      LOGGER("client",
+             LogLevel::INFO,
+             "no bindings detected for client, default applicated (z q s "
+             "d, les bindings de thresh tu connais (de la dinde) ? (le joueur de quake "
+             "pas le main de baptiste ahah mdr))");
 
-          std::size_t new_entity = this->_registry.get().spawn_entity();
+      std::size_t new_entity = this->_registry.get().spawn_entity();
 
-          this->_registry.get().emplace_component<Controllable>(
-              new_entity, 'Z', 'S', 'Q', 'D');
-          this->_server_indexes.insert(server.server_index,
-                                       new_entity);  // SERVER -> CLIENT
-        }
-        this->_registry.get().emit<EventBuilder>(
-            "PlayerCreated",
-            PlayerCreated(server.server_index, this->_id_in_server).to_bytes());
-      });
+      this->_registry.get().emplace_component<Controllable>(
+          new_entity, 'Z', 'S', 'Q', 'D');
+      this->_server_indexes.insert(event.server_index,
+                                   new_entity);  // SERVER -> CLIENT
+    }
+    this->_registry.get().emit<EventBuilder>(
+        "PlayerCreated",
+        PlayerCreated(event.server_index, this->_id_in_server).to_bytes());
+  })
 
-  this->_registry.get().on<WantReady>(
-      "WantReady",
-      [this](WantReady const&)
-      {
-        std::cout << "TOUCHE COMPRISE" << std::endl;
-        this->_registry.get().emit<EventBuilder>(
-            "PlayerReady", PlayerReady(this->_id_in_server).to_bytes());
-      });
+  SUBSCRIBE_EVENT(WantReady, {
+    this->_registry.get().emit<EventBuilder>(
+        "PlayerReady", PlayerReady(this->_id_in_server).to_bytes());
+  })
 
   this->_registry.get().add_system<>(
       [this](Registry& r)
@@ -130,18 +113,8 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
             this->_server_indexes.insert(server_comp.entity, new_entity);
           }
           auto true_entity = this->_server_indexes.at_first(server_comp.entity);
-
-          for (auto i : server_comp.data) {
-              std::cout << (int)i << ", ";
-          }
-          std::cout << std::endl;
-          r.emplace_component(true_entity,
-                              server_comp.id,
-                              this->_registry.get().convert_comp_entity(
-                                  server_comp.id,
-                                  server_comp.data,
-                                  this->_server_indexes.get_first()));
-
+          this->_loader.get().load_byte_component(
+              true_entity, server_comp, this->_server_indexes);
           this->_component_queue.queue.pop();
         }
         this->_component_queue.lock.unlock();
@@ -187,6 +160,7 @@ void NetworkClient::connection_thread(ClientConnection const& c)
     LOGGER("client",
            LogLevel::ERROR,
            std::format("Connection failed: {}", e.what()));
+    _running = false;
   }
 }
 

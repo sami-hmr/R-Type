@@ -5,6 +5,7 @@
 #include "ecs/SparseArray.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "libs/Vector2D.hpp"
+#include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Follower.hpp"
 #include "plugin/components/Position.hpp"
@@ -12,16 +13,12 @@
 #include "plugin/events/InteractionZoneEvent.hpp"
 
 Target::Target(Registry& r, EntityLoader& l)
-    : APlugin(r, l, {"moving"}, {COMP_INIT(Follower, Follower, init_follower)})
+    : APlugin("target", r, l, {"moving"}, {COMP_INIT(Follower, Follower, init_follower)})
 {
-  this->_registry.get().register_component<Follower>("target:Follower");
-
+    REGISTER_COMPONENT(Follower)
   this->_registry.get().add_system([this](Registry& r)
                                    { this->target_system(r); });
-  this->_registry.get().on<InteractionZoneEvent>(
-      "InteractionZoneEvent",
-      [this](const InteractionZoneEvent& event)
-      { this->on_interaction_zone(event); });
+  SUBSCRIBE_EVENT(InteractionZoneEvent, { this->on_interaction_zone(event); })
 }
 
 void Target::init_follower(Registry::Entity entity, JsonObject const& obj)

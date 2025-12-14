@@ -4,6 +4,7 @@
 #include "ecs/Registry.hpp"
 #include "ecs/SparseArray.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
+#include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Fragile.hpp"
 #include "plugin/components/Team.hpp"
@@ -11,19 +12,21 @@
 #include "plugin/events/CollisionEvent.hpp"
 
 Projectile::Projectile(Registry& r, EntityLoader& l)
-    : APlugin(r,
+    : APlugin("projectile", r,
               l,
               {"moving", "collision"},
               {COMP_INIT(Temporal, Temporal, init_temporal),
                COMP_INIT(Fragile, Fragile, init_fragile)})
 {
-  this->_registry.get().register_component<Temporal>("projectile:Temporal");
-  this->_registry.get().register_component<Fragile>("projectile:Fragile");
+    REGISTER_COMPONENT(Temporal)
+    REGISTER_COMPONENT(Fragile)
 
-  this->_registry.get().add_system<Temporal>(
-      [this](Registry& r, const SparseArray<Temporal>&)
+  this->_registry.get().add_system(
+      [this](Registry& r)
       { this->temporal_system(r); },
       2);
+
+
 
   this->_registry.get().on<CollisionEvent>("CollisionEvent", [this](const CollisionEvent& event)
                                             { this->on_collision(event); });
