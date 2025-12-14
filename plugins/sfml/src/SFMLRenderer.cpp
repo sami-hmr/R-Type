@@ -173,12 +173,12 @@ void SFMLRenderer::handle_events()
 
   _key_pressed.key_pressed.clear();
   if (_key_pressed.key_unicode.has_value()) {
-    _key_pressed.key_unicode->clear();
+    _key_pressed.key_unicode.reset();
   }
 
   _key_released.key_released.clear();
   if (_key_released.key_unicode.has_value()) {
-    _key_released.key_unicode->clear();
+    _key_released.key_unicode.reset();
   }
 
   while (const std::optional event = _window.pollEvent()) {

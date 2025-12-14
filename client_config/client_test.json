@@ -19,31 +19,11 @@
           "config": {}
         },
         {
-          "name": "collision",
-          "config": {}
-        },
-        {
           "name": "controller",
           "config": {}
         },
         {
-          "name": "life",
-          "config": {}
-        },
-        {
-          "name": "moving",
-          "config": {}
-        },
-        {
           "name": "sfml",
-          "config": {}
-        },
-        {
-          "name": "ui",
-          "config": {}
-        },
-        {
-          "name": "actions",
           "config": {}
         }
       ],

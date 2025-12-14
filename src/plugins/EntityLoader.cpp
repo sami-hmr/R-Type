@@ -222,7 +222,7 @@ void EntityLoader::load_byte_component(
 {
   if (component.id.contains(':')) {
     std::string plugin = component.id.substr(0, component.id.find(':'));
-    this->get_loader(plugin);
+    this->load_plugin(plugin);
     if (this->_plugins.contains(plugin)) {
       this->_registry.get().emplace_component(
           entity,
