@@ -220,9 +220,17 @@ void EntityLoader::load_byte_component(
     ComponentBuilder const& component,
     TwoWayMap<Registry::Entity, Registry::Entity> const& indexes)
 {
-  std::string plugin = component.id.substr(0, component.id.find(':'));
-  this->get_loader(plugin);
-  if (this->_plugins.contains(plugin)) {
+  if (component.id.contains(':')) {
+    std::string plugin = component.id.substr(0, component.id.find(':'));
+    this->get_loader(plugin);
+    if (this->_plugins.contains(plugin)) {
+      this->_registry.get().emplace_component(
+          entity,
+          component.id,
+          this->_registry.get().convert_comp_entity(
+              component.id, component.data, indexes.get_first()));
+    }
+  } else {
     this->_registry.get().emplace_component(
         entity,
         component.id,

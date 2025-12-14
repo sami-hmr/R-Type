@@ -17,7 +17,7 @@
 #include "plugin/events/IoEvents.hpp"
 
 Actions::Actions(Registry& r, EntityLoader& l)
-    : APlugin("action",
+    : APlugin("actions",
               r,
               l,
               {},

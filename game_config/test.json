@@ -1,4 +1,4 @@
-  {
+{
   "entities_template": [
     {
       "name": "menu",
@@ -92,16 +92,9 @@
                 "name": "SceneChangeEvent",
                 "params": {
                   "target_scene": "game",
-                  "state": "main",
-                  "reason": "User pressed enter"
-                }
-              },
-              {
-                "name": "SceneChangeEvent",
-                "params": {
-                  "target_scene": "menu",
-                  "state": "disabled",
-                  "reason": "User pressed R"
+                  "state": "enabled",
+                  "reason": "User pressed enter",
+                  "force": true
                 }
               }
             ]
@@ -280,7 +273,7 @@
             "text": "#game_text:buffer"
           }
         },
-        
+
         {
           "actions:ActionTrigger": {
             "trigger": {
