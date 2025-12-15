@@ -26,8 +26,8 @@ Weapon::Weapon(Registry& r, EntityLoader& l)
   REGISTER_COMPONENT(BasicWeapon)
   SUBSCRIBE_EVENT(KeyPressedEvent,
                   { this->on_fire(this->_registry.get(), event); })
-  _registry.get().add_system([this](Registry& /*unused*/)
-                             { this->basic_weapon_system(); });
+  _registry.get().add_system([this](Registry& r)
+                             { this->basic_weapon_system(r.clock().now()); });
 }
 
 void Weapon::on_fire(Registry& r, const KeyPressedEvent& e)
@@ -36,8 +36,9 @@ void Weapon::on_fire(Registry& r, const KeyPressedEvent& e)
     return;
   }
 
+  auto now = r.clock().now();
   for (auto&& [weapon, pos] : Zipper<BasicWeapon, Position>(r)) {
-    if (!weapon.update_basic_weapon()) {
+    if (!weapon.update_basic_weapon(now)) {
       continue;
     }
     Vector2D spawn_pos = pos.pos;
@@ -53,11 +54,10 @@ void Weapon::on_fire(Registry& r, const KeyPressedEvent& e)
 }
 
 
-void Weapon::basic_weapon_system()
+void Weapon::basic_weapon_system(std::chrono::high_resolution_clock::time_point now)
 {
   for (auto&& [weapon] : Zipper<BasicWeapon>(_registry.get())) {
     if (weapon.reloading && weapon.remaining_magazine > 0) {
-      auto now = std::chrono::high_resolution_clock::now();
       double elapsed_time =
           std::chrono::duration<double>(now - weapon.last_reload_time).count();
       if (elapsed_time >= weapon.reload_time) {
