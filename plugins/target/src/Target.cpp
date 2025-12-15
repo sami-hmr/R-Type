@@ -1,6 +1,7 @@
 #include "Target.hpp"
 
 #include "Json/JsonParser.hpp"
+#include "NetworkShared.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/SparseArray.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
@@ -8,14 +9,20 @@
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Follower.hpp"
+#include "plugin/components/Health.hpp"
 #include "plugin/components/Position.hpp"
+#include "plugin/components/Team.hpp"
 #include "plugin/components/Velocity.hpp"
 #include "plugin/events/InteractionZoneEvent.hpp"
 
 Target::Target(Registry& r, EntityLoader& l)
-    : APlugin("target", r, l, {"moving"}, {COMP_INIT(Follower, Follower, init_follower)})
+    : APlugin("target",
+              r,
+              l,
+              {"moving", "life"},
+              {COMP_INIT(Follower, Follower, init_follower)})
 {
-    REGISTER_COMPONENT(Follower)
+  REGISTER_COMPONENT(Follower)
   this->_registry.get().add_system([this](Registry& r)
                                    { this->target_system(r); });
   SUBSCRIBE_EVENT(InteractionZoneEvent, { this->on_interaction_zone(event); })
@@ -37,17 +44,43 @@ void Target::target_system(Registry& reg)
     }
     std::size_t target_id = follower.target;
 
+    if (target_id == i) {
+      follower.lost_target = true;
+      this->_registry.get().emit<ComponentBuilder>(
+          i,
+          this->_registry.get().get_component_key<Follower>(),
+          follower.to_bytes());
+      continue;
+    }
+
     if (reg.is_entity_dying(target_id)
         || !reg.has_component<Position>(target_id))
     {
       follower.lost_target = true;
+
+      this->_registry.get().emit<ComponentBuilder>(
+          i,
+          this->_registry.get().get_component_key<Follower>(),
+          follower.to_bytes());
       continue;
     }
 
-    Vector2D target_position = positions[follower.target].value().pos;
+    Vector2D target_position = positions[target_id].value().pos;
     Vector2D vect = target_position - position.pos;
 
-    velocity.direction = vect.normalize();
+    Vector2D new_direction = vect.normalize();
+
+    Vector2D direction_diff = new_direction - velocity.direction;
+    double direction_change = direction_diff.length();
+
+    if (direction_change > DIRECTION_TOLERANCE) {
+      velocity.direction = new_direction;
+
+      this->_registry.get().emit<ComponentBuilder>(
+          i,
+          this->_registry.get().get_component_key<Velocity>(),
+          velocity.to_bytes());
+    }
   }
 }
 
@@ -66,6 +99,9 @@ void Target::on_interaction_zone(const InteractionZoneEvent& event)
   double closest_distance_sq = event.radius * event.radius;
 
   for (const Registry::Entity& candidate : event.candidates) {
+    if (!this->_registry.get().has_component<Health>(candidate)) {
+      continue;
+    }
     Vector2D distance =
         positions[candidate]->pos - positions[event.source]->pos;
     double distance_sq = distance.length();
@@ -75,8 +111,16 @@ void Target::on_interaction_zone(const InteractionZoneEvent& event)
       closest_entity = candidate;
     }
   }
-  if (closest_entity.has_value()) {
-    followers[event.source] = closest_entity;
+  if (closest_entity.has_value()
+      && closest_entity != followers[event.source]->target)
+  {
+    followers[event.source]->target = closest_entity.value();
+    followers[event.source]->lost_target = false;
+
+    this->_registry.get().emit<ComponentBuilder>(
+        event.source,
+        this->_registry.get().get_component_key<Follower>(),
+        followers[event.source]->to_bytes());
   }
 }
 
