@@ -7,6 +7,7 @@
 
 #include "CustomException.hpp"
 #include "Json/JsonParser.hpp"
+#include "NetworkShared.hpp"
 #include "TwoWayMap.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/IPlugin.hpp"
@@ -26,6 +27,11 @@ public:
 
   void load_plugin(std::string const& plugin,
                    std::optional<JsonObject> const& config = std::nullopt);
+
+  void load_byte_component(
+      Registry::Entity entity,
+      ComponentBuilder const& component,
+      TwoWayMap<Registry::Entity, Registry::Entity> const& indexes);
 
 private:
   void load_scene(JsonObject& json_scene);

@@ -62,14 +62,14 @@
             }
           },
           "ui:Drawable": {},
-          // "ui:Text": {
-          //   "font": "assets/fonts/roboto.ttf",
-          //   "size": {
-          //     "width": 30.0,
-          //     "height": 30.0
-          //   },
-          //   "text": "LOBY: press r to get ready"
-          // },
+          "ui:Text": {
+            "font": "assets/fonts/roboto.ttf",
+            "size": {
+              "width": 30.0,
+              "height": 30.0
+            },
+            "text": "LOBY: press r to get ready"
+          },
           "actions:ActionTrigger": {
             "trigger": {
               "type": "KeyPressed",

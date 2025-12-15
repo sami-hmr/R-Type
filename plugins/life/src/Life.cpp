@@ -9,9 +9,11 @@
 
 #include "Json/JsonParser.hpp"
 #include "Logger.hpp"
+#include "NetworkShared.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/SparseArray.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
+#include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/AnimatedSprite.hpp"
@@ -20,9 +22,12 @@
 #include "plugin/components/Health.hpp"
 #include "plugin/components/Team.hpp"
 #include "plugin/events/CameraEvents.hpp"
+#include "plugin/events/DamageEvent.hpp"
+#include "plugin/events/HealEvent.hpp"
 
 Life::Life(Registry& r, EntityLoader& l)
-    : APlugin(r,
+    : APlugin("life",
+              r,
               l,
               {"moving", "collision"},
               {COMP_INIT(Health, Health, init_health),
@@ -30,23 +35,20 @@ Life::Life(Registry& r, EntityLoader& l)
                COMP_INIT(Heal, Heal, init_heal),
                COMP_INIT(Team, Team, init_team)})
 {
-  this->_registry.get().register_component<Health>("life:Health");
-  this->_registry.get().register_component<Damage>("life:Health");
-  this->_registry.get().register_component<Heal>("life:Heal");
-  this->_registry.get().register_component<Team>("life:Team");
+  REGISTER_COMPONENT(Health)
+  REGISTER_COMPONENT(Damage)
+  REGISTER_COMPONENT(Heal)
+  REGISTER_COMPONENT(Team)
+  this->_registry.get().add_system([this](Registry& r) { this->update_cooldowns(r); }, 2);
 
-  this->_registry.get().add_system<Health>(
-      [this](Registry& r, const SparseArray<Health>&)
-      { this->update_cooldowns(r); },
-      2);
 
-  this->_registry.get().on<DamageEvent>("DamageEvent", [this](const DamageEvent& event)
-                                         { this->on_damage(event); });
+  this->_registry.get().on<DamageEvent>("DamageEvent",
+                                        [this](const DamageEvent& event)
+                                        { this->on_damage(event); });
 
-  this->_registry.get().on<HealEvent>("HealEvent", [this](const HealEvent& event)
-                                       { this->on_heal(event); });
-  this->_registry.get().on<CollisionEvent>("CollisionEvent", [this](const CollisionEvent& event)
-                                            { this->on_collision(event); });
+  SUBSCRIBE_EVENT(DamageEvent, { this->on_damage(event); })
+  SUBSCRIBE_EVENT(HealEvent, { this->on_heal(event); })
+  SUBSCRIBE_EVENT(CollisionEvent, { this->on_collision(event); })
 }
 
 void Life::init_health(Registry::Entity entity, JsonObject const& obj)
@@ -62,7 +64,7 @@ void Life::init_health(Registry::Entity entity, JsonObject const& obj)
     return;
   }
   this->_registry.get().emplace_component<Health>(
-      entity, current.value(), max.value());
+      entity, current.value(), max.value(), heal_cooldown, damage_cooldown);
 }
 
 void Life::init_damage(Registry::Entity entity, JsonObject const& obj)
@@ -111,8 +113,14 @@ void Life::damage_entity(const CollisionEvent& event,
 
   if (healths[event.a]->damage_delta >= damage_cooldown) {
     healths[event.a]->damage_delta = 0.0;
+    this->_registry.get().emit<ComponentBuilder>(
+        event.a,
+        this->_registry.get().get_component_key<Health>(),
+        healths[event.a]->to_bytes());
+
     _registry.get().emit<DamageEvent>(
         event.a, event.b, damages[event.b]->amount);
+
   }
 }
 
@@ -124,6 +132,11 @@ void Life::heal_entity(const CollisionEvent& event,
   if (healths[event.a]->heal_delta >= heal_cooldown) {
     healths[event.a]->heal_delta = 0.0;
     _registry.get().emit<HealEvent>(event.a, event.b, healers[event.b]->amount);
+
+    this->_registry.get().emit<ComponentBuilder>(
+        event.a,
+        this->_registry.get().get_component_key<Health>(),
+        healths[event.a]->to_bytes());
   }
 }
 
@@ -159,6 +172,11 @@ void Life::on_damage(const DamageEvent& event)
   }
   if (event.target < healths.size() && healths[event.target].has_value()) {
     healths[event.target]->current -= event.amount;
+
+    this->_registry.get().emit<ComponentBuilder>(
+        event.target,
+        this->_registry.get().get_component_key<Health>(),
+        healths[event.target]->to_bytes());
   } else {
     return;
   }
@@ -178,9 +196,9 @@ void Life::on_damage(const DamageEvent& event)
         LogLevel::WARNING,
         std::format("Entity {} died!", event.target));
 
-        if (!this->_registry.get().has_component<AnimatedSprite>(event.target)) {
-          this->_registry.get().kill_entity(event.target);
-        }
+    if (!this->_registry.get().has_component<AnimatedSprite>(event.target)) {
+      this->_registry.get().kill_entity(event.target);
+    }
   }
 }
 
@@ -196,6 +214,11 @@ void Life::on_heal(const HealEvent& event)
     healths[event.target]->current =
         std::min(healths[event.target]->current + event.amount,
                  healths[event.target]->max);
+
+    this->_registry.get().emit<ComponentBuilder>(
+        event.target,
+        this->_registry.get().get_component_key<Health>(),
+        healths[event.target]->to_bytes());
 
     int actual_heal = healths[event.target]->current - old_health;
 
@@ -219,6 +242,10 @@ void Life::update_cooldowns(Registry& reg)
     if (!reg.is_entity_dying(i)) {
       health.damage_delta += dt;
       health.heal_delta += dt;
+      this->_registry.get().emit<ComponentBuilder>(
+          i,
+          this->_registry.get().get_component_key<Health>(),
+          health.to_bytes());
     }
   }
 }

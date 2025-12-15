@@ -6,6 +6,7 @@
 #include "Json/JsonParser.hpp"
 
 APlugin::APlugin(
+    std::string name,
     Registry& registry,
     EntityLoader& loader,
     std::vector<std::string> const& depends_on,
@@ -13,7 +14,8 @@ APlugin::APlugin(
         std::string,
         std::function<void(Registry::Entity, JsonVariant const&)>> components,
     std::optional<JsonObject> const& config)
-    : components(std::move(components))
+    : name(std::move(name))
+    , components(std::move(components))
     , _registry(registry)
     , _loader(loader)
     , _config(config)

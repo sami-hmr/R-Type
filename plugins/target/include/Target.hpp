@@ -18,6 +18,8 @@ class Target : public APlugin
 public:
   Target(Registry& r, EntityLoader& l);
 
+  static constexpr double DIRECTION_TOLERANCE = 0.1;
+
 private:
   void init_follower(Registry::Entity entity, JsonObject const& obj);
   void on_interaction_zone(const InteractionZoneEvent& event);

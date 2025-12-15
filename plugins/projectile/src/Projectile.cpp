@@ -1,9 +1,11 @@
 #include "Projectile.hpp"
 
 #include "Json/JsonParser.hpp"
+#include "NetworkShared.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/SparseArray.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
+#include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Fragile.hpp"
 #include "plugin/components/Team.hpp"
@@ -11,22 +13,21 @@
 #include "plugin/events/CollisionEvent.hpp"
 
 Projectile::Projectile(Registry& r, EntityLoader& l)
-    : APlugin(r,
+    : APlugin("projectile", r,
               l,
               {"moving", "collision"},
               {COMP_INIT(Temporal, Temporal, init_temporal),
                COMP_INIT(Fragile, Fragile, init_fragile)})
 {
-  this->_registry.get().register_component<Temporal>("projectile:Temporal");
-  this->_registry.get().register_component<Fragile>("projectile:Fragile");
+    REGISTER_COMPONENT(Temporal)
+    REGISTER_COMPONENT(Fragile)
 
-  this->_registry.get().add_system<Temporal>(
-      [this](Registry& r, const SparseArray<Temporal>&)
-      { this->temporal_system(r); },
-      2);
+  this->_registry.get().add_system<>(
+      [this](Registry& r) { this->temporal_system(r); }, 2);
+  this->_registry.get().add_system<>([this](Registry& r)
+                                     { this->fragile_system(r); });
 
-  this->_registry.get().on<CollisionEvent>("CollisionEvent", [this](const CollisionEvent& event)
-                                            { this->on_collision(event); });
+  SUBSCRIBE_EVENT(CollisionEvent, { this->on_collision(event); })
 }
 
 void Projectile::init_temporal(Registry::Entity entity, JsonObject const& obj)
@@ -43,10 +44,18 @@ void Projectile::init_temporal(Registry::Entity entity, JsonObject const& obj)
   this->_registry.get().emplace_component<Temporal>(entity, lifetime.value());
 }
 
-void Projectile::init_fragile(Registry::Entity entity,
-                              JsonObject const& /*obj*/)
+void Projectile::init_fragile(Registry::Entity entity, JsonObject const& obj)
 {
-  this->_registry.get().emplace_component<Fragile>(entity);
+  auto const& hits =
+      get_value<Fragile, int>(this->_registry.get(), obj, entity, "hits");
+
+  if (!hits) {
+    std::cerr << "Error loading fragile component: unexpected value type or "
+                 "missing value in JsonObject\n";
+    return;
+  }
+  this->_registry.get().emplace_component<Fragile>(
+      entity, hits.value(), fragile_cooldown);
 }
 
 void Projectile::temporal_system(Registry& reg)
@@ -57,6 +66,11 @@ void Projectile::temporal_system(Registry& reg)
     if (!reg.is_entity_dying(i)) {
       temporal.elapsed += dt;
 
+      this->_registry.get().emit<ComponentBuilder>(
+          i,
+          this->_registry.get().get_component_key<Temporal>(),
+          temporal.to_bytes());
+
       if (temporal.elapsed >= temporal.lifetime) {
         reg.kill_entity(i);
       }
@@ -64,8 +78,26 @@ void Projectile::temporal_system(Registry& reg)
   }
 }
 
+void Projectile::fragile_system(Registry& reg)
+{
+  double dt = reg.clock().delta_seconds();
+
+  for (auto&& [i, fragile] : ZipperIndex<Fragile>(reg)) {
+    if (!reg.is_entity_dying(i)) {
+      fragile.fragile_delta += dt;
+
+      this->_registry.get().emit<ComponentBuilder>(
+          i,
+          this->_registry.get().get_component_key<Fragile>(),
+          fragile.to_bytes());
+    }
+  }
+}
+
 void Projectile::on_collision(const CollisionEvent& event)
 {
+  auto& fragiles = this->_registry.get().get_components<Fragile>();
+
   if (!this->_registry.get().has_component<Fragile>(event.a)) {
     return;
   }
@@ -80,8 +112,26 @@ void Projectile::on_collision(const CollisionEvent& event)
     }
   }
 
-  if (!this->_registry.get().is_entity_dying(event.a)) {
-    this->_registry.get().kill_entity(event.a);
+  if (fragiles[event.a]->fragile_delta >= fragile_cooldown) {
+    fragiles[event.a]->fragile_delta = 0.0;
+
+    this->_registry.get().emit<ComponentBuilder>(
+        event.a,
+        this->_registry.get().get_component_key<Fragile>(),
+        fragiles[event.a]->to_bytes());
+
+    if (fragiles[event.a]->counter >= fragiles[event.a]->hits
+        && !this->_registry.get().is_entity_dying(event.a))
+    {
+      this->_registry.get().kill_entity(event.a);
+      return;
+    }
+    fragiles[event.a]->counter += 1;
+
+    this->_registry.get().emit<ComponentBuilder>(
+        event.a,
+        this->_registry.get().get_component_key<Fragile>(),
+        fragiles[event.a]->to_bytes());
   }
 }
 

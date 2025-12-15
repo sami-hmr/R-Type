@@ -17,14 +17,15 @@
 #include "plugin/events/IoEvents.hpp"
 
 Actions::Actions(Registry& r, EntityLoader& l)
-    : APlugin(r,
+    : APlugin("actions",
+              r,
               l,
               {},
-              {{
+              {
                   COMP_INIT(ActionTrigger, ActionTrigger, init_action_trigger),
-              }})
+              })
 {
-  _registry.get().register_component<ActionTrigger>("ActionTrigger");
+  REGISTER_COMPONENT(ActionTrigger)
 
   _registry.get().add_system<>(
       [](Registry& r)
@@ -35,24 +36,24 @@ Actions::Actions(Registry& r, EntityLoader& l)
       },
       5);
 
-  this->_registry.get().on<KeyPressedEvent>(
-      "KeyPressedEvent",
-      [this](KeyPressedEvent const& evt)
+  SUBSCRIBE_EVENT(KeyPressedEvent, {
+    for (auto&& [entity, action] :
+         ZipperIndex<ActionTrigger>(this->_registry.get()))
+    {
+      if (action.event_trigger.first != "KeyPressed") {
+        continue;
+      }
+      std::string key =
+          std::get<std::string>(action.event_trigger.second.at("key").value);
+      if (std::any_cast<KeyPressedEvent>(event).key_pressed.contains(
+              KEY_MAPPING.at_first(key)))
       {
-        for (auto&& [entity, action] : ZipperIndex<ActionTrigger>(this->_registry.get())) {
-          if (action.event_trigger.first != "KeyPressed") {
-            continue;
-          }
-          std::string key = std::get<std::string>(
-              action.event_trigger.second.at("key").value);
-          if (evt.key_pressed.contains(KEY_MAPPING.at_first(key)))
-          {
-            for (auto& i : action.event_to_emit) {
-              this->_registry.get().emit(i.first, i.second);
-            }
-          }
+        for (auto& i : action.event_to_emit) {
+          this->_registry.get().emit(i.first, i.second);
         }
-      });
+      }
+    }
+  })
 }
 
 void Actions::init_action_trigger(Registry::Entity const& entity,

@@ -16,17 +16,16 @@
 #include "plugin/events/IoEvents.hpp"
 
 Weapon::Weapon(Registry& r, EntityLoader& l)
-    : APlugin(r,
+    : APlugin("weapon",
+              r,
               l,
               {"moving"},
               {COMP_INIT(BasicWeapon, BasicWeapon, init_basic_weapon)})
     , entity_loader(l)
 {
-  _registry.get().register_component<BasicWeapon>("weapon:BasicWeapon");
-  _registry.get().on<KeyPressedEvent>(
-      "KeyPressedEvent",
-      [this](const KeyPressedEvent& e)
-      { this->on_fire(this->_registry.get(), e); });
+  REGISTER_COMPONENT(BasicWeapon)
+  SUBSCRIBE_EVENT(KeyPressedEvent,
+                  { this->on_fire(this->_registry.get(), event); })
   _registry.get().add_system([this](Registry& /*unused*/)
                              { this->basic_weapon_system(); });
 }
@@ -53,6 +52,7 @@ void Weapon::on_fire(Registry& r, const KeyPressedEvent& e)
   }
 }
 
+
 void Weapon::basic_weapon_system()
 {
   for (auto&& [weapon] : Zipper<BasicWeapon>(_registry.get())) {
@@ -68,6 +68,7 @@ void Weapon::basic_weapon_system()
     }
   }
 }
+
 
 extern "C"
 {

@@ -8,7 +8,7 @@
 #include "plugin/components/Bar.hpp"
 
 ATH::ATH(Registry& r, EntityLoader& l, std::optional<JsonObject> const &config)
-    : APlugin(r, l, {"ui"}, {COMP_INIT(Bar, Bar, init_bar)})
+    : APlugin("ath", r, l, {"ui"}, {COMP_INIT(Bar, Bar, init_bar)})
 {
   _registry.get().register_component<Bar>("ath:Bar");
 }
