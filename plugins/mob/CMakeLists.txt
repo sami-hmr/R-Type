@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.14)
 
-set(LIB_NAME enemy)
+set(LIB_NAME mob)
 
 add_library(${LIB_NAME} SHARED
-    src/Enemy.cpp
+    src/Mob.cpp
 )
 
 target_compile_features(${LIB_NAME} PRIVATE cxx_std_23)
