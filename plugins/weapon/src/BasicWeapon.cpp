@@ -51,7 +51,7 @@ void Weapon::init_basic_weapon(Registry::Entity const& entity,
       entity, bullet_type.value(), magazine_size.value(), magazine_nb.value(), reload_time.value(), cooldown.value());
 }
 
-bool BasicWeapon::update_basic_weapon()
+bool BasicWeapon::update_basic_weapon(std::chrono::high_resolution_clock::time_point now)
 {
   if (this->reloading) {
     return false;
@@ -59,7 +59,6 @@ bool BasicWeapon::update_basic_weapon()
   if (this->remaining_ammo <= 0) {
     return false;
   }
-  auto now = std::chrono::high_resolution_clock::now();
   double elapsed_time =
       std::chrono::duration<double>(now - this->last_shot_time).count();
   if (elapsed_time < this->cooldown) {

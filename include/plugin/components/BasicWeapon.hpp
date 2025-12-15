@@ -56,11 +56,11 @@ struct BasicWeapon
   double reload_time;
   double cooldown;
   bool reloading = false;
-  std::chrono::high_resolution_clock::time_point last_shot_time = std::chrono::high_resolution_clock::now();
-  std::chrono::high_resolution_clock::time_point last_reload_time = std::chrono::high_resolution_clock::now();
+  std::chrono::high_resolution_clock::time_point last_shot_time;
+  std::chrono::high_resolution_clock::time_point last_reload_time;
 
   HOOKABLE(BasicWeapon, HOOK(bullet_type), HOOK(magazine_size), HOOK(magazine_nb), HOOK(remaining_ammo), HOOK(remaining_magazine), HOOK(reload_time),
            HOOK(reloading), HOOK(last_reload_time), HOOK(cooldown))
 
-  bool update_basic_weapon();
+  bool update_basic_weapon(std::chrono::high_resolution_clock::time_point now);
 };
