@@ -15,5 +15,6 @@ public:
   private:
   void init_basic_weapon(Registry::Entity const &entity, JsonObject const &obj);
   void on_fire(Registry &r, const KeyPressedEvent &e);
+  void basic_weapon_system();
   
 };

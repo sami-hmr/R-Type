@@ -54,9 +54,9 @@ Life::Life(Registry& r, EntityLoader& l)
 void Life::init_health(Registry::Entity entity, JsonObject const& obj)
 {
   auto const& current =
-      get_value<Health, int>(this->_registry.get(), obj, entity, "current");
+      get_value<Health, double>(this->_registry.get(), obj, entity, "current");
   auto const& max =
-      get_value<Health, int>(this->_registry.get(), obj, entity, "max");
+      get_value<Health, double>(this->_registry.get(), obj, entity, "max");
 
   if (!current || !max) {
     std::cerr << "Error loading health component: unexpected value type or "

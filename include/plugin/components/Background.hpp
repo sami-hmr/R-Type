@@ -14,9 +14,9 @@
 
 #include "BaseTypes.hpp"
 #include "ByteParser/ByteParser.hpp"
+#include "plugin/Byte.hpp"
 #include "TwoWayMap.hpp"
 #include "libs/Vector2D.hpp"
-#include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
 
 struct Parallax

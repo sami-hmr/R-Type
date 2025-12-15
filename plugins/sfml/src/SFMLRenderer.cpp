@@ -77,7 +77,7 @@ SFMLRenderer::SFMLRenderer(Registry& r, EntityLoader& l)
     : APlugin("sfml",
               r,
               l,
-              {"moving", "ui", "client_network", "server_network"},
+              {"moving", "ath", "ui", "client_network", "server_network"},
               {})
 {
   _window =
@@ -96,6 +96,7 @@ SFMLRenderer::SFMLRenderer(Registry& r, EntityLoader& l)
 
   _registry.get().add_system([this](Registry& r)
                              { this->animation_system(r); });
+  _registry.get().add_system([this](Registry& r) { this->bar_system(r); });
   _registry.get().add_system([this](Registry& r) { this->camera_system(r); });
   _registry.get().add_system<>([this](Registry&) { this->display(); });
   _textures.insert_or_assign(SFMLRenderer::placeholder_texture,
@@ -317,6 +318,61 @@ void SFMLRenderer::render_text(Registry& r)
     _text.value().setPosition(new_pos);
     _text.value().setCharacterSize(static_cast<unsigned int>(txt.scale.x));
     _window.draw(_text.value());
+  }
+}
+
+void SFMLRenderer::bar_system(Registry& r)
+{
+  sf::Vector2u window_size = _window.getSize();
+
+  for (auto&& [scene, drawable, position, bar] :
+       Zipper<Scene, Drawable, Position, Bar>(r))
+  {
+    this->_rectangle.setOutlineColor(sf::Color::Transparent);
+    this->_rectangle.setFillColor(sf::Color::Transparent);
+    if (!drawable.enabled) {
+      continue;
+    }
+    float min_dimension =
+        static_cast<float>(std::min(window_size.x, window_size.y));
+    sf::Vector2f new_pos(
+        static_cast<float>((position.pos.x + 1.0) * min_dimension / 2.0f),
+        static_cast<float>((position.pos.y + 1.0) * min_dimension / 2.0f));
+    sf::Vector2f size(static_cast<float>(bar.size.x * min_dimension),
+                      static_cast<float>(bar.size.y * min_dimension));
+    sf::Vector2f offset(static_cast<float>(bar.offset.x * min_dimension),
+                        static_cast<float>(bar.offset.y * min_dimension));
+
+    _rectangle.setPosition(new_pos + offset);
+    _rectangle.setSize(size);
+    _rectangle.setOrigin(sf::Vector2f(size.x / 2, size.y / 2));
+    if (bar.outline) {
+      _rectangle.setOutlineColor(
+          sf::Color(bar.color.r, bar.color.g, bar.color.b, bar.color.a));
+      _rectangle.setOutlineThickness(size.y * 0.1f);
+      _window.draw(_rectangle);
+    }
+
+    float fill_percentage = bar.current_value / bar.max_value;
+    if (fill_percentage < 0.0f) {
+      fill_percentage = 0.0f;
+    } else if (fill_percentage > 1.0f) {
+      fill_percentage = 1.0f;
+    }
+    if (bar.texture_path != "") {
+      sf::Texture& texture = load_texture(bar.texture_path);
+      this->_rectangle.setTexture(&texture, true);
+      this->_rectangle.setTextureRect(
+          sf::IntRect({0, 0},
+                      {static_cast<int>(texture.getSize().x * fill_percentage),
+                       static_cast<int>(texture.getSize().y)}));
+    }
+    this->_rectangle.setSize(sf::Vector2f(size.x * fill_percentage, size.y));
+    this->_rectangle.setOutlineColor(sf::Color::Transparent);
+    this->_rectangle.setFillColor(
+        sf::Color(bar.color.r, bar.color.g, bar.color.b, bar.color.a));
+    this->_rectangle.setPosition(new_pos + offset);
+    this->_window.draw(_rectangle);
   }
 }
 
