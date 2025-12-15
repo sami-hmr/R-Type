@@ -17,12 +17,14 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
+#include <SFML/Window/Mouse.hpp>
 
 #include "ecs/Registry.hpp"
 #include "ecs/Scenes.hpp"
 #include "ecs/SparseArray.hpp"
 #include "ecs/zipper/Zipper.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
+#include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/AnimatedSprite.hpp"
@@ -57,6 +59,12 @@ static const std::map<sf::Keyboard::Key, Key> key_association = {
     {sf::Keyboard::Key::RControl, Key::CTRL},
     {sf::Keyboard::Key::LAlt, Key::ALT},
     {sf::Keyboard::Key::RAlt, Key::ALT},
+};
+
+static const std::map<sf::Mouse::Button, MouseButton> MOUSEBUTTONMAP = {
+    {sf::Mouse::Button::Left, MouseButton::MOUSELEFT},
+    {sf::Mouse::Button::Right, MouseButton::MOUSERIGHT},
+    {sf::Mouse::Button::Middle, MouseButton::MOUSEMIDDLE},
 };
 
 static sf::Texture gen_placeholder()
@@ -166,6 +174,37 @@ void SFMLRenderer::handle_resize()
   _window.setView(this->_view);
 }
 
+static constexpr double deux = 2.0; //allez le linter t content mtn y'a une constante
+
+void SFMLRenderer::mouse_events(const sf::Event &events)
+{
+  sf::Vector2u window_size = _window.getSize();
+  double min_dimension =
+      static_cast<double>(std::min(window_size.x, window_size.y));
+  const sf::Vector2i mouse_pos = sf::Mouse::getPosition(_window);
+  const auto *mouse_pressed = events.getIf<sf::Event::MouseButtonPressed>();
+  const auto *mouse_released = events.getIf<sf::Event::MouseButtonReleased>();
+
+  if (mouse_pressed != nullptr) {
+    if (MOUSEBUTTONMAP.contains(mouse_pressed->button)) {
+      MouseButton button = MOUSEBUTTONMAP.at(mouse_pressed->button);
+      Vector2D position((mouse_pos.x * deux / min_dimension) - 1.0,
+                        (mouse_pos.y * deux / min_dimension) - 1.0);
+      MousePressedEvent mouse_event(position, button);
+      this->_registry.get().emit<MousePressedEvent>(mouse_event);
+    }
+  }
+  if (mouse_released != nullptr) {
+    if (MOUSEBUTTONMAP.contains(mouse_released->button)) {
+      MouseButton button = MOUSEBUTTONMAP.at(mouse_released->button);
+      Vector2D position((mouse_pos.x * deux / min_dimension) - 1.0,
+                        (mouse_pos.y * deux / min_dimension) - 1.0);
+      MouseReleasedEvent mouse_event(position, button);
+      this->_registry.get().emit<MouseReleasedEvent>(mouse_event);
+    }
+  }
+}
+
 void SFMLRenderer::handle_events()
 {
   if (!_window.isOpen()) {
@@ -187,6 +226,7 @@ void SFMLRenderer::handle_events()
       _window.close();
       _registry.get().emit<ShutdownEvent>("Window closed", 0);
     }
+    this->mouse_events(event.value());
     if (const auto* key_pressed = event->getIf<sf::Event::KeyPressed>()) {
       auto key = sfml_key_to_key(key_pressed->code);
       if (key.has_value()) {

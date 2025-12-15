@@ -50,6 +50,7 @@ private:
   sf::Font& load_font(std::string const& path);
 
   void handle_events();
+  void mouse_events(const sf::Event &events);
   void handle_resize();
   void render_sprites(Registry& r);
   void render_text(Registry& r);
