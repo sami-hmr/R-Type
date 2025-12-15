@@ -431,19 +431,12 @@ void SFMLRenderer::on_click(Registry& r, const MousePressedEvent& event)
     if (!draw.enabled) {
       continue;
     }
-    std::cout << "Checking clickable at position (" << pos.pos.x << ", "
-              << pos.pos.y << ") with size (" << collision.width << ", "
-              << collision.height << ")\n";
-              std::cout << "Mouse position: (" << event.position.x << ", "
-              << event.position.y << ")\n";
     Rect entity_rect = {.x = pos.pos.x,
                         .y = pos.pos.y,
                         .width = collision.width,
                         .height = collision.height};
     if (entity_rect.contains(event.position.x, event.position.y)) {
-      std::cout << "Clickable entity clicked!\n";
       for (const auto& [name, obj] : clickable.to_emit) {
-        std::cout << "Emitting event: " << name << "\n";
         r.emit(name, obj);
         return;
       }
