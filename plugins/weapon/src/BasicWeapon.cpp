@@ -39,21 +39,37 @@ void Weapon::init_basic_weapon(Registry::Entity const& entity,
                      "(reload_time: double)\n";
     return;
   }
-
-  _registry.get().emplace_component<BasicWeapon>(
-      entity, bullet_type.value(), magazine_size.value(), magazine_nb.value(), reload_time.value());
-}
-
-void BasicWeapon::update_basic_weapon()
-{
-  if (this->reloading) {
+  auto const & cooldown = get_value<BasicWeapon, double>(
+      this->_registry.get(), obj, entity, "cooldown");
+  if (!cooldown) {
+    std::cerr << "Error loading BasicWeapon component: unexpected value type "
+                     "(cooldown: double)\n";
     return;
   }
-  if (this->remaining_ammo > 0) {
-    this->remaining_ammo -= 1;
+
+  _registry.get().emplace_component<BasicWeapon>(
+      entity, bullet_type.value(), magazine_size.value(), magazine_nb.value(), reload_time.value(), cooldown.value());
+}
+
+bool BasicWeapon::update_basic_weapon()
+{
+  if (this->reloading) {
+    return false;
   }
+  if (this->remaining_ammo <= 0) {
+    return false;
+  }
+  auto now = std::chrono::high_resolution_clock::now();
+  double elapsed_time =
+      std::chrono::duration<double>(now - this->last_shot_time).count();
+  if (elapsed_time < this->cooldown) {
+    return false;
+  }
+  this->last_shot_time = now;
+  this->remaining_ammo -= 1;
   if (this->remaining_ammo <= 0 && this->remaining_magazine > 0) {
     this->reloading = true;
     this->last_reload_time = std::chrono::high_resolution_clock::now();
   }
+  return true;
 }

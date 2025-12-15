@@ -38,8 +38,7 @@ void Weapon::on_fire(Registry& r, const KeyPressedEvent& e)
   }
 
   for (auto&& [weapon, pos] : Zipper<BasicWeapon, Position>(r)) {
-    weapon.update_basic_weapon();
-    if (weapon.remaining_ammo <= 0 || weapon.reloading) {
+    if (!weapon.update_basic_weapon()) {
       continue;
     }
     Vector2D spawn_pos = pos.pos;

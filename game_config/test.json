@@ -156,7 +156,8 @@
               "bullet_type": "basic_bullet",
               "magazine_size": 6,
               "magazine_nb": 3,
-              "reload_time": 2.0
+              "reload_time": 2.0,
+              "cooldown": 0.3
             },
             "ui:AnimatedSprite": {
               "animations": [
