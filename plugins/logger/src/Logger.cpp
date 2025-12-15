@@ -1,21 +1,19 @@
 #include <chrono>
 #include <format>
 #include <iostream>
+
 #include "Logger.hpp"
 
-#include "plugin/events/LoggerEvent.hpp"
-
 #include "ecs/Registry.hpp"
+#include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
-#include "plugin/events/LoggerEvent.hpp"
-#include "plugin/events/ShutdownEvent.hpp"
 #include "plugin/events/LoggerEvent.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
 
 Logger::Logger(Registry& r,
                EntityLoader& l,
                std::optional<JsonObject> const& config)
-    : APlugin(r, l, {}, {}, config)
+    : APlugin("logger", r, l, {}, {}, config)
     , _min_log_level(LogLevel::INFO)
 {
   _log_file.open("rtype.log", std::ios::app);
@@ -38,17 +36,14 @@ Logger::Logger(Registry& r,
     }
   }
 
-  this->_registry.get().on<LogEvent>("LogEvent", [this](const LogEvent& event)
-                                      { this->on_log_event(event); });
-  this->_registry.get().on<ShutdownEvent>("ShutdownEvent",
-      [this](const ShutdownEvent& event)
-      {
-        this->_registry.get().emit<LogEvent>(
-            "System",
-            event.exit_code == 0 ? LogLevel::INFO : LogLevel::WARNING,
-            std::format(
-                "Shutdown: {} (exit code: {})", event.reason, event.exit_code));
-      });
+  SUBSCRIBE_EVENT(LogEvent, { this->on_log_event(event); })
+  SUBSCRIBE_EVENT(ShutdownEvent, {
+    this->_registry.get().emit<LogEvent>(
+        "System",
+        event.exit_code == 0 ? LogLevel::INFO : LogLevel::WARNING,
+        std::format(
+            "Shutdown: {} (exit code: {})", event.reason, event.exit_code));
+  })
 }
 
 void Logger::on_log_event(const LogEvent& event)

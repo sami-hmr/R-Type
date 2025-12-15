@@ -32,6 +32,8 @@
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Sprite.hpp"
 #include "plugin/components/Text.hpp"
+#include "plugin/events/AnimationEvents.hpp"
+#include "plugin/events/DamageEvent.hpp"
 #include "plugin/events/LoggerEvent.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
 
@@ -72,7 +74,11 @@ static sf::Texture gen_placeholder()
 }
 
 SFMLRenderer::SFMLRenderer(Registry& r, EntityLoader& l)
-    : APlugin(r, l, {"moving", "ui", "client_network", "server_network"}, {})
+    : APlugin("sfml",
+              r,
+              l,
+              {"moving", "ui", "client_network", "server_network"},
+              {})
 {
   _window =
       sf::RenderWindow(sf::VideoMode(window_size), "R-Type - SFML Renderer");
@@ -80,43 +86,29 @@ SFMLRenderer::SFMLRenderer(Registry& r, EntityLoader& l)
 
   _registry.get().add_system([this](Registry&) { this->handle_events(); }, 1);
   _registry.get().add_system([this](Registry&)
-                               { _window.clear(sf::Color::Black); });
-  _registry.get().add_system(
-      [this](Registry& r)
-      { this->background_system(r); });
+                             { _window.clear(sf::Color::Black); });
+  _registry.get().add_system([this](Registry& r)
+                             { this->background_system(r); });
 
-  _registry.get().add_system(
-      [this](Registry& r)
-      { this->render_sprites(r); });
+  _registry.get().add_system([this](Registry& r) { this->render_sprites(r); });
 
-  _registry.get().add_system(
-      [this](Registry& r)
-      { this->render_text(r); });
+  _registry.get().add_system([this](Registry& r) { this->render_text(r); });
 
-  _registry.get().add_system(
-      [this](Registry& r)
-      {
-        this->animation_system(r);
-      });
-  _registry.get().add_system(
-      [this](Registry& r)
-      { this->camera_system(r); });
+  _registry.get().add_system([this](Registry& r)
+                             { this->animation_system(r); });
+  _registry.get().add_system([this](Registry& r) { this->camera_system(r); });
   _registry.get().add_system<>([this](Registry&) { this->display(); });
   _textures.insert_or_assign(SFMLRenderer::placeholder_texture,
                              gen_placeholder());
 
-  _registry.get().on<PlayAnimationEvent>(
-      "PlayAnimationEvent",
-      [this](const PlayAnimationEvent& event)
-      { AnimatedSprite::on_play_animation(this->_registry.get(), event); });
-  _registry.get().on<AnimationEndEvent>(
-      "AnimationEndEvent",
-      [this](const AnimationEndEvent& event)
-      { AnimatedSprite::on_animation_end(this->_registry.get(), event); });
-  _registry.get().on<DamageEvent>(
-      "DamageEvent",
-      [this](const DamageEvent& event)
-      { AnimatedSprite::on_death(this->_registry.get(), event); });
+  SUBSCRIBE_EVENT(PlayAnimationEvent, {
+    AnimatedSprite::on_play_animation(this->_registry.get(), event);
+  })
+  SUBSCRIBE_EVENT(AnimationEndEvent, {
+    AnimatedSprite::on_animation_end(this->_registry.get(), event);
+  })
+  SUBSCRIBE_EVENT(DamageEvent,
+                  { AnimatedSprite::on_death(this->_registry.get(), event); })
 }
 
 SFMLRenderer::~SFMLRenderer()
@@ -181,12 +173,12 @@ void SFMLRenderer::handle_events()
 
   _key_pressed.key_pressed.clear();
   if (_key_pressed.key_unicode.has_value()) {
-    _key_pressed.key_unicode->clear();
+    _key_pressed.key_unicode.reset();
   }
 
   _key_released.key_released.clear();
   if (_key_released.key_unicode.has_value()) {
-    _key_released.key_unicode->clear();
+    _key_released.key_unicode.reset();
   }
 
   while (const std::optional event = _window.pollEvent()) {
@@ -253,9 +245,7 @@ void SFMLRenderer::render_sprites(Registry& r)
                               r.get_components<Drawable>().size(),
                               r.get_components<Sprite>().size()}));
 
-  for (auto&& [pos, draw, spr] :
-       Zipper<Position, Drawable, Sprite>(r))
-  {
+  for (auto&& [pos, draw, spr] : Zipper<Position, Drawable, Sprite>(r)) {
     if (!draw.enabled) {
       continue;
     }
@@ -305,9 +295,7 @@ void SFMLRenderer::render_sprites(Registry& r)
 
 void SFMLRenderer::render_text(Registry& r)
 {
-  for (auto&& [i, pos, draw, txt] :
-       ZipperIndex<Position, Drawable, Text>(r))
-  {
+  for (auto&& [i, pos, draw, txt] : ZipperIndex<Position, Drawable, Text>(r)) {
     if (!draw.enabled) {
       continue;
     }

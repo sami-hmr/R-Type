@@ -1,4 +1,4 @@
-  {
+{
   "entities_template": [
     {
       "name": "menu",
@@ -92,16 +92,9 @@
                 "name": "SceneChangeEvent",
                 "params": {
                   "target_scene": "game",
-                  "state": "main",
-                  "reason": "User pressed enter"
-                }
-              },
-              {
-                "name": "SceneChangeEvent",
-                "params": {
-                  "target_scene": "menu",
-                  "state": "disabled",
-                  "reason": "User pressed R"
+                  "state": "enabled",
+                  "reason": "User pressed enter",
+                  "force": true
                 }
               }
             ]
@@ -221,18 +214,8 @@
               "y": -0.3
             }
           },
-          "moving:Velocity": {
-            "speed": {
-              "x": 0.005,
-              "y": 0.005
-            },
-            "direction": {
-              "x": 0.0,
-              "y": 0.0
-            }
-          },
-          "sfml:Drawable": {},
-          "sfml:Sprite": {
+          "ui:Drawable": {},
+          "ui:Sprite": {
             "texture": "assets/enemy.png",
             "size": {
               "width": "20.0%",
@@ -252,9 +235,18 @@
           "life:Team": {
             "name": "test"
           },
-          "target:Follower": {},
-          "collision:InteractionZone": {
-            "radius": 0.9
+          "life:Damage": {
+            "amount": 1
+          },
+          "moving:Velocity": {
+            "speed": {
+              "x": 0.005,
+              "y": 0.005
+            },
+            "direction": {
+              "x": 0.0,
+              "y": 0.0
+            }
           }
         },
         {
@@ -281,7 +273,7 @@
             "text": "#game_text:buffer"
           }
         },
-        
+
         {
           "actions:ActionTrigger": {
             "trigger": {

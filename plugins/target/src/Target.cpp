@@ -6,25 +6,26 @@
 #include "ecs/SparseArray.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "libs/Vector2D.hpp"
+#include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Follower.hpp"
 #include "plugin/components/Health.hpp"
 #include "plugin/components/Position.hpp"
-#include "plugin/components/Velocity.hpp"
 #include "plugin/components/Team.hpp"
+#include "plugin/components/Velocity.hpp"
 #include "plugin/events/InteractionZoneEvent.hpp"
 
 Target::Target(Registry& r, EntityLoader& l)
-    : APlugin(r, l, {"moving", "life"}, {COMP_INIT(Follower, Follower, init_follower)})
+    : APlugin("target",
+              r,
+              l,
+              {"moving", "life"},
+              {COMP_INIT(Follower, Follower, init_follower)})
 {
-  this->_registry.get().register_component<Follower>("target:Follower");
-
+  REGISTER_COMPONENT(Follower)
   this->_registry.get().add_system([this](Registry& r)
                                    { this->target_system(r); });
-  this->_registry.get().on<InteractionZoneEvent>(
-      "InteractionZoneEvent",
-      [this](const InteractionZoneEvent& event)
-      { this->on_interaction_zone(event); });
+  SUBSCRIBE_EVENT(InteractionZoneEvent, { this->on_interaction_zone(event); })
 }
 
 void Target::init_follower(Registry::Entity entity, JsonObject const& obj)
@@ -71,7 +72,7 @@ void Target::target_system(Registry& reg)
 
     Vector2D direction_diff = new_direction - velocity.direction;
     double direction_change = direction_diff.length();
-    
+
     if (direction_change > DIRECTION_TOLERANCE) {
       velocity.direction = new_direction;
 
@@ -110,7 +111,9 @@ void Target::on_interaction_zone(const InteractionZoneEvent& event)
       closest_entity = candidate;
     }
   }
-  if (closest_entity.has_value() && closest_entity != followers[event.source]->target) {
+  if (closest_entity.has_value()
+      && closest_entity != followers[event.source]->target)
+  {
     followers[event.source]->target = closest_entity.value();
     followers[event.source]->lost_target = false;
 

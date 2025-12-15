@@ -15,37 +15,40 @@
 #include "plugin/events/IoEvents.hpp"
 
 Weapon::Weapon(Registry& r, EntityLoader& l)
-    : APlugin(r, l, {"moving"}, {COMP_INIT(BasicWeapon, BasicWeapon, init_basic_weapon)}), entity_loader(l)
+    : APlugin("weapon",
+              r,
+              l,
+              {"moving"},
+              {COMP_INIT(BasicWeapon, BasicWeapon, init_basic_weapon)})
+    , entity_loader(l)
 {
-    _registry.get().register_component<BasicWeapon>("weapon:BasicWeapon");
-    _registry.get().on<KeyPressedEvent>("KeyPressedEvent", [this] (const KeyPressedEvent& e) {
-        this->on_fire(this->_registry.get(), e);
-    });
+  REGISTER_COMPONENT(BasicWeapon)
+  SUBSCRIBE_EVENT(KeyPressedEvent,
+                  { this->on_fire(this->_registry.get(), event); })
 }
 
-
-void Weapon::on_fire(Registry &r, const KeyPressedEvent &e)
+void Weapon::on_fire(Registry& r, const KeyPressedEvent& e)
 {
   if (!e.key_pressed.contains(Key::SPACE)) {
     return;
   }
   Registry::Entity player = 0;
 
-  for (auto &&[i, _]: ZipperIndex<Controllable>(r)) {
+  for (auto&& [i, _] : ZipperIndex<Controllable>(r)) {
     player = i;
   }
 
-  for (auto &&[weapon] : Zipper<BasicWeapon>(r)) {
-    std::optional<Registry::Entity> bullet = this->entity_loader.load_entity(JsonObject({{"template", JsonValue(weapon.bullet_type)}}));
+  for (auto&& [weapon] : Zipper<BasicWeapon>(r)) {
+    std::optional<Registry::Entity> bullet = this->entity_loader.load_entity(
+        JsonObject({{"template", JsonValue(weapon.bullet_type)}}));
     if (!bullet) {
-        continue;
+      continue;
     }
-    SparseArray<Position> &positions = r.get_components<Position>();
+    SparseArray<Position>& positions = r.get_components<Position>();
     positions.at(bullet.value())->pos = positions.at(player)->pos;
     r.add_component<Scene>(bullet.value(), Scene("game", SceneState::ACTIVE));
   }
 }
-
 
 extern "C"
 {
