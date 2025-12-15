@@ -19,6 +19,7 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Mouse.hpp>
 
+#include "../../collision/include/algorithm/Rect.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/Scenes.hpp"
 #include "ecs/SparseArray.hpp"
@@ -30,12 +31,15 @@
 #include "plugin/components/AnimatedSprite.hpp"
 #include "plugin/components/Background.hpp"
 #include "plugin/components/Camera.hpp"
+#include "plugin/components/Clickable.hpp"
+#include "plugin/components/Collidable.hpp"
 #include "plugin/components/Drawable.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Sprite.hpp"
 #include "plugin/components/Text.hpp"
 #include "plugin/events/AnimationEvents.hpp"
 #include "plugin/events/DamageEvent.hpp"
+#include "plugin/events/IoEvents.hpp"
 #include "plugin/events/LoggerEvent.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
 
@@ -118,6 +122,8 @@ SFMLRenderer::SFMLRenderer(Registry& r, EntityLoader& l)
   })
   SUBSCRIBE_EVENT(DamageEvent,
                   { AnimatedSprite::on_death(this->_registry.get(), event); })
+  SUBSCRIBE_EVENT(MousePressedEvent,
+                  { this->on_click(this->_registry.get(), event); })
 }
 
 SFMLRenderer::~SFMLRenderer()
@@ -174,16 +180,17 @@ void SFMLRenderer::handle_resize()
   _window.setView(this->_view);
 }
 
-static constexpr double deux = 2.0; //allez le linter t content mtn y'a une constante
+static constexpr double deux =
+    2.0;  // allez le linter t content mtn y'a une constante
 
-void SFMLRenderer::mouse_events(const sf::Event &events)
+void SFMLRenderer::mouse_events(const sf::Event& events)
 {
   sf::Vector2u window_size = _window.getSize();
   double min_dimension =
       static_cast<double>(std::min(window_size.x, window_size.y));
   const sf::Vector2i mouse_pos = sf::Mouse::getPosition(_window);
-  const auto *mouse_pressed = events.getIf<sf::Event::MouseButtonPressed>();
-  const auto *mouse_released = events.getIf<sf::Event::MouseButtonReleased>();
+  const auto* mouse_pressed = events.getIf<sf::Event::MouseButtonPressed>();
+  const auto* mouse_released = events.getIf<sf::Event::MouseButtonReleased>();
 
   if (mouse_pressed != nullptr) {
     if (MOUSEBUTTONMAP.contains(mouse_pressed->button)) {
@@ -413,6 +420,34 @@ void SFMLRenderer::bar_system(Registry& r)
         sf::Color(bar.color.r, bar.color.g, bar.color.b, bar.color.a));
     this->_rectangle.setPosition(new_pos + offset);
     this->_window.draw(_rectangle);
+  }
+}
+
+void SFMLRenderer::on_click(Registry& r, const MousePressedEvent& event)
+{
+  for (const auto& [draw, clickable, pos, collision] :
+       Zipper<Drawable, Clickable, Position, Collidable>(r))
+  {
+    if (!draw.enabled) {
+      continue;
+    }
+    std::cout << "Checking clickable at position (" << pos.pos.x << ", "
+              << pos.pos.y << ") with size (" << collision.width << ", "
+              << collision.height << ")\n";
+              std::cout << "Mouse position: (" << event.position.x << ", "
+              << event.position.y << ")\n";
+    Rect entity_rect = {.x = pos.pos.x,
+                        .y = pos.pos.y,
+                        .width = collision.width,
+                        .height = collision.height};
+    if (entity_rect.contains(event.position.x, event.position.y)) {
+      std::cout << "Clickable entity clicked!\n";
+      for (const auto& [name, obj] : clickable.to_emit) {
+        std::cout << "Emitting event: " << name << "\n";
+        r.emit(name, obj);
+        return;
+      }
+    }
   }
 }
 

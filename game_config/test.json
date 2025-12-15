@@ -242,6 +242,18 @@
               }
             },
             "ui:Drawable": {},
+            "ath:Clickable": {
+              "to_emit": [
+                {
+                  "SceneChangeEvent": {
+                    "target_scene": "menu",
+                    "state": "main",
+                    "reason": "User clicked enemy sprite",
+                    "force": true
+                  }
+                }
+              ]
+            },
             "ui:Sprite": {
               "texture": "assets/enemy.png",
               "size": {

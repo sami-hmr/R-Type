@@ -9,12 +9,27 @@ struct Rect
 
   bool intersects(Rect const& other) const
   {
-    return x + width >= other.x && other.x + other.width >= x
-             && y + height >= other.y && other.y + other.height >= y;
+    double left = x - (width / 2);
+    double right = x + (width / 2);
+    double top = y - (height / 2);
+    double bottom = y + (height / 2);
+
+    double other_left = other.x - (other.width / 2);
+    double other_right = other.x + (other.width / 2);
+    double other_top = other.y - (other.height / 2);
+    double other_bottom = other.y + (other.height / 2);
+
+    return right >= other_left && other_right >= left && bottom >= other_top
+        && other_bottom >= top;
   }
 
   bool contains(double px, double py) const
   {
-    return px >= x && px < x + width && py >= y && py < y + height;
+    double left = x - (width / 2);
+    double right = x + (width / 2);
+    double top = y - (height / 2);
+    double bottom = y + (height / 2);
+
+    return px >= left && px < right && py >= top && py < bottom;
   }
 };

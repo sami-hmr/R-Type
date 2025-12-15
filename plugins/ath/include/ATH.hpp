@@ -20,4 +20,6 @@ public:
                   const SparseArray<Drawable>& drawables,
                   const SparseArray<Position>& positions,
                   SparseArray<Bar>& bars);
+
+  void init_clickable(Registry::Entity const& e, JsonObject const& obj);
 };

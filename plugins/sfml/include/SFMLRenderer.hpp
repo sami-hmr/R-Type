@@ -57,7 +57,8 @@ private:
   void background_system(Registry& r);
   void camera_system(Registry &r);
   void bar_system(Registry &r);
-
+  
+  void on_click(Registry &r, const MousePressedEvent &event);
   void animation_system(Registry& r);
   void display();
 
