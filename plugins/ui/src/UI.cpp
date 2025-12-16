@@ -1,5 +1,6 @@
 #include "UI.hpp"
 
+#include "libs/Color.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/Hooks.hpp"
@@ -86,16 +87,59 @@ void UI::init_text(Registry::Entity const& entity, JsonObject const& obj)
                 .value();
   }
 
-  auto& text_opt = _registry.get().emplace_component<Text>(
-      entity, font_path.value(), scale, "");
+  auto const &str = get_value<Text, std::string>(
+      this->_registry.get(), obj, entity, "text");
 
-  if (text_opt.has_value()) {
-    auto text_val = get_value<Text, std::string>(
-        this->_registry.get(), obj, entity, "text");
-    if (text_val) {
-      text_opt.value().text = text_val.value();
-    }
+  std::string text = "";
+  if (!str.has_value()) {
+    std::cerr << "Error loading text component: unexpected value type (text: "
+                 "string)\n";
+    return;
+  } 
+  text = str.value();
+  
+  const std::optional<Color> &outline_color = get_value<Text, Color>(
+      this->_registry.get(), obj, entity, "outline_color");
+
+  if (!outline_color.has_value()) {
+    std::cerr << "Error loading text component: unexpected value type "
+                 "(outline_color: Color)\n";
+    return;
   }
+
+  const std::optional<Color> &fill_color = get_value<Text, Color>(
+      this->_registry.get(), obj, entity, "fill_color");
+  if (!fill_color.has_value()) {
+    std::cerr << "Error loading text component: unexpected value type "
+                 "(fill_color: Color)\n";
+    return;
+  }
+
+  const std::optional<bool> &outline = get_value<Text, bool>(
+      this->_registry.get(), obj, entity, "outline");
+  if (!outline.has_value()) {
+    std::cerr << "Error loading text component: unexpected value type "
+                 "(outline: bool)\n";
+    return;
+  }
+
+  const std::optional<float> &outline_thickness = get_value<Text, double>(
+      this->_registry.get(), obj, entity, "outline_thickness");
+  if (!outline_thickness.has_value()) {
+    std::cerr << "Error loading text component: unexpected value type "
+                 "(outline_thickness: float)\n";
+    return;
+  }
+  
+  _registry.get().emplace_component<Text>(
+      entity,
+      font_path.value(),
+      scale,
+      text,
+      outline_color.value(),
+      fill_color.value(),
+      outline.value(),
+      outline_thickness.value());
 }
 
 void UI::init_input(Registry::Entity entity, const JsonVariant& config)

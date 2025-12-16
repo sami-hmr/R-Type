@@ -6,41 +6,59 @@
 
 #include "BaseTypes.hpp"
 #include "ByteParser/ByteParser.hpp"
+#include "libs/Color.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
 
 struct Text
 {
-  Text(std::string font_path, Vector2D v, std::string t)
+  Text(std::string font_path, Vector2D v, std::string t, Color outline_color, Color fill_color, bool outline, float outline_thickness)
       : font_path(std::move(font_path))
       , scale(v)
       , text(std::move(t))
+      , outline_color(outline_color)
+      , fill_color(fill_color)
+      , outline(outline)
+      , outline_thickness(outline_thickness)
   {
   }
 
   DEFAULT_BYTE_CONSTRUCTOR(
       Text,
       (
-          [](std::string font_path, double x, double y, std::string text)
+          [](std::string font_path, double x, double y, std::string text, Color outline_color, Color fill_color, bool outline, float outline_thickness)
           {
-            return Text(std::move(font_path), Vector2D {x, y}, std::move(text));
+            return Text(std::move(font_path), Vector2D {x, y}, std::move(text), outline_color, fill_color, outline, outline_thickness);
           }),
       parseByteString(),
       parseByte<double>(),
       parseByte<double>(),
-      parseByteString())
+      parseByteString(),
+      parseColor(),
+      parseColor(),
+      parseByte<bool>(),
+      parseByte<float>())
 
   DEFAULT_SERIALIZE(string_to_byte(this->font_path),
                     type_to_byte(this->scale.x),
                     type_to_byte(this->scale.y),
-                    string_to_byte(this->text))
+                    string_to_byte(this->text),
+                    colorToByte(this->outline_color),
+                    colorToByte(this->fill_color),
+                    type_to_byte<bool>(this->outline),
+                    type_to_byte<float>(this->outline_thickness))
 
   CHANGE_ENTITY_DEFAULT
 
   std::string font_path;
   Vector2D scale;
   std::string text;
+  Color outline_color = BLACK;
+  Color fill_color = WHITE;
+  bool outline = false;
+  float outline_thickness = 1.0f;
 
-  HOOKABLE(Text, HOOK(font_path), HOOK(scale), HOOK(text))
+  HOOKABLE(Text, HOOK(font_path), HOOK(scale), HOOK(text), HOOK(outline_color),
+           HOOK(fill_color), HOOK(outline), HOOK(outline_thickness))
 };

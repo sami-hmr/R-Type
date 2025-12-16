@@ -300,13 +300,14 @@ void SFMLRenderer::render_sprites(Registry& r)
     if (!draw.enabled) {
       continue;
     }
-    
+
     float offset_x = (window_size.x - min_dimension) / 2.0f;
     float offset_y = (window_size.y - min_dimension) / 2.0f;
-    
+
     sf::Vector2f new_pos(
         static_cast<float>((pos.pos.x + 1.0) * min_dimension / deux) + offset_x,
-        static_cast<float>((pos.pos.y + 1.0) * min_dimension / deux) + offset_y);
+        static_cast<float>((pos.pos.y + 1.0) * min_dimension / deux)
+            + offset_y);
 
     if (new_pos.x < view_pos.x - (view_size.x / 2)
         || new_pos.x > view_pos.x + (view_size.x / 2))
@@ -362,36 +363,44 @@ void SFMLRenderer::render_text(Registry& r)
     _text.value().setFont(font);
 
     _text.value().setString(txt.text);
-    
+
     constexpr unsigned int base_size = 100;
     _text.value().setCharacterSize(base_size);
     sf::Rect<float> text_rect = _text.value().getLocalBounds();
 
     sf::Vector2u window_size = _window.getSize();
-    float min_dimension =
+    double min_dimension =
         static_cast<float>(std::min(window_size.x, window_size.y));
-    
-    float desired_width = min_dimension * txt.scale.x;
-    float desired_height = min_dimension * txt.scale.y;
-    
-    float scale_x = desired_width / text_rect.size.x;
-    float scale_y = desired_height / text_rect.size.y;
-    float text_scale = std::min(scale_x, scale_y);
-    
-    unsigned int final_size = static_cast<unsigned int>(base_size * text_scale);
+
+    double desired_width = min_dimension * txt.scale.x;
+    double desired_height = min_dimension * txt.scale.y;
+
+    double scale_x = desired_width / text_rect.size.x;
+    double scale_y = desired_height / text_rect.size.y;
+    double text_scale = std::min(scale_x, scale_y);
+
+    auto final_size = static_cast<unsigned int>(base_size * text_scale);
     _text.value().setCharacterSize(final_size);
 
     text_rect = _text.value().getLocalBounds();
-    _text.value().setOrigin({text_rect.position.x + text_rect.size.x / 2.0f,
-                            text_rect.position.y + text_rect.size.y / 2.0f});
-    
+    _text.value().setOrigin({text_rect.position.x + (text_rect.size.x / 2.0f),
+                             text_rect.position.y + (text_rect.size.y / 2.0f)});
+
     float offset_x = (window_size.x - min_dimension) / deux;
     float offset_y = (window_size.y - min_dimension) / deux;
-    
+
     sf::Vector2f new_pos(
         static_cast<float>((pos.pos.x + 1.0) * min_dimension / deux) + offset_x,
-        static_cast<float>((pos.pos.y + 1.0) * min_dimension / deux) + offset_y);
+        static_cast<float>((pos.pos.y + 1.0) * min_dimension / deux)
+            + offset_y);
     _text.value().setPosition(new_pos);
+    _text.value().setFillColor(sf::Color(txt.fill_color.r, txt.fill_color.g, txt.fill_color.b, txt.fill_color.a));
+    _text.value().setOutlineColor(sf::Color(txt.outline_color.r, txt.outline_color.g, txt.outline_color.b, txt.outline_color.a));
+    if (txt.outline) {
+      _text.value().setOutlineThickness(txt.outline_thickness * 0.1f);
+    } else {
+      _text.value().setOutlineThickness(0.0f);
+    }
     _window.draw(_text.value());
   }
 }
@@ -410,13 +419,15 @@ void SFMLRenderer::bar_system(Registry& r)
     }
     float min_dimension =
         static_cast<float>(std::min(window_size.x, window_size.y));
-    
+
     float offset_x = (window_size.x - min_dimension) / 2.0f;
     float offset_y = (window_size.y - min_dimension) / 2.0f;
-    
+
     sf::Vector2f new_pos(
-        static_cast<float>((position.pos.x + 1.0) * min_dimension / 2.0f) + offset_x,
-        static_cast<float>((position.pos.y + 1.0) * min_dimension / 2.0f) + offset_y);
+        static_cast<float>((position.pos.x + 1.0) * min_dimension / 2.0f)
+            + offset_x,
+        static_cast<float>((position.pos.y + 1.0) * min_dimension / 2.0f)
+            + offset_y);
     sf::Vector2f size(static_cast<float>(bar.size.x * min_dimension),
                       static_cast<float>(bar.size.y * min_dimension));
     sf::Vector2f offset(static_cast<float>(bar.offset.x * min_dimension),
