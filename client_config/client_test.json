@@ -2,7 +2,7 @@
   "scenes": [
     {
       "name": "game",
-      "state": "disabled",
+      "state": "active",
       "plugins": [
         {
           "name": "logger",
@@ -40,7 +40,7 @@
                 "key": "Z",
                 "params": {
                   "x": 0.0,
-                  "y": 1.0
+                  "y": -1.0
                 }
               },
               {
@@ -56,16 +56,21 @@
                 "key": "S",
                 "params": {
                   "x": 0.0,
-                  "y": -1.0
+                  "y": 1.0
                 }
               },
               {
                 "name": "UpdateVelocity",
                 "key": "D",
                 "params": {
-                  "x": 0.0,
-                  "y": 1.0
+                  "x": 1.0,
+                  "y": 0.0
                 }
+              },
+              {
+                "name": "FireBullet",
+                "key": "SPACE",
+                "params": {}
               }
             ],
             "released": [
@@ -74,7 +79,7 @@
                 "key": "Z",
                 "params": {
                   "x": 0.0,
-                  "y": -1.0
+                  "y": 1.0
                 }
               },
               {
@@ -90,15 +95,15 @@
                 "key": "S",
                 "params": {
                   "x": 0.0,
-                  "y": 1.0
+                  "y": -1.0
                 }
               },
               {
                 "name": "UpdateVelocity",
                 "key": "D",
                 "params": {
-                  "x": 0.0,
-                  "y": -1.0
+                  "x": -1.0,
+                  "y": 0.0
                 }
               }
             ]

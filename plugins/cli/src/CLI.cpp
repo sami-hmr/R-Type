@@ -27,7 +27,7 @@ CLI::CLI(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config)
     : APlugin("cli",
               r,
               l,
-              {"logger", "server_network", "client_network"},
+              {"logger"},
               {},
               config)
 {

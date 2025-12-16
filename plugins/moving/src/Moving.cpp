@@ -31,15 +31,12 @@ Moving::Moving(Registry& r, EntityLoader& l)
       [this](Registry& r) { this->moving_system(r); }, 4);
 
   SUBSCRIBE_EVENT(UpdateVelocity, {
-    std::cout << "VELOCITY\n";
     auto& comp = this->_registry.get().get_components<Velocity>()[event.entity];
     if (!comp) {
       return;
     }
-    this->_registry.get().emit<EventBuilder>("UpdateVelocity",
-                                             event.to_bytes());
-    comp->direction.x = std::min(-1.0, std::max(comp->direction.x + event.x_axis, 1.0));
-    comp->direction.y = std::min(-1.0, std::max(comp->direction.y + event.y_axis, 1.0));
+    comp->direction.x = std::max(-1.0, std::min(comp->direction.x + event.x_axis, 1.0));
+    comp->direction.y = std::max(-1.0, std::min(comp->direction.y + event.y_axis, 1.0));
   })
 }
 

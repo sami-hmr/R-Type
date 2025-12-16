@@ -80,6 +80,7 @@ void SFMLRenderer::animation_system(
         std::ref(texture), uniform_scale, new_pos, pos.z, anim_data);
   }
 
+
   std::sort(drawables.begin(),
             drawables.end(),
             [](auto const& a, auto const& b)

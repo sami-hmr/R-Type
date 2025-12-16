@@ -6,6 +6,7 @@
 #include "Controller.hpp"
 
 #include "Json/JsonParser.hpp"
+#include "ecs/EmitEvent.hpp"
 #include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
@@ -89,7 +90,6 @@ void Controller::init_event_map(Registry::Entity const& entity,
 void Controller::init_controller(Registry::Entity const& entity,
                                  JsonObject const& obj)
 {
-  std::cout << "INIT\n";
   Controllable result(
       (std::unordered_map<std::uint16_t, Controllable::Trigger>()));
   auto pressed = std::get<JsonArray>(obj.at("pressed").value);
@@ -98,7 +98,7 @@ void Controller::init_controller(Registry::Entity const& entity,
   this->init_event_map(entity, pressed, result, KEY_PRESSED);
   this->init_event_map(entity, released, result, KEY_REALEASED);
 
-  init_component(this->_registry.get(), entity, result);
+  this->_registry.get().add_component<Controllable>(entity, std::move(result));
 }
 
 void Controller::handle_key_change(Key key, bool is_pressed)
@@ -108,12 +108,12 @@ void Controller::handle_key_change(Key key, bool is_pressed)
       (static_cast<std::uint32_t>(key) << 8) + static_cast<int>(is_pressed);
 
   for (auto&& [c] : Zipper<Controllable>(this->_registry.get())) {
-    std::cout << "CONTROLLABLE\n";
     if (!c.event_map.contains(key_map)) {
       continue;
     }
     auto const& event = c.event_map.at(key_map);
-    this->_registry.get().emit(event.first, event.second);
+
+    emit_event(this->_registry.get(), event.first, event.second);
   }
 };
 

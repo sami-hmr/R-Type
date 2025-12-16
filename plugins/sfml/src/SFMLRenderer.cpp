@@ -53,7 +53,7 @@ static const std::map<sf::Keyboard::Key, Key> key_association = {
     {sf::Keyboard::Key::Escape, Key::ECHAP},
     {sf::Keyboard::Key::Backspace, Key::DELETE},
     {sf::Keyboard::Key::Space, Key::SPACE},
-    {sf::Keyboard::Key::LShift, Key::SHIFT},  
+    {sf::Keyboard::Key::LShift, Key::SHIFT},
     {sf::Keyboard::Key::RShift, Key::SHIFT},
     {sf::Keyboard::Key::LControl, Key::CTRL},
     {sf::Keyboard::Key::RControl, Key::CTRL},
@@ -95,8 +95,7 @@ static const std::map<sf::Keyboard::Key, Key> key_association = {
     {sf::Keyboard::Key::Num7, Key::SEVEN},
     {sf::Keyboard::Key::Num8, Key::EIGHT},
     {sf::Keyboard::Key::Num9, Key::NINE},
-    {sf::Keyboard::Key::Num0, Key::ZERO}
-};
+    {sf::Keyboard::Key::Num0, Key::ZERO}};
 
 static const std::map<sf::Mouse::Button, MouseButton> MOUSEBUTTONMAP = {
     {sf::Mouse::Button::Left, MouseButton::MOUSELEFT},
@@ -119,11 +118,7 @@ static sf::Texture gen_placeholder()
 }
 
 SFMLRenderer::SFMLRenderer(Registry& r, EntityLoader& l)
-    : APlugin("sfml",
-              r,
-              l,
-              {"moving", "ath", "ui", "client_network", "server_network", "collision"},
-              {})
+    : APlugin("sfml", r, l, {"moving", "ath", "ui", "collision"}, {})
 {
   _window =
       sf::RenderWindow(sf::VideoMode(window_size), "R-Type - SFML Renderer");
@@ -325,6 +320,7 @@ void SFMLRenderer::render_sprites(Registry& r)
 
   float min_dimension =
       static_cast<float>(std::min(window_size.x, window_size.y));
+
 
   drawables.reserve(std::max({r.get_components<Position>().size(),
                               r.get_components<Drawable>().size(),

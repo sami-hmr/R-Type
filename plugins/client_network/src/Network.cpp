@@ -76,7 +76,6 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
       std::size_t index = std::get<0>(*zipper.begin());
 
       this->_server_indexes.insert(event.server_index, index);
-
     } else {
       LOGGER("client",
              LogLevel::INFO,
@@ -89,7 +88,8 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
       // init_component<Controllable>(this->_registry.get(), {
       //   {"Z",
       //       {
-      //           {"name", this->_registry.get().get_event_key<UpdateVelocity>()},
+      //           {"name",
+      //           this->_registry.get().get_event_key<UpdateVelocity>()},
       //           {"params", {
       //               {"entity", JsonValue(static_cast<int>(new_entity))},
       //               {"x", JsonValue(static_cast<double>(0))},
@@ -126,6 +126,7 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
             this->_server_indexes.insert(server_comp.entity, new_entity);
           }
           auto true_entity = this->_server_indexes.at_first(server_comp.entity);
+
           this->_loader.get().load_byte_component(
               true_entity, server_comp, this->_server_indexes);
           this->_component_queue.queue.pop();

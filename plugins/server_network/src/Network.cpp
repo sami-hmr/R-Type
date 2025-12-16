@@ -37,6 +37,7 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
     : APlugin("network_server", r, l, {}, {})
     , _comp_semaphore(0)
     , _semaphore_event_to_server(0)
+
     , _event_semaphore(0)
 {
   SUBSCRIBE_EVENT(ServerLaunching, {
@@ -81,7 +82,6 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
         this->_event_queue.lock.lock();
         while (!this->_event_queue.queue.empty()) {
           auto& e = this->_event_queue.queue.front();
-          std::cout << e.event_id << std::endl;
           r.emit(e.event_id, e.data);
           this->_event_queue.queue.pop();
         }

@@ -11,6 +11,8 @@
 #include "plugin/components/Position.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
 #include "plugin/events/IoEvents.hpp"
+#include "plugin/events/WeaponEvent.hpp"
+#include "ecs/EmitEvent.hpp"
 
 Weapon::Weapon(Registry& r, EntityLoader& l)
     : APlugin("weapon",
@@ -21,34 +23,38 @@ Weapon::Weapon(Registry& r, EntityLoader& l)
     , entity_loader(l)
 {
   REGISTER_COMPONENT(BasicWeapon)
-  SUBSCRIBE_EVENT(KeyPressedEvent,
-                  { this->on_fire(this->_registry.get(), event); })
+  SUBSCRIBE_EVENT(FireBullet, { this->on_fire(this->_registry.get(), event); })
   _registry.get().add_system([this](Registry& r)
                              { this->basic_weapon_system(r.clock().now()); });
 }
 
-void Weapon::on_fire(Registry& r, const KeyPressedEvent& e)
+void Weapon::on_fire(Registry& r, const FireBullet& e)
 {
-  if (!e.key_pressed.contains(Key::SPACE)) {
+  auto now = r.clock().now();
+  if (!this->_registry.get().has_component<BasicWeapon, Position, Scene>(
+          e.entity))
+  {
     return;
   }
 
-  auto now = r.clock().now();
-  for (auto&& [weapon, pos, scene] : Zipper<BasicWeapon, Position, Scene>(r)) {
-    if (!weapon.update_basic_weapon(now)) {
-      continue;
-    }
-    this->_registry.get().emit<EventBuilder>(
-        this->_registry.get().get_event_key<LoadEntityTemplate>(),
-        LoadEntityTemplate(
-            weapon.bullet_type,
-            LoadEntityTemplate::Additional {
-                {this->_registry.get().get_component_key<Position>(),
-                 pos.to_bytes()},
-                {this->_registry.get().get_component_key<Scene>(),
-                 scene.to_bytes()}})
-            .to_bytes());
+  auto& weapon = *this->_registry.get().get_components<BasicWeapon>()[e.entity];
+  auto const& pos =
+      *this->_registry.get().get_components<Position>()[e.entity];
+  auto const& scene =
+      *this->_registry.get().get_components<Scene>()[e.entity];
+
+  if (!weapon.update_basic_weapon(now)) {
+    return;
   }
+  emit_event(this->_registry.get(),
+             "LoadEntityTemplate",
+             LoadEntityTemplate(
+                 weapon.bullet_type,
+                 LoadEntityTemplate::Additional {
+                     {this->_registry.get().get_component_key<Position>(),
+                      pos.to_bytes()},
+                     {this->_registry.get().get_component_key<Scene>(),
+                      scene.to_bytes()}}));
 }
 
 void Weapon::basic_weapon_system(
