@@ -1,97 +1,9 @@
   {
-    "entities_template": [
-      {
-        "name": "menu",
-        "components": {
-          "moving:Position": {
-            "pos": {
-              "x": 0.0,
-              "y": -0.5
-            }
-          },
-          "ui:Drawable": {},
-          "ui:Text": {
-            "font": "assets/fonts/roboto.ttf",
-            "size": {
-              "width": 40.0,
-              "height": 40.0
-            },
-            "text": "R-TYPE MENU"
-          }
-        }
-      }
-    ],
+    "entities_template": [],
     "scenes": [
       {
-        "name": "menu",
-        "state": "disabled",
-        "plugins": [
-          {
-            "name": "logger",
-            "config": {
-              "level": "DEBUG"
-            }
-          },
-          {
-            "name": "actions",
-            "config": {}
-          },
-          {
-            "name": "moving",
-            "config": {}
-          },
-          {
-            "name": "ui",
-            "config": {}
-          },
-          {
-            "name": "sfml",
-            "config": {}
-          }
-        ],
-        "entities": [
-          {
-            "template": "menu"
-          },
-          {
-            "moving:Position": {
-              "pos": {
-                "x": 0.0,
-                "y": 0.0
-              }
-            },
-            "ui:Drawable": {},
-            "ui:Text": {
-              "font": "assets/fonts/roboto.ttf",
-              "size": {
-                "width": 30.0,
-                "height": 30.0
-              },
-              "text": "Press ENTER to start game"
-            }
-          },
-          {
-            "moving:Position": {
-              "pos": {
-                "x": 0.0,
-                "y": 0.3
-              }
-            },
-            "ui:Drawable": {},
-            "ui:Text": {
-              "font": "assets/fonts/roboto.ttf",
-              "size": {
-                "width": 25.0,
-                "height": 25.0
-              },
-              "text": "Press R to return to menu"
-            }
-          }
-        ]
-      },
-      {
         "name": "game",
-        "state": "active",
+        "state": "disabled",
         "plugins": [
           {
             "name": "actions",
@@ -241,7 +153,6 @@
                 "y": -0.3
               }
             },
-            "ui:Drawable": {},
             "ui:Sprite": {
               "texture": "assets/enemy.png",
               "size": {
@@ -274,6 +185,7 @@
               "outline": false,
               "texture_path": "/home/sami/EPITECH/tek3/RType/R-Type/assets/backgrounds/background.png"
             },
+            "ui:Drawable": {},
             "collision:Collidable": {
               "width": 0.2,
               "height": 0.2,
@@ -340,8 +252,8 @@
                 {
                   "name": "SceneChangeEvent",
                   "params": {
-                    "target_scene": "game",
-                    "state": "disabled",
+                    "target_scene": "menu",
+                    "state": "main",
                     "reason": "User pressed R"
                   }
                 }
@@ -388,28 +300,6 @@
                   "y": 0.0
                 },
                 "framerate": 60.0
-              }
-            }
-          },
-          {
-            "moving:Position": {
-              "pos": {
-                "x": 0.0,
-                "y": 0.0
-              }
-            },
-            "ui:Camera": {
-              "size": {
-                "width": "100.0%",
-                "height": "100.0%"
-              },
-              "target": {
-                "x": "50.0%",
-                "y": "50.0%"
-              },
-              "speed": {
-                "x": 0.01,
-                "y": 0.01
               }
             }
           }

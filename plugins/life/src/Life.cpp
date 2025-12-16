@@ -23,6 +23,7 @@
 #include "plugin/components/Team.hpp"
 #include "plugin/events/CameraEvents.hpp"
 #include "plugin/events/DamageEvent.hpp"
+#include "plugin/events/DeathEvent.hpp"
 #include "plugin/events/HealEvent.hpp"
 
 Life::Life(Registry& r, EntityLoader& l)
@@ -40,11 +41,6 @@ Life::Life(Registry& r, EntityLoader& l)
   REGISTER_COMPONENT(Heal)
   REGISTER_COMPONENT(Team)
   this->_registry.get().add_system([this](Registry& r) { this->update_cooldowns(r); }, 2);
-
-
-  this->_registry.get().on<DamageEvent>("DamageEvent",
-                                        [this](const DamageEvent& event)
-                                        { this->on_damage(event); });
 
   SUBSCRIBE_EVENT(DamageEvent, { this->on_damage(event); })
   SUBSCRIBE_EVENT(HealEvent, { this->on_heal(event); })
@@ -196,9 +192,7 @@ void Life::on_damage(const DamageEvent& event)
         LogLevel::WARNING,
         std::format("Entity {} died!", event.target));
 
-    if (!this->_registry.get().has_component<AnimatedSprite>(event.target)) {
-      this->_registry.get().kill_entity(event.target);
-    }
+    this->_registry.get().emit<DeathEvent>(event.target);
   }
 }
 

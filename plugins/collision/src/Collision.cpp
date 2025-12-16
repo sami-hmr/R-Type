@@ -234,6 +234,7 @@ void Collision::on_collision(const CollisionEvent& c)
       if (dot_product < 0) {
         Vector2D perpendicular_vector = collision_normal * dot_product;
         positions[c.a]->pos -= perpendicular_vector;
+        positions[c.a]->pos -= movement;
       }
     } else if (type_a == CollisionType::Bounce) {
       double dot_product = velocities[c.a]->direction.dot(collision_normal);
