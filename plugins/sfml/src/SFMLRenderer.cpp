@@ -10,6 +10,7 @@
 
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Image.hpp>
+#include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -187,10 +188,8 @@ Vector2D SFMLRenderer::screen_to_world(sf::Vector2i screen_pos)
 {
   sf::Vector2f world_pos = _window.mapPixelToCoords(screen_pos, _view);
   sf::Vector2u window_size = _window.getSize();
-  double min_dimension =
-      static_cast<double>(std::min(window_size.x, window_size.y));
-  return Vector2D((world_pos.x * deux / min_dimension) - 1.0,
-                  (world_pos.y * deux / min_dimension) - 1.0);
+  return Vector2D((world_pos.x * deux / window_size.x) - 1.0,
+                  (world_pos.y * deux / window_size.y) - 1.0);
 }
 
 void SFMLRenderer::mouse_events(const sf::Event& events)
@@ -290,7 +289,6 @@ void SFMLRenderer::render_sprites(Registry& r)
   sf::Vector2u window_size = _window.getSize();
   sf::Vector2f view_size = this->_view.getSize();
   sf::Vector2f view_pos = this->_view.getCenter();
-
   float min_dimension =
       static_cast<float>(std::min(window_size.x, window_size.y));
 
@@ -302,9 +300,13 @@ void SFMLRenderer::render_sprites(Registry& r)
     if (!draw.enabled) {
       continue;
     }
+    
+    float offset_x = (window_size.x - min_dimension) / 2.0f;
+    float offset_y = (window_size.y - min_dimension) / 2.0f;
+    
     sf::Vector2f new_pos(
-        static_cast<float>((pos.pos.x + 1.0) * min_dimension / 2.0f),
-        static_cast<float>((pos.pos.y + 1.0) * min_dimension / 2.0f));
+        static_cast<float>((pos.pos.x + 1.0) * min_dimension / deux) + offset_x,
+        static_cast<float>((pos.pos.y + 1.0) * min_dimension / deux) + offset_y);
 
     if (new_pos.x < view_pos.x - (view_size.x / 2)
         || new_pos.x > view_pos.x + (view_size.x / 2))
@@ -319,9 +321,9 @@ void SFMLRenderer::render_sprites(Registry& r)
     sf::Texture& texture = load_texture(spr.texture_path);
 
     float scale_x =
-        static_cast<float>(window_size.x * spr.scale.x) / texture.getSize().x;
+        static_cast<float>(min_dimension * spr.scale.x) / texture.getSize().x;
     float scale_y =
-        static_cast<float>(window_size.y * spr.scale.y) / texture.getSize().y;
+        static_cast<float>(min_dimension * spr.scale.y) / texture.getSize().y;
     float uniform_scale = std::min(scale_x, scale_y);
 
     drawables.emplace_back(std::ref(texture), uniform_scale, new_pos, pos.z);
@@ -360,15 +362,36 @@ void SFMLRenderer::render_text(Registry& r)
     _text.value().setFont(font);
 
     _text.value().setString(txt.text);
+    
+    constexpr unsigned int base_size = 100;
+    _text.value().setCharacterSize(base_size);
+    sf::Rect<float> text_rect = _text.value().getLocalBounds();
 
     sf::Vector2u window_size = _window.getSize();
     float min_dimension =
         static_cast<float>(std::min(window_size.x, window_size.y));
+    
+    float desired_width = min_dimension * txt.scale.x;
+    float desired_height = min_dimension * txt.scale.y;
+    
+    float scale_x = desired_width / text_rect.size.x;
+    float scale_y = desired_height / text_rect.size.y;
+    float text_scale = std::min(scale_x, scale_y);
+    
+    unsigned int final_size = static_cast<unsigned int>(base_size * text_scale);
+    _text.value().setCharacterSize(final_size);
+
+    text_rect = _text.value().getLocalBounds();
+    _text.value().setOrigin({text_rect.position.x + text_rect.size.x / 2.0f,
+                            text_rect.position.y + text_rect.size.y / 2.0f});
+    
+    float offset_x = (window_size.x - min_dimension) / deux;
+    float offset_y = (window_size.y - min_dimension) / deux;
+    
     sf::Vector2f new_pos(
-        static_cast<float>((pos.pos.x + 1.0) * min_dimension / 2.0f),
-        static_cast<float>((pos.pos.y + 1.0) * min_dimension / 2.0f));
+        static_cast<float>((pos.pos.x + 1.0) * min_dimension / deux) + offset_x,
+        static_cast<float>((pos.pos.y + 1.0) * min_dimension / deux) + offset_y);
     _text.value().setPosition(new_pos);
-    _text.value().setCharacterSize(static_cast<unsigned int>(txt.scale.x));
     _window.draw(_text.value());
   }
 }
@@ -387,9 +410,13 @@ void SFMLRenderer::bar_system(Registry& r)
     }
     float min_dimension =
         static_cast<float>(std::min(window_size.x, window_size.y));
+    
+    float offset_x = (window_size.x - min_dimension) / 2.0f;
+    float offset_y = (window_size.y - min_dimension) / 2.0f;
+    
     sf::Vector2f new_pos(
-        static_cast<float>((position.pos.x + 1.0) * min_dimension / 2.0f),
-        static_cast<float>((position.pos.y + 1.0) * min_dimension / 2.0f));
+        static_cast<float>((position.pos.x + 1.0) * min_dimension / 2.0f) + offset_x,
+        static_cast<float>((position.pos.y + 1.0) * min_dimension / 2.0f) + offset_y);
     sf::Vector2f size(static_cast<float>(bar.size.x * min_dimension),
                       static_cast<float>(bar.size.y * min_dimension));
     sf::Vector2f offset(static_cast<float>(bar.offset.x * min_dimension),
