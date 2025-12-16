@@ -6,6 +6,7 @@
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Bar.hpp"
+#include "plugin/components/Button.hpp"
 #include "plugin/components/Clickable.hpp"
 #include "plugin/events/IoEvents.hpp"
 
@@ -15,11 +16,14 @@ ATH::ATH(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config)
               l,
               {"ui"},
               {COMP_INIT(Bar, Bar, init_bar),
-               COMP_INIT(Clickable, Clickable, init_clickable)},
+               COMP_INIT(Clickable, Clickable, init_clickable),
+               COMP_INIT(Button, Button, init_button)},
               config)
 {
   REGISTER_COMPONENT(Bar)
   REGISTER_COMPONENT(Clickable)
+  REGISTER_COMPONENT(Button)
+
 }
 
 extern "C"

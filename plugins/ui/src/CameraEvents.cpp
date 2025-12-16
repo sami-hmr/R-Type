@@ -22,6 +22,15 @@ void UI::cam_target_event(const CamAggroEvent& e)
   }
 }
 
+void UI::cam_move_event(const CamMoveEvent &e)
+{
+  for (auto&& [cam] : Zipper<Camera>(this->_registry.get()))
+  {
+        cam.target = e.target;
+        cam.moving = true;
+    }
+}
+
 void UI::cam_zoom_event(const CamZoomEvent &e)
 {
     for (auto&& [cam] : Zipper<Camera>(this->_registry.get()))

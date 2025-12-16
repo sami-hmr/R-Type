@@ -34,6 +34,12 @@ UI::UI(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config)
   REGISTER_COMPONENT(Camera)
   REGISTER_COMPONENT(Background)
   REGISTER_COMPONENT(AnimatedSprite)
+
+  SUBSCRIBE_EVENT(CamAggroEvent, { this->cam_target_event(event); })
+  SUBSCRIBE_EVENT(CamZoomEvent, { this->cam_zoom_event(event); })
+  SUBSCRIBE_EVENT(CamRotateEvent, { this->cam_rotate_event(event); })
+  SUBSCRIBE_EVENT(CamSpeedEvent, { this->cam_speed_event(event); })
+  SUBSCRIBE_EVENT(CamMoveEvent, { this->cam_move_event(event); })
 }
 
 void UI::init_drawable(Registry::Entity const& entity, JsonObject const&)
@@ -365,18 +371,6 @@ void UI::init_cam(Registry::Entity const& entity, JsonObject const& obj)
     return;
   }
   _registry.get().emplace_component<Camera>(entity, size, target, speed);
-  _registry.get().on<CamAggroEvent>("CamAggroEvent",
-                                    [this](const CamAggroEvent& e)
-                                    { this->cam_target_event(e); });
-  _registry.get().on<CamZoomEvent>("CamZoomEvent",
-                                   [this](const CamZoomEvent& e)
-                                   { this->cam_zoom_event(e); });
-  _registry.get().on<CamRotateEvent>("CamRotateEvent",
-                                     [this](const CamRotateEvent& e)
-                                     { this->cam_rotate_event(e); });
-  _registry.get().on<CamSpeedEvent>("CamSpeedEvent",
-                                    [this](const CamSpeedEvent& e)
-                                    { this->cam_speed_event(e); });
 }
 
 extern "C"

@@ -14,47 +14,51 @@ void QuadTreeNode::split()
 {
   double sub_width = bounds.width / 2.0;
   double sub_height = bounds.height / 2.0;
+  double quarter_width = sub_width / 2.0;
+  double quarter_height = sub_height / 2.0;
 
   _nodes.reserve(4);
 
   _nodes.emplace_back(
       _level + 1, 
-      Rect{.x=bounds.x, .y=bounds.y, .width=sub_width, .height=sub_height});
+      Rect{.x=bounds.x - quarter_width, .y=bounds.y - quarter_height, .width=sub_width, .height=sub_height});
 
   _nodes.emplace_back(
       _level + 1, 
-      Rect{.x=bounds.x + sub_width, .y=bounds.y, .width=sub_width, .height=sub_height});
+      Rect{.x=bounds.x + quarter_width, .y=bounds.y - quarter_height, .width=sub_width, .height=sub_height});
 
   _nodes.emplace_back(
       _level + 1, 
-      Rect{.x=bounds.x, .y=bounds.y + sub_height, .width=sub_width, .height=sub_height});
+      Rect{.x=bounds.x - quarter_width, .y=bounds.y + quarter_height, .width=sub_width, .height=sub_height});
 
   _nodes.emplace_back(
       _level + 1, 
-      Rect{.x=bounds.x + sub_width, .y=bounds.y + sub_height, .width=sub_width, .height=sub_height});
+      Rect{.x=bounds.x + quarter_width, .y=bounds.y + quarter_height, .width=sub_width, .height=sub_height});
 }
 
 int QuadTreeNode::get_index(Rect const& rect) const
 {
   int index = -1;
 
-  double vertical_midpoint = bounds.x + (bounds.width / 2.0);
-  double horizontal_midpoint = bounds.y + (bounds.height / 2.0);
+  double vertical_midpoint = bounds.x;
+  double horizontal_midpoint = bounds.y;
 
-  bool top_half = (rect.y < horizontal_midpoint && 
-                   rect.y + rect.height < horizontal_midpoint);
+  double rect_left = rect.x - (rect.width / 2.0);
+  double rect_right = rect.x + (rect.width / 2.0);
+  double rect_top = rect.y - (rect.height / 2.0);
+  double rect_bottom = rect.y + (rect.height / 2.0);
 
-  bool bottom_half = (rect.y > horizontal_midpoint);
+  bool top_half = (rect_bottom < horizontal_midpoint);
+  bool bottom_half = (rect_top > horizontal_midpoint);
 
-  if (rect.x < vertical_midpoint && 
-      rect.x + rect.width < vertical_midpoint) {
+  if (rect_right < vertical_midpoint) {
     if (top_half) {
       index = 0;
     } else if (bottom_half) {
       index = 2;
     }
   }
-  else if (rect.x > vertical_midpoint) {
+  else if (rect_left > vertical_midpoint) {
     if (top_half) {
       index = 1;
     } else if (bottom_half) {
