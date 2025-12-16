@@ -310,6 +310,20 @@
           }
         },
         {
+          "mob:Enemy": {
+            "type": 0
+          },
+          "mob:Spawner": {
+            "spawn_pos": {
+              "x": 0.0,
+              "y": 0.0
+            },
+            "entity_template": "Baguette",
+            "spawn_delta": 10.0,
+            "max_spawns": 10
+          }
+        },
+        {
           "ui:Drawable": {},
           "ui:Background": {
             "layers": [

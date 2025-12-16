@@ -2,6 +2,7 @@
 
 #include "Mob.hpp"
 
+#include "NetworkShared.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/EntityLoader.hpp"
@@ -25,14 +26,14 @@ Mob::Mob(Registry& r, EntityLoader& l)
 void Mob::init_enemy(Registry::Entity const& entity, JsonObject const& obj)
 {
   auto const& type =
-      get_value<Enemy, Enemy_type>(this->_registry.get(), obj, entity, "type");
+      get_value<Enemy, int>(this->_registry.get(), obj, entity, "type");
 
   if (!type) {
     std::cerr << "Error loading Enemy component: unexpected value type or "
                  "missing value in JsonObject\n";
     return;
   }
-  this->_registry.get().emplace_component<Enemy>(entity, type.value());
+  this->_registry.get().emplace_component<Enemy>(entity, Enemy_type(type.value()));
 }
 
 void Mob::init_spawner(Registry::Entity const& entity, JsonObject const& obj)
@@ -83,6 +84,8 @@ void Mob::spawner_system(Registry& r)
       positions.at(enemy.value())->pos = spawner.spawn_pos;
 
       r.add_component<Scene>(enemy.value(), Scene("game", SceneState::ACTIVE));
+      r.emit<ComponentBuilder>(
+          i, r.get_component_key<Spawner>(), spawner.to_bytes());
     }
   }
 }
