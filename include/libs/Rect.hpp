@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 struct Rect
 {
   double x;

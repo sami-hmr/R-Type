@@ -1,0 +1,189 @@
+{
+  "entities_template": [],
+  "scenes": [
+    {
+      "name": "camera",
+      "state": "active",
+      "plugins": [],
+      "entities": [
+        {
+          "moving:Position": {
+            "pos": {
+              "x": 0.0,
+              "y": -2.0
+            }
+          },
+          "ui:Camera": {
+            "size": {
+              "width": "100.0%",
+              "height": "100.0%"
+            },
+            "target": {
+              "x": 0.0,
+              "y": -2.0
+            },
+            "speed": {
+              "x": 0.01,
+              "y": 0.03
+            },
+            "moving": true
+          }
+        }
+      ]
+    },
+    {
+      "name": "menu",
+      "state": "active",
+      "plugins": [],
+      "entities": [
+        {
+          "ui:Drawable": {},
+          "ui:Background": {
+            "layers": [
+              {
+                "path": "assets/backgrounds/skies/Sky_sky.png"
+              }
+            ],
+            "render_type": "STRETCH",
+            "parallax": {
+              "active": false,
+              "speed": {
+                "x": 0.0,
+                "y": 0.0
+              },
+              "framerate": 60.0
+            },
+            "position": {
+                "x": 0.0,
+                "y": 0.0
+            }
+          }
+        },
+        {
+          "ui:AnimatedSprite": {
+            "animations": [
+              {
+                "name": "idle",
+                "texture": "assets/ui/buttons/start.png",
+                "frame_size": {
+                  "x": 410.0,
+                  "y": 121.0
+                },
+                "frame_pos": {
+                  "x": 0.0,
+                  "y": 0.0
+                },
+                "sprite_size": {
+                  "width": "30.0%",
+                  "height": "30.0%"
+                },
+                "direction": {
+                  "x": 0.0,
+                  "y": 0.0
+                },
+                "framerate": 1.0,
+                "nb_frames": 1,
+                "loop": true,
+                "rollback": false
+              },
+              {
+                "name": "hover",
+                "texture": "assets/ui/buttons/start_hover.png",
+                "frame_size": {
+                  "x": 410.0,
+                  "y": 121.0
+                },
+                "frame_pos": {
+                  "x": 0.0,
+                  "y": 0.0
+                },
+                "sprite_size": {
+                  "width": "30.0%",
+                  "height": "30.0%"
+                },
+                "direction": {
+                  "x": 0.0,
+                  "y": 0.0
+                },
+                "framerate": 1.0,
+                "nb_frames": 1,
+                "loop": false,
+                "rollback": false
+              },
+              {
+                "name": "pressed",
+                "texture": "assets/ui/buttons/start.png",
+                "frame_size": {
+                  "x": 410.0,
+                  "y": 121.0
+                },
+                "frame_pos": {
+                  "x": 0.0,
+                  "y": 0.0
+                },
+                "sprite_size": {
+                  "width": "30.0%",
+                  "height": "30.0%"
+                },
+                "direction": {
+                  "x": 0.0,
+                  "y": 0.0
+                },
+                "framerate": 1.0,
+                "nb_frames": 1,
+                "loop": true,
+                "rollback": false
+              }
+            ],
+            "default_animation": "idle"
+          },
+          "ui:Drawable": {},
+          "ath:Clickable": {
+            "to_emit": [
+              {
+                "SceneChangeEvent": {
+                  "target_scene": "game",
+                  "state": "main",
+                  "reason": "User clicked enemy sprite",
+                  "force": true
+                }
+              },
+              {
+                "SceneChangeEvent": {
+                  "target_scene": "camera",
+                  "state": "active",
+                  "reason": "User clicked enemy sprite",
+                  "force": false
+                }
+              },
+              {
+                "CamMoveEvent": {
+                  "target": {
+                    "x": 0.0,
+                    "y": 0.0
+                  }
+                }
+              }
+            ]
+          },
+          "moving:Position": {
+            "pos": {
+              "x": 0.0,
+              "y": -2.0
+            }
+          },
+          "collision:Collidable": {
+            "width": 0.2,
+            "height": 0.2,
+            "collision_type": "solid"
+          },
+          "ath:Button": {
+            "hover": false,
+            "toggle": false,
+            "pressed": false
+          }
+        }
+      ]
+    }
+  ]
+}

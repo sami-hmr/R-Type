@@ -118,12 +118,10 @@ void Collision::collision_system(Registry& r)
     if (!collidable.is_active) {
       continue;
     }
-    double rect_x = position.pos.x - (collidable.width / 2.0);
-    double rect_y = position.pos.y - (collidable.height / 2.0);
     entities.push_back(ICollisionAlgorithm::CollisionEntity {
         .entity_id = i,
-        .bounds = Rect {.x = rect_x,
-                        .y = rect_y,
+        .bounds = Rect {.x = position.pos.x,
+                        .y = position.pos.y,
                         .width = collidable.width,
                         .height = collidable.height}});
   }
@@ -152,8 +150,8 @@ void Collision::interaction_zone_system(Registry& r)
       continue;
     }
 
-    Rect range {.x = position.pos.x - zone.radius,
-                .y = position.pos.y - zone.radius,
+    Rect range {.x = position.pos.x,
+                .y = position.pos.y,
                 .width = zone.radius * 2,
                 .height = zone.radius * 2};
 
