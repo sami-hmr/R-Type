@@ -7,6 +7,7 @@
 
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Font.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
@@ -22,15 +23,16 @@
 #include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
-#include "plugin/components/Camera.hpp"
 #include "plugin/components/AnimatedSprite.hpp"
 #include "plugin/components/Background.hpp"
+#include "plugin/components/Bar.hpp"
+#include "plugin/components/Camera.hpp"
 #include "plugin/components/Drawable.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Sprite.hpp"
 #include "plugin/components/Text.hpp"
-#include "plugin/events/IoEvents.hpp"
 #include "plugin/events/CameraEvents.hpp"
+#include "plugin/events/IoEvents.hpp"
 
 class SFMLRenderer : public APlugin
 {
@@ -48,12 +50,17 @@ private:
   sf::Font& load_font(std::string const& path);
 
   void handle_events();
+  void mouse_events(const sf::Event &events);
   void handle_resize();
+  Vector2D screen_to_world(sf::Vector2i screen_pos);
   void render_sprites(Registry& r);
   void render_text(Registry& r);
   void background_system(Registry& r);
   void camera_system(Registry &r);
+  void bar_system(Registry &r);
+  void button_system(Registry& r);
 
+  
   void animation_system(Registry& r);
   void display();
 
@@ -67,7 +74,10 @@ private:
 
   std::optional<sf::Sprite> _sprite;
   std::optional<sf::Text> _text;
+  sf::RectangleShape _rectangle;
+
   sf::View _view;
+  bool _camera_initialized = false;
 
   void draw_nothing_background(Background& background);
   void draw_repeat_background(Background& background);
@@ -85,7 +95,6 @@ private:
            [this](Background& background)
            { this->draw_stretch_background(background); }},
       };
-
 
   KeyPressedEvent _key_pressed;
   KeyReleasedEvent _key_released;

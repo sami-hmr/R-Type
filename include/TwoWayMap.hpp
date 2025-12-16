@@ -34,9 +34,9 @@ public:
 
   bool contains_second(B const& a) { return _left.contains(a); }
 
-  std::unordered_map<A, B> const& get_first() { return _right; }
+  std::unordered_map<A, B> const& get_first() const { return _right; }
 
-  std::unordered_map<B, A> const& get_second() { return _left; }
+  std::unordered_map<B, A> const& get_second() const { return _left; }
 
 private:
   std::unordered_map<A, B> _right;

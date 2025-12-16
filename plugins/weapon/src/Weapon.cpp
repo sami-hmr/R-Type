@@ -1,6 +1,7 @@
 #include "Weapon.hpp"
 
 #include "Json/JsonParser.hpp"
+#include "NetworkShared.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/Scenes.hpp"
 #include "ecs/SparseArray.hpp"
@@ -15,34 +16,56 @@
 #include "plugin/events/IoEvents.hpp"
 
 Weapon::Weapon(Registry& r, EntityLoader& l)
-    : APlugin(r, l, {"moving"}, {COMP_INIT(BasicWeapon, BasicWeapon, init_basic_weapon)}), entity_loader(l)
+    : APlugin("weapon",
+              r,
+              l,
+              {"moving"},
+              {COMP_INIT(BasicWeapon, BasicWeapon, init_basic_weapon)})
+    , entity_loader(l)
 {
-    _registry.get().register_component<BasicWeapon>("weapon:BasicWeapon");
-    _registry.get().on<KeyPressedEvent>("KeyPressedEvent", [this] (const KeyPressedEvent& e) {
-        this->on_fire(this->_registry.get(), e);
-    });
+  REGISTER_COMPONENT(BasicWeapon)
+  SUBSCRIBE_EVENT(KeyPressedEvent,
+                  { this->on_fire(this->_registry.get(), event); })
+  _registry.get().add_system([this](Registry& r)
+                             { this->basic_weapon_system(r.clock().now()); });
 }
 
-
-void Weapon::on_fire(Registry &r, const KeyPressedEvent &e)
+void Weapon::on_fire(Registry& r, const KeyPressedEvent& e)
 {
   if (!e.key_pressed.contains(Key::SPACE)) {
     return;
   }
-  Registry::Entity player = 0;
 
-  for (auto &&[i, _]: ZipperIndex<Controllable>(r)) {
-    player = i;
-  }
-
-  for (auto &&[weapon] : Zipper<BasicWeapon>(r)) {
-    std::optional<Registry::Entity> bullet = this->entity_loader.load_entity(JsonObject({{"template", JsonValue(weapon.bullet_type)}}));
-    if (!bullet) {
-        continue;
+  auto now = r.clock().now();
+  for (auto&& [weapon, pos] : Zipper<BasicWeapon, Position>(r)) {
+    if (!weapon.update_basic_weapon(now)) {
+      continue;
     }
-    SparseArray<Position> &positions = r.get_components<Position>();
-    positions.at(bullet.value())->pos = positions.at(player)->pos;
+    Vector2D spawn_pos = pos.pos;
+    std::optional<Registry::Entity> bullet = this->entity_loader.load_entity(
+        JsonObject({{"template", JsonValue(weapon.bullet_type)}}));
+    if (!bullet) {
+      continue;
+    }
+    SparseArray<Position>& positions = r.get_components<Position>();
+    positions.at(bullet.value())->pos = spawn_pos;
     r.add_component<Scene>(bullet.value(), Scene("game", SceneState::ACTIVE));
+  }
+}
+
+
+void Weapon::basic_weapon_system(std::chrono::high_resolution_clock::time_point now)
+{
+  for (auto&& [weapon] : Zipper<BasicWeapon>(_registry.get())) {
+    if (weapon.reloading && weapon.remaining_magazine > 0) {
+      double elapsed_time =
+          std::chrono::duration<double>(now - weapon.last_reload_time).count();
+      if (elapsed_time >= weapon.reload_time) {
+        weapon.reloading = false;
+        weapon.remaining_ammo = weapon.magazine_size;
+        weapon.remaining_magazine -= 1;
+      }
+    }
   }
 }
 

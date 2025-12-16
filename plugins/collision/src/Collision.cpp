@@ -6,15 +6,18 @@
 #include "Collision.hpp"
 
 #include "Json/JsonParser.hpp"
+#include "NetworkShared.hpp"
 #include "algorithm/QuadTreeCollision.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "libs/Vector2D.hpp"
+#include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Collidable.hpp"
 #include "plugin/components/InteractionZone.hpp"
 #include "plugin/components/Position.hpp"
+#include "plugin/components/Team.hpp"
 #include "plugin/components/Velocity.hpp"
 #include "plugin/events/CollisionEvent.hpp"
 #include "plugin/events/InteractionZoneEvent.hpp"
@@ -22,15 +25,15 @@
 
 Collision::Collision(Registry& r, EntityLoader& l)
     : APlugin(
+          "collision",
           r,
           l,
           {"moving"},
           {COMP_INIT(Collidable, Collidable, init_collision),
            COMP_INIT(InteractionZone, InteractionZone, init_interaction_zone)})
 {
-  _registry.get().register_component<Collidable>("collision:Collidable");
-  _registry.get().register_component<InteractionZone>(
-      "collision:InteractionZone");
+  REGISTER_COMPONENT(Collidable)
+  REGISTER_COMPONENT(InteractionZone)
 
   _collision_algo = std::make_unique<QuadTreeCollision>(2.0, 2.0);
 
@@ -41,11 +44,9 @@ Collision::Collision(Registry& r, EntityLoader& l)
   _registry.get().add_system([this](Registry& r) { this->collision_system(r); },
                              3);
   _registry.get().add_system(
-      [this](Registry& r) { this->interaction_zone_system(r); }, 4);
+      [this](Registry& r) { this->interaction_zone_system(r); }, 3);
 
-  this->_registry.get().on<CollisionEvent>("CollisionEvent",
-                                           [this](const CollisionEvent& c)
-                                           { this->on_collision(c); });
+  SUBSCRIBE_EVENT(CollisionEvent, { this->on_collision(event); })
 }
 
 void Collision::set_algorithm(std::unique_ptr<ICollisionAlgorithm> algo)
@@ -81,6 +82,8 @@ void Collision::init_collision(Registry::Entity const& entity,
     type = CollisionType::Solid;
   } else if (type_text == "push") {
     type = CollisionType::Push;
+  } else if (type_text == "bounce") {
+    type = CollisionType::Bounce;
   }
 
   this->_registry.get().emplace_component<Collidable>(
@@ -115,12 +118,10 @@ void Collision::collision_system(Registry& r)
     if (!collidable.is_active) {
       continue;
     }
-    double rect_x = position.pos.x - (collidable.width / 2.0);
-    double rect_y = position.pos.y - (collidable.height / 2.0);
     entities.push_back(ICollisionAlgorithm::CollisionEntity {
         .entity_id = i,
-        .bounds = Rect {.x = rect_x,
-                        .y = rect_y,
+        .bounds = Rect {.x = position.pos.x,
+                        .y = position.pos.y,
                         .width = collidable.width,
                         .height = collidable.height}});
   }
@@ -149,8 +150,8 @@ void Collision::interaction_zone_system(Registry& r)
       continue;
     }
 
-    Rect range {.x = position.pos.x - zone.radius,
-                .y = position.pos.y - zone.radius,
+    Rect range {.x = position.pos.x,
+                .y = position.pos.y,
                 .width = zone.radius * 2,
                 .height = zone.radius * 2};
 
@@ -180,7 +181,15 @@ void Collision::on_collision(const CollisionEvent& c)
 {
   auto& velocities = this->_registry.get().get_components<Velocity>();
   auto& positions = this->_registry.get().get_components<Position>();
+  auto const& teams = this->_registry.get().get_components<Team>();
   auto const& collidables = this->_registry.get().get_components<Collidable>();
+
+  if (this->_registry.get().has_component<Team>(c.a)
+      && this->_registry.get().has_component<Team>(c.b)
+      && teams[c.a]->name == teams[c.b]->name)
+  {
+    return;
+  }
 
   if (!this->_registry.get().has_component<Collidable>(c.a)
       || !this->_registry.get().has_component<Collidable>(c.b)
@@ -193,8 +202,10 @@ void Collision::on_collision(const CollisionEvent& c)
   CollisionType type_a = collidables[c.a]->collision_type;
   CollisionType type_b = collidables[c.b]->collision_type;
 
-  if ((type_a != CollisionType::Solid && type_a != CollisionType::Push)
-      || (type_b != CollisionType::Solid && type_b != CollisionType::Push))
+  if ((type_a != CollisionType::Solid && type_a != CollisionType::Push
+       && type_a != CollisionType::Bounce)
+      || (type_b != CollisionType::Solid && type_b != CollisionType::Push
+          && type_b != CollisionType::Bounce))
   {
     return;
   }
@@ -203,24 +214,40 @@ void Collision::on_collision(const CollisionEvent& c)
   if (this->_registry.get().has_component<Velocity>(c.a)) {
     Vector2D movement =
         (velocities[c.a]->direction * dt).normalize() * velocities[c.a]->speed;
+    Vector2D collision_normal =
+        (positions[c.a]->pos - positions[c.b]->pos).normalize();
 
     if (this->_registry.get().has_component<Velocity>(c.b)
         && type_a == CollisionType::Push)
     {
       positions[c.a]->pos -= movement;
       positions[c.b]->pos += movement;
+      this->_registry.get().emit<ComponentBuilder>(
+          c.b,
+          this->_registry.get().get_component_key<Position>(),
+          positions[c.b]->to_bytes());
     } else if (type_a == CollisionType::Solid) {
-      Vector2D collision_normal =
-          (positions[c.a]->pos - positions[c.b]->pos).normalize();
       double dot_product = movement.dot(collision_normal);
 
       if (dot_product < 0) {
         Vector2D perpendicular_vector = collision_normal * dot_product;
         positions[c.a]->pos -= perpendicular_vector;
       }
+    } else if (type_a == CollisionType::Bounce) {
+      double dot_product = velocities[c.a]->direction.dot(collision_normal);
+      Vector2D reflected_direction =
+          velocities[c.a]->direction - (collision_normal * (2.0 * dot_product));
+
+      velocities[c.a]->direction = reflected_direction.normalize();
+      positions[c.a]->pos += collision_normal * 0.01;
     } else {
       positions[c.a]->pos -= movement;
     }
+
+    this->_registry.get().emit<ComponentBuilder>(
+        c.a,
+        this->_registry.get().get_component_key<Position>(),
+        positions[c.a]->to_bytes());
   }
 }
 

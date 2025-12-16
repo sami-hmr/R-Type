@@ -12,29 +12,34 @@
 #include "plugin/components/Text.hpp"
 
 UI::UI(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config)
-    : APlugin(r,
+    : APlugin("ui",
+              r,
               l,
               {},
               {COMP_INIT(input, Input, init_input),
                COMP_INIT(Drawable, Drawable, init_drawable),
                COMP_INIT(Sprite, Sprite, init_sprite),
                COMP_INIT(Text, Text, init_text),
-                COMP_INIT(Camera, Camera, init_cam),
+               COMP_INIT(Camera, Camera, init_cam),
                COMP_INIT(Background, Background, init_background),
                COMP_INIT(AnimatedSprite, AnimatedSprite, init_animated_sprite)},
               config)
 {
-  _registry.get().on<KeyPressedEvent>("KeyPressedEvent",
-                                      [this](const KeyPressedEvent& event)
-                                      { this->handle_key_pressed(event); });
-  _registry.get().register_component<Drawable>("ui:Drawable");
-  _registry.get().register_component<Input>("ui:input");
+  SUBSCRIBE_EVENT(KeyPressedEvent, { this->handle_key_pressed(event); })
 
-  _registry.get().register_component<Sprite>("ui:Sprite");
-  _registry.get().register_component<Text>("ui:Text");
-  _registry.get().register_component<Camera>("ui:Camera");
-  _registry.get().register_component<Background>("ui:Background");
-  _registry.get().register_component<AnimatedSprite>("ui:AnimatedSprite");
+  REGISTER_COMPONENT(Drawable)
+  REGISTER_COMPONENT(Input)
+  REGISTER_COMPONENT(Sprite)
+  REGISTER_COMPONENT(Text)
+  REGISTER_COMPONENT(Camera)
+  REGISTER_COMPONENT(Background)
+  REGISTER_COMPONENT(AnimatedSprite)
+
+  SUBSCRIBE_EVENT(CamAggroEvent, { this->cam_target_event(event); })
+  SUBSCRIBE_EVENT(CamZoomEvent, { this->cam_zoom_event(event); })
+  SUBSCRIBE_EVENT(CamRotateEvent, { this->cam_rotate_event(event); })
+  SUBSCRIBE_EVENT(CamSpeedEvent, { this->cam_speed_event(event); })
+  SUBSCRIBE_EVENT(CamMoveEvent, { this->cam_move_event(event); })
 }
 
 void UI::init_drawable(Registry::Entity const& entity, JsonObject const&)
@@ -164,7 +169,6 @@ void UI::init_background(Registry::Entity const& entity, JsonObject const& obj)
         this->_registry.get(), path_obj, entity, "path");
 
     if (path_str.has_value()) {
-      std::cout << "Adding background layer: " << path_str.value() << "\n";
       paths.push_back(path_str.value());
     }
   }
@@ -333,14 +337,14 @@ void UI::init_animated_sprite(Registry::Entity const& entity,
       entity, std::move(animations), default_animation, default_animation);
 }
 
-void UI::init_cam(Registry::Entity const &entity,
-                            JsonObject const& obj)
+void UI::init_cam(Registry::Entity const& entity, JsonObject const& obj)
 {
   Vector2D size(0.5, 0.5);
   Vector2D target(0.0, 0.0);
   Vector2D speed(0.1, 0.1);
 
-  auto sizeopt = get_value<Camera, Vector2D>(this->_registry.get(), obj, entity, "size", "width", "height");
+  auto sizeopt = get_value<Camera, Vector2D>(
+      this->_registry.get(), obj, entity, "size", "width", "height");
   if (sizeopt.has_value()) {
     size = sizeopt.value();
   } else {
@@ -348,7 +352,8 @@ void UI::init_cam(Registry::Entity const &entity,
         << "Camera component missing size field, using default (50%, 50%)\n";
     return;
   }
-  auto targetopt = get_value<Camera, Vector2D>(this->_registry.get(), obj, entity, "target");
+  auto targetopt =
+      get_value<Camera, Vector2D>(this->_registry.get(), obj, entity, "target");
   if (targetopt.has_value()) {
     target = targetopt.value();
   } else {
@@ -356,7 +361,8 @@ void UI::init_cam(Registry::Entity const &entity,
         << "Camera component missing target field, using default (0, 0)\n";
     return;
   }
-  auto speedopt = get_value<Camera, Vector2D>(this->_registry.get(), obj, entity, "speed", "x", "y");
+  auto speedopt = get_value<Camera, Vector2D>(
+      this->_registry.get(), obj, entity, "speed", "x", "y");
   if (speedopt.has_value()) {
     speed = speedopt.value();
   } else {
@@ -365,20 +371,7 @@ void UI::init_cam(Registry::Entity const &entity,
     return;
   }
   _registry.get().emplace_component<Camera>(entity, size, target, speed);
-  _registry.get().on<CamAggroEvent>("CamAggroEvent", [this](const CamAggroEvent& e) {
-    this->cam_target_event(e);
-  });
-  _registry.get().on<CamZoomEvent>("CamZoomEvent", [this](const CamZoomEvent& e) {
-      this->cam_zoom_event(e);
-  });
-  _registry.get().on<CamRotateEvent>("CamRotateEvent", [this](const CamRotateEvent& e) {
-      this->cam_rotate_event(e);
-  });
-  _registry.get().on<CamSpeedEvent>("CamSpeedEvent", [this](const CamSpeedEvent& e) {
-      this->cam_speed_event(e);
-  });
 }
-
 
 extern "C"
 {

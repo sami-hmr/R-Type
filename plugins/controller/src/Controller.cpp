@@ -6,6 +6,7 @@
 #include "Json/JsonParser.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
+#include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Controllable.hpp"
@@ -41,35 +42,29 @@ Key Controller::char_to_key(char c)
 }
 
 Controller::Controller(Registry& r, EntityLoader& l)
-    : APlugin(r,
+    : APlugin("controller",
+              r,
               l,
               {"logger", "moving"},
               {COMP_INIT(Controllable, Controllable, init_controller)})
 {
-  this->_registry.get().register_component<Controllable>(
-      "controller:Controllable");
+  REGISTER_COMPONENT(Controllable)
 
-  this->_registry.get().on<KeyPressedEvent>(
-      "KeyPressedEvent",
-      [this](const KeyPressedEvent& c)
-      {
-        for (auto const& [key, active] : c.key_pressed) {
-          if (active) {
-            this->handle_key_change(key, true);
-          }
-        }
-      });
+  SUBSCRIBE_EVENT(KeyPressedEvent, {
+    for (auto const& [key, active] : event.key_pressed) {
+      if (active) {
+        this->handle_key_change(key, true);
+      }
+    }
+  });
 
-  this->_registry.get().on<KeyReleasedEvent>(
-      "KeyReleasedEvent",
-      [this](const KeyReleasedEvent& c)
-      {
-        for (auto const& [key, active] : c.key_released) {
-          if (active) {
-            this->handle_key_change(key, false);
-          }
-        }
-      });
+  SUBSCRIBE_EVENT(KeyReleasedEvent, {
+    for (auto const& [key, active] : event.key_released) {
+      if (active) {
+        this->handle_key_change(key, false);
+      }
+    }
+  })
 }
 
 void Controller::init_controller(Registry::Entity const entity,

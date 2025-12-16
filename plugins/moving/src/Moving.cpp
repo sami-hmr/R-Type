@@ -7,6 +7,7 @@
 #include "ecs/Registry.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "libs/Vector2D.hpp"
+#include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Position.hpp"
@@ -14,50 +15,37 @@
 #include "plugin/events/CollisionEvent.hpp"
 
 Moving::Moving(Registry& r, EntityLoader& l)
-    : APlugin(r,
+    : APlugin("moving",
+              r,
               l,
               {},
               {COMP_INIT(Position, Position, init_pos),
                COMP_INIT(Velocity, Velocity, init_velocity)})
 {
-  this->_registry.get().register_component<Position>("moving:Position");
-  this->_registry.get().register_component<Velocity>("moving:Velocity");
+  REGISTER_COMPONENT(Position)
+  REGISTER_COMPONENT(Velocity)
 
   this->_registry.get().add_system(
-      [this](Registry& r)
-      { this->moving_system(r); },
-      4);
+      [this](Registry& r) { this->moving_system(r); }, 4);
 
-  // this->_registry.get().on<ComponentBuilder>("ComponentBuilder",
-  // [](ComponentBuilder const &data) {
-  //     std::cerr << "ça build un component " << data.id << "\n";
-  // });
-
-  // this->_registry.get().on<EventBuilder>("EventBuilder", [](EventBuilder
-  // const &data) {
-  //     std::cerr << "ça build un event " << data.event_id << "\n";
-  // });
-  this->_registry.get().on<UpdateVelocity>(
-      "UpdateVelocity",
-      [this](UpdateVelocity const& data)
-      {
-        auto& comp =
-            this->_registry.get().get_components<Velocity>()[data.entity];
-        if (!comp) {
-          return;
-        }
-        this->_registry.get().emit<EventBuilder>("UpdateVelocity",
-                                                 data.to_bytes());
-        comp->direction.x = data.x_axis;
-        comp->direction.y = data.y_axis;
-      });
+  SUBSCRIBE_EVENT(UpdateVelocity, {
+    auto& comp = this->_registry.get().get_components<Velocity>()[event.entity];
+    if (!comp) {
+      return;
+    }
+    this->_registry.get().emit<EventBuilder>("UpdateVelocity",
+                                             event.to_bytes());
+    comp->direction.x = event.x_axis;
+    comp->direction.y = event.y_axis;
+  })
 }
 
 void Moving::moving_system(Registry& reg)
 {
   double dt = reg.clock().delta_seconds();
 
-  for (auto&& [index, position, velocity] : ZipperIndex<Position, Velocity>(reg))
+  for (auto&& [index, position, velocity] :
+       ZipperIndex<Position, Velocity>(reg))
   {
     Vector2D movement = (velocity.direction * dt).normalize() * velocity.speed;
     position.pos += movement;

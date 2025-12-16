@@ -71,7 +71,7 @@ std::optional<std::reference_wrapper<const T>> get_ref(Registry& r,
   return std::nullopt;
 }
 
-/*
+/**
  *@brief Gets the value at a given key from a JsonObject for a component ALSO
  * register the component for a **static** hook (usefull for when entity isn't
  * accessible)
@@ -98,8 +98,8 @@ std::optional<T> get_value_copy(Registry& r,
   return std::nullopt;
 }
 
-/*
- *@brief Gets the value at a given key from a JsonObject for a component ALSO
+/**
+ * @brief Gets the value at a given key from a JsonObject for a component ALSO
  * register the component for a **dynamic** hook ALWAYS prefer to get_value_copy
  * to avoid ownsership issues
  */
@@ -116,7 +116,26 @@ std::optional<T> get_value(Registry& r,
       std::string stripped = value_str.substr(1);
       r.template register_binding<ComponentType, T>(
           entity, field_name, stripped);
+      std::string comp = stripped.substr(0, stripped.find(':'));
+      std::string value = stripped.substr(stripped.find(':') + 1);
+      try {
+        auto hooked_val = r.template get_hooked_value<T>(comp, value);
+        if (hooked_val) {
+          return hooked_val->get();
+        }
+      } catch (...) {
+      }
+      return T{};
     }
+    else if (value_str.starts_with('%')) {
+      std::string comp = value_str.substr(1, value_str.find(':') - 1);;
+      std::string value = value_str.substr(value_str.find(':') + 1);
+      auto hooked_val = r.get_hooked_value<T>(comp, value);
+      if (hooked_val) {
+        return hooked_val->get();
+      }
+    }
+    
   } catch (std::bad_variant_access const&) {  // NOLINT intentional fallthrough
   }
 

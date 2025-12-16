@@ -41,8 +41,8 @@ void SFMLRenderer::animation_system(
 
   drawables.reserve(r.get_components<AnimatedSprite>().size());
 
-  for (auto&& [entity, pos, draw, anim] :
-       ZipperIndex<Position, Drawable, AnimatedSprite>(r))
+  for (auto&& [entity, pos, draw, anim, scene] :
+       ZipperIndex<Position, Drawable, AnimatedSprite, Scene>(r))
   {
     if (!draw.enabled) {
       continue;
@@ -53,19 +53,20 @@ void SFMLRenderer::animation_system(
     sf::Vector2f new_pos(
         static_cast<float>((pos.pos.x + 1.0) * min_dimension / 2.0),
         static_cast<float>((pos.pos.y + 1.0) * min_dimension / 2.0));
-    if (new_pos.x < view_pos.x - (view_size.x / 2)
-        || new_pos.x > view_pos.x + (view_size.x / 2))
-    {
-      continue;
-    }
-    if (new_pos.y < view_pos.y - (view_size.y / 2)
-        || new_pos.y > view_pos.y + (view_size.y / 2))
-    {
-      continue;
-    }
 
     anim.update_anim(this->_registry.get(), now, entity);
     AnimationData anim_data = anim.animations.at(anim.current_animation);
+
+    if (new_pos.x + (anim_data.sprite_size.x * window_size.x) < view_pos.x - (view_size.x / 2)
+        || new_pos.x - (anim_data.sprite_size.x * window_size.x) > view_pos.x + (view_size.x / 2))
+    {
+      continue;
+    }
+    if (new_pos.y + (anim_data.sprite_size.y * window_size.y) < view_pos.y - (view_size.y / 2)
+        || new_pos.y - (anim_data.sprite_size.y * window_size.y) > view_pos.y + (view_size.y / 2))
+    {
+      continue;
+    }
 
     sf::Texture& texture = load_texture(anim_data.texture_path);
 

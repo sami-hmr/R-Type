@@ -30,6 +30,7 @@ private:
                                                     Registry::Entity const& e);
 
   void cam_target_event(const CamAggroEvent &e);
+  void cam_move_event(const CamMoveEvent &e);
   void cam_zoom_event(const CamZoomEvent &e);
   void cam_rotate_event(const CamRotateEvent &e);
   void cam_speed_event(const CamSpeedEvent &e);

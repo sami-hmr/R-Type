@@ -24,26 +24,21 @@
 #include "plugin/events/ShutdownEvent.hpp"
 
 CLI::CLI(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config)
-    : APlugin(r, l, {"logger", "server_network", "client_network"}, {}, config)
+    : APlugin("cli",
+              r,
+              l,
+              {"logger", "server_network", "client_network"},
+              {},
+              config)
 {
-  _registry.get().on<ShutdownEvent>(
-      "ShutdownEvent", [this](const ShutdownEvent&) { _running = false; });
-
-  _registry.get().on<CleanupEvent>(
-      "CleanupEvent", [this](const CleanupEvent&) { _running = false; });
-
-  _registry.get().on<CliStart>("CliStart",
-                               [this](const CliStart&)
-                               {
-                                 if (!this->_running) {
-                                   _cli_thread =
-                                       std::thread(&CLI::run_cli, this);
-                                 }
-                               });
-
-  _registry.get().on<CliStop>("CliStop",
-                              [this](const CliStop&) { _running = false; });
-
+  SUBSCRIBE_EVENT(ShutdownEvent, { _running = false; })
+  SUBSCRIBE_EVENT(CleanupEvent, { _running = false; })
+  SUBSCRIBE_EVENT(CliStart, {
+    if (!this->_running) {
+      _cli_thread = std::thread(&CLI::run_cli, this);
+    }
+  })
+  SUBSCRIBE_EVENT(CliStop, { _running = false; })
   _registry.get().emit<CliStart>();
 }
 

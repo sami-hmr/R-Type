@@ -11,17 +11,18 @@
 
 #include "NetworkShared.hpp"
 #include "Server.hpp"
+#include "ServerLaunch.hpp"
 #include "ecs/ComponentState.hpp"
 #include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/Scenes.hpp"
+#include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/AnimatedSprite.hpp"
 #include "plugin/components/Collidable.hpp"
 #include "plugin/components/Drawable.hpp"
 #include "plugin/components/Health.hpp"
 #include "plugin/components/Position.hpp"
-#include "plugin/components/Sprite.hpp"
 #include "plugin/components/Team.hpp"
 #include "plugin/components/Velocity.hpp"
 #include "plugin/events/CleanupEvent.hpp"
@@ -31,62 +32,46 @@
 #include "plugin/events/ShutdownEvent.hpp"
 
 NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
-    : APlugin(r, l, {}, {})
+    : APlugin("network_server", r, l, {}, {})
     , _comp_semaphore(0)
     , _semaphore_event_to_server(0)
     , _event_semaphore(0)
 {
-  this->_registry.get().on<ServerLaunching>(
-      "ServerLaunching",
-      [this](ServerLaunching const& s)
-      {
-        this->_thread = std::thread([this, s]() { this->launch_server(s); });
-      });
+  SUBSCRIBE_EVENT(ServerLaunching, {
+    this->_thread = std::thread(&NetworkServer::launch_server, this, event);
+  })
 
-  this->_registry.get().on<ShutdownEvent>(
-      "ShutdownEvent",
-      [this](ShutdownEvent const& event)
-      {
-        _running = false;
-        LOGGER("server",
-               LogLevel::INFO,
-               std::format("Shutdown requested: {}", event.reason));
-        // server.close();
-      });
+  SUBSCRIBE_EVENT(ShutdownEvent, {
+    _running = false;
+    LOGGER("server",
+           LogLevel::INFO,
+           std::format("Shutdown requested: {}", event.reason));
+    // server.close();
+  })
 
-  this->_registry.get().on<CleanupEvent>(
-      "CleanupEvent",
-      [this](CleanupEvent const&)
-      {
-        _running = false;
-        LOGGER("server", LogLevel::DEBUG, "Cleanup requested");
-        // server.close();
-      });
+  SUBSCRIBE_EVENT(CleanupEvent, {
+    _running = false;
+    LOGGER("server", LogLevel::DEBUG, "Cleanup requested");
+    // server.close();
+  })
 
-  this->_registry.get().on<ComponentBuilder>(
-      "ComponentBuilder",
-      [this](ComponentBuilder const& e)
-      { this->_registry.get().emit<ComponentBuilderId>(std::nullopt, e); });
+  SUBSCRIBE_EVENT(ComponentBuilder, {
+    this->_registry.get().emit<ComponentBuilderId>(std::nullopt, event);
+  })
 
-  this->_registry.get().on<ComponentBuilderId>(
-      "ComponentBuilder",
-      [this](ComponentBuilderId const& e)
-      {
-        this->_components_to_update.lock.lock();
-        this->_components_to_update.queue.push(e);
-        this->_components_to_update.lock.unlock();
-        this->_comp_semaphore.release();
-      });
+  SUBSCRIBE_EVENT(ComponentBuilderId, {
+    this->_components_to_update.lock.lock();
+    this->_components_to_update.queue.push(event);
+    this->_components_to_update.lock.unlock();
+    this->_comp_semaphore.release();
+  })
 
-  this->_registry.get().on<EventBuilderId>(
-      "EventBuilderId",
-      [this](EventBuilderId const& e)
-      {
-        this->_event_queue_to_client.lock.lock();
-        this->_event_queue_to_client.queue.push(e);
-        this->_event_queue_to_client.lock.unlock();
-        this->_event_semaphore.release();
-      });
+  SUBSCRIBE_EVENT(EventBuilderId, {
+    this->_event_queue_to_client.lock.lock();
+    this->_event_queue_to_client.queue.push(event);
+    this->_event_queue_to_client.lock.unlock();
+    this->_event_semaphore.release();
+  })
 
   this->_registry.get().add_system<>(
       [this](Registry& r)
@@ -100,107 +85,92 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
         this->_event_queue.lock.unlock();
       });
 
-  this->_registry.get().on<EntityCreation>(
-      "EntityCreation",
-      [this](EntityCreation const& e)
-      {
-        std::size_t entity = this->_registry.get().spawn_entity();
+  SUBSCRIBE_EVENT(EntityCreation, {
+    std::size_t entity = this->_registry.get().spawn_entity();
 
-        this->_registry.get().emit<EventBuilderId>(
-            e.client,
-            "PlayerCreation",
-            PlayerCreation(entity, e.client).to_bytes());
+    this->_registry.get().emit<EventBuilderId>(
+        event.client,
+        "PlayerCreation",
+        PlayerCreation(entity, event.client).to_bytes());
 
-        this->_player_ready[e.client] = false;
-      });
+    this->_player_ready[event.client] = false;
+  })
 
-  this->_registry.get().on<PlayerCreated>(
-      "PlayerCreated",
-      [this](PlayerCreated const& data)
-      {
-        this->_registry.get().emit<StateTransfer>(data.client_id);
+  SUBSCRIBE_EVENT(PlayerCreated, {
+    this->_registry.get().emit<StateTransfer>(event.client_id);
 
-        this->_registry.get().emit<EventBuilderId>(
-            data.client_id,
-            "SceneChangeEvent",
-            SceneChangeEvent("loby", "", true).to_bytes());
+    this->_registry.get().emit<EventBuilderId>(
+        event.client_id,
+        "SceneChangeEvent",
+        SceneChangeEvent("loby", "", true).to_bytes());
 
-        init_component(
-            this->_registry.get(), data.server_index, Position(0, 0, 2));
-        init_component(this->_registry.get(), data.server_index, Drawable());
-        init_component(this->_registry.get(),
-                       data.server_index,
-                       Velocity(0.01, 0.01, 0, 0));
+    init_component(
+        this->_registry.get(), event.server_index, Position(0, 0, 2));
+    init_component(this->_registry.get(), event.server_index, Drawable());
+    init_component(
+        this->_registry.get(), event.server_index, Velocity(0.01, 0.01, 0, 0));
 
-        init_component(this->_registry.get(),
-                       data.server_index,
-                       AnimatedSprite({{"idle",
-                                        AnimationData("assets/player.png",
-                                                      {350., 150.},
-                                                      {0., 0.},
-                                                      {1., 0.},
-                                                      {0.2, 0.2},
-                                                      10,
-                                                      7,
-                                                      0,
-                                                      true,
-                                                      true)}},
-                                      "idle",
-                                      "idle"));
+    init_component(this->_registry.get(),
+                   event.server_index,
+                   AnimatedSprite({{"idle",
+                                    AnimationData("assets/player.png",
+                                                  {350., 150.},
+                                                  {0., 0.},
+                                                  {1., 0.},
+                                                  {0.2, 0.2},
+                                                  10,
+                                                  7,
+                                                  0,
+                                                  true,
+                                                  true)}},
+                                  "idle",
+                                  "idle"));
 
-        init_component(this->_registry.get(),
-                       data.server_index,
-                       Collidable(0.02, 0.02, CollisionType::Solid));
-        init_component(
-            this->_registry.get(), data.server_index, Health(5, 100));
-        init_component(this->_registry.get(), data.server_index, Team("test1"));
-        init_component(this->_registry.get(),
-                       data.server_index,
-                       Scene("game", SceneState::ACTIVE));
-      });
+    init_component(this->_registry.get(),
+                   event.server_index,
+                   Collidable(0.02, 0.02, CollisionType::Solid));
+    init_component(this->_registry.get(), event.server_index, Health(5, 100));
+    init_component(this->_registry.get(), event.server_index, Team("test1"));
+    init_component(this->_registry.get(),
+                   event.server_index,
+                   Scene("game", SceneState::ACTIVE));
+  })
 
-  this->_registry.get().on<StateTransfer>(
-      "StateTransfer",
-      [this](const StateTransfer& data)
-      {
-        std::vector<ComponentState> s = this->_registry.get().get_state();
+  SUBSCRIBE_EVENT(StateTransfer, {
+    std::vector<ComponentState> s = this->_registry.get().get_state();
 
-        for (auto const& it : s) {
-          for (auto const& i : it.comps) {
-            this->_registry.get().emit<ComponentBuilderId>(
-                data.client_id, ComponentBuilder(i.first, it.id, i.second));
-          }
-        }
-      });
+    for (auto const& it : s) {
+      for (auto const& i : it.comps) {
+        this->_registry.get().emit<ComponentBuilderId>(
+            event.client_id, ComponentBuilder(i.first, it.id, i.second));
+      }
+    }
+  })
 
-  this->_registry.get().on<PlayerReady>(
-      "PlayerReady",
-      [this](const PlayerReady& data)
-      {
-        std::cout << "READY" << std::endl;
-        if (!this->_player_ready.contains(data.client_id)) {
-          return;
-        }
-        this->_player_ready[data.client_id] = true;
+  SUBSCRIBE_EVENT(PlayerReady, {
+    if (!this->_player_ready.contains(event.client_id)) {
+      return;
+    }
+    this->_player_ready[event.client_id] = true;
 
-        this->_registry.get().emit<EventBuilderId>(
-            data.client_id,
-            "SceneChangeEvent",
-            SceneChangeEvent("ready", "", true).to_bytes());
+    this->_registry.get().emit<EventBuilderId>(
+        event.client_id,
+        "SceneChangeEvent",
+        SceneChangeEvent("ready", "", true).to_bytes());
 
-        if (std::find_if(this->_player_ready.begin(),
-                         this->_player_ready.end(),
-                         [](auto const& p) { return !p.second; })
-            == this->_player_ready.end())
-        {
-          this->_registry.get().emit<SceneChangeEvent>("game", "", true);
-          LOGGER("server", LogLevel::DEBUG, "POURQUOI çA PASSE ICI")
-          this->_registry.get().emit<EventBuilderId>(
-              std::nullopt,
-              "SceneChangeEvent",
-              SceneChangeEvent("game", "", true).to_bytes());
-        }
-      });
+    if (std::find_if(this->_player_ready.begin(),
+                     this->_player_ready.end(),
+                     [](auto const& p) { return !p.second; })
+        == this->_player_ready.end())
+    {
+      this->_registry.get().emit<SceneChangeEvent>("game", "", true);
+      LOGGER("server", LogLevel::DEBUG, "POURQUOI çA PASSE ICI")
+      this->_registry.get().emit<EventBuilderId>(
+          std::nullopt,
+          "SceneChangeEvent",
+          SceneChangeEvent("game", "", true).to_bytes());
+    }
+  })
 }
 
 NetworkServer::~NetworkServer()

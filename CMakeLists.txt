@@ -41,6 +41,7 @@ add_library(${CORE_LIB} STATIC
     src/plugins/APlugin.cpp
     src/plugins/EntityLoader.cpp
     src/plugins/Byte.cpp
+    src/Registry.cpp
 )
 
 target_include_directories(${CORE_LIB}

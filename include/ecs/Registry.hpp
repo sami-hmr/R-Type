@@ -18,7 +18,6 @@
 
 #include "Clock.hpp"
 #include "Json/JsonParser.hpp"
-// #include "NetworkShared.hpp"
 #include "SparseArray.hpp"
 #include "TwoWayMap.hpp"
 #include "ecs/ComponentState.hpp"
@@ -129,18 +128,7 @@ public:
     return (e < comp.size() && comp[e].has_value());
   }
 
-  Entity spawn_entity()
-  {
-    Entity to_return = 0;
-    if (this->_dead_entities.empty()) {
-      to_return = this->_max;
-      this->_max += 1;
-    } else {
-      to_return = this->_dead_entities.front();
-      this->_dead_entities.pop();
-    }
-    return to_return;
-  }
+  Entity spawn_entity();
 
   /**
    * @brief Kills an entity, marking it for deletion and allowing its ID to be
@@ -148,23 +136,11 @@ public:
    *
    * @param e The entity to kill.
    */
-  void kill_entity(Entity const& e) { _entities_to_kill.insert(e); }
+  void kill_entity(Entity const& e);
 
-  bool is_entity_dying(Entity const& e) const
-  {
-    return _entities_to_kill.contains(e);
-  }
+  bool is_entity_dying(Entity const& e) const;
 
-  void process_entity_deletions()
-  {
-    for (auto const& e : _entities_to_kill) {
-      for (auto const& [_, f] : this->_delete_functions) {
-        f(e);
-      }
-      this->_dead_entities.push(e);
-    }
-    _entities_to_kill.clear();
-  }
+  void process_entity_deletions();
 
   /**
    * @brief Adds a component to an entity.
@@ -210,15 +186,7 @@ public:
    */
   void emplace_component(Entity const& to,
                          std::string const& string_id,
-                         ByteArray const& bytes)
-  {
-    try {
-      this->_emplace_functions.at(this->_index_getter.at_second(string_id))(
-          to, bytes);
-    } catch (std::out_of_range const&) {
-      std::cerr << "error: unknow component :" << string_id << "\n";
-    }
-  }
+                         ByteArray const& bytes);
 
   /**
    * @brief Removes a component from an entity.
@@ -255,28 +223,13 @@ public:
    * @brief Runs all registered systems.
    *
    */
-  void run_systems()
-  {
-    this->clock().tick();
-
-    update_bindings();
-
-    for (auto const& f : this->_frequent_systems) {
-      f();
-    }
-    process_entity_deletions();
-  }
+  void run_systems();
 
   /**
    * @brief Updates all variable bindings from their hooked sources.
    *
    */
-  void update_bindings()
-  {
-    for (auto& binding : _bindings) {
-      binding.updater();
-    }
-  }
+  void update_bindings();
 
   /**
    * @brief Registers a binding that syncs a variable to a hooked source every
@@ -328,7 +281,7 @@ public:
    * @brief Clears all registered bindings.
    *
    */
-  void clear_bindings() { _bindings.clear(); }
+  void clear_bindings();
 
   template<event EventType>
   HandlerId on(std::string const& name,
@@ -382,23 +335,7 @@ public:
     _event_handlers.erase(type_id);
   }
 
-  void emit(std::string const& name, JsonObject const& args)
-  {
-    std::type_index type_id = _events_index_getter.at_second(name);
-    if (!_event_handlers.contains(type_id)) {
-      return;
-    }
-
-    auto builder =
-        std::any_cast<std::function<std::any(Registry&, JsonObject const&)>>(
-            _event_builders.at(type_id));
-    std::any event = builder(*this, args);
-
-    auto invoker =
-        std::any_cast<std::function<void(const std::any&, const std::any&)>>(
-            _event_invokers.at(type_id));
-    invoker(_event_handlers.at(type_id), event);
-  }
+  void emit(std::string const& name, JsonObject const& args);
 
   template<typename EventType, typename... Args>
   void emit(Args&&... args)
@@ -419,52 +356,25 @@ public:
     }
   }
 
-  void emit(std::string const& name, ByteArray const& data)
-  {
-    this->_byte_event_emitter.at(name)(data);
-  }
+  void emit(std::string const& name, ByteArray const& data);
 
-  void add_scene(std::string const& scene_name, SceneState state)
-  {
-    _scenes.insert_or_assign(scene_name, state);
-  }
+  void add_scene(std::string const& scene_name, SceneState state);
 
-  void init_scene_management() { this->register_component<Scene>("scene"); }
+  void init_scene_management();
 
-  void setup_scene_systems()
-  {
-    for (const auto& [name, state] : _scenes) {
-      if (state == SceneState::MAIN || state == SceneState::ACTIVE) {
-        _current_scene.push_back(name);
-        break;
-      }
-    }
-  }
+  void setup_scene_systems();
 
-  void set_current_scene(std::string const& scene_name)
-  {
-    _current_scene.push_back(scene_name);
-  }
+  void set_current_scene(std::string const& scene_name);
 
-  void remove_current_scene(std::string const& scene_name)
-  {
-    _current_scene.erase(
-        std::remove(_current_scene.begin(), _current_scene.end(), scene_name),
-        _current_scene.end());
-  }
+  void remove_current_scene(std::string const& scene_name);
 
-  void remove_all_scenes() {
-      this->_current_scene.clear();
-  }
+  void remove_all_scenes();
 
-  std::vector<std::string> const& get_current_scene() const
-  {
-    return _current_scene;
-  }
+  std::vector<std::string> const& get_current_scene() const;
 
-  Clock& clock() { return _clock; }
+  Clock& clock();
 
-  const Clock& clock() const { return _clock; }
+  const Clock& clock() const;
 
   template<hookable T>
   void register_hook(std::string name, Entity const& e)
@@ -520,40 +430,19 @@ public:
         });
   }
 
-  void add_template(std::string const& name, JsonObject const& config)
-  {
-    _entities_templates.insert_or_assign(name, config);
-  }
+  void add_template(std::string const& name, JsonObject const& config);
 
-  JsonObject get_template(std::string const& name)
-  {
-    if (!_entities_templates.contains(name)) {
-      std::cerr << "Template: " << name << " not found !\n";
-    }
-    return _entities_templates.find(name)->second;
-  }
+  JsonObject get_template(std::string const& name);
 
-  bool is_in_current_cene(Entity e)
-  {
-    return std::find(this->_current_scene.begin(),
-                     this->_current_scene.end(),
-                     this->get_components<Scene>()[e].value().scene_name)
-        != this->_current_scene.end();
-  }
+  bool is_in_current_cene(Entity e);
 
   ByteArray convert_event_entity(std::string const& id,
                                  ByteArray const& event,
-                                 std::unordered_map<Entity, Entity> const& map)
-  {
-    return this->_event_entity_converters.at(id)(event, map);
-  }
+                                 std::unordered_map<Entity, Entity> const& map);
 
   ByteArray convert_comp_entity(std::string const& id,
                                 ByteArray const& comp,
-                                std::unordered_map<Entity, Entity> const& map)
-  {
-    return this->_comp_entity_converters.at(id)(comp, map);
-  }
+                                std::unordered_map<Entity, Entity> const& map);
 
   template<event Event>
   std::string get_event_key()
@@ -567,14 +456,7 @@ public:
     return this->_index_getter.at_first(typeid(Component));
   }
 
-  std::vector<ComponentState> get_state()
-  {
-    std::vector<ComponentState> r(this->_state_getters.size());
-    for (auto const& it : this->_components) {
-      r.emplace_back(this->_state_getters.at(it.first)());
-    }
-    return r;
-  }
+  std::vector<ComponentState> get_state();
 
 private:
   template<typename EventType>

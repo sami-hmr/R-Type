@@ -14,6 +14,7 @@
 #include "ParserUtils.hpp"
 #include "TwoWayMap.hpp"
 #include "ecs/Registry.hpp"
+#include "libs/Vector2D.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/ActionTrigger.hpp"
@@ -146,4 +147,72 @@ struct KeyReleasedEvent
           std::function<ByteArray(bool)>([](bool b)
                                          { return type_to_byte(b); })),
       optional_to_byte<std::string>(this->key_unicode, string_to_byte))
+};
+
+enum MouseButton : uint8_t
+{
+  MOUSELEFT = 0,
+  MOUSERIGHT,
+  MOUSEMIDDLE,
+};
+
+static const TwoWayMap<std::string, MouseButton> MOUSE_BUTTON_MAPPING = {
+    {"MOUSELEFT", MouseButton::MOUSELEFT},
+    {"MOUSERIGHT", MouseButton::MOUSERIGHT},
+    {"MOUSEMIDDLE", MouseButton::MOUSEMIDDLE}};
+
+struct MousePressedEvent
+{
+  Vector2D position;
+  MouseButton button;
+
+  CHANGE_ENTITY_DEFAULT
+
+  MousePressedEvent() = default;
+  MousePressedEvent(Vector2D pos, MouseButton btn)
+      : position(pos)
+      , button(btn)
+  {
+  }
+  MousePressedEvent(Registry& r, JsonObject const& e)
+      : position(get_value_copy<Vector2D>(r, e, "position").value())
+      , button(static_cast<MouseButton>(
+            get_value_copy<uint8_t>(r, e, "button").value()))
+  {
+  }
+  DEFAULT_BYTE_CONSTRUCTOR(MousePressedEvent,
+                           ([](Vector2D const& pos, MouseButton btn)
+                            { return MousePressedEvent(pos, btn); }),
+                           parseVector2D(),
+                           parseByte<MouseButton>())
+  DEFAULT_SERIALIZE(
+       vector2DToByte(this->position), type_to_byte(this->button))
+};
+
+struct MouseReleasedEvent
+{
+  Vector2D position;
+  MouseButton button;
+
+  CHANGE_ENTITY_DEFAULT
+
+  MouseReleasedEvent() = default;
+  MouseReleasedEvent(Vector2D pos, MouseButton btn)
+      : position(pos)
+      , button(btn)
+  {
+  }
+  MouseReleasedEvent(Registry& r, JsonObject const& e)
+      : position(get_value_copy<Vector2D>(r, e, "position").value())
+      , button(static_cast<MouseButton>(
+            get_value_copy<uint8_t>(r, e, "button").value()))
+  {
+  }
+  DEFAULT_BYTE_CONSTRUCTOR(MouseReleasedEvent,
+                           ([](Vector2D const& pos, MouseButton btn)
+                            { return MouseReleasedEvent(pos, btn); }),
+                           parseVector2D(),
+                           parseByte<MouseButton>())
+  DEFAULT_SERIALIZE(
+       vector2DToByte(this->position), type_to_byte(this->button))
 };
