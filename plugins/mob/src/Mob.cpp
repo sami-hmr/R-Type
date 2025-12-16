@@ -11,7 +11,8 @@
 #include "plugin/components/Position.hpp"
 
 Mob::Mob(Registry& r, EntityLoader& l)
-    : APlugin(r,
+    : APlugin("mob",
+              r,
               l,
               {},
               {COMP_INIT(Enemy, Enemy, init_enemy),
