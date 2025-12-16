@@ -21,6 +21,8 @@
 #include "plugin/components/Position.hpp"
 #include "plugin/events/LoggerEvent.hpp"
 
+static const double deux = 2.0;
+
 void SFMLRenderer::animation_system(
     Registry& r)
 {
@@ -50,9 +52,13 @@ void SFMLRenderer::animation_system(
     if (!anim.animations.contains(anim.current_animation)) {
       continue;
     }
+    
+    float offset_x = (window_size.x - min_dimension) / deux;
+    float offset_y = (window_size.y - min_dimension) / deux;
+    
     sf::Vector2f new_pos(
-        static_cast<float>((pos.pos.x + 1.0) * min_dimension / 2.0),
-        static_cast<float>((pos.pos.y + 1.0) * min_dimension / 2.0));
+        static_cast<float>((pos.pos.x + 1.0) * min_dimension / deux) + offset_x,
+        static_cast<float>((pos.pos.y + 1.0) * min_dimension / deux) + offset_y);
 
     anim.update_anim(this->_registry.get(), now, entity);
     AnimationData anim_data = anim.animations.at(anim.current_animation);
