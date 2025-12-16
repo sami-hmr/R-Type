@@ -64,7 +64,7 @@ struct KillEntityRequestEvent
 
   KillEntityRequestEvent(Registry& r, JsonObject const& e)
       : target(static_cast<Registry::Entity>(
-            get_value_copy<double>(r, e, "target").value()))
+            get_value_copy<double>(r, e, "entity").value()))
       , reason(get_value_copy<std::string>(r, e, "reason").value_or(""))
   {
   }
@@ -97,7 +97,7 @@ struct ModifyComponentRequestEvent
 
   ModifyComponentRequestEvent(Registry& r, JsonObject const& e)
       : target(static_cast<Registry::Entity>(
-            get_value_copy<double>(r, e, "target").value()))
+            get_value_copy<double>(r, e, "entity").value()))
       , component_name(get_value_copy<std::string>(r, e, "component").value())
       , modifications(get_value_copy<JsonObject>(r, e, "modifications").value())
   {

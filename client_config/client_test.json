@@ -31,7 +31,80 @@
           "config": {}
         }
       ],
-      "entities": []
+      "entities": [
+        {
+          "controller:Controllable": {
+            "pressed": [
+              {
+                "name": "UpdateVelocity",
+                "key": "Z",
+                "params": {
+                  "x": 0.0,
+                  "y": 1.0
+                }
+              },
+              {
+                "name": "UpdateVelocity",
+                "key": "Q",
+                "params": {
+                  "x": -1.0,
+                  "y": 0.0
+                }
+              },
+              {
+                "name": "UpdateVelocity",
+                "key": "S",
+                "params": {
+                  "x": 0.0,
+                  "y": -1.0
+                }
+              },
+              {
+                "name": "UpdateVelocity",
+                "key": "D",
+                "params": {
+                  "x": 0.0,
+                  "y": 1.0
+                }
+              }
+            ],
+            "released": [
+              {
+                "name": "UpdateVelocity",
+                "key": "Z",
+                "params": {
+                  "x": 0.0,
+                  "y": -1.0
+                }
+              },
+              {
+                "name": "UpdateVelocity",
+                "key": "Q",
+                "params": {
+                  "x": 1.0,
+                  "y": 0.0
+                }
+              },
+              {
+                "name": "UpdateVelocity",
+                "key": "S",
+                "params": {
+                  "x": 0.0,
+                  "y": 1.0
+                }
+              },
+              {
+                "name": "UpdateVelocity",
+                "key": "D",
+                "params": {
+                  "x": 0.0,
+                  "y": -1.0
+                }
+              }
+            ]
+          }
+        }
+      ]
     }
   ]
 }
