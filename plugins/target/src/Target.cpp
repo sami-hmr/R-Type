@@ -8,6 +8,7 @@
 #include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
+#include "plugin/components/Facing.hpp"
 #include "plugin/components/Follower.hpp"
 #include "plugin/components/Health.hpp"
 #include "plugin/components/Position.hpp"
@@ -36,6 +37,8 @@ void Target::init_follower(Registry::Entity entity, JsonObject const& obj)
 void Target::target_system(Registry& reg)
 {
   auto const& positions = reg.get_components<Position>();
+  auto& faces = reg.get_components<Facing>();
+
   for (auto&& [i, follower, position, velocity] :
        ZipperIndex<Follower, Position, Velocity>(reg))
   {
@@ -75,6 +78,9 @@ void Target::target_system(Registry& reg)
 
     if (direction_change > DIRECTION_TOLERANCE) {
       velocity.direction = new_direction;
+      if (reg.has_component<Facing>(i)) {
+        faces[i]->direction = new_direction;
+      }
 
       this->_registry.get().emit<ComponentBuilder>(
           i,

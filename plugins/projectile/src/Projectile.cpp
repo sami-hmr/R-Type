@@ -11,6 +11,7 @@
 #include "plugin/components/Team.hpp"
 #include "plugin/components/Temporal.hpp"
 #include "plugin/events/CollisionEvent.hpp"
+#include "plugin/events/DeathEvent.hpp"
 
 Projectile::Projectile(Registry& r, EntityLoader& l)
     : APlugin("projectile", r,
@@ -123,7 +124,7 @@ void Projectile::on_collision(const CollisionEvent& event)
     if (fragiles[event.a]->counter >= fragiles[event.a]->hits
         && !this->_registry.get().is_entity_dying(event.a))
     {
-      this->_registry.get().kill_entity(event.a);
+      this->_registry.get().emit<DeathEvent>(event.a);
       return;
     }
     fragiles[event.a]->counter += 1;
