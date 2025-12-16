@@ -1,6 +1,6 @@
 #include "UI.hpp"
-
 #include "libs/Color.hpp"
+#include "ecs/InitComponent.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/Hooks.hpp"
@@ -12,7 +12,9 @@
 #include "plugin/components/Sprite.hpp"
 #include "plugin/components/Text.hpp"
 
-UI::UI(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config)
+    UI::UI(Registry& r,
+           EntityLoader& l,
+           std::optional<JsonObject> const& config)
     : APlugin("ui",
               r,
               l,
@@ -45,7 +47,7 @@ UI::UI(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config)
 
 void UI::init_drawable(Registry::Entity const& entity, JsonObject const&)
 {
-  _registry.get().emplace_component<Drawable>(entity);
+  init_component<Drawable>(this->_registry.get(), entity);
 }
 
 void UI::init_sprite(Registry::Entity const& entity, JsonObject const& obj)
@@ -65,8 +67,8 @@ void UI::init_sprite(Registry::Entity const& entity, JsonObject const& obj)
                 this->_registry.get(), obj, entity, "size", "width", "height")
                 .value();
   }
-  _registry.get().emplace_component<Sprite>(
-      entity, texture_path.value(), scale);
+  init_component<Sprite>(
+      this->_registry.get(), entity, texture_path.value(), scale);
 }
 
 void UI::init_text(Registry::Entity const& entity, JsonObject const& obj)
@@ -87,18 +89,17 @@ void UI::init_text(Registry::Entity const& entity, JsonObject const& obj)
                 .value();
   }
 
-  auto const &str = get_value<Text, std::string>(
+  std::optional<std::string> str = get_value<Text, std::string>(
       this->_registry.get(), obj, entity, "text");
 
-  std::string text = "";
-  if (!str.has_value()) {
-    std::cerr << "Error loading text component: unexpected value type (text: "
-                 "string)\n";
+      if (!str.has_value()) {
+    std::cerr << "Error loading text component: unexpected value type "
+                 "(text: string)\n";
     return;
-  } 
-  text = str.value();
-  
-  const std::optional<Color> &outline_color = get_value<Text, Color>(
+  }
+  std::string text = std::move(str.value());
+
+  const std::optional<Color>& outline_color = get_value<Text, Color>(
       this->_registry.get(), obj, entity, "outline_color");
 
   if (!outline_color.has_value()) {
@@ -107,39 +108,39 @@ void UI::init_text(Registry::Entity const& entity, JsonObject const& obj)
     return;
   }
 
-  const std::optional<Color> &fill_color = get_value<Text, Color>(
-      this->_registry.get(), obj, entity, "fill_color");
+  const std::optional<Color>& fill_color =
+      get_value<Text, Color>(this->_registry.get(), obj, entity, "fill_color");
   if (!fill_color.has_value()) {
     std::cerr << "Error loading text component: unexpected value type "
                  "(fill_color: Color)\n";
     return;
   }
 
-  const std::optional<bool> &outline = get_value<Text, bool>(
-      this->_registry.get(), obj, entity, "outline");
+  const std::optional<bool>& outline =
+      get_value<Text, bool>(this->_registry.get(), obj, entity, "outline");
   if (!outline.has_value()) {
     std::cerr << "Error loading text component: unexpected value type "
                  "(outline: bool)\n";
     return;
   }
 
-  const std::optional<float> &outline_thickness = get_value<Text, double>(
+  const std::optional<float>& outline_thickness = get_value<Text, double>(
       this->_registry.get(), obj, entity, "outline_thickness");
   if (!outline_thickness.has_value()) {
     std::cerr << "Error loading text component: unexpected value type "
                  "(outline_thickness: float)\n";
     return;
   }
-  
-  _registry.get().emplace_component<Text>(
-      entity,
-      font_path.value(),
-      scale,
-      text,
-      outline_color.value(),
-      fill_color.value(),
-      outline.value(),
-      outline_thickness.value());
+
+  init_component(this->_registry.get(),
+                 entity,
+                 Text(font_path.value(),
+                      scale,
+                      text,
+                      outline_color.value(),
+                      fill_color.value(),
+                      outline.value(),
+                      outline_thickness.value()));
 }
 
 void UI::init_input(Registry::Entity entity, const JsonVariant& config)
@@ -156,7 +157,8 @@ void UI::init_input(Registry::Entity entity, const JsonVariant& config)
       buffer = std::get<std::string>(obj.at("buffer").value);
     }
 
-    _registry.get().emplace_component<Input>(entity, Input(enabled, buffer));
+    init_component<Input>(
+        this->_registry.get(), entity, Input(enabled, buffer));
   } catch (std::bad_variant_access const&) {
   }
 }
@@ -250,8 +252,8 @@ void UI::init_background(Registry::Entity const& entity, JsonObject const& obj)
                    "value, using default (inactive)\n";
     }
   }
-  this->_registry.get().emplace_component<Background>(
-      entity, Background(paths, render_type, parallax));
+  init_component<Background>(
+      this->_registry.get(), entity, Background(paths, render_type, parallax));
 }
 
 std::optional<AnimationData> UI::parse_animation_data(JsonObject const& obj,
@@ -377,8 +379,11 @@ void UI::init_animated_sprite(Registry::Entity const& entity,
   if (default_animation_value) {
     default_animation = default_animation_value.value();
   }
-  _registry.get().emplace_component<AnimatedSprite>(
-      entity, std::move(animations), default_animation, default_animation);
+  init_component<AnimatedSprite>(this->_registry.get(),
+                                 entity,
+                                 std::move(animations),
+                                 default_animation,
+                                 default_animation);
 }
 
 void UI::init_cam(Registry::Entity const& entity, JsonObject const& obj)
@@ -414,7 +419,7 @@ void UI::init_cam(Registry::Entity const& entity, JsonObject const& obj)
         << "Camera component missing speed field, using default (10%, 15%)\n";
     return;
   }
-  _registry.get().emplace_component<Camera>(entity, size, target, speed);
+  init_component(this->_registry.get(), entity, Camera(size, target, speed));
 }
 
 extern "C"

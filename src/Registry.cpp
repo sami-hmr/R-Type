@@ -1,6 +1,11 @@
 
 
+#include <optional>
+#include <vector>
+
 #include "ecs/Registry.hpp"
+
+#include "ecs/Systems.hpp"
 
 Registry::Entity Registry::spawn_entity()
 {
@@ -54,7 +59,8 @@ void Registry::run_systems()
 
   update_bindings();
 
-  for (auto const& f : this->_frequent_systems) {
+  std::vector<System<>> pending = this->_frequent_systems;
+  for (auto const& f : pending) {
     f();
   }
   process_entity_deletions();
@@ -92,6 +98,9 @@ void Registry::emit(std::string const& name, JsonObject const& args)
 
 void Registry::emit(std::string const& name, ByteArray const& data)
 {
+  if (!this->_byte_event_emitter.contains(name)) {
+    return;
+  }
   this->_byte_event_emitter.at(name)(data);
 }
 
@@ -130,8 +139,9 @@ void Registry::remove_current_scene(std::string const& scene_name)
       _current_scene.end());
 }
 
-void Registry::remove_all_scenes() {
-    this->_current_scene.clear();
+void Registry::remove_all_scenes()
+{
+  this->_current_scene.clear();
 }
 
 std::vector<std::string> const& Registry::get_current_scene() const
@@ -139,9 +149,15 @@ std::vector<std::string> const& Registry::get_current_scene() const
   return _current_scene;
 }
 
-Clock& Registry::clock() { return _clock; }
+Clock& Registry::clock()
+{
+  return _clock;
+}
 
-const Clock& Registry::clock() const { return _clock; }
+const Clock& Registry::clock() const
+{
+  return _clock;
+}
 
 void Registry::add_template(std::string const& name, JsonObject const& config)
 {
@@ -164,16 +180,21 @@ bool Registry::is_in_current_cene(Entity e)
       != this->_current_scene.end();
 }
 
-ByteArray Registry::convert_event_entity(std::string const& id,
-                               ByteArray const& event,
-                               std::unordered_map<Entity, Entity> const& map)
+ByteArray Registry::convert_event_entity(
+    std::string const& id,
+    ByteArray const& event,
+    std::unordered_map<Entity, Entity> const& map)
 {
+  if (!this->_event_entity_converters.contains(id)) {
+    return event;
+  }
   return this->_event_entity_converters.at(id)(event, map);
 }
 
-ByteArray Registry::convert_comp_entity(std::string const& id,
-                              ByteArray const& comp,
-                              std::unordered_map<Entity, Entity> const& map)
+ByteArray Registry::convert_comp_entity(
+    std::string const& id,
+    ByteArray const& comp,
+    std::unordered_map<Entity, Entity> const& map)
 {
   return this->_comp_entity_converters.at(id)(comp, map);
 }
@@ -185,4 +206,11 @@ std::vector<ComponentState> Registry::get_state()
     r.emplace_back(this->_state_getters.at(it.first)());
   }
   return r;
+}
+
+ByteArray Registry::get_event_with_id(std::string const& id,
+                                      JsonObject const& params)
+{
+  return this->_event_json_builder.at(this->_events_index_getter.at_second(id))(
+      params);
 }

@@ -40,8 +40,7 @@ concept bytable = serializable<T> && unserializable<T>;
 #define DEFAULT_BYTE_CONSTRUCTOR(classname, construct, ...) \
   classname(ByteArray const& array) \
   { \
-    Result<classname> r = \
-        apply((construct), __VA_ARGS__)(Rest(array)); \
+    Result<classname> r = apply((construct), __VA_ARGS__)(Rest(array)); \
     if (r.index() == ERROR) { \
       auto const& err = std::get<ERROR>(r); \
       throw InvalidPackage(std::format("{}: {}, {}, line {} col {}", \
@@ -81,6 +80,20 @@ ByteArray type_to_byte(T v, std::endian endian = std::endian::big)
   }
   return tmp;
 }
+
+template<typename Type>
+constexpr std::function<ByteArray(Type const&)> TTB_FUNCTION()
+{
+  return [](Type const& v) { return type_to_byte(v); };
+}
+
+template<typename Type, typename... Args>
+constexpr std::function<ByteArray(Type const&)> SERIALIZE_FUNCTION(auto&& f,
+                                                                   Args... args)
+{
+  return [f, args...](Type const& v) { return f(v, args...); };
+}
+
 
 template<typename T>
 ByteArray vector_to_byte(std::vector<T> const& v,
@@ -122,7 +135,7 @@ ByteArray optional_to_byte(std::optional<T> const& m,
 }
 
 ByteArray string_to_byte(std::string const& str);
-ByteArray json_value_to_byte(JsonValue const &v);
+ByteArray json_value_to_byte(JsonValue const& v);
 ByteArray json_object_to_byte(JsonObject const& object);
 
 CUSTOM_EXCEPTION(InvalidPackage)

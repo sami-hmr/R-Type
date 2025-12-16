@@ -32,7 +32,6 @@ static int true_main(Registry& r,
   r.on<SceneChangeEvent>("SceneChangeEvent",
                          [&r](const SceneChangeEvent& event)
                          {
-                             std::cout << event.target_scene << std::endl;;
                              if (event.force) {
                                  r.remove_all_scenes();
                              }

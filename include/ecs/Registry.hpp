@@ -121,11 +121,17 @@ public:
         this->_components.at(std::type_index(typeid(Component))));
   }
 
-  template<class Component>
+  template<class... Component>
   bool has_component(const Entity& e) const
   {
-    SparseArray<Component> const& comp = this->get_components<Component>();
-    return (e < comp.size() && comp[e].has_value());
+    return ((
+                [this, e]()
+                {
+                  SparseArray<Component> const& comp =
+                      this->get_components<Component>();
+                  return (e < comp.size() && comp[e].has_value());
+                })()
+            && ...);
   }
 
   Entity spawn_entity();
@@ -428,7 +434,14 @@ public:
             handler(event);
           }
         });
+
+    _event_json_builder.insert_or_assign(
+        type_id,
+        [this](JsonObject const& params)
+        { return T(*this, params).to_bytes(); });
   }
+
+  ByteArray get_event_with_id(std::string const&, JsonObject const&);
 
   void add_template(std::string const& name, JsonObject const& config);
 
@@ -540,6 +553,9 @@ private:
   std::unordered_map<std::type_index, std::any> _event_handlers;
   TwoWayMap<std::type_index, std::string> _events_index_getter;
   std::unordered_map<std::type_index, std::any> _event_builders;
+  std::unordered_map<std::type_index,
+                     std::function<ByteArray(JsonObject const&)>>
+      _event_json_builder;
   std::unordered_map<std::type_index,
                      std::function<void(const std::any&, const std::any&)>>
       _event_invokers;

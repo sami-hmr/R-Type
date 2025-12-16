@@ -9,6 +9,7 @@
 
 #include "Json/JsonParser.hpp"
 #include "TwoWayMap.hpp"
+#include "ecs/InitComponent.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/Hooks.hpp"
@@ -87,7 +88,8 @@ void Actions::init_action_trigger(Registry::Entity const& entity,
     }
     to_emit_map.emplace_back(name, params);
   }
-  this->_registry.get().emplace_component<ActionTrigger>(
+
+  init_component<ActionTrigger>(this->_registry.get(),
       entity, std::make_pair(type, params), to_emit_map);
 }
 

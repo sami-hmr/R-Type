@@ -37,29 +37,6 @@
       "plugins": [],
       "entities": [
         {
-          "ui:Drawable": {},
-          "ui:Background": {
-            "layers": [
-              {
-                "path": "assets/backgrounds/skies/Sky_sky.png"
-              }
-            ],
-            "render_type": "STRETCH",
-            "parallax": {
-              "active": false,
-              "speed": {
-                "x": 0.0,
-                "y": 0.0
-              },
-              "framerate": 60.0
-            },
-            "position": {
-                "x": 0.0,
-                "y": 0.0
-            }
-          }
-        },
-        {
           "ui:AnimatedSprite": {
             "animations": [
               {
@@ -145,7 +122,7 @@
                   "target_scene": "game",
                   "state": "main",
                   "reason": "User clicked enemy sprite",
-                  "force": true
+                  "force": false
                 }
               },
               {
@@ -154,6 +131,12 @@
                   "state": "active",
                   "reason": "User clicked enemy sprite",
                   "force": false
+                }
+              },
+              {
+                "CamRotateEvent": {
+                  "rotation": 720.0,
+                  "speed": 10.0
                 }
               },
               {

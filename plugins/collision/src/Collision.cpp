@@ -8,6 +8,7 @@
 #include "Json/JsonParser.hpp"
 #include "NetworkShared.hpp"
 #include "algorithm/QuadTreeCollision.hpp"
+#include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "libs/Vector2D.hpp"
@@ -86,8 +87,8 @@ void Collision::init_collision(Registry::Entity const& entity,
     type = CollisionType::Bounce;
   }
 
-  this->_registry.get().emplace_component<Collidable>(
-      entity, width.value(), height.value(), type, true);
+  init_component<Collidable>(
+      this->_registry.get(), entity, width.value(), height.value(), type, true);
 }
 
 void Collision::init_interaction_zone(Registry::Entity const& entity,
@@ -101,8 +102,8 @@ void Collision::init_interaction_zone(Registry::Entity const& entity,
     return;
   }
 
-  this->_registry.get().emplace_component<InteractionZone>(entity,
-                                                           radius.value());
+  init_component<InteractionZone>(
+      this->_registry.get(), entity, radius.value());
 }
 
 void Collision::collision_system(Registry& r)

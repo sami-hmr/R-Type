@@ -38,7 +38,7 @@ struct HealEvent
 
   HealEvent(Registry& r, JsonObject const& e)
       : target(static_cast<Registry::Entity>(
-            get_value_copy<double>(r, e, "target").value()))
+            get_value_copy<double>(r, e, "entity").value()))
       , source(static_cast<Registry::Entity>(
             get_value_copy<double>(r, e, "source").value()))
       , amount(get_value_copy<int>(r, e, "amount").value())
