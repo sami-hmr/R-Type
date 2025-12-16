@@ -3,6 +3,7 @@
 #include "Mob.hpp"
 
 #include "ecs/zipper/ZipperIndex.hpp"
+#include "libs/Vector2D.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Enemy.hpp"
@@ -23,12 +24,49 @@ Mob::Mob(Registry& r, EntityLoader& l)
 
 void Mob::init_enemy(Registry::Entity const& entity, JsonObject const& obj)
 {
-  return;
+  auto const& type =
+      get_value<Enemy, Enemy_type>(this->_registry.get(), obj, entity, "type");
+
+  if (!type) {
+    std::cerr << "Error loading Enemy component: unexpected value type or "
+                 "missing value in JsonObject\n";
+    return;
+  }
+  this->_registry.get().emplace_component<Enemy>(entity, type.value());
 }
 
 void Mob::init_spawner(Registry::Entity const& entity, JsonObject const& obj)
 {
-  return;
+  auto const& spawn_pos = get_value<Spawner, Vector2D>(
+      this->_registry.get(), obj, entity, "spawn_pos");
+  auto const& entity_template = get_value<Spawner, std::string>(
+      this->_registry.get(), obj, entity, "entity_template");
+  auto const& spawn_interval = get_value<Spawner, double>(
+      this->_registry.get(), obj, entity, "spawn_interval");
+  auto const& spawn_delta = get_value<Spawner, double>(
+      this->_registry.get(), obj, entity, "spawn_delta");
+  auto const& max_spawns =
+      get_value<Spawner, int>(this->_registry.get(), obj, entity, "max_spawns");
+  auto const& current_spawns = get_value<Spawner, int>(
+      this->_registry.get(), obj, entity, "current_spawns");
+  auto const& active =
+      get_value<Spawner, bool>(this->_registry.get(), obj, entity, "active");
+
+  if (!spawn_pos || !entity_template || !spawn_interval || !spawn_delta
+      || !max_spawns || !current_spawns || !active)
+  {
+    std::cerr << "Error loading Spawner component: unexpected value type or "
+                 "missing value in JsonObject\n";
+    return;
+  }
+  this->_registry.get().emplace_component<Spawner>(entity,
+    spawn_pos.value(),
+    entity_template.value(),
+    spawn_interval.value(),
+    spawn_delta.value(),
+    max_spawns.value(),
+    current_spawns.value(),
+    active.value());
 }
 
 void Mob::spawner_system(Registry& r)
