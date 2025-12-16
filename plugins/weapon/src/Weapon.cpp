@@ -1,3 +1,5 @@
+#include <vector>
+
 #include "Weapon.hpp"
 
 #include "NetworkShared.hpp"

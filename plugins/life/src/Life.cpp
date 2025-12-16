@@ -40,8 +40,8 @@ Life::Life(Registry& r, EntityLoader& l)
   REGISTER_COMPONENT(Damage)
   REGISTER_COMPONENT(Heal)
   REGISTER_COMPONENT(Team)
-  this->_registry.get().add_system([this](Registry& r) { this->update_cooldowns(r); }, 2);
-
+  this->_registry.get().add_system(
+      [this](Registry& r) { this->update_cooldowns(r); }, 2);
 
   this->_registry.get().on<DamageEvent>("DamageEvent",
                                         [this](const DamageEvent& event)
@@ -121,7 +121,6 @@ void Life::damage_entity(const CollisionEvent& event,
 
     _registry.get().emit<DamageEvent>(
         event.a, event.b, damages[event.b]->amount);
-
   }
 }
 
@@ -133,7 +132,6 @@ void Life::heal_entity(const CollisionEvent& event,
   if (healths[event.a]->heal_delta >= heal_cooldown) {
     healths[event.a]->heal_delta = 0.0;
     _registry.get().emit<HealEvent>(event.a, event.b, healers[event.b]->amount);
-
 
     this->_registry.get().emit<ComponentBuilder>(
         event.a,
@@ -174,7 +172,6 @@ void Life::on_damage(const DamageEvent& event)
   }
   if (event.target < healths.size() && healths[event.target].has_value()) {
     healths[event.target]->current -= event.amount;
-
 
     this->_registry.get().emit<ComponentBuilder>(
         event.target,
@@ -217,7 +214,6 @@ void Life::on_heal(const HealEvent& event)
     healths[event.target]->current =
         std::min(healths[event.target]->current + event.amount,
                  healths[event.target]->max);
-
 
     this->_registry.get().emit<ComponentBuilder>(
         event.target,

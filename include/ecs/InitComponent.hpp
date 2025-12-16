@@ -2,6 +2,7 @@
 
 #include <stdexcept>
 #include <utility>
+#include <string>
 
 #include "NetworkShared.hpp"
 #include "ecs/Registry.hpp"

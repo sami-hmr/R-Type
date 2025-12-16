@@ -1,6 +1,8 @@
 
 
+#include <vector>
 #include "ecs/Registry.hpp"
+#include "ecs/Systems.hpp"
 
 Registry::Entity Registry::spawn_entity()
 {
@@ -54,7 +56,8 @@ void Registry::run_systems()
 
   update_bindings();
 
-  for (auto const& f : this->_frequent_systems) {
+  std::vector<System<>> pending = this->_frequent_systems;
+  for (auto const& f : pending) {
     f();
   }
   process_entity_deletions();

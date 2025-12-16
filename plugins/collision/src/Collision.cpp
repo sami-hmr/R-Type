@@ -87,9 +87,8 @@ void Collision::init_collision(Registry::Entity const& entity,
     type = CollisionType::Bounce;
   }
 
-  init_component(this->_registry.get(),
-                 entity,
-                 Collidable(width.value(), height.value(), type, true));
+  init_component<Collidable>(
+      this->_registry.get(), entity, width.value(), height.value(), type, true);
 }
 
 void Collision::init_interaction_zone(Registry::Entity const& entity,
@@ -103,8 +102,8 @@ void Collision::init_interaction_zone(Registry::Entity const& entity,
     return;
   }
 
-  init_component<InteractionZone>(this->_registry.get(), entity,
-                                                           radius.value());
+  init_component<InteractionZone>(
+      this->_registry.get(), entity, radius.value());
 }
 
 void Collision::collision_system(Registry& r)
