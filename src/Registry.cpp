@@ -108,9 +108,12 @@ void Registry::init_scene_management()
 void Registry::setup_scene_systems()
 {
   for (const auto& [name, state] : _scenes) {
-    if (state == SceneState::MAIN || state == SceneState::ACTIVE) {
+    if (state == SceneState::MAIN) {
       _current_scene.push_back(name);
       break;
+    }
+    if (state == SceneState::ACTIVE) {
+      _current_scene.push_back(name);
     }
   }
 }

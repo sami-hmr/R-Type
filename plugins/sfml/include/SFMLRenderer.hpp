@@ -50,13 +50,17 @@ private:
   sf::Font& load_font(std::string const& path);
 
   void handle_events();
+  void mouse_events(const sf::Event &events);
   void handle_resize();
+  Vector2D screen_to_world(sf::Vector2i screen_pos);
   void render_sprites(Registry& r);
   void render_text(Registry& r);
   void background_system(Registry& r);
   void camera_system(Registry &r);
   void bar_system(Registry &r);
+  void button_system(Registry& r);
 
+  
   void animation_system(Registry& r);
   void display();
 
@@ -73,6 +77,7 @@ private:
   sf::RectangleShape _rectangle;
 
   sf::View _view;
+  bool _camera_initialized = false;
 
   void draw_nothing_background(Background& background);
   void draw_repeat_background(Background& background);

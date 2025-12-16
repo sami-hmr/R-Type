@@ -8,6 +8,7 @@
 #include "Json/JsonParser.hpp"
 #include "NetworkShared.hpp"
 #include "algorithm/QuadTreeCollision.hpp"
+#include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "libs/Vector2D.hpp"
@@ -86,8 +87,9 @@ void Collision::init_collision(Registry::Entity const& entity,
     type = CollisionType::Bounce;
   }
 
-  this->_registry.get().emplace_component<Collidable>(
-      entity, width.value(), height.value(), type, true);
+  init_component(this->_registry.get(),
+                 entity,
+                 Collidable(width.value(), height.value(), type, true));
 }
 
 void Collision::init_interaction_zone(Registry::Entity const& entity,
@@ -101,7 +103,7 @@ void Collision::init_interaction_zone(Registry::Entity const& entity,
     return;
   }
 
-  this->_registry.get().emplace_component<InteractionZone>(entity,
+  init_component<InteractionZone>(this->_registry.get(), entity,
                                                            radius.value());
 }
 
@@ -118,12 +120,10 @@ void Collision::collision_system(Registry& r)
     if (!collidable.is_active) {
       continue;
     }
-    double rect_x = position.pos.x - (collidable.width / 2.0);
-    double rect_y = position.pos.y - (collidable.height / 2.0);
     entities.push_back(ICollisionAlgorithm::CollisionEntity {
         .entity_id = i,
-        .bounds = Rect {.x = rect_x,
-                        .y = rect_y,
+        .bounds = Rect {.x = position.pos.x,
+                        .y = position.pos.y,
                         .width = collidable.width,
                         .height = collidable.height}});
   }
@@ -152,8 +152,8 @@ void Collision::interaction_zone_system(Registry& r)
       continue;
     }
 
-    Rect range {.x = position.pos.x - zone.radius,
-                .y = position.pos.y - zone.radius,
+    Rect range {.x = position.pos.x,
+                .y = position.pos.y,
                 .width = zone.radius * 2,
                 .height = zone.radius * 2};
 

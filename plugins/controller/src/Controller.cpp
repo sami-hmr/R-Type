@@ -4,6 +4,7 @@
 #include "Controller.hpp"
 
 #include "Json/JsonParser.hpp"
+#include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "plugin/APlugin.hpp"
@@ -94,7 +95,7 @@ void Controller::init_controller(Registry::Entity const entity,
     return;
   }
 
-  this->_registry.get().emplace_component<Controllable>(entity,
+  init_component<Controllable>(this->_registry.get(), entity,
                                                         up_str.value()[0],
                                                         down_str.value()[0],
                                                         left_str.value()[0],

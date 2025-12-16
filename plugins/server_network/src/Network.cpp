@@ -27,6 +27,7 @@
 #include "plugin/components/Team.hpp"
 #include "plugin/components/Velocity.hpp"
 #include "plugin/events/CleanupEvent.hpp"
+#include "plugin/events/EntityManagementEvent.hpp"
 #include "plugin/events/LoggerEvent.hpp"
 #include "plugin/events/NetworkEvents.hpp"
 #include "plugin/events/SceneChangeEvent.hpp"
@@ -80,6 +81,7 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
         this->_event_queue.lock.lock();
         while (!this->_event_queue.queue.empty()) {
           auto& e = this->_event_queue.queue.front();
+          std::cout << e.event_id << std::endl;
           r.emit(e.event_id, e.data);
           this->_event_queue.queue.pop();
         }
@@ -172,6 +174,20 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
           std::nullopt,
           "SceneChangeEvent",
           SceneChangeEvent("game", "", true).to_bytes());
+    }
+  })
+
+  SUBSCRIBE_EVENT(LoadEntityTemplate, {
+    auto const& entity = this->_loader.get().load_entity(
+        JsonObject({{"template", JsonValue(event.template_name)}}));
+
+    if (!entity) {
+      LOGGER("load entity template",
+             LogLevel::ERROR,
+             "failed to load entity template " + event.template_name);
+    }
+    for (auto const& [id, comp] : event.aditionals) {
+      init_component(this->_registry.get(), *entity, id, comp);
     }
   })
 }

@@ -4,6 +4,7 @@
 
 #include "Json/JsonParser.hpp"
 #include "NetworkShared.hpp"
+#include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "libs/Vector2D.hpp"
@@ -76,7 +77,7 @@ void Moving::init_pos(Registry::Entity const& entity, JsonObject& obj)
                    "(expected z: int)\n";
     }
   }
-  auto& pos_opt = this->_registry.get().emplace_component<Position>(
+  auto& pos_opt = init_component<Position>(this->_registry.get(),
       entity, values.value(), z);
 
   if (!pos_opt.has_value()) {
@@ -98,7 +99,7 @@ void Moving::init_velocity(Registry::Entity const& entity, JsonObject& obj)
     return;
   }
 
-  auto& vel_opt = this->_registry.get().emplace_component<Velocity>(
+  auto& vel_opt = init_component<Velocity>(this->_registry.get(),
       entity, speed.value(), dir.value());
 
   if (!vel_opt.has_value()) {

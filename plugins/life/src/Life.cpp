@@ -10,6 +10,7 @@
 #include "Json/JsonParser.hpp"
 #include "Logger.hpp"
 #include "NetworkShared.hpp"
+#include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/SparseArray.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
@@ -63,7 +64,7 @@ void Life::init_health(Registry::Entity entity, JsonObject const& obj)
                  "missing value in JsonObject\n";
     return;
   }
-  this->_registry.get().emplace_component<Health>(
+  init_component<Health>(this->_registry.get(),
       entity, current.value(), max.value(), heal_cooldown, damage_cooldown);
 }
 
@@ -77,7 +78,7 @@ void Life::init_damage(Registry::Entity entity, JsonObject const& obj)
                      "missing value in JsonObject\n";
     return;
   }
-  this->_registry.get().emplace_component<Damage>(entity, value.value());
+  init_component<Damage>(this->_registry.get(), entity, value.value());
 }
 
 void Life::init_heal(Registry::Entity entity, JsonObject const& obj)
@@ -90,7 +91,7 @@ void Life::init_heal(Registry::Entity entity, JsonObject const& obj)
                      "missing value in JsonObject\n";
     return;
   }
-  this->_registry.get().emplace_component<Heal>(entity, value.value());
+  init_component<Heal>(this->_registry.get(), entity, value.value());
 }
 
 void Life::init_team(Registry::Entity const& entity, JsonObject const& obj)
@@ -103,7 +104,7 @@ void Life::init_team(Registry::Entity const& entity, JsonObject const& obj)
                      "missing value in JsonObject\n";
     return;
   }
-  this->_registry.get().emplace_component<Team>(entity, value.value());
+  init_component<Team>(this->_registry.get(), entity, value.value());
 }
 
 void Life::damage_entity(const CollisionEvent& event,

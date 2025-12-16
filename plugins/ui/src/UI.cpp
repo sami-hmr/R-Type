@@ -1,5 +1,6 @@
 #include "UI.hpp"
 
+#include "ecs/InitComponent.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/Hooks.hpp"
@@ -34,11 +35,17 @@ UI::UI(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config)
   REGISTER_COMPONENT(Camera)
   REGISTER_COMPONENT(Background)
   REGISTER_COMPONENT(AnimatedSprite)
+
+  SUBSCRIBE_EVENT(CamAggroEvent, { this->cam_target_event(event); })
+  SUBSCRIBE_EVENT(CamZoomEvent, { this->cam_zoom_event(event); })
+  SUBSCRIBE_EVENT(CamRotateEvent, { this->cam_rotate_event(event); })
+  SUBSCRIBE_EVENT(CamSpeedEvent, { this->cam_speed_event(event); })
+  SUBSCRIBE_EVENT(CamMoveEvent, { this->cam_move_event(event); })
 }
 
 void UI::init_drawable(Registry::Entity const& entity, JsonObject const&)
 {
-  _registry.get().emplace_component<Drawable>(entity);
+  init_component<Drawable>(this->_registry.get(), entity);
 }
 
 void UI::init_sprite(Registry::Entity const& entity, JsonObject const& obj)
@@ -58,7 +65,7 @@ void UI::init_sprite(Registry::Entity const& entity, JsonObject const& obj)
                 this->_registry.get(), obj, entity, "size", "width", "height")
                 .value();
   }
-  _registry.get().emplace_component<Sprite>(
+  init_component<Sprite>(this->_registry.get(),
       entity, texture_path.value(), scale);
 }
 
@@ -80,7 +87,7 @@ void UI::init_text(Registry::Entity const& entity, JsonObject const& obj)
                 .value();
   }
 
-  auto& text_opt = _registry.get().emplace_component<Text>(
+  auto& text_opt = init_component<Text>(this->_registry.get(),
       entity, font_path.value(), scale, "");
 
   if (text_opt.has_value()) {
@@ -106,7 +113,7 @@ void UI::init_input(Registry::Entity entity, const JsonVariant& config)
       buffer = std::get<std::string>(obj.at("buffer").value);
     }
 
-    _registry.get().emplace_component<Input>(entity, Input(enabled, buffer));
+    init_component<Input>(this->_registry.get(), entity, Input(enabled, buffer));
   } catch (std::bad_variant_access const&) {
   }
 }
@@ -163,7 +170,6 @@ void UI::init_background(Registry::Entity const& entity, JsonObject const& obj)
         this->_registry.get(), path_obj, entity, "path");
 
     if (path_str.has_value()) {
-      std::cout << "Adding background layer: " << path_str.value() << "\n";
       paths.push_back(path_str.value());
     }
   }
@@ -201,7 +207,7 @@ void UI::init_background(Registry::Entity const& entity, JsonObject const& obj)
                    "value, using default (inactive)\n";
     }
   }
-  this->_registry.get().emplace_component<Background>(
+  init_component<Background>(this->_registry.get(),
       entity, Background(paths, render_type, parallax));
 }
 
@@ -328,7 +334,7 @@ void UI::init_animated_sprite(Registry::Entity const& entity,
   if (default_animation_value) {
     default_animation = default_animation_value.value();
   }
-  _registry.get().emplace_component<AnimatedSprite>(
+  init_component<AnimatedSprite>(this->_registry.get(),
       entity, std::move(animations), default_animation, default_animation);
 }
 
@@ -365,19 +371,7 @@ void UI::init_cam(Registry::Entity const& entity, JsonObject const& obj)
         << "Camera component missing speed field, using default (10%, 15%)\n";
     return;
   }
-  _registry.get().emplace_component<Camera>(entity, size, target, speed);
-  _registry.get().on<CamAggroEvent>("CamAggroEvent",
-                                    [this](const CamAggroEvent& e)
-                                    { this->cam_target_event(e); });
-  _registry.get().on<CamZoomEvent>("CamZoomEvent",
-                                   [this](const CamZoomEvent& e)
-                                   { this->cam_zoom_event(e); });
-  _registry.get().on<CamRotateEvent>("CamRotateEvent",
-                                     [this](const CamRotateEvent& e)
-                                     { this->cam_rotate_event(e); });
-  _registry.get().on<CamSpeedEvent>("CamSpeedEvent",
-                                    [this](const CamSpeedEvent& e)
-                                    { this->cam_speed_event(e); });
+  init_component(this->_registry.get(), entity, Camera(size, target, speed));
 }
 
 extern "C"

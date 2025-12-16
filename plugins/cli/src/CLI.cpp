@@ -191,7 +191,6 @@ void CLI::process_command(const std::string& cmd)
             [this](std::istringstream&)
         {
           _registry.get().emit<WantReady>();
-          std::cout << "ready\n";
         }}},
       {"spawn",
        {.usage = "spawn",

@@ -9,6 +9,7 @@
 #include "Client.hpp"
 #include "ClientConnection.hpp"
 #include "NetworkShared.hpp"
+#include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "plugin/APlugin.hpp"
@@ -83,7 +84,7 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
 
       std::size_t new_entity = this->_registry.get().spawn_entity();
 
-      this->_registry.get().emplace_component<Controllable>(
+      init_component<Controllable>(this->_registry.get(),
           new_entity, 'Z', 'S', 'Q', 'D');
       this->_server_indexes.insert(event.server_index,
                                    new_entity);  // SERVER -> CLIENT

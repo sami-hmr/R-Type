@@ -1,18 +1,13 @@
 #include "Weapon.hpp"
 
-#include "Json/JsonParser.hpp"
 #include "NetworkShared.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/Scenes.hpp"
-#include "ecs/SparseArray.hpp"
 #include "ecs/zipper/Zipper.hpp"
-#include "ecs/zipper/ZipperIndex.hpp"
 #include "plugin/APlugin.hpp"
-#include "plugin/Hooks.hpp"
 #include "plugin/components/BasicWeapon.hpp"
-#include "plugin/components/Controllable.hpp"
 #include "plugin/components/Position.hpp"
-#include "plugin/components/Velocity.hpp"
+#include "plugin/events/EntityManagementEvent.hpp"
 #include "plugin/events/IoEvents.hpp"
 
 Weapon::Weapon(Registry& r, EntityLoader& l)
@@ -25,9 +20,9 @@ Weapon::Weapon(Registry& r, EntityLoader& l)
 {
   REGISTER_COMPONENT(BasicWeapon)
   SUBSCRIBE_EVENT(KeyPressedEvent,
-      { this->on_fire(this->_registry.get(), event); })
+                  { this->on_fire(this->_registry.get(), event); })
   _registry.get().add_system([this](Registry& r)
-      { this->basic_weapon_system(r.clock().now()); });
+                             { this->basic_weapon_system(r.clock().now()); });
 }
 
 void Weapon::on_fire(Registry& r, const KeyPressedEvent& e)
@@ -37,24 +32,25 @@ void Weapon::on_fire(Registry& r, const KeyPressedEvent& e)
   }
 
   auto now = r.clock().now();
-  for (auto&& [weapon, pos] : Zipper<BasicWeapon, Position>(r)) {
+  for (auto&& [weapon, pos, scene] : Zipper<BasicWeapon, Position, Scene>(r)) {
     if (!weapon.update_basic_weapon(now)) {
       continue;
     }
-    Vector2D spawn_pos = pos.pos;
-    std::optional<Registry::Entity> bullet = this->entity_loader.load_entity(
-        JsonObject({{"template", JsonValue(weapon.bullet_type)}}));
-    if (!bullet) {
-      continue;
-    }
-    SparseArray<Position>& positions = r.get_components<Position>();
-    positions.at(bullet.value())->pos = spawn_pos;
-    r.add_component<Scene>(bullet.value(), Scene("game", SceneState::ACTIVE));
+    this->_registry.get().emit<EventBuilder>(
+        this->_registry.get().get_event_key<LoadEntityTemplate>(),
+        LoadEntityTemplate(
+            weapon.bullet_type,
+            LoadEntityTemplate::Additional {
+                {this->_registry.get().get_component_key<Position>(),
+                 pos.to_bytes()},
+                {this->_registry.get().get_component_key<Scene>(),
+                 scene.to_bytes()}})
+            .to_bytes());
   }
 }
 
-
-void Weapon::basic_weapon_system(std::chrono::high_resolution_clock::time_point now)
+void Weapon::basic_weapon_system(
+    std::chrono::high_resolution_clock::time_point now)
 {
   for (auto&& [weapon] : Zipper<BasicWeapon>(_registry.get())) {
     if (weapon.reloading && weapon.remaining_magazine > 0) {
@@ -68,7 +64,6 @@ void Weapon::basic_weapon_system(std::chrono::high_resolution_clock::time_point 
     }
   }
 }
-
 
 extern "C"
 {
