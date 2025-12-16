@@ -73,7 +73,7 @@ void Projectile::temporal_system(Registry& reg)
           temporal.to_bytes());
 
       if (temporal.elapsed >= temporal.lifetime) {
-        reg.kill_entity(i);
+        this->_registry.get().emit<DeathEvent>(i);
       }
     }
   }
