@@ -25,9 +25,9 @@ Weapon::Weapon(Registry& r, EntityLoader& l)
 {
   REGISTER_COMPONENT(BasicWeapon)
   SUBSCRIBE_EVENT(KeyPressedEvent,
-                  { this->on_fire(this->_registry.get(), event); })
+      { this->on_fire(this->_registry.get(), event); })
   _registry.get().add_system([this](Registry& r)
-                             { this->basic_weapon_system(r.clock().now()); });
+      { this->basic_weapon_system(r.clock().now()); });
 }
 
 void Weapon::on_fire(Registry& r, const KeyPressedEvent& e)

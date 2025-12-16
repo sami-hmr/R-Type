@@ -133,6 +133,7 @@ void Life::heal_entity(const CollisionEvent& event,
     healths[event.a]->heal_delta = 0.0;
     _registry.get().emit<HealEvent>(event.a, event.b, healers[event.b]->amount);
 
+
     this->_registry.get().emit<ComponentBuilder>(
         event.a,
         this->_registry.get().get_component_key<Health>(),
@@ -172,6 +173,7 @@ void Life::on_damage(const DamageEvent& event)
   }
   if (event.target < healths.size() && healths[event.target].has_value()) {
     healths[event.target]->current -= event.amount;
+
 
     this->_registry.get().emit<ComponentBuilder>(
         event.target,
@@ -215,6 +217,7 @@ void Life::on_heal(const HealEvent& event)
         std::min(healths[event.target]->current + event.amount,
                  healths[event.target]->max);
 
+
     this->_registry.get().emit<ComponentBuilder>(
         event.target,
         this->_registry.get().get_component_key<Health>(),
@@ -242,10 +245,11 @@ void Life::update_cooldowns(Registry& reg)
     if (!reg.is_entity_dying(i)) {
       health.damage_delta += dt;
       health.heal_delta += dt;
-      this->_registry.get().emit<ComponentBuilder>(
-          i,
-          this->_registry.get().get_component_key<Health>(),
-          health.to_bytes());
+
+      // this->_registry.get().emit<ComponentBuilder>(
+      //     i,
+      //     this->_registry.get().get_component_key<Health>(),
+      //     health.to_bytes());
     }
   }
 }

@@ -19,6 +19,7 @@
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/AnimatedSprite.hpp"
+#include "plugin/components/BasicWeapon.hpp"
 #include "plugin/components/Collidable.hpp"
 #include "plugin/components/Drawable.hpp"
 #include "plugin/components/Health.hpp"
@@ -134,6 +135,9 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
     init_component(this->_registry.get(),
                    event.server_index,
                    Scene("game", SceneState::ACTIVE));
+    init_component(this->_registry.get(),
+                   event.server_index,
+                   BasicWeapon("basic_bullet", 6, 3, 2.0, 0.3));
   })
 
   SUBSCRIBE_EVENT(StateTransfer, {
@@ -164,7 +168,6 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
         == this->_player_ready.end())
     {
       this->_registry.get().emit<SceneChangeEvent>("game", "", true);
-      LOGGER("server", LogLevel::DEBUG, "POURQUOI çA PASSE ICI")
       this->_registry.get().emit<EventBuilderId>(
           std::nullopt,
           "SceneChangeEvent",
@@ -206,15 +209,6 @@ void NetworkServer::launch_server(ServerLaunching const& s)
            std::format("Failed to start server: {}", e.what()));
   }
 }
-
-// asio::socket_base::message_flags Server::handle_receive(
-//     const asio::error_code& UNUSED error, std::size_t UNUSED
-//     bytes_transferred)
-// {
-//   asio::socket_base::message_flags flag = MSG_OOB;
-//   std::cout << "handled the reception" << std::endl;
-//   return flag;
-// }
 
 extern "C"
 {

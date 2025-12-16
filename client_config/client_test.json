@@ -25,6 +25,10 @@
         {
           "name": "sfml",
           "config": {}
+        },
+        {
+          "name": "weapon",
+          "config": {}
         }
       ],
       "entities": []

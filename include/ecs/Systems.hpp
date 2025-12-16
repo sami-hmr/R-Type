@@ -11,9 +11,6 @@ public:
       : _priority(priority)
       , _fn(std::move(fn))
   {
-    if (!static_cast<bool>(this->_fn)) {
-      std::cerr << "bordel" << std::endl;
-    }
   }
 
   void operator()(Args&&... args) const
@@ -26,7 +23,7 @@ public:
     return this->_priority > other._priority;
   }
 
-private:
   size_t _priority;
+private:
   std::function<void(Args...)> _fn;
 };
