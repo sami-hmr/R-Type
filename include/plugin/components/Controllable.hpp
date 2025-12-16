@@ -1,41 +1,48 @@
 #pragma once
 
+#include <cstdint>
+#include <unordered_map>
+#include <utility>
+
 #include "ByteParser/ByteParser.hpp"
+#include "Json/JsonParser.hpp"
 #include "plugin/Byte.hpp"
-#include "plugin/Hooks.hpp"
+#include "plugin/HookMacros.hpp"
 #include "plugin/events/EventMacros.hpp"
+
+enum KeyEventType : bool
+{
+  KEY_REALEASED = false,
+  KEY_PRESSED = true,
+};
 
 struct Controllable
 {
+  using Trigger = std::pair<std::string, JsonObject>;
   Controllable() = default;
 
-  Controllable(char up, char down, char left, char right)
-      : up(up)
-      , down(down)
-      , left(left)
-      , right(right)
+  Controllable(std::unordered_map<std::uint16_t, Trigger> map)
+      : event_map(std::move(map))
   {
   }
 
-  DEFAULT_BYTE_CONSTRUCTOR(Controllable,
-                           ([](char u, char d, char l, char r)
-                            { return Controllable(u, d, l, r); }),
-                           parseByte<char>(),
-                           parseByte<char>(),
-                           parseByte<char>(),
-                           parseByte<char>())
+  DEFAULT_BYTE_CONSTRUCTOR(
+      Controllable,
+      ([](std::unordered_map<std::uint16_t, Trigger> const& map)
+       { return Controllable(map); }),
+      parseByteMap(parseByte<std::uint16_t>(),
+          parseBytePair(parseByteString(), parseByteJsonObject())))
 
-  DEFAULT_SERIALIZE(type_to_byte(up),
-                    type_to_byte(down),
-                    type_to_byte(left),
-                    type_to_byte(right))
-
+  DEFAULT_SERIALIZE(
+      map_to_byte(event_map,
+                  TTB_FUNCTION<std::uint16_t>(),
+                  SERIALIZE_FUNCTION<Trigger>(
+                      pair_to_byte<std::string, JsonObject>,
+                      SERIALIZE_FUNCTION<std::string>(string_to_byte),
+                      SERIALIZE_FUNCTION<JsonObject>(json_object_to_byte))))
   CHANGE_ENTITY_DEFAULT
 
-  char up;
-  char down;
-  char left;
-  char right;
+  std::unordered_map<std::uint16_t, Trigger> event_map;
 
-  HOOKABLE(Controllable, HOOK(up), HOOK(down), HOOK(left), HOOK(right))
+  HOOKABLE(Controllable)
 };

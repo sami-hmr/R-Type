@@ -1,5 +1,6 @@
 #include "plugin/components/Clickable.hpp"
 #include "ATH.hpp"
+#include "ecs/InitComponent.hpp"
 #include "ecs/zipper/Zipper.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/components/Collidable.hpp"
@@ -51,6 +52,6 @@ void ATH::init_clickable(Registry::Entity const& e, JsonObject const& obj)
             std::cerr << "Error parsing clickable component: 'to_emit' is not a JsonArray" << '\n';
         }
     }
-    _registry.get().emplace_component<Clickable>(e, emits);
+    init_component<Clickable>(this->_registry.get(), e, emits);
     SUBSCRIBE_EVENT(MousePressedEvent, { on_click(this->_registry.get(), event); } );
 }

@@ -12,6 +12,7 @@
 #include <sys/types.h>
 
 #include "Json/JsonParser.hpp"
+#include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/Scenes.hpp"
 #include "plugin/libLoaders/LDLoader.hpp"
@@ -224,17 +225,17 @@ void EntityLoader::load_byte_component(
     std::string plugin = component.id.substr(0, component.id.find(':'));
     this->load_plugin(plugin);
     if (this->_plugins.contains(plugin)) {
-      this->_registry.get().emplace_component(
-          entity,
-          component.id,
-          this->_registry.get().convert_comp_entity(
-              component.id, component.data, indexes.get_first()));
+      init_component(this->_registry.get(),
+                     entity,
+                     component.id,
+                     this->_registry.get().convert_comp_entity(
+                         component.id, component.data, indexes.get_first()));
     }
   } else {
-    this->_registry.get().emplace_component(
-        entity,
-        component.id,
-        this->_registry.get().convert_comp_entity(
-            component.id, component.data, indexes.get_first()));
+    init_component(this->_registry.get(),
+                   entity,
+                   component.id,
+                   this->_registry.get().convert_comp_entity(
+                       component.id, component.data, indexes.get_first()));
   }
 }

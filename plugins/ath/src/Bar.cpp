@@ -2,6 +2,7 @@
 
 #include "ATH.hpp"
 #include "Json/JsonParser.hpp"
+#include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/zipper/Zipper.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
@@ -61,7 +62,7 @@ void ATH::init_bar(Registry::Entity& e, const JsonObject& obj)
       outline = outline_opt.value();
     }
   }
-  this->_registry.get().emplace_component<Bar>(e,
+  init_component<Bar>(this->_registry.get(), e,
                                                size.value(),
                                                max_value.value(),
                                                current_value.value(),

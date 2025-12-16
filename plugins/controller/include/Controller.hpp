@@ -24,9 +24,12 @@ public:
   Controller(Registry& r, EntityLoader& l);
 
 private:
-  void init_controller(Registry::Entity const entity, JsonObject const& obj);
+  void init_controller(Registry::Entity const &entity, JsonObject const& obj);
 
-  Key char_to_key(char c);
+  void init_event_map(Registry::Entity const& entity,
+                                  JsonArray& events,
+                                  Controllable& result,
+                                  KeyEventType pressed);
   void handle_key_change(Key key, bool is_pressed);
   double compute_axis(Key negative, Key positive) const;
   bool is_key_active(Key key) const;

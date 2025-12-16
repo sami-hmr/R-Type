@@ -2,6 +2,7 @@
 
 #include "Json/JsonParser.hpp"
 #include "NetworkShared.hpp"
+#include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/SparseArray.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
@@ -41,7 +42,7 @@ void Projectile::init_temporal(Registry::Entity entity, JsonObject const& obj)
     return;
   }
 
-  this->_registry.get().emplace_component<Temporal>(entity, lifetime.value());
+  init_component<Temporal>(this->_registry.get(), entity, lifetime.value());
 }
 
 void Projectile::init_fragile(Registry::Entity entity, JsonObject const& obj)
@@ -54,7 +55,7 @@ void Projectile::init_fragile(Registry::Entity entity, JsonObject const& obj)
                  "missing value in JsonObject\n";
     return;
   }
-  this->_registry.get().emplace_component<Fragile>(
+  init_component<Fragile>(this->_registry.get(),
       entity, hits.value(), fragile_cooldown);
 }
 

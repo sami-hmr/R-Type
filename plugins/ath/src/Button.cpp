@@ -1,6 +1,7 @@
 #include "plugin/components/Button.hpp"
 
 #include "ATH.hpp"
+#include "ecs/InitComponent.hpp"
 #include "ecs/zipper/Zipper.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/AnimatedSprite.hpp"
@@ -22,5 +23,5 @@ void ATH::init_button(Registry::Entity const& e, JsonObject const& obj)
   if (obj.contains("toggle")) {
     toggle = get_value<Button, bool>(_registry.get(), obj, e, "toggle").value();
   }
-  _registry.get().emplace_component<Button>(e, pressed, hovered, toggle);
+  init_component<Button>(this->_registry.get(), e, pressed, hovered, toggle);
 }

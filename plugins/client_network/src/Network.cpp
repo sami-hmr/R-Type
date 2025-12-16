@@ -8,7 +8,9 @@
 
 #include "Client.hpp"
 #include "ClientConnection.hpp"
+#include "Json/JsonParser.hpp"
 #include "NetworkShared.hpp"
+#include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "plugin/APlugin.hpp"
@@ -16,6 +18,7 @@
 #include "plugin/components/Controllable.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/events/CleanupEvent.hpp"
+#include "plugin/events/CollisionEvent.hpp"
 #include "plugin/events/LoggerEvent.hpp"
 #include "plugin/events/NetworkEvents.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
@@ -73,7 +76,6 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
       std::size_t index = std::get<0>(*zipper.begin());
 
       this->_server_indexes.insert(event.server_index, index);
-
     } else {
       LOGGER("client",
              LogLevel::INFO,
@@ -81,12 +83,23 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
              "d, les bindings de thresh tu connais (de la dinde) ? (le joueur de quake "
              "pas le main de baptiste ahah mdr))");
 
-      std::size_t new_entity = this->_registry.get().spawn_entity();
+      // std::size_t new_entity = this->_registry.get().spawn_entity();
 
-      this->_registry.get().emplace_component<Controllable>(
-          new_entity, 'Z', 'S', 'Q', 'D');
-      this->_server_indexes.insert(event.server_index,
-                                   new_entity);  // SERVER -> CLIENT
+      // init_component<Controllable>(this->_registry.get(), {
+      //   {"Z",
+      //       {
+      //           {"name",
+      //           this->_registry.get().get_event_key<UpdateVelocity>()},
+      //           {"params", {
+      //               {"entity", JsonValue(static_cast<int>(new_entity))},
+      //               {"x", JsonValue(static_cast<double>(0))},
+      //               {"y", JsonValue(static_cast<double>(1))}
+      //           }}
+      //       }
+      //   }
+      // });
+      // this->_server_indexes.insert(event.server_index,
+      //                              new_entity);  // SERVER -> CLIENT
     }
     this->_registry.get().emit<EventBuilder>(
         "PlayerCreated",
@@ -113,6 +126,7 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
             this->_server_indexes.insert(server_comp.entity, new_entity);
           }
           auto true_entity = this->_server_indexes.at_first(server_comp.entity);
+
           this->_loader.get().load_byte_component(
               true_entity, server_comp, this->_server_indexes);
           this->_component_queue.queue.pop();
