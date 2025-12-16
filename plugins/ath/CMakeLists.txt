@@ -5,6 +5,8 @@ set(LIB_NAME ath)
 add_library(${LIB_NAME} SHARED
   src/ATH.cpp
   src/Bar.cpp
+  src/Clickable.cpp
+  src/Button.cpp
 )
 
 target_compile_features(${LIB_NAME} PRIVATE cxx_std_23)

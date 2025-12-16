@@ -17,23 +17,30 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
+#include <SFML/Window/Mouse.hpp>
 
 #include "ecs/Registry.hpp"
 #include "ecs/Scenes.hpp"
 #include "ecs/SparseArray.hpp"
 #include "ecs/zipper/Zipper.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
+#include "libs/Rect.hpp"
+#include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/AnimatedSprite.hpp"
 #include "plugin/components/Background.hpp"
+#include "plugin/components/Button.hpp"
 #include "plugin/components/Camera.hpp"
+#include "plugin/components/Clickable.hpp"
+#include "plugin/components/Collidable.hpp"
 #include "plugin/components/Drawable.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Sprite.hpp"
 #include "plugin/components/Text.hpp"
 #include "plugin/events/AnimationEvents.hpp"
 #include "plugin/events/DamageEvent.hpp"
+#include "plugin/events/IoEvents.hpp"
 #include "plugin/events/LoggerEvent.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
 
@@ -57,6 +64,12 @@ static const std::map<sf::Keyboard::Key, Key> key_association = {
     {sf::Keyboard::Key::RControl, Key::CTRL},
     {sf::Keyboard::Key::LAlt, Key::ALT},
     {sf::Keyboard::Key::RAlt, Key::ALT},
+};
+
+static const std::map<sf::Mouse::Button, MouseButton> MOUSEBUTTONMAP = {
+    {sf::Mouse::Button::Left, MouseButton::MOUSELEFT},
+    {sf::Mouse::Button::Right, MouseButton::MOUSERIGHT},
+    {sf::Mouse::Button::Middle, MouseButton::MOUSEMIDDLE},
 };
 
 static sf::Texture gen_placeholder()
@@ -85,6 +98,7 @@ SFMLRenderer::SFMLRenderer(Registry& r, EntityLoader& l)
   _window.setFramerateLimit(window_rate);
 
   _registry.get().add_system([this](Registry&) { this->handle_events(); }, 1);
+  _registry.get().add_system([this](Registry& r) { this->camera_system(r); });
   _registry.get().add_system([this](Registry&)
                              { _window.clear(sf::Color::Black); });
   _registry.get().add_system([this](Registry& r)
@@ -94,10 +108,10 @@ SFMLRenderer::SFMLRenderer(Registry& r, EntityLoader& l)
 
   _registry.get().add_system([this](Registry& r) { this->render_text(r); });
 
+  _registry.get().add_system([this](Registry& r) { this->button_system(r); });
   _registry.get().add_system([this](Registry& r)
                              { this->animation_system(r); });
   _registry.get().add_system([this](Registry& r) { this->bar_system(r); });
-  _registry.get().add_system([this](Registry& r) { this->camera_system(r); });
   _registry.get().add_system<>([this](Registry&) { this->display(); });
   _textures.insert_or_assign(SFMLRenderer::placeholder_texture,
                              gen_placeholder());
@@ -166,6 +180,43 @@ void SFMLRenderer::handle_resize()
   _window.setView(this->_view);
 }
 
+static constexpr double deux =
+    2.0;  // allez le linter t content mtn y'a une constante
+
+Vector2D SFMLRenderer::screen_to_world(sf::Vector2i screen_pos)
+{
+  sf::Vector2f world_pos = _window.mapPixelToCoords(screen_pos, _view);
+  sf::Vector2u window_size = _window.getSize();
+  double min_dimension =
+      static_cast<double>(std::min(window_size.x, window_size.y));
+  return Vector2D((world_pos.x * deux / min_dimension) - 1.0,
+                  (world_pos.y * deux / min_dimension) - 1.0);
+}
+
+void SFMLRenderer::mouse_events(const sf::Event& events)
+{
+  const sf::Vector2i mouse_pos = sf::Mouse::getPosition(_window);
+  const auto* mouse_pressed = events.getIf<sf::Event::MouseButtonPressed>();
+  const auto* mouse_released = events.getIf<sf::Event::MouseButtonReleased>();
+
+  if (mouse_pressed != nullptr) {
+    if (MOUSEBUTTONMAP.contains(mouse_pressed->button)) {
+      MouseButton button = MOUSEBUTTONMAP.at(mouse_pressed->button);
+      Vector2D position = screen_to_world(mouse_pos);
+      MousePressedEvent mouse_event(position, button);
+      this->_registry.get().emit<MousePressedEvent>(mouse_event);
+    }
+  }
+  if (mouse_released != nullptr) {
+    if (MOUSEBUTTONMAP.contains(mouse_released->button)) {
+      MouseButton button = MOUSEBUTTONMAP.at(mouse_released->button);
+      Vector2D position = screen_to_world(mouse_pos);
+      MouseReleasedEvent mouse_event(position, button);
+      this->_registry.get().emit<MouseReleasedEvent>(mouse_event);
+    }
+  }
+}
+
 void SFMLRenderer::handle_events()
 {
   if (!_window.isOpen()) {
@@ -187,6 +238,7 @@ void SFMLRenderer::handle_events()
       _window.close();
       _registry.get().emit<ShutdownEvent>("Window closed", 0);
     }
+    this->mouse_events(event.value());
     if (const auto* key_pressed = event->getIf<sf::Event::KeyPressed>()) {
       auto key = sfml_key_to_key(key_pressed->code);
       if (key.has_value()) {
@@ -373,6 +425,44 @@ void SFMLRenderer::bar_system(Registry& r)
         sf::Color(bar.color.r, bar.color.g, bar.color.b, bar.color.a));
     this->_rectangle.setPosition(new_pos + offset);
     this->_window.draw(_rectangle);
+  }
+}
+
+void SFMLRenderer::button_system(Registry& r)
+{
+  sf::Vector2i tmp = sf::Mouse::getPosition(_window);
+  Vector2D mouse_pos = screen_to_world(tmp);
+
+  for (auto&& [e, draw, anim, button, pos, collision] :
+       ZipperIndex<Drawable, AnimatedSprite, Button, Position, Collidable>(r))
+  {
+    if (!draw.enabled) {
+      continue;
+    }
+    if (!anim.animations.contains("hover")
+        || !anim.animations.contains("pressed")
+        || !anim.animations.contains("idle"))
+    {
+      continue;
+    }
+    AnimationData hover_anim_data = anim.animations.at("hover");
+    Rect entity_rect = {.x = pos.pos.x,
+                        .y = pos.pos.y,
+                        .width = collision.width,
+                        .height = collision.height};
+    if (entity_rect.contains(mouse_pos.x, mouse_pos.y)) {
+      if (!button.hovered) {
+        button.hovered = true;
+        r.emit<PlayAnimationEvent>(
+            "hover", e, hover_anim_data.framerate, false, false);
+      }
+    } else {
+      if (button.hovered) {
+        button.hovered = false;
+        r.emit<PlayAnimationEvent>(
+            "idle", e, hover_anim_data.framerate, true, false);
+      }
+    }
   }
 }
 

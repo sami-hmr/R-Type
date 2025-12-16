@@ -1,6 +1,7 @@
 
 
 #include "plugin/components/Camera.hpp"
+
 #include <SFML/System/Angle.hpp>
 #include <SFML/System/Vector2.hpp>
 
@@ -22,7 +23,7 @@ static void move_cam(Position& pos, Camera& cam)
   }
 }
 
-static void rotate_cam(Camera &cam)
+static void rotate_cam(Camera& cam)
 {
   if (cam.rotating) {
     if (std::abs(cam.rotation - cam.next_rotation) <= cam.rotation_speed) {
@@ -37,7 +38,8 @@ static void rotate_cam(Camera &cam)
   }
 }
 
-static void zoom_cam(Camera &cam) {
+static void zoom_cam(Camera& cam)
+{
   if (cam.zooming) {
     if (cam.size.distanceTo(cam.next_size) <= cam.speed.length()) {
       cam.size = cam.next_size;
@@ -48,7 +50,8 @@ static void zoom_cam(Camera &cam) {
   }
 }
 
-static void shake_cam(Camera &cam) {
+static void shake_cam(Camera& cam)
+{
   if (cam.shaking) {
     // Vector2D offset();
   }
@@ -59,6 +62,18 @@ void SFMLRenderer::camera_system(Registry& r)
   sf::Vector2u window_size = _window.getSize();
 
   for (auto&& [pos, cam] : Zipper<Position, Camera>(r)) {
+    if (!_camera_initialized) {
+      pos.pos = cam.target;
+      _camera_initialized = true;
+      this->_view.setCenter(sf::Vector2f(
+          static_cast<float>((pos.pos.x + 1.0) * window_size.x / 2.0),
+          static_cast<float>((pos.pos.y + 1.0) * window_size.y / 2.0)));
+      sf::Vector2f size = {static_cast<float>(cam.size.x * window_size.x),
+                           static_cast<float>(cam.size.y * window_size.y)};
+      this->_view.setRotation(sf::degrees(static_cast<float>(cam.rotation)));
+      this->_view.setSize(size);
+      this->_window.setView(this->_view);
+    }
     move_cam(pos, cam);
     rotate_cam(cam);
     zoom_cam(cam);
