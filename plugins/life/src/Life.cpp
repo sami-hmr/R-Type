@@ -183,22 +183,10 @@ void Life::on_damage(const DamageEvent& event)
   } else {
     return;
   }
-  this->_registry.get().emit<LogEvent>(
-      "HealthSystem",
-      LogLevel::INFO,
-      std::format("Entity {} took {} damage from Entity {}",
-                  event.target,
-                  event.amount,
-                  event.source));
 
   if (healths[event.target]->current <= 0
       && !this->_registry.get().is_entity_dying(event.target))
   {
-    this->_registry.get().emit<LogEvent>(
-        "HealthSystem",
-        LogLevel::WARNING,
-        std::format("Entity {} died!", event.target));
-
     this->_registry.get().emit<DeathEvent>(event.target);
   }
 }
@@ -222,15 +210,6 @@ void Life::on_heal(const HealEvent& event)
         healths[event.target]->to_bytes());
 
     int actual_heal = healths[event.target]->current - old_health;
-
-    this->_registry.get().emit<LogEvent>(
-        "HealthSystem",
-        LogLevel::INFO,
-        std::format("Entity {} healed for {} HP (now {}/{})",
-                    event.target,
-                    actual_heal,
-                    healths[event.target]->current,
-                    healths[event.target]->max));
     return;
   }
 }

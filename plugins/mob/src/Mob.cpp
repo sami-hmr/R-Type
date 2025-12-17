@@ -1,0 +1,81 @@
+#include <iostream>
+
+#include "Mob.hpp"
+
+#include "NetworkShared.hpp"
+#include "ecs/zipper/ZipperIndex.hpp"
+#include "libs/Vector2D.hpp"
+#include "plugin/EntityLoader.hpp"
+#include "plugin/Hooks.hpp"
+#include "plugin/components/Position.hpp"
+#include "plugin/events/EntityManagementEvent.hpp"
+
+Mob::Mob(Registry& r, EntityLoader& l)
+    : APlugin("mob",
+              r,
+              l,
+              {"moving"},
+              {COMP_INIT(Spawner, Spawner, init_spawner)})
+    , entity_loader(l)
+{
+  _registry.get().register_component<Spawner>("mob:Spawner");
+
+  _registry.get().add_system([this](Registry& r) { spawner_system(r); });
+}
+
+void Mob::init_spawner(Registry::Entity const& entity, JsonObject const& obj)
+{
+  auto const& entity_template = get_value<Spawner, std::string>(
+      this->_registry.get(), obj, entity, "entity_template");
+  auto const& spawn_interval = get_value<Spawner, double>(
+      this->_registry.get(), obj, entity, "spawn_interval");
+  auto const& max_spawns =
+      get_value<Spawner, int>(this->_registry.get(), obj, entity, "max_spawns");
+
+  if (!entity_template || !spawn_interval || !max_spawns) {
+    std::cerr << "Error loading Spawner component: unexpected value type or "
+                 "missing value in JsonObject\n";
+    return;
+  }
+  this->_registry.get().emplace_component<Spawner>(
+      entity, entity_template.value(), spawn_interval.value(), max_spawns.value());
+}
+
+void Mob::spawner_system(Registry& r)
+{
+  for (auto&& [i, spawner, pos, scene] :
+       ZipperIndex<Spawner, Position, Scene>(r))
+  {
+    if (r.is_entity_dying(i)) {
+      continue;
+    }
+    spawner.spawn_delta += r.clock().delta_seconds();
+    if (spawner.spawn_delta < spawner.spawn_interval) {
+      continue;
+    }
+    if (spawner.active && spawner.current_spawns < spawner.max_spawns) {
+      spawner.spawn_delta = 0;
+      spawner.current_spawns += 1;
+      spawner.active = spawner.current_spawns < spawner.max_spawns;
+      r.emit<ComponentBuilder>(
+          i, r.get_component_key<Spawner>(), spawner.to_bytes());
+      r.emit<LoadEntityTemplate>(
+          spawner.entity_template,
+          LoadEntityTemplate::Additional {
+              {
+                  this->_registry.get().get_component_key<Position>(),
+                  pos.to_bytes(),
+              },
+              {this->_registry.get().get_component_key<Scene>(),
+               scene.to_bytes()}});
+    }
+  }
+}
+
+extern "C"
+{
+void* entry_point(Registry& r, EntityLoader& e)
+{
+  return new Mob(r, e);
+}
+}

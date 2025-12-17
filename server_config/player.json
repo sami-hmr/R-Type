@@ -23,10 +23,10 @@
         },
         "weapon:BasicWeapon": {
           "bullet_type": "basic_bullet",
-          "magazine_size": 6,
-          "magazine_nb": 3,
-          "reload_time": 2.0,
-          "cooldown": 0.3
+          "magazine_size": 60000,
+          "magazine_nb": 30000,
+          "reload_time": 0.0,
+          "cooldown": 0.01
         },
         "ui:AnimatedSprite": {
           "animations": [

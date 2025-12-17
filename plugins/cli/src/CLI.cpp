@@ -194,7 +194,7 @@ void CLI::process_command(const std::string& cmd)
         }}},
       {"spawn",
        {.usage = "spawn",
-        .description = "spawn entity with drawing de con en 0, 0",
+        .description = "spawn entity with drawing at 0,0",
         .handler =
             [this](std::istringstream&)
         {

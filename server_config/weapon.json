@@ -76,10 +76,6 @@
         "life:Team": {
           "name": "test1"
         },
-        "life:Health": {
-          "current": 1.0,
-          "max": 1.0
-        },
         "life:Damage": {
           "amount": 3
         },
@@ -87,6 +83,12 @@
           "width": 0.2,
           "height": 0.2,
           "collision_type": "solid"
+        },
+        "projectile:Temporal": {
+          "lifetime": 2.0
+        },
+        "projectile:Fragile": {
+          "hits": 0
         }
       }
     },
@@ -155,11 +157,11 @@
         },
         "moving:Velocity": {
           "speed": {
-            "x": 0.02,
+            "x": 0.5,
             "y": 0.0
           },
           "direction": {
-            "x": 1.0,
+            "x": -1.0,
             "y": 0.0
           }
         },
@@ -170,13 +172,16 @@
           "current": 1.0,
           "max": 1.0
         },
-        "life:Damage": {
-          "amount": 3
-        },
         "collision:Collidable": {
           "width": 0.2,
           "height": 0.2,
           "collision_type": "bounce"
+        },
+        "projectile:Temporal": {
+          "lifetime": 4.0
+        },
+        "projectile:Fragile": {
+          "hits": 2
         }
       }
     }

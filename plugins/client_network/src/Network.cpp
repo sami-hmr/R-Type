@@ -114,6 +114,7 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
   })
 
   SUBSCRIBE_EVENT(DeleteClientEntity, {
+    this->_server_indexes.remove_second(event.entity);
     this->_registry.get().kill_entity(event.entity);
   })
 
