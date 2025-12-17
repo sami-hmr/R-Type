@@ -5,10 +5,40 @@
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
 
+/**
+ * @file Color.hpp
+ * @brief RGBA color representation with serialization support
+ */
+
+/**
+ * @struct Color
+ * @brief RGBA color with 8-bit channels
+ *
+ * Represents colors using four unsigned char components (0-255):
+ * - r: Red channel
+ * - g: Green channel
+ * - b: Blue channel
+ * - a: Alpha channel (transparency, 255 = fully opaque)
+ *
+ * Supports JSON parsing with optional hook system for dynamic color binding.
+ * Provides predefined color constants (WHITE, BLACK, RED, GREEN, BLUE,
+ * TRANSPARENT).
+ *
+ * @see colorToByte(), parseColor()
+ */
 struct Color
 {
-  Color() : r(0), g(0), b(0), a(255) {} // NOLINT
+  Color()
+      : r(0)
+      , g(0)
+      , b(0)
+      , a(255)
+  {
+  }  // NOLINT
 
+  /**
+   * @brief Constructs a color with explicit RGBA values
+   */
   Color(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
       : r(r)
       , g(g)
@@ -17,6 +47,12 @@ struct Color
   {
   }
 
+  /**
+   * @brief Constructs from JSON object
+   * @param obj JSON object with r, g, b, and optional a fields
+   * @note Supports hook system for dynamic color binding (see is_hook())
+   * @note Missing or invalid values default to (0, 0, 0, 255)
+   */
   Color(JsonObject const& obj)
   {
     try {
@@ -52,10 +88,10 @@ struct Color
   {
   }
 
-  unsigned char r;
-  unsigned char g;
-  unsigned char b;
-  unsigned char a;
+  unsigned char r;  ///< Red channel (0-255)
+  unsigned char g;  ///< Green channel (0-255)
+  unsigned char b;  ///< Blue channel (0-255)
+  unsigned char a;  ///< Alpha channel (0=transparent, 255=opaque)
 };
 
 inline bool operator==(const Color& lhs, const Color& rhs)
@@ -63,6 +99,10 @@ inline bool operator==(const Color& lhs, const Color& rhs)
   return lhs.r == rhs.r && lhs.g == rhs.g && lhs.b == rhs.b && lhs.a == rhs.a;
 }
 
+/**
+ * @brief Parses a Color from binary data
+ * @return Parser that deserializes four bytes (r, g, b, a)
+ */
 inline Parser<Color> parseColor()  // NOLINT
 {
   return apply(
@@ -74,6 +114,11 @@ inline Parser<Color> parseColor()  // NOLINT
       parseByte<unsigned char>());
 }
 
+/**
+ * @brief Serializes a Color to binary data
+ * @param c Color to serialize
+ * @return ByteArray containing r, g, b, a bytes
+ */
 inline ByteArray colorToByte(const Color& c)  // NOLINT
 {
   return byte_array_join(type_to_byte<unsigned char>(c.r),
