@@ -27,7 +27,7 @@ CLI::CLI(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config)
     : APlugin("cli",
               r,
               l,
-              {"logger", "server_network", "client_network"},
+              {"logger"},
               {},
               config)
 {
@@ -191,7 +191,6 @@ void CLI::process_command(const std::string& cmd)
             [this](std::istringstream&)
         {
           _registry.get().emit<WantReady>();
-          std::cout << "ready\n";
         }}},
       {"spawn",
        {.usage = "spawn",

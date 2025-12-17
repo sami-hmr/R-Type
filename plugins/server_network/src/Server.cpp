@@ -74,9 +74,9 @@ void Server::receive_loop()
       std::size_t len =
           recv_buf.read_socket(this->_socket, sender_endpoint, ec);
       if (len > 0) {
-        NETWORK_LOGGER("server",
-                       std::uint8_t(LogLevel::DEBUG),
-                       std::format("received buffer, size : {}", len));
+        // NETWORK_LOGGER("server",
+        //                std::uint8_t(LogLevel::DEBUG),
+        //                std::format("received buffer, size : {}", len));
       }
 
       if (ec) {
@@ -89,8 +89,8 @@ void Server::receive_loop()
       }
 
       while (std::optional<ByteArray> p = recv_buf.extract(PROTOCOL_EOF)) {
-        NETWORK_LOGGER(
-            "server", std::uint8_t(LogLevel::DEBUG), "package extracted");
+        // NETWORK_LOGGER(
+        //     "server", std::uint8_t(LogLevel::DEBUG), "package extracted");
         this->handle_package(*p, sender_endpoint);
       }
     } catch (std::exception& e) {
@@ -154,9 +154,9 @@ void Server::send(ByteArray const& response,
     this->remove_client_by_endpoint(endpoint);
   }
 
-  NETWORK_LOGGER("server",
-                 std::uint8_t(LogLevel::DEBUG),
-                 std::format("Sent package of size: {}", pkg.size()));
+  // NETWORK_LOGGER("server",
+  //                std::uint8_t(LogLevel::DEBUG),
+  //                std::format("Sent package of size: {}", pkg.size()));
 }
 
 void Server::send_connected(ByteArray const& response,

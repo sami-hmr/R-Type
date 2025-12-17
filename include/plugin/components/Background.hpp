@@ -14,9 +14,9 @@
 
 #include "BaseTypes.hpp"
 #include "ByteParser/ByteParser.hpp"
-#include "plugin/Byte.hpp"
 #include "TwoWayMap.hpp"
 #include "libs/Vector2D.hpp"
+#include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
 
 struct Parallax
@@ -28,10 +28,7 @@ struct Parallax
   {
   }
 
-  Parallax(bool active,
-           double x,
-           double y,
-           double framerate)
+  Parallax(bool active, double x, double y, double framerate)
       : active(active)
       , speed(x, y)
       , framerate(framerate)
@@ -52,10 +49,7 @@ struct Parallax
 
   DEFAULT_BYTE_CONSTRUCTOR(
       Parallax,
-      ([](bool active,
-          double x,
-          double y,
-          double framerate)
+      ([](bool active, double x, double y, double framerate)
        { return Parallax(active, x, y, framerate); }),
       parseByte<bool>(),
       parseByte<double>(),
@@ -67,6 +61,16 @@ struct Parallax
                     type_to_byte(this->framerate))
   HOOKABLE(Parallax, HOOK(active), HOOK(speed), HOOK(framerate), HOOK(pos));
 };
+
+inline Parser<Parallax> parse_parallax()
+{
+  return apply([](bool active, double x, double y, double framerate)
+               { return Parallax(active, x, y, framerate); },
+               parseByte<bool>(),
+               parseByte<double>(),
+               parseByte<double>(),
+               parseByte<double>());
+}
 
 struct Background
 {
@@ -94,26 +98,22 @@ struct Background
 
   DEFAULT_BYTE_CONSTRUCTOR(Background,
                            (
-                               [](std::vector<std::vector<char>> textures_path,
+                               [](std::vector<std::string> textures_path,
                                   std::uint8_t render_type,
                                   Parallax parallax)
                                {
-                                 std::vector<std::string> paths;
-                                 paths.reserve(textures_path.size());
-                                 for (auto const& it : textures_path) {
-                                   paths.emplace_back(it.begin(), it.end());
-                                 }
                                  return Background(
-                                     paths,
+                                     std::move(textures_path),
                                      static_cast<RenderType>(render_type),
                                      parallax);
                                }),
-                           parseByteArray(parseByteArray(parseAnyChar())),
+                           parseByteArray(parseByteString()),
                            parseByte<std::uint8_t>(),
-                           parseByte<Parallax>())
-  DEFAULT_SERIALIZE(vector_to_byte<std::string>(this->textures_path,
-                                                string_to_byte),
-                    type_to_byte(static_cast<std::uint8_t>(this->render_type)),
+                           parse_parallax())
+  DEFAULT_SERIALIZE(vector_to_byte<std::string>(
+                        this->textures_path,
+                        SERIALIZE_FUNCTION<std::string>(string_to_byte)),
+                    type_to_byte<std::uint8_t>(this->render_type),
                     parallax.to_bytes())
   HOOKABLE(Background, HOOK(textures_path), HOOK(render_type), HOOK(parallax));
 };

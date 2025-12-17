@@ -10,6 +10,7 @@
 #include "Json/JsonParser.hpp"
 #include "Logger.hpp"
 #include "NetworkShared.hpp"
+#include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/SparseArray.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
@@ -23,6 +24,8 @@
 #include "plugin/components/Team.hpp"
 #include "plugin/events/CameraEvents.hpp"
 #include "plugin/events/DamageEvent.hpp"
+#include "plugin/events/DeathEvent.hpp"
+#include "plugin/events/EntityManagementEvent.hpp"
 #include "plugin/events/HealEvent.hpp"
 
 Life::Life(Registry& r, EntityLoader& l)
@@ -39,12 +42,9 @@ Life::Life(Registry& r, EntityLoader& l)
   REGISTER_COMPONENT(Damage)
   REGISTER_COMPONENT(Heal)
   REGISTER_COMPONENT(Team)
-  this->_registry.get().add_system([this](Registry& r) { this->update_cooldowns(r); }, 2);
 
-
-  this->_registry.get().on<DamageEvent>("DamageEvent",
-                                        [this](const DamageEvent& event)
-                                        { this->on_damage(event); });
+  this->_registry.get().add_system(
+      [this](Registry& r) { this->update_cooldowns(r); }, 2);
 
   SUBSCRIBE_EVENT(DamageEvent, { this->on_damage(event); })
   SUBSCRIBE_EVENT(HealEvent, { this->on_heal(event); })
@@ -63,8 +63,12 @@ void Life::init_health(Registry::Entity entity, JsonObject const& obj)
                  "missing value in JsonObject\n";
     return;
   }
-  this->_registry.get().emplace_component<Health>(
-      entity, current.value(), max.value(), heal_cooldown, damage_cooldown);
+  init_component<Health>(this->_registry.get(),
+                         entity,
+                         current.value(),
+                         max.value(),
+                         heal_cooldown,
+                         damage_cooldown);
 }
 
 void Life::init_damage(Registry::Entity entity, JsonObject const& obj)
@@ -77,7 +81,7 @@ void Life::init_damage(Registry::Entity entity, JsonObject const& obj)
                      "missing value in JsonObject\n";
     return;
   }
-  this->_registry.get().emplace_component<Damage>(entity, value.value());
+  init_component<Damage>(this->_registry.get(), entity, value.value());
 }
 
 void Life::init_heal(Registry::Entity entity, JsonObject const& obj)
@@ -90,7 +94,7 @@ void Life::init_heal(Registry::Entity entity, JsonObject const& obj)
                      "missing value in JsonObject\n";
     return;
   }
-  this->_registry.get().emplace_component<Heal>(entity, value.value());
+  init_component<Heal>(this->_registry.get(), entity, value.value());
 }
 
 void Life::init_team(Registry::Entity const& entity, JsonObject const& obj)
@@ -103,7 +107,7 @@ void Life::init_team(Registry::Entity const& entity, JsonObject const& obj)
                      "missing value in JsonObject\n";
     return;
   }
-  this->_registry.get().emplace_component<Team>(entity, value.value());
+  init_component<Team>(this->_registry.get(), entity, value.value());
 }
 
 void Life::damage_entity(const CollisionEvent& event,
@@ -120,7 +124,6 @@ void Life::damage_entity(const CollisionEvent& event,
 
     _registry.get().emit<DamageEvent>(
         event.a, event.b, damages[event.b]->amount);
-
   }
 }
 
@@ -196,9 +199,7 @@ void Life::on_damage(const DamageEvent& event)
         LogLevel::WARNING,
         std::format("Entity {} died!", event.target));
 
-    if (!this->_registry.get().has_component<AnimatedSprite>(event.target)) {
-      this->_registry.get().kill_entity(event.target);
-    }
+    this->_registry.get().emit<DeathEvent>(event.target);
   }
 }
 
@@ -242,10 +243,11 @@ void Life::update_cooldowns(Registry& reg)
     if (!reg.is_entity_dying(i)) {
       health.damage_delta += dt;
       health.heal_delta += dt;
-      this->_registry.get().emit<ComponentBuilder>(
-          i,
-          this->_registry.get().get_component_key<Health>(),
-          health.to_bytes());
+
+      // this->_registry.get().emit<ComponentBuilder>(
+      //     i,
+      //     this->_registry.get().get_component_key<Health>(),
+      //     health.to_bytes());
     }
   }
 }

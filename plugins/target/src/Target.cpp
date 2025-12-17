@@ -2,12 +2,14 @@
 
 #include "Json/JsonParser.hpp"
 #include "NetworkShared.hpp"
+#include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/SparseArray.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
+#include "plugin/components/Facing.hpp"
 #include "plugin/components/Follower.hpp"
 #include "plugin/components/Health.hpp"
 #include "plugin/components/Position.hpp"
@@ -30,12 +32,14 @@ Target::Target(Registry& r, EntityLoader& l)
 
 void Target::init_follower(Registry::Entity entity, JsonObject const& obj)
 {
-  this->_registry.get().emplace_component<Follower>(entity);
+  init_component<Follower>(this->_registry.get(), entity);
 }
 
 void Target::target_system(Registry& reg)
 {
   auto const& positions = reg.get_components<Position>();
+  auto& faces = reg.get_components<Facing>();
+
   for (auto&& [i, follower, position, velocity] :
        ZipperIndex<Follower, Position, Velocity>(reg))
   {
@@ -75,6 +79,9 @@ void Target::target_system(Registry& reg)
 
     if (direction_change > DIRECTION_TOLERANCE) {
       velocity.direction = new_direction;
+      if (reg.has_component<Facing>(i)) {
+        faces[i]->direction = new_direction;
+      }
 
       this->_registry.get().emit<ComponentBuilder>(
           i,
@@ -88,6 +95,7 @@ void Target::on_interaction_zone(const InteractionZoneEvent& event)
 {
   const auto& positions = this->_registry.get().get_components<Position>();
   auto& followers = this->_registry.get().get_components<Follower>();
+  const auto& teams = this->_registry.get().get_components<Team>();
 
   if (!this->_registry.get().has_component<Follower>(event.source)
       || !followers[event.source]->lost_target)
@@ -100,6 +108,12 @@ void Target::on_interaction_zone(const InteractionZoneEvent& event)
 
   for (const Registry::Entity& candidate : event.candidates) {
     if (!this->_registry.get().has_component<Health>(candidate)) {
+      continue;
+    }
+    if (this->_registry.get().has_component<Team>(candidate)
+        && this->_registry.get().has_component<Team>(event.source)
+        && teams[candidate]->name == teams[event.source]->name)
+    {
       continue;
     }
     Vector2D distance =

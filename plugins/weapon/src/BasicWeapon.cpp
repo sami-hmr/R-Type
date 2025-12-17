@@ -1,6 +1,7 @@
 #include "plugin/components/BasicWeapon.hpp"
 
 #include "Weapon.hpp"
+#include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
@@ -47,7 +48,7 @@ void Weapon::init_basic_weapon(Registry::Entity const& entity,
     return;
   }
 
-  _registry.get().emplace_component<BasicWeapon>(
+  init_component<BasicWeapon>(this->_registry.get(),
       entity, bullet_type.value(), magazine_size.value(), magazine_nb.value(), reload_time.value(), cooldown.value());
 }
 

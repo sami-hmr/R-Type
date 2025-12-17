@@ -20,7 +20,7 @@ struct CamAggroEvent
 
   CamAggroEvent(Registry& r, JsonObject const& e)
       : target(static_cast<Registry::Entity>(
-            get_value_copy<double>(r, e, "target").value()))
+            get_value_copy<double>(r, e, "entity").value()))
   {
   }
 

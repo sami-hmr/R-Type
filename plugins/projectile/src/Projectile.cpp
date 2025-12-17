@@ -2,6 +2,7 @@
 
 #include "Json/JsonParser.hpp"
 #include "NetworkShared.hpp"
+#include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/SparseArray.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
@@ -11,6 +12,7 @@
 #include "plugin/components/Team.hpp"
 #include "plugin/components/Temporal.hpp"
 #include "plugin/events/CollisionEvent.hpp"
+#include "plugin/events/DeathEvent.hpp"
 
 Projectile::Projectile(Registry& r, EntityLoader& l)
     : APlugin("projectile", r,
@@ -41,7 +43,7 @@ void Projectile::init_temporal(Registry::Entity entity, JsonObject const& obj)
     return;
   }
 
-  this->_registry.get().emplace_component<Temporal>(entity, lifetime.value());
+  init_component<Temporal>(this->_registry.get(), entity, lifetime.value());
 }
 
 void Projectile::init_fragile(Registry::Entity entity, JsonObject const& obj)
@@ -54,7 +56,7 @@ void Projectile::init_fragile(Registry::Entity entity, JsonObject const& obj)
                  "missing value in JsonObject\n";
     return;
   }
-  this->_registry.get().emplace_component<Fragile>(
+  init_component<Fragile>(this->_registry.get(),
       entity, hits.value(), fragile_cooldown);
 }
 
@@ -72,7 +74,7 @@ void Projectile::temporal_system(Registry& reg)
           temporal.to_bytes());
 
       if (temporal.elapsed >= temporal.lifetime) {
-        reg.kill_entity(i);
+        this->_registry.get().emit<DeathEvent>(i);
       }
     }
   }
@@ -123,7 +125,7 @@ void Projectile::on_collision(const CollisionEvent& event)
     if (fragiles[event.a]->counter >= fragiles[event.a]->hits
         && !this->_registry.get().is_entity_dying(event.a))
     {
-      this->_registry.get().kill_entity(event.a);
+      this->_registry.get().emit<DeathEvent>(event.a);
       return;
     }
     fragiles[event.a]->counter += 1;

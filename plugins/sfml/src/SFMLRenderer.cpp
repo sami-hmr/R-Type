@@ -10,6 +10,7 @@
 
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Image.hpp>
+#include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
@@ -39,6 +40,7 @@
 #include "plugin/components/Sprite.hpp"
 #include "plugin/components/Text.hpp"
 #include "plugin/events/AnimationEvents.hpp"
+#include "plugin/events/DeathEvent.hpp"
 #include "plugin/events/DamageEvent.hpp"
 #include "plugin/events/IoEvents.hpp"
 #include "plugin/events/LoggerEvent.hpp"
@@ -50,11 +52,6 @@ static const std::map<sf::Keyboard::Key, Key> key_association = {
     {sf::Keyboard::Key::Right, Key::RIGHT},
     {sf::Keyboard::Key::Down, Key::DOWN},
     {sf::Keyboard::Key::Up, Key::UP},
-    {sf::Keyboard::Key::Z, Key::Z},
-    {sf::Keyboard::Key::Q, Key::Q},
-    {sf::Keyboard::Key::S, Key::S},
-    {sf::Keyboard::Key::D, Key::D},
-    {sf::Keyboard::Key::R, Key::R},
     {sf::Keyboard::Key::Escape, Key::ECHAP},
     {sf::Keyboard::Key::Backspace, Key::DELETE},
     {sf::Keyboard::Key::Space, Key::SPACE},
@@ -64,7 +61,43 @@ static const std::map<sf::Keyboard::Key, Key> key_association = {
     {sf::Keyboard::Key::RControl, Key::CTRL},
     {sf::Keyboard::Key::LAlt, Key::ALT},
     {sf::Keyboard::Key::RAlt, Key::ALT},
-};
+    {sf::Keyboard::Key::A, Key::A},
+    {sf::Keyboard::Key::B, Key::B},
+    {sf::Keyboard::Key::D, Key::D},
+    {sf::Keyboard::Key::C, Key::C},
+    {sf::Keyboard::Key::E, Key::E},
+    {sf::Keyboard::Key::F, Key::F},
+    {sf::Keyboard::Key::G, Key::G},
+    {sf::Keyboard::Key::H, Key::H},
+    {sf::Keyboard::Key::I, Key::I},
+    {sf::Keyboard::Key::J, Key::J},
+    {sf::Keyboard::Key::K, Key::K},
+    {sf::Keyboard::Key::L, Key::L},
+    {sf::Keyboard::Key::M, Key::M},
+    {sf::Keyboard::Key::N, Key::N},
+    {sf::Keyboard::Key::O, Key::O},
+    {sf::Keyboard::Key::P, Key::P},
+    {sf::Keyboard::Key::Q, Key::Q},
+    {sf::Keyboard::Key::R, Key::R},
+    {sf::Keyboard::Key::S, Key::S},
+    {sf::Keyboard::Key::T, Key::T},
+    {sf::Keyboard::Key::U, Key::U},
+    {sf::Keyboard::Key::V, Key::V},
+    {sf::Keyboard::Key::W, Key::W},
+    {sf::Keyboard::Key::X, Key::X},
+    {sf::Keyboard::Key::Y, Key::Y},
+    {sf::Keyboard::Key::Z, Key::Z},
+    {sf::Keyboard::Key::Slash, Key::SLASH},
+    {sf::Keyboard::Key::Num1, Key::ONE},
+    {sf::Keyboard::Key::Num2, Key::TWO},
+    {sf::Keyboard::Key::Num3, Key::THREE},
+    {sf::Keyboard::Key::Num4, Key::FOUR},
+    {sf::Keyboard::Key::Num5, Key::FIVE},
+    {sf::Keyboard::Key::Num6, Key::SIX},
+    {sf::Keyboard::Key::Num7, Key::SEVEN},
+    {sf::Keyboard::Key::Num8, Key::EIGHT},
+    {sf::Keyboard::Key::Num9, Key::NINE},
+    {sf::Keyboard::Key::Num0, Key::ZERO}};
 
 static const std::map<sf::Mouse::Button, MouseButton> MOUSEBUTTONMAP = {
     {sf::Mouse::Button::Left, MouseButton::MOUSELEFT},
@@ -87,11 +120,7 @@ static sf::Texture gen_placeholder()
 }
 
 SFMLRenderer::SFMLRenderer(Registry& r, EntityLoader& l)
-    : APlugin("sfml",
-              r,
-              l,
-              {"moving", "ath", "ui", "client_network", "server_network"},
-              {})
+    : APlugin("sfml", r, l, {"moving", "ath", "ui", "collision"}, {})
 {
   _window =
       sf::RenderWindow(sf::VideoMode(window_size), "R-Type - SFML Renderer");
@@ -122,7 +151,7 @@ SFMLRenderer::SFMLRenderer(Registry& r, EntityLoader& l)
   SUBSCRIBE_EVENT(AnimationEndEvent, {
     AnimatedSprite::on_animation_end(this->_registry.get(), event);
   })
-  SUBSCRIBE_EVENT(DamageEvent,
+  SUBSCRIBE_EVENT(DeathEvent,
                   { AnimatedSprite::on_death(this->_registry.get(), event); })
 }
 
@@ -187,10 +216,8 @@ Vector2D SFMLRenderer::screen_to_world(sf::Vector2i screen_pos)
 {
   sf::Vector2f world_pos = _window.mapPixelToCoords(screen_pos, _view);
   sf::Vector2u window_size = _window.getSize();
-  double min_dimension =
-      static_cast<double>(std::min(window_size.x, window_size.y));
-  return Vector2D((world_pos.x * deux / min_dimension) - 1.0,
-                  (world_pos.y * deux / min_dimension) - 1.0);
+  return Vector2D((world_pos.x * deux / window_size.x) - 1.0,
+                  (world_pos.y * deux / window_size.y) - 1.0);
 }
 
 void SFMLRenderer::mouse_events(const sf::Event& events)
@@ -290,9 +317,9 @@ void SFMLRenderer::render_sprites(Registry& r)
   sf::Vector2u window_size = _window.getSize();
   sf::Vector2f view_size = this->_view.getSize();
   sf::Vector2f view_pos = this->_view.getCenter();
-
   float min_dimension =
       static_cast<float>(std::min(window_size.x, window_size.y));
+
 
   drawables.reserve(std::max({r.get_components<Position>().size(),
                               r.get_components<Drawable>().size(),
@@ -302,9 +329,14 @@ void SFMLRenderer::render_sprites(Registry& r)
     if (!draw.enabled) {
       continue;
     }
+
+    float offset_x = (window_size.x - min_dimension) / 2.0f;
+    float offset_y = (window_size.y - min_dimension) / 2.0f;
+
     sf::Vector2f new_pos(
-        static_cast<float>((pos.pos.x + 1.0) * min_dimension / 2.0f),
-        static_cast<float>((pos.pos.y + 1.0) * min_dimension / 2.0f));
+        static_cast<float>((pos.pos.x + 1.0) * min_dimension / deux) + offset_x,
+        static_cast<float>((pos.pos.y + 1.0) * min_dimension / deux)
+            + offset_y);
 
     if (new_pos.x < view_pos.x - (view_size.x / 2)
         || new_pos.x > view_pos.x + (view_size.x / 2))
@@ -319,9 +351,9 @@ void SFMLRenderer::render_sprites(Registry& r)
     sf::Texture& texture = load_texture(spr.texture_path);
 
     float scale_x =
-        static_cast<float>(window_size.x * spr.scale.x) / texture.getSize().x;
+        static_cast<float>(min_dimension * spr.scale.x) / texture.getSize().x;
     float scale_y =
-        static_cast<float>(window_size.y * spr.scale.y) / texture.getSize().y;
+        static_cast<float>(min_dimension * spr.scale.y) / texture.getSize().y;
     float uniform_scale = std::min(scale_x, scale_y);
 
     drawables.emplace_back(std::ref(texture), uniform_scale, new_pos, pos.z);
@@ -361,14 +393,42 @@ void SFMLRenderer::render_text(Registry& r)
 
     _text.value().setString(txt.text);
 
+    constexpr unsigned int base_size = 100;
+    _text.value().setCharacterSize(base_size);
+    sf::Rect<float> text_rect = _text.value().getLocalBounds();
+
     sf::Vector2u window_size = _window.getSize();
-    float min_dimension =
-        static_cast<float>(std::min(window_size.x, window_size.y));
+    double min_dimension = std::min(window_size.x, window_size.y);
+
+    double desired_width = min_dimension * txt.scale.x;
+    double desired_height = min_dimension * txt.scale.y;
+
+    double scale_x = desired_width / text_rect.size.x;
+    double scale_y = desired_height / text_rect.size.y;
+    double text_scale = std::min(scale_x, scale_y);
+
+    auto final_size = static_cast<unsigned int>(base_size * text_scale);
+    _text.value().setCharacterSize(final_size);
+
+    text_rect = _text.value().getLocalBounds();
+    _text.value().setOrigin({text_rect.position.x + (text_rect.size.x / 2.0f),
+                             text_rect.position.y + (text_rect.size.y / 2.0f)});
+
+    float offset_x = (window_size.x - min_dimension) / deux;
+    float offset_y = (window_size.y - min_dimension) / deux;
+
     sf::Vector2f new_pos(
-        static_cast<float>((pos.pos.x + 1.0) * min_dimension / 2.0f),
-        static_cast<float>((pos.pos.y + 1.0) * min_dimension / 2.0f));
+        static_cast<float>((pos.pos.x + 1.0) * min_dimension / deux) + offset_x,
+        static_cast<float>((pos.pos.y + 1.0) * min_dimension / deux)
+            + offset_y);
     _text.value().setPosition(new_pos);
-    _text.value().setCharacterSize(static_cast<unsigned int>(txt.scale.x));
+    _text.value().setFillColor(sf::Color(txt.fill_color.r, txt.fill_color.g, txt.fill_color.b, txt.fill_color.a));
+    _text.value().setOutlineColor(sf::Color(txt.outline_color.r, txt.outline_color.g, txt.outline_color.b, txt.outline_color.a));
+    if (txt.outline) {
+      _text.value().setOutlineThickness(txt.outline_thickness * 0.1f);
+    } else {
+      _text.value().setOutlineThickness(0.0f);
+    }
     _window.draw(_text.value());
   }
 }
@@ -387,9 +447,15 @@ void SFMLRenderer::bar_system(Registry& r)
     }
     float min_dimension =
         static_cast<float>(std::min(window_size.x, window_size.y));
+
+    float offset_x = (window_size.x - min_dimension) / 2.0f;
+    float offset_y = (window_size.y - min_dimension) / 2.0f;
+
     sf::Vector2f new_pos(
-        static_cast<float>((position.pos.x + 1.0) * min_dimension / 2.0f),
-        static_cast<float>((position.pos.y + 1.0) * min_dimension / 2.0f));
+        static_cast<float>((position.pos.x + 1.0) * min_dimension / 2.0f)
+            + offset_x,
+        static_cast<float>((position.pos.y + 1.0) * min_dimension / 2.0f)
+            + offset_y);
     sf::Vector2f size(static_cast<float>(bar.size.x * min_dimension),
                       static_cast<float>(bar.size.y * min_dimension));
     sf::Vector2f offset(static_cast<float>(bar.offset.x * min_dimension),

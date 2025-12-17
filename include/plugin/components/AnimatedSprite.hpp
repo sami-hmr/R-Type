@@ -18,6 +18,7 @@
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/events/AnimationEvents.hpp"
+#include "plugin/events/DeathEvent.hpp"
 #include "plugin/events/DamageEvent.hpp"
 
 struct AnimationData
@@ -183,7 +184,7 @@ public:
   void update_anim(Registry& r,
                    std::chrono::high_resolution_clock::time_point now,
                    int entity);
-  static void on_death(Registry& r, const DamageEvent& event);
+  static void on_death(Registry& r, const DeathEvent& event);
   static void on_animation_end(Registry& r, const AnimationEndEvent& event);
   static void on_play_animation(Registry& r, const PlayAnimationEvent& event);
 

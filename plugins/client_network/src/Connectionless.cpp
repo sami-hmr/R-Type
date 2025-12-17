@@ -17,10 +17,10 @@ void Client::send(ByteArray const& command)
 
   _socket.send_to(asio::buffer(pkg), _server_endpoint);
 
-  NETWORK_LOGGER(
-      "client",
-      LogLevel::DEBUG,
-      std::format("Sent package of size: {}", pkg.size()));
+  // NETWORK_LOGGER(
+  //     "client",
+  //     LogLevel::DEBUG,
+  //     std::format("Sent package of size: {}", pkg.size()));
 }
 
 void Client::send_connected(ByteArray const& response)

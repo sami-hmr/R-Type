@@ -64,7 +64,7 @@ public:
       return std::nullopt;
     }
 
-    Package tmp(available);
+    Package tmp(available, 0);
     for (size_t i = 0; i < tmp.size(); i++) {
       tmp[i] = this->_array[(this->_read + i) % Size];
     }
@@ -106,8 +106,8 @@ private:
     return Size - (_read - _write);
   }
 
-  std::array<Byte, 65536> _temporary_buffer {};
-  std::array<Byte, Size> _array {};
+  std::array<Byte, 65536> _temporary_buffer {0};
+  std::array<Byte, Size> _array {0};
   std::size_t _read = 0;
   std::size_t _write = 0;
 };

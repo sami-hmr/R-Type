@@ -2,6 +2,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
+#include "libs/Color.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Sprite.hpp"
@@ -467,16 +468,16 @@ TEST_CASE("Serialization - Sprite with large scale values", "[serialization]")
 
 TEST_CASE("Serialization - Text to_bytes", "[serialization]")
 {
-  Text text("assets/font.ttf", Vector2D {1.0, 1.0}, "Hello");
+  Text text("assets/font.ttf", Vector2D {1.0, 1.0}, "Hello", WHITE, BLACK, true, 1.0f);
   ByteArray bytes = text.to_bytes();
 
   // Should contain: 2 string sizes + 2 string contents + 2 doubles
-  REQUIRE(bytes.size() > 2 * sizeof(std::uint32_t) + 2 * sizeof(double));
+  REQUIRE(bytes.size() > 2 * sizeof(std::uint32_t) + 2 * sizeof(double) + 2 * sizeof(Color) + sizeof(bool) + sizeof(float));
 }
 
 TEST_CASE("Serialization - Text round-trip", "[serialization]")
 {
-  Text original("assets/roboto.ttf", Vector2D {2.0, 2.5}, "Test Message");
+  Text original("assets/roboto.ttf", Vector2D {2.0, 2.5}, "Test Message", WHITE, BLACK, false, 2.0f);
   ByteArray bytes = original.to_bytes();
   Text deserialized(bytes);
 
@@ -484,55 +485,115 @@ TEST_CASE("Serialization - Text round-trip", "[serialization]")
   REQUIRE(deserialized.scale.x == original.scale.x);
   REQUIRE(deserialized.scale.y == original.scale.y);
   REQUIRE(deserialized.text == original.text);
+  REQUIRE(deserialized.fill_color.r == original.fill_color.r);
+  REQUIRE(deserialized.fill_color.g == original.fill_color.g);
+  REQUIRE(deserialized.fill_color.b == original.fill_color.b);
+  REQUIRE(deserialized.fill_color.a == original.fill_color.a);
+  REQUIRE(deserialized.outline_color.r == original.outline_color.r);
+  REQUIRE(deserialized.outline_color.g == original.outline_color.g);
+  REQUIRE(deserialized.outline_color.b == original.outline_color.b);
+  REQUIRE(deserialized.outline_color.a == original.outline_color.a);
+  REQUIRE(deserialized.outline == original.outline);
+  REQUIRE(deserialized.outline_thickness == original.outline_thickness);
 }
 
 TEST_CASE("Serialization - Text with empty strings", "[serialization]")
 {
-  Text original("", Vector2D {1.0, 1.0}, "");
+  Text original("", Vector2D {1.0, 1.0}, "", WHITE, BLACK, false, 1.0f);
   ByteArray bytes = original.to_bytes();
   Text deserialized(bytes);
 
   REQUIRE(deserialized.font_path == "");
   REQUIRE(deserialized.text == "");
+  REQUIRE(deserialized.fill_color.r == original.fill_color.r);
+  REQUIRE(deserialized.fill_color.g == original.fill_color.g);
+  REQUIRE(deserialized.fill_color.b == original.fill_color.b);
+  REQUIRE(deserialized.fill_color.a == original.fill_color.a);
+  REQUIRE(deserialized.outline_color.r == original.outline_color.r);
+  REQUIRE(deserialized.outline_color.g == original.outline_color.g);
+  REQUIRE(deserialized.outline_color.b == original.outline_color.b);
+  REQUIRE(deserialized.outline_color.a == original.outline_color.a);
+  REQUIRE(deserialized.outline == original.outline);
+  REQUIRE(deserialized.outline_thickness == original.outline_thickness);
 }
 
 TEST_CASE("Serialization - Text with long content", "[serialization]")
 {
   std::string long_text(1000, 'A');
-  Text original("font.ttf", Vector2D {1.0, 1.0}, long_text);
+  Text original("font.ttf", Vector2D {1.0, 1.0}, long_text, WHITE, BLACK, true, 1.0f);
   ByteArray bytes = original.to_bytes();
   Text deserialized(bytes);
 
   REQUIRE(deserialized.text == long_text);
   REQUIRE(deserialized.text.size() == 1000);
+  REQUIRE(deserialized.fill_color.r == original.fill_color.r);
+  REQUIRE(deserialized.fill_color.g == original.fill_color.g);
+  REQUIRE(deserialized.fill_color.b == original.fill_color.b);
+  REQUIRE(deserialized.fill_color.a == original.fill_color.a);
+  REQUIRE(deserialized.outline_color.r == original.outline_color.r);
+  REQUIRE(deserialized.outline_color.g == original.outline_color.g);
+  REQUIRE(deserialized.outline_color.b == original.outline_color.b);
+  REQUIRE(deserialized.outline_color.a == original.outline_color.a);
+  REQUIRE(deserialized.outline == original.outline);
+  REQUIRE(deserialized.outline_thickness == original.outline_thickness);
 }
 
 TEST_CASE("Serialization - Text with special characters", "[serialization]")
 {
-  Text original("font.ttf", Vector2D {1.0, 1.0}, "Hello\nWorld\t!");
+  Text original("font.ttf", Vector2D {1.0, 1.0}, "Hello\nWorld\t!", WHITE, BLACK, true, 1.0f);
   ByteArray bytes = original.to_bytes();
   Text deserialized(bytes);
 
   REQUIRE(deserialized.text == "Hello\nWorld\t!");
+  REQUIRE(deserialized.fill_color.r == original.fill_color.r);
+  REQUIRE(deserialized.fill_color.g == original.fill_color.g);
+  REQUIRE(deserialized.fill_color.b == original.fill_color.b);
+  REQUIRE(deserialized.fill_color.a == original.fill_color.a);
+  REQUIRE(deserialized.outline_color.r == original.outline_color.r);
+  REQUIRE(deserialized.outline_color.g == original.outline_color.g);
+  REQUIRE(deserialized.outline_color.b == original.outline_color.b);
+  REQUIRE(deserialized.outline_color.a == original.outline_color.a);
+  REQUIRE(deserialized.outline == original.outline);
+  REQUIRE(deserialized.outline_thickness == original.outline_thickness);
 }
 
 TEST_CASE("Serialization - Text with unicode-like characters",
           "[serialization]")
 {
-  Text original("font.ttf", Vector2D {1.5, 1.5}, "Test: !@#$%^&*()");
+  Text original("font.ttf", Vector2D {1.5, 1.5}, "Test: !@#$%^&*()", WHITE, BLACK, false, 1.5f);
   ByteArray bytes = original.to_bytes();
   Text deserialized(bytes);
 
   REQUIRE(deserialized.text == "Test: !@#$%^&*()");
+  REQUIRE(deserialized.fill_color.r == original.fill_color.r);
+  REQUIRE(deserialized.fill_color.g == original.fill_color.g);
+  REQUIRE(deserialized.fill_color.b == original.fill_color.b);
+  REQUIRE(deserialized.fill_color.a == original.fill_color.a);
+  REQUIRE(deserialized.outline_color.r == original.outline_color.r);
+  REQUIRE(deserialized.outline_color.g == original.outline_color.g);
+  REQUIRE(deserialized.outline_color.b == original.outline_color.b);
+  REQUIRE(deserialized.outline_color.a == original.outline_color.a);
+  REQUIRE(deserialized.outline == original.outline);
+  REQUIRE(deserialized.outline_thickness == original.outline_thickness);
 }
 
 TEST_CASE("Serialization - Text with only whitespace", "[serialization]")
 {
-  Text original("font.ttf", Vector2D {1.0, 1.0}, "   \t\n   ");
+  Text original("font.ttf", Vector2D {1.0, 1.0}, "   \t\n   ", WHITE, BLACK, true, 1.0f);
   ByteArray bytes = original.to_bytes();
   Text deserialized(bytes);
-
+  
   REQUIRE(deserialized.text == "   \t\n   ");
+  REQUIRE(deserialized.fill_color.r == original.fill_color.r);
+  REQUIRE(deserialized.fill_color.g == original.fill_color.g);
+  REQUIRE(deserialized.fill_color.b == original.fill_color.b);
+  REQUIRE(deserialized.fill_color.a == original.fill_color.a);
+  REQUIRE(deserialized.outline_color.r == original.outline_color.r);
+  REQUIRE(deserialized.outline_color.g == original.outline_color.g);
+  REQUIRE(deserialized.outline_color.b == original.outline_color.b);
+  REQUIRE(deserialized.outline_color.a == original.outline_color.a);
+  REQUIRE(deserialized.outline == original.outline);
+  REQUIRE(deserialized.outline_thickness == original.outline_thickness);
 }
 
 TEST_CASE("Serialization - CliComp to_bytes", "[serialization]")

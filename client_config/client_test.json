@@ -2,7 +2,7 @@
   "scenes": [
     {
       "name": "game",
-      "state": "disabled",
+      "state": "active",
       "plugins": [
         {
           "name": "logger",
@@ -25,9 +25,91 @@
         {
           "name": "sfml",
           "config": {}
+        },
+        {
+          "name": "weapon",
+          "config": {}
         }
       ],
-      "entities": []
+      "entities": [
+        {
+          "controller:Controllable": {
+            "pressed": [
+              {
+                "name": "UpdateVelocity",
+                "key": "Z",
+                "params": {
+                  "x": 0.0,
+                  "y": -1.0
+                }
+              },
+              {
+                "name": "UpdateVelocity",
+                "key": "Q",
+                "params": {
+                  "x": -1.0,
+                  "y": 0.0
+                }
+              },
+              {
+                "name": "UpdateVelocity",
+                "key": "S",
+                "params": {
+                  "x": 0.0,
+                  "y": 1.0
+                }
+              },
+              {
+                "name": "UpdateVelocity",
+                "key": "D",
+                "params": {
+                  "x": 1.0,
+                  "y": 0.0
+                }
+              },
+              {
+                "name": "FireBullet",
+                "key": "SPACE",
+                "params": {}
+              }
+            ],
+            "released": [
+              {
+                "name": "UpdateVelocity",
+                "key": "Z",
+                "params": {
+                  "x": 0.0,
+                  "y": 1.0
+                }
+              },
+              {
+                "name": "UpdateVelocity",
+                "key": "Q",
+                "params": {
+                  "x": 1.0,
+                  "y": 0.0
+                }
+              },
+              {
+                "name": "UpdateVelocity",
+                "key": "S",
+                "params": {
+                  "x": 0.0,
+                  "y": -1.0
+                }
+              },
+              {
+                "name": "UpdateVelocity",
+                "key": "D",
+                "params": {
+                  "x": -1.0,
+                  "y": 0.0
+                }
+              }
+            ]
+          }
+        }
+      ]
     }
   ]
 }
