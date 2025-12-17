@@ -11,4 +11,21 @@ else
     exit 1
 fi
 
-cmake --build build --target format-fix
+if ! cmake -D FORMAT_COMMAND="$FORMAT_CMD" -P cmake/lint.cmake 2>&1; then
+    echo ""
+    echo "=========================================="
+    echo "ERROR: Code formatting check failed!"
+    echo "=========================================="
+    echo ""
+    echo "Please fix the formatting issues before pushing."
+    echo "To auto-fix formatting, run:"
+    echo "  cmake --build build --target format-fix"
+    echo ""
+    echo "Or use the provided alias:"
+    echo "  source aliases.sh && format-fix"
+    echo ""
+    exit 1
+fi
+
+echo "Code formatting check passed!"
+exit 0
