@@ -1,13 +1,38 @@
 #pragma once
 
-#include <iostream>
+/**
+ * @file Rect.hpp
+ * @brief Axis-aligned bounding box for collision detection
+ */
+
+/**
+ * @struct Rect
+ * @brief Center-based rectangle with collision detection methods
+ *
+ * Represents an axis-aligned rectangle using center point (x, y) and dimensions
+ * (width, height). Provides intersection and point containment tests for
+ * collision detection and spatial queries.
+ *
+ * @note Coordinates use center point, not top-left corner
+ * @note Used primarily by collision systems and interaction zones
+ *
+ * @see Collidable, InteractionZone components
+ */
 struct Rect
 {
-  double x;
-  double y;
-  double width;
-  double height;
+  double x;  ///< Center X coordinate
+  double y;  ///< Center Y coordinate
+  double width;  ///< Total width
+  double height;  ///< Total height
 
+  /**
+   * @brief Tests if this rectangle intersects another
+   * @param other Rectangle to test against
+   * @return true if rectangles overlap, false otherwise
+   *
+   * Uses AABB (Axis-Aligned Bounding Box) intersection algorithm.
+   * Rectangles are treated as centered at (x, y).
+   */
   bool intersects(Rect const& other) const
   {
     double left = x - (width / 2);
@@ -24,6 +49,13 @@ struct Rect
         && other_bottom >= top;
   }
 
+  /**
+   * @brief Tests if a point lies within this rectangle
+   * @param px Point X coordinate
+   * @param py Point Y coordinate
+   * @return true if point is inside rectangle (inclusive lower bound, exclusive
+   * upper)
+   */
   bool contains(double px, double py) const
   {
     double left = x - (width / 2);
