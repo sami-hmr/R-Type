@@ -20,7 +20,7 @@ jobs:
 
     - name: Check formatting with clang-format
       id: lint-check
-      run: cmake --preset=dev && cmake --build build --target format-check
+      run: cmake -P cmake/lint.cmake
 
   build-release:
     needs: [lint]
