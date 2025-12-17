@@ -64,11 +64,17 @@ struct LoadEntityTemplate
 struct DeleteEntity
 {
   DeleteEntity() = default;
-  DeleteEntity(Registry::Entity e): entity(e) {}
+
+  DeleteEntity(Registry::Entity e)
+      : entity(e)
+  {
+  }
 
   CHANGE_ENTITY(result.entity = map.at(entity))
 
-  DEFAULT_BYTE_CONSTRUCTOR(DeleteEntity, ([](Registry::Entity e){return DeleteEntity(e);}), parseByte<Registry::Entity>())
+  DEFAULT_BYTE_CONSTRUCTOR(DeleteEntity,
+                           ([](Registry::Entity e) { return DeleteEntity(e); }),
+                           parseByte<Registry::Entity>())
 
   DEFAULT_SERIALIZE(type_to_byte(entity))
 
@@ -83,11 +89,18 @@ struct DeleteEntity
 struct DeleteClientEntity
 {
   DeleteClientEntity() = default;
-  DeleteClientEntity(Registry::Entity e): entity(e) {}
+
+  DeleteClientEntity(Registry::Entity e)
+      : entity(e)
+  {
+  }
 
   CHANGE_ENTITY(result.entity = map.at(entity))
 
-  DEFAULT_BYTE_CONSTRUCTOR(DeleteClientEntity, ([](Registry::Entity e){return DeleteClientEntity(e);}), parseByte<Registry::Entity>())
+  DEFAULT_BYTE_CONSTRUCTOR(DeleteClientEntity,
+                           ([](Registry::Entity e)
+                            { return DeleteClientEntity(e); }),
+                           parseByte<Registry::Entity>())
 
   DEFAULT_SERIALIZE(type_to_byte(entity))
 

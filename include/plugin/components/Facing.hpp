@@ -1,9 +1,9 @@
 #pragma once
 
 #include "ByteParser/ByteParser.hpp"
+#include "libs/Vector2D.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
-#include "libs/Vector2D.hpp"
 
 struct Facing
 {
@@ -19,12 +19,11 @@ struct Facing
   {
   }
 
-  DEFAULT_BYTE_CONSTRUCTOR(
-      Facing,
-      ([](double dir_x, double dir_y)
-       { return (Facing) {dir_x, dir_y}; }),
-      parseByte<double>(),
-      parseByte<double>())
+  DEFAULT_BYTE_CONSTRUCTOR(Facing,
+                           ([](double dir_x, double dir_y)
+                            { return (Facing) {dir_x, dir_y}; }),
+                           parseByte<double>(),
+                           parseByte<double>())
   DEFAULT_SERIALIZE(type_to_byte(this->direction.x),
                     type_to_byte(this->direction.y))
 
@@ -32,8 +31,5 @@ struct Facing
 
   Vector2D direction;
 
-  HOOKABLE(Facing,
-           HOOK(direction),
-           HOOK(direction.x),
-           HOOK(direction.y))
+  HOOKABLE(Facing, HOOK(direction), HOOK(direction.x), HOOK(direction.y))
 };

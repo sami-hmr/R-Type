@@ -12,8 +12,8 @@
 #include <utility>
 
 #include "ByteParser/ByteParser.hpp"
-#include "plugin/Byte.hpp"
 #include "ecs/Registry.hpp"
+#include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/events/EventMacros.hpp"
 

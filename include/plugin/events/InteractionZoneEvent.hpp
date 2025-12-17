@@ -47,5 +47,4 @@ struct InteractionZoneEvent
                      std::function<ByteArray(Registry::Entity const&)>(
                          [](Registry::Entity const& e)
                          { return type_to_byte<Registry::Entity>(e); })))
-
 };

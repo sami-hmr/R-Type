@@ -13,7 +13,13 @@
 
 struct Text
 {
-  Text(std::string font_path, Vector2D v, std::string t, Color outline_color, Color fill_color, bool outline, double outline_thickness)
+  Text(std::string font_path,
+       Vector2D v,
+       std::string t,
+       Color outline_color,
+       Color fill_color,
+       bool outline,
+       double outline_thickness)
       : font_path(std::move(font_path))
       , scale(v)
       , text(std::move(t))
@@ -24,21 +30,33 @@ struct Text
   {
   }
 
-  DEFAULT_BYTE_CONSTRUCTOR(
-      Text,
-      (
-          [](std::string font_path, double x, double y, std::string text, Color outline_color, Color fill_color, bool outline, double outline_thickness)
-          {
-            return Text(std::move(font_path), Vector2D {x, y}, std::move(text), outline_color, fill_color, outline, outline_thickness);
-          }),
-      parseByteString(),
-      parseByte<double>(),
-      parseByte<double>(),
-      parseByteString(),
-      parseColor(),
-      parseColor(),
-      parseByte<bool>(),
-      parseByte<double>())
+  DEFAULT_BYTE_CONSTRUCTOR(Text,
+                           (
+                               [](std::string font_path,
+                                  double x,
+                                  double y,
+                                  std::string text,
+                                  Color outline_color,
+                                  Color fill_color,
+                                  bool outline,
+                                  double outline_thickness)
+                               {
+                                 return Text(std::move(font_path),
+                                             Vector2D {x, y},
+                                             std::move(text),
+                                             outline_color,
+                                             fill_color,
+                                             outline,
+                                             outline_thickness);
+                               }),
+                           parseByteString(),
+                           parseByte<double>(),
+                           parseByte<double>(),
+                           parseByteString(),
+                           parseColor(),
+                           parseColor(),
+                           parseByte<bool>(),
+                           parseByte<double>())
 
   DEFAULT_SERIALIZE(string_to_byte(this->font_path),
                     type_to_byte(this->scale.x),
@@ -59,6 +77,12 @@ struct Text
   bool outline = false;
   double outline_thickness = 1.0f;
 
-  HOOKABLE(Text, HOOK(font_path), HOOK(scale), HOOK(text), HOOK(outline_color),
-           HOOK(fill_color), HOOK(outline), HOOK(outline_thickness))
+  HOOKABLE(Text,
+           HOOK(font_path),
+           HOOK(scale),
+           HOOK(text),
+           HOOK(outline_color),
+           HOOK(fill_color),
+           HOOK(outline),
+           HOOK(outline_thickness))
 };

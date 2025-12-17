@@ -20,21 +20,16 @@ struct Speed
   {
   }
 
-  DEFAULT_BYTE_CONSTRUCTOR(
-      Speed,
-      ([](double speed_x, double speed_y)
-       { return (Speed) {speed_x, speed_y}; }),
-      parseByte<double>(),
-      parseByte<double>())
-  DEFAULT_SERIALIZE(type_to_byte(this->speed.x),
-                    type_to_byte(this->speed.y))
+  DEFAULT_BYTE_CONSTRUCTOR(Speed,
+                           ([](double speed_x, double speed_y)
+                            { return (Speed) {speed_x, speed_y}; }),
+                           parseByte<double>(),
+                           parseByte<double>())
+  DEFAULT_SERIALIZE(type_to_byte(this->speed.x), type_to_byte(this->speed.y))
 
   CHANGE_ENTITY_DEFAULT
 
   Vector2D speed;
 
-  HOOKABLE(Speed,
-           HOOK(speed),
-           HOOK(speed.x),
-           HOOK(speed.y), )
+  HOOKABLE(Speed, HOOK(speed), HOOK(speed.x), HOOK(speed.y), )
 };

@@ -47,7 +47,8 @@ struct SendMessage
   }
 
   DEFAULT_BYTE_CONSTRUCTOR(SendMessage,
-                           ([](std::string const &m) { return SendMessage(m); }),
+                           ([](std::string const& m)
+                            { return SendMessage(m); }),
                            parseByteString())
 
   DEFAULT_SERIALIZE(string_to_byte(message))

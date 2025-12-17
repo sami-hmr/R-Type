@@ -23,7 +23,7 @@ struct Fragile
   {
   }
 
-    Fragile(int hits, double fragile_delta)
+  Fragile(int hits, double fragile_delta)
       : hits(hits)
       , counter(0)
       , fragile_delta(fragile_delta)

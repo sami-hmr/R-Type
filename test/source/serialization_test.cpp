@@ -468,16 +468,29 @@ TEST_CASE("Serialization - Sprite with large scale values", "[serialization]")
 
 TEST_CASE("Serialization - Text to_bytes", "[serialization]")
 {
-  Text text("assets/font.ttf", Vector2D {1.0, 1.0}, "Hello", WHITE, BLACK, true, 1.0f);
+  Text text("assets/font.ttf",
+            Vector2D {1.0, 1.0},
+            "Hello",
+            WHITE,
+            BLACK,
+            true,
+            1.0f);
   ByteArray bytes = text.to_bytes();
 
   // Should contain: 2 string sizes + 2 string contents + 2 doubles
-  REQUIRE(bytes.size() > 2 * sizeof(std::uint32_t) + 2 * sizeof(double) + 2 * sizeof(Color) + sizeof(bool) + sizeof(float));
+  REQUIRE(bytes.size() > 2 * sizeof(std::uint32_t) + 2 * sizeof(double)
+              + 2 * sizeof(Color) + sizeof(bool) + sizeof(float));
 }
 
 TEST_CASE("Serialization - Text round-trip", "[serialization]")
 {
-  Text original("assets/roboto.ttf", Vector2D {2.0, 2.5}, "Test Message", WHITE, BLACK, false, 2.0f);
+  Text original("assets/roboto.ttf",
+                Vector2D {2.0, 2.5},
+                "Test Message",
+                WHITE,
+                BLACK,
+                false,
+                2.0f);
   ByteArray bytes = original.to_bytes();
   Text deserialized(bytes);
 
@@ -520,7 +533,8 @@ TEST_CASE("Serialization - Text with empty strings", "[serialization]")
 TEST_CASE("Serialization - Text with long content", "[serialization]")
 {
   std::string long_text(1000, 'A');
-  Text original("font.ttf", Vector2D {1.0, 1.0}, long_text, WHITE, BLACK, true, 1.0f);
+  Text original(
+      "font.ttf", Vector2D {1.0, 1.0}, long_text, WHITE, BLACK, true, 1.0f);
   ByteArray bytes = original.to_bytes();
   Text deserialized(bytes);
 
@@ -540,7 +554,13 @@ TEST_CASE("Serialization - Text with long content", "[serialization]")
 
 TEST_CASE("Serialization - Text with special characters", "[serialization]")
 {
-  Text original("font.ttf", Vector2D {1.0, 1.0}, "Hello\nWorld\t!", WHITE, BLACK, true, 1.0f);
+  Text original("font.ttf",
+                Vector2D {1.0, 1.0},
+                "Hello\nWorld\t!",
+                WHITE,
+                BLACK,
+                true,
+                1.0f);
   ByteArray bytes = original.to_bytes();
   Text deserialized(bytes);
 
@@ -560,7 +580,13 @@ TEST_CASE("Serialization - Text with special characters", "[serialization]")
 TEST_CASE("Serialization - Text with unicode-like characters",
           "[serialization]")
 {
-  Text original("font.ttf", Vector2D {1.5, 1.5}, "Test: !@#$%^&*()", WHITE, BLACK, false, 1.5f);
+  Text original("font.ttf",
+                Vector2D {1.5, 1.5},
+                "Test: !@#$%^&*()",
+                WHITE,
+                BLACK,
+                false,
+                1.5f);
   ByteArray bytes = original.to_bytes();
   Text deserialized(bytes);
 
@@ -579,10 +605,11 @@ TEST_CASE("Serialization - Text with unicode-like characters",
 
 TEST_CASE("Serialization - Text with only whitespace", "[serialization]")
 {
-  Text original("font.ttf", Vector2D {1.0, 1.0}, "   \t\n   ", WHITE, BLACK, true, 1.0f);
+  Text original(
+      "font.ttf", Vector2D {1.0, 1.0}, "   \t\n   ", WHITE, BLACK, true, 1.0f);
   ByteArray bytes = original.to_bytes();
   Text deserialized(bytes);
-  
+
   REQUIRE(deserialized.text == "   \t\n   ");
   REQUIRE(deserialized.fill_color.r == original.fill_color.r);
   REQUIRE(deserialized.fill_color.g == original.fill_color.g);

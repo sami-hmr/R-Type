@@ -41,15 +41,17 @@ struct LogEvent
   {
   }
 
-  DEFAULT_BYTE_CONSTRUCTOR(LogEvent,
-                         ([](std::string const& n, LogLevel l, std::string const& m)
-                          { return (LogEvent) {n, l, m}; }),
-                         parseByteString(),
-                         parseByte<LogLevel>(),
-                         parseByteString())
+  DEFAULT_BYTE_CONSTRUCTOR(
+      LogEvent,
+      ([](std::string const& n, LogLevel l, std::string const& m)
+       { return (LogEvent) {n, l, m}; }),
+      parseByteString(),
+      parseByte<LogLevel>(),
+      parseByteString())
 
-  DEFAULT_SERIALIZE(string_to_byte(this->name), type_to_byte(this->level), string_to_byte(this->message))
-
+  DEFAULT_SERIALIZE(string_to_byte(this->name),
+                    type_to_byte(this->level),
+                    string_to_byte(this->message))
 
   LogEvent(Registry& r, JsonObject const& e)
       : name(get_value_copy<std::string>(r, e, "name").value())

@@ -39,8 +39,7 @@ struct AttackBehavior
 
   DEFAULT_BYTE_CONSTRUCTOR(AttackBehavior,
                            (
-                               [](std::string attack_type,
-                                  double interval)
+                               [](std::string attack_type, double interval)
                                {
                                  return AttackBehavior(
                                      std::string(attack_type.begin(),

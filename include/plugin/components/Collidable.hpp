@@ -12,7 +12,7 @@
 #include "plugin/Hooks.hpp"
 #include "plugin/events/EventMacros.hpp"
 
-enum class CollisionType:std::uint8_t
+enum class CollisionType : std::uint8_t
 {
   Bounce,
   Push,
@@ -51,7 +51,11 @@ struct Collidable
   DEFAULT_BYTE_CONSTRUCTOR(
       Collidable,
       (
-          [](double x, double y, CollisionType collision_type, bool active, std::vector<std::vector<char>> const& excludes)
+          [](double x,
+             double y,
+             CollisionType collision_type,
+             bool active,
+             std::vector<std::vector<char>> const& excludes)
           {
             std::vector<std::string> r;
             r.reserve(excludes.size());
@@ -80,5 +84,10 @@ struct Collidable
   bool is_active = true;
   std::vector<std::string> exclude_entities;
 
-  HOOKABLE(Collidable, HOOK(width), HOOK(height), HOOK(collision_type), HOOK(is_active), HOOK(exclude_entities))
+  HOOKABLE(Collidable,
+           HOOK(width),
+           HOOK(height),
+           HOOK(collision_type),
+           HOOK(is_active),
+           HOOK(exclude_entities))
 };

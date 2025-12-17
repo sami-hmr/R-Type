@@ -72,6 +72,12 @@ struct Bar
                     string_to_byte(this->texture_path),
                     type_to_byte<bool>(this->outline))
 
-    HOOKABLE(Bar, HOOK(size), HOOK(max_value), HOOK(current_value), HOOK(offset), HOOK(color), HOOK(texture_path), HOOK(outline))
-
+  HOOKABLE(Bar,
+           HOOK(size),
+           HOOK(max_value),
+           HOOK(current_value),
+           HOOK(offset),
+           HOOK(color),
+           HOOK(texture_path),
+           HOOK(outline))
 };

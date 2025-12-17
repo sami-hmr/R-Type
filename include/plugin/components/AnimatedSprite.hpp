@@ -18,8 +18,8 @@
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/events/AnimationEvents.hpp"
-#include "plugin/events/DeathEvent.hpp"
 #include "plugin/events/DamageEvent.hpp"
+#include "plugin/events/DeathEvent.hpp"
 
 struct AnimationData
 {
@@ -61,7 +61,6 @@ struct AnimationData
   bool loop = false;
   bool rollback = false;
 
-
   DEFAULT_BYTE_CONSTRUCTOR(AnimationData,
                            (
                                [](std::string texture,
@@ -75,17 +74,16 @@ struct AnimationData
                                   bool loop,
                                   bool rollback)
                                {
-                                 return AnimationData(
-                                     texture,
-                                     frame_size,
-                                     frame_pos,
-                                     direction,
-                                     sprite_size,
-                                     framerate,
-                                     nb_frames,
-                                     current_frame,
-                                     loop,
-                                     rollback);
+                                 return AnimationData(texture,
+                                                      frame_size,
+                                                      frame_pos,
+                                                      direction,
+                                                      sprite_size,
+                                                      framerate,
+                                                      nb_frames,
+                                                      current_frame,
+                                                      loop,
+                                                      rollback);
                                }),
                            parseByteString(),
                            parseVector2D(),

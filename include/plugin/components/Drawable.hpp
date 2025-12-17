@@ -13,7 +13,9 @@ struct Drawable
       : enabled(enabled)
   {
   }
-  DEFAULT_BYTE_CONSTRUCTOR(Drawable, ([](bool e) {return Drawable(e);}), parseByte<bool>())
+  DEFAULT_BYTE_CONSTRUCTOR(Drawable,
+                           ([](bool e) { return Drawable(e); }),
+                           parseByte<bool>())
   DEFAULT_SERIALIZE(type_to_byte<bool>(this->enabled))
 
   CHANGE_ENTITY_DEFAULT

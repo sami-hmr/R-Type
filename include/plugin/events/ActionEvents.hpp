@@ -109,7 +109,8 @@ struct ModifyComponentRequestEvent
                            parseByte<Registry::Entity>(),
                            parseByteString())
 
-  DEFAULT_SERIALIZE(type_to_byte(this->target), string_to_byte(this->component_name))
+  DEFAULT_SERIALIZE(type_to_byte(this->target),
+                    string_to_byte(this->component_name))
 };
 
 struct TimerTickEvent
@@ -117,9 +118,14 @@ struct TimerTickEvent
   double delta_time;
   std::chrono::steady_clock::time_point now;
 
-  TimerTickEvent(double dt): delta_time(dt) {}
+  TimerTickEvent(double dt)
+      : delta_time(dt)
+  {
+  }
 
-  DEFAULT_BYTE_CONSTRUCTOR(TimerTickEvent, ([](double dt){return TimerTickEvent(dt);}), parseByte<double>())
+  DEFAULT_BYTE_CONSTRUCTOR(TimerTickEvent,
+                           ([](double dt) { return TimerTickEvent(dt); }),
+                           parseByte<double>())
   CHANGE_ENTITY_DEFAULT
 
   TimerTickEvent(double dt, std::chrono::steady_clock::time_point n)

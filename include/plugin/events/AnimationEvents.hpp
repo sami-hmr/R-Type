@@ -1,12 +1,13 @@
 
 #ifndef ANIMATIONEVENTS_HPP_
 
-#include <string>
-#include "ecs/Registry.hpp"
-#include "plugin/Byte.hpp"
-#include "plugin/Hooks.hpp"
-#include "ByteParser/ByteParser.hpp"
-#include "plugin/events/EventMacros.hpp"
+#  include <string>
+
+#  include "ByteParser/ByteParser.hpp"
+#  include "ecs/Registry.hpp"
+#  include "plugin/Byte.hpp"
+#  include "plugin/Hooks.hpp"
+#  include "plugin/events/EventMacros.hpp"
 
 struct AnimationEndEvent
 {
@@ -109,6 +110,5 @@ struct PlayAnimationEvent
                     type_to_byte(this->rollback))
 };
 
-
-#define ANIMATIONEVENTS_HPP_
+#  define ANIMATIONEVENTS_HPP_
 #endif /* !ANIMATIONEVENTS_HPP_ */

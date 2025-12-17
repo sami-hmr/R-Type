@@ -231,7 +231,8 @@ struct PlayerCreated
   }
 
   DEFAULT_BYTE_CONSTRUCTOR(PlayerCreated,
-                           ([](std::size_t i, std::size_t id) { return PlayerCreated(i, id); }),
+                           ([](std::size_t i, std::size_t id)
+                            { return PlayerCreated(i, id); }),
                            parseByte<std::size_t>(),
                            parseByte<std::size_t>())
 
