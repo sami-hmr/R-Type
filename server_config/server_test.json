@@ -69,10 +69,24 @@
           "ui:Text": {
             "font": "assets/fonts/roboto.ttf",
             "size": {
-              "width": 30.0,
-              "height": 30.0
+              "width": "100.0%",
+              "height": "100.0%"
             },
-            "text": "LOBY: press r to get ready"
+            "fill_color": {
+              "r": 255,
+              "g": 0,
+              "b": 255,
+              "a": 255
+            },
+            "outline_color": {
+              "r": 0,
+              "g": 0,
+              "b": 0,
+              "a": 255
+            },
+            "outline_thickness": 30.0,
+            "outline": true,
+            "text": "LOBBY: get ready with R"
           },
           "actions:ActionTrigger": {
             "trigger": {
@@ -143,9 +157,23 @@
           "ui:Text": {
             "font": "assets/fonts/roboto.ttf",
             "size": {
-              "width": 30.0,
-              "height": 30.0
+              "width": "100.0%",
+              "height": "100.0%"
             },
+            "fill_color": {
+              "r": 255,
+              "g": 0,
+              "b": 255,
+              "a": 255
+            },
+            "outline_color": {
+              "r": 0,
+              "g": 0,
+              "b": 0,
+              "a": 255
+            },
+            "outline_thickness": 30.0,
+            "outline": true,
             "text": "ready"
           }
         }
@@ -156,24 +184,29 @@
       "state": "disabled",
       "plugins": [],
       "entities": [
-        // {
-        //   "moving:Position": {
-        //     "pos": {
-        //       "x": -0.5,
-        //       "y": 0.0
-        //     }
-        //   },
-        //   "ui:Drawable": {},
-        //   "ui:Text": {
-        //     "font": "assets/fonts/roboto.ttf",
-        //     "size": {
-        //       "width": 30.0,
-        //       "height": 30.0
-        //     },
-        //     "text": "this is the game"
-        //   }
-        // },
         {
+          "ui:Text": {
+            "font": "assets/fonts/roboto.ttf",
+            "size": {
+              "width": "100.0%",
+              "height": "100.0%"
+            },
+            "fill_color": {
+              "r": 255,
+              "g": 0,
+              "b": 255,
+              "a": 255
+            },
+            "outline_color": {
+              "r": 0,
+              "g": 0,
+              "b": 145,
+              "a": 255
+            },
+            "outline_thickness": 30.0,
+            "outline": true,
+            "text": "this is the game"
+          },
           "moving:Position": {
             "hook": "enemy_pos",
             "pos": {
