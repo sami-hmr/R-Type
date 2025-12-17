@@ -5,10 +5,6 @@
 
 #include "plugin/components/AnimatedSprite.hpp"
 
-#include <SFML/Graphics/Rect.hpp>
-#include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/System/Vector2.hpp>
-
 #include "Json/JsonParser.hpp"
 #include "NetworkShared.hpp"
 #include "UI.hpp"
