@@ -19,14 +19,6 @@
 #include "ecs/Scenes.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
-#include "plugin/components/AnimatedSprite.hpp"
-#include "plugin/components/BasicWeapon.hpp"
-#include "plugin/components/Collidable.hpp"
-#include "plugin/components/Drawable.hpp"
-#include "plugin/components/Health.hpp"
-#include "plugin/components/Position.hpp"
-#include "plugin/components/Team.hpp"
-#include "plugin/components/Facing.hpp"
 #include "plugin/events/CleanupEvent.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
 #include "plugin/events/LoggerEvent.hpp"
@@ -97,6 +89,7 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
         "PlayerCreation",
         PlayerCreation(entity, event.client).to_bytes());
 
+    this->_player_entities[entity] = event.client;
     this->_player_ready[event.client] = false;
   })
 
@@ -110,7 +103,8 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
 
     this->_loader.get().load_components(
         event.server_index, JsonObject({{"template", JsonValue("player")}}));
-      init_component<Scene>(this->_registry.get(), event.server_index, "game", SceneState::ACTIVE);
+    init_component<Scene>(
+        this->_registry.get(), event.server_index, "game", SceneState::ACTIVE);
   })
 
   SUBSCRIBE_EVENT(StateTransfer, {
@@ -168,6 +162,21 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
         std::nullopt,
         "DeleteClientEntity",
         DeleteClientEntity(event.entity).to_bytes());
+    if (this->_player_entities.contains(event.entity)) {
+      this->_registry.get().emit<EventBuilderId>(
+          this->_player_entities[event.entity],
+          "SceneChangeEvent",
+          SceneChangeEvent("death", "", false).to_bytes());
+      if (this->_player_entities.erase(event.entity)) {
+        if (this->_player_entities.empty()) {
+          this->_registry.get().emit<EventBuilderId>(
+              std::nullopt,
+              "ShutdownEvent",
+              ShutdownEvent("death of all players...", 0).to_bytes());
+          this->_registry.get().emit<ShutdownEvent>("game ended", 0);
+        }
+      }
+    }
   })
 }
 
