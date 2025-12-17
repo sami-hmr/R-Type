@@ -11,26 +11,27 @@
 #include "plugin/IPlugin.hpp"
 
 #define COMP_INIT(comp_name, comp_type, method_name) \
-  {#comp_name, \
-   [this](size_t entity, const JsonVariant& config) \
-   { \
-     try { \
-       JsonObject obj = std::get<JsonObject>(config); \
-       this->method_name(entity, obj); \
-       if (obj.contains("hook")) { \
-         try { \
-           std::string hook_name = \
-               std::get<std::string>(obj.at("hook").value); \
-           this->_registry.get().register_hook<comp_type>(hook_name, entity); \
-         } catch (...) { \
-         } \
-       } \
-     } catch (std::bad_variant_access const&) { \
-       std::cout << "Error initializing component \"" << #comp_name \
-                 << "\": only JsonObjects are supported\n"; \
-       return; \
-     } \
-   }}
+  { \
+    #comp_name, [this](size_t entity, const JsonVariant& config) \
+    { \
+      try { \
+        JsonObject obj = std::get<JsonObject>(config); \
+        this->method_name(entity, obj); \
+        if (obj.contains("hook")) { \
+          try { \
+            std::string hook_name = \
+                std::get<std::string>(obj.at("hook").value); \
+            this->_registry.get().register_hook<comp_type>(hook_name, entity); \
+          } catch (...) { \
+          } \
+        } \
+      } catch (std::bad_variant_access const&) { \
+        std::cout << "Error initializing component \"" << #comp_name \
+                  << "\": only JsonObjects are supported\n"; \
+        return; \
+      } \
+    } \
+  }
 
 #define REGISTER_COMPONENT(comp) \
   this->_registry.get().register_component<comp>( \
