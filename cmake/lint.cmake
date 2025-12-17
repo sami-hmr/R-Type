@@ -6,7 +6,7 @@ macro(default name)
     endif()
 endmacro()
 
-default(FORMAT_COMMAND clang-format)
+default(FORMAT_COMMAND clang-format-18)
 default(
     PATTERNS
     plugin/*.cpp plugin/*.hpp
