@@ -1,0 +1,22 @@
+var searchData=
+[
+  ['candidates_0',['candidates',['../structInteractionZoneEvent.html#a8223933fe5db87e04c6355aed3a85b10',1,'InteractionZoneEvent']]],
+  ['challenge_1',['challenge',['../structClientInfo.html#aafac490f04eda3c326c0960fb00c93c7',1,'ClientInfo::challenge'],['../structChallengeResponse.html#aac4f505d06582ca6183e9d9e0fb7f344',1,'ChallengeResponse::challenge'],['../structConnectCommand.html#a61bbb4918706ba98530d9123beabc6a1',1,'ConnectCommand::challenge']]],
+  ['client_2',['client',['../structComponentBuilderId.html#a76333a80af401960d96e9876e883419f',1,'ComponentBuilderId::client'],['../structEventBuilderId.html#afc2ed60865558f75e0c7cf1c4fb7732a',1,'EventBuilderId::client'],['../structEntityCreation.html#a15afdb677e134acd07a55b24994c4303',1,'EntityCreation::client']]],
+  ['client_5fid_3',['client_id',['../structClientInfo.html#a563e2351bad9f14f596840c51206d5ea',1,'ClientInfo::client_id'],['../structPlayerCreated.html#a2072dfb85360ed22edcb9cc8c85c139c',1,'PlayerCreated::client_id'],['../structStateTransfer.html#aa7b06d826c9d41aafb9c4e59097a64f1',1,'StateTransfer::client_id'],['../structPlayerReady.html#a349da54f3b8a6636f3c54dc67d135938',1,'PlayerReady::client_id'],['../structConnectResponse.html#a7cdd218a4ab508659485931ec68408ae',1,'ConnectResponse::client_id']]],
+  ['collision_5ftype_4',['collision_type',['../structCollidable.html#abaa0340742ac3cf684c49d1d81186910',1,'Collidable']]],
+  ['color_5',['color',['../structBar.html#aee20b5591d8414c49d69acde765f11a3',1,'Bar']]],
+  ['command_6',['command',['../structConnectionlessCommand.html#ac3b53b9c63ca0c01389826bcd9657026',1,'ConnectionlessCommand']]],
+  ['command_5fcode_7',['command_code',['../structConnectionlessCommand.html#a490c833b2468d613df098632769a93a0',1,'ConnectionlessCommand']]],
+  ['component_8',['component',['../structComponentBuilderId.html#ad1786d191694b686398c61de11badee4',1,'ComponentBuilderId']]],
+  ['component_5fname_9',['component_name',['../structModifyComponentRequestEvent.html#aa208c89e96747c500198b206273f7e66',1,'ModifyComponentRequestEvent']]],
+  ['components_10',['components',['../classAPlugin.html#a7b6c1389e597e1161afc325c7102c0be',1,'APlugin']]],
+  ['comps_11',['comps',['../structComponentState.html#a8ef40682f2afd2813810875c4f2fbb19',1,'ComponentState']]],
+  ['conf_12',['conf',['../structDeleteEntity.html#a8d0e1188c5bfe80fe0930347f0191f8b',1,'DeleteEntity::conf'],['../structDeleteEntity.html#ad18067057aeb6a20c15919c17a48a72c',1,'DeleteEntity::conf'],['../structDeleteClientEntity.html#abe31548c9742702131b78e18c65c5393',1,'DeleteClientEntity::conf'],['../structDeleteClientEntity.html#aaa96b01e6dcaaa8ed2396b7067184ed5',1,'DeleteClientEntity::conf'],['../structFireBullet.html#a34daee559a9594682488f44b4922f47b',1,'FireBullet::conf'],['../structFireBullet.html#ab8c9b3574c64bb71448e6f0b7e5dbae9',1,'FireBullet::conf']]],
+  ['cooldown_13',['cooldown',['../structBasicWeapon.html#a8d1927b444c33d2cafa556b474682607',1,'BasicWeapon']]],
+  ['counter_14',['counter',['../structFragile.html#a5b95bc10532c1285fd1ad66546f0a435',1,'Fragile']]],
+  ['current_5fanimation_15',['current_animation',['../classAnimatedSprite.html#aad7a2ae906b1403f76870aeb9600b0c1',1,'AnimatedSprite']]],
+  ['current_5fframe_16',['current_frame',['../structAnimationData.html#aa56c71294ea7900d957fd183dd00218d',1,'AnimationData']]],
+  ['current_5fspawns_17',['current_spawns',['../structSpawner.html#a678817e537900a5434c30f4c944d21b4',1,'Spawner::current_spawns'],['../structSpawner.html#ae588f7aaf376570af71402a143ee00ab',1,'Spawner::current_spawns']]],
+  ['current_5fvalue_18',['current_value',['../structBar.html#a5434ae306ef67862d79e2d24c95e76fe',1,'Bar']]]
+];

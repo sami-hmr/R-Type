@@ -1,0 +1,22 @@
+var searchData=
+[
+  ['s_0',['s',['../structDamageEvent.html#a86d1c6d9e624ab8edce2a4c9145f6c8a',1,'DamageEvent']]],
+  ['scale_1',['scale',['../structSprite.html#abea97bf0cfc772aa4cfe8bee12f4755f',1,'Sprite::scale'],['../structText.html#adcb580d266b5d328fc16badd71414d08',1,'Text::scale']]],
+  ['score_2',['score',['../structClientInfo.html#ae31ecddf0df0b8449f77d84bff43ec3b',1,'ClientInfo']]],
+  ['seq_3',['seq',['../classZipperIterator.html#a5383701ad675fc69bccd9b4068bf0e23',1,'ZipperIterator']]],
+  ['sequence_4',['sequence',['../structFragmentedPackage.html#a9661d85e072c1d824998a43b0ae31ca3',1,'FragmentedPackage']]],
+  ['sequence_5fnumber_5',['sequence_number',['../structConnectedPackage.html#a82b89f562fcc5766b694ec73bf20049a',1,'ConnectedPackage']]],
+  ['server_5fid_6',['server_id',['../structPlayerCreation.html#a4b5f1957c6c44ca188cb83c4a4ad8fe0',1,'PlayerCreation::server_id'],['../structConnectResponse.html#aa22694371383b345c484890934a85cec',1,'ConnectResponse::server_id']]],
+  ['server_5findex_7',['server_index',['../structPlayerCreated.html#ac6f10052bd3b6decf481138f3de85491',1,'PlayerCreated::server_index'],['../structPlayerCreation.html#a158ef0dd45f215ad9eec5c2212396932',1,'PlayerCreation::server_index']]],
+  ['shake_5fduration_8',['shake_duration',['../classCamera.html#a47b8e54dd90493a82ddb72ac22db2054',1,'Camera']]],
+  ['shaking_9',['shaking',['../classCamera.html#ac92f6a700ae0c767bf3ef963c00e714d',1,'Camera']]],
+  ['shaking_5famplitude_10',['shaking_amplitude',['../classCamera.html#ad67c32860504ec3238edf82c5f5e9e87',1,'Camera']]],
+  ['shaking_5foffset_11',['shaking_offset',['../classCamera.html#ae03e329bfd319dcdbd971d10023f0c09',1,'Camera']]],
+  ['size_12',['size',['../classCamera.html#afab8b120da0e948f7a401b18faa3bd95',1,'Camera::size'],['../structBar.html#a652851ac61a16e2c94913bd4f57cca93',1,'Bar::size']]],
+  ['source_13',['source',['../structDamageEvent.html#a0763a07c325e5474fd852daa303b3444',1,'DamageEvent::source'],['../structHealEvent.html#af0378a1a4a20899f684e89b24d45ca84',1,'HealEvent::source'],['../structInteractionZoneEvent.html#a849f3e16c35f827059dbac68955fffe1',1,'InteractionZoneEvent::source']]],
+  ['spawn_5fdelta_14',['spawn_delta',['../structSpawner.html#a323ba4c9e8e96b82dd33aa2a6a7c5cd3',1,'Spawner::spawn_delta'],['../structSpawner.html#a90dab3ad81921487f2923e2f5e6a1715',1,'Spawner::spawn_delta']]],
+  ['spawn_5finterval_15',['spawn_interval',['../structSpawner.html#a79b7c8c3d4e46ecc3ad0f19dbe415ba7',1,'Spawner::spawn_interval'],['../structSpawner.html#a2e9423670556eb303bd435c5b71f590a',1,'Spawner::spawn_interval']]],
+  ['speed_16',['speed',['../structParallax.html#a969c1269776ef0e99bcce1f201b8a27f',1,'Parallax::speed'],['../classCamera.html#aab4b06907c7ce2f34056f33745252e27',1,'Camera::speed'],['../structCamRotateEvent.html#a0ec75cdfd19c03e760681edcb788923f',1,'CamRotateEvent::speed'],['../structCamSpeedEvent.html#a56ddf297edcccd3db984fb605f3b9f24',1,'CamSpeedEvent::speed']]],
+  ['sprite_5fsize_17',['sprite_size',['../structAnimationData.html#aeaa2d05afc49597538fb4a0676ff9f41',1,'AnimationData']]],
+  ['state_18',['state',['../structScene.html#a17e7ecac955706d3a58ffb3d5d22a434',1,'Scene::state'],['../structClientInfo.html#a7eadb6d26d57462dbba8cdfddfc56992',1,'ClientInfo::state'],['../structSceneChangeEvent.html#a3fb2ce34346537dbc69468bc8e70a9ed',1,'SceneChangeEvent::state']]]
+];

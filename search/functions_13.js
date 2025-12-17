@@ -1,0 +1,25 @@
+var searchData=
+[
+  ['scene_0',['scene',['../structScene.html#ae61492f64c1ec01c0215a2ec70f4fd8f',1,'Scene::Scene(std::string scene_name, SceneState state)'],['../structScene.html#a93ccc41b0a2f6c24e467d5d9de76ec0d',1,'Scene::Scene()=default']]],
+  ['scenechangeevent_1',['scenechangeevent',['../structSceneChangeEvent.html#a5ce5ca318d7dffc5d4e089ef098636fe',1,'SceneChangeEvent::SceneChangeEvent()=default'],['../structSceneChangeEvent.html#af2422ff57a97afa759d4063127e97efe',1,'SceneChangeEvent::SceneChangeEvent(std::string t, std::string r, bool f)']]],
+  ['sendmessage_2',['sendmessage',['../structSendMessage.html#abc200a375b2291067b8a6004f2949ee3',1,'SendMessage::SendMessage(std::string message)'],['../structSendMessage.html#ac0a54eb41d9e25786d2f59ae139913c4',1,'SendMessage::SendMessage(Registry &amp;r, JsonObject const &amp;e)']]],
+  ['serialize_5ffunction_3',['SERIALIZE_FUNCTION',['../Byte_8hpp.html#adfc57ae61fc24faeb260b584f0e6e9e1',1,'Byte.hpp']]],
+  ['server_4',['Server',['../classServer.html#a5b10f206eed978627b091ad927bb2755',1,'Server']]],
+  ['server_5fid_5',['server_id',['../structPlayerCreation.html#a2e8ad86abe45d2cfbfb6463f14642372',1,'PlayerCreation']]],
+  ['serverlaunching_6',['serverlaunching',['../structServerLaunching.html#abbe4aaef8a109d480dca302f873497be',1,'ServerLaunching::ServerLaunching(std::size_t p)'],['../structServerLaunching.html#a5fc39561a3b7eb2f419557f75c1b48bd',1,'ServerLaunching::ServerLaunching(Registry &amp;r, JsonObject const &amp;e)']]],
+  ['set_5falgorithm_7',['set_algorithm',['../classCollision.html#aa33ba09a76ab5f55fec5159ee5c985b4',1,'Collision']]],
+  ['set_5fcomponent_8',['set_component',['../classAPlugin.html#a0dc03be300d00218d79e6e2b2d8b88f8',1,'APlugin::set_component()'],['../classIPlugin.html#a533909c503a22fd403016b43a845280d',1,'IPlugin::set_component()']]],
+  ['set_5fcurrent_5fscene_9',['set_current_scene',['../classRegistry.html#ad1c9d136cf9da966ef0977d3c698a963',1,'Registry']]],
+  ['setup_5fscene_5fsystems_10',['setup_scene_systems',['../classRegistry.html#a35e8c1f487a94aaf2752678d814a942a',1,'Registry']]],
+  ['sfmlrenderer_11',['SFMLRenderer',['../classSFMLRenderer.html#ac6f8feed17e1936f32fc1a7d1cdd1b11',1,'SFMLRenderer']]],
+  ['shutdownevent_12',['ShutdownEvent',['../structShutdownEvent.html#ad742acdbec93d8ecc4fdd4e346adc2f5',1,'ShutdownEvent']]],
+  ['spawn_5fentity_13',['spawn_entity',['../classRegistry.html#a3afa81d52e66afd192bfb44f191c1510',1,'Registry']]],
+  ['spawnentityrequestevent_14',['spawnentityrequestevent',['../structSpawnEntityRequestEvent.html#a2dadbeb3f5003752846d97978fe48bf6',1,'SpawnEntityRequestEvent::SpawnEntityRequestEvent(Registry &amp;r, JsonObject const &amp;e)'],['../structSpawnEntityRequestEvent.html#a9b6377989d02bdf79ad9f187cfa63609',1,'SpawnEntityRequestEvent::SpawnEntityRequestEvent(std::string e)'],['../structSpawnEntityRequestEvent.html#a6c809304d3302b98f28ab5c2e6c1cd68',1,'SpawnEntityRequestEvent::SpawnEntityRequestEvent(std::string templ, JsonObject p)']]],
+  ['spawner_15',['spawner',['../structSpawner.html#a4f5e55904095c4946d9eaab828d3f9c5',1,'Spawner::Spawner()=default'],['../structSpawner.html#a38bd211645bdba643534b7bfac3c72c8',1,'Spawner::Spawner(std::string entity_template, double spawn_interval, int max_spawns)'],['../structSpawner.html#a3e34f5f3591fc6261beb9d90d3fcf4ed',1,'Spawner::Spawner(std::string entity_template, double spawn_interval, double spawn_delta, int max_spawns, int current_spawns, bool active)']]],
+  ['split_16',['split',['../classQuadTreeNode.html#a8570baa3cd93a42488f6650cb252c3a9',1,'QuadTreeNode']]],
+  ['sprite_17',['Sprite',['../structSprite.html#a0e9e92c050e38a6dafce57f92804e603',1,'Sprite']]],
+  ['statetransfer_18',['statetransfer',['../structStateTransfer.html#af68ec3112a7f66632639bd8dff0c2926',1,'StateTransfer::StateTransfer()=default'],['../structStateTransfer.html#a5dc2d1271ebbff76df0185c1688bbacf',1,'StateTransfer::StateTransfer(std::size_t client)']]],
+  ['std_3a_3afunction_19',['std::function',['../structActionTrigger.html#af10e08ae8d97ff9545d2a3f738f6c67e',1,'ActionTrigger::function([](const std::string &amp;e) { return string_to_byte(e);})'],['../structActionTrigger.html#a42418a8fb9d705d06344a7929bd59f34',1,'ActionTrigger::function([](const JsonObject &amp;e) { return json_object_to_byte(e);}))'],['../structClickable.html#a18a7321405ec87046c9a3c6e5af63021',1,'Clickable::function()']]],
+  ['string_5fto_5fbyte_20',['string_to_byte',['../Byte_8hpp.html#a20d43856fdb8ef111a9b55ceeb1f96f8',1,'string_to_byte(std::string const &amp;str):&#160;Byte.cpp'],['../Byte_8cpp.html#a20d43856fdb8ef111a9b55ceeb1f96f8',1,'string_to_byte(std::string const &amp;str):&#160;Byte.cpp']]],
+  ['system_21',['System',['../classSystem.html#a1260f51966ae14d8b237224ec5a44494',1,'System']]]
+];
