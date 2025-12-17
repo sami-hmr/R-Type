@@ -2,6 +2,7 @@
 
 #include <string>
 
+#include "ByteParser/ByteParser.hpp"
 #include "libs/Color.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/Byte.hpp"
@@ -60,7 +61,7 @@ struct Bar
       parseByte<double>(),
       parseVector2D(),
       parseColor(),
-      parseByte<std::string>(),
+      parseByteString(),
       parseByte<bool>())
 
   DEFAULT_SERIALIZE(vector2DToByte(this->size),

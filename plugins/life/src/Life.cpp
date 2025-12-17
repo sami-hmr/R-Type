@@ -24,6 +24,7 @@
 #include "plugin/components/Team.hpp"
 #include "plugin/events/CameraEvents.hpp"
 #include "plugin/events/DamageEvent.hpp"
+#include "plugin/events/EntityManagementEvent.hpp"
 #include "plugin/events/HealEvent.hpp"
 
 Life::Life(Registry& r, EntityLoader& l)
@@ -65,7 +66,11 @@ void Life::init_health(Registry::Entity entity, JsonObject const& obj)
     return;
   }
   init_component<Health>(this->_registry.get(),
-      entity, current.value(), max.value(), heal_cooldown, damage_cooldown);
+                         entity,
+                         current.value(),
+                         max.value(),
+                         heal_cooldown,
+                         damage_cooldown);
 }
 
 void Life::init_damage(Registry::Entity entity, JsonObject const& obj)
@@ -197,7 +202,7 @@ void Life::on_damage(const DamageEvent& event)
         std::format("Entity {} died!", event.target));
 
     if (!this->_registry.get().has_component<AnimatedSprite>(event.target)) {
-      this->_registry.get().kill_entity(event.target);
+      this->_registry.get().emit<DeleteEntity>(event.target);
     }
   }
 }

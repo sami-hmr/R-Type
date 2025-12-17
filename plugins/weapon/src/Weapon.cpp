@@ -3,6 +3,7 @@
 #include "Weapon.hpp"
 
 #include "NetworkShared.hpp"
+#include "ecs/EmitEvent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/Scenes.hpp"
 #include "ecs/zipper/Zipper.hpp"
@@ -12,7 +13,6 @@
 #include "plugin/events/EntityManagementEvent.hpp"
 #include "plugin/events/IoEvents.hpp"
 #include "plugin/events/WeaponEvent.hpp"
-#include "ecs/EmitEvent.hpp"
 
 Weapon::Weapon(Registry& r, EntityLoader& l)
     : APlugin("weapon",
@@ -38,23 +38,18 @@ void Weapon::on_fire(Registry& r, const FireBullet& e)
   }
 
   auto& weapon = *this->_registry.get().get_components<BasicWeapon>()[e.entity];
-  auto const& pos =
-      *this->_registry.get().get_components<Position>()[e.entity];
-  auto const& scene =
-      *this->_registry.get().get_components<Scene>()[e.entity];
+  auto const& pos = *this->_registry.get().get_components<Position>()[e.entity];
+  auto const& scene = *this->_registry.get().get_components<Scene>()[e.entity];
 
   if (!weapon.update_basic_weapon(now)) {
     return;
   }
-  emit_event(this->_registry.get(),
-             "LoadEntityTemplate",
-             LoadEntityTemplate(
-                 weapon.bullet_type,
-                 LoadEntityTemplate::Additional {
-                     {this->_registry.get().get_component_key<Position>(),
-                      pos.to_bytes()},
-                     {this->_registry.get().get_component_key<Scene>(),
-                      scene.to_bytes()}}));
+  this->_registry.get().emit<LoadEntityTemplate>(
+      weapon.bullet_type,
+      LoadEntityTemplate::Additional {
+          {this->_registry.get().get_component_key<Position>(), pos.to_bytes()},
+          {this->_registry.get().get_component_key<Scene>(),
+           scene.to_bytes()}});
 }
 
 void Weapon::basic_weapon_system(
