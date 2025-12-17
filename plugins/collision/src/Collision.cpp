@@ -214,7 +214,7 @@ void Collision::on_collision(const CollisionEvent& c)
 
   if (this->_registry.get().has_component<Velocity>(c.a)) {
     Vector2D movement =
-        (velocities[c.a]->direction * dt).normalize() * velocities[c.a]->speed;
+        (velocities[c.a]->direction).normalize() * velocities[c.a]->speed * dt;
     Vector2D collision_normal =
         (positions[c.a]->pos - positions[c.b]->pos).normalize();
 

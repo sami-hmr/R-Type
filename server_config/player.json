@@ -13,8 +13,8 @@
         "ui:Drawable": {},
         "moving:Velocity": {
           "speed": {
-            "x": 0.01,
-            "y": 0.01
+            "x": 1.0,
+            "y": 1.0
           },
           "direction": {
             "x": 0.0,
@@ -22,7 +22,7 @@
           }
         },
         "weapon:BasicWeapon": {
-          "bullet_type": "bounce_bullet",
+          "bullet_type": "basic_bullet",
           "magazine_size": 6,
           "magazine_nb": 3,
           "reload_time": 2.0,

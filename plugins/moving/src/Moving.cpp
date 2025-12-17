@@ -52,7 +52,7 @@ void Moving::moving_system(Registry& reg)
   for (auto&& [index, position, velocity] :
        ZipperIndex<Position, Velocity>(reg))
   {
-    Vector2D movement = (velocity.direction * dt).normalize() * velocity.speed;
+    Vector2D movement = (velocity.direction).normalize() * velocity.speed * dt;
     position.pos += movement;
     if (movement.length() != 0) {
       reg.emit<ComponentBuilder>(
