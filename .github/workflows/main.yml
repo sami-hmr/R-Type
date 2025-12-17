@@ -20,7 +20,7 @@ jobs:
 
     - name: Check formatting with clang-format
       id: lint-check
-      run: cmake -D FORMAT_COMMAND=clang-format-18 -P cmake/lint.cmake
+      run: cmake --build build --target format-check
 
   build-release:
     needs: [lint]

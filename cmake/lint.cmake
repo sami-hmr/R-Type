@@ -6,8 +6,8 @@ macro(default name)
     endif()
 endmacro()
 
-default(FORMAT_COMMAND clang-format-18)
-default(
+set(FORMAT_COMMAND clang-format-18)
+set(
     PATTERNS
     plugin/*.cpp plugin/*.hpp
     src/*.cpp
@@ -31,7 +31,7 @@ string(LENGTH "${CMAKE_SOURCE_DIR}/" path_prefix_length)
 
 foreach(file IN LISTS files)
     execute_process(
-      COMMAND "${FORMAT_COMMAND}" --style=file "${flag}" "${file}"
+      COMMAND "${FORMAT_COMMAND}" "${flag}" "${file}"
       WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
       RESULT_VARIABLE result
       ${args}

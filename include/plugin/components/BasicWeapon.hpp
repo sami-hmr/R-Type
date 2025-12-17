@@ -34,8 +34,7 @@ struct BasicWeapon
                                   int mag_size,
                                   int mag_nb,
                                   double reload_time,
-                                  double cooldown)
-                               {
+                                  double cooldown) {
                                  return BasicWeapon(bullet_type,
                                                     mag_size,
                                                     mag_nb,
@@ -52,7 +51,6 @@ struct BasicWeapon
                     type_to_byte(this->magazine_nb),
                     type_to_byte(this->reload_time),
                     type_to_byte(this->cooldown))
-
   CHANGE_ENTITY_DEFAULT
 
   std::string bullet_type;
