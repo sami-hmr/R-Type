@@ -34,6 +34,15 @@ bool Registry::is_entity_dying(Entity const& e) const
 void Registry::process_entity_deletions()
 {
   for (auto const& e : _entities_to_kill) {
+    for (auto it = _bindings.begin(); it != _bindings.end();) {
+      if (it->target_entity == e) {
+        it->deleter();
+        it = _bindings.erase(it);
+      } else {
+        ++it;
+      }
+    }
+
     for (auto const& [_, f] : this->_delete_functions) {
       f(e);
     }
@@ -82,6 +91,10 @@ void Registry::update_bindings()
 
 void Registry::clear_bindings()
 {
+  // Appeler tous les deleters avant de vider les bindings
+  for (auto& binding : _bindings) {
+    binding.deleter();
+  }
   _bindings.clear();
 }
 
