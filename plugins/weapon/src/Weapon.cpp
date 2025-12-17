@@ -65,19 +65,14 @@ void Weapon::on_fire(Registry& r, const FireBullet& e)
   if (!weapon.update_basic_weapon(now)) {
     return;
   }
-  emit_event(this->_registry.get(),
-             "LoadEntityTemplate",
-             LoadEntityTemplate(
-                 weapon.bullet_type,
-                 LoadEntityTemplate::Additional {
-                     {this->_registry.get().get_component_key<Position>(),
-                      pos.to_bytes()},
-                     {this->_registry.get().get_component_key<Scene>(),
-                      scene.to_bytes()},
-                     {this->_registry.get().get_component_key<Velocity>(),
-                      velocity.to_bytes()},
-                     {this->_registry.get().get_component_key<Team>(),
-                      team.to_bytes()}}));
+  this->_registry.get().emit<LoadEntityTemplate>(
+      weapon.bullet_type,
+      LoadEntityTemplate::Additional {
+          {this->_registry.get().get_component_key<Position>(), pos.to_bytes()},
+          {this->_registry.get().get_component_key<Scene>(), scene.to_bytes()},
+          {this->_registry.get().get_component_key<Velocity>(),
+           velocity.to_bytes()},
+          {this->_registry.get().get_component_key<Team>(), team.to_bytes()}});
 }
 
 void Weapon::basic_weapon_system(
