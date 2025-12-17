@@ -76,28 +76,28 @@
             }
           },
           "ui:Drawable": {},
-          "ui:Text": {
-            "font": "assets/fonts/roboto.ttf",
-            "size": {
-              "width": "100.0%",
-              "height": "100.0%"
-            },
-            "fill_color": {
-              "r": 255,
-              "g": 0,
-              "b": 255,
-              "a": 255
-            },
-            "outline_color": {
-              "r": 0,
-              "g": 0,
-              "b": 0,
-              "a": 255
-            },
-            "outline_thickness": 30.0,
-            "outline": true,
-            "text": "LOBBY: get ready with R"
-          },
+          // "ui:Text": {
+          //   "font": "assets/fonts/roboto.ttf",
+          //   "size": {
+          //     "width": "100.0%",
+          //     "height": "100.0%"
+          //   },
+          //   "fill_color": {
+          //     "r": 255,
+          //     "g": 0,
+          //     "b": 255,
+          //     "a": 255
+          //   },
+          //   "outline_color": {
+          //     "r": 0,
+          //     "g": 0,
+          //     "b": 0,
+          //     "a": 255
+          //   },
+          //   "outline_thickness": 30.0,
+          //   "outline": true,
+          //   "text": "LOBBY: get ready with R"
+          // },
           "actions:ActionTrigger": {
             "trigger": {
               "type": "KeyPressed",
@@ -215,28 +215,28 @@
       "plugins": [],
       "entities": [
         {
-          "ui:Text": {
-            "font": "assets/fonts/roboto.ttf",
-            "size": {
-              "width": "100.0%",
-              "height": "100.0%"
-            },
-            "fill_color": {
-              "r": 255,
-              "g": 0,
-              "b": 255,
-              "a": 255
-            },
-            "outline_color": {
-              "r": 0,
-              "g": 0,
-              "b": 145,
-              "a": 255
-            },
-            "outline_thickness": 30.0,
-            "outline": true,
-            "text": "this is the game"
-          },
+          // "ui:Text": {
+          //   "font": "assets/fonts/roboto.ttf",
+          //   "size": {
+          //     "width": "100.0%",
+          //     "height": "100.0%"
+          //   },
+          //   "fill_color": {
+          //     "r": 255,
+          //     "g": 0,
+          //     "b": 255,
+          //     "a": 255
+          //   },
+          //   "outline_color": {
+          //     "r": 0,
+          //     "g": 0,
+          //     "b": 145,
+          //     "a": 255
+          //   },
+          //   "outline_thickness": 30.0,
+          //   "outline": true,
+          //   "text": "this is the game"
+          // },
           "moving:Position": {
             "hook": "enemy_pos",
             "pos": {
@@ -299,22 +299,7 @@
             }
           }
         },
-        {
-          "moving:Position": {
-            "pos": {
-              "x": 2.0,
-              "y": 0.0
-            }
-          },
-          "mob:Enemy": {
-            "type": 1
-          },
-          "mob:Spawner": {
-            "entity_template": "bounce_bullet",
-            "spawn_interval": 5.0,
-            "max_spawns": 5
-          }
-        },
+        
         {
           "ui:Drawable": {},
           "ui:Background": {

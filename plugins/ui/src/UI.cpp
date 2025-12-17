@@ -39,7 +39,7 @@ UI::UI(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config)
   REGISTER_COMPONENT(AnimatedSprite)
 
   this->_registry.get().add_system([this](Registry& r)
-                                   { return this->update_anim_system(r); });
+                                   { this->update_anim_system(r); }, 1000);
 
   SUBSCRIBE_EVENT(CamAggroEvent, { this->cam_target_event(event); })
   SUBSCRIBE_EVENT(CamZoomEvent, { this->cam_zoom_event(event); })

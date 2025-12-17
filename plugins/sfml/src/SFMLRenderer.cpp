@@ -40,8 +40,8 @@
 #include "plugin/components/Sprite.hpp"
 #include "plugin/components/Text.hpp"
 #include "plugin/events/AnimationEvents.hpp"
-#include "plugin/events/DeathEvent.hpp"
 #include "plugin/events/DamageEvent.hpp"
+#include "plugin/events/DeathEvent.hpp"
 #include "plugin/events/IoEvents.hpp"
 #include "plugin/events/LoggerEvent.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
@@ -311,7 +311,6 @@ void SFMLRenderer::render_sprites(Registry& r)
   float min_dimension =
       static_cast<float>(std::min(window_size.x, window_size.y));
 
-
   drawables.reserve(std::max({r.get_components<Position>().size(),
                               r.get_components<Drawable>().size(),
                               r.get_components<Sprite>().size()}));
@@ -413,8 +412,14 @@ void SFMLRenderer::render_text(Registry& r)
         static_cast<float>((pos.pos.y + 1.0) * min_dimension / deux)
             + offset_y);
     _text.value().setPosition(new_pos);
-    _text.value().setFillColor(sf::Color(txt.fill_color.r, txt.fill_color.g, txt.fill_color.b, txt.fill_color.a));
-    _text.value().setOutlineColor(sf::Color(txt.outline_color.r, txt.outline_color.g, txt.outline_color.b, txt.outline_color.a));
+    _text.value().setFillColor(sf::Color(txt.fill_color.r,
+                                         txt.fill_color.g,
+                                         txt.fill_color.b,
+                                         txt.fill_color.a));
+    _text.value().setOutlineColor(sf::Color(txt.outline_color.r,
+                                            txt.outline_color.g,
+                                            txt.outline_color.b,
+                                            txt.outline_color.a));
     if (txt.outline) {
       _text.value().setOutlineThickness(txt.outline_thickness * 0.1f);
     } else {
@@ -523,8 +528,7 @@ void SFMLRenderer::button_system(Registry& r)
   }
 }
 
-void SFMLRenderer::animation_system(
-    Registry& r)
+void SFMLRenderer::animation_system(Registry& r)
 {
   auto now = std::chrono::high_resolution_clock::now();
 
@@ -552,13 +556,14 @@ void SFMLRenderer::animation_system(
     if (!anim.animations.contains(anim.current_animation)) {
       continue;
     }
-    
+
     float offset_x = (window_size.x - min_dimension) / deux;
     float offset_y = (window_size.y - min_dimension) / deux;
-    
+
     sf::Vector2f new_pos(
         static_cast<float>((pos.pos.x + 1.0) * min_dimension / deux) + offset_x,
-        static_cast<float>((pos.pos.y + 1.0) * min_dimension / deux) + offset_y);
+        static_cast<float>((pos.pos.y + 1.0) * min_dimension / deux)
+            + offset_y);
 
     AnimationData anim_data = anim.animations.at(anim.current_animation);
 
@@ -589,7 +594,6 @@ void SFMLRenderer::animation_system(
         std::ref(texture), uniform_scale, new_pos, pos.z, anim_data);
   }
 
-
   std::sort(drawables.begin(),
             drawables.end(),
             [](auto const& a, auto const& b)
@@ -616,7 +620,6 @@ void SFMLRenderer::animation_system(
     _window.draw(*this->_sprite);
   }
 }
-
 
 extern "C"
 {

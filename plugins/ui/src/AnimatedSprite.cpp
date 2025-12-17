@@ -126,7 +126,14 @@ void UI::update_anim_system(Registry &r)
 {
   auto now = r.clock().now();
  
-  for (auto &&[e, anim] : ZipperIndex<AnimatedSprite>(r)) {
+  for (auto &&[e, drawable, anim] : ZipperIndex<Drawable, AnimatedSprite>(r)) {
+    if (!drawable.enabled) {
+      continue;
+    }
     anim.update_anim(r, now, e);
+    // r.emit<ComponentBuilder>(
+    //     e,
+    //     r.get_component_key<AnimatedSprite>(),
+    //     anim.to_bytes());
   }
 }

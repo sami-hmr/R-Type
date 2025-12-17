@@ -76,10 +76,6 @@
         "life:Team": {
           "name": "test1"
         },
-        "life:Health": {
-          "current": 1.0,
-          "max": 1.0
-        },
         "life:Damage": {
           "amount": 3
         },
@@ -87,6 +83,12 @@
           "width": 0.2,
           "height": 0.2,
           "collision_type": "solid"
+        },
+        "projectile:Temporal": {
+          "lifetime": 2.0
+        },
+        "projectile:Fragile": {
+          "hits": 0
         }
       }
     },

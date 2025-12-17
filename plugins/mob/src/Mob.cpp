@@ -7,7 +7,6 @@
 #include "libs/Vector2D.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
-#include "plugin/components/Enemy.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
 
@@ -16,28 +15,12 @@ Mob::Mob(Registry& r, EntityLoader& l)
               r,
               l,
               {"moving"},
-              {COMP_INIT(Enemy, Enemy, init_enemy),
-               COMP_INIT(Spawner, Spawner, init_spawner)})
+              {COMP_INIT(Spawner, Spawner, init_spawner)})
     , entity_loader(l)
 {
-  _registry.get().register_component<Enemy>("mob:Enemy");
   _registry.get().register_component<Spawner>("mob:Spawner");
 
   _registry.get().add_system([this](Registry& r) { spawner_system(r); });
-}
-
-void Mob::init_enemy(Registry::Entity const& entity, JsonObject const& obj)
-{
-  auto const& type =
-      get_value<Enemy, int>(this->_registry.get(), obj, entity, "type");
-
-  if (!type) {
-    std::cerr << "Error loading Enemy component: unexpected value type or "
-                 "missing value in JsonObject\n";
-    return;
-  }
-  this->_registry.get().emplace_component<Enemy>(entity,
-                                                 Enemy_type(type.value()));
 }
 
 void Mob::init_spawner(Registry::Entity const& entity, JsonObject const& obj)
@@ -72,7 +55,6 @@ void Mob::spawner_system(Registry& r)
     }
     if (spawner.active && spawner.current_spawns < spawner.max_spawns) {
       spawner.spawn_delta = 0;
-      std::cout << "ici ça spawn\n\n\n";
       spawner.current_spawns += 1;
       spawner.active = spawner.current_spawns < spawner.max_spawns;
       r.emit<ComponentBuilder>(
