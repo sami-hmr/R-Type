@@ -136,7 +136,6 @@
  *
  * @note The key is stringified using #key, so no quotes needed
  *
- * @example
  * @code
  * struct Transform {
  *   Vector2D position;
@@ -165,7 +164,6 @@
  *
  * @param var The member variable to expose (name used as hook key)
  *
- * @example
  * @code
  * struct Player {
  *   int health;
@@ -197,7 +195,6 @@
  * where each entry maps a field name to a lambda that extracts that field
  * as a reference_wrapper<T> wrapped in std::any.
  *
- * @example Basic Usage
  * @code
  * struct Position {
  *   double x;
@@ -213,7 +210,6 @@
  * // "z" -> [](Position& p) { return std::ref(p.z); }
  * @endcode
  *
- * @example Complex Types
  * @code
  * struct Sprite {
  *   std::string texture;

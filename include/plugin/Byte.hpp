@@ -96,7 +96,7 @@ concept bytable = serializable<T> && unserializable<T>;
  * applied sequentially, and results are passed to the construct lambda.
  * Throws InvalidPackage with detailed error info on parse failure.
  *
- * @example
+ * @code
  * struct Position {
  *   double x, y;
  *   DEFAULT_BYTE_CONSTRUCTOR(
@@ -106,6 +106,7 @@ concept bytable = serializable<T> && unserializable<T>;
  *     parseByte<double>()
  *   )
  * };
+ * @encode
  */
 #define DEFAULT_BYTE_CONSTRUCTOR(classname, construct, ...) \
   classname(ByteArray const& array) \
@@ -160,11 +161,12 @@ ByteArray byte_array_join(Args... arrays)
  * Concatenates the ByteArrays produced by each argument using byte_array_join.
  * Fields are serialized in the order specified.
  *
- * @example
+ * @code
  * struct Position {
  *   double x, y;
  *   DEFAULT_SERIALIZE(type_to_byte(x), type_to_byte(y))
  * };
+ * @encode
  */
 #define DEFAULT_SERIALIZE(...) \
   ByteArray to_bytes() const \

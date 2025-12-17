@@ -251,7 +251,6 @@
  * @note This concept is automatically satisfied by using HOOKABLE() macro
  * @note Empty hook maps (no fields exposed) are valid
  *
- * @example Basic Check
  * @code
  * struct Position {
  *   double x, y;
@@ -265,7 +264,6 @@
  * }
  * @endcode
  *
- * @example Template Constraint
  * @code
  * template<hookable T>
  * void print_hooks() {

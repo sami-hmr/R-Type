@@ -31,7 +31,6 @@
  * @see Registry::add_system()
  * @see Registry::run_systems()
  *
- * @example
  * @code
  * // High priority system (runs first)
  * registry.add_system<Position, Velocity>(

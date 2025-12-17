@@ -237,7 +237,6 @@
  * - Binary serialization for efficient transmission
  * - Entity ID remapping for client-server synchronization
  *
- * @example
  * @code
  * struct Position {
  *   double x, y;
@@ -278,7 +277,6 @@ concept component = bytable<T> && entity_convertible<T>;
  * - Test event creation
  * - Dynamic event building
  *
- * @example
  * @code
  * struct DamageEvent {
  *   Registry::Entity target;
@@ -315,7 +313,6 @@ concept event = bytable<T> && entity_convertible<T> && json_buildable<T>;
  * It manages entities, their associated components, and the systems that
  * operate on them.
  *
- * @example Basic Usage
  * @code
  * Registry registry;
  *
@@ -462,7 +459,6 @@ public:
    * - Entity ID is out of bounds for any component array
    * - Any component is not present (nullopt)
    *
-   * @example Single Component
    * @code
    * if (registry.has_component<Position>(entity)) {
    *   auto& pos = registry.get_components<Position>()[entity];
@@ -470,7 +466,6 @@ public:
    * }
    * @endcode
    *
-   * @example Multiple Components
    * @code
    * // Check if entity is a moving sprite
    * if (registry.has_component<Position, Velocity, Sprite>(entity)) {
@@ -520,7 +515,6 @@ public:
    * @note No maximum entity limit (bounded by size_t max)
    * @note Thread-unsafe - single-threaded use only
    *
-   * @example Basic Spawn
    * @code
    * Registry registry;
    *
@@ -529,7 +523,6 @@ public:
    * auto enemy2 = registry.spawn_entity();    // ID: 2
    * @endcode
    *
-   * @example With Components
    * @code
    * auto bullet = registry.spawn_entity();
    * registry.add_component(bullet, Position{100, 50});
@@ -537,7 +530,6 @@ public:
    * registry.add_component(bullet, Sprite{"bullet.png"});
    * @endcode
    *
-   * @example ID Recycling
    * @code
    * auto e1 = registry.spawn_entity();  // 0
    * auto e2 = registry.spawn_entity();  // 1
@@ -576,7 +568,6 @@ public:
    * @warning Entity remains accessible until process_entity_deletions()
    * @note Killing already-dead entity is safe (no-op)
    *
-   * @example Basic Kill
    * @code
    * registry.kill_entity(bullet);
    * // Bullet still exists here
@@ -585,7 +576,6 @@ public:
    * // Bullet deleted now
    * @endcode
    *
-   * @example Safe Mid-System Kill
    * @code
    * registry.add_system<Position, Health>([](Registry& r, auto& pos, auto& hp)
    * { for (auto&& [e, p, h] : Zipper(pos, hp)) { if (h.current <= 0) {
@@ -596,7 +586,6 @@ public:
    * });
    * @endcode
    *
-   * @example Checking Kill Status
    * @code
    * registry.kill_entity(enemy);
    * if (registry.is_entity_dying(enemy)) {
@@ -619,7 +608,6 @@ public:
    * Useful to avoid processing entities that will be deleted soon.
    * Entity remains accessible but should be treated as "dead".
    *
-   * @example
    * @code
    * registry.kill_entity(enemy);
    *
@@ -647,8 +635,6 @@ public:
    *
    * @note Generally called automatically - manual use rarely needed
    * @note Safe to call multiple times (clears empty set)
-   *
-   * @example Manual Use
    * @code
    * // Batch kill entities
    * for (auto enemy : enemies_to_remove) {
@@ -660,7 +646,6 @@ public:
    * // Entities deleted now instead of at frame end
    * @endcode
    *
-   * @example Automatic Use (Normal)
    * @code
    * while (game_running) {
    *   registry.run_systems();
@@ -698,7 +683,6 @@ public:
    * @note Component type must be registered first
    * @note Prefer emplace_component() for in-place construction
    *
-   * @example Move Existing Component
    * @code
    * Position pos{100, 200, 1};
    * auto& inserted = registry.add_component(entity, std::move(pos));
@@ -706,14 +690,12 @@ public:
    * // inserted is the component in storage
    * @endcode
    *
-   * @example Inline Construction
    * @code
    * registry.add_component(player, Position{0, 0});
    * registry.add_component(player, Velocity{5, 5});
    * registry.add_component(player, Health{100, 100});
    * @endcode
    *
-   * @example Replace Existing
    * @code
    * registry.add_component(entity, Position{0, 0});
    * // Later...
@@ -754,7 +736,6 @@ public:
    * @note More efficient than add_component() for complex components
    * @note Replaces existing component if present
    *
-   * @example Basic Construction
    * @code
    * // Direct construction
    * registry.emplace_component<Position>(entity, 100.0, 200.0, 1);
@@ -763,7 +744,6 @@ public:
    * registry.add_component(entity, Position(100.0, 200.0, 1));
    * @endcode
    *
-   * @example Complex Types
    * @code
    * // Sprite with multiple parameters
    * registry.emplace_component<Sprite>(
@@ -807,7 +787,6 @@ public:
    * @note Byte array must be valid serialized component data
    * @note Used internally by network systems
    *
-   * @example Network Receive
    * @code
    * // Server sends component update
    * ByteArray bytes = position_component.to_bytes();
@@ -820,7 +799,6 @@ public:
    * registry.emplace_component(entity, comp_id, data);
    * @endcode
    *
-   * @example State Loading
    * @code
    * ComponentState state = load_from_file("save.dat");
    * for (auto& [entity_id, comp_data] : state.comps) {
@@ -852,14 +830,12 @@ public:
    * @note Component type must be registered (or bad_any_cast thrown)
    * @note Does not kill the entity - only removes one component
    *
-   * @example Single Removal
    * @code
    * // Remove velocity to stop movement
    * registry.remove_component<Velocity>(entity);
    * // Entity still exists with other components
    * @endcode
    *
-   * @example Conditional Removal
    * @code
    * registry.add_system<Position, Sprite>([](Registry& r, auto& pos, auto& spr)
    * { for (auto&& [e, p, s] : Zipper(pos, spr)) { if (p.x < 0 || p.x >
@@ -930,7 +906,6 @@ public:
    * @note Component types must be registered before adding systems
    * @note Systems are copyable - lambda captures must be copy-safe
    *
-   * @example Basic System
    * @code
    * registry.add_system<Position, Velocity>(
    *   [](Registry& r, auto& positions, auto& velocities) {
@@ -942,7 +917,6 @@ public:
    * );
    * @endcode
    *
-   * @example Priority System
    * @code
    * // Physics runs first (priority 10)
    * registry.add_system<Position, Velocity>(
@@ -962,7 +936,6 @@ public:
    *
    * @endcode
    *
-   * @example Multiple Component Types
    * @code
    * registry.add_system<Position, Velocity, Sprite, Health>(
    *   [](Registry& r, auto& pos, auto& vel, auto& spr, auto& hp) {
@@ -977,7 +950,6 @@ public:
    * );
    * @endcode
    *
-   * @example Entity Access
    * @code
    * registry.add_system<Position, Health>(
    *   [](Registry& r, auto& positions, auto& healths) {
@@ -990,7 +962,6 @@ public:
    * );
    * @endcode
    *
-   * @example Emitting Events
    * @code
    * registry.add_system<Position, Velocity>(
    *   [](Registry& r, auto& pos, auto& vel) {
@@ -1026,7 +997,6 @@ public:
    * @note Order of binding updates matches registration order
    * @note Failed bindings are silently ignored (no error thrown)
    *
-   * @example Automatic Update
    * @code
    * // Bindings updated automatically
    * while (running) {
@@ -1039,7 +1009,6 @@ public:
    * }
    * @endcode
    *
-   * @example Manual Update (Rare)
    * @code
    * // Force binding sync mid-frame (unusual)
    * leader_position.x = 500;
@@ -1078,7 +1047,6 @@ public:
    * @note Binding survives until clear_bindings() or entity deletion
    * @note Typically called automatically during component JSON construction
    *
-   * @example Follower AI
    * @code
    * struct Follower {
    *   Vector2D target_pos;
@@ -1102,7 +1070,6 @@ public:
    * // 3. Follower.target_pos = Leader.pos (automatic!)
    * @endcode
    *
-   * @example Turret Tracking
    * @code
    * struct Turret {
    *   Vector2D aim_target;
@@ -1121,7 +1088,6 @@ public:
    * // Turret automatically aims at player position every frame
    * @endcode
    *
-   * @example Health Bar UI
    * @code
    * struct HealthBar {
    *   int current_value;
@@ -1208,7 +1174,6 @@ public:
    * @note Does not affect component data - only removes update connections
    * @note Bindings are not automatically re-created on next frame
    *
-   * @example Scene Transition
    * @code
    * void load_new_scene(Registry& r) {
    *   // Clear old scene
@@ -1225,7 +1190,6 @@ public:
    * }
    * @endcode
    *
-   * @example Gameplay State Change
    * @code
    * void enter_pause_menu(Registry& r) {
    *   r.clear_bindings();  // Stop all dynamic behaviors
@@ -1294,7 +1258,6 @@ public:
    *
    * @throws std::bad_alloc If handler registration fails
    *
-   * @example Basic Handler Registration
    * @code
    * struct PlayerDied {
    *   std::size_t player_id;
@@ -1310,7 +1273,6 @@ public:
    * );
    * @endcode
    *
-   * @example Multiple Handlers
    * @code
    * // Audio system handler
    * auto audio_id = registry.on<EnemyDestroyed>(
@@ -1335,7 +1297,6 @@ public:
    * // All three handlers execute when event is emitted
    * @endcode
    *
-   * @example Handler with State Modification
    * @code
    * auto id = registry.on<LevelComplete>(
    *   [](const LevelComplete& evt, Registry& r) {
@@ -1398,7 +1359,6 @@ public:
    * @note Safe to call with invalid/already-removed IDs (no-op)
    * @note Does not affect other handlers for the same event type
    *
-   * @example Temporary Handler
    * @code
    * // Register handler for one-time use
    * auto id = registry.on<GameStarted>(
@@ -1411,7 +1371,6 @@ public:
    * registry.off<GameStarted>(id);
    * @endcode
    *
-   * @example Conditional Handler Management
    * @code
    * class DebugSystem {
    *   std::string debug_handler_id;
@@ -1496,7 +1455,6 @@ public:
    * @note Internally calls emit(event) after deserialization
    * @note JSON structure must match Event::from_json() expectations
    *
-   * @example Configuration-Driven Events
    * @code
     // TODO: real example
    * @endcode
@@ -1524,7 +1482,6 @@ public:
    * @note If a handler throws, subsequent handlers may not execute
    * @note Handlers can emit new events (recursive emission supported)
    *
-   * @example Direct Event Emission
    * @code
    * // Notify all handlers that player took damage
    * registry.emit(PlayerDamaged{
@@ -1534,7 +1491,6 @@ public:
    * });
    * @endcode
    *
-   * @example Event Chain
    * @code
    * registry.on<EnemyDestroyed>([](const EnemyDestroyed& e, Registry& r) {
    *   // Handler can emit new events
@@ -1546,7 +1502,6 @@ public:
    * registry.emit(EnemyDestroyed{...});
    * @endcode
    *
-   * @example Conditional Emission
    * @code
    * void apply_damage(Registry& r, Entity target, int damage) {
    *   auto& healths = r.get_components<Health>();
@@ -1605,7 +1560,6 @@ public:
    * @note More efficient than JSON for network transmission
    * @note Binary format must match Event::from_bytes() expectations
    *
-   * @example Network Packet Reception
    * @code
     // TODO: real example
    * @endcode
@@ -1663,7 +1617,6 @@ public:
    * @note Scene names must be unique
    * @note Call init_scene_management() before using scenes
    *
-   * @example Initial Scene Setup
    * @code
    * registry.init_scene_management();
    * registry.add_scene("menu", SceneState::MAIN);
@@ -1671,7 +1624,6 @@ public:
    * registry.add_scene("gameplay", SceneState::DISABLED);
    * @endcode
    *
-   * @example Dynamic Scene Registration
    * @code
    * void load_level(Registry& r, const std::string& level_name) {
    *   // Register level scene as disabled initially
@@ -1701,7 +1653,6 @@ public:
    * @note Call this once during Registry initialization
    * @note Safe to call multiple times (idempotent)
    *
-   * @example Registry Setup
    * @code
    * Registry registry;
    * registry.init_scene_management();  // Enable scenes
@@ -1723,7 +1674,6 @@ public:
    * @note Call after init_scene_management()
    * @note Adds systems to the Registry's system pipeline
    *
-   * @example Complete Scene Setup
    * @code
    * registry.init_scene_management();
    * registry.setup_scene_systems();  // Enable automatic scene handling
@@ -1751,14 +1701,12 @@ public:
    *
    * @throws std::exception If scene_name was not registered
    *
-   * @example Scene Transition
    * @code
    * // Switch from menu to gameplay
    * registry.remove_current_scene("menu");
    * registry.set_current_scene("gameplay");
    * @endcode
    *
-   * @example Overlay Scene
    * @code
    * // Show pause menu over gameplay
    * // (both scenes active - systems process both)
@@ -1766,7 +1714,6 @@ public:
    * registry.set_current_scene("pause_menu");  // ACTIVE overlay
    * @endcode
    *
-   * @example Level Loading
    * @code
    * void start_level(Registry& r, const std::string& level) {
    *   // Hide menu
@@ -1797,14 +1744,12 @@ public:
    * @note Does not delete the scene or its entities
    * @note Scene can be reactivated later with set_current_scene()
    *
-   * @example Menu to Gameplay Transition
    * @code
    * // User clicks "Start Game"
    * registry.remove_current_scene("main_menu");
    * registry.set_current_scene("gameplay");
    * @endcode
    *
-   * @example Pause Menu
    * @code
    * void toggle_pause(Registry& r, bool& paused) {
    *   if (paused) {
@@ -1832,7 +1777,6 @@ public:
    * @note Does not delete entities
    * @note Useful for complete state resets
    *
-   * @example Game Restart
    * @code
    * void restart_game(Registry& r) {
    *   r.remove_all_scenes();  // Disable everything
@@ -1852,7 +1796,6 @@ public:
    * @note Returned vector is const - use set/remove to modify scenes
    * @note Empty vector means no scenes are active
    *
-   * @example Debug Display
    * @code
    * void show_debug_info(Registry& r) {
    *   auto scenes = r.get_current_scene();
@@ -1864,7 +1807,6 @@ public:
    * }
    * @endcode
    *
-   * @example Conditional System
    * @code
    * void update_system(Registry& r) {
    *   auto scenes = r.get_current_scene();
@@ -1888,6 +1830,136 @@ public:
 
   const Clock& clock() const;
 
+  // ============================================================================
+  // HOOK SYSTEM
+  // ============================================================================
+
+  // Hooks enable components to expose fields for runtime reflection and data
+  // binding. This powers JSON configuration, network synchronization, and
+  // dynamic component-to-component data flow.
+  //
+  // Hook Registration:
+  // Components declare hookable fields using HOOKABLE() macro:
+  //   HOOKABLE(Position, HOOK(x), HOOK(y))
+  //
+  // This creates a static hook_map() returning field accessors.
+  //
+  // Hook Usage:
+  // 1. register_hook<Component>("name", entity) - Make component fields
+  // accessible
+  // 2. get_hooked_value<T>("name", "field") - Read field value by string name
+  //
+  // Hook Applications:
+  // - JSON configuration: "%Player:maxSpeed" reads Player component's maxSpeed
+  // - Dynamic bindings: "#Leader:pos" creates live binding to Leader's position
+  // - Network sync: Serialize/deserialize specific fields by name
+  // - Runtime introspection: Query component state without compile-time
+  // knowledge
+  //
+  // Hook Naming:
+  // The "name" parameter is a user-defined identifier (often entity name or
+  // role). Multiple entities can have hooks with different names pointing to
+  // same component type.
+  //
+  //   register_hook<Position>("player1", player1_entity)
+  //   register_hook<Position>("player2", player2_entity)
+  //   auto p1_x = get_hooked_value<float>("player1", "x")
+  //   auto p2_x = get_hooked_value<float>("player2", "x")
+
+  /**
+   * @brief Register component hooks for runtime field access.
+   *
+   * Makes the specified entity's component fields accessible via string names.
+   * The component type must be hookable (declared with HOOKABLE macro).
+   *
+   * After registration, get_hooked_value() can retrieve field values using
+   * the hook name and field name. This enables JSON configuration to reference
+   * runtime values with syntax like "%hookname:fieldname".
+   *
+   * The hook persists until the Registry is destroyed or the entity is deleted.
+   * Registering the same name again overwrites the previous registration.
+   *
+   * @tparam T Component type (must satisfy hookable concept)
+   * @param name Unique identifier for this hook (user-defined)
+   * @param e Entity containing the component
+   *
+   * @note Component must have HOOKABLE() declaration
+   * @note Hook name should be unique within the Registry
+   * @note Entity must have the component when accessed
+   *
+   * @code
+   * // Component with hookable fields
+   * struct PlayerConfig {
+   *   float max_speed = 100.0f;
+   *   int max_health = 100;
+   *
+   *   HOOKABLE(PlayerConfig,
+   *            HOOK(max_speed),
+   *            HOOK(max_health))
+   * };
+   *
+   * // Register hook for global config entity
+   * Entity config_entity = registry.spawn_entity();
+   * registry.add_component<PlayerConfig>(config_entity);
+   * registry.register_hook<PlayerConfig>("PlayerConfig", config_entity);
+   *
+   * // Now JSON can reference these values
+   * // {"speed": "%PlayerConfig:max_speed"}  // Uses hooked value
+   * @endcode
+   *
+   * @code
+   * // Register multiple player entities
+   * Entity p1 = registry.spawn_entity();
+   * Entity p2 = registry.spawn_entity();
+   * registry.add_component<Position>(p1, 10.0f, 20.0f);
+   * registry.add_component<Position>(p2, 50.0f, 60.0f);
+   *
+   * registry.register_hook<Position>("player1", p1);
+   * registry.register_hook<Position>("player2", p2);
+   *
+   * // Access specific player positions
+   * auto p1_x = registry.get_hooked_value<float>("player1", "x");
+   * auto p2_x = registry.get_hooked_value<float>("player2", "x");
+   * @endcode
+   *
+   * @code
+   * // Register player as target for AI
+   * Entity player = spawn_player(registry);
+   * registry.register_hook<Position>("player", player);
+   *
+   * // Enemy JSON can reference player position
+   * // {
+   * //   "enemy": {
+   * //     "components": {
+   * //       "AI": {
+   * //         "target": "#player:pos"  // Binds to player position
+   * //       }
+   * //     }
+   * //   }
+   * // }
+   * @endcode
+   *
+   * @code
+   * struct GameConfig {
+   *   float gravity = 9.8f;
+   *   float friction = 0.95f;
+   *
+   *   HOOKABLE(GameConfig, HOOK(gravity), HOOK(friction))
+   * };
+   *
+   * // Create global config entity
+   * Entity config = registry.spawn_entity();
+   * registry.add_component<GameConfig>(config);
+   * registry.register_hook<GameConfig>("GameConfig", config);
+   *
+   * // All entity configs can reference global settings
+   * // {"friction": "%GameConfig:friction"}
+   * @endcode
+   *
+   * @see get_hooked_value() to retrieve field values
+   * @see HOOKABLE() macro to declare hookable components
+   * @see register_binding() which uses hooks for dynamic data binding
+   */
   template<hookable T>
   void register_hook(std::string name, Entity const& e)
   {
@@ -1904,6 +1976,115 @@ public:
         });
   }
 
+  /**
+   * @brief Retrieve a reference to a hooked component field.
+   *
+   * Returns a reference to a specific field of a hooked component. The
+   * component must have been registered with register_hook(). Returns
+   * std::nullopt if the hook name doesn't exist, the entity was deleted, or the
+   * field name is invalid.
+   *
+   * The returned value is a reference_wrapper - changes to the original field
+   * are reflected in the reference.
+   *
+   * @tparam T Field type (must match the actual field type)
+   * @param comp Hook name (from register_hook())
+   * @param value Field name (from HOOK() declaration)
+   * @return Optional reference to the field, or std::nullopt if not found
+   *
+   * @note Returns std::nullopt if hook name is invalid
+   * @note Returns std::nullopt if entity no longer has component
+   * @note Returns std::nullopt if field name is invalid
+   * @note Returned reference is valid until component is removed
+   *
+   * @code
+   * // Setup
+   * registry.register_hook<Position>("player", player_entity);
+   *
+   * // Read field
+   * auto x_ref = registry.get_hooked_value<float>("player", "x");
+   * if (x_ref) {
+   *   float x = x_ref->get();  // Dereference reference_wrapper
+   *   std::cout << "Player X: " << x << "\n";
+   * }
+   * @endcode
+   *
+   * @code
+   * auto health_ref = registry.get_hooked_value<int>("player", "health");
+   * if (health_ref) {
+   *   health_ref->get() -= 10;  // Modify original component field
+   * }
+   * @endcode
+   *
+   * @code
+   * template<typename T>
+   * T get_config_value(Registry& r, const std::string& key) {
+   *   // Config stored in "GameConfig" hook
+   *   auto ref = r.get_hooked_value<T>("GameConfig", key);
+   *   if (ref) {
+   *     return ref->get();
+   *   }
+   *   throw std::runtime_error("Config key not found: " + key);
+   * }
+   *
+   * float gravity = get_config_value<float>(registry, "gravity");
+   * int max_enemies = get_config_value<int>(registry, "max_enemies");
+   * @endcode
+   *
+   * @code
+   * void update_enemy_ai(Registry& r, Entity enemy) {
+   *   // Track player position through hook
+   *   auto target_x = r.get_hooked_value<float>("player", "x");
+   *   auto target_y = r.get_hooked_value<float>("player", "y");
+   *
+   *   if (target_x && target_y) {
+   *     auto& enemy_pos = r.get_components<Position>()[enemy];
+   *     if (enemy_pos) {
+   *       // Move towards player
+   *       float dx = target_x->get() - enemy_pos->x;
+   *       float dy = target_y->get() - enemy_pos->y;
+   *       // ... movement logic
+   *     }
+   *   }
+   * }
+   * @endcode
+   *
+   * @code
+   * // This is how register_binding() uses get_hooked_value()
+   * void sync_follower_position(Registry& r, Entity follower) {
+   *   auto leader_x = r.get_hooked_value<float>("leader", "x");
+   *   auto leader_y = r.get_hooked_value<float>("leader", "y");
+   *
+   *   if (leader_x && leader_y) {
+   *     auto& follower_pos = r.get_components<Position>()[follower];
+   *     if (follower_pos) {
+   *       follower_pos->x = leader_x->get();
+   *       follower_pos->y = leader_y->get();
+   *     }
+   *   }
+   * }
+   * @endcode
+   *
+   * @code
+   * void debug_print_hook(Registry& r, const std::string& hook_name) {
+   *   std::cout << "Hook '" << hook_name << "' fields:\n";
+   *
+   *   // Try common field names
+   *   auto x = r.get_hooked_value<float>(hook_name, "x");
+   *   if (x) std::cout << "  x: " << x->get() << "\n";
+   *
+   *   auto y = r.get_hooked_value<float>(hook_name, "y");
+   *   if (y) std::cout << "  y: " << y->get() << "\n";
+   *
+   *   auto health = r.get_hooked_value<int>(hook_name, "health");
+   *   if (health) std::cout << "  health: " << health->get() << "\n";
+   * }
+   * @endcode
+   *
+   * @see register_hook() to register component hooks
+   * @see register_binding() which uses this for dynamic data binding
+   * @see HOOKABLE() macro for declaring hookable fields
+   */
   template<typename T>
   std::optional<std::reference_wrapper<T>> get_hooked_value(
       std::string const& comp, std::string const& value)
@@ -1916,6 +2097,61 @@ public:
     return std::any_cast<std::reference_wrapper<T>>(tmp.value());
   }
 
+  // ============================================================================
+  // EVENT BUILDERS & TEMPLATES
+  // ============================================================================
+
+  // Infrastructure for JSON-based event construction and entity templating.
+  //
+  // Event Builders:
+  // Event builders enable creating event objects from JSON. Each event type
+  // can register a builder function that constructs the event from JSON params.
+  // This is used for network events and configuration-driven events.
+  //
+  // Templates:
+  // Templates are JSON configurations for entity prefabs. Store reusable entity
+  // definitions and instantiate them multiple times. Common for enemy types,
+  // powerups, UI elements, etc.
+  //
+  // Event Builder Flow:
+  // 1. add_event_builder<Event>() - Register JSON->Event constructor
+  // 2. get_event_with_id("event_name", json) - Build event from JSON
+  // 3. Event is serialized to binary for network transmission
+  //
+  // Template Flow:
+  // 1. add_template("enemy_basic", json_config) - Register prefab
+  // 2. get_template("enemy_basic") - Retrieve config
+  // 3. EntityLoader::load_entity(config) - Instantiate entity
+  //
+  // Network Integration:
+  // Event builders are automatically registered by on() to enable JSON
+  // emission. The builder constructs events from network-received JSON
+  // payloads.
+
+  /**
+   * @brief Register a JSON builder for an event type.
+   *
+   * Creates infrastructure for constructing events from JSON. This enables:
+   * - JSON-based event emission via emit<Event>(json)
+   * - Network event reception and deserialization
+   * - Configuration-driven event triggering
+   *
+   * The event type T must have a constructor accepting (Registry&, JsonObject).
+   * This constructor should parse JSON and initialize event fields.
+   *
+   * This method is typically called automatically by on() when registering
+   * event handlers. Manual calls are rarely needed.
+   *
+   * @tparam T Event type (must satisfy event concept)
+   *
+   * @note Event must have constructor: T(Registry&, JsonObject const&)
+   * @note Event must have to_bytes() method for serialization
+   * @note Usually called automatically by on() - manual use is advanced
+   *
+   * @see on() which calls this automatically
+   * @see get_event_with_id() to construct events from JSON
+   * @see emit<Event>(const nlohmann::json&) for JSON emission
+   */
   template<event T>
   void add_event_builder()
   {
@@ -1947,18 +2183,240 @@ public:
         { return T(*this, params).to_bytes(); });
   }
 
+  /**
+   * @brief Construct an event from JSON and serialize to binary.
+   *
+   * Builds an event object from JSON parameters using the registered event
+   * builder, then serializes it to binary format. The result can be transmitted
+   * over the network or stored.
+   *
+   * The event type must have been registered with add_event_builder() (which
+   * happens automatically when using on()).
+   *
+   * @param id Event type name (string identifier)
+   * @param params JSON object with event parameters
+   * @return Binary representation of the constructed event
+   *
+   * @throws std::out_of_range If event type not registered
+   * @throws std::exception If JSON is malformed or event construction fails
+   *
+   * @note Event type must be registered via add_event_builder()
+   * @note Returned bytes can be deserialized with Event::from_bytes()
+   *
+   * @code
+   * // Server builds event from JSON
+   * JsonObject json = {
+   *   {"player_id", 42},
+   *   {"position", {{"x", 100.0}, {"y", 200.0}}}
+   * };
+   *
+   * ByteArray event_data = registry.get_event_with_id("PlayerMoved", json);
+   *
+   * // Send over network
+   * send_to_clients(event_data);
+   *
+   * // Client receives and emits
+   * registry.emit<PlayerMoved>(event_data.data(), event_data.size());
+   * @endcode
+   *
+   * @see add_event_builder() to register event types
+   * @see emit<Event>(const byte*, std::size_t) to emit binary events
+   * @see on() which registers builders automatically
+   */
   ByteArray get_event_with_id(std::string const&, JsonObject const&);
 
+  /**
+   * @brief Register an entity template for reuse.
+   *
+   * Stores a JSON configuration as a named template. Templates are entity
+   * prefabs - reusable entity definitions that can be instantiated multiple
+   * times with EntityLoader::load_entity().
+   *
+   * Common use cases:
+   * - Enemy types (basic_enemy, tank_enemy, fast_enemy)
+   * - Powerups (health_pack, speed_boost, shield)
+   * - UI elements (button, text_field, health_bar)
+   * - Projectiles (bullet, missile, laser)
+   *
+   * @param name Unique template identifier
+   * @param config JSON object defining the entity structure
+   *
+   * @note If template exists, it is overwritten
+   * @note Template names should be unique
+   * @note Templates are not validated until instantiated
+   *
+   * @code
+   * JsonObject enemy_template = {
+   *   {"components", {
+   *     {"Position", {{"x", 0}, {"y", 0}}},
+   *     {"Velocity", {{"speed", 50.0}}},
+   *     {"Health", {{"max", 100}, {"current", 100}}},
+   *     {"Sprite", {{"texture", "enemy.png"}}}
+   *   }}
+   * };
+   *
+   * registry.add_template("basic_enemy", enemy_template);
+   *
+   * // Later, instantiate multiple enemies
+   * auto config1 = registry.get_template("basic_enemy");
+   * config1["components"]["Position"]["x"] = 100;
+   * EntityLoader(registry).load_entity(config1);
+   *
+   * auto config2 = registry.get_template("basic_enemy");
+   * config2["components"]["Position"]["x"] = 200;
+   * EntityLoader(registry).load_entity(config2);
+   * @endcode
+   *
+   * @code
+   * void load_templates(Registry& r, const std::string& file_path) {
+   *   auto json = nlohmann::json::parse(std::ifstream(file_path));
+   *
+   *   for (const auto& [name, config] : json["templates"].items()) {
+   *     r.add_template(name, config);
+   *   }
+   * }
+   *
+   * // templates.json:
+   * // {
+   * //   "templates": {
+   * //     "player": { ... },
+   * //     "enemy_basic": { ... },
+   * //     "enemy_tank": { ... }
+   * //   }
+   * // }
+   * @endcode
+   *
+   * @see get_template() to retrieve template
+   * @see EntityLoader::load_entity() to instantiate template
+   */
   void add_template(std::string const& name, JsonObject const& config);
 
+  /**
+   * @brief Retrieve a registered entity template.
+   *
+   * Returns a copy of the JSON configuration for the named template. The
+   * returned JSON can be modified and passed to EntityLoader::load_entity()
+   * to create an entity instance.
+   *
+   * @param name Template identifier (from add_template())
+   * @return Copy of the template JSON configuration
+   *
+   * @note Returns empty/default JSON if template not found (prints error)
+   * @note Returned JSON is a copy - modifications don't affect stored template
+   * @note Use add_template() to update the stored template
+   *
+   * @code
+   * // Get template and customize
+   * auto enemy_config = registry.get_template("basic_enemy");
+   * enemy_config["components"]["Position"]["x"] = 500;
+   * enemy_config["components"]["Position"]["y"] = 300;
+   *
+   * // Create entity
+   * EntityLoader loader(registry);
+   * Entity enemy = loader.load_entity(enemy_config);
+   * @endcode
+   *
+   * @code
+   * bool has_template(Registry& r, const std::string& name) {
+   *   auto config = r.get_template(name);
+   *   return !config.empty();  // Empty if not found
+   * }
+   *
+   * void load_entity_safe(Registry& r, const std::string& template_name) {
+   *   if (has_template(r, template_name)) {
+   *     auto config = r.get_template(template_name);
+   *     EntityLoader(r).load_entity(config);
+   *   } else {
+   *     std::cerr << "Template not found: " << template_name << "\n";
+   *   }
+   * }
+   * @endcode
+   *
+   * @see add_template() to register templates
+   * @see EntityLoader::load_entity() to instantiate entities
+   */
   JsonObject get_template(std::string const& name);
 
   bool is_in_current_cene(Entity e);
 
+  // ============================================================================
+  // NETWORK SUPPORT
+  // ============================================================================
+  //
+  // Entity ID mapping and state serialization for networked multiplayer.
+  //
+  // The Problem:
+  // In multiplayer games, entity IDs differ between client and server. The
+  // server spawns entity 5, but on the client it becomes entity 12. Events
+  // and components referencing entity IDs must be translated when transmitted.
+  //
+  // Entity Conversion:
+  // convert_event_entity() and convert_comp_entity() remap entity IDs in
+  // serialized data using a provided mapping. This ensures events like
+  // "Player 5 shot Player 8" are correctly translated to client IDs.
+  //
+  // State Synchronization:
+  // get_state() captures the entire ECS state as serialized components.
+  // This enables full state snapshots for:
+  // - New player connection (send world state)
+  // - Save/load functionality
+  // - Replay recording
+  // - State diffing/delta compression
+  //
+  // String Keys:
+  // get_event_key() and get_component_key() return the string identifier for
+  // a type. This is used for network protocols where types are sent as strings
+  // rather than compile-time type information.
+  //
+  // Network Flow:
+  // 1. Server emits event with server entity IDs
+  // 2. convert_event_entity() remaps IDs to client space
+  // 3. Client emits event with client entity IDs
+  // 4. Systems process with local IDs
+
+  /**
+   * @brief Convert entity IDs in a serialized event using provided
+   * mapping.
+   *
+   * Remaps entity references in component data from one ID space to another.
+   * Similar to convert_component_entity() but for events. Used when
+   * synchronizing event state over network.
+   *
+   * The component type must implement change_entity(map) method that returns
+   * a new event with remapped IDs.
+   *
+   * @param id event type string identifier
+   * @param event Serialized event data (binary format)
+   * @param map Entity ID mapping (old ID -> new ID)
+   * @return Serialized event with remapped entity IDs
+   *
+   * @throws std::out_of_range If event type not registered
+   *
+   * @note event type must have change_entity() method
+   */
   ByteArray convert_event_entity(std::string const& id,
                                  ByteArray const& event,
                                  std::unordered_map<Entity, Entity> const& map);
-
+  /**
+   * @brief Convert entity IDs in a serialized component using provided
+   * mapping.
+   *
+   * Remaps entity references in component data from one ID space to another.
+   * Similar to convert_event_entity() but for components. Used when
+   * synchronizing component state over network.
+   *
+   * The component type must implement change_entity(map) method that returns
+   * a new component with remapped IDs.
+   *
+   * @param id Component type string identifier
+   * @param comp Serialized component data (binary format)
+   * @param map Entity ID mapping (old ID -> new ID)
+   * @return Serialized component with remapped entity IDs
+   *
+   * @throws std::out_of_range If component type not registered
+   *
+   * @note Component type must have change_entity() method
+   */
   ByteArray convert_comp_entity(std::string const& id,
                                 ByteArray const& comp,
                                 std::unordered_map<Entity, Entity> const& map);
@@ -1975,6 +2433,59 @@ public:
     return this->_index_getter.at_first(typeid(Component));
   }
 
+  /**
+   * @brief Get the complete ECS state as serialized components.
+   *
+   * Captures a snapshot of all component data across all entities. Returns
+   * a vector where each entry contains one component type's complete state:
+   * the component type identifier and all (entity, component data) pairs.
+   *
+   * This is used for:
+   * - Full state synchronization for new players
+   * - Save/load game functionality
+   * - Replay recording
+   * - State diffing for delta compression
+   *
+   * The returned data is fully serialized and can be transmitted over network
+   * or written to disk.
+   *
+   * @return Vector of ComponentState (one per component type)
+   *
+   * @note This is a complete snapshot - can be large for complex worlds
+   * @note Each ComponentState contains component ID and entity-data pairs
+   * @note Order is not guaranteed
+   *
+   * @code
+   * void send_world_state_to_new_player(Registry& server_registry,
+   *                                     NetworkClient& client,
+   *                                     const EntityMapping& id_map) {
+   *   // Get complete server state
+   *   auto state = server_registry.get_state();
+   *
+   *   // Send each component type
+   *   for (const auto& comp_state : state) {
+   *     // comp_state.id = "Position", "Velocity", etc.
+   *     // comp_state.comps = [(entity, bytes), (entity, bytes), ...]
+   *
+   *     for (const auto& [entity, data] : comp_state.comps) {
+   *       // Remap entity IDs to client space
+   *       ByteArray client_data = server_registry.convert_comp_entity(
+   *         comp_state.id,
+   *         data,
+   *         id_map
+   *       );
+   *
+   *       // Send to client
+   *       client.send_component(comp_state.id, id_map.at(entity),
+   * client_data);
+   *     }
+   *   }
+   * }
+   * @endcode
+   *
+   * @see ComponentState structure
+   * @see convert_comp_entity() to remap entity IDs in state
+   */
   std::vector<ComponentState> get_state();
 
 private:
@@ -2003,12 +2514,13 @@ private:
 
   struct Binding
   {
-    Entity target_entity;
-    std::type_index target_component;
-    std::string target_field;
-    std::string source_hook;
-    std::function<void()> updater;
-    std::function<ByteArray()> serializer;
+    Entity target_entity;  ///< Entity containing the target component
+    std::type_index target_component;  ///< Type of the target component
+    std::string target_field;  ///< Field name to update
+    std::string source_hook;  ///< Hook string (e.g., "player:position")
+    std::function<void()> updater;  ///< Copies value from hook to field
+    std::function<ByteArray()>
+        serializer;  ///< Serializes component for network sync
 
     Binding(Entity e,
             std::type_index ti,
@@ -2026,6 +2538,17 @@ private:
     }
   };
 
+  /**
+   * @brief Generate unique handler ID using random number generator.
+   *
+   * Creates a random 64-bit unsigned integer to uniquely identify event
+   * handlers. Used internally by on() to generate handler IDs.
+   *
+   * Uses thread-safe static random number generator initialized from
+   * std::random_device.
+   *
+   * @return Unique handler ID
+   */
   static HandlerId generate_uuid()
   {
     static std::random_device rd;

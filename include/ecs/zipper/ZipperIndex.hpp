@@ -23,7 +23,6 @@
  * values.
  * @note Uses ZipperIterator as a base for the core iteration logic.
  *
- * @example
  * @code
  * SparseArray<int> arr1;
  * SparseArray<float> arr2;
@@ -148,7 +147,6 @@ private:
  * container index, since positions with empty optionals are skipped.
  * @note Like Zipper, it respects the size of the smallest container.
  *
- * @example
  * @code
  * SparseArray<Position> positions;
  * SparseArray<Velocity> velocities;

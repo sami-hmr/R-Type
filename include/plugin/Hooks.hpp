@@ -386,7 +386,6 @@
  *
  * @tparam T Type to check
  *
- * @example
  * @code
  * static_assert(is_in_json_variant_v<int>);        // true
  * static_assert(is_in_json_variant_v<double>);     // true
@@ -439,7 +438,6 @@ inline constexpr bool is_in_json_variant_v = is_in_json_variant<T>::value;
  * @note For hooks, reference points to component field (updated if dynamic)
  * @note For direct values, reference points to JSON storage (immutable)
  *
- * @example Direct Value
  * @code
  * JsonObject obj;
  * obj["speed"] = 10.5;
@@ -450,7 +448,6 @@ inline constexpr bool is_in_json_variant_v = is_in_json_variant<T>::value;
  * }
  * @endcode
  *
- * @example Static Hook
  * @code
  * JsonObject obj;
  * obj["max_health"] = "%PlayerConfig:baseHealth";
@@ -462,7 +459,6 @@ inline constexpr bool is_in_json_variant_v = is_in_json_variant<T>::value;
  * }
  * @endcode
  *
- * @example Dynamic Hook
  * @code
  * JsonObject obj;
  * obj["target"] = "#Enemy:pos";
@@ -546,7 +542,6 @@ std::optional<std::reference_wrapper<const T>> get_ref(Registry& r,
  * @note Always returns a copy - caller owns the returned value
  * @note For static hooks only - dynamic binding requires get_value()
  *
- * @example Direct Value
  * @code
  * JsonObject obj;
  * obj["damage"] = 50;
@@ -555,7 +550,6 @@ std::optional<std::reference_wrapper<const T>> get_ref(Registry& r,
  * // damage == optional<int>(50)
  * @endcode
  *
- * @example Hook Reference
  * @code
  * JsonObject obj;
  * obj["speed"] = "%Config:playerSpeed";
@@ -564,7 +558,6 @@ std::optional<std::reference_wrapper<const T>> get_ref(Registry& r,
  * // Reads Config::playerSpeed and returns a copy
  * @endcode
  *
- * @example JSON Construction
  * @code
  * JsonObject obj;
  * obj["rect"] = JsonObject{
@@ -575,7 +568,6 @@ std::optional<std::reference_wrapper<const T>> get_ref(Registry& r,
  * // Calls Rect(JsonObject) constructor
  * @endcode
  *
- * @example With Default
  * @code
  * auto health = get_value_copy<int>(r, obj, "health").value_or(100);
  * // Returns 100 if "health" key missing or invalid
@@ -642,7 +634,6 @@ std::optional<T> get_value_copy(Registry& r,
  * @note Use get_value_copy() if dynamic binding is not needed
  * @note Empty T{} returned if hook exists but no mapped entities found
  *
- * @example Dynamic Binding
  * @code
  * struct Follower {
  *   Vector2D target_pos;
@@ -659,7 +650,6 @@ std::optional<T> get_value_copy(Registry& r,
  * };
  * @endcode
  *
- * @example Static Hook (No Binding)
  * @code
  * struct Enemy {
  *   int max_health;
@@ -675,7 +665,6 @@ std::optional<T> get_value_copy(Registry& r,
  * };
  * @endcode
  *
- * @example Direct Value
  * @code
  * struct Projectile {
  *   int damage;
@@ -742,7 +731,6 @@ std::optional<T> get_value(Registry& r,
  * @note Only detects dynamic hooks (#), not static hooks (%)
  * @note Returns false for non-string values or missing keys
  *
- * @example
  * @code
  * JsonObject obj;
  * obj["direct"] = 100;
