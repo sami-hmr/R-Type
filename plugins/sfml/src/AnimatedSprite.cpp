@@ -6,8 +6,8 @@
 #include "plugin/components/AnimatedSprite.hpp"
 
 #include <SFML/Graphics/Rect.hpp>
-#include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/System/Vector2.hpp>
 
 #include "Json/JsonParser.hpp"
 #include "SFMLRenderer.hpp"
@@ -20,6 +20,7 @@
 #include "plugin/components/Health.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/events/LoggerEvent.hpp"
+#include "plugin/events/EntityManagementEvent.hpp"
 
 static const double deux = 2.0;
 
@@ -63,13 +64,17 @@ void SFMLRenderer::animation_system(
     anim.update_anim(this->_registry.get(), now, entity);
     AnimationData anim_data = anim.animations.at(anim.current_animation);
 
-    if (new_pos.x + (anim_data.sprite_size.x * window_size.x) < view_pos.x - (view_size.x / 2)
-        || new_pos.x - (anim_data.sprite_size.x * window_size.x) > view_pos.x + (view_size.x / 2))
+    if (new_pos.x + (anim_data.sprite_size.x * window_size.x)
+            < view_pos.x - (view_size.x / 2)
+        || new_pos.x - (anim_data.sprite_size.x * window_size.x)
+            > view_pos.x + (view_size.x / 2))
     {
       continue;
     }
-    if (new_pos.y + (anim_data.sprite_size.y * window_size.y) < view_pos.y - (view_size.y / 2)
-        || new_pos.y - (anim_data.sprite_size.y * window_size.y) > view_pos.y + (view_size.y / 2))
+    if (new_pos.y + (anim_data.sprite_size.y * window_size.y)
+            < view_pos.y - (view_size.y / 2)
+        || new_pos.y - (anim_data.sprite_size.y * window_size.y)
+            > view_pos.y + (view_size.y / 2))
     {
       continue;
     }
@@ -149,26 +154,25 @@ void AnimatedSprite::update_anim(
   }
 }
 
-void AnimatedSprite::on_death(Registry& r, const DamageEvent& event)
+void AnimatedSprite::on_death(Registry& r, const DeathEvent& event)
 {
-  if (!r.has_component<AnimatedSprite>(event.target)
-      || !r.has_component<Health>(event.target))
-  {
+  if (r.is_entity_dying(event.entity)) {
+    return;
+  }
+  if (!r.has_component<AnimatedSprite>(event.entity)) {
+    r.emit<DeleteEntity>(event.entity);
     return;
   }
 
   auto& animated_sprites = r.get_components<AnimatedSprite>();
-  auto& healths = r.get_components<Health>();
 
-  if (healths[event.target]->current <= 0) {
-    if (animated_sprites[event.target].value().animations.contains("death")) {
-      AnimationData& animdata =
-          animated_sprites[event.target].value().animations.at("death");
-      r.emit<PlayAnimationEvent>(
-          "death", event.target, animdata.framerate, false, false);
-    } else {
-      r.kill_entity(event.target);
-    }
+  if (animated_sprites[event.entity].value().animations.contains("death")) {
+    AnimationData& animdata =
+        animated_sprites[event.entity].value().animations.at("death");
+    r.emit<PlayAnimationEvent>(
+        "death", event.entity, animdata.framerate, false, false);
+  } else {
+    r.emit<DeleteEntity>(event.entity);
   }
 }
 
@@ -180,7 +184,7 @@ void AnimatedSprite::on_animation_end(Registry& r,
   }
 
   if (event.name == "death") {
-    r.kill_entity(event.entity);
+    r.emit<DeleteEntity>(event.entity);
   }
 }
 

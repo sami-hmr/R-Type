@@ -14,6 +14,7 @@
 #include "ecs/Registry.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "plugin/APlugin.hpp"
+#include "plugin/Byte.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Controllable.hpp"
 #include "plugin/components/Position.hpp"
@@ -133,9 +134,13 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
           }
           auto true_entity = this->_server_indexes.at_first(server_comp.entity);
 
-          this->_loader.get().load_byte_component(
-              true_entity, server_comp, this->_server_indexes);
-          this->_component_queue.queue.pop();
+          try {
+            this->_loader.get().load_byte_component(
+                true_entity, server_comp, this->_server_indexes);
+            this->_component_queue.queue.pop();
+          } catch (InvalidPackage const &e) {
+            LOGGER("client", LogLevel::ERROR, e.what());
+          }
         }
         this->_component_queue.lock.unlock();
       });

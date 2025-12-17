@@ -7,9 +7,13 @@
 #include "ecs/Registry.hpp"
 #include "ecs/Scenes.hpp"
 #include "ecs/zipper/Zipper.hpp"
+#include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/components/BasicWeapon.hpp"
+#include "plugin/components/Facing.hpp"
 #include "plugin/components/Position.hpp"
+#include "plugin/components/Team.hpp"
+#include "plugin/components/Velocity.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
 #include "plugin/events/IoEvents.hpp"
 #include "plugin/events/WeaponEvent.hpp"
@@ -18,7 +22,7 @@ Weapon::Weapon(Registry& r, EntityLoader& l)
     : APlugin("weapon",
               r,
               l,
-              {"moving"},
+              {"moving", "life"},
               {COMP_INIT(BasicWeapon, BasicWeapon, init_basic_weapon)})
     , entity_loader(l)
 {
@@ -41,15 +45,39 @@ void Weapon::on_fire(Registry& r, const FireBullet& e)
   auto const& pos = *this->_registry.get().get_components<Position>()[e.entity];
   auto const& scene = *this->_registry.get().get_components<Scene>()[e.entity];
 
+  auto const& vel_direction =
+      (this->_registry.get().has_component<Velocity>(e.entity))
+      ? this->_registry.get().get_components<Velocity>()[e.entity]->direction
+      : Vector2D(0, 0);
+
+  auto const& fire_direction =
+      (this->_registry.get().has_component<Facing>(e.entity))
+      ? this->_registry.get().get_components<Facing>()[e.entity]->direction
+      : vel_direction;
+
+  auto velocity = *this->_registry.get().get_components<Velocity>()[e.entity];
+  velocity.direction = fire_direction;
+
+  auto const& team = (this->_registry.get().has_component<Team>(e.entity))
+      ? *this->_registry.get().get_components<Team>()[e.entity]
+      : std::string("");
+
   if (!weapon.update_basic_weapon(now)) {
     return;
   }
-  this->_registry.get().emit<LoadEntityTemplate>(
-      weapon.bullet_type,
-      LoadEntityTemplate::Additional {
-          {this->_registry.get().get_component_key<Position>(), pos.to_bytes()},
-          {this->_registry.get().get_component_key<Scene>(),
-           scene.to_bytes()}});
+  emit_event(this->_registry.get(),
+             "LoadEntityTemplate",
+             LoadEntityTemplate(
+                 weapon.bullet_type,
+                 LoadEntityTemplate::Additional {
+                     {this->_registry.get().get_component_key<Position>(),
+                      pos.to_bytes()},
+                     {this->_registry.get().get_component_key<Scene>(),
+                      scene.to_bytes()},
+                     {this->_registry.get().get_component_key<Velocity>(),
+                      velocity.to_bytes()},
+                     {this->_registry.get().get_component_key<Team>(),
+                      team.to_bytes()}}));
 }
 
 void Weapon::basic_weapon_system(

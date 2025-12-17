@@ -29,7 +29,7 @@ static constexpr std::array<Byte, 4> __MAGIC_SEQUENCE__ = __generate_index_seque
 
 
 static const ByteArray MAGIC_SEQUENCE = {__MAGIC_SEQUENCE__.begin(), __MAGIC_SEQUENCE__.end()};
-static const ByteArray PROTOCOL_EOF = {0x67, 0x67, 0x67, 0x67};
+static const ByteArray PROTOCOL_EOF = {0x42, 0x67, 0xab, 0x01};
 
 #define HOSTNAME_LENGTH 64
 #define MAPNAME_LENGTH 32

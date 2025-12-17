@@ -184,10 +184,8 @@
   "scenes": [
     {
       "name": "game",
-      "state": "active",
-      "entities": [
-        {}
-      ]
+      "state": "disabled",
+      "entities": [{}]
     }
   ]
 }

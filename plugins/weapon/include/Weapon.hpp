@@ -4,6 +4,7 @@
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/events/WeaponEvent.hpp"
+#include "plugin/events/IoEvents.hpp"
 
 class Weapon : public APlugin
 {

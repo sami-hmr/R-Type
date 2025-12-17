@@ -40,6 +40,7 @@
 #include "plugin/components/Sprite.hpp"
 #include "plugin/components/Text.hpp"
 #include "plugin/events/AnimationEvents.hpp"
+#include "plugin/events/DeathEvent.hpp"
 #include "plugin/events/DamageEvent.hpp"
 #include "plugin/events/IoEvents.hpp"
 #include "plugin/events/LoggerEvent.hpp"
@@ -150,7 +151,7 @@ SFMLRenderer::SFMLRenderer(Registry& r, EntityLoader& l)
   SUBSCRIBE_EVENT(AnimationEndEvent, {
     AnimatedSprite::on_animation_end(this->_registry.get(), event);
   })
-  SUBSCRIBE_EVENT(DamageEvent,
+  SUBSCRIBE_EVENT(DeathEvent,
                   { AnimatedSprite::on_death(this->_registry.get(), event); })
 }
 
