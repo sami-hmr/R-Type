@@ -91,7 +91,6 @@ void Registry::update_bindings()
 
 void Registry::clear_bindings()
 {
-  // Appeler tous les deleters avant de vider les bindings
   for (auto& binding : _bindings) {
     binding.deleter();
   }
