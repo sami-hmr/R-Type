@@ -247,14 +247,14 @@ public:
    * @param field_name The name of the field to bind.
    * @param source_hook The hook string (e.g., "player:position").
    */
-  template<typename ComponentType, typename T>
+  template<component ComponentType, typename T>
   void register_binding(Entity entity,
                         std::string const& field_name,
                         std::string const& source_hook)
   {
     std::type_index ti(typeid(ComponentType));
 
-    auto updater = [this, entity, field_name, source_hook]()
+    std::function<void()> updater = [this, entity, field_name, source_hook]()
     {
       try {
         std::string comp = source_hook.substr(0, source_hook.find(':'));
@@ -279,8 +279,21 @@ public:
       }
     };
 
-    _bindings.emplace_back(
-        entity, ti, field_name, source_hook, std::move(updater));
+    std::function<ByteArray()> serializer = [this, entity]()
+    {
+      auto& components = this->get_components<ComponentType>();
+      if (entity < components.size() && components[entity].has_value()) {
+        return components[entity]->to_bytes();
+      }
+      return ByteArray {};
+    };
+
+    _bindings.emplace_back(entity,
+                           ti,
+                           field_name,
+                           source_hook,
+                           std::move(updater),
+                           std::move(serializer));
   }
 
   /**
@@ -502,17 +515,20 @@ private:
     std::string target_field;
     std::string source_hook;
     std::function<void()> updater;
+    std::function<ByteArray()> serializer;
 
     Binding(Entity e,
             std::type_index ti,
             std::string tf,
             std::string sh,
-            std::function<void()> u)
+            std::function<void()> u,
+            std::function<ByteArray()> s)
         : target_entity(e)
         , target_component(ti)
         , target_field(std::move(tf))
         , source_hook(std::move(sh))
         , updater(std::move(u))
+        , serializer(std::move(s))
     {
     }
   };

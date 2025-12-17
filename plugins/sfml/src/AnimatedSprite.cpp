@@ -20,6 +20,7 @@
 #include "plugin/components/Health.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/events/LoggerEvent.hpp"
+#include "plugin/events/EntityManagementEvent.hpp"
 
 static const double deux = 2.0;
 
@@ -159,7 +160,7 @@ void AnimatedSprite::on_death(Registry& r, const DeathEvent& event)
     return;
   }
   if (!r.has_component<AnimatedSprite>(event.entity)) {
-    r.kill_entity(event.entity);
+    r.emit<DeleteEntity>(event.entity);
     return;
   }
 
@@ -171,7 +172,7 @@ void AnimatedSprite::on_death(Registry& r, const DeathEvent& event)
     r.emit<PlayAnimationEvent>(
         "death", event.entity, animdata.framerate, false, false);
   } else {
-    r.kill_entity(event.entity);
+    r.emit<DeleteEntity>(event.entity);
   }
 }
 
@@ -183,7 +184,7 @@ void AnimatedSprite::on_animation_end(Registry& r,
   }
 
   if (event.name == "death") {
-    r.kill_entity(event.entity);
+    r.emit<DeleteEntity>(event.entity);
   }
 }
 

@@ -13,6 +13,7 @@
 #include "Server.hpp"
 #include "ServerLaunch.hpp"
 #include "ecs/ComponentState.hpp"
+#include "ecs/EmitEvent.hpp"
 #include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/Scenes.hpp"
@@ -108,40 +109,9 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
         "SceneChangeEvent",
         SceneChangeEvent("loby", "", true).to_bytes());
 
-    init_component(
-        this->_registry.get(), event.server_index, Position(0, 0, 2));
-    init_component(this->_registry.get(), event.server_index, Drawable());
-    init_component(
-        this->_registry.get(), event.server_index, Velocity(0.01, 0.01, 0, 0));
-    init_component(
-        this->_registry.get(), event.server_index, Facing(1.0, 0.0));
-    init_component(this->_registry.get(),
-                   event.server_index,
-                   AnimatedSprite({{"idle",
-                                    AnimationData("assets/player.png",
-                                                  {350., 150.},
-                                                  {0., 0.},
-                                                  {1., 0.},
-                                                  {0.2, 0.2},
-                                                  10,
-                                                  7,
-                                                  0,
-                                                  true,
-                                                  true)}},
-                                  "idle",
-                                  "idle"));
-
-    init_component(this->_registry.get(),
-                   event.server_index,
-                   Collidable(0.02, 0.02, CollisionType::Solid));
-    init_component(this->_registry.get(), event.server_index, Health(5, 100));
-    init_component(this->_registry.get(), event.server_index, Team("test1"));
-    init_component(this->_registry.get(),
-                   event.server_index,
-                   Scene("game", SceneState::ACTIVE));
-    init_component(this->_registry.get(),
-                   event.server_index,
-                   BasicWeapon("basic_bullet", 6, 3, 2.0, 0.3));
+    this->_loader.get().load_components(
+        event.server_index, JsonObject({{"template", JsonValue("player")}}));
+      init_component<Scene>(this->_registry.get(), event.server_index, "game", SceneState::ACTIVE);
   })
 
   SUBSCRIBE_EVENT(StateTransfer, {
@@ -191,6 +161,14 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
     for (auto const& [id, comp] : event.aditionals) {
       init_component(this->_registry.get(), *entity, id, comp);
     }
+  })
+
+  SUBSCRIBE_EVENT(DeleteEntity, {
+    this->_registry.get().kill_entity(event.entity);
+    this->_registry.get().emit<EventBuilderId>(
+        std::nullopt,
+        "DeleteClientEntity",
+        DeleteClientEntity(event.entity).to_bytes());
   })
 }
 

@@ -25,6 +25,7 @@
 #include "plugin/events/CameraEvents.hpp"
 #include "plugin/events/DamageEvent.hpp"
 #include "plugin/events/DeathEvent.hpp"
+#include "plugin/events/EntityManagementEvent.hpp"
 #include "plugin/events/HealEvent.hpp"
 
 Life::Life(Registry& r, EntityLoader& l)

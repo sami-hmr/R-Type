@@ -20,6 +20,7 @@
 #include "plugin/components/Position.hpp"
 #include "plugin/events/CleanupEvent.hpp"
 #include "plugin/events/CollisionEvent.hpp"
+#include "plugin/events/EntityManagementEvent.hpp"
 #include "plugin/events/LoggerEvent.hpp"
 #include "plugin/events/NetworkEvents.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
@@ -111,6 +112,11 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
     this->_registry.get().emit<EventBuilder>(
         "PlayerReady", PlayerReady(this->_id_in_server).to_bytes());
   })
+
+  SUBSCRIBE_EVENT(DeleteClientEntity, {
+    this->_registry.get().kill_entity(event.entity);
+  })
+
 
   this->_registry.get().add_system<>(
       [this](Registry& r)

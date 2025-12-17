@@ -5,6 +5,7 @@
 
 #include "ecs/Registry.hpp"
 
+#include "NetworkShared.hpp"
 #include "ecs/Systems.hpp"
 
 Registry::Entity Registry::spawn_entity()
@@ -70,6 +71,13 @@ void Registry::update_bindings()
   for (auto& binding : _bindings) {
 
     binding.updater();
+    ByteArray component_data = binding.serializer();
+    if (!component_data.empty()) {
+      this->emit<ComponentBuilder>(
+          binding.target_entity,
+          this->_index_getter.at_first(binding.target_component),
+          component_data);
+    }
   }
 }
 
