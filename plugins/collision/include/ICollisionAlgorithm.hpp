@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-#include "algorithm/Rect.hpp"
+#include "libs/Rect.hpp"
 
 class ICollisionAlgorithm
 {

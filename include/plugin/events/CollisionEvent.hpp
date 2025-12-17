@@ -76,7 +76,7 @@ struct UpdateVelocity
                     type_to_byte(y_axis))
 
   UpdateVelocity(Registry& r, JsonObject const& e)
-      : entity(get_value_copy<int>(r, e, "x").value())
+      : entity(get_value_copy<int>(r, e, "entity").value())
       , x_axis(get_value_copy<double>(r, e, "x").value())
       , y_axis(get_value_copy<double>(r, e, "y").value())
   {

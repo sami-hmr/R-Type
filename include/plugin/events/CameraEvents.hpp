@@ -20,7 +20,7 @@ struct CamAggroEvent
 
   CamAggroEvent(Registry& r, JsonObject const& e)
       : target(static_cast<Registry::Entity>(
-            get_value_copy<double>(r, e, "target").value()))
+            get_value_copy<double>(r, e, "entity").value()))
   {
   }
 
@@ -30,6 +30,23 @@ struct CamAggroEvent
                            parseByte<Registry::Entity>())
 
   DEFAULT_SERIALIZE(type_to_byte(this->target))
+};
+
+struct CamMoveEvent {
+    Vector2D target;
+
+    CamMoveEvent(Vector2D target)
+        : target(target) {}
+    CamMoveEvent(Registry& r, JsonObject const& e)
+        : target(get_value_copy<Vector2D>(r, e, "target").value()) {}
+
+    CHANGE_ENTITY_DEFAULT
+
+    DEFAULT_BYTE_CONSTRUCTOR(CamMoveEvent,
+                             ([](Vector2D target)
+                              { return CamMoveEvent(target); }),
+                             parseVector2D())
+    DEFAULT_SERIALIZE(vector2DToByte(this->target))
 };
 
 struct CamZoomEvent {

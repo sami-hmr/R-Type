@@ -76,9 +76,9 @@ void Client::receive_loop()
       std::size_t len = recv_buf.read_socket(_socket, sender_endpoint, ec);
 
       if (len > 0) {
-        NETWORK_LOGGER("client",
-                       LogLevel::DEBUG,
-                       std::format("received buffer, size : {}", len));
+        // NETWORK_LOGGER("client",
+        //                LogLevel::DEBUG,
+        //                std::format("received buffer, size : {}", len));
       }
 
 
@@ -93,7 +93,7 @@ void Client::receive_loop()
 
 
       while (std::optional<ByteArray> p = recv_buf.extract(PROTOCOL_EOF)) {
-        NETWORK_LOGGER("client", LogLevel::DEBUG, "package extracted");
+        // NETWORK_LOGGER("client", LogLevel::DEBUG, "package extracted");
         // std::cout << "[";
         // for (auto i : *p) {
         //     std::cout << " " << (unsigned int)i << ",";

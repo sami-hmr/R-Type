@@ -2,6 +2,7 @@
 
 #include "Json/JsonParser.hpp"
 #include "NetworkShared.hpp"
+#include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/SparseArray.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
@@ -31,7 +32,7 @@ Target::Target(Registry& r, EntityLoader& l)
 
 void Target::init_follower(Registry::Entity entity, JsonObject const& obj)
 {
-  this->_registry.get().emplace_component<Follower>(entity);
+  init_component<Follower>(this->_registry.get(), entity);
 }
 
 void Target::target_system(Registry& reg)

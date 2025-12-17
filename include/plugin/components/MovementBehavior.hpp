@@ -30,17 +30,13 @@ struct MovementBehavior
 
   DEFAULT_BYTE_CONSTRUCTOR(MovementBehavior,
                            (
-                               [](std::vector<char> movement_type, double dt)
+                               [](std::string movement_type)
                                {
                                  return MovementBehavior(
-                                     std::string(movement_type.begin(),
-                                                 movement_type.end()),
-                                     dt);
+                                     std::move(movement_type));
                                }),
-                           parseByteArray(parseAnyChar()),
-                           parseByte<double>())
-  DEFAULT_SERIALIZE(string_to_byte(this->movement_type),
-                    type_to_byte(this->movement_delta))
+                           parseByteString())
+  DEFAULT_SERIALIZE(string_to_byte(this->movement_type))
 
   CHANGE_ENTITY_DEFAULT
 

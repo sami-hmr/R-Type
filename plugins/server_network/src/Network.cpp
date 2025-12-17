@@ -19,13 +19,16 @@
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/AnimatedSprite.hpp"
+#include "plugin/components/BasicWeapon.hpp"
 #include "plugin/components/Collidable.hpp"
 #include "plugin/components/Drawable.hpp"
 #include "plugin/components/Health.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Team.hpp"
+#include "plugin/components/Facing.hpp"
 #include "plugin/components/Velocity.hpp"
 #include "plugin/events/CleanupEvent.hpp"
+#include "plugin/events/EntityManagementEvent.hpp"
 #include "plugin/events/LoggerEvent.hpp"
 #include "plugin/events/NetworkEvents.hpp"
 #include "plugin/events/SceneChangeEvent.hpp"
@@ -35,6 +38,7 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
     : APlugin("network_server", r, l, {}, {})
     , _comp_semaphore(0)
     , _semaphore_event_to_server(0)
+
     , _event_semaphore(0)
 {
   SUBSCRIBE_EVENT(ServerLaunching, {
@@ -109,7 +113,8 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
     init_component(this->_registry.get(), event.server_index, Drawable());
     init_component(
         this->_registry.get(), event.server_index, Velocity(0.01, 0.01, 0, 0));
-
+    init_component(
+        this->_registry.get(), event.server_index, Facing(1.0, 0.0));
     init_component(this->_registry.get(),
                    event.server_index,
                    AnimatedSprite({{"idle",
@@ -134,6 +139,9 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
     init_component(this->_registry.get(),
                    event.server_index,
                    Scene("game", SceneState::ACTIVE));
+    init_component(this->_registry.get(),
+                   event.server_index,
+                   BasicWeapon("basic_bullet", 6, 3, 2.0, 0.3));
   })
 
   SUBSCRIBE_EVENT(StateTransfer, {
@@ -164,11 +172,24 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
         == this->_player_ready.end())
     {
       this->_registry.get().emit<SceneChangeEvent>("game", "", true);
-      LOGGER("server", LogLevel::DEBUG, "POURQUOI çA PASSE ICI")
       this->_registry.get().emit<EventBuilderId>(
           std::nullopt,
           "SceneChangeEvent",
           SceneChangeEvent("game", "", true).to_bytes());
+    }
+  })
+
+  SUBSCRIBE_EVENT(LoadEntityTemplate, {
+    auto const& entity = this->_loader.get().load_entity(
+        JsonObject({{"template", JsonValue(event.template_name)}}));
+
+    if (!entity) {
+      LOGGER("load entity template",
+             LogLevel::ERROR,
+             "failed to load entity template " + event.template_name);
+    }
+    for (auto const& [id, comp] : event.aditionals) {
+      init_component(this->_registry.get(), *entity, id, comp);
     }
   })
 }
@@ -206,15 +227,6 @@ void NetworkServer::launch_server(ServerLaunching const& s)
            std::format("Failed to start server: {}", e.what()));
   }
 }
-
-// asio::socket_base::message_flags Server::handle_receive(
-//     const asio::error_code& UNUSED error, std::size_t UNUSED
-//     bytes_transferred)
-// {
-//   asio::socket_base::message_flags flag = MSG_OOB;
-//   std::cout << "handled the reception" << std::endl;
-//   return flag;
-// }
 
 extern "C"
 {

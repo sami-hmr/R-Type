@@ -1,9 +1,11 @@
+#include <algorithm>
 #include <iostream>
 
 #include "Moving.hpp"
 
 #include "Json/JsonParser.hpp"
 #include "NetworkShared.hpp"
+#include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "libs/Vector2D.hpp"
@@ -32,14 +34,14 @@ Moving::Moving(Registry& r, EntityLoader& l)
       [this](Registry& r) { this->moving_system(r); }, 4);
 
   SUBSCRIBE_EVENT(UpdateVelocity, {
-    auto& comp = this->_registry.get().get_components<Velocity>()[event.entity];
-    if (!comp) {
+    if (!this->_registry.get().has_component<Velocity>(event.entity)) {
       return;
     }
-    this->_registry.get().emit<EventBuilder>("UpdateVelocity",
-                                             event.to_bytes());
-    comp->direction.x = event.x_axis;
-    comp->direction.y = event.y_axis;
+    auto& comp = this->_registry.get().get_components<Velocity>()[event.entity];
+    comp->direction.x =
+        std::max(-1.0, std::min(comp->direction.x + event.x_axis, 1.0));
+    comp->direction.y =
+        std::max(-1.0, std::min(comp->direction.y + event.y_axis, 1.0));
   })
 }
 
@@ -79,8 +81,8 @@ void Moving::init_pos(Registry::Entity const& entity, JsonObject& obj)
                    "(expected z: int)\n";
     }
   }
-  auto& pos_opt = this->_registry.get().emplace_component<Position>(
-      entity, values.value(), z);
+  auto& pos_opt = init_component<Position>(
+      this->_registry.get(), entity, values.value(), z);
 
   if (!pos_opt.has_value()) {
     std::cerr << "Error creating Position component\n";
@@ -101,8 +103,8 @@ void Moving::init_velocity(Registry::Entity const& entity, JsonObject& obj)
     return;
   }
 
-  auto& vel_opt = this->_registry.get().emplace_component<Velocity>(
-      entity, speed.value(), dir.value());
+  auto& vel_opt = init_component<Velocity>(
+      this->_registry.get(), entity, speed.value(), dir.value());
 
   if (!vel_opt.has_value()) {
     std::cerr << "Error creating Velocity component\n";
@@ -121,7 +123,7 @@ void Moving::init_facing(Registry::Entity const& entity, JsonObject& obj)
     return;
   }
   auto& facing_opt =
-    this->_registry.get().emplace_component<Facing>(entity, dir.value());
+      this->_registry.get().emplace_component<Facing>(entity, dir.value());
 
   if (!facing_opt.has_value()) {
     std::cerr << "Error creating Facing component\n";

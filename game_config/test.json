@@ -218,16 +218,16 @@
           {
             "moving:Position": {
               "pos": {
-                "x": -0.8,
-                "y": -0.8
+                "x": 0.0,
+                "y": 0.0
               }
             },
             "ui:Drawable": {},
             "ui:Text": {
               "font": "assets/fonts/roboto.ttf",
               "size": {
-                "width": 30.0,
-                "height": 30.0
+                "width": "100.0%",
+                "height": "100.0%"
               },
               "text": "%game_text:buffer"
             }
