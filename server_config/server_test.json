@@ -41,7 +41,12 @@
       ],
       "entities": [
         {
-          "moving:Position": { "pos": { "x": 0.5, "y": -0.3 } },
+          "moving:Position": {
+            "pos": {
+              "x": 0.5,
+              "y": -0.3
+            }
+          },
           "ui:Drawable": {},
           "ui:Sprite": {
             "texture": "assets/enemy.png",
@@ -55,8 +60,13 @@
             "height": 0.1,
             "collision_type": "Solid"
           },
-          "life:Health": { "current": 5.0, "max": 100.0 },
-          "life:Team": { "name": "test" }
+          "life:Health": {
+            "current": 5.0,
+            "max": 100.0
+          },
+          "life:Team": {
+            "name": "test"
+          }
         },
         {
           "moving:Position": {
@@ -111,7 +121,12 @@
       "plugins": [],
       "entities": [
         {
-          "moving:Position": { "pos": { "x": 0.5, "y": -0.3 } },
+          "moving:Position": {
+            "pos": {
+              "x": 0.5,
+              "y": -0.3
+            }
+          },
           "ui:Drawable": {},
           "ui:Sprite": {
             "texture": "assets/enemy.png",
@@ -125,11 +140,21 @@
             "height": 0.1,
             "collision_type": "Solid"
           },
-          "life:Health": { "current": 5.0, "max": 100.0 },
-          "life:Team": { "name": "test" }
+          "life:Health": {
+            "current": 5.0,
+            "max": 100.0
+          },
+          "life:Team": {
+            "name": "test"
+          }
         },
         {
-          "moving:Position": { "pos": { "x": 0.5, "y": -0.3 } },
+          "moving:Position": {
+            "pos": {
+              "x": 0.5,
+              "y": -0.3
+            }
+          },
           "ui:Drawable": {},
           "ui:Sprite": {
             "texture": "assets/enemy.png",
@@ -143,8 +168,13 @@
             "height": 0.1,
             "collision_type": "Solid"
           },
-          "life:Health": { "current": 5.0, "max": 100.0 },
-          "life:Team": { "name": "test" }
+          "life:Health": {
+            "current": 5.0,
+            "max": 100.0
+          },
+          "life:Team": {
+            "name": "test"
+          }
         },
         {
           "moving:Position": {
@@ -270,48 +300,64 @@
           }
         },
         {
-            "ui:Drawable": {},
-            "ui:Background": {
-              "layers": [
-                {
-                  "path": "assets/backgrounds/skies/Sky_sky.png"
-                },
-                {
-                  "path": "assets/backgrounds/skies/sky_moon.png"
-                },
-                {
-                  "path": "assets/backgrounds/skies/Sky_back_mountain.png"
-                },
-                {
-                  "path": "assets/backgrounds/skies/sky_front_mountain.png"
-                },
-                {
-                  "path": "assets/backgrounds/skies/sky_clouds.png"
-                },
-                {
-                  "path": "assets/backgrounds/skies/Sky_cloud_single.png"
-                },
-                {
-                  "path": "assets/backgrounds/skies/Sky_front_cloud.png"
-                },
-                {
-                  "path": "assets/backgrounds/skies/sky_cloud_floor.png"
-                },
-                {
-                  "path": "assets/backgrounds/skies/sky_cloud_floor_2.png"
-                }
-              ],
-              "render_type": "STRETCH",
-              "parallax": {
-                "active": true,
-                "speed": {
-                  "x": -1000.0,
-                  "y": 0.0
-                },
-                "framerate": 60.0
+          "moving:Position": {
+            "pos": {
+              "x": 2.0,
+              "y": 0.0
+            }
+          },
+          "mob:Enemy": {
+            "type": 1
+          },
+          "mob:Spawner": {
+            "entity_template": "bounce_bullet",
+            "spawn_interval": 5.0,
+            "max_spawns": 5
+          }
+        },
+        {
+          "ui:Drawable": {},
+          "ui:Background": {
+            "layers": [
+              {
+                "path": "assets/backgrounds/skies/Sky_sky.png"
+              },
+              {
+                "path": "assets/backgrounds/skies/sky_moon.png"
+              },
+              {
+                "path": "assets/backgrounds/skies/Sky_back_mountain.png"
+              },
+              {
+                "path": "assets/backgrounds/skies/sky_front_mountain.png"
+              },
+              {
+                "path": "assets/backgrounds/skies/sky_clouds.png"
+              },
+              {
+                "path": "assets/backgrounds/skies/Sky_cloud_single.png"
+              },
+              {
+                "path": "assets/backgrounds/skies/Sky_front_cloud.png"
+              },
+              {
+                "path": "assets/backgrounds/skies/sky_cloud_floor.png"
+              },
+              {
+                "path": "assets/backgrounds/skies/sky_cloud_floor_2.png"
               }
+            ],
+            "render_type": "STRETCH",
+            "parallax": {
+              "active": true,
+              "speed": {
+                "x": -1000.0,
+                "y": 0.0
+              },
+              "framerate": 60.0
             }
           }
+        }
       ]
     }
   ]

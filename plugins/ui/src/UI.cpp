@@ -1,6 +1,7 @@
 #include "UI.hpp"
 
 #include "ecs/InitComponent.hpp"
+#include "ecs/Registry.hpp"
 #include "libs/Color.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
@@ -37,11 +38,22 @@ UI::UI(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config)
   REGISTER_COMPONENT(Background)
   REGISTER_COMPONENT(AnimatedSprite)
 
+  this->_registry.get().add_system([this](Registry& r)
+                                   { return this->update_anim_system(r); });
+
   SUBSCRIBE_EVENT(CamAggroEvent, { this->cam_target_event(event); })
   SUBSCRIBE_EVENT(CamZoomEvent, { this->cam_zoom_event(event); })
   SUBSCRIBE_EVENT(CamRotateEvent, { this->cam_rotate_event(event); })
   SUBSCRIBE_EVENT(CamSpeedEvent, { this->cam_speed_event(event); })
   SUBSCRIBE_EVENT(CamMoveEvent, { this->cam_move_event(event); })
+  SUBSCRIBE_EVENT(PlayAnimationEvent, {
+    AnimatedSprite::on_play_animation(this->_registry.get(), event);
+  })
+  SUBSCRIBE_EVENT(AnimationEndEvent, {
+    AnimatedSprite::on_animation_end(this->_registry.get(), event);
+  })
+  SUBSCRIBE_EVENT(DeathEvent,
+                  { AnimatedSprite::on_death(this->_registry.get(), event); })
 }
 
 void UI::init_drawable(Registry::Entity const& entity, JsonObject const&)

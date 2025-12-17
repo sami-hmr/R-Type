@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include "Json/JsonParser.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/APlugin.hpp"
@@ -12,6 +13,7 @@ public:
   Mob(Registry& r, EntityLoader& l);
   ~Mob() override = default;
   EntityLoader &entity_loader;
+
 private:
   void init_enemy(Registry::Entity const& entity, JsonObject const& obj);
   void init_spawner(Registry::Entity const& entity, JsonObject const& obj);

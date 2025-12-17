@@ -10,7 +10,8 @@
 #include <SFML/System/Vector2.hpp>
 
 #include "Json/JsonParser.hpp"
-#include "SFMLRenderer.hpp"
+#include "NetworkShared.hpp"
+#include "UI.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/Scenes.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
@@ -24,100 +25,6 @@
 
 static const double deux = 2.0;
 
-void SFMLRenderer::animation_system(
-    Registry& r)
-{
-  auto now = std::chrono::high_resolution_clock::now();
-
-  std::vector<std::tuple<std::reference_wrapper<sf::Texture>,
-                         double,
-                         sf::Vector2f,
-                         int,
-                         AnimationData>>
-      drawables;
-
-  sf::Vector2u window_size = _window.getSize();
-  float min_dimension =
-      static_cast<float>(std::min(window_size.x, window_size.y));
-  sf::Vector2f view_size = this->_view.getSize();
-  sf::Vector2f view_pos = this->_view.getCenter();
-
-  drawables.reserve(r.get_components<AnimatedSprite>().size());
-
-  for (auto&& [entity, pos, draw, anim, scene] :
-       ZipperIndex<Position, Drawable, AnimatedSprite, Scene>(r))
-  {
-    if (!draw.enabled) {
-      continue;
-    }
-    if (!anim.animations.contains(anim.current_animation)) {
-      continue;
-    }
-    
-    float offset_x = (window_size.x - min_dimension) / deux;
-    float offset_y = (window_size.y - min_dimension) / deux;
-    
-    sf::Vector2f new_pos(
-        static_cast<float>((pos.pos.x + 1.0) * min_dimension / deux) + offset_x,
-        static_cast<float>((pos.pos.y + 1.0) * min_dimension / deux) + offset_y);
-
-    anim.update_anim(this->_registry.get(), now, entity);
-    AnimationData anim_data = anim.animations.at(anim.current_animation);
-
-    if (new_pos.x + (anim_data.sprite_size.x * window_size.x)
-            < view_pos.x - (view_size.x / 2)
-        || new_pos.x - (anim_data.sprite_size.x * window_size.x)
-            > view_pos.x + (view_size.x / 2))
-    {
-      continue;
-    }
-    if (new_pos.y + (anim_data.sprite_size.y * window_size.y)
-            < view_pos.y - (view_size.y / 2)
-        || new_pos.y - (anim_data.sprite_size.y * window_size.y)
-            > view_pos.y + (view_size.y / 2))
-    {
-      continue;
-    }
-
-    sf::Texture& texture = load_texture(anim_data.texture_path);
-
-    float scale_x = static_cast<float>(min_dimension * anim_data.sprite_size.x)
-        / anim_data.frame_size.x;
-    float scale_y = static_cast<float>(min_dimension * anim_data.sprite_size.y)
-        / anim_data.frame_size.y;
-    float uniform_scale = std::min(scale_x, scale_y);
-
-    drawables.emplace_back(
-        std::ref(texture), uniform_scale, new_pos, pos.z, anim_data);
-  }
-
-
-  std::sort(drawables.begin(),
-            drawables.end(),
-            [](auto const& a, auto const& b)
-            { return std::get<3>(a) < std::get<3>(b); });
-  for (auto&& [texture, scale, new_pos, z, anim_data] : drawables) {
-    if (!this->_sprite.has_value()) {
-      this->_sprite.emplace(texture.get());
-    } else {
-      this->_sprite->setTexture(texture.get(), true);
-    }
-    this->_sprite->setOrigin(
-        sf::Vector2f(static_cast<float>(anim_data.frame_size.x) / 2.0f,
-                     static_cast<float>(anim_data.frame_size.y) / 2.0f));
-    this->_sprite->setTextureRect(
-        sf::IntRect({static_cast<int>(anim_data.frame_pos.x),
-                     static_cast<int>(anim_data.frame_pos.y)},
-                    {
-                        static_cast<int>(anim_data.frame_size.x),
-                        static_cast<int>(anim_data.frame_size.y),
-                    }));
-    this->_sprite->setScale(
-        {static_cast<float>(scale), static_cast<float>(scale)});
-    this->_sprite->setPosition(new_pos);
-    _window.draw(*this->_sprite);
-  }
-}
 
 void AnimatedSprite::update_anim(
     Registry& r, std::chrono::high_resolution_clock::time_point now, int entity)
@@ -156,6 +63,7 @@ void AnimatedSprite::update_anim(
 
 void AnimatedSprite::on_death(Registry& r, const DeathEvent& event)
 {
+
   if (r.is_entity_dying(event.entity)) {
     return;
   }
@@ -208,4 +116,17 @@ void AnimatedSprite::on_play_animation(Registry& r,
   animData.loop = event.loop;
   animData.rollback = event.rollback;
   animSprite.current_animation = event.name;
+  r.emit<ComponentBuilder>(
+      event.entity,
+      r.get_component_key<AnimatedSprite>(),
+      animSprite.to_bytes());
+}
+
+void UI::update_anim_system(Registry &r)
+{
+  auto now = r.clock().now();
+ 
+  for (auto &&[e, anim] : ZipperIndex<AnimatedSprite>(r)) {
+    anim.update_anim(r, now, e);
+  }
 }

@@ -144,15 +144,6 @@ SFMLRenderer::SFMLRenderer(Registry& r, EntityLoader& l)
   _registry.get().add_system<>([this](Registry&) { this->display(); });
   _textures.insert_or_assign(SFMLRenderer::placeholder_texture,
                              gen_placeholder());
-
-  SUBSCRIBE_EVENT(PlayAnimationEvent, {
-    AnimatedSprite::on_play_animation(this->_registry.get(), event);
-  })
-  SUBSCRIBE_EVENT(AnimationEndEvent, {
-    AnimatedSprite::on_animation_end(this->_registry.get(), event);
-  })
-  SUBSCRIBE_EVENT(DeathEvent,
-                  { AnimatedSprite::on_death(this->_registry.get(), event); })
 }
 
 SFMLRenderer::~SFMLRenderer()
@@ -531,6 +522,101 @@ void SFMLRenderer::button_system(Registry& r)
     }
   }
 }
+
+void SFMLRenderer::animation_system(
+    Registry& r)
+{
+  auto now = std::chrono::high_resolution_clock::now();
+
+  std::vector<std::tuple<std::reference_wrapper<sf::Texture>,
+                         double,
+                         sf::Vector2f,
+                         int,
+                         AnimationData>>
+      drawables;
+
+  sf::Vector2u window_size = _window.getSize();
+  float min_dimension =
+      static_cast<float>(std::min(window_size.x, window_size.y));
+  sf::Vector2f view_size = this->_view.getSize();
+  sf::Vector2f view_pos = this->_view.getCenter();
+
+  drawables.reserve(r.get_components<AnimatedSprite>().size());
+
+  for (auto&& [entity, pos, draw, anim, scene] :
+       ZipperIndex<Position, Drawable, AnimatedSprite, Scene>(r))
+  {
+    if (!draw.enabled) {
+      continue;
+    }
+    if (!anim.animations.contains(anim.current_animation)) {
+      continue;
+    }
+    
+    float offset_x = (window_size.x - min_dimension) / deux;
+    float offset_y = (window_size.y - min_dimension) / deux;
+    
+    sf::Vector2f new_pos(
+        static_cast<float>((pos.pos.x + 1.0) * min_dimension / deux) + offset_x,
+        static_cast<float>((pos.pos.y + 1.0) * min_dimension / deux) + offset_y);
+
+    AnimationData anim_data = anim.animations.at(anim.current_animation);
+
+    if (new_pos.x + (anim_data.sprite_size.x * window_size.x)
+            < view_pos.x - (view_size.x / 2)
+        || new_pos.x - (anim_data.sprite_size.x * window_size.x)
+            > view_pos.x + (view_size.x / 2))
+    {
+      continue;
+    }
+    if (new_pos.y + (anim_data.sprite_size.y * window_size.y)
+            < view_pos.y - (view_size.y / 2)
+        || new_pos.y - (anim_data.sprite_size.y * window_size.y)
+            > view_pos.y + (view_size.y / 2))
+    {
+      continue;
+    }
+
+    sf::Texture& texture = load_texture(anim_data.texture_path);
+
+    float scale_x = static_cast<float>(min_dimension * anim_data.sprite_size.x)
+        / anim_data.frame_size.x;
+    float scale_y = static_cast<float>(min_dimension * anim_data.sprite_size.y)
+        / anim_data.frame_size.y;
+    float uniform_scale = std::min(scale_x, scale_y);
+
+    drawables.emplace_back(
+        std::ref(texture), uniform_scale, new_pos, pos.z, anim_data);
+  }
+
+
+  std::sort(drawables.begin(),
+            drawables.end(),
+            [](auto const& a, auto const& b)
+            { return std::get<3>(a) < std::get<3>(b); });
+  for (auto&& [texture, scale, new_pos, z, anim_data] : drawables) {
+    if (!this->_sprite.has_value()) {
+      this->_sprite.emplace(texture.get());
+    } else {
+      this->_sprite->setTexture(texture.get(), true);
+    }
+    this->_sprite->setOrigin(
+        sf::Vector2f(static_cast<float>(anim_data.frame_size.x) / 2.0f,
+                     static_cast<float>(anim_data.frame_size.y) / 2.0f));
+    this->_sprite->setTextureRect(
+        sf::IntRect({static_cast<int>(anim_data.frame_pos.x),
+                     static_cast<int>(anim_data.frame_pos.y)},
+                    {
+                        static_cast<int>(anim_data.frame_size.x),
+                        static_cast<int>(anim_data.frame_size.y),
+                    }));
+    this->_sprite->setScale(
+        {static_cast<float>(scale), static_cast<float>(scale)});
+    this->_sprite->setPosition(new_pos);
+    _window.draw(*this->_sprite);
+  }
+}
+
 
 extern "C"
 {

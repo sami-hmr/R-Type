@@ -9,14 +9,16 @@
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Enemy.hpp"
 #include "plugin/components/Position.hpp"
+#include "plugin/events/EntityManagementEvent.hpp"
 
 Mob::Mob(Registry& r, EntityLoader& l)
     : APlugin("mob",
               r,
               l,
-              {},
+              {"moving"},
               {COMP_INIT(Enemy, Enemy, init_enemy),
-              COMP_INIT(Spawner, Spawner, init_spawner)}), entity_loader(l)
+               COMP_INIT(Spawner, Spawner, init_spawner)})
+    , entity_loader(l)
 {
   _registry.get().register_component<Enemy>("mob:Enemy");
   _registry.get().register_component<Spawner>("mob:Spawner");
@@ -34,59 +36,56 @@ void Mob::init_enemy(Registry::Entity const& entity, JsonObject const& obj)
                  "missing value in JsonObject\n";
     return;
   }
-  this->_registry.get().emplace_component<Enemy>(entity, Enemy_type(type.value()));
+  this->_registry.get().emplace_component<Enemy>(entity,
+                                                 Enemy_type(type.value()));
 }
 
 void Mob::init_spawner(Registry::Entity const& entity, JsonObject const& obj)
 {
-  auto const& spawn_pos = get_value<Spawner, Vector2D>(
-      this->_registry.get(), obj, entity, "spawn_pos");
   auto const& entity_template = get_value<Spawner, std::string>(
       this->_registry.get(), obj, entity, "entity_template");
-  auto const& spawn_delta = get_value<Spawner, double>(
-      this->_registry.get(), obj, entity, "spawn_delta");
+  auto const& spawn_interval = get_value<Spawner, double>(
+      this->_registry.get(), obj, entity, "spawn_interval");
   auto const& max_spawns =
       get_value<Spawner, int>(this->_registry.get(), obj, entity, "max_spawns");
 
-  if (!spawn_pos || !entity_template || !spawn_delta
-      || !max_spawns)
-  {
+  if (!entity_template || !spawn_interval || !max_spawns) {
     std::cerr << "Error loading Spawner component: unexpected value type or "
                  "missing value in JsonObject\n";
     return;
   }
-  this->_registry.get().emplace_component<Spawner>(entity,
-    spawn_pos.value(),
-    entity_template.value(),
-    spawn_delta.value(),
-    max_spawns.value());
+  this->_registry.get().emplace_component<Spawner>(
+      entity, entity_template.value(), spawn_interval.value(), max_spawns.value());
 }
 
 void Mob::spawner_system(Registry& r)
 {
-  for (auto&& [i, spawner] : ZipperIndex<Spawner>(r)) {
+  for (auto&& [i, spawner, pos, scene] :
+       ZipperIndex<Spawner, Position, Scene>(r))
+  {
     if (r.is_entity_dying(i)) {
       continue;
     }
-    spawner.spawn_interval += r.clock().delta_seconds();
-    if (spawner.spawn_interval < spawner.spawn_delta) {
+    spawner.spawn_delta += r.clock().delta_seconds();
+    if (spawner.spawn_delta < spawner.spawn_interval) {
       continue;
     }
     if (spawner.active && spawner.current_spawns < spawner.max_spawns) {
-      spawner.spawn_interval = 0;
+      spawner.spawn_delta = 0;
+      std::cout << "ici ça spawn\n\n\n";
       spawner.current_spawns += 1;
       spawner.active = spawner.current_spawns < spawner.max_spawns;
-      std::optional<Registry::Entity> enemy = this->entity_loader.load_entity(
-        JsonObject({{"template", JsonValue(spawner.entity_template)}}));
-      if (!enemy) {
-        return;
-      }
-      SparseArray<Position>& positions = r.get_components<Position>();
-      positions.at(enemy.value())->pos = spawner.spawn_pos;
-
-      r.add_component<Scene>(enemy.value(), Scene("game", SceneState::ACTIVE));
       r.emit<ComponentBuilder>(
           i, r.get_component_key<Spawner>(), spawner.to_bytes());
+      r.emit<LoadEntityTemplate>(
+          spawner.entity_template,
+          LoadEntityTemplate::Additional {
+              {
+                  this->_registry.get().get_component_key<Position>(),
+                  pos.to_bytes(),
+              },
+              {this->_registry.get().get_component_key<Scene>(),
+               scene.to_bytes()}});
     }
   }
 }
