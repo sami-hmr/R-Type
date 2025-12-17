@@ -5,8 +5,8 @@
 #include <unordered_map>
 
 #include "Json/JsonParser.hpp"
-#include "plugin/Byte.hpp"
 #include "TwoWayMap.hpp"
+#include "plugin/Byte.hpp"
 
 // template<typename K, typename V>
 // class TwoWayMap;
@@ -25,16 +25,17 @@ concept json_buildable = requires(Registry& r, JsonObject const& j) {
  *          TwoWayMap<size_t, size_t> (compatible with Registry::Entity).
  *          Use this for events containing Registry::Entity fields.
  *
- * @example
+ * @code
  * struct MyEvent {
  *   Registry::Entity actor;
  *   auto change_entity(TwoWayMap<Registry::Entity, Registry::Entity> const&)
  * const -> MyEvent;
  * };
  * static_assert(EventHasChangeEntity<MyEvent>);
+ * @endcode
  */
 template<typename T>
-concept entity_convertible =
-    requires(T const& event, std::unordered_map<std::size_t, std::size_t> const& map) {
-      { event.change_entity(map) } -> std::same_as<T>;
-    };
+concept entity_convertible = requires(
+    T const& event, std::unordered_map<std::size_t, std::size_t> const& map) {
+  { event.change_entity(map) } -> std::same_as<T>;
+};
