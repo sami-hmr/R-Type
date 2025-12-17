@@ -7,9 +7,10 @@
 #include "ecs/Registry.hpp"
 #include "ecs/SparseArray.hpp"
 #include "plugin/Byte.hpp"
+#include "plugin/components/Direction.hpp"
 #include "plugin/components/Health.hpp"
 #include "plugin/components/Position.hpp"
-#include "plugin/components/Velocity.hpp"
+#include "plugin/components/Speed.hpp"
 
 TEST_CASE("SparseArray - Basic construction", "[sparse_array]")
 {
@@ -174,23 +175,23 @@ TEST_CASE("Registry - removeComponent removes component from entity",
 {
   Registry reg;
   reg.register_component<Position>("Position");
-  reg.register_component<Velocity>("Velocity");
+  reg.register_component<Speed>("Speed");
 
   auto entity = reg.spawn_entity();
   reg.add_component(entity, Position(10.0f, 20.0f));
-  reg.add_component(entity, Velocity(1.0f, 2.0f, 0.0f, 1.0f));
+  reg.add_component(entity, Speed(1.0f, 2.0f));
 
   auto& positions = reg.get_components<Position>();
-  auto& velocities = reg.get_components<Velocity>();
+  auto& speeds = reg.get_components<Speed>();
 
   REQUIRE(positions[entity].has_value());
-  REQUIRE(velocities[entity].has_value());
+  REQUIRE(speeds[entity].has_value());
 
   reg.kill_entity(entity);
   reg.process_entity_deletions();
 
   REQUIRE(!positions[entity].has_value());
-  REQUIRE(!velocities[entity].has_value());
+  REQUIRE(!speeds[entity].has_value());
 }
 
 TEST_CASE("Registry - kill_entity recycles entity IDs", "[registry]")
@@ -212,20 +213,20 @@ TEST_CASE("Registry - multiple components per entity", "[registry]")
 {
   Registry reg;
   reg.register_component<Position>("Position");
-  reg.register_component<Velocity>("Velocity");
+  reg.register_component<Speed>("Speed");
   reg.register_component<Health>("Health");
 
   auto entity = reg.spawn_entity();
   reg.add_component(entity, Position(10.0f, 20.0f));
-  reg.add_component(entity, Velocity(1.0f, 2.0f, 0.0f, 1.0f));
+  reg.add_component(entity, Speed(1.0f, 2.0f));
   reg.add_component(entity, Health(100, 100));
 
   auto& positions = reg.get_components<Position>();
-  auto& velocities = reg.get_components<Velocity>();
+  auto& speeds = reg.get_components<Speed>();
   auto& healths = reg.get_components<Health>();
 
   REQUIRE(positions[entity].has_value());
-  REQUIRE(velocities[entity].has_value());
+  REQUIRE(speeds[entity].has_value());
   REQUIRE(healths[entity].has_value());
   REQUIRE(healths[entity]->current == 100);
 }
