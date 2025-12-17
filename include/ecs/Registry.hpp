@@ -2177,10 +2177,10 @@ public:
           }
         });
 
-    _event_json_builder.insert_or_assign(type_id,
-                                         [this](JsonObject const& params) {
-                                           return T(*this, params).to_bytes();
-                                         });
+    _event_json_builder.insert_or_assign(
+        type_id,
+        [this](JsonObject const& params)
+        { return T(*this, params).to_bytes(); });
   }
 
   /**
