@@ -151,9 +151,9 @@
  * @endcode
  */
 #define HOOK_CUSTOM(key, var) \
-  {#key, [](Component& self) -> std::any { \
-     return std::reference_wrapper(self.var); \
-   }}
+  {#key, \
+   [](Component& self) -> std::any \
+   { return std::reference_wrapper(self.var); }}
 
 /**
  * @def HOOK(var)

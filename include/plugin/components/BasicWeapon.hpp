@@ -34,7 +34,8 @@ struct BasicWeapon
                                   int mag_size,
                                   int mag_nb,
                                   double reload_time,
-                                  double cooldown) {
+                                  double cooldown)
+                               {
                                  return BasicWeapon(bullet_type,
                                                     mag_size,
                                                     mag_nb,
