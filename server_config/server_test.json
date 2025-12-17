@@ -131,23 +131,6 @@
           },
           "life:Health": { "current": 5.0, "max": 100.0 },
           "life:Team": { "name": "test" }
-        },
-        {
-          "moving:Position": {
-            "pos": {
-              "x": -0.5,
-              "y": 0.0
-            }
-          },
-          "ui:Drawable": {},
-          "ui:Text": {
-            "font": "assets/fonts/roboto.ttf",
-            "size": {
-              "width": 30.0,
-              "height": 30.0
-            },
-            "text": "ready"
-          }
         }
       ]
     },
@@ -156,22 +139,110 @@
       "state": "disabled",
       "plugins": [],
       "entities": [
+        // ENEMY 1 WAVE
         {
           "moving:Position": {
+            "hook": "enemy_wave_pos_1",
             "pos": {
-              "x": -0.5,
-              "y": 0.0
+              "x": 1.9,
+              "y": 0.3
             }
           },
           "ui:Drawable": {},
-          "ui:Text": {
-            "font": "assets/fonts/roboto.ttf",
-            "size": {
-              "width": 30.0,
-              "height": 30.0
+          "ui:AnimatedSprite": {
+            "animations": [
+              {
+                "name": "idle",
+                "texture": "assets/backgrounds/assetpack/Bonus (enemies)/random_shooter-sheet.png",
+                "frame_size": {
+                  "x": 635.0,
+                  "y": 218.0
+                },
+                "frame_pos": {
+                  "x": 0.0,
+                  "y": 0.0
+                },
+                "direction": {
+                  "x": 1.0,
+                  "y": 0.0
+                },
+                "sprite_size": {
+                  "width": "20.0%",
+                  "height": "20.0%"
+                },
+                "framerate": 10.0,
+                "nb_frames": 4,
+                "loop": true,
+                "rollback": true
+              },
+              {
+                "name": "death",
+                "texture": "assets/explosion.png",
+                "frame_size": {
+                  "x": 128.0,
+                  "y": 128.0
+                },
+                "frame_pos": {
+                  "x": 0.0,
+                  "y": 0.0
+                },
+                "direction": {
+                  "x": 1.0,
+                  "y": 0.0
+                },
+                "sprite_size": {
+                  "width": "20.0%",
+                  "height": "20.0%"
+                },
+                "framerate": 10.0,
+                "nb_frames": 12,
+                "loop": false,
+                "rollback": false
+              }
+            ],
+            "default_animation": "idle"
+          },
+          "life:Health": {
+            "hook": "enemy_wave_health_1",
+            "current": 10.0,
+            "max": 10.0
+          },
+          "life:Damage": {
+            "amount": 10
+          },
+          "collision:Collidable": {
+            "width": 0.1,
+            "height": 0.1,
+            "collision_type": "solid"
+          },
+          "life:Team": {
+            "name": "enemy"
+          },
+          "moving:Velocity": {
+            "speed": {
+              "x": 0.005,
+              "y": 0.005
             },
-            "text": "this is the game"
-          }
+            "direction": {
+              "x": 0.0,
+              "y": 0.0
+            }
+          },
+          "moving:Facing": {
+            "direction": {
+              "x": -1.0,
+              "y": 0.0
+            }
+          },
+          "weapon:BasicWeapon": {
+            "bullet_type": "basic_bullet",
+            "magazine_size": 6,
+            "magazine_nb": 3,
+            "reload_time": 2.0,
+            "cooldown": 0.3
+          },
+          "ai:MovementBehavior": { "movement_type": "wave" },
+          "ai:AttackBehavior": { "attack_type": "continuous", "attack_interval": 2.0 }
         }
       ]
     }

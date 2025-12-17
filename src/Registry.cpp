@@ -55,8 +55,6 @@ void Registry::emplace_component(Entity const& to,
 
 void Registry::run_systems()
 {
-  this->clock().tick();
-
   update_bindings();
 
   std::vector<System<>> pending = this->_frequent_systems;
@@ -64,11 +62,13 @@ void Registry::run_systems()
     f();
   }
   process_entity_deletions();
+  this->clock().tick();
 }
 
 void Registry::update_bindings()
 {
   for (auto& binding : _bindings) {
+
     binding.updater();
   }
 }
