@@ -8,7 +8,6 @@ add_library(${LIB_NAME} SHARED
     src/SFMLRenderer.cpp
     src/Camera.cpp
     src/Background.cpp
-    src/AnimatedSprite.cpp
 )
 
 target_compile_features(${LIB_NAME} PRIVATE cxx_std_23)
