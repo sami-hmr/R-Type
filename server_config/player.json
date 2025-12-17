@@ -1,0 +1,101 @@
+{
+    "entities_template": [
+        {
+            "name": "player",
+            "components": {
+                "moving:Position": {
+                    "pos": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "z": 2
+                },
+                "ui:Drawable": {},
+                "moving:Velocity": {
+                    "speed": {
+                        "x": 0.01,
+                        "y": 0.01
+                    },
+                    "direction": {
+                        "x": 0.0,
+                        "y": 0.0
+                    }
+                },
+                "weapon:BasicWeapon": {
+                    "bullet_type": "bounce_bullet",
+                    "magazine_size": 6,
+                    "magazine_nb": 3,
+                    "reload_time": 2.0,
+                    "cooldown": 0.3
+                },
+                "ui:AnimatedSprite": {
+                    "animations": [
+                        {
+                            "name": "idle",
+                            "texture": "assets/player.png",
+                            "frame_size": {
+                                "x": 350.0,
+                                "y": 150.0
+                            },
+                            "frame_pos": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "direction": {
+                                "x": 1.0,
+                                "y": 0.0
+                            },
+                            "sprite_size": {
+                                "width": "20.0%",
+                                "height": "20.0%"
+                            },
+                            "framerate": 10.0,
+                            "nb_frames": 7,
+                            "loop": true,
+                            "rollback": true
+                        },
+                        {
+                            "name": "death",
+                            "texture": "assets/explosion.png",
+                            "frame_size": {
+                                "x": 128.0,
+                                "y": 128.0
+                            },
+                            "frame_pos": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "direction": {
+                                "x": 1.0,
+                                "y": 0.0
+                            },
+                            "sprite_size": {
+                                "width": "20.0%",
+                                "height": "20.0%"
+                            },
+                            "framerate": 10.0,
+                            "nb_frames": 12,
+                            "loop": false,
+                            "rollback": false
+                        }
+                    ],
+                    "default_animation": "idle"
+                },
+                "collision:Collidable": {
+                    "width": 0.2,
+                    "height": 0.2,
+                    "collision_type": "solid"
+                },
+                "life:Damage": {
+                    "amount": 0
+                },
+                "life:Heal": {
+                    "amount": 1
+                },
+                "life:Team": {
+                    "name": "test1"
+                }
+            }
+        }
+    ]
+}

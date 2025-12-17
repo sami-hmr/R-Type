@@ -89,6 +89,96 @@
                     "collision_type": "solid"
                 }
             }
+        },
+        {
+            "name": "bounce_bullet",
+            "components": {
+                "ui:Drawable": {},
+                "ui:AnimatedSprite": {
+                    "animations": [
+                        {
+                            "name": "idle",
+                            "texture": "assets/fire_bullet.png",
+                            "frame_size": {
+                                "x": 16.0,
+                                "y": 16.0
+                            },
+                            "frame_pos": {
+                                "x": 304.0,
+                                "y": 144.0
+                            },
+                            "direction": {
+                                "x": 1.0,
+                                "y": 0.0
+                            },
+                            "sprite_size": {
+                                "width": "5.0%",
+                                "height": "5.0%"
+                            },
+                            "framerate": 10.0,
+                            "nb_frames": 4,
+                            "loop": true,
+                            "rollback": true
+                        },
+                        {
+                            "name": "death",
+                            "texture": "assets/fire_bullet.png",
+                            "frame_size": {
+                                "x": 16.0,
+                                "y": 16.0
+                            },
+                            "frame_pos": {
+                                "x": 160.0,
+                                "y": 80.0
+                            },
+                            "direction": {
+                                "x": 1.0,
+                                "y": 0.0
+                            },
+                            "sprite_size": {
+                                "width": "5.0%",
+                                "height": "5.0%"
+                            },
+                            "framerate": 10.0,
+                            "nb_frames": 3,
+                            "loop": true,
+                            "rollback": true
+                        }
+                    ],
+                    "default_animation": "idle"
+                },
+                "moving:Position": {
+                    "pos": {
+                        "x": 0.0,
+                        "y": 0.0
+                    }
+                },
+                "moving:Velocity": {
+                    "speed": {
+                        "x": 0.02,
+                        "y": 0.0
+                    },
+                    "direction": {
+                        "x": 1.0,
+                        "y": 0.0
+                    }
+                },
+                "life:Team": {
+                    "name": "test1"
+                },
+                "life:Health": {
+                    "current": 1.0,
+                    "max": 1.0
+                },
+                "life:Damage": {
+                    "amount": 3
+                },
+                "collision:Collidable": {
+                    "width": 0.2,
+                    "height": 0.2,
+                    "collision_type": "bounce"
+                }
+            }
         }
     ],
     "scenes": [
