@@ -1,6 +1,7 @@
 #include "UI.hpp"
-#include "libs/Color.hpp"
+
 #include "ecs/InitComponent.hpp"
+#include "libs/Color.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/Hooks.hpp"
@@ -12,9 +13,7 @@
 #include "plugin/components/Sprite.hpp"
 #include "plugin/components/Text.hpp"
 
-    UI::UI(Registry& r,
-           EntityLoader& l,
-           std::optional<JsonObject> const& config)
+UI::UI(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config)
     : APlugin("ui",
               r,
               l,
@@ -89,10 +88,10 @@ void UI::init_text(Registry::Entity const& entity, JsonObject const& obj)
                 .value();
   }
 
-  std::optional<std::string> str = get_value<Text, std::string>(
-      this->_registry.get(), obj, entity, "text");
+  std::optional<std::string> str =
+      get_value<Text, std::string>(this->_registry.get(), obj, entity, "text");
 
-      if (!str.has_value()) {
+  if (!str.has_value()) {
     std::cerr << "Error loading text component: unexpected value type "
                  "(text: string)\n";
     return;
@@ -124,11 +123,11 @@ void UI::init_text(Registry::Entity const& entity, JsonObject const& obj)
     return;
   }
 
-  const std::optional<float>& outline_thickness = get_value<Text, double>(
+  const std::optional<double>& outline_thickness = get_value<Text, double>(
       this->_registry.get(), obj, entity, "outline_thickness");
   if (!outline_thickness.has_value()) {
     std::cerr << "Error loading text component: unexpected value type "
-                 "(outline_thickness: float)\n";
+                 "(outline_thickness: double)\n";
     return;
   }
 

@@ -13,7 +13,7 @@
 
 struct Text
 {
-  Text(std::string font_path, Vector2D v, std::string t, Color outline_color, Color fill_color, bool outline, float outline_thickness)
+  Text(std::string font_path, Vector2D v, std::string t, Color outline_color, Color fill_color, bool outline, double outline_thickness)
       : font_path(std::move(font_path))
       , scale(v)
       , text(std::move(t))
@@ -27,7 +27,7 @@ struct Text
   DEFAULT_BYTE_CONSTRUCTOR(
       Text,
       (
-          [](std::string font_path, double x, double y, std::string text, Color outline_color, Color fill_color, bool outline, float outline_thickness)
+          [](std::string font_path, double x, double y, std::string text, Color outline_color, Color fill_color, bool outline, double outline_thickness)
           {
             return Text(std::move(font_path), Vector2D {x, y}, std::move(text), outline_color, fill_color, outline, outline_thickness);
           }),
@@ -38,7 +38,7 @@ struct Text
       parseColor(),
       parseColor(),
       parseByte<bool>(),
-      parseByte<float>())
+      parseByte<double>())
 
   DEFAULT_SERIALIZE(string_to_byte(this->font_path),
                     type_to_byte(this->scale.x),
@@ -47,7 +47,7 @@ struct Text
                     colorToByte(this->outline_color),
                     colorToByte(this->fill_color),
                     type_to_byte<bool>(this->outline),
-                    type_to_byte<float>(this->outline_thickness))
+                    type_to_byte<double>(this->outline_thickness))
 
   CHANGE_ENTITY_DEFAULT
 
@@ -57,7 +57,7 @@ struct Text
   Color outline_color = BLACK;
   Color fill_color = WHITE;
   bool outline = false;
-  float outline_thickness = 1.0f;
+  double outline_thickness = 1.0f;
 
   HOOKABLE(Text, HOOK(font_path), HOOK(scale), HOOK(text), HOOK(outline_color),
            HOOK(fill_color), HOOK(outline), HOOK(outline_thickness))

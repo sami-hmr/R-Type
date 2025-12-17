@@ -397,8 +397,7 @@ void SFMLRenderer::render_text(Registry& r)
     sf::Rect<float> text_rect = _text.value().getLocalBounds();
 
     sf::Vector2u window_size = _window.getSize();
-    double min_dimension =
-        static_cast<float>(std::min(window_size.x, window_size.y));
+    double min_dimension = std::min(window_size.x, window_size.y);
 
     double desired_width = min_dimension * txt.scale.x;
     double desired_height = min_dimension * txt.scale.y;
