@@ -72,7 +72,7 @@ struct Spawner
                                                 current_spawns,
                                                 active);
                                }),
-                           parseByte<Vector2D>(),
+                           parseVector2D(),
                            parseByteString(),
                            parseByte<double>(),
                            parseByte<double>(),
@@ -80,7 +80,7 @@ struct Spawner
                            parseByte<int>(),
                            parseByte<bool>())
 
-  DEFAULT_SERIALIZE(type_to_byte(this->spawn_pos),
+  DEFAULT_SERIALIZE(vector2DToByte(this->spawn_pos),
                     string_to_byte(this->entity_template),
                     type_to_byte(this->spawn_interval),
                     type_to_byte(this->spawn_delta),

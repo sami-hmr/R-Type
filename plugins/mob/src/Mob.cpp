@@ -16,7 +16,7 @@ Mob::Mob(Registry& r, EntityLoader& l)
               l,
               {},
               {COMP_INIT(Enemy, Enemy, init_enemy),
-               COMP_INIT(Spawner, Spawner, init_spawner)}), entity_loader(l)
+              COMP_INIT(Spawner, Spawner, init_spawner)}), entity_loader(l)
 {
   _registry.get().register_component<Enemy>("mob:Enemy");
   _registry.get().register_component<Spawner>("mob:Spawner");
