@@ -1,5 +1,6 @@
 
 #include <algorithm>
+#include <cmath>
 #include <cstdio>
 #include <functional>
 #include <iostream>
@@ -15,6 +16,7 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/View.hpp>
+#include <SFML/System/Angle.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
@@ -36,6 +38,7 @@
 #include "plugin/components/Clickable.hpp"
 #include "plugin/components/Collidable.hpp"
 #include "plugin/components/Drawable.hpp"
+#include "plugin/components/Facing.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Sprite.hpp"
 #include "plugin/components/Text.hpp"
@@ -533,8 +536,9 @@ void SFMLRenderer::animation_system(Registry& r)
   auto now = std::chrono::high_resolution_clock::now();
 
   std::vector<std::tuple<std::reference_wrapper<sf::Texture>,
-                         double,
                          sf::Vector2f,
+                         sf::Vector2f,
+                         double,
                          int,
                          AnimationData>>
       drawables;
@@ -590,15 +594,32 @@ void SFMLRenderer::animation_system(Registry& r)
         / anim_data.frame_size.y;
     float uniform_scale = std::min(scale_x, scale_y);
 
+    double rotation = 0.0;
+
+    auto facings = this->_registry.get().get_components<Facing>();
+    Facing facing;
+
+    if (facings.size() > entity && facings[entity].has_value()) {
+      facing = facings[entity].value();
+      std::cout << facing.direction << "\n";
+      Vector2D norm = (pos.pos - facing.direction).normalize();
+      rotation = std::atan2(norm.y, norm.x);
+    }
+
     drawables.emplace_back(
-        std::ref(texture), uniform_scale, new_pos, pos.z, anim_data);
+        std::ref(texture),
+        sf::Vector2f(uniform_scale, uniform_scale),
+        new_pos,
+        rotation,
+        pos.z,
+        anim_data);
   }
 
   std::sort(drawables.begin(),
             drawables.end(),
             [](auto const& a, auto const& b)
             { return std::get<3>(a) < std::get<3>(b); });
-  for (auto&& [texture, scale, new_pos, z, anim_data] : drawables) {
+  for (auto&& [texture, scale, new_pos, rotation, z, anim_data] : drawables) {
     if (!this->_sprite.has_value()) {
       this->_sprite.emplace(texture.get());
     } else {
@@ -614,10 +635,12 @@ void SFMLRenderer::animation_system(Registry& r)
                         static_cast<int>(anim_data.frame_size.x),
                         static_cast<int>(anim_data.frame_size.y),
                     }));
-    this->_sprite->setScale(
-        {static_cast<float>(scale), static_cast<float>(scale)});
+    this->_sprite->setScale(scale);
+    this->_sprite->setRotation(
+        sf::Angle(sf::radians(static_cast<float>(rotation))));
     this->_sprite->setPosition(new_pos);
     _window.draw(*this->_sprite);
+    this->_sprite->setRotation(sf::Angle(sf::degrees(static_cast<float>(0))));
   }
 }
 

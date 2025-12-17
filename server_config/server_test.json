@@ -37,6 +37,10 @@
         {
           "name": "weapon",
           "config": {}
+        },
+        {
+          "name": "mob",
+          "config": {}
         }
       ],
       "entities": [
