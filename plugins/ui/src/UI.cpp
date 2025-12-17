@@ -1,6 +1,7 @@
 #include "UI.hpp"
 
 #include "ecs/InitComponent.hpp"
+#include "libs/Color.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/Hooks.hpp"
@@ -65,8 +66,8 @@ void UI::init_sprite(Registry::Entity const& entity, JsonObject const& obj)
                 this->_registry.get(), obj, entity, "size", "width", "height")
                 .value();
   }
-  init_component<Sprite>(this->_registry.get(),
-      entity, texture_path.value(), scale);
+  init_component<Sprite>(
+      this->_registry.get(), entity, texture_path.value(), scale);
 }
 
 void UI::init_text(Registry::Entity const& entity, JsonObject const& obj)
@@ -87,16 +88,58 @@ void UI::init_text(Registry::Entity const& entity, JsonObject const& obj)
                 .value();
   }
 
-  auto& text_opt = init_component<Text>(this->_registry.get(),
-      entity, font_path.value(), scale, "");
+  std::optional<std::string> str =
+      get_value<Text, std::string>(this->_registry.get(), obj, entity, "text");
 
-  if (text_opt.has_value()) {
-    auto text_val = get_value<Text, std::string>(
-        this->_registry.get(), obj, entity, "text");
-    if (text_val) {
-      text_opt.value().text = text_val.value();
-    }
+  if (!str.has_value()) {
+    std::cerr << "Error loading text component: unexpected value type "
+                 "(text: string)\n";
+    return;
   }
+  std::string text = std::move(str.value());
+
+  const std::optional<Color>& outline_color = get_value<Text, Color>(
+      this->_registry.get(), obj, entity, "outline_color");
+
+  if (!outline_color.has_value()) {
+    std::cerr << "Error loading text component: unexpected value type "
+                 "(outline_color: Color)\n";
+    return;
+  }
+
+  const std::optional<Color>& fill_color =
+      get_value<Text, Color>(this->_registry.get(), obj, entity, "fill_color");
+  if (!fill_color.has_value()) {
+    std::cerr << "Error loading text component: unexpected value type "
+                 "(fill_color: Color)\n";
+    return;
+  }
+
+  const std::optional<bool>& outline =
+      get_value<Text, bool>(this->_registry.get(), obj, entity, "outline");
+  if (!outline.has_value()) {
+    std::cerr << "Error loading text component: unexpected value type "
+                 "(outline: bool)\n";
+    return;
+  }
+
+  const std::optional<double>& outline_thickness = get_value<Text, double>(
+      this->_registry.get(), obj, entity, "outline_thickness");
+  if (!outline_thickness.has_value()) {
+    std::cerr << "Error loading text component: unexpected value type "
+                 "(outline_thickness: double)\n";
+    return;
+  }
+
+  init_component(this->_registry.get(),
+                 entity,
+                 Text(font_path.value(),
+                      scale,
+                      text,
+                      outline_color.value(),
+                      fill_color.value(),
+                      outline.value(),
+                      outline_thickness.value()));
 }
 
 void UI::init_input(Registry::Entity entity, const JsonVariant& config)
@@ -113,7 +156,8 @@ void UI::init_input(Registry::Entity entity, const JsonVariant& config)
       buffer = std::get<std::string>(obj.at("buffer").value);
     }
 
-    init_component<Input>(this->_registry.get(), entity, Input(enabled, buffer));
+    init_component<Input>(
+        this->_registry.get(), entity, Input(enabled, buffer));
   } catch (std::bad_variant_access const&) {
   }
 }
@@ -207,8 +251,8 @@ void UI::init_background(Registry::Entity const& entity, JsonObject const& obj)
                    "value, using default (inactive)\n";
     }
   }
-  init_component<Background>(this->_registry.get(),
-      entity, Background(paths, render_type, parallax));
+  init_component<Background>(
+      this->_registry.get(), entity, Background(paths, render_type, parallax));
 }
 
 std::optional<AnimationData> UI::parse_animation_data(JsonObject const& obj,
@@ -335,7 +379,10 @@ void UI::init_animated_sprite(Registry::Entity const& entity,
     default_animation = default_animation_value.value();
   }
   init_component<AnimatedSprite>(this->_registry.get(),
-      entity, std::move(animations), default_animation, default_animation);
+                                 entity,
+                                 std::move(animations),
+                                 default_animation,
+                                 default_animation);
 }
 
 void UI::init_cam(Registry::Entity const& entity, JsonObject const& obj)
