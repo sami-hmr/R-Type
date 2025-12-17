@@ -4,6 +4,7 @@ var searchData=
   ['input_1',['Input',['../structInput.html',1,'']]],
   ['interactionzone_2',['InteractionZone',['../structInteractionZone.html',1,'']]],
   ['interactionzoneevent_3',['InteractionZoneEvent',['../structInteractionZoneEvent.html',1,'']]],
-  ['iplugin_4',['IPlugin',['../classIPlugin.html',1,'']]],
-  ['is_5fin_5fjson_5fvariant_5',['is_in_json_variant',['../structis__in__json__variant.html',1,'']]]
+  ['invalidpackage_4',['InvalidPackage',['../classInvalidPackage.html',1,'']]],
+  ['iplugin_5',['IPlugin',['../classIPlugin.html',1,'']]],
+  ['is_5fin_5fjson_5fvariant_6',['is_in_json_variant',['../structis__in__json__variant.html',1,'']]]
 ];

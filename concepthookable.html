@@ -73,17 +73,63 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>Requires a type to provide a static hook_map() method.  
+<a href="concepthookable.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="HookConcept_8hpp_source.html">HookConcept.hpp</a>&gt;</code></p>
 <h2 class="groupheader">Concept definition</h2>
 <div class="fragment"><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
 <div class="line"><span class="keyword">concept </span><a class="code hl_concept" href="concepthookable.html">hookable</a> =  <span class="keyword">requires</span>() {</div>
 <div class="line">  {</div>
 <div class="line">    T::hook_map()</div>
-<div class="line">  } -&gt; std::same_as&lt;<span class="keyword">const</span> std ::unordered_map&lt;std ::string, std ::function&lt;std ::any(<a class="code hl_enumvalue" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a>&amp;)&gt;&gt;&amp;&gt;;</div>
+<div class="line">  } -&gt; std::same_as&lt;</div>
+<div class="line">      <span class="keyword">const</span> std ::unordered_map&lt;std ::string, std ::function&lt;std ::any(<a class="code hl_enumvalue" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a>&amp;)&gt;&gt;&amp;&gt;;</div>
 <div class="line">}</div>
 <div class="ttc" id="aIoEvents_8hpp_html_a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce"><div class="ttname"><a href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a></div><div class="ttdeci">@ T</div><div class="ttdef"><b>Definition</b> IoEvents.hpp:53</div></div>
-<div class="ttc" id="aconcepthookable_html"><div class="ttname"><a href="concepthookable.html">hookable</a></div><div class="ttdef"><b>Definition</b> HookConcept.hpp:9</div></div>
-</div><!-- fragment --></div><!-- contents -->
+<div class="ttc" id="aconcepthookable_html"><div class="ttname"><a href="concepthookable.html">hookable</a></div><div class="ttdoc">Requires a type to provide a static hook_map() method.</div><div class="ttdef"><b>Definition</b> HookConcept.hpp:280</div></div>
+</div><!-- fragment --><a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Requires a type to provide a static hook_map() method. </p>
+<p>A type T is hookable if it defines a static method hook_map() that returns a const reference to an unordered_map mapping field names (strings) to accessor functions that extract those fields as std::any.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>The type to check for hookability</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Required signature: </p><div class="fragment"><div class="line"><span class="keyword">static</span> <span class="keyword">const</span> std::unordered_map&lt;std::string,</div>
+<div class="line">                                std::function&lt;std::any(<a class="code hl_enumvalue" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a>&amp;)&gt;&gt;&amp;</div>
+<div class="line">T::hook_map();</div>
+</div><!-- fragment --><p>The returned map should:</p><ul>
+<li>Map field names (strings) to accessor lambdas</li>
+<li>Each lambda takes a T&amp; and returns the field wrapped in std::any</li>
+<li>Fields are wrapped in std::reference_wrapper for reference semantics</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd>This concept is automatically satisfied by using <a class="el" href="HookMacros_8hpp.html#a8f0cb5d5dff2b9cbbd63e1e50cc30e6a" title="Makes a component type hookable by generating a static hook map.">HOOKABLE()</a> macro </dd>
+<dd>
+Empty hook maps (no fields exposed) are valid</dd></dl>
+<div class="fragment"><div class="line"><span class="keyword">struct </span><a class="code hl_struct" href="structPosition.html">Position</a> {</div>
+<div class="line">  <span class="keywordtype">double</span> x, y;</div>
+<div class="line">  <a class="code hl_define" href="HookMacros_8hpp.html#a8f0cb5d5dff2b9cbbd63e1e50cc30e6a">HOOKABLE</a>(<a class="code hl_struct" href="structPosition.html">Position</a>, <a class="code hl_define" href="HookMacros_8hpp.html#a64db554aa76425e63b60d0fd6ccb1e26">HOOK</a>(x), <a class="code hl_define" href="HookMacros_8hpp.html#a64db554aa76425e63b60d0fd6ccb1e26">HOOK</a>(y))</div>
+<div class="line">};</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordflow">if</span> <span class="keyword">constexpr</span> (<a class="code hl_concept" href="concepthookable.html">hookable&lt;Position&gt;</a>) {</div>
+<div class="line">  <span class="comment">// Position provides runtime introspection</span></div>
+<div class="line">  <span class="keyword">auto</span>&amp; hooks = Position::hook_map();</div>
+<div class="line">  std::cout &lt;&lt; <span class="stringliteral">&quot;Position has &quot;</span> &lt;&lt; hooks.size() &lt;&lt; <span class="stringliteral">&quot; hooks\n&quot;</span>;</div>
+<div class="line">}</div>
+<div class="ttc" id="aHookMacros_8hpp_html_a64db554aa76425e63b60d0fd6ccb1e26"><div class="ttname"><a href="HookMacros_8hpp.html#a64db554aa76425e63b60d0fd6ccb1e26">HOOK</a></div><div class="ttdeci">#define HOOK(var)</div><div class="ttdoc">Registers a component field using its variable name as the hook key.</div><div class="ttdef"><b>Definition</b> HookMacros.hpp:179</div></div>
+<div class="ttc" id="aHookMacros_8hpp_html_a8f0cb5d5dff2b9cbbd63e1e50cc30e6a"><div class="ttname"><a href="HookMacros_8hpp.html#a8f0cb5d5dff2b9cbbd63e1e50cc30e6a">HOOKABLE</a></div><div class="ttdeci">#define HOOKABLE(type,...)</div><div class="ttdoc">Makes a component type hookable by generating a static hook map.</div><div class="ttdef"><b>Definition</b> HookMacros.hpp:233</div></div>
+<div class="ttc" id="astructPosition_html"><div class="ttname"><a href="structPosition.html">Position</a></div><div class="ttdef"><b>Definition</b> Position.hpp:9</div></div>
+</div><!-- fragment --><div class="fragment"><div class="line"><span class="keyword">template</span>&lt;hookable T&gt;</div>
+<div class="line"><span class="keywordtype">void</span> print_hooks() {</div>
+<div class="line">  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; [name, accessor] : <a class="code hl_enumvalue" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a>::hook_map()) {</div>
+<div class="line">    std::cout &lt;&lt; <span class="stringliteral">&quot;Hook: &quot;</span> &lt;&lt; name &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line">  }</div>
+<div class="line">}</div>
+<div class="line"> </div>
+<div class="line">print_hooks&lt;Position&gt;();  <span class="comment">// OK - Position is hookable</span></div>
+<div class="line">print_hooks&lt;int&gt;();       <span class="comment">// Error - int is not hookable</span></div>
+</div><!-- fragment --> </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8

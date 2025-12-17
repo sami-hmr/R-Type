@@ -79,12 +79,15 @@ $(function() {
   <div class="headertitle"><div class="title">Vector2D.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>2D vector mathematics for position, velocity, and direction calculations  
+<a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;cmath&gt;</code><br />
 <code>#include &lt;iostream&gt;</code><br />
 <code>#include &lt;ostream&gt;</code><br />
+<code>#include &quot;ByteParser/ByteParser.hpp&quot;</code><br />
 <code>#include &quot;Json/JsonParser.hpp&quot;</code><br />
 <code>#include &quot;Parser.hpp&quot;</code><br />
-<code>#include &quot;ByteParser/ByteParser.hpp&quot;</code><br />
 <code>#include &quot;<a class="el" href="Byte_8hpp_source.html">plugin/Byte.hpp</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for Vector2D.hpp:</div>
@@ -102,18 +105,24 @@ This graph shows which files directly or indirectly include this file:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVector2D.html">Vector2D</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Two-dimensional vector with mathematical operations.  <a href="classVector2D.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a63443b1d9aba2b51dbe45a498bb346c9" id="r_a63443b1d9aba2b51dbe45a498bb346c9"><td class="memItemLeft" align="right" valign="top">Parser&lt; <a class="el" href="classVector2D.html">Vector2D</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Vector2D_8hpp.html#a63443b1d9aba2b51dbe45a498bb346c9">parseVector2D</a> ()</td></tr>
+<tr class="memdesc:a63443b1d9aba2b51dbe45a498bb346c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parses a <a class="el" href="classVector2D.html" title="Two-dimensional vector with mathematical operations.">Vector2D</a> from binary data.  <br /></td></tr>
 <tr class="separator:a63443b1d9aba2b51dbe45a498bb346c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a889ebca628d3ef16a582581c5d45cf63" id="r_a889ebca628d3ef16a582581c5d45cf63"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Vector2D_8hpp.html#a889ebca628d3ef16a582581c5d45cf63">vector2DToByte</a> (<a class="el" href="classVector2D.html">Vector2D</a> const &amp;vec)</td></tr>
+<tr class="memdesc:a889ebca628d3ef16a582581c5d45cf63"><td class="mdescLeft">&#160;</td><td class="mdescRight">Serializes a <a class="el" href="classVector2D.html" title="Two-dimensional vector with mathematical operations.">Vector2D</a> to binary data.  <br /></td></tr>
 <tr class="separator:a889ebca628d3ef16a582581c5d45cf63"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3042faf2fa1b8228cc82456632e02532" id="r_a3042faf2fa1b8228cc82456632e02532"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Vector2D_8hpp.html#a3042faf2fa1b8228cc82456632e02532">operator&lt;&lt;</a> (std::ostream &amp;os, const <a class="el" href="classVector2D.html">Vector2D</a> &amp;vec)</td></tr>
+<tr class="memdesc:a3042faf2fa1b8228cc82456632e02532"><td class="mdescLeft">&#160;</td><td class="mdescRight">Outputs vector to stream in readable format.  <br /></td></tr>
 <tr class="separator:a3042faf2fa1b8228cc82456632e02532"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>2D vector mathematics for position, velocity, and direction calculations </p>
+</div><h2 class="groupheader">Function Documentation</h2>
 <a id="a3042faf2fa1b8228cc82456632e02532" name="a3042faf2fa1b8228cc82456632e02532"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3042faf2fa1b8228cc82456632e02532">&#9670;&#160;</a></span>operator&lt;&lt;()</h2>
 
@@ -148,6 +157,8 @@ Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Outputs vector to stream in readable format. </p>
+
 </div>
 </div>
 <a id="a63443b1d9aba2b51dbe45a498bb346c9" name="a63443b1d9aba2b51dbe45a498bb346c9"></a>
@@ -172,6 +183,9 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Parses a <a class="el" href="classVector2D.html" title="Two-dimensional vector with mathematical operations.">Vector2D</a> from binary data. </p>
+<dl class="section return"><dt>Returns</dt><dd>Parser that deserializes two doubles into a <a class="el" href="classVector2D.html" title="Two-dimensional vector with mathematical operations.">Vector2D</a> </dd></dl>
 
 </div>
 </div>
@@ -198,6 +212,15 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Serializes a <a class="el" href="classVector2D.html" title="Two-dimensional vector with mathematical operations.">Vector2D</a> to binary data. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">vec</td><td>Vector to serialize </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>ByteArray containing x and y as doubles </dd></dl>
 
 </div>
 </div>

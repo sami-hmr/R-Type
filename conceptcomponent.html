@@ -73,14 +73,52 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>Requires a type to be serializable and entity-convertible for network sync.  
+<a href="conceptcomponent.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="Registry_8hpp_source.html">Registry.hpp</a>&gt;</code></p>
 <h2 class="groupheader">Concept definition</h2>
 <div class="fragment"><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
 <div class="line"><span class="keyword">concept </span><a class="code hl_concept" href="conceptcomponent.html">component</a> =  <a class="code hl_concept" href="conceptbytable.html">bytable&lt;T&gt;</a> &amp;&amp; <a class="code hl_concept" href="conceptentity__convertible.html">entity_convertible&lt;T&gt;</a></div>
-<div class="ttc" id="aconceptbytable_html"><div class="ttname"><a href="conceptbytable.html">bytable</a></div><div class="ttdef"><b>Definition</b> Byte.hpp:27</div></div>
-<div class="ttc" id="aconceptcomponent_html"><div class="ttname"><a href="conceptcomponent.html">component</a></div><div class="ttdef"><b>Definition</b> Registry.hpp:31</div></div>
-<div class="ttc" id="aconceptentity__convertible_html"><div class="ttname"><a href="conceptentity__convertible.html">entity_convertible</a></div><div class="ttdef"><b>Definition</b> EventConcept.hpp:37</div></div>
-</div><!-- fragment --></div><!-- contents -->
+<div class="ttc" id="aconceptbytable_html"><div class="ttname"><a href="conceptbytable.html">bytable</a></div><div class="ttdoc">Type supports bidirectional byte conversion.</div><div class="ttdef"><b>Definition</b> Byte.hpp:67</div></div>
+<div class="ttc" id="aconceptcomponent_html"><div class="ttname"><a href="conceptcomponent.html">component</a></div><div class="ttdoc">Requires a type to be serializable and entity-convertible for network sync.</div><div class="ttdef"><b>Definition</b> Registry.hpp:260</div></div>
+<div class="ttc" id="aconceptentity__convertible_html"><div class="ttname"><a href="conceptentity__convertible.html">entity_convertible</a></div><div class="ttdoc">Checks if a type has a change_entity method for mapping entity IDs.</div><div class="ttdef"><b>Definition</b> EventConcept.hpp:38</div></div>
+</div><!-- fragment --><a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Requires a type to be serializable and entity-convertible for network sync. </p>
+<p>A valid component type must:</p><ul>
+<li>Satisfy bytable (provide to_bytes() and from-bytes constructor)</li>
+<li>Satisfy entity_convertible (provide change_entity() method)</li>
+</ul>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>The type to check</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Components must be network-transmittable, requiring:</p><ul>
+<li>Binary serialization for efficient transmission</li>
+<li>Entity ID remapping for client-server synchronization</li>
+</ul>
+<div class="fragment"><div class="line"><span class="keyword">struct </span><a class="code hl_struct" href="structPosition.html">Position</a> {</div>
+<div class="line">  <span class="keywordtype">double</span> x, y;</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Bytable requirement</span></div>
+<div class="line">  <a class="code hl_define" href="Byte_8hpp.html#a8ffb46d0172418df9eba2947c7135f4d">DEFAULT_BYTE_CONSTRUCTOR</a>(<a class="code hl_struct" href="structPosition.html">Position</a>, ...)</div>
+<div class="line">  <a class="code hl_define" href="Byte_8hpp.html#ac2fb474e60f46281e11bf3824e6f4517">DEFAULT_SERIALIZE</a>(...)</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Entity-convertible requirement</span></div>
+<div class="line">  <a class="code hl_define" href="EventMacros_8hpp.html#a762cd3630f6f73bfa82bbc45f3563a2d">CHANGE_ENTITY_DEFAULT</a>  <span class="comment">// No entities to remap</span></div>
+<div class="line">};</div>
+<div class="line"> </div>
+<div class="line">static_assert(<a class="code hl_concept" href="conceptcomponent.html">component</a>&lt;<a class="code hl_struct" href="structPosition.html">Position</a>&gt;);</div>
+<div class="ttc" id="aByte_8hpp_html_a8ffb46d0172418df9eba2947c7135f4d"><div class="ttname"><a href="Byte_8hpp.html#a8ffb46d0172418df9eba2947c7135f4d">DEFAULT_BYTE_CONSTRUCTOR</a></div><div class="ttdeci">#define DEFAULT_BYTE_CONSTRUCTOR(classname, construct,...)</div><div class="ttdoc">Generates a ByteArray constructor using parser combinators.</div><div class="ttdef"><b>Definition</b> Byte.hpp:111</div></div>
+<div class="ttc" id="aByte_8hpp_html_ac2fb474e60f46281e11bf3824e6f4517"><div class="ttname"><a href="Byte_8hpp.html#ac2fb474e60f46281e11bf3824e6f4517">DEFAULT_SERIALIZE</a></div><div class="ttdeci">#define DEFAULT_SERIALIZE(...)</div><div class="ttdoc">Generates a to_bytes() method by joining field serializations.</div><div class="ttdef"><b>Definition</b> Byte.hpp:171</div></div>
+<div class="ttc" id="aEventMacros_8hpp_html_a762cd3630f6f73bfa82bbc45f3563a2d"><div class="ttname"><a href="EventMacros_8hpp.html#a762cd3630f6f73bfa82bbc45f3563a2d">CHANGE_ENTITY_DEFAULT</a></div><div class="ttdeci">#define CHANGE_ENTITY_DEFAULT</div><div class="ttdef"><b>Definition</b> EventMacros.hpp:61</div></div>
+<div class="ttc" id="astructPosition_html"><div class="ttname"><a href="structPosition.html">Position</a></div><div class="ttdef"><b>Definition</b> Position.hpp:9</div></div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="conceptbytable.html" title="Type supports bidirectional byte conversion.">bytable</a> in <a class="el" href="Byte_8hpp.html" title="Binary serialization system for network communication and persistence.">Byte.hpp</a> </dd>
+<dd>
+<a class="el" href="conceptentity__convertible.html" title="Checks if a type has a change_entity method for mapping entity IDs.">entity_convertible</a> in <a class="el" href="EventMacros_8hpp.html">EventMacros.hpp</a> </dd></dl>
+</div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8

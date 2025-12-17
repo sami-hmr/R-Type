@@ -78,6 +78,9 @@ $(function() {
   <div class="headertitle"><div class="title">HookConcept.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Concept definition for hookable component types.  
+<a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;any&gt;</code><br />
 <code>#include &lt;concepts&gt;</code><br />
 <code>#include &lt;functional&gt;</code><br />
@@ -99,9 +102,208 @@ This graph shows which files directly or indirectly include this file:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="concepts" name="concepts"></a>
 Concepts</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">concept &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="concepthookable.html">hookable</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Requires a type to provide a static hook_map() method. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-</div><!-- contents -->
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Concept definition for hookable component types. </p>
+<p>This file defines the hookable concept which constrains types to those that provide a static hook_map() method. This concept is automatically satisfied by any component using the <a class="el" href="HookMacros_8hpp.html#a8f0cb5d5dff2b9cbbd63e1e50cc30e6a" title="Makes a component type hookable by generating a static hook map.">HOOKABLE()</a> macro.</p>
+<h1><a class="anchor" id="hook_purpose"></a>
+Purpose</h1>
+<p>The hookable concept enables:</p><ul>
+<li><b>Compile-time verification</b> that types support runtime introspection</li>
+<li><b>Generic programming</b> with hookable types (template constraints)</li>
+<li><b>Safe hook access</b> via <a class="el" href="classRegistry.html" title="The Registry class is the core of the ECS (Entity-Component-System) architecture.">Registry</a> methods</li>
+</ul>
+<h1><a class="anchor" id="hook_requirements"></a>
+Requirements</h1>
+<p>A type T satisfies hookable if:</p><ol type="1">
+<li>T::hook_map() is a valid static method</li>
+<li>Returns const std::unordered_map&lt;std::string, std::function&lt;std::any(T&amp;)&gt;&gt;&amp;</li>
+<li>The map associates string keys to field accessor functions</li>
+</ol>
+<h1><a class="anchor" id="hook_usage"></a>
+Usage</h1>
+<h2><a class="anchor" id="hook_auto"></a>
+Automatic Satisfaction</h2>
+<p>Most components automatically satisfy hookable via the <a class="el" href="HookMacros_8hpp.html#a8f0cb5d5dff2b9cbbd63e1e50cc30e6a" title="Makes a component type hookable by generating a static hook map.">HOOKABLE()</a> macro:</p>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="HookMacros_8hpp.html">plugin/HookMacros.hpp</a>&quot;</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">struct </span>Transform {</div>
+<div class="line">  <a class="code hl_class" href="classVector2D.html">Vector2D</a> position;</div>
+<div class="line">  <span class="keywordtype">float</span> rotation;</div>
+<div class="line">  <span class="keywordtype">float</span> scale;</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// This macro makes Transform satisfy hookable</span></div>
+<div class="line">  <a class="code hl_define" href="HookMacros_8hpp.html#a8f0cb5d5dff2b9cbbd63e1e50cc30e6a">HOOKABLE</a>(Transform,</div>
+<div class="line">    <a class="code hl_define" href="HookMacros_8hpp.html#a64db554aa76425e63b60d0fd6ccb1e26">HOOK</a>(position),</div>
+<div class="line">    <a class="code hl_define" href="HookMacros_8hpp.html#a64db554aa76425e63b60d0fd6ccb1e26">HOOK</a>(rotation),</div>
+<div class="line">    <a class="code hl_define" href="HookMacros_8hpp.html#a64db554aa76425e63b60d0fd6ccb1e26">HOOK</a>(scale)</div>
+<div class="line">  )</div>
+<div class="line">};</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Concept is satisfied - Transform is hookable</span></div>
+<div class="line"><span class="keyword">static_assert</span>(<a class="code hl_concept" href="concepthookable.html">hookable&lt;Transform&gt;</a>);</div>
+<div class="ttc" id="aHookMacros_8hpp_html"><div class="ttname"><a href="HookMacros_8hpp.html">HookMacros.hpp</a></div><div class="ttdoc">Hook registration macros for component introspection.</div></div>
+<div class="ttc" id="aHookMacros_8hpp_html_a64db554aa76425e63b60d0fd6ccb1e26"><div class="ttname"><a href="HookMacros_8hpp.html#a64db554aa76425e63b60d0fd6ccb1e26">HOOK</a></div><div class="ttdeci">#define HOOK(var)</div><div class="ttdoc">Registers a component field using its variable name as the hook key.</div><div class="ttdef"><b>Definition</b> HookMacros.hpp:179</div></div>
+<div class="ttc" id="aHookMacros_8hpp_html_a8f0cb5d5dff2b9cbbd63e1e50cc30e6a"><div class="ttname"><a href="HookMacros_8hpp.html#a8f0cb5d5dff2b9cbbd63e1e50cc30e6a">HOOKABLE</a></div><div class="ttdeci">#define HOOKABLE(type,...)</div><div class="ttdoc">Makes a component type hookable by generating a static hook map.</div><div class="ttdef"><b>Definition</b> HookMacros.hpp:233</div></div>
+<div class="ttc" id="aclassVector2D_html"><div class="ttname"><a href="classVector2D.html">Vector2D</a></div><div class="ttdoc">Two-dimensional vector with mathematical operations.</div><div class="ttdef"><b>Definition</b> Vector2D.hpp:43</div></div>
+<div class="ttc" id="aconcepthookable_html"><div class="ttname"><a href="concepthookable.html">hookable</a></div><div class="ttdoc">Requires a type to provide a static hook_map() method.</div><div class="ttdef"><b>Definition</b> HookConcept.hpp:280</div></div>
+</div><!-- fragment --><h2><a class="anchor" id="hook_manual"></a>
+Manual Implementation</h2>
+<p>You can manually implement hookable without macros:</p>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="HookConcept_8hpp.html">plugin/HookConcept.hpp</a>&quot;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;any&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;functional&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;string&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &lt;unordered_map&gt;</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">struct </span>CustomComponent {</div>
+<div class="line">  <span class="keywordtype">int</span> value;</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Manually satisfy hookable</span></div>
+<div class="line">  <span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">auto</span>&amp; hook_map() {</div>
+<div class="line">    <span class="keyword">using </span>Self = CustomComponent;</div>
+<div class="line">    <span class="keyword">static</span> <span class="keyword">const</span> std::unordered_map&lt;std::string,</div>
+<div class="line">                                    std::function&lt;std::any(Self&amp;)&gt;&gt; map {</div>
+<div class="line">      {<span class="stringliteral">&quot;value&quot;</span>, [](Self&amp; c) -&gt; std::any {</div>
+<div class="line">        <span class="keywordflow">return</span> std::reference_wrapper(c.value);</div>
+<div class="line">      }}</div>
+<div class="line">    };</div>
+<div class="line">    <span class="keywordflow">return</span> map;</div>
+<div class="line">  }</div>
+<div class="line">};</div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">static_assert</span>(<a class="code hl_concept" href="concepthookable.html">hookable&lt;CustomComponent&gt;</a>);</div>
+<div class="ttc" id="aHookConcept_8hpp_html"><div class="ttname"><a href="HookConcept_8hpp.html">HookConcept.hpp</a></div><div class="ttdoc">Concept definition for hookable component types.</div></div>
+</div><!-- fragment --><h2><a class="anchor" id="hook_constraint"></a>
+Template Constraints</h2>
+<p>Use hookable to constrain template parameters:</p>
+<div class="fragment"><div class="line"><span class="comment">// Only accept hookable types</span></div>
+<div class="line"><span class="keyword">template</span>&lt;hookable T&gt;</div>
+<div class="line"><span class="keywordtype">void</span> register_component(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <span class="keyword">const</span> std::string&amp; name) {</div>
+<div class="line">  <span class="comment">// Can safely access T::hook_map()</span></div>
+<div class="line">  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; [key, accessor] : <a class="code hl_enumvalue" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a>::hook_map()) {</div>
+<div class="line">    r.<a class="code hl_function" href="classRegistry.html#a988dbbf41e2d34202090c4b47a17d4f7">register_hook</a>&lt;<a class="code hl_enumvalue" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a>&gt;(name, key, accessor);</div>
+<div class="line">  }</div>
+<div class="line">}</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Also works with requires clause</span></div>
+<div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line">  <span class="keyword">requires</span> <a class="code hl_concept" href="concepthookable.html">hookable&lt;T&gt;</a></div>
+<div class="line"><span class="keyword">class </span>ComponentWrapper {</div>
+<div class="line">  <span class="comment">// Implementation can assume T has hook_map()</span></div>
+<div class="line">};</div>
+<div class="ttc" id="aIoEvents_8hpp_html_a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce"><div class="ttname"><a href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a></div><div class="ttdeci">@ T</div><div class="ttdef"><b>Definition</b> IoEvents.hpp:53</div></div>
+<div class="ttc" id="aclassRegistry_html"><div class="ttname"><a href="classRegistry.html">Registry</a></div><div class="ttdoc">The Registry class is the core of the ECS (Entity-Component-System) architecture.</div><div class="ttdef"><b>Definition</b> Registry.hpp:348</div></div>
+<div class="ttc" id="aclassRegistry_html_a988dbbf41e2d34202090c4b47a17d4f7"><div class="ttname"><a href="classRegistry.html#a988dbbf41e2d34202090c4b47a17d4f7">Registry::register_hook</a></div><div class="ttdeci">void register_hook(std::string name, Entity const &amp;e)</div><div class="ttdoc">Register component hooks for runtime field access.</div><div class="ttdef"><b>Definition</b> Registry.hpp:1964</div></div>
+</div><!-- fragment --><h2><a class="anchor" id="hook_detection"></a>
+Compile-Time Detection</h2>
+<div class="fragment"><div class="line"><span class="keyword">struct </span>Unhookable {</div>
+<div class="line">  <span class="keywordtype">int</span> x;</div>
+<div class="line">  <span class="comment">// No HOOKABLE() macro - concept not satisfied</span></div>
+<div class="line">};</div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">struct </span>Hookable {</div>
+<div class="line">  <span class="keywordtype">int</span> x;</div>
+<div class="line">  <a class="code hl_define" href="HookMacros_8hpp.html#a8f0cb5d5dff2b9cbbd63e1e50cc30e6a">HOOKABLE</a>(Hookable, <a class="code hl_define" href="HookMacros_8hpp.html#a64db554aa76425e63b60d0fd6ccb1e26">HOOK</a>(x))</div>
+<div class="line">};</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Compile-time checks</span></div>
+<div class="line"><span class="keyword">static_assert</span>(!<a class="code hl_concept" href="concepthookable.html">hookable&lt;Unhookable&gt;</a>);  <span class="comment">// Fails - no hook_map()</span></div>
+<div class="line"><span class="keyword">static_assert</span>(<a class="code hl_concept" href="concepthookable.html">hookable&lt;Hookable&gt;</a>);     <span class="comment">// Passes</span></div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Conditional behavior</span></div>
+<div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><span class="keywordtype">void</span> inspect(<a class="code hl_enumvalue" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a>&amp; <a class="code hl_concept" href="conceptcomponent.html">component</a>) {</div>
+<div class="line">  <span class="keywordflow">if</span> <span class="keyword">constexpr</span> (<a class="code hl_concept" href="concepthookable.html">hookable&lt;T&gt;</a>) {</div>
+<div class="line">    std::cout &lt;&lt; <span class="stringliteral">&quot;Hookable with &quot;</span> &lt;&lt; T::hook_map().size()</div>
+<div class="line">              &lt;&lt; <span class="stringliteral">&quot; fields\n&quot;</span>;</div>
+<div class="line">  } <span class="keywordflow">else</span> {</div>
+<div class="line">    std::cout &lt;&lt; <span class="stringliteral">&quot;Not hookable\n&quot;</span>;</div>
+<div class="line">  }</div>
+<div class="line">}</div>
+<div class="ttc" id="aconceptcomponent_html"><div class="ttname"><a href="conceptcomponent.html">component</a></div><div class="ttdoc">Requires a type to be serializable and entity-convertible for network sync.</div><div class="ttdef"><b>Definition</b> Registry.hpp:260</div></div>
+</div><!-- fragment --><h1><a class="anchor" id="hook_implementation"></a>
+Implementation Details</h1>
+<p>The concept uses C++20 requires expression to check:</p><ul>
+<li><b>Expression validity</b>: T::hook_map() is callable</li>
+<li><b>Return type</b>: Matches exact signature (const reference to map)</li>
+<li><b>Map signature</b>: Maps strings to function&lt;any(T&amp;)&gt;</li>
+</ul>
+<div class="fragment"><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><span class="keyword">concept </span><a class="code hl_concept" href="concepthookable.html">hookable</a> = <span class="keyword">requires</span>() {</div>
+<div class="line">  {</div>
+<div class="line">    T::hook_map()</div>
+<div class="line">  } -&gt; std::same_as&lt;<span class="keyword">const</span> std::unordered_map&lt;</div>
+<div class="line">                      std::string,</div>
+<div class="line">                      std::function&lt;std::any(<a class="code hl_enumvalue" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a>&amp;)&gt;</div>
+<div class="line">                    &gt;&amp;&gt;;</div>
+<div class="line">};</div>
+</div><!-- fragment --><h1><a class="anchor" id="hook_registry"></a>
+Registry Integration</h1>
+<p>The <a class="el" href="classRegistry.html" title="The Registry class is the core of the ECS (Entity-Component-System) architecture.">Registry</a> uses hookable for safe hook access:</p>
+<div class="fragment"><div class="line"><span class="keyword">class </span><a class="code hl_class" href="classRegistry.html">Registry</a> {</div>
+<div class="line"><span class="keyword">public</span>:</div>
+<div class="line">  <span class="comment">// Get static hook value (read-only)</span></div>
+<div class="line">  <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, hookable Component&gt;</div>
+<div class="line">  std::optional&lt;std::reference_wrapper&lt;const T&gt;&gt;</div>
+<div class="line">  <a class="code hl_function" href="classRegistry.html#a3c5b1d39982cf8c8a5159f048478faf9">get_hooked_value</a>(<span class="keyword">const</span> std::string&amp; component_name,</div>
+<div class="line">                   <span class="keyword">const</span> std::string&amp; field_name) {</div>
+<div class="line">    <span class="comment">// Can safely call Component::hook_map()</span></div>
+<div class="line">    <span class="keyword">const</span> <span class="keyword">auto</span>&amp; hooks = Component::hook_map();</div>
+<div class="line">    <span class="keyword">auto</span> it = hooks.find(field_name);</div>
+<div class="line">    <span class="keywordflow">if</span> (it == hooks.end()) <span class="keywordflow">return</span> std::nullopt;</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">// Get first instance and extract field</span></div>
+<div class="line">    <span class="keyword">auto</span>&amp; components = get_components&lt;Component&gt;();</div>
+<div class="line">    <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; opt : components) {</div>
+<div class="line">      <span class="keywordflow">if</span> (opt.has_value()) {</div>
+<div class="line">        std::any result = it-&gt;second(opt.value());</div>
+<div class="line">        <span class="keywordflow">return</span> std::any_cast&lt;std::reference_wrapper&lt;T&gt;&gt;(result);</div>
+<div class="line">      }</div>
+<div class="line">    }</div>
+<div class="line">    <span class="keywordflow">return</span> std::nullopt;</div>
+<div class="line">  }</div>
+<div class="line">};</div>
+<div class="ttc" id="aclassRegistry_html_a3c5b1d39982cf8c8a5159f048478faf9"><div class="ttname"><a href="classRegistry.html#a3c5b1d39982cf8c8a5159f048478faf9">Registry::get_hooked_value</a></div><div class="ttdeci">std::optional&lt; std::reference_wrapper&lt; T &gt; &gt; get_hooked_value(std::string const &amp;comp, std::string const &amp;value)</div><div class="ttdoc">Retrieve a reference to a hooked component field.</div><div class="ttdef"><b>Definition</b> Registry.hpp:2089</div></div>
+</div><!-- fragment --><h1><a class="anchor" id="hook_examples"></a>
+Common Patterns</h1>
+<h2><a class="anchor" id="hook_empty"></a>
+Empty Hook Map</h2>
+<div class="fragment"><div class="line"><span class="keyword">struct </span>NoHooks {</div>
+<div class="line">  <span class="keywordtype">int</span> internal_data;  <span class="comment">// Not exposed</span></div>
+<div class="line"> </div>
+<div class="line">  <a class="code hl_define" href="HookMacros_8hpp.html#a8f0cb5d5dff2b9cbbd63e1e50cc30e6a">HOOKABLE</a>(NoHooks, )  <span class="comment">// Empty hook list is valid</span></div>
+<div class="line">};</div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">static_assert</span>(<a class="code hl_concept" href="concepthookable.html">hookable&lt;NoHooks&gt;</a>);  <span class="comment">// Still satisfies concept</span></div>
+<div class="line"><span class="comment">// NoHooks::hook_map().empty() == true</span></div>
+</div><!-- fragment --><h2><a class="anchor" id="hook_nested"></a>
+Nested Structures</h2>
+<div class="fragment"><div class="line"><span class="keyword">struct </span>Inner {</div>
+<div class="line">  <span class="keywordtype">float</span> value;</div>
+<div class="line">  <a class="code hl_define" href="HookMacros_8hpp.html#a8f0cb5d5dff2b9cbbd63e1e50cc30e6a">HOOKABLE</a>(Inner, <a class="code hl_define" href="HookMacros_8hpp.html#a64db554aa76425e63b60d0fd6ccb1e26">HOOK</a>(value))</div>
+<div class="line">};</div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">struct </span>Outer {</div>
+<div class="line">  Inner inner;</div>
+<div class="line"> </div>
+<div class="line">  <a class="code hl_define" href="HookMacros_8hpp.html#a8f0cb5d5dff2b9cbbd63e1e50cc30e6a">HOOKABLE</a>(Outer,</div>
+<div class="line">    <a class="code hl_define" href="HookMacros_8hpp.html#a64db554aa76425e63b60d0fd6ccb1e26">HOOK</a>(inner),        <span class="comment">// Whole inner object</span></div>
+<div class="line">    <a class="code hl_define" href="HookMacros_8hpp.html#a64db554aa76425e63b60d0fd6ccb1e26">HOOK</a>(inner.value)   <span class="comment">// Direct access to nested field</span></div>
+<div class="line">  )</div>
+<div class="line">};</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Both are hookable</span></div>
+<div class="line"><span class="keyword">static_assert</span>(<a class="code hl_concept" href="concepthookable.html">hookable&lt;Inner&gt;</a>);</div>
+<div class="line"><span class="keyword">static_assert</span>(<a class="code hl_concept" href="concepthookable.html">hookable&lt;Outer&gt;</a>);</div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="HookMacros_8hpp.html" title="Hook registration macros for component introspection.">HookMacros.hpp</a> for <a class="el" href="HookMacros_8hpp.html#a8f0cb5d5dff2b9cbbd63e1e50cc30e6a" title="Makes a component type hookable by generating a static hook map.">HOOKABLE()</a>, <a class="el" href="HookMacros_8hpp.html#a64db554aa76425e63b60d0fd6ccb1e26" title="Registers a component field using its variable name as the hook key.">HOOK()</a>, and <a class="el" href="HookMacros_8hpp.html#a8bbce773ce13c61b2cb949332d6d2ec4" title="Registers a component field with a custom hook name.">HOOK_CUSTOM()</a> macros </dd>
+<dd>
+<a class="el" href="Hooks_8hpp.html" title="Hook resolution and JSON value extraction functions.">Hooks.hpp</a> for <a class="el" href="Hooks_8hpp.html#a978c2837387286f95b5dd502a61a74e3" title="Retrieves a const reference to a value from JSON, resolving hooks.">get_ref()</a> and <a class="el" href="Hooks_8hpp.html#ac691828d534a0e4dd453f2419b40c4bf" title="Gets a value and registers a dynamic binding for auto-updates.">get_value()</a> helper functions </dd>
+<dd>
+<a class="el" href="classRegistry.html#a3c5b1d39982cf8c8a5159f048478faf9" title="Retrieve a reference to a hooked component field.">Registry::get_hooked_value()</a> for runtime hook access </dd></dl>
+</div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8

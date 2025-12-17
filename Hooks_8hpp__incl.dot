@@ -5,7 +5,7 @@ digraph "include/plugin/Hooks.hpp"
   bgcolor="transparent";
   edge [fontname=Helvetica,fontsize=10,labelfontname=Helvetica,labelfontsize=10];
   node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
-  Node1 [id="Node000001",label="include/plugin/Hooks.hpp",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip=" "];
+  Node1 [id="Node000001",label="include/plugin/Hooks.hpp",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip="Hook resolution and JSON value extraction functions."];
   Node1 -> Node2 [id="edge1_Node000001_Node000002",color="steelblue1",style="solid",tooltip=" "];
   Node2 [id="Node000002",label="any",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
   Node1 -> Node3 [id="edge2_Node000001_Node000003",color="steelblue1",style="solid",tooltip=" "];
@@ -25,7 +25,7 @@ digraph "include/plugin/Hooks.hpp"
   Node1 -> Node10 [id="edge9_Node000001_Node000010",color="steelblue1",style="solid",tooltip=" "];
   Node10 [id="Node000010",label="Json/JsonParser.hpp",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
   Node1 -> Node11 [id="edge10_Node000001_Node000011",color="steelblue1",style="solid",tooltip=" "];
-  Node11 [id="Node000011",label="ecs/Registry.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Registry_8hpp.html",tooltip=" "];
+  Node11 [id="Node000011",label="ecs/Registry.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Registry_8hpp.html",tooltip="Central hub of the ECS architecture managing entities, components, systems, and events."];
   Node11 -> Node12 [id="edge11_Node000011_Node000012",color="steelblue1",style="solid",tooltip=" "];
   Node12 [id="Node000012",label="algorithm",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
   Node11 -> Node2 [id="edge12_Node000011_Node000002",color="steelblue1",style="solid",tooltip=" "];
@@ -66,10 +66,10 @@ digraph "include/plugin/Hooks.hpp"
   Node24 -> Node17 [id="edge35_Node000024_Node000017",color="steelblue1",style="solid",tooltip=" "];
   Node24 -> Node19 [id="edge36_Node000024_Node000019",color="steelblue1",style="solid",tooltip=" "];
   Node11 -> Node25 [id="edge37_Node000011_Node000025",color="steelblue1",style="solid",tooltip=" "];
-  Node25 [id="Node000025",label="ecs/ComponentState.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$ComponentState_8hpp.html",tooltip=" "];
+  Node25 [id="Node000025",label="ecs/ComponentState.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$ComponentState_8hpp.html",tooltip="Component state serialization structure."];
   Node25 -> Node20 [id="edge38_Node000025_Node000020",color="steelblue1",style="solid",tooltip=" "];
   Node25 -> Node26 [id="edge39_Node000025_Node000026",color="steelblue1",style="solid",tooltip=" "];
-  Node26 [id="Node000026",label="plugin/Byte.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Byte_8hpp.html",tooltip=" "];
+  Node26 [id="Node000026",label="plugin/Byte.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Byte_8hpp.html",tooltip="Binary serialization system for network communication and persistence."];
   Node26 -> Node12 [id="edge40_Node000026_Node000012",color="steelblue1",style="solid",tooltip=" "];
   Node26 -> Node27 [id="edge41_Node000026_Node000027",color="steelblue1",style="solid",tooltip=" "];
   Node27 [id="Node000027",label="bit",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
@@ -89,7 +89,7 @@ digraph "include/plugin/Hooks.hpp"
   Node30 -> Node19 [id="edge51_Node000030_Node000019",color="steelblue1",style="solid",tooltip=" "];
   Node26 -> Node10 [id="edge52_Node000026_Node000010",color="steelblue1",style="solid",tooltip=" "];
   Node11 -> Node32 [id="edge53_Node000011_Node000032",color="steelblue1",style="solid",tooltip=" "];
-  Node32 [id="Node000032",label="ecs/Scenes.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Scenes_8hpp.html",tooltip=" "];
+  Node32 [id="Node000032",label="ecs/Scenes.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Scenes_8hpp.html",tooltip="Scene management system for organizing entities into layers."];
   Node32 -> Node29 [id="edge54_Node000032_Node000029",color="steelblue1",style="solid",tooltip=" "];
   Node32 -> Node7 [id="edge55_Node000032_Node000007",color="steelblue1",style="solid",tooltip=" "];
   Node32 -> Node33 [id="edge56_Node000032_Node000033",color="steelblue1",style="solid",tooltip=" "];
@@ -97,16 +97,16 @@ digraph "include/plugin/Hooks.hpp"
   Node32 -> Node24 [id="edge57_Node000032_Node000024",color="steelblue1",style="solid",tooltip=" "];
   Node32 -> Node26 [id="edge58_Node000032_Node000026",color="steelblue1",style="solid",tooltip=" "];
   Node32 -> Node34 [id="edge59_Node000032_Node000034",color="steelblue1",style="solid",tooltip=" "];
-  Node34 [id="Node000034",label="plugin/HookMacros.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$HookMacros_8hpp.html",tooltip=" "];
+  Node34 [id="Node000034",label="plugin/HookMacros.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$HookMacros_8hpp.html",tooltip="Hook registration macros for component introspection."];
   Node32 -> Node35 [id="edge60_Node000032_Node000035",color="steelblue1",style="solid",tooltip=" "];
   Node35 [id="Node000035",label="plugin/events/EventMacros.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$EventMacros_8hpp.html",tooltip=" "];
   Node11 -> Node36 [id="edge61_Node000011_Node000036",color="steelblue1",style="solid",tooltip=" "];
-  Node36 [id="Node000036",label="ecs/Systems.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Systems_8hpp.html",tooltip=" "];
+  Node36 [id="Node000036",label="ecs/Systems.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Systems_8hpp.html",tooltip="System wrapper for ECS functionality."];
   Node36 -> Node3 [id="edge62_Node000036_Node000003",color="steelblue1",style="solid",tooltip=" "];
   Node36 -> Node4 [id="edge63_Node000036_Node000004",color="steelblue1",style="solid",tooltip=" "];
   Node11 -> Node26 [id="edge64_Node000011_Node000026",color="steelblue1",style="solid",tooltip=" "];
   Node11 -> Node37 [id="edge65_Node000011_Node000037",color="steelblue1",style="solid",tooltip=" "];
-  Node37 [id="Node000037",label="plugin/HookConcept.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$HookConcept_8hpp.html",tooltip=" "];
+  Node37 [id="Node000037",label="plugin/HookConcept.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$HookConcept_8hpp.html",tooltip="Concept definition for hookable component types."];
   Node37 -> Node2 [id="edge66_Node000037_Node000002",color="steelblue1",style="solid",tooltip=" "];
   Node37 -> Node28 [id="edge67_Node000037_Node000028",color="steelblue1",style="solid",tooltip=" "];
   Node37 -> Node3 [id="edge68_Node000037_Node000003",color="steelblue1",style="solid",tooltip=" "];
@@ -118,6 +118,6 @@ digraph "include/plugin/Hooks.hpp"
   Node38 -> Node13 [id="edge73_Node000038_Node000013",color="steelblue1",style="solid",tooltip=" "];
   Node38 -> Node17 [id="edge74_Node000038_Node000017",color="steelblue1",style="solid",tooltip=" "];
   Node38 -> Node10 [id="edge75_Node000038_Node000010",color="steelblue1",style="solid",tooltip=" "];
-  Node38 -> Node26 [id="edge76_Node000038_Node000026",color="steelblue1",style="solid",tooltip=" "];
-  Node38 -> Node24 [id="edge77_Node000038_Node000024",color="steelblue1",style="solid",tooltip=" "];
+  Node38 -> Node24 [id="edge76_Node000038_Node000024",color="steelblue1",style="solid",tooltip=" "];
+  Node38 -> Node26 [id="edge77_Node000038_Node000026",color="steelblue1",style="solid",tooltip=" "];
 }

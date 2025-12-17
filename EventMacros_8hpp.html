@@ -89,8 +89,10 @@ This graph shows which files directly or indirectly include this file:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="define-members" name="define-members"></a>
 Macros</h2></td></tr>
 <tr class="memitem:a53098b45a961ee04eae5e4956d6279c9" id="r_a53098b45a961ee04eae5e4956d6279c9"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="EventMacros_8hpp.html#a53098b45a961ee04eae5e4956d6279c9">MAP_ENTITY_VECTOR</a>(vec)</td></tr>
+<tr class="memdesc:a53098b45a961ee04eae5e4956d6279c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maps a vector of <a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110" title="Type alias for an entity identifier.">Registry::Entity</a> using a <a class="el" href="classTwoWayMap.html">TwoWayMap</a>.  <br /></td></tr>
 <tr class="separator:a53098b45a961ee04eae5e4956d6279c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af8639b4604542d50abeda5d3e94a043f" id="r_af8639b4604542d50abeda5d3e94a043f"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="EventMacros_8hpp.html#af8639b4604542d50abeda5d3e94a043f">CHANGE_ENTITY</a>(...)</td></tr>
+<tr class="memdesc:af8639b4604542d50abeda5d3e94a043f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates a change_entity method for event structs.  <br /></td></tr>
 <tr class="separator:af8639b4604542d50abeda5d3e94a043f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a762cd3630f6f73bfa82bbc45f3563a2d" id="r_a762cd3630f6f73bfa82bbc45f3563a2d"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="EventMacros_8hpp.html#a762cd3630f6f73bfa82bbc45f3563a2d">CHANGE_ENTITY_DEFAULT</a></td></tr>
 <tr class="separator:a762cd3630f6f73bfa82bbc45f3563a2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -111,8 +113,8 @@ Macros</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">  <span class="keyword">auto</span> change_entity(std::unordered_map&lt;Registry::Entity, Registry::Entity&gt; <span class="keyword">const</span>&amp; map) \</div>
-<div class="line">      <span class="keyword">const</span> \</div>
+<b>Value:</b><div class="fragment"><div class="line">  <span class="keyword">auto</span> change_entity( \</div>
+<div class="line">      std::unordered_map&lt;Registry::Entity, Registry::Entity&gt; <span class="keyword">const</span>&amp; map) <span class="keyword">const</span> \</div>
 <div class="line">  { \</div>
 <div class="line">    <span class="keywordflow">try</span> { \</div>
 <div class="line">      <span class="keyword">auto</span> result = *<span class="keyword">this</span>; \</div>
@@ -123,6 +125,26 @@ Macros</h2></td></tr>
 <div class="line">    } \</div>
 <div class="line">  }</div>
 </div><!-- fragment -->
+<p>Generates a change_entity method for event structs. </p>
+<p>Creates a const method that maps <a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110" title="Type alias for an entity identifier.">Registry::Entity</a> fields using a <a class="el" href="classTwoWayMap.html">TwoWayMap</a>. Non-entity fields are automatically copied from the original event. If any mapping fails (std::out_of_range), returns the original event unchanged.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">...</td><td>Statements to modify entity fields (e.g., result.field = map.at_second(field))</td></tr>
+  </table>
+  </dd>
+</dl>
+<div class="fragment"><div class="line"><span class="keyword">struct </span>MyEvent {</div>
+<div class="line">  <a class="code hl_typedef" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a> actor;</div>
+<div class="line">  <a class="code hl_typedef" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a> target;</div>
+<div class="line">  <span class="keywordtype">int</span> value;</div>
+<div class="line"> </div>
+<div class="line">  DEFINE_CHANGE_ENTITY(</div>
+<div class="line">    result.actor = map.at(actor);</div>
+<div class="line">    result.target = map.at(target);</div>
+<div class="line">  )</div>
+<div class="line">};</div>
+<div class="ttc" id="aclassRegistry_html_a0f7878e7be2d225f4f7ca38b85911110"><div class="ttname"><a href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a></div><div class="ttdeci">std::size_t Entity</div><div class="ttdoc">Type alias for an entity identifier.</div><div class="ttdef"><b>Definition</b> Registry.hpp:356</div></div>
+</div><!-- fragment --> 
 </div>
 </div>
 <a id="a762cd3630f6f73bfa82bbc45f3563a2d" name="a762cd3630f6f73bfa82bbc45f3563a2d"></a>
@@ -169,6 +191,14 @@ Macros</h2></td></tr>
 <div class="line">    <span class="keywordflow">return</span> mapped_vec; \</div>
 <div class="line">  }()</div>
 </div><!-- fragment -->
+<p>Maps a vector of <a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110" title="Type alias for an entity identifier.">Registry::Entity</a> using a <a class="el" href="classTwoWayMap.html">TwoWayMap</a>. </p>
+<p>Creates a new vector with all entities mapped.</p>
+<div class="fragment"><div class="line">DEFINE_CHANGE_ENTITY(</div>
+<div class="line">  result.source = map.at(source);</div>
+<div class="line">  result.candidates = <a class="code hl_define" href="EventMacros_8hpp.html#a53098b45a961ee04eae5e4956d6279c9">MAP_ENTITY_VECTOR</a>(candidates);</div>
+<div class="line">)</div>
+<div class="ttc" id="aEventMacros_8hpp_html_a53098b45a961ee04eae5e4956d6279c9"><div class="ttname"><a href="EventMacros_8hpp.html#a53098b45a961ee04eae5e4956d6279c9">MAP_ENTITY_VECTOR</a></div><div class="ttdeci">#define MAP_ENTITY_VECTOR(vec)</div><div class="ttdoc">Maps a vector of Registry::Entity using a TwoWayMap.</div><div class="ttdef"><b>Definition</b> EventMacros.hpp:14</div></div>
+</div><!-- fragment --> 
 </div>
 </div>
 </div><!-- contents -->

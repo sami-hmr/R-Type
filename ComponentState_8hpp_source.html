@@ -84,18 +84,21 @@ $(document).ready(function() { init_codefold(0); });
 <a href="ComponentState_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span> </div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;<a class="code" href="Byte_8hpp.html">plugin/Byte.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span> </div>
-<div class="foldopen" id="foldopen00006" data-start="{" data-end="};">
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno"><a class="line" href="structComponentState.html">    6</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structComponentState.html">ComponentState</a> {</div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno"><a class="line" href="structComponentState.html#a994fa4db9043fd49c780e12f098af193">    7</a></span>    std::string <a class="code hl_variable" href="structComponentState.html#a994fa4db9043fd49c780e12f098af193">id</a>;</div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno"><a class="line" href="structComponentState.html#a8ef40682f2afd2813810875c4f2fbb19">    8</a></span>    std::vector&lt;std::pair&lt;size_t, ByteArray&gt;&gt; <a class="code hl_variable" href="structComponentState.html#a8ef40682f2afd2813810875c4f2fbb19">comps</a>;</div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>};</div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span> </div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="Byte_8hpp.html">plugin/Byte.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
+<div class="foldopen" id="foldopen00023" data-start="{" data-end="};">
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno"><a class="line" href="structComponentState.html">   23</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structComponentState.html">ComponentState</a></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>{</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno"><a class="line" href="structComponentState.html#a994fa4db9043fd49c780e12f098af193">   25</a></span>  std::string <a class="code hl_variable" href="structComponentState.html#a994fa4db9043fd49c780e12f098af193">id</a>;  </div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>  std::vector&lt;std::pair&lt;size_t, ByteArray&gt;&gt;</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="structComponentState.html#a8ef40682f2afd2813810875c4f2fbb19">   27</a></span>      <a class="code hl_variable" href="structComponentState.html#a8ef40682f2afd2813810875c4f2fbb19">comps</a>;  </div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>};</div>
 </div>
-<div class="ttc" id="aByte_8hpp_html"><div class="ttname"><a href="Byte_8hpp.html">Byte.hpp</a></div></div>
-<div class="ttc" id="astructComponentState_html"><div class="ttname"><a href="structComponentState.html">ComponentState</a></div><div class="ttdef"><b>Definition</b> ComponentState.hpp:6</div></div>
-<div class="ttc" id="astructComponentState_html_a8ef40682f2afd2813810875c4f2fbb19"><div class="ttname"><a href="structComponentState.html#a8ef40682f2afd2813810875c4f2fbb19">ComponentState::comps</a></div><div class="ttdeci">std::vector&lt; std::pair&lt; size_t, ByteArray &gt; &gt; comps</div><div class="ttdef"><b>Definition</b> ComponentState.hpp:8</div></div>
-<div class="ttc" id="astructComponentState_html_a994fa4db9043fd49c780e12f098af193"><div class="ttname"><a href="structComponentState.html#a994fa4db9043fd49c780e12f098af193">ComponentState::id</a></div><div class="ttdeci">std::string id</div><div class="ttdef"><b>Definition</b> ComponentState.hpp:7</div></div>
+<div class="ttc" id="aByte_8hpp_html"><div class="ttname"><a href="Byte_8hpp.html">Byte.hpp</a></div><div class="ttdoc">Binary serialization system for network communication and persistence.</div></div>
+<div class="ttc" id="astructComponentState_html"><div class="ttname"><a href="structComponentState.html">ComponentState</a></div><div class="ttdoc">Captures the state of a component type across all entities.</div><div class="ttdef"><b>Definition</b> ComponentState.hpp:24</div></div>
+<div class="ttc" id="astructComponentState_html_a8ef40682f2afd2813810875c4f2fbb19"><div class="ttname"><a href="structComponentState.html#a8ef40682f2afd2813810875c4f2fbb19">ComponentState::comps</a></div><div class="ttdeci">std::vector&lt; std::pair&lt; size_t, ByteArray &gt; &gt; comps</div><div class="ttdoc">Entity-component pairs (entity ID, serialized component data)</div><div class="ttdef"><b>Definition</b> ComponentState.hpp:27</div></div>
+<div class="ttc" id="astructComponentState_html_a994fa4db9043fd49c780e12f098af193"><div class="ttname"><a href="structComponentState.html#a994fa4db9043fd49c780e12f098af193">ComponentState::id</a></div><div class="ttdeci">std::string id</div><div class="ttdoc">Component type identifier (format: &quot;plugin:component&quot;)</div><div class="ttdef"><b>Definition</b> ComponentState.hpp:25</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

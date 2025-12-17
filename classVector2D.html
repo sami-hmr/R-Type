@@ -77,6 +77,9 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>Two-dimensional vector with mathematical operations.  
+ <a href="classVector2D.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="Vector2D_8hpp_source.html">Vector2D.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
@@ -84,10 +87,13 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:aa666ef9e6d697c5090f193baefe16f66" id="r_aa666ef9e6d697c5090f193baefe16f66"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVector2D.html#aa666ef9e6d697c5090f193baefe16f66">Vector2D</a> ()=default</td></tr>
 <tr class="separator:aa666ef9e6d697c5090f193baefe16f66"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a525e125aac4c844f04c52ddb0e75d594" id="r_a525e125aac4c844f04c52ddb0e75d594"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVector2D.html#a525e125aac4c844f04c52ddb0e75d594">Vector2D</a> (double <a class="el" href="classVector2D.html#ac5c4e553815737aa24bec8281270178f">x</a>, double <a class="el" href="classVector2D.html#ac38d0179cfe74c30fee290a703ab209a">y</a>)</td></tr>
+<tr class="memdesc:a525e125aac4c844f04c52ddb0e75d594"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a vector with x and y coordinates.  <br /></td></tr>
 <tr class="separator:a525e125aac4c844f04c52ddb0e75d594"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af9c646d7597233611a0045b12ae1e076" id="r_af9c646d7597233611a0045b12ae1e076"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVector2D.html#af9c646d7597233611a0045b12ae1e076">Vector2D</a> (JsonVariant const &amp;variant, std::string const &amp;<a class="el" href="classVector2D.html#ac5c4e553815737aa24bec8281270178f">x</a>=&quot;x&quot;, std::string const &amp;<a class="el" href="classVector2D.html#ac38d0179cfe74c30fee290a703ab209a">y</a>=&quot;y&quot;)</td></tr>
+<tr class="memdesc:af9c646d7597233611a0045b12ae1e076"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs from JSON variant with custom field names.  <br /></td></tr>
 <tr class="separator:af9c646d7597233611a0045b12ae1e076"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abb5e407d84faed7334c7cdbee7694fbe" id="r_abb5e407d84faed7334c7cdbee7694fbe"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVector2D.html#abb5e407d84faed7334c7cdbee7694fbe">Vector2D</a> (JsonObject const &amp;obj, std::string const &amp;<a class="el" href="classVector2D.html#ac5c4e553815737aa24bec8281270178f">x</a>=&quot;x&quot;, std::string const &amp;<a class="el" href="classVector2D.html#ac38d0179cfe74c30fee290a703ab209a">y</a>=&quot;y&quot;)</td></tr>
+<tr class="memdesc:abb5e407d84faed7334c7cdbee7694fbe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs from JSON object with custom field names.  <br /></td></tr>
 <tr class="separator:abb5e407d84faed7334c7cdbee7694fbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3f3381ca3c34cdd95ed1225ffc6be508" id="r_a3f3381ca3c34cdd95ed1225ffc6be508"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVector2D.html#a3f3381ca3c34cdd95ed1225ffc6be508">~Vector2D</a> ()=default</td></tr>
 <tr class="separator:a3f3381ca3c34cdd95ed1225ffc6be508"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -132,22 +138,39 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a9393d072165e45664ad8654c1d2f7dad" id="r_a9393d072165e45664ad8654c1d2f7dad"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVector2D.html#a9393d072165e45664ad8654c1d2f7dad">operator&gt;</a> (const <a class="el" href="classVector2D.html">Vector2D</a> &amp;other) const</td></tr>
 <tr class="separator:a9393d072165e45664ad8654c1d2f7dad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab08635b0482451cc43b5b399034eff2f" id="r_ab08635b0482451cc43b5b399034eff2f"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVector2D.html#ab08635b0482451cc43b5b399034eff2f">length</a> () const</td></tr>
+<tr class="memdesc:ab08635b0482451cc43b5b399034eff2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates the Euclidean length (magnitude) of the vector.  <br /></td></tr>
 <tr class="separator:ab08635b0482451cc43b5b399034eff2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a79cfa577c38cb866d088166d6729a47d" id="r_a79cfa577c38cb866d088166d6729a47d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classVector2D.html">Vector2D</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVector2D.html#a79cfa577c38cb866d088166d6729a47d">normalize</a> () const</td></tr>
+<tr class="memdesc:a79cfa577c38cb866d088166d6729a47d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns a normalized (unit length) copy of this vector.  <br /></td></tr>
 <tr class="separator:a79cfa577c38cb866d088166d6729a47d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af0f3f79d4b747c996923b403c4260c7b" id="r_af0f3f79d4b747c996923b403c4260c7b"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVector2D.html#af0f3f79d4b747c996923b403c4260c7b">distanceTo</a> (const <a class="el" href="classVector2D.html">Vector2D</a> &amp;other) const</td></tr>
+<tr class="memdesc:af0f3f79d4b747c996923b403c4260c7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates Euclidean distance to another vector.  <br /></td></tr>
 <tr class="separator:af0f3f79d4b747c996923b403c4260c7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aedca2e0def2c047e2c6ee15572e63780" id="r_aedca2e0def2c047e2c6ee15572e63780"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVector2D.html#aedca2e0def2c047e2c6ee15572e63780">dot</a> (const <a class="el" href="classVector2D.html">Vector2D</a> &amp;other) const</td></tr>
+<tr class="memdesc:aedca2e0def2c047e2c6ee15572e63780"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates dot product with another vector.  <br /></td></tr>
 <tr class="separator:aedca2e0def2c047e2c6ee15572e63780"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:ac5c4e553815737aa24bec8281270178f" id="r_ac5c4e553815737aa24bec8281270178f"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVector2D.html#ac5c4e553815737aa24bec8281270178f">x</a> = 0</td></tr>
+<tr class="memdesc:ac5c4e553815737aa24bec8281270178f"><td class="mdescLeft">&#160;</td><td class="mdescRight">X coordinate.  <br /></td></tr>
 <tr class="separator:ac5c4e553815737aa24bec8281270178f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac38d0179cfe74c30fee290a703ab209a" id="r_ac38d0179cfe74c30fee290a703ab209a"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVector2D.html#ac38d0179cfe74c30fee290a703ab209a">y</a> = 0</td></tr>
+<tr class="memdesc:ac38d0179cfe74c30fee290a703ab209a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Y coordinate.  <br /></td></tr>
 <tr class="separator:ac38d0179cfe74c30fee290a703ab209a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Two-dimensional vector with mathematical operations. </p>
+<p>Provides a comprehensive 2D vector implementation with:</p><ul>
+<li>Arithmetic operations (addition, subtraction, multiplication, division)</li>
+<li>Vector mathematics (length, normalization, dot product, distance)</li>
+<li>JSON/ByteArray serialization for configuration and networking</li>
+<li>Comparison operators for sorting and equality checks</li>
+</ul>
+<p>Widely used throughout the engine for positions, velocities, directions, scales, and any 2D spatial data.</p>
+<dl class="section note"><dt>Note</dt><dd>Component-wise comparison operators (&lt;, &gt;, &lt;=, &gt;=) check both x and y </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structPosition.html">Position</a>, <a class="el" href="structVelocity.html">Velocity</a> components </dd></dl>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="aa666ef9e6d697c5090f193baefe16f66" name="aa666ef9e6d697c5090f193baefe16f66"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa666ef9e6d697c5090f193baefe16f66">&#9670;&#160;</a></span>Vector2D() <span class="overload">[1/6]</span></h2>
 
@@ -207,6 +230,8 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Constructs a vector with x and y coordinates. </p>
+
 </div>
 </div>
 <a id="af9c646d7597233611a0045b12ae1e076" name="af9c646d7597233611a0045b12ae1e076"></a>
@@ -241,6 +266,16 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Constructs from JSON variant with custom field names. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">variant</td><td>JSON variant containing an object with x/y fields </td></tr>
+    <tr><td class="paramname">x</td><td>Field name for x coordinate (default: "x") </td></tr>
+    <tr><td class="paramname">y</td><td>Field name for y coordinate (default: "y") </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="abb5e407d84faed7334c7cdbee7694fbe" name="abb5e407d84faed7334c7cdbee7694fbe"></a>
@@ -274,6 +309,16 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Constructs from JSON object with custom field names. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">obj</td><td>JSON object containing x/y fields </td></tr>
+    <tr><td class="paramname">x</td><td>Field name for x coordinate (default: "x") </td></tr>
+    <tr><td class="paramname">y</td><td>Field name for y coordinate (default: "y") </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -379,6 +424,15 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Calculates Euclidean distance to another vector. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">other</td><td><a class="el" href="classTarget.html">Target</a> vector </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Distance between this vector and other </dd></dl>
+
 </div>
 </div>
 <a id="aedca2e0def2c047e2c6ee15572e63780" name="aedca2e0def2c047e2c6ee15572e63780"></a>
@@ -405,6 +459,15 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Calculates dot product with another vector. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">other</td><td>Second vector </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Dot product (this.x * other.x + this.y * other.y) </dd></dl>
+
 </div>
 </div>
 <a id="ab08635b0482451cc43b5b399034eff2f" name="ab08635b0482451cc43b5b399034eff2f"></a>
@@ -430,6 +493,9 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Calculates the Euclidean length (magnitude) of the vector. </p>
+<dl class="section return"><dt>Returns</dt><dd>Vector length as sqrt(x^2 + y^2) </dd></dl>
+
 </div>
 </div>
 <a id="a79cfa577c38cb866d088166d6729a47d" name="a79cfa577c38cb866d088166d6729a47d"></a>
@@ -454,6 +520,9 @@ Public Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Returns a normalized (unit length) copy of this vector. </p>
+<dl class="section return"><dt>Returns</dt><dd>Normalized vector, or (0,0) if length is zero </dd></dl>
 
 </div>
 </div>
@@ -938,6 +1007,8 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>X coordinate. </p>
+
 </div>
 </div>
 <a id="ac38d0179cfe74c30fee290a703ab209a" name="ac38d0179cfe74c30fee290a703ab209a"></a>
@@ -951,6 +1022,8 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Y coordinate. </p>
 
 </div>
 </div>

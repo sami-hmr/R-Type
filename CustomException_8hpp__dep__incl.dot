@@ -7,7 +7,7 @@ digraph "include/CustomException.hpp"
   node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
   Node1 [id="Node000001",label="include/CustomException.hpp",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip=" "];
   Node1 -> Node2 [id="edge1_Node000001_Node000002",dir="back",color="steelblue1",style="solid",tooltip=" "];
-  Node2 [id="Node000002",label="include/plugin/Byte.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Byte_8hpp.html",tooltip=" "];
+  Node2 [id="Node000002",label="include/plugin/Byte.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Byte_8hpp.html",tooltip="Binary serialization system for network communication and persistence."];
   Node2 -> Node3 [id="edge2_Node000002_Node000003",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node3 [id="Node000003",label="include/ClientConnection.hpp",height=0.2,width=0.4,color="red", fillcolor="#FFF0F0", style="filled",URL="$ClientConnection_8hpp.html",tooltip=" "];
   Node3 -> Node5 [id="edge3_Node000003_Node000005",dir="back",color="steelblue1",style="solid",tooltip=" "];
@@ -46,7 +46,7 @@ digraph "include/CustomException.hpp"
   Node2 -> Node21 [id="edge23_Node000002_Node000021",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node21 [id="Node000021",label="include/NetworkShared.hpp",height=0.2,width=0.4,color="red", fillcolor="#FFF0F0", style="filled",URL="$NetworkShared_8hpp.html",tooltip=" "];
   Node21 -> Node25 [id="edge24_Node000021_Node000025",dir="back",color="steelblue1",style="solid",tooltip=" "];
-  Node25 [id="Node000025",label="include/ecs/InitComponent.hpp",height=0.2,width=0.4,color="red", fillcolor="#FFF0F0", style="filled",URL="$InitComponent_8hpp.html",tooltip=" "];
+  Node25 [id="Node000025",label="include/ecs/InitComponent.hpp",height=0.2,width=0.4,color="red", fillcolor="#FFF0F0", style="filled",URL="$InitComponent_8hpp.html",tooltip="Component initialization helpers with automatic network synchronization."];
   Node25 -> Node11 [id="edge25_Node000025_Node000011",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node25 -> Node30 [id="edge26_Node000025_Node000030",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node30 [id="Node000030",label="plugins/collision/src\l/Collision.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Collision_8cpp.html",tooltip=" "];
@@ -177,9 +177,9 @@ digraph "include/CustomException.hpp"
   Node73 -> Node14 [id="edge124_Node000073_Node000014",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node73 -> Node19 [id="edge125_Node000073_Node000019",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node2 -> Node74 [id="edge126_Node000002_Node000074",dir="back",color="steelblue1",style="solid",tooltip=" "];
-  Node74 [id="Node000074",label="include/ecs/ComponentState.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$ComponentState_8hpp.html",tooltip=" "];
+  Node74 [id="Node000074",label="include/ecs/ComponentState.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$ComponentState_8hpp.html",tooltip="Component state serialization structure."];
   Node74 -> Node75 [id="edge127_Node000074_Node000075",dir="back",color="steelblue1",style="solid",tooltip=" "];
-  Node75 [id="Node000075",label="include/ecs/Registry.hpp",height=0.2,width=0.4,color="red", fillcolor="#FFF0F0", style="filled",URL="$Registry_8hpp.html",tooltip=" "];
+  Node75 [id="Node000075",label="include/ecs/Registry.hpp",height=0.2,width=0.4,color="red", fillcolor="#FFF0F0", style="filled",URL="$Registry_8hpp.html",tooltip="Central hub of the ECS architecture managing entities, components, systems, and events."];
   Node75 -> Node3 [id="edge128_Node000075_Node000003",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node75 -> Node73 [id="edge129_Node000075_Node000073",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node75 -> Node25 [id="edge130_Node000075_Node000025",dir="back",color="steelblue1",style="solid",tooltip=" "];
@@ -314,11 +314,11 @@ digraph "include/CustomException.hpp"
   Node2 -> Node25 [id="edge237_Node000002_Node000025",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node2 -> Node75 [id="edge238_Node000002_Node000075",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node2 -> Node125 [id="edge239_Node000002_Node000125",dir="back",color="steelblue1",style="solid",tooltip=" "];
-  Node125 [id="Node000125",label="include/ecs/Scenes.hpp",height=0.2,width=0.4,color="red", fillcolor="#FFF0F0", style="filled",URL="$Scenes_8hpp.html",tooltip=" "];
+  Node125 [id="Node000125",label="include/ecs/Scenes.hpp",height=0.2,width=0.4,color="red", fillcolor="#FFF0F0", style="filled",URL="$Scenes_8hpp.html",tooltip="Scene management system for organizing entities into layers."];
   Node125 -> Node75 [id="edge240_Node000125_Node000075",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node125 -> Node19 [id="edge241_Node000125_Node000019",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node2 -> Node79 [id="edge242_Node000002_Node000079",dir="back",color="steelblue1",style="solid",tooltip=" "];
-  Node79 [id="Node000079",label="include/libs/Color.hpp",height=0.2,width=0.4,color="red", fillcolor="#FFF0F0", style="filled",URL="$Color_8hpp.html",tooltip=" "];
+  Node79 [id="Node000079",label="include/libs/Color.hpp",height=0.2,width=0.4,color="red", fillcolor="#FFF0F0", style="filled",URL="$Color_8hpp.html",tooltip="RGBA color representation with serialization support."];
   Node79 -> Node80 [id="edge243_Node000079_Node000080",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node80 [id="Node000080",label="include/plugin/components\l/Bar.hpp",height=0.2,width=0.4,color="red", fillcolor="#FFF0F0", style="filled",URL="$Bar_8hpp.html",tooltip=" "];
   Node80 -> Node43 [id="edge244_Node000080_Node000043",dir="back",color="steelblue1",style="solid",tooltip=" "];
@@ -328,7 +328,7 @@ digraph "include/CustomException.hpp"
   Node81 [id="Node000081",label="include/plugin/components\l/Text.hpp",height=0.2,width=0.4,color="red", fillcolor="#FFF0F0", style="filled",URL="$Text_8hpp.html",tooltip=" "];
   Node81 -> Node56 [id="edge248_Node000081_Node000056",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node2 -> Node126 [id="edge249_Node000002_Node000126",dir="back",color="steelblue1",style="solid",tooltip=" "];
-  Node126 [id="Node000126",label="include/libs/Vector2D.hpp",height=0.2,width=0.4,color="red", fillcolor="#FFF0F0", style="filled",URL="$Vector2D_8hpp.html",tooltip=" "];
+  Node126 [id="Node000126",label="include/libs/Vector2D.hpp",height=0.2,width=0.4,color="red", fillcolor="#FFF0F0", style="filled",URL="$Vector2D_8hpp.html",tooltip="2D vector mathematics for position, velocity, and direction calculations"];
   Node126 -> Node86 [id="edge250_Node000126_Node000086",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node126 -> Node88 [id="edge251_Node000126_Node000088",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node88 [id="Node000088",label="include/plugin/components\l/Background.hpp",height=0.2,width=0.4,color="red", fillcolor="#FFF0F0", style="filled",URL="$Background_8hpp.html",tooltip=" "];

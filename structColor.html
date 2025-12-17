@@ -77,6 +77,9 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>RGBA color with 8-bit channels.  
+ <a href="structColor.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="Color_8hpp_source.html">Color.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
@@ -84,8 +87,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a9a742cbe9f9f4037f5d9f4e81a9b2428" id="r_a9a742cbe9f9f4037f5d9f4e81a9b2428"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structColor.html#a9a742cbe9f9f4037f5d9f4e81a9b2428">Color</a> ()</td></tr>
 <tr class="separator:a9a742cbe9f9f4037f5d9f4e81a9b2428"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a67479480eac706296049f596feca471c" id="r_a67479480eac706296049f596feca471c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structColor.html#a67479480eac706296049f596feca471c">Color</a> (unsigned char <a class="el" href="structColor.html#ab9a9c7134511f9b116a6fcc81a303ba6">r</a>, unsigned char <a class="el" href="structColor.html#adc506c5063609cacdda2c007da3b7a5f">g</a>, unsigned char <a class="el" href="structColor.html#a9f00605f7024dcb79342e97fae52c1bd">b</a>, unsigned char <a class="el" href="structColor.html#a39bb1f3f9a514ac1a581ca27fddebebc">a</a>)</td></tr>
+<tr class="memdesc:a67479480eac706296049f596feca471c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a color with explicit RGBA values.  <br /></td></tr>
 <tr class="separator:a67479480eac706296049f596feca471c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4e07658279443524cc517e52beaf99b9" id="r_a4e07658279443524cc517e52beaf99b9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structColor.html#a4e07658279443524cc517e52beaf99b9">Color</a> (JsonObject const &amp;obj)</td></tr>
+<tr class="memdesc:a4e07658279443524cc517e52beaf99b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs from JSON object.  <br /></td></tr>
 <tr class="separator:a4e07658279443524cc517e52beaf99b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a57f39d5af9b0497d7dc03a2de0a183b3" id="r_a57f39d5af9b0497d7dc03a2de0a183b3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structColor.html#a57f39d5af9b0497d7dc03a2de0a183b3">Color</a> (JsonVariant const &amp;variant)</td></tr>
 <tr class="separator:a57f39d5af9b0497d7dc03a2de0a183b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -93,15 +98,29 @@ Public Member Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:ab9a9c7134511f9b116a6fcc81a303ba6" id="r_ab9a9c7134511f9b116a6fcc81a303ba6"><td class="memItemLeft" align="right" valign="top">unsigned char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structColor.html#ab9a9c7134511f9b116a6fcc81a303ba6">r</a></td></tr>
+<tr class="memdesc:ab9a9c7134511f9b116a6fcc81a303ba6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Red channel (0-255)  <br /></td></tr>
 <tr class="separator:ab9a9c7134511f9b116a6fcc81a303ba6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adc506c5063609cacdda2c007da3b7a5f" id="r_adc506c5063609cacdda2c007da3b7a5f"><td class="memItemLeft" align="right" valign="top">unsigned char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structColor.html#adc506c5063609cacdda2c007da3b7a5f">g</a></td></tr>
+<tr class="memdesc:adc506c5063609cacdda2c007da3b7a5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Green channel (0-255)  <br /></td></tr>
 <tr class="separator:adc506c5063609cacdda2c007da3b7a5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9f00605f7024dcb79342e97fae52c1bd" id="r_a9f00605f7024dcb79342e97fae52c1bd"><td class="memItemLeft" align="right" valign="top">unsigned char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structColor.html#a9f00605f7024dcb79342e97fae52c1bd">b</a></td></tr>
+<tr class="memdesc:a9f00605f7024dcb79342e97fae52c1bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Blue channel (0-255)  <br /></td></tr>
 <tr class="separator:a9f00605f7024dcb79342e97fae52c1bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a39bb1f3f9a514ac1a581ca27fddebebc" id="r_a39bb1f3f9a514ac1a581ca27fddebebc"><td class="memItemLeft" align="right" valign="top">unsigned char&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structColor.html#a39bb1f3f9a514ac1a581ca27fddebebc">a</a></td></tr>
+<tr class="memdesc:a39bb1f3f9a514ac1a581ca27fddebebc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Alpha channel (0=transparent, 255=opaque)  <br /></td></tr>
 <tr class="separator:a39bb1f3f9a514ac1a581ca27fddebebc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>RGBA color with 8-bit channels. </p>
+<p>Represents colors using four unsigned char components (0-255):</p><ul>
+<li>r: Red channel</li>
+<li>g: Green channel</li>
+<li>b: Blue channel</li>
+<li>a: Alpha channel (transparency, 255 = fully opaque)</li>
+</ul>
+<p>Supports JSON parsing with optional hook system for dynamic color binding. Provides predefined color constants (WHITE, BLACK, RED, GREEN, BLUE, TRANSPARENT).</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="Color_8hpp.html#aad3143c59bd4fddf0994b460401abe2e" title="Serializes a Color to binary data.">colorToByte()</a>, <a class="el" href="Color_8hpp.html#ab146d5f17d68e6a0137486d93a4309f3" title="Parses a Color from binary data.">parseColor()</a> </dd></dl>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a9a742cbe9f9f4037f5d9f4e81a9b2428" name="a9a742cbe9f9f4037f5d9f4e81a9b2428"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9a742cbe9f9f4037f5d9f4e81a9b2428">&#9670;&#160;</a></span>Color() <span class="overload">[1/4]</span></h2>
 
@@ -173,6 +192,8 @@ Public Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
+<p>Constructs a color with explicit RGBA values. </p>
+
 </div>
 </div>
 <a id="a4e07658279443524cc517e52beaf99b9" name="a4e07658279443524cc517e52beaf99b9"></a>
@@ -198,6 +219,17 @@ Public Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Constructs from JSON object. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">obj</td><td>JSON object with r, g, b, and optional a fields </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>Supports hook system for dynamic color binding (see <a class="el" href="Hooks_8hpp.html#a7f31f364a4ef0cbffcdb592482c79562" title="Checks if a JSON value is a dynamic hook reference.">is_hook()</a>) </dd>
+<dd>
+Missing or invalid values default to (0, 0, 0, 255) </dd></dl>
 
 </div>
 </div>
@@ -240,6 +272,8 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Alpha channel (0=transparent, 255=opaque) </p>
+
 </div>
 </div>
 <a id="a9f00605f7024dcb79342e97fae52c1bd" name="a9f00605f7024dcb79342e97fae52c1bd"></a>
@@ -253,6 +287,8 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Blue channel (0-255) </p>
 
 </div>
 </div>
@@ -268,6 +304,8 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Green channel (0-255) </p>
+
 </div>
 </div>
 <a id="ab9a9c7134511f9b116a6fcc81a303ba6" name="ab9a9c7134511f9b116a6fcc81a303ba6"></a>
@@ -281,6 +319,8 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Red channel (0-255) </p>
 
 </div>
 </div>

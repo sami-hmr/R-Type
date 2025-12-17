@@ -81,28 +81,28 @@ $(document).ready(function() { init_codefold(0); });
   <div class="headertitle"><div class="title">HookMacros.hpp</div></div>
 </div><!--header-->
 <div class="contents">
-<a href="HookMacros_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#pragma once</span></div>
-<div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span> </div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
-<div class="foldopen" id="foldopen00004" data-start="" data-end="">
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno"><a class="line" href="HookMacros_8hpp.html#a8bbce773ce13c61b2cb949332d6d2ec4">    4</a></span><span class="preprocessor">#define HOOK_CUSTOM(key, var) \</span></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">  {#key, \</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">   [](Component&amp; self) -&gt; std::any \</span></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">   { return std::reference_wrapper(self.var); }}</span></div>
+<a href="HookMacros_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span> </div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span><span class="preprocessor">#pragma once</span></div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span> </div>
+<div class="foldopen" id="foldopen00153" data-start="" data-end="">
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno"><a class="line" href="HookMacros_8hpp.html#a8bbce773ce13c61b2cb949332d6d2ec4">  153</a></span><span class="preprocessor">#define HOOK_CUSTOM(key, var) \</span></div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span><span class="preprocessor">  {#key, \</span></div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span><span class="preprocessor">   [](Component&amp; self) -&gt; std::any \</span></div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span><span class="preprocessor">   { return std::reference_wrapper(self.var); }}</span></div>
 </div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno"><a class="line" href="HookMacros_8hpp.html#a64db554aa76425e63b60d0fd6ccb1e26">    9</a></span><span class="preprocessor">#define HOOK(var) HOOK_CUSTOM(var, var)</span></div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
-<div class="foldopen" id="foldopen00011" data-start="" data-end="">
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno"><a class="line" href="HookMacros_8hpp.html#a8f0cb5d5dff2b9cbbd63e1e50cc30e6a">   11</a></span><span class="preprocessor">#define HOOKABLE(type, ...) \</span></div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">  using Component = type; \</span></div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">  static const auto&amp; hook_map() \</span></div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">  { \</span></div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">    static const std::unordered_map&lt;std::string, \</span></div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">                                    std::function&lt;std::any(type&amp;)&gt;&gt; \</span></div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">        map {__VA_ARGS__}; \</span></div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">    return map; \</span></div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="preprocessor">  }</span></div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span> </div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno"><a class="line" href="HookMacros_8hpp.html#a64db554aa76425e63b60d0fd6ccb1e26">  179</a></span><span class="preprocessor">#define HOOK(var) HOOK_CUSTOM(var, var)</span></div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span> </div>
+<div class="foldopen" id="foldopen00233" data-start="" data-end="">
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno"><a class="line" href="HookMacros_8hpp.html#a8f0cb5d5dff2b9cbbd63e1e50cc30e6a">  233</a></span><span class="preprocessor">#define HOOKABLE(type, ...) \</span></div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span><span class="preprocessor">  using Component = type; \</span></div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span><span class="preprocessor">  static const auto&amp; hook_map() \</span></div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span><span class="preprocessor">  { \</span></div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span><span class="preprocessor">    static const std::unordered_map&lt;std::string, \</span></div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span><span class="preprocessor">                                    std::function&lt;std::any(type&amp;)&gt;&gt; \</span></div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span><span class="preprocessor">        map {__VA_ARGS__}; \</span></div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span><span class="preprocessor">    return map; \</span></div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span><span class="preprocessor">  }</span></div>
 </div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

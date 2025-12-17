@@ -7,7 +7,7 @@ digraph "include/ecs/SparseArray.hpp"
   node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
   Node1 [id="Node000001",label="include/ecs/SparseArray.hpp",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip=" "];
   Node1 -> Node2 [id="edge1_Node000001_Node000002",dir="back",color="steelblue1",style="solid",tooltip=" "];
-  Node2 [id="Node000002",label="include/ecs/Registry.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Registry_8hpp.html",tooltip=" "];
+  Node2 [id="Node000002",label="include/ecs/Registry.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Registry_8hpp.html",tooltip="Central hub of the ECS architecture managing entities, components, systems, and events."];
   Node2 -> Node3 [id="edge2_Node000002_Node000003",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node3 [id="Node000003",label="include/ClientConnection.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$ClientConnection_8hpp.html",tooltip=" "];
   Node3 -> Node4 [id="edge3_Node000003_Node000004",dir="back",color="steelblue1",style="solid",tooltip=" "];
@@ -31,14 +31,14 @@ digraph "include/ecs/SparseArray.hpp"
   Node20 [id="Node000020",label="plugins/server_network\l/src/Network.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$server__network_2src_2Network_8cpp.html",tooltip=" "];
   Node13 -> Node20 [id="edge14_Node000013_Node000020",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node2 -> Node22 [id="edge15_Node000002_Node000022",dir="back",color="steelblue1",style="solid",tooltip=" "];
-  Node22 [id="Node000022",label="include/ecs/EmitEvent.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$EmitEvent_8hpp.html",tooltip=" "];
+  Node22 [id="Node000022",label="include/ecs/EmitEvent.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$EmitEvent_8hpp.html",tooltip="Event emission helper functions with automatic network synchronization."];
   Node22 -> Node23 [id="edge16_Node000022_Node000023",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node23 [id="Node000023",label="plugins/controller\l/src/Controller.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Controller_8cpp.html",tooltip=" "];
   Node22 -> Node20 [id="edge17_Node000022_Node000020",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node22 -> Node24 [id="edge18_Node000022_Node000024",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node24 [id="Node000024",label="plugins/weapon/src\l/Weapon.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Weapon_8cpp.html",tooltip=" "];
   Node2 -> Node25 [id="edge19_Node000002_Node000025",dir="back",color="steelblue1",style="solid",tooltip=" "];
-  Node25 [id="Node000025",label="include/ecs/InitComponent.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$InitComponent_8hpp.html",tooltip=" "];
+  Node25 [id="Node000025",label="include/ecs/InitComponent.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$InitComponent_8hpp.html",tooltip="Component initialization helpers with automatic network synchronization."];
   Node25 -> Node26 [id="edge20_Node000025_Node000026",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node26 [id="Node000026",label="plugins/actions/src\l/Actions.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Actions_8cpp.html",tooltip=" "];
   Node25 -> Node27 [id="edge21_Node000025_Node000027",dir="back",color="steelblue1",style="solid",tooltip=" "];
@@ -225,7 +225,7 @@ digraph "include/ecs/SparseArray.hpp"
   Node71 [id="Node000071",label="src/main.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$main_8cpp.html",tooltip=" "];
   Node66 -> Node37 [id="edge159_Node000066_Node000037",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node2 -> Node72 [id="edge160_Node000002_Node000072",dir="back",color="steelblue1",style="solid",tooltip=" "];
-  Node72 [id="Node000072",label="include/plugin/Hooks.hpp",height=0.2,width=0.4,color="red", fillcolor="#FFF0F0", style="filled",URL="$Hooks_8hpp.html",tooltip=" "];
+  Node72 [id="Node000072",label="include/plugin/Hooks.hpp",height=0.2,width=0.4,color="red", fillcolor="#FFF0F0", style="filled",URL="$Hooks_8hpp.html",tooltip="Hook resolution and JSON value extraction functions."];
   Node72 -> Node3 [id="edge161_Node000072_Node000003",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node72 -> Node73 [id="edge162_Node000072_Node000073",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node73 [id="Node000073",label="include/NetworkShared.hpp",height=0.2,width=0.4,color="red", fillcolor="#FFF0F0", style="filled",URL="$NetworkShared_8hpp.html",tooltip=" "];
@@ -251,7 +251,7 @@ digraph "include/ecs/SparseArray.hpp"
   Node74 [id="Node000074",label="src/Registry.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Registry_8cpp.html",tooltip=" "];
   Node72 -> Node13 [id="edge182_Node000072_Node000013",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node72 -> Node75 [id="edge183_Node000072_Node000075",dir="back",color="steelblue1",style="solid",tooltip=" "];
-  Node75 [id="Node000075",label="include/libs/Color.hpp",height=0.2,width=0.4,color="red", fillcolor="#FFF0F0", style="filled",URL="$Color_8hpp.html",tooltip=" "];
+  Node75 [id="Node000075",label="include/libs/Color.hpp",height=0.2,width=0.4,color="red", fillcolor="#FFF0F0", style="filled",URL="$Color_8hpp.html",tooltip="RGBA color representation with serialization support."];
   Node75 -> Node35 [id="edge184_Node000075_Node000035",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node72 -> Node78 [id="edge185_Node000072_Node000078",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node78 [id="Node000078",label="include/plugin/components\l/ActionTrigger.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$ActionTrigger_8hpp.html",tooltip=" "];

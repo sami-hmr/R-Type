@@ -115,10 +115,17 @@ class ZipperIndex&lt; Comps &gt;</div><p>Range adapter that zips multiple Comps 
 <p>This class extends the functionality of <a class="el" href="classZipper.html" title="Range adapter that simultaneously iterates over multiple Comps.">Zipper</a> by including the current iteration index in each yielded tuple. It's useful when you need to know the position during iteration, for example when processing entities by their index or performing indexed operations.</p>
 <dl class="section note"><dt>Note</dt><dd>The index is the logical iteration position, not necessarily the container index, since positions with empty optionals are skipped. </dd>
 <dd>
-Like <a class="el" href="classZipper.html" title="Range adapter that simultaneously iterates over multiple Comps.">Zipper</a>, it respects the size of the smallest container. </dd></dl>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2runner_2work_2R-Type_2R-Type_2include_2ecs_2zipper_2ZipperIndex_8hpp-example.html#_a1">/home/runner/work/R-Type/R-Type/include/ecs/zipper/ZipperIndex.hpp</a>.</dd>
-</dl>
-</div><h2 class="groupheader">Member Typedef Documentation</h2>
+Like <a class="el" href="classZipper.html" title="Range adapter that simultaneously iterates over multiple Comps.">Zipper</a>, it respects the size of the smallest container.</dd></dl>
+<div class="fragment"><div class="line"><a class="code hl_class" href="classSparseArray.html">SparseArray&lt;Position&gt;</a> positions;</div>
+<div class="line"><a class="code hl_class" href="classSparseArray.html">SparseArray&lt;Velocity&gt;</a> velocities;</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordflow">for</span> (<span class="keyword">auto</span> [idx, pos, vel] : <a class="code hl_class" href="classZipperIndex.html">ZipperIndex</a>(positions, velocities)) {</div>
+<div class="line">    std::cout &lt;&lt; <span class="stringliteral">&quot;Entity &quot;</span> &lt;&lt; idx &lt;&lt; <span class="stringliteral">&quot; at (&quot;</span> &lt;&lt; pos.x &lt;&lt; <span class="stringliteral">&quot;,&quot;</span> &lt;&lt; pos.y &lt;&lt; <span class="stringliteral">&quot;)&quot;</span></div>
+<div class="line">&lt;&lt; std::endl; pos.x += vel.dx; pos.y += vel.dy;</div>
+<div class="line">}</div>
+<div class="ttc" id="aclassSparseArray_html"><div class="ttname"><a href="classSparseArray.html">SparseArray</a></div><div class="ttdoc">A sparse array implementation that stores components in an optional vector.</div><div class="ttdef"><b>Definition</b> SparseArray.hpp:16</div></div>
+<div class="ttc" id="aclassZipperIndex_html"><div class="ttname"><a href="classZipperIndex.html">ZipperIndex</a></div><div class="ttdoc">Range adapter that zips multiple Comps and includes indices in the iteration.</div><div class="ttdef"><b>Definition</b> ZipperIndex.hpp:162</div></div>
+</div><!-- fragment --> </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="ab19ce959ed663da5fc2d93117d9326d2" name="ab19ce959ed663da5fc2d93117d9326d2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ab19ce959ed663da5fc2d93117d9326d2">&#9670;&#160;</a></span>Iterator</h2>
 
@@ -134,8 +141,6 @@ template&lt;class... Comps&gt; </div>
 </div><div class="memdoc">
 
 <p>Iterator type for this indexed zipper. </p>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2runner_2work_2R-Type_2R-Type_2include_2ecs_2zipper_2ZipperIndex_8hpp-example.html#a14">/home/runner/work/R-Type/R-Type/include/ecs/zipper/ZipperIndex.hpp</a>.</dd>
-</dl>
 
 </div>
 </div>
@@ -154,8 +159,6 @@ template&lt;class... Comps&gt; </div>
 </div><div class="memdoc">
 
 <p>Tuple type containing iterators for all Comps. </p>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2runner_2work_2R-Type_2R-Type_2include_2ecs_2zipper_2ZipperIndex_8hpp-example.html#a15">/home/runner/work/R-Type/R-Type/include/ecs/zipper/ZipperIndex.hpp</a>.</dd>
-</dl>
 
 </div>
 </div>
@@ -226,8 +229,6 @@ template&lt;class... Comps&gt; </div>
 <p>Returns an iterator to the beginning of the indexed zipped range. </p>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="classZipperIndexIterator.html" title="Iterator that zips multiple Comps and includes the current index in the result.">ZipperIndexIterator</a> positioned at the first valid element.</dd></dl>
 <p>The returned iterator will yield tuples of (index, value1, value2, ...) where index starts at 0 and increments for each valid position. </p>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2runner_2work_2R-Type_2R-Type_2include_2ecs_2zipper_2ZipperIndex_8hpp-example.html#a17">/home/runner/work/R-Type/R-Type/include/ecs/zipper/ZipperIndex.hpp</a>.</dd>
-</dl>
 
 </div>
 </div>
@@ -258,8 +259,6 @@ template&lt;class... Comps&gt; </div>
 
 <p>Returns an iterator to the end of the indexed zipped range. </p>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="classZipperIndexIterator.html" title="Iterator that zips multiple Comps and includes the current index in the result.">ZipperIndexIterator</a> positioned one past the last valid element. </dd></dl>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2runner_2work_2R-Type_2R-Type_2include_2ecs_2zipper_2ZipperIndex_8hpp-example.html#a19">/home/runner/work/R-Type/R-Type/include/ecs/zipper/ZipperIndex.hpp</a>.</dd>
-</dl>
 
 </div>
 </div>

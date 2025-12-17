@@ -9,5 +9,5 @@ digraph "Background"
   Node2 -> Node1 [id="edge1_Node000001_Node000002",dir="back",color="darkorchid3",style="dashed",tooltip=" ",label=" parallax",fontcolor="grey" ];
   Node2 [id="Node000002",label="Parallax",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",URL="$structParallax.html",tooltip=" "];
   Node3 -> Node2 [id="edge2_Node000002_Node000003",dir="back",color="darkorchid3",style="dashed",tooltip=" ",label=" pos\nspeed",fontcolor="grey" ];
-  Node3 [id="Node000003",label="Vector2D",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",URL="$classVector2D.html",tooltip=" "];
+  Node3 [id="Node000003",label="Vector2D",height=0.2,width=0.4,color="gray40", fillcolor="white", style="filled",URL="$classVector2D.html",tooltip="Two-dimensional vector with mathematical operations."];
 }

@@ -5,7 +5,7 @@ digraph "include/ecs/Registry.hpp"
   bgcolor="transparent";
   edge [fontname=Helvetica,fontsize=10,labelfontname=Helvetica,labelfontsize=10];
   node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
-  Node1 [id="Node000001",label="include/ecs/Registry.hpp",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip=" "];
+  Node1 [id="Node000001",label="include/ecs/Registry.hpp",height=0.2,width=0.4,color="gray40", fillcolor="grey60", style="filled", fontcolor="black",tooltip="Central hub of the ECS architecture managing entities, components, systems, and events."];
   Node1 -> Node2 [id="edge1_Node000001_Node000002",color="steelblue1",style="solid",tooltip=" "];
   Node2 [id="Node000002",label="algorithm",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
   Node1 -> Node3 [id="edge2_Node000001_Node000003",color="steelblue1",style="solid",tooltip=" "];
@@ -53,10 +53,10 @@ digraph "include/ecs/Registry.hpp"
   Node21 -> Node13 [id="edge25_Node000021_Node000013",color="steelblue1",style="solid",tooltip=" "];
   Node21 -> Node15 [id="edge26_Node000021_Node000015",color="steelblue1",style="solid",tooltip=" "];
   Node1 -> Node22 [id="edge27_Node000001_Node000022",color="steelblue1",style="solid",tooltip=" "];
-  Node22 [id="Node000022",label="ecs/ComponentState.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$ComponentState_8hpp.html",tooltip=" "];
+  Node22 [id="Node000022",label="ecs/ComponentState.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$ComponentState_8hpp.html",tooltip="Component state serialization structure."];
   Node22 -> Node16 [id="edge28_Node000022_Node000016",color="steelblue1",style="solid",tooltip=" "];
   Node22 -> Node23 [id="edge29_Node000022_Node000023",color="steelblue1",style="solid",tooltip=" "];
-  Node23 [id="Node000023",label="plugin/Byte.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Byte_8hpp.html",tooltip=" "];
+  Node23 [id="Node000023",label="plugin/Byte.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Byte_8hpp.html",tooltip="Binary serialization system for network communication and persistence."];
   Node23 -> Node2 [id="edge30_Node000023_Node000002",color="steelblue1",style="solid",tooltip=" "];
   Node23 -> Node24 [id="edge31_Node000023_Node000024",color="steelblue1",style="solid",tooltip=" "];
   Node24 [id="Node000024",label="bit",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
@@ -76,7 +76,7 @@ digraph "include/ecs/Registry.hpp"
   Node27 -> Node15 [id="edge41_Node000027_Node000015",color="steelblue1",style="solid",tooltip=" "];
   Node23 -> Node19 [id="edge42_Node000023_Node000019",color="steelblue1",style="solid",tooltip=" "];
   Node1 -> Node29 [id="edge43_Node000001_Node000029",color="steelblue1",style="solid",tooltip=" "];
-  Node29 [id="Node000029",label="ecs/Scenes.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Scenes_8hpp.html",tooltip=" "];
+  Node29 [id="Node000029",label="ecs/Scenes.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Scenes_8hpp.html",tooltip="Scene management system for organizing entities into layers."];
   Node29 -> Node26 [id="edge44_Node000029_Node000026",color="steelblue1",style="solid",tooltip=" "];
   Node29 -> Node11 [id="edge45_Node000029_Node000011",color="steelblue1",style="solid",tooltip=" "];
   Node29 -> Node30 [id="edge46_Node000029_Node000030",color="steelblue1",style="solid",tooltip=" "];
@@ -84,16 +84,16 @@ digraph "include/ecs/Registry.hpp"
   Node29 -> Node21 [id="edge47_Node000029_Node000021",color="steelblue1",style="solid",tooltip=" "];
   Node29 -> Node23 [id="edge48_Node000029_Node000023",color="steelblue1",style="solid",tooltip=" "];
   Node29 -> Node31 [id="edge49_Node000029_Node000031",color="steelblue1",style="solid",tooltip=" "];
-  Node31 [id="Node000031",label="plugin/HookMacros.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$HookMacros_8hpp.html",tooltip=" "];
+  Node31 [id="Node000031",label="plugin/HookMacros.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$HookMacros_8hpp.html",tooltip="Hook registration macros for component introspection."];
   Node29 -> Node32 [id="edge50_Node000029_Node000032",color="steelblue1",style="solid",tooltip=" "];
   Node32 [id="Node000032",label="plugin/events/EventMacros.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$EventMacros_8hpp.html",tooltip=" "];
   Node1 -> Node33 [id="edge51_Node000001_Node000033",color="steelblue1",style="solid",tooltip=" "];
-  Node33 [id="Node000033",label="ecs/Systems.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Systems_8hpp.html",tooltip=" "];
+  Node33 [id="Node000033",label="ecs/Systems.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Systems_8hpp.html",tooltip="System wrapper for ECS functionality."];
   Node33 -> Node5 [id="edge52_Node000033_Node000005",color="steelblue1",style="solid",tooltip=" "];
   Node33 -> Node6 [id="edge53_Node000033_Node000006",color="steelblue1",style="solid",tooltip=" "];
   Node1 -> Node23 [id="edge54_Node000001_Node000023",color="steelblue1",style="solid",tooltip=" "];
   Node1 -> Node34 [id="edge55_Node000001_Node000034",color="steelblue1",style="solid",tooltip=" "];
-  Node34 [id="Node000034",label="plugin/HookConcept.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$HookConcept_8hpp.html",tooltip=" "];
+  Node34 [id="Node000034",label="plugin/HookConcept.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$HookConcept_8hpp.html",tooltip="Concept definition for hookable component types."];
   Node34 -> Node3 [id="edge56_Node000034_Node000003",color="steelblue1",style="solid",tooltip=" "];
   Node34 -> Node25 [id="edge57_Node000034_Node000025",color="steelblue1",style="solid",tooltip=" "];
   Node34 -> Node5 [id="edge58_Node000034_Node000005",color="steelblue1",style="solid",tooltip=" "];
@@ -105,6 +105,6 @@ digraph "include/ecs/Registry.hpp"
   Node35 -> Node4 [id="edge63_Node000035_Node000004",color="steelblue1",style="solid",tooltip=" "];
   Node35 -> Node13 [id="edge64_Node000035_Node000013",color="steelblue1",style="solid",tooltip=" "];
   Node35 -> Node19 [id="edge65_Node000035_Node000019",color="steelblue1",style="solid",tooltip=" "];
-  Node35 -> Node23 [id="edge66_Node000035_Node000023",color="steelblue1",style="solid",tooltip=" "];
-  Node35 -> Node21 [id="edge67_Node000035_Node000021",color="steelblue1",style="solid",tooltip=" "];
+  Node35 -> Node21 [id="edge66_Node000035_Node000021",color="steelblue1",style="solid",tooltip=" "];
+  Node35 -> Node23 [id="edge67_Node000035_Node000023",color="steelblue1",style="solid",tooltip=" "];
 }

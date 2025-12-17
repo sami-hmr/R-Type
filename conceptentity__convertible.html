@@ -73,17 +73,31 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>Checks if a type has a change_entity method for mapping entity IDs.  
+<a href="conceptentity__convertible.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="EventConcept_8hpp_source.html">EventConcept.hpp</a>&gt;</code></p>
 <h2 class="groupheader">Concept definition</h2>
 <div class="fragment"><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><span class="keyword">concept </span><a class="code hl_concept" href="conceptentity__convertible.html">entity_convertible</a> = </div>
-<div class="line">    <span class="keyword">requires</span>(<a class="code hl_enumvalue" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> <span class="keyword">const</span>&amp; <a class="code hl_concept" href="conceptevent.html">event</a>, std::unordered_map&lt;std::size_t, std::size_t&gt; <span class="keyword">const</span>&amp; map) {</div>
-<div class="line">      { <span class="keyword">event</span>.change_entity(map) } -&gt; std::same_as&lt;T&gt;;</div>
-<div class="line">    }</div>
+<div class="line"><span class="keyword">concept </span><a class="code hl_concept" href="conceptentity__convertible.html">entity_convertible</a> =  <span class="keyword">requires</span>(</div>
+<div class="line">    <a class="code hl_enumvalue" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> <span class="keyword">const</span>&amp; <a class="code hl_concept" href="conceptevent.html">event</a>, std::unordered_map&lt;std::size_t, std::size_t&gt; <span class="keyword">const</span>&amp; map) {</div>
+<div class="line">  { <span class="keyword">event</span>.change_entity(map) } -&gt; std::same_as&lt;T&gt;;</div>
+<div class="line">}</div>
 <div class="ttc" id="aIoEvents_8hpp_html_a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce"><div class="ttname"><a href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a></div><div class="ttdeci">@ T</div><div class="ttdef"><b>Definition</b> IoEvents.hpp:53</div></div>
-<div class="ttc" id="aconceptentity__convertible_html"><div class="ttname"><a href="conceptentity__convertible.html">entity_convertible</a></div><div class="ttdef"><b>Definition</b> EventConcept.hpp:37</div></div>
-<div class="ttc" id="aconceptevent_html"><div class="ttname"><a href="conceptevent.html">event</a></div><div class="ttdef"><b>Definition</b> Registry.hpp:34</div></div>
-</div><!-- fragment --></div><!-- contents -->
+<div class="ttc" id="aconceptentity__convertible_html"><div class="ttname"><a href="conceptentity__convertible.html">entity_convertible</a></div><div class="ttdoc">Checks if a type has a change_entity method for mapping entity IDs.</div><div class="ttdef"><b>Definition</b> EventConcept.hpp:38</div></div>
+<div class="ttc" id="aconceptevent_html"><div class="ttname"><a href="conceptevent.html">event</a></div><div class="ttdoc">Requires a type to be a valid event with serialization and JSON construction.</div><div class="ttdef"><b>Definition</b> Registry.hpp:307</div></div>
+</div><!-- fragment --><a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Checks if a type has a change_entity method for mapping entity IDs. </p>
+<p>Requires a change_entity method that maps entities using a <a class="el" href="classTwoWayMap.html">TwoWayMap</a>. The method must be const, return the same type, and accept a TwoWayMap&lt;size_t, size_t&gt; (compatible with <a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110" title="Type alias for an entity identifier.">Registry::Entity</a>). Use this for events containing <a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110" title="Type alias for an entity identifier.">Registry::Entity</a> fields.</p>
+<div class="fragment"><div class="line"><span class="keyword">struct </span>MyEvent {</div>
+<div class="line">  <a class="code hl_typedef" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a> actor;</div>
+<div class="line">  <span class="keyword">auto</span> change_entity(<a class="code hl_class" href="classTwoWayMap.html">TwoWayMap&lt;Registry::Entity, Registry::Entity&gt;</a> <span class="keyword">const</span>&amp;)</div>
+<div class="line"><span class="keyword">const</span> -&gt; MyEvent;</div>
+<div class="line">};</div>
+<div class="line"><span class="keyword">static_assert</span>(EventHasChangeEntity&lt;MyEvent&gt;);</div>
+<div class="ttc" id="aclassRegistry_html_a0f7878e7be2d225f4f7ca38b85911110"><div class="ttname"><a href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a></div><div class="ttdeci">std::size_t Entity</div><div class="ttdoc">Type alias for an entity identifier.</div><div class="ttdef"><b>Definition</b> Registry.hpp:356</div></div>
+<div class="ttc" id="aclassTwoWayMap_html"><div class="ttname"><a href="classTwoWayMap.html">TwoWayMap</a></div><div class="ttdef"><b>Definition</b> TwoWayMap.hpp:8</div></div>
+</div><!-- fragment --> </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.8

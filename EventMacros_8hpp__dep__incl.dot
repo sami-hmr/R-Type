@@ -28,7 +28,7 @@ digraph "include/plugin/events/EventMacros.hpp"
   Node1 -> Node12 [id="edge11_Node000001_Node000012",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node12 [id="Node000012",label="include/NetworkShared.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$NetworkShared_8hpp.html",tooltip=" "];
   Node12 -> Node13 [id="edge12_Node000012_Node000013",dir="back",color="steelblue1",style="solid",tooltip=" "];
-  Node13 [id="Node000013",label="include/ecs/EmitEvent.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$EmitEvent_8hpp.html",tooltip=" "];
+  Node13 [id="Node000013",label="include/ecs/EmitEvent.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$EmitEvent_8hpp.html",tooltip="Event emission helper functions with automatic network synchronization."];
   Node13 -> Node14 [id="edge13_Node000013_Node000014",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node14 [id="Node000014",label="plugins/controller\l/src/Controller.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Controller_8cpp.html",tooltip=" "];
   Node13 -> Node15 [id="edge14_Node000013_Node000015",dir="back",color="steelblue1",style="solid",tooltip=" "];
@@ -36,7 +36,7 @@ digraph "include/plugin/events/EventMacros.hpp"
   Node13 -> Node16 [id="edge15_Node000013_Node000016",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node16 [id="Node000016",label="plugins/weapon/src\l/Weapon.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Weapon_8cpp.html",tooltip=" "];
   Node12 -> Node17 [id="edge16_Node000012_Node000017",dir="back",color="steelblue1",style="solid",tooltip=" "];
-  Node17 [id="Node000017",label="include/ecs/InitComponent.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$InitComponent_8hpp.html",tooltip=" "];
+  Node17 [id="Node000017",label="include/ecs/InitComponent.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$InitComponent_8hpp.html",tooltip="Component initialization helpers with automatic network synchronization."];
   Node17 -> Node18 [id="edge17_Node000017_Node000018",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node18 [id="Node000018",label="plugins/actions/src\l/Actions.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Actions_8cpp.html",tooltip=" "];
   Node17 -> Node19 [id="edge18_Node000017_Node000019",dir="back",color="steelblue1",style="solid",tooltip=" "];
@@ -198,9 +198,9 @@ digraph "include/plugin/events/EventMacros.hpp"
   Node70 -> Node63 [id="edge127_Node000070_Node000063",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node70 -> Node15 [id="edge128_Node000070_Node000015",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node1 -> Node71 [id="edge129_Node000001_Node000071",dir="back",color="steelblue1",style="solid",tooltip=" "];
-  Node71 [id="Node000071",label="include/ecs/Scenes.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Scenes_8hpp.html",tooltip=" "];
+  Node71 [id="Node000071",label="include/ecs/Scenes.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Scenes_8hpp.html",tooltip="Scene management system for organizing entities into layers."];
   Node71 -> Node72 [id="edge130_Node000071_Node000072",dir="back",color="steelblue1",style="solid",tooltip=" "];
-  Node72 [id="Node000072",label="include/ecs/Registry.hpp",height=0.2,width=0.4,color="red", fillcolor="#FFF0F0", style="filled",URL="$Registry_8hpp.html",tooltip=" "];
+  Node72 [id="Node000072",label="include/ecs/Registry.hpp",height=0.2,width=0.4,color="red", fillcolor="#FFF0F0", style="filled",URL="$Registry_8hpp.html",tooltip="Central hub of the ECS architecture managing entities, components, systems, and events."];
   Node72 -> Node2 [id="edge131_Node000072_Node000002",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node72 -> Node70 [id="edge132_Node000072_Node000070",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node72 -> Node13 [id="edge133_Node000072_Node000013",dir="back",color="steelblue1",style="solid",tooltip=" "];

@@ -76,16 +76,25 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>Captures the state of a component type across all entities.  
+ <a href="structComponentState.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="ComponentState_8hpp_source.html">ComponentState.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a994fa4db9043fd49c780e12f098af193" id="r_a994fa4db9043fd49c780e12f098af193"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structComponentState.html#a994fa4db9043fd49c780e12f098af193">id</a></td></tr>
+<tr class="memdesc:a994fa4db9043fd49c780e12f098af193"><td class="mdescLeft">&#160;</td><td class="mdescRight">Component type identifier (format: "plugin:component")  <br /></td></tr>
 <tr class="separator:a994fa4db9043fd49c780e12f098af193"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8ef40682f2afd2813810875c4f2fbb19" id="r_a8ef40682f2afd2813810875c4f2fbb19"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::pair&lt; size_t, <a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structComponentState.html#a8ef40682f2afd2813810875c4f2fbb19">comps</a></td></tr>
+<tr class="memdesc:a8ef40682f2afd2813810875c4f2fbb19"><td class="mdescLeft">&#160;</td><td class="mdescRight">Entity-component pairs (entity ID, serialized component data)  <br /></td></tr>
 <tr class="separator:a8ef40682f2afd2813810875c4f2fbb19"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Member Data Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Captures the state of a component type across all entities. </p>
+<p>This structure is used for serialization and state snapshots of the ECS. It stores all instances of a component type along with their entity associations. Primarily used for network synchronization and save/load functionality.</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classRegistry.html#aa1f44e83eaea9570fb48f4f20eeeb103" title="Get the complete ECS state as serialized components.">Registry::get_state()</a> </dd></dl>
+</div><h2 class="groupheader">Member Data Documentation</h2>
 <a id="a8ef40682f2afd2813810875c4f2fbb19" name="a8ef40682f2afd2813810875c4f2fbb19"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8ef40682f2afd2813810875c4f2fbb19">&#9670;&#160;</a></span>comps</h2>
 
@@ -97,6 +106,8 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Entity-component pairs (entity ID, serialized component data) </p>
 
 </div>
 </div>
@@ -111,6 +122,8 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Component type identifier (format: "plugin:component") </p>
 
 </div>
 </div>

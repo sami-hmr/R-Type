@@ -30,7 +30,7 @@ digraph "include/NetworkCommun.hpp"
   Node9 -> Node12 [id="edge12_Node000009_Node000012",color="steelblue1",style="solid",tooltip=" "];
   Node12 [id="Node000012",label="ParserUtils.hpp",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
   Node9 -> Node13 [id="edge13_Node000009_Node000013",color="steelblue1",style="solid",tooltip=" "];
-  Node13 [id="Node000013",label="plugin/Byte.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Byte_8hpp.html",tooltip=" "];
+  Node13 [id="Node000013",label="plugin/Byte.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Byte_8hpp.html",tooltip="Binary serialization system for network communication and persistence."];
   Node13 -> Node14 [id="edge14_Node000013_Node000014",color="steelblue1",style="solid",tooltip=" "];
   Node14 [id="Node000014",label="algorithm",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
   Node13 -> Node3 [id="edge15_Node000013_Node000003",color="steelblue1",style="solid",tooltip=" "];

@@ -78,6 +78,9 @@ $(function() {
   <div class="headertitle"><div class="title">EmitEvent.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Event emission helper functions with automatic network synchronization.  
+<a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;Json/JsonParser.hpp&quot;</code><br />
 <code>#include &quot;<a class="el" href="NetworkShared_8hpp_source.html">NetworkShared.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Registry_8hpp_source.html">ecs/Registry.hpp</a>&quot;</code><br />
@@ -98,12 +101,17 @@ This graph shows which files directly or indirectly include this file:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:ada0a7f9695fc30439b882b0cd904dfc4" id="r_ada0a7f9695fc30439b882b0cd904dfc4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="EmitEvent_8hpp.html#ada0a7f9695fc30439b882b0cd904dfc4">emit_event</a> (<a class="el" href="classRegistry.html">Registry</a> &amp;r, std::string const &amp;id, JsonObject const &amp;params)</td></tr>
+<tr class="memdesc:ada0a7f9695fc30439b882b0cd904dfc4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Emits an event constructed from JSON parameters.  <br /></td></tr>
 <tr class="separator:ada0a7f9695fc30439b882b0cd904dfc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a42f1e96d3dffd005698f2427cf6de4fa" id="r_a42f1e96d3dffd005698f2427cf6de4fa"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="conceptevent.html">event</a> Event&gt; </td></tr>
 <tr class="memitem:a42f1e96d3dffd005698f2427cf6de4fa"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="EmitEvent_8hpp.html#a42f1e96d3dffd005698f2427cf6de4fa">emit_event</a> (<a class="el" href="classRegistry.html">Registry</a> &amp;r, std::string const &amp;id, Event <a class="el" href="conceptevent.html">event</a>)</td></tr>
+<tr class="memdesc:a42f1e96d3dffd005698f2427cf6de4fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Emits a pre-constructed event with network synchronization.  <br /></td></tr>
 <tr class="separator:a42f1e96d3dffd005698f2427cf6de4fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Event emission helper functions with automatic network synchronization. </p>
+<p>These functions wrap <a class="el" href="classRegistry.html#ac065676212c7e627cb54d88db52bba0e" title="Emit an event from JSON representation.">Registry::emit()</a> to automatically broadcast events to network clients via <a class="el" href="structEventBuilder.html">EventBuilder</a> events. This ensures events are synchronized across the network in multiplayer scenarios. </p>
+</div><h2 class="groupheader">Function Documentation</h2>
 <a id="a42f1e96d3dffd005698f2427cf6de4fa" name="a42f1e96d3dffd005698f2427cf6de4fa"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a42f1e96d3dffd005698f2427cf6de4fa">&#9670;&#160;</a></span>emit_event() <span class="overload">[1/2]</span></h2>
 
@@ -137,6 +145,34 @@ template&lt;<a class="el" href="conceptevent.html">event</a> Event&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Emits a pre-constructed event with network synchronization. </p>
+<p>This templated function emits an already-constructed event object, serializing it for network transmission via <a class="el" href="structEventBuilder.html">EventBuilder</a> before triggering local event handlers.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Event</td><td>Event type (must satisfy the event concept) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">r</td><td><a class="el" href="classRegistry.html" title="The Registry class is the core of the ECS (Entity-Component-System) architecture.">Registry</a> instance to emit the event through </td></tr>
+    <tr><td class="paramname">id</td><td>Event type identifier string </td></tr>
+    <tr><td class="paramname">event</td><td>The event object to emit</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>Event type must satisfy the event concept (bytable + entity_convertible<ul>
+<li>json_buildable) </li>
+</ul>
+</dd>
+<dd>
+Emits <a class="el" href="structEventBuilder.html">EventBuilder</a> first for network, then the actual event locally </dd>
+<dd>
+Logs error if event type is not registered</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classRegistry.html#ac065676212c7e627cb54d88db52bba0e" title="Emit an event from JSON representation.">Registry::emit()</a> </dd>
+<dd>
+<a class="el" href="structEventBuilder.html">EventBuilder</a> </dd></dl>
 
 </div>
 </div>
@@ -179,6 +215,27 @@ template&lt;<a class="el" href="conceptevent.html">event</a> Event&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Emits an event constructed from JSON parameters. </p>
+<p>This function constructs an event from JSON configuration and emits it both locally and to the network. It handles unknown events gracefully by logging an error instead of crashing.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">r</td><td><a class="el" href="classRegistry.html" title="The Registry class is the core of the ECS (Entity-Component-System) architecture.">Registry</a> instance to emit the event through </td></tr>
+    <tr><td class="paramname">id</td><td>Event type identifier (must be registered via <a class="el" href="classRegistry.html#a519b37b5089d58e931f941147cdb741d" title="Register an event handler with unique identifier.">Registry::on()</a>) </td></tr>
+    <tr><td class="paramname">params</td><td>JSON object containing event parameters</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>This function emits two events:<ol type="1">
+<li><a class="el" href="structEventBuilder.html">EventBuilder</a> (for network synchronization)</li>
+<li>The actual event (for local handlers) </li>
+</ol>
+</dd>
+<dd>
+If event ID is unknown, emits a <a class="el" href="structLogEvent.html">LogEvent</a> with ERROR level</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classRegistry.html#ac065676212c7e627cb54d88db52bba0e" title="Emit an event from JSON representation.">Registry::emit()</a> </dd>
+<dd>
+<a class="el" href="structEventBuilder.html">EventBuilder</a> </dd></dl>
 
 </div>
 </div>

@@ -79,6 +79,9 @@ $(function() {
   <div class="headertitle"><div class="title">Color.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>RGBA color representation with serialization support.  
+<a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;ByteParser/ByteParser.hpp&quot;</code><br />
 <code>#include &quot;Json/JsonParser.hpp&quot;</code><br />
 <code>#include &quot;<a class="el" href="Byte_8hpp_source.html">plugin/Byte.hpp</a>&quot;</code><br />
@@ -99,6 +102,7 @@ This graph shows which files directly or indirectly include this file:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structColor.html">Color</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">RGBA color with 8-bit channels.  <a href="structColor.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
@@ -106,11 +110,15 @@ Functions</h2></td></tr>
 <tr class="memitem:a8cbf40ce97eb2127b5bcd681c6fcdc4d" id="r_a8cbf40ce97eb2127b5bcd681c6fcdc4d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Color_8hpp.html#a8cbf40ce97eb2127b5bcd681c6fcdc4d">operator==</a> (const <a class="el" href="structColor.html">Color</a> &amp;lhs, const <a class="el" href="structColor.html">Color</a> &amp;rhs)</td></tr>
 <tr class="separator:a8cbf40ce97eb2127b5bcd681c6fcdc4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab146d5f17d68e6a0137486d93a4309f3" id="r_ab146d5f17d68e6a0137486d93a4309f3"><td class="memItemLeft" align="right" valign="top">Parser&lt; <a class="el" href="structColor.html">Color</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Color_8hpp.html#ab146d5f17d68e6a0137486d93a4309f3">parseColor</a> ()</td></tr>
+<tr class="memdesc:ab146d5f17d68e6a0137486d93a4309f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Parses a <a class="el" href="structColor.html" title="RGBA color with 8-bit channels.">Color</a> from binary data.  <br /></td></tr>
 <tr class="separator:ab146d5f17d68e6a0137486d93a4309f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aad3143c59bd4fddf0994b460401abe2e" id="r_aad3143c59bd4fddf0994b460401abe2e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Color_8hpp.html#aad3143c59bd4fddf0994b460401abe2e">colorToByte</a> (const <a class="el" href="structColor.html">Color</a> &amp;c)</td></tr>
+<tr class="memdesc:aad3143c59bd4fddf0994b460401abe2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Serializes a <a class="el" href="structColor.html" title="RGBA color with 8-bit channels.">Color</a> to binary data.  <br /></td></tr>
 <tr class="separator:aad3143c59bd4fddf0994b460401abe2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>RGBA color representation with serialization support. </p>
+</div><h2 class="groupheader">Function Documentation</h2>
 <a id="aad3143c59bd4fddf0994b460401abe2e" name="aad3143c59bd4fddf0994b460401abe2e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aad3143c59bd4fddf0994b460401abe2e">&#9670;&#160;</a></span>colorToByte()</h2>
 
@@ -134,6 +142,15 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Serializes a <a class="el" href="structColor.html" title="RGBA color with 8-bit channels.">Color</a> to binary data. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">c</td><td><a class="el" href="structColor.html" title="RGBA color with 8-bit channels.">Color</a> to serialize </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>ByteArray containing r, g, b, a bytes </dd></dl>
 
 </div>
 </div>
@@ -195,6 +212,9 @@ Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Parses a <a class="el" href="structColor.html" title="RGBA color with 8-bit channels.">Color</a> from binary data. </p>
+<dl class="section return"><dt>Returns</dt><dd>Parser that deserializes four bytes (r, g, b, a) </dd></dl>
 
 </div>
 </div>

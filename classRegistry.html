@@ -89,6 +89,7 @@ Public Types</h2></td></tr>
 <tr class="memdesc:a0f7878e7be2d225f4f7ca38b85911110"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type alias for an entity identifier.  <br /></td></tr>
 <tr class="separator:a0f7878e7be2d225f4f7ca38b85911110"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0cc4f5b2a67a25624fe28290aa049624" id="r_a0cc4f5b2a67a25624fe28290aa049624"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRegistry.html#a0cc4f5b2a67a25624fe28290aa049624">HandlerId</a> = std::size_t</td></tr>
+<tr class="memdesc:a0cc4f5b2a67a25624fe28290aa049624"><td class="mdescLeft">&#160;</td><td class="mdescRight">Type alias for event handler identifiers.  <br /></td></tr>
 <tr class="separator:a0cc4f5b2a67a25624fe28290aa049624"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
@@ -103,30 +104,33 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ab8ff3522b765d882b46262ad345db07b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afdce4af207b1240a6c10b83ad66cc4b4" id="r_afdce4af207b1240a6c10b83ad66cc4b4"><td class="memTemplParams" colspan="2">template&lt;class Component &gt; </td></tr>
 <tr class="memitem:afdce4af207b1240a6c10b83ad66cc4b4"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classSparseArray.html">SparseArray</a>&lt; Component &gt; const &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRegistry.html#afdce4af207b1240a6c10b83ad66cc4b4">get_components</a> () const</td></tr>
-<tr class="memdesc:afdce4af207b1240a6c10b83ad66cc4b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the components object (const version)  <br /></td></tr>
 <tr class="separator:afdce4af207b1240a6c10b83ad66cc4b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0ebe63c781a345ce210cfcfa5da3fcae" id="r_a0ebe63c781a345ce210cfcfa5da3fcae"><td class="memTemplParams" colspan="2">template&lt;class... Component&gt; </td></tr>
 <tr class="memitem:a0ebe63c781a345ce210cfcfa5da3fcae"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRegistry.html#a0ebe63c781a345ce210cfcfa5da3fcae">has_component</a> (const <a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Entity</a> &amp;e) const</td></tr>
+<tr class="memdesc:a0ebe63c781a345ce210cfcfa5da3fcae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if an entity has all specified components.  <br /></td></tr>
 <tr class="separator:a0ebe63c781a345ce210cfcfa5da3fcae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3afa81d52e66afd192bfb44f191c1510" id="r_a3afa81d52e66afd192bfb44f191c1510"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Entity</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRegistry.html#a3afa81d52e66afd192bfb44f191c1510">spawn_entity</a> ()</td></tr>
+<tr class="memdesc:a3afa81d52e66afd192bfb44f191c1510"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spawns a new entity.  <br /></td></tr>
 <tr class="separator:a3afa81d52e66afd192bfb44f191c1510"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9f8e76e4f67a4e33dd7273d065d6be7a" id="r_a9f8e76e4f67a4e33dd7273d065d6be7a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRegistry.html#a9f8e76e4f67a4e33dd7273d065d6be7a">kill_entity</a> (<a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Entity</a> const &amp;e)</td></tr>
-<tr class="memdesc:a9f8e76e4f67a4e33dd7273d065d6be7a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kills an entity, marking it for deletion and allowing its ID to be reused.  <br /></td></tr>
+<tr class="memdesc:a9f8e76e4f67a4e33dd7273d065d6be7a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Marks an entity for deletion.  <br /></td></tr>
 <tr class="separator:a9f8e76e4f67a4e33dd7273d065d6be7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac4b33f8cf1890733209cf94c0d15da4f" id="r_ac4b33f8cf1890733209cf94c0d15da4f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRegistry.html#ac4b33f8cf1890733209cf94c0d15da4f">is_entity_dying</a> (<a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Entity</a> const &amp;e) const</td></tr>
+<tr class="memdesc:ac4b33f8cf1890733209cf94c0d15da4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if an entity is marked for deletion.  <br /></td></tr>
 <tr class="separator:ac4b33f8cf1890733209cf94c0d15da4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2cf00a9ea3b232b551de02598cbc7756" id="r_a2cf00a9ea3b232b551de02598cbc7756"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRegistry.html#a2cf00a9ea3b232b551de02598cbc7756">process_entity_deletions</a> ()</td></tr>
+<tr class="memdesc:a2cf00a9ea3b232b551de02598cbc7756"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deletes all entities marked for killing.  <br /></td></tr>
 <tr class="separator:a2cf00a9ea3b232b551de02598cbc7756"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9990d86dfe7f90e314f8e93773b307d4" id="r_a9990d86dfe7f90e314f8e93773b307d4"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="conceptcomponent.html">component</a> Component&gt; </td></tr>
 <tr class="memitem:a9990d86dfe7f90e314f8e93773b307d4"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classSparseArray.html">SparseArray</a>&lt; Component &gt;::Ref&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRegistry.html#a9990d86dfe7f90e314f8e93773b307d4">add_component</a> (<a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Entity</a> const &amp;to, Component &amp;&amp;c)</td></tr>
-<tr class="memdesc:a9990d86dfe7f90e314f8e93773b307d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a component to an entity.  <br /></td></tr>
+<tr class="memdesc:a9990d86dfe7f90e314f8e93773b307d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a component to an entity by moving.  <br /></td></tr>
 <tr class="separator:a9990d86dfe7f90e314f8e93773b307d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aedaff3e905a52a1945250cd16ffbb5fb" id="r_aedaff3e905a52a1945250cd16ffbb5fb"><td class="memTemplParams" colspan="2">template&lt;typename Component , typename... Params&gt; </td></tr>
 <tr class="memitem:aedaff3e905a52a1945250cd16ffbb5fb"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classSparseArray.html">SparseArray</a>&lt; Component &gt;::Ref&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRegistry.html#aedaff3e905a52a1945250cd16ffbb5fb">emplace_component</a> (<a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Entity</a> const &amp;to, Params &amp;&amp;... p)</td></tr>
-<tr class="memdesc:aedaff3e905a52a1945250cd16ffbb5fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs and adds a component to an entity.  <br /></td></tr>
+<tr class="memdesc:aedaff3e905a52a1945250cd16ffbb5fb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a component in-place on an entity.  <br /></td></tr>
 <tr class="separator:aedaff3e905a52a1945250cd16ffbb5fb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a02e78bd26f93b8cf996f457389c422f3" id="r_a02e78bd26f93b8cf996f457389c422f3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRegistry.html#a02e78bd26f93b8cf996f457389c422f3">emplace_component</a> (<a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Entity</a> const &amp;to, std::string const &amp;string_id, <a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> const &amp;bytes)</td></tr>
-<tr class="memdesc:a02e78bd26f93b8cf996f457389c422f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs and adds a component to an entity using byte array (for bytable components).  <br /></td></tr>
+<tr class="memdesc:a02e78bd26f93b8cf996f457389c422f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a component from binary data by string ID.  <br /></td></tr>
 <tr class="separator:a02e78bd26f93b8cf996f457389c422f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae83c694e0e30125b850edcc343406b76" id="r_ae83c694e0e30125b850edcc343406b76"><td class="memTemplParams" colspan="2">template&lt;typename Component &gt; </td></tr>
 <tr class="memitem:ae83c694e0e30125b850edcc343406b76"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRegistry.html#ae83c694e0e30125b850edcc343406b76">remove_component</a> (<a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Entity</a> const &amp;from)</td></tr>
@@ -137,47 +141,60 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:aee1a7222875fdfa2859b6470a741b66e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a system that operates on specified components.  <br /></td></tr>
 <tr class="separator:aee1a7222875fdfa2859b6470a741b66e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a15a6de78dc2259220850e60b540148aa" id="r_a15a6de78dc2259220850e60b540148aa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRegistry.html#a15a6de78dc2259220850e60b540148aa">run_systems</a> ()</td></tr>
-<tr class="memdesc:a15a6de78dc2259220850e60b540148aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Runs all registered systems.  <br /></td></tr>
+<tr class="memdesc:a15a6de78dc2259220850e60b540148aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registers a system function to run every frame.  <br /></td></tr>
 <tr class="separator:a15a6de78dc2259220850e60b540148aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8f89de6aea32015de47de101f941e53d" id="r_a8f89de6aea32015de47de101f941e53d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRegistry.html#a8f89de6aea32015de47de101f941e53d">update_bindings</a> ()</td></tr>
-<tr class="memdesc:a8f89de6aea32015de47de101f941e53d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Updates all variable bindings from their hooked sources.  <br /></td></tr>
+<tr class="memdesc:a8f89de6aea32015de47de101f941e53d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Updates all registered dynamic bindings.  <br /></td></tr>
 <tr class="separator:a8f89de6aea32015de47de101f941e53d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a529bdf9002188825f7b03f33b2991624" id="r_a529bdf9002188825f7b03f33b2991624"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="conceptcomponent.html">component</a> ComponentType, typename <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt; </td></tr>
 <tr class="memitem:a529bdf9002188825f7b03f33b2991624"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRegistry.html#a529bdf9002188825f7b03f33b2991624">register_binding</a> (<a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Entity</a> entity, std::string const &amp;field_name, std::string const &amp;source_hook)</td></tr>
-<tr class="memdesc:a529bdf9002188825f7b03f33b2991624"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registers a binding that syncs a variable to a hooked source every tick.  <br /></td></tr>
+<tr class="memdesc:a529bdf9002188825f7b03f33b2991624"><td class="mdescLeft">&#160;</td><td class="mdescRight">Registers a dynamic binding between component fields.  <br /></td></tr>
 <tr class="separator:a529bdf9002188825f7b03f33b2991624"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab44989c0361996ad2c4aefbf4636b664" id="r_ab44989c0361996ad2c4aefbf4636b664"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRegistry.html#ab44989c0361996ad2c4aefbf4636b664">clear_bindings</a> ()</td></tr>
-<tr class="memdesc:ab44989c0361996ad2c4aefbf4636b664"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears all registered bindings.  <br /></td></tr>
+<tr class="memdesc:ab44989c0361996ad2c4aefbf4636b664"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes all registered bindings.  <br /></td></tr>
 <tr class="separator:ab44989c0361996ad2c4aefbf4636b664"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a519b37b5089d58e931f941147cdb741d" id="r_a519b37b5089d58e931f941147cdb741d"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="conceptevent.html">event</a> EventType&gt; </td></tr>
 <tr class="memitem:a519b37b5089d58e931f941147cdb741d"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classRegistry.html#a0cc4f5b2a67a25624fe28290aa049624">HandlerId</a>&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRegistry.html#a519b37b5089d58e931f941147cdb741d">on</a> (std::string const &amp;name, std::function&lt; void(const EventType &amp;)&gt; handler)</td></tr>
+<tr class="memdesc:a519b37b5089d58e931f941147cdb741d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register an event handler with unique identifier.  <br /></td></tr>
 <tr class="separator:a519b37b5089d58e931f941147cdb741d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaa995f6e5fb98a63e02df08c17395c4c" id="r_aaa995f6e5fb98a63e02df08c17395c4c"><td class="memTemplParams" colspan="2">template&lt;typename EventType &gt; </td></tr>
 <tr class="memitem:aaa995f6e5fb98a63e02df08c17395c4c"><td class="memTemplItemLeft" align="right" valign="top">bool&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRegistry.html#aaa995f6e5fb98a63e02df08c17395c4c">off</a> (<a class="el" href="classRegistry.html#a0cc4f5b2a67a25624fe28290aa049624">HandlerId</a> handler_id)</td></tr>
+<tr class="memdesc:aaa995f6e5fb98a63e02df08c17395c4c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Unregister a specific event handler by ID.  <br /></td></tr>
 <tr class="separator:aaa995f6e5fb98a63e02df08c17395c4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a279352508a910ee9eafb1b2454bf484c" id="r_a279352508a910ee9eafb1b2454bf484c"><td class="memTemplParams" colspan="2">template&lt;typename EventType &gt; </td></tr>
 <tr class="memitem:a279352508a910ee9eafb1b2454bf484c"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRegistry.html#a279352508a910ee9eafb1b2454bf484c">off_all</a> ()</td></tr>
+<tr class="memdesc:a279352508a910ee9eafb1b2454bf484c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove all event handlers for a specific event type.  <br /></td></tr>
 <tr class="separator:a279352508a910ee9eafb1b2454bf484c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac065676212c7e627cb54d88db52bba0e" id="r_ac065676212c7e627cb54d88db52bba0e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRegistry.html#ac065676212c7e627cb54d88db52bba0e">emit</a> (std::string const &amp;name, JsonObject const &amp;args)</td></tr>
+<tr class="memdesc:ac065676212c7e627cb54d88db52bba0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Emit an event from JSON representation.  <br /></td></tr>
 <tr class="separator:ac065676212c7e627cb54d88db52bba0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaa45538203de70196bf261d7f966a1e2" id="r_aaa45538203de70196bf261d7f966a1e2"><td class="memTemplParams" colspan="2">template&lt;typename EventType , typename... Args&gt; </td></tr>
 <tr class="memitem:aaa45538203de70196bf261d7f966a1e2"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRegistry.html#aaa45538203de70196bf261d7f966a1e2">emit</a> (Args &amp;&amp;... args)</td></tr>
+<tr class="memdesc:aaa45538203de70196bf261d7f966a1e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Emit an event, invoking all registered handlers.  <br /></td></tr>
 <tr class="separator:aaa45538203de70196bf261d7f966a1e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af8945a67567f3560d34737f05971f3c5" id="r_af8945a67567f3560d34737f05971f3c5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRegistry.html#af8945a67567f3560d34737f05971f3c5">emit</a> (std::string const &amp;name, <a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> const &amp;data)</td></tr>
+<tr class="memdesc:af8945a67567f3560d34737f05971f3c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Emit an event from binary representation.  <br /></td></tr>
 <tr class="separator:af8945a67567f3560d34737f05971f3c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0298d7d46f1cca897273a7fd9fa2bbc2" id="r_a0298d7d46f1cca897273a7fd9fa2bbc2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRegistry.html#a0298d7d46f1cca897273a7fd9fa2bbc2">add_scene</a> (std::string const &amp;scene_name, <a class="el" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19">SceneState</a> state)</td></tr>
+<tr class="memdesc:a0298d7d46f1cca897273a7fd9fa2bbc2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a scene with the given name and initial state.  <br /></td></tr>
 <tr class="separator:a0298d7d46f1cca897273a7fd9fa2bbc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a676be837cc2defb394f38b32d664fd30" id="r_a676be837cc2defb394f38b32d664fd30"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRegistry.html#a676be837cc2defb394f38b32d664fd30">init_scene_management</a> ()</td></tr>
+<tr class="memdesc:a676be837cc2defb394f38b32d664fd30"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the scene management system.  <br /></td></tr>
 <tr class="separator:a676be837cc2defb394f38b32d664fd30"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a35e8c1f487a94aaf2752678d814a942a" id="r_a35e8c1f487a94aaf2752678d814a942a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRegistry.html#a35e8c1f487a94aaf2752678d814a942a">setup_scene_systems</a> ()</td></tr>
+<tr class="memdesc:a35e8c1f487a94aaf2752678d814a942a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setup automatic scene management systems.  <br /></td></tr>
 <tr class="separator:a35e8c1f487a94aaf2752678d814a942a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad1c9d136cf9da966ef0977d3c698a963" id="r_ad1c9d136cf9da966ef0977d3c698a963"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRegistry.html#ad1c9d136cf9da966ef0977d3c698a963">set_current_scene</a> (std::string const &amp;scene_name)</td></tr>
+<tr class="memdesc:ad1c9d136cf9da966ef0977d3c698a963"><td class="mdescLeft">&#160;</td><td class="mdescRight">Activate a scene, making its entities visible to systems.  <br /></td></tr>
 <tr class="separator:ad1c9d136cf9da966ef0977d3c698a963"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a936cd3eebe707ee32e2aac62eb079404" id="r_a936cd3eebe707ee32e2aac62eb079404"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRegistry.html#a936cd3eebe707ee32e2aac62eb079404">remove_current_scene</a> (std::string const &amp;scene_name)</td></tr>
+<tr class="memdesc:a936cd3eebe707ee32e2aac62eb079404"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deactivate a specific scene.  <br /></td></tr>
 <tr class="separator:a936cd3eebe707ee32e2aac62eb079404"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa3aabe22621e394e0e17f2f2b35a59c8" id="r_aa3aabe22621e394e0e17f2f2b35a59c8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRegistry.html#aa3aabe22621e394e0e17f2f2b35a59c8">remove_all_scenes</a> ()</td></tr>
+<tr class="memdesc:aa3aabe22621e394e0e17f2f2b35a59c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deactivate all scenes.  <br /></td></tr>
 <tr class="separator:aa3aabe22621e394e0e17f2f2b35a59c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0b9eb2723831a87cb5602c43e2b05b0a" id="r_a0b9eb2723831a87cb5602c43e2b05b0a"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt; const &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRegistry.html#a0b9eb2723831a87cb5602c43e2b05b0a">get_current_scene</a> () const</td></tr>
+<tr class="memdesc:a0b9eb2723831a87cb5602c43e2b05b0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get list of currently active scene names.  <br /></td></tr>
 <tr class="separator:a0b9eb2723831a87cb5602c43e2b05b0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a350fe0f552eb16cde1a56d3a871983f4" id="r_a350fe0f552eb16cde1a56d3a871983f4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classClock.html">Clock</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRegistry.html#a350fe0f552eb16cde1a56d3a871983f4">clock</a> ()</td></tr>
 <tr class="separator:a350fe0f552eb16cde1a56d3a871983f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -185,24 +202,32 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a05890b45956ce181802c46b7f4c130eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a988dbbf41e2d34202090c4b47a17d4f7" id="r_a988dbbf41e2d34202090c4b47a17d4f7"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="concepthookable.html">hookable</a> T&gt; </td></tr>
 <tr class="memitem:a988dbbf41e2d34202090c4b47a17d4f7"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRegistry.html#a988dbbf41e2d34202090c4b47a17d4f7">register_hook</a> (std::string name, <a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Entity</a> const &amp;e)</td></tr>
+<tr class="memdesc:a988dbbf41e2d34202090c4b47a17d4f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register component hooks for runtime field access.  <br /></td></tr>
 <tr class="separator:a988dbbf41e2d34202090c4b47a17d4f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3c5b1d39982cf8c8a5159f048478faf9" id="r_a3c5b1d39982cf8c8a5159f048478faf9"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt; </td></tr>
 <tr class="memitem:a3c5b1d39982cf8c8a5159f048478faf9"><td class="memTemplItemLeft" align="right" valign="top">std::optional&lt; std::reference_wrapper&lt; <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRegistry.html#a3c5b1d39982cf8c8a5159f048478faf9">get_hooked_value</a> (std::string const &amp;comp, std::string const &amp;value)</td></tr>
+<tr class="memdesc:a3c5b1d39982cf8c8a5159f048478faf9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve a reference to a hooked component field.  <br /></td></tr>
 <tr class="separator:a3c5b1d39982cf8c8a5159f048478faf9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a57983d07871bbe2bd574a290e5813875" id="r_a57983d07871bbe2bd574a290e5813875"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="conceptevent.html">event</a> T&gt; </td></tr>
 <tr class="memitem:a57983d07871bbe2bd574a290e5813875"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRegistry.html#a57983d07871bbe2bd574a290e5813875">add_event_builder</a> ()</td></tr>
+<tr class="memdesc:a57983d07871bbe2bd574a290e5813875"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register a JSON builder for an event type.  <br /></td></tr>
 <tr class="separator:a57983d07871bbe2bd574a290e5813875"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1808a25dbb631648d093c9391b358d21" id="r_a1808a25dbb631648d093c9391b358d21"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRegistry.html#a1808a25dbb631648d093c9391b358d21">get_event_with_id</a> (std::string const &amp;, JsonObject const &amp;)</td></tr>
+<tr class="memdesc:a1808a25dbb631648d093c9391b358d21"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct an event from JSON and serialize to binary.  <br /></td></tr>
 <tr class="separator:a1808a25dbb631648d093c9391b358d21"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afbd9ddbdd3cd1b607c381951afd032e7" id="r_afbd9ddbdd3cd1b607c381951afd032e7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRegistry.html#afbd9ddbdd3cd1b607c381951afd032e7">add_template</a> (std::string const &amp;name, JsonObject const &amp;config)</td></tr>
+<tr class="memdesc:afbd9ddbdd3cd1b607c381951afd032e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Register an entity template for reuse.  <br /></td></tr>
 <tr class="separator:afbd9ddbdd3cd1b607c381951afd032e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6e6e2effbd9f3ba4f3e92e693c360538" id="r_a6e6e2effbd9f3ba4f3e92e693c360538"><td class="memItemLeft" align="right" valign="top">JsonObject&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRegistry.html#a6e6e2effbd9f3ba4f3e92e693c360538">get_template</a> (std::string const &amp;name)</td></tr>
+<tr class="memdesc:a6e6e2effbd9f3ba4f3e92e693c360538"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve a registered entity template.  <br /></td></tr>
 <tr class="separator:a6e6e2effbd9f3ba4f3e92e693c360538"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa173e9399b055aa64d39a86ebd0d90b9" id="r_aa173e9399b055aa64d39a86ebd0d90b9"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRegistry.html#aa173e9399b055aa64d39a86ebd0d90b9">is_in_current_cene</a> (<a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Entity</a> e)</td></tr>
 <tr class="separator:aa173e9399b055aa64d39a86ebd0d90b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0fedbeca77141d94ccc0742256fbceae" id="r_a0fedbeca77141d94ccc0742256fbceae"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRegistry.html#a0fedbeca77141d94ccc0742256fbceae">convert_event_entity</a> (std::string const &amp;id, <a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> const &amp;<a class="el" href="conceptevent.html">event</a>, std::unordered_map&lt; <a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Entity</a>, <a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Entity</a> &gt; const &amp;map)</td></tr>
+<tr class="memdesc:a0fedbeca77141d94ccc0742256fbceae"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert entity IDs in a serialized event using provided mapping.  <br /></td></tr>
 <tr class="separator:a0fedbeca77141d94ccc0742256fbceae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a649dbdf578a8498e6282d88a0d81d8d5" id="r_a649dbdf578a8498e6282d88a0d81d8d5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRegistry.html#a649dbdf578a8498e6282d88a0d81d8d5">convert_comp_entity</a> (std::string const &amp;id, <a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> const &amp;comp, std::unordered_map&lt; <a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Entity</a>, <a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Entity</a> &gt; const &amp;map)</td></tr>
+<tr class="memdesc:a649dbdf578a8498e6282d88a0d81d8d5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert entity IDs in a serialized component using provided mapping.  <br /></td></tr>
 <tr class="separator:a649dbdf578a8498e6282d88a0d81d8d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a75d029ff608ba539b1719e261f235062" id="r_a75d029ff608ba539b1719e261f235062"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="conceptevent.html">event</a> Event&gt; </td></tr>
 <tr class="memitem:a75d029ff608ba539b1719e261f235062"><td class="memTemplItemLeft" align="right" valign="top">std::string&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRegistry.html#a75d029ff608ba539b1719e261f235062">get_event_key</a> ()</td></tr>
@@ -211,13 +236,50 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a64c1066928e59a7aeb60ae79c08f1690"><td class="memTemplItemLeft" align="right" valign="top">std::string&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classRegistry.html#a64c1066928e59a7aeb60ae79c08f1690">get_component_key</a> ()</td></tr>
 <tr class="separator:a64c1066928e59a7aeb60ae79c08f1690"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa1f44e83eaea9570fb48f4f20eeeb103" id="r_aa1f44e83eaea9570fb48f4f20eeeb103"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="structComponentState.html">ComponentState</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classRegistry.html#aa1f44e83eaea9570fb48f4f20eeeb103">get_state</a> ()</td></tr>
+<tr class="memdesc:aa1f44e83eaea9570fb48f4f20eeeb103"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the complete ECS state as serialized components.  <br /></td></tr>
 <tr class="separator:aa1f44e83eaea9570fb48f4f20eeeb103"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>The <a class="el" href="classRegistry.html" title="The Registry class is the core of the ECS (Entity-Component-System) architecture.">Registry</a> class is the core of the ECS (Entity-Component-System) architecture. </p>
-<p>It manages entities, their associated components, and the systems that operate on them. </p>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2runner_2work_2R-Type_2R-Type_2include_2ecs_2zipper_2Zipper_8hpp-example.html#_a23">/home/runner/work/R-Type/R-Type/include/ecs/zipper/Zipper.hpp</a>, <a class="el" href="_2home_2runner_2work_2R-Type_2R-Type_2include_2ecs_2zipper_2ZipperIndex_8hpp-example.html#_a16">/home/runner/work/R-Type/R-Type/include/ecs/zipper/ZipperIndex.hpp</a>, and <a class="el" href="_2home_2runner_2work_2R-Type_2R-Type_2include_2plugin_2events_2EventConcept_8hpp-example.html#_a0">/home/runner/work/R-Type/R-Type/include/plugin/events/EventConcept.hpp</a>.</dd>
-</dl>
+<p>It manages entities, their associated components, and the systems that operate on them.</p>
+<div class="fragment"><div class="line"><a class="code hl_class" href="classRegistry.html">Registry</a> registry;</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Register components</span></div>
+<div class="line"> </div>
+<div class="line"><a class="code hl_define" href="APlugin_8hpp.html#a84485819a678fe68f3deddaf7cb19bb4">REGISTER_COMPONENT</a>(<a class="code hl_struct" href="structPosition.html">Position</a>)</div>
+<div class="line"><a class="code hl_define" href="APlugin_8hpp.html#a84485819a678fe68f3deddaf7cb19bb4">REGISTER_COMPONENT</a>(<a class="code hl_struct" href="structVelocity.html">Velocity</a>)</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Spawn entity</span></div>
+<div class="line"><span class="keyword">auto</span> player = registry.<a class="code hl_function" href="classRegistry.html#a3afa81d52e66afd192bfb44f191c1510">spawn_entity</a>();</div>
+<div class="line">registry.<a class="code hl_function" href="classRegistry.html#a9990d86dfe7f90e314f8e93773b307d4">add_component</a>(player, <a class="code hl_struct" href="structPosition.html">Position</a>{100, 200});</div>
+<div class="line">registry.<a class="code hl_function" href="classRegistry.html#a9990d86dfe7f90e314f8e93773b307d4">add_component</a>(player, <a class="code hl_struct" href="structVelocity.html">Velocity</a>{5, 0});</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Add system</span></div>
+<div class="line">registry.<a class="code hl_function" href="classRegistry.html#aee1a7222875fdfa2859b6470a741b66e">add_system</a>&lt;<a class="code hl_struct" href="structPosition.html">Position</a>, <a class="code hl_struct" href="structVelocity.html">Velocity</a>&gt;(</div>
+<div class="line">  [](<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <span class="keyword">auto</span>&amp; pos, <span class="keyword">auto</span>&amp; vel) {</div>
+<div class="line">    <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp;&amp; [p, v] : <a class="code hl_class" href="classZipper.html">Zipper</a>(pos, vel)) {</div>
+<div class="line">      p.x += v.speed.x;</div>
+<div class="line">      p.y += v.speed.y;</div>
+<div class="line">    }</div>
+<div class="line">  }</div>
+<div class="line">);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Game loop</span></div>
+<div class="line"><span class="keywordflow">while</span> (running) {</div>
+<div class="line">  registry.<a class="code hl_function" href="classRegistry.html#a15a6de78dc2259220850e60b540148aa">run_systems</a>();  <span class="comment">// Update, process deletions, tick clock</span></div>
+<div class="line">}</div>
+<div class="ttc" id="aAPlugin_8hpp_html_a84485819a678fe68f3deddaf7cb19bb4"><div class="ttname"><a href="APlugin_8hpp.html#a84485819a678fe68f3deddaf7cb19bb4">REGISTER_COMPONENT</a></div><div class="ttdeci">#define REGISTER_COMPONENT(comp)</div><div class="ttdef"><b>Definition</b> APlugin.hpp:35</div></div>
+<div class="ttc" id="aclassRegistry_html"><div class="ttname"><a href="classRegistry.html">Registry</a></div><div class="ttdoc">The Registry class is the core of the ECS (Entity-Component-System) architecture.</div><div class="ttdef"><b>Definition</b> Registry.hpp:348</div></div>
+<div class="ttc" id="aclassRegistry_html_a15a6de78dc2259220850e60b540148aa"><div class="ttname"><a href="classRegistry.html#a15a6de78dc2259220850e60b540148aa">Registry::run_systems</a></div><div class="ttdeci">void run_systems()</div><div class="ttdoc">Registers a system function to run every frame.</div><div class="ttdef"><b>Definition</b> Registry.cpp:57</div></div>
+<div class="ttc" id="aclassRegistry_html_a3afa81d52e66afd192bfb44f191c1510"><div class="ttname"><a href="classRegistry.html#a3afa81d52e66afd192bfb44f191c1510">Registry::spawn_entity</a></div><div class="ttdeci">Entity spawn_entity()</div><div class="ttdoc">Spawns a new entity.</div><div class="ttdef"><b>Definition</b> Registry.cpp:11</div></div>
+<div class="ttc" id="aclassRegistry_html_a9990d86dfe7f90e314f8e93773b307d4"><div class="ttname"><a href="classRegistry.html#a9990d86dfe7f90e314f8e93773b307d4">Registry::add_component</a></div><div class="ttdeci">SparseArray&lt; Component &gt;::Ref add_component(Entity const &amp;to, Component &amp;&amp;c)</div><div class="ttdoc">Adds a component to an entity by moving.</div><div class="ttdef"><b>Definition</b> Registry.hpp:709</div></div>
+<div class="ttc" id="aclassRegistry_html_aee1a7222875fdfa2859b6470a741b66e"><div class="ttname"><a href="classRegistry.html#aee1a7222875fdfa2859b6470a741b66e">Registry::add_system</a></div><div class="ttdeci">void add_system(Function &amp;&amp;f, std::size_t priority=0)</div><div class="ttdoc">Adds a system that operates on specified components.</div><div class="ttdef"><b>Definition</b> Registry.hpp:867</div></div>
+<div class="ttc" id="aclassZipper_html"><div class="ttname"><a href="classZipper.html">Zipper</a></div><div class="ttdoc">Range adapter that simultaneously iterates over multiple Comps.</div><div class="ttdef"><b>Definition</b> Zipper.hpp:291</div></div>
+<div class="ttc" id="astructPosition_html"><div class="ttname"><a href="structPosition.html">Position</a></div><div class="ttdef"><b>Definition</b> Position.hpp:9</div></div>
+<div class="ttc" id="astructVelocity_html"><div class="ttname"><a href="structVelocity.html">Velocity</a></div><div class="ttdef"><b>Definition</b> Velocity.hpp:10</div></div>
+</div><!-- fragment --> <dl class="section note"><dt>Note</dt><dd><a class="el" href="classRegistry.html" title="The Registry class is the core of the ECS (Entity-Component-System) architecture.">Registry</a> is non-copyable due to internal state complexity </dd>
+<dd>
+Thread-safety is not guaranteed - single-threaded use recommended </dd></dl>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="a0f7878e7be2d225f4f7ca38b85911110" name="a0f7878e7be2d225f4f7ca38b85911110"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0f7878e7be2d225f4f7ca38b85911110">&#9670;&#160;</a></span>Entity</h2>
@@ -232,6 +294,7 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Type alias for an entity identifier. </p>
+<p>Entities are lightweight indices into component arrays. Valid entity IDs start at 0 and increment. Deleted entity IDs are recycled. </p>
 
 </div>
 </div>
@@ -246,6 +309,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Type alias for event handler identifiers. </p>
+<p>Handler IDs are unique UUIDs generated when registering event handlers. Used to unregister specific handlers via <a class="el" href="classRegistry.html#aaa995f6e5fb98a63e02df08c17395c4c" title="Unregister a specific event handler by ID.">off()</a>. </p>
 
 </div>
 </div>
@@ -286,21 +352,42 @@ template&lt;<a class="el" href="conceptcomponent.html">component</a> Component&g
 </table>
 </div><div class="memdoc">
 
-<p>Adds a component to an entity. </p>
+<p>Adds a component to an entity by moving. </p>
+<p>Transfers ownership of a component to an entity's component storage. The component is moved into the <a class="el" href="classSparseArray.html" title="A sparse array implementation that stores components in an optional vector.">SparseArray</a> at the entity's index.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">Component</td><td>The type of the component to add. </td></tr>
+    <tr><td class="paramname">Component</td><td>The component type to add (must satisfy component concept) </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">to</td><td>The entity to which the component will be added. </td></tr>
-    <tr><td class="paramname">c</td><td>The component to add. </td></tr>
+    <tr><td class="paramname">to</td><td>The entity to receive the component </td></tr>
+    <tr><td class="paramname">c</td><td>The component to add (will be moved) </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd><a class="el" href="classSparseArray.html#afcb68b007a0a116f234324bcc5a27ffc">SparseArray&lt;Component&gt;::Ref</a> A reference to the added component. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Reference to the inserted component</dd></dl>
+<p>Uses perfect forwarding to efficiently move the component into storage. If entity already has this component type, it is replaced.</p>
+<dl class="section note"><dt>Note</dt><dd>Entity must be valid (spawned and not killed) </dd>
+<dd>
+Component type must be registered first </dd>
+<dd>
+Prefer <a class="el" href="classRegistry.html#aedaff3e905a52a1945250cd16ffbb5fb" title="Constructs a component in-place on an entity.">emplace_component()</a> for in-place construction</dd></dl>
+<div class="fragment"><div class="line"><a class="code hl_struct" href="structPosition.html">Position</a> pos{100, 200, 1};</div>
+<div class="line"><span class="keyword">auto</span>&amp; inserted = registry.add_component(entity, std::move(pos));</div>
+<div class="line"><span class="comment">// pos is now moved-from</span></div>
+<div class="line"><span class="comment">// inserted is the component in storage</span></div>
+</div><!-- fragment --><div class="fragment"><div class="line">registry.add_component(player, <a class="code hl_struct" href="structPosition.html">Position</a>{0, 0});</div>
+<div class="line">registry.add_component(player, <a class="code hl_struct" href="structVelocity.html">Velocity</a>{5, 5});</div>
+<div class="line">registry.add_component(player, <a class="code hl_struct" href="structHealth.html">Health</a>{100, 100});</div>
+<div class="ttc" id="astructHealth_html"><div class="ttname"><a href="structHealth.html">Health</a></div><div class="ttdef"><b>Definition</b> Health.hpp:9</div></div>
+</div><!-- fragment --><div class="fragment"><div class="line">registry.add_component(entity, <a class="code hl_struct" href="structPosition.html">Position</a>{0, 0});</div>
+<div class="line"><span class="comment">// Later...</span></div>
+<div class="line">registry.add_component(entity, <a class="code hl_struct" href="structPosition.html">Position</a>{100, 50}); <span class="comment">// Replaces old position</span></div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="classRegistry.html#aedaff3e905a52a1945250cd16ffbb5fb" title="Constructs a component in-place on an entity.">emplace_component()</a> for in-place construction </dd>
+<dd>
+<a class="el" href="classRegistry.html#ae83c694e0e30125b850edcc343406b76" title="Removes a component from an entity.">remove_component()</a> to remove components </dd></dl>
 
 </div>
 </div>
@@ -329,6 +416,31 @@ template&lt;<a class="el" href="conceptevent.html">event</a> T&gt; </div>
 </table>
 </div><div class="memdoc">
 
+<p>Register a JSON builder for an event type. </p>
+<p>Creates infrastructure for constructing events from JSON. This enables:</p><ul>
+<li>JSON-based event emission via emit&lt;Event&gt;(json)</li>
+<li>Network event reception and deserialization</li>
+<li>Configuration-driven event triggering</li>
+</ul>
+<p>The event type T must have a constructor accepting (<a class="el" href="classRegistry.html" title="The Registry class is the core of the ECS (Entity-Component-System) architecture.">Registry</a>&amp;, JsonObject). This constructor should parse JSON and initialize event fields.</p>
+<p>This method is typically called automatically by <a class="el" href="classRegistry.html#a519b37b5089d58e931f941147cdb741d" title="Register an event handler with unique identifier.">on()</a> when registering event handlers. Manual calls are rarely needed.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>Event type (must satisfy event concept)</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>Event must have constructor: <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T(Registry&amp;, JsonObject const&amp;)</a> </dd>
+<dd>
+Event must have to_bytes() method for serialization </dd>
+<dd>
+Usually called automatically by <a class="el" href="classRegistry.html#a519b37b5089d58e931f941147cdb741d" title="Register an event handler with unique identifier.">on()</a> - manual use is advanced</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classRegistry.html#a519b37b5089d58e931f941147cdb741d" title="Register an event handler with unique identifier.">on()</a> which calls this automatically </dd>
+<dd>
+<a class="el" href="classRegistry.html#a1808a25dbb631648d093c9391b358d21" title="Construct an event from JSON and serialize to binary.">get_event_with_id()</a> to construct events from JSON </dd>
+<dd>
+emit&lt;Event&gt;(const nlohmann::json&amp;) for JSON emission </dd></dl>
+
 </div>
 </div>
 <a id="a0298d7d46f1cca897273a7fd9fa2bbc2" name="a0298d7d46f1cca897273a7fd9fa2bbc2"></a>
@@ -356,6 +468,48 @@ template&lt;<a class="el" href="conceptevent.html">event</a> T&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Register a scene with the given name and initial state. </p>
+<p>Creates a scene entry in the <a class="el" href="classRegistry.html" title="The Registry class is the core of the ECS (Entity-Component-System) architecture.">Registry</a>'s scene management system. The scene can later be activated/deactivated with <a class="el" href="classRegistry.html#ad1c9d136cf9da966ef0977d3c698a963" title="Activate a scene, making its entities visible to systems.">set_current_scene()</a> and <a class="el" href="classRegistry.html#a936cd3eebe707ee32e2aac62eb079404" title="Deactivate a specific scene.">remove_current_scene()</a>.</p>
+<p>This does NOT create entities - it only registers the scene metadata. Entities are associated with scenes via the <a class="el" href="structScene.html" title="Component that associates an entity with a specific scene.">Scene</a> component, typically added during <a class="el" href="classEntityLoader.html#ab23eea9052153a6664b5e93a88bdef09">EntityLoader::load_entity()</a>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">scene_name</td><td>Unique identifier for the scene </td></tr>
+    <tr><td class="paramname">state</td><td>Initial activation state (MAIN, ACTIVE, or DISABLED)</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>If scene already exists, this updates its state </dd>
+<dd>
+<a class="el" href="structScene.html" title="Component that associates an entity with a specific scene.">Scene</a> names must be unique </dd>
+<dd>
+Call <a class="el" href="classRegistry.html#a676be837cc2defb394f38b32d664fd30" title="Initialize the scene management system.">init_scene_management()</a> before using scenes</dd></dl>
+<div class="fragment"><div class="line">registry.init_scene_management();</div>
+<div class="line">registry.add_scene(<span class="stringliteral">&quot;menu&quot;</span>, <a class="code hl_enumvalue" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19a186495f7da296bf880df3a22a492b378">SceneState::MAIN</a>);</div>
+<div class="line">registry.add_scene(<span class="stringliteral">&quot;hud&quot;</span>, <a class="code hl_enumvalue" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19a18ff74f43da410c5529f7d6fca84f115">SceneState::ACTIVE</a>);</div>
+<div class="line">registry.add_scene(<span class="stringliteral">&quot;gameplay&quot;</span>, <a class="code hl_enumvalue" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19a055c1a591abb0e8cd86dc969727bcc0b">SceneState::DISABLED</a>);</div>
+<div class="ttc" id="aScenes_8hpp_html_ab0d98f61608665befb0dc9afa0419e19a055c1a591abb0e8cd86dc969727bcc0b"><div class="ttname"><a href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19a055c1a591abb0e8cd86dc969727bcc0b">SceneState::DISABLED</a></div><div class="ttdeci">@ DISABLED</div><div class="ttdoc">Scene is disabled.</div></div>
+<div class="ttc" id="aScenes_8hpp_html_ab0d98f61608665befb0dc9afa0419e19a186495f7da296bf880df3a22a492b378"><div class="ttname"><a href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19a186495f7da296bf880df3a22a492b378">SceneState::MAIN</a></div><div class="ttdeci">@ MAIN</div><div class="ttdoc">Primary active scene.</div></div>
+<div class="ttc" id="aScenes_8hpp_html_ab0d98f61608665befb0dc9afa0419e19a18ff74f43da410c5529f7d6fca84f115"><div class="ttname"><a href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19a18ff74f43da410c5529f7d6fca84f115">SceneState::ACTIVE</a></div><div class="ttdeci">@ ACTIVE</div><div class="ttdoc">Scene is active but not primary.</div></div>
+</div><!-- fragment --><div class="fragment"><div class="line"><span class="keywordtype">void</span> load_level(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <span class="keyword">const</span> std::string&amp; level_name) {</div>
+<div class="line">  <span class="comment">// Register level scene as disabled initially</span></div>
+<div class="line">  r.<a class="code hl_function" href="classRegistry.html#a0298d7d46f1cca897273a7fd9fa2bbc2">add_scene</a>(level_name, <a class="code hl_enumvalue" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19a055c1a591abb0e8cd86dc969727bcc0b">SceneState::DISABLED</a>);</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Load level entities (they get Scene component automatically)</span></div>
+<div class="line">  <a class="code hl_class" href="classEntityLoader.html">EntityLoader</a> loader(r);</div>
+<div class="line">  loader.load_entity(<span class="stringliteral">&quot;level_config.json&quot;</span>);</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Activate when ready</span></div>
+<div class="line">  r.<a class="code hl_function" href="classRegistry.html#ad1c9d136cf9da966ef0977d3c698a963">set_current_scene</a>(level_name);</div>
+<div class="line">}</div>
+<div class="ttc" id="aclassEntityLoader_html"><div class="ttname"><a href="classEntityLoader.html">EntityLoader</a></div><div class="ttdef"><b>Definition</b> EntityLoader.hpp:17</div></div>
+<div class="ttc" id="aclassRegistry_html_a0298d7d46f1cca897273a7fd9fa2bbc2"><div class="ttname"><a href="classRegistry.html#a0298d7d46f1cca897273a7fd9fa2bbc2">Registry::add_scene</a></div><div class="ttdeci">void add_scene(std::string const &amp;scene_name, SceneState state)</div><div class="ttdoc">Register a scene with the given name and initial state.</div><div class="ttdef"><b>Definition</b> Registry.cpp:115</div></div>
+<div class="ttc" id="aclassRegistry_html_ad1c9d136cf9da966ef0977d3c698a963"><div class="ttname"><a href="classRegistry.html#ad1c9d136cf9da966ef0977d3c698a963">Registry::set_current_scene</a></div><div class="ttdeci">void set_current_scene(std::string const &amp;scene_name)</div><div class="ttdoc">Activate a scene, making its entities visible to systems.</div><div class="ttdef"><b>Definition</b> Registry.cpp:138</div></div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="classRegistry.html#a676be837cc2defb394f38b32d664fd30" title="Initialize the scene management system.">init_scene_management()</a> must be called first </dd>
+<dd>
+<a class="el" href="classRegistry.html#ad1c9d136cf9da966ef0977d3c698a963" title="Activate a scene, making its entities visible to systems.">set_current_scene()</a> to activate the scene </dd>
+<dd>
+<a class="el" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19" title="Defines the activation state of a scene.">SceneState</a> enum for state meanings </dd></dl>
 
 </div>
 </div>
@@ -438,6 +592,67 @@ template&lt;class... Components, typename Function &gt; </div>
       </table>
 </div><div class="memdoc">
 
+<p>Register an entity template for reuse. </p>
+<p>Stores a JSON configuration as a named template. Templates are entity prefabs - reusable entity definitions that can be instantiated multiple times with <a class="el" href="classEntityLoader.html#ab23eea9052153a6664b5e93a88bdef09">EntityLoader::load_entity()</a>.</p>
+<p>Common use cases:</p><ul>
+<li>Enemy types (basic_enemy, tank_enemy, fast_enemy)</li>
+<li>Powerups (health_pack, speed_boost, shield)</li>
+<li><a class="el" href="classUI.html">UI</a> elements (button, text_field, health_bar)</li>
+<li>Projectiles (bullet, missile, laser)</li>
+</ul>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">name</td><td>Unique template identifier </td></tr>
+    <tr><td class="paramname">config</td><td>JSON object defining the entity structure</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>If template exists, it is overwritten </dd>
+<dd>
+Template names should be unique </dd>
+<dd>
+Templates are not validated until instantiated</dd></dl>
+<div class="fragment"><div class="line">JsonObject enemy_template = {</div>
+<div class="line">  {<span class="stringliteral">&quot;components&quot;</span>, {</div>
+<div class="line">    {<span class="stringliteral">&quot;Position&quot;</span>, {{<span class="stringliteral">&quot;x&quot;</span>, 0}, {<span class="stringliteral">&quot;y&quot;</span>, 0}}},</div>
+<div class="line">    {<span class="stringliteral">&quot;Velocity&quot;</span>, {{<span class="stringliteral">&quot;speed&quot;</span>, 50.0}}},</div>
+<div class="line">    {<span class="stringliteral">&quot;Health&quot;</span>, {{<span class="stringliteral">&quot;max&quot;</span>, 100}, {<span class="stringliteral">&quot;current&quot;</span>, 100}}},</div>
+<div class="line">    {<span class="stringliteral">&quot;Sprite&quot;</span>, {{<span class="stringliteral">&quot;texture&quot;</span>, <span class="stringliteral">&quot;enemy.png&quot;</span>}}}</div>
+<div class="line">  }}</div>
+<div class="line">};</div>
+<div class="line"> </div>
+<div class="line">registry.add_template(<span class="stringliteral">&quot;basic_enemy&quot;</span>, enemy_template);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Later, instantiate multiple enemies</span></div>
+<div class="line"><span class="keyword">auto</span> config1 = registry.get_template(<span class="stringliteral">&quot;basic_enemy&quot;</span>);</div>
+<div class="line">config1[<span class="stringliteral">&quot;components&quot;</span>][<span class="stringliteral">&quot;Position&quot;</span>][<span class="stringliteral">&quot;x&quot;</span>] = 100;</div>
+<div class="line"><a class="code hl_class" href="classEntityLoader.html">EntityLoader</a>(registry).<a class="code hl_function" href="classEntityLoader.html#ab23eea9052153a6664b5e93a88bdef09">load_entity</a>(config1);</div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">auto</span> config2 = registry.get_template(<span class="stringliteral">&quot;basic_enemy&quot;</span>);</div>
+<div class="line">config2[<span class="stringliteral">&quot;components&quot;</span>][<span class="stringliteral">&quot;Position&quot;</span>][<span class="stringliteral">&quot;x&quot;</span>] = 200;</div>
+<div class="line"><a class="code hl_class" href="classEntityLoader.html">EntityLoader</a>(registry).<a class="code hl_function" href="classEntityLoader.html#ab23eea9052153a6664b5e93a88bdef09">load_entity</a>(config2);</div>
+<div class="ttc" id="aclassEntityLoader_html_ab23eea9052153a6664b5e93a88bdef09"><div class="ttname"><a href="classEntityLoader.html#ab23eea9052153a6664b5e93a88bdef09">EntityLoader::load_entity</a></div><div class="ttdeci">std::optional&lt; Registry::Entity &gt; load_entity(JsonObject const &amp;config)</div><div class="ttdef"><b>Definition</b> EntityLoader.cpp:194</div></div>
+</div><!-- fragment --><div class="fragment"><div class="line"><span class="keywordtype">void</span> load_templates(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <span class="keyword">const</span> std::string&amp; file_path) {</div>
+<div class="line">  <span class="keyword">auto</span> json = nlohmann::json::parse(std::ifstream(file_path));</div>
+<div class="line"> </div>
+<div class="line">  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; [name, config] : json[<span class="stringliteral">&quot;templates&quot;</span>].items()) {</div>
+<div class="line">    r.<a class="code hl_function" href="classRegistry.html#afbd9ddbdd3cd1b607c381951afd032e7">add_template</a>(name, config);</div>
+<div class="line">  }</div>
+<div class="line">}</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// templates.json:</span></div>
+<div class="line"><span class="comment">// {</span></div>
+<div class="line"><span class="comment">//   &quot;templates&quot;: {</span></div>
+<div class="line"><span class="comment">//     &quot;player&quot;: { ... },</span></div>
+<div class="line"><span class="comment">//     &quot;enemy_basic&quot;: { ... },</span></div>
+<div class="line"><span class="comment">//     &quot;enemy_tank&quot;: { ... }</span></div>
+<div class="line"><span class="comment">//   }</span></div>
+<div class="line"><span class="comment">// }</span></div>
+<div class="ttc" id="aclassRegistry_html_afbd9ddbdd3cd1b607c381951afd032e7"><div class="ttname"><a href="classRegistry.html#afbd9ddbdd3cd1b607c381951afd032e7">Registry::add_template</a></div><div class="ttdeci">void add_template(std::string const &amp;name, JsonObject const &amp;config)</div><div class="ttdoc">Register an entity template for reuse.</div><div class="ttdef"><b>Definition</b> Registry.cpp:170</div></div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="classRegistry.html#a6e6e2effbd9f3ba4f3e92e693c360538" title="Retrieve a registered entity template.">get_template()</a> to retrieve template </dd>
+<dd>
+<a class="el" href="classEntityLoader.html#ab23eea9052153a6664b5e93a88bdef09">EntityLoader::load_entity()</a> to instantiate template </dd></dl>
+
 </div>
 </div>
 <a id="ab44989c0361996ad2c4aefbf4636b664" name="ab44989c0361996ad2c4aefbf4636b664"></a>
@@ -455,7 +670,43 @@ template&lt;class... Components, typename Function &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Clears all registered bindings. </p>
+<p>Removes all registered bindings. </p>
+<p>Clears the _bindings vector, stopping all automatic field synchronization. Typically used when transitioning between game states or loading new scenes.</p>
+<p>After clearing:</p><ul>
+<li>Bound fields stop updating automatically</li>
+<li>Field values remain at last synchronized value</li>
+<li>New bindings can be registered normally</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd>Does not affect component data - only removes update connections </dd>
+<dd>
+Bindings are not automatically re-created on next frame</dd></dl>
+<div class="fragment"><div class="line"><span class="keywordtype">void</span> load_new_scene(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r) {</div>
+<div class="line">  <span class="comment">// Clear old scene</span></div>
+<div class="line">  r.<a class="code hl_function" href="classRegistry.html#ab44989c0361996ad2c4aefbf4636b664">clear_bindings</a>();  <span class="comment">// Remove follower AI, turret tracking, etc.</span></div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Kill old entities</span></div>
+<div class="line">  <span class="keywordflow">for</span> (<span class="keyword">auto</span> e : old_scene_entities) {</div>
+<div class="line">    r.<a class="code hl_function" href="classRegistry.html#a9f8e76e4f67a4e33dd7273d065d6be7a">kill_entity</a>(e);</div>
+<div class="line">  }</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Load new scene</span></div>
+<div class="line">  load_entities_from_json(r, <span class="stringliteral">&quot;new_scene.json&quot;</span>);</div>
+<div class="line">  <span class="comment">// New bindings registered during entity loading</span></div>
+<div class="line">}</div>
+<div class="ttc" id="aclassRegistry_html_a9f8e76e4f67a4e33dd7273d065d6be7a"><div class="ttname"><a href="classRegistry.html#a9f8e76e4f67a4e33dd7273d065d6be7a">Registry::kill_entity</a></div><div class="ttdeci">void kill_entity(Entity const &amp;e)</div><div class="ttdoc">Marks an entity for deletion.</div><div class="ttdef"><b>Definition</b> Registry.cpp:24</div></div>
+<div class="ttc" id="aclassRegistry_html_ab44989c0361996ad2c4aefbf4636b664"><div class="ttname"><a href="classRegistry.html#ab44989c0361996ad2c4aefbf4636b664">Registry::clear_bindings</a></div><div class="ttdeci">void clear_bindings()</div><div class="ttdoc">Removes all registered bindings.</div><div class="ttdef"><b>Definition</b> Registry.cpp:84</div></div>
+</div><!-- fragment --><div class="fragment"><div class="line"><span class="keywordtype">void</span> enter_pause_menu(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r) {</div>
+<div class="line">  r.<a class="code hl_function" href="classRegistry.html#ab44989c0361996ad2c4aefbf4636b664">clear_bindings</a>();  <span class="comment">// Stop all dynamic behaviors</span></div>
+<div class="line">  <span class="comment">// Game entities frozen</span></div>
+<div class="line">}</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> resume_game(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r) {</div>
+<div class="line">  <span class="comment">// Bindings must be re-registered if needed</span></div>
+<div class="line">  setup_gameplay_bindings(r);</div>
+<div class="line">}</div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="classRegistry.html#a529bdf9002188825f7b03f33b2991624" title="Registers a dynamic binding between component fields.">register_binding()</a> to create new bindings </dd>
+<dd>
+<a class="el" href="classRegistry.html#a8f89de6aea32015de47de101f941e53d" title="Updates all registered dynamic bindings.">update_bindings()</a> which processes bindings </dd></dl>
 
 </div>
 </div>
@@ -525,6 +776,26 @@ template&lt;class... Components, typename Function &gt; </div>
       </table>
 </div><div class="memdoc">
 
+<p>Convert entity IDs in a serialized component using provided mapping. </p>
+<p>Remaps entity references in component data from one ID space to another. Similar to <a class="el" href="classRegistry.html#a0fedbeca77141d94ccc0742256fbceae" title="Convert entity IDs in a serialized event using provided mapping.">convert_event_entity()</a> but for components. Used when synchronizing component state over network.</p>
+<p>The component type must implement change_entity(map) method that returns a new component with remapped IDs.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">id</td><td>Component type string identifier </td></tr>
+    <tr><td class="paramname">comp</td><td>Serialized component data (binary format) </td></tr>
+    <tr><td class="paramname">map</td><td>Entity ID mapping (old ID -&gt; new ID) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Serialized component with remapped entity IDs</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::out_of_range</td><td>If component type not registered</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>Component type must have change_entity() method </dd></dl>
+
 </div>
 </div>
 <a id="a0fedbeca77141d94ccc0742256fbceae" name="a0fedbeca77141d94ccc0742256fbceae"></a>
@@ -559,6 +830,26 @@ template&lt;class... Components, typename Function &gt; </div>
       </table>
 </div><div class="memdoc">
 
+<p>Convert entity IDs in a serialized event using provided mapping. </p>
+<p>Remaps entity references in component data from one ID space to another. Similar to convert_component_entity() but for events. Used when synchronizing event state over network.</p>
+<p>The component type must implement change_entity(map) method that returns a new event with remapped IDs.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">id</td><td>event type string identifier </td></tr>
+    <tr><td class="paramname">event</td><td>Serialized event data (binary format) </td></tr>
+    <tr><td class="paramname">map</td><td>Entity ID mapping (old ID -&gt; new ID) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Serialized event with remapped entity IDs</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::out_of_range</td><td>If event type not registered</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>event type must have change_entity() method </dd></dl>
+
 </div>
 </div>
 <a id="aaa45538203de70196bf261d7f966a1e2" name="aaa45538203de70196bf261d7f966a1e2"></a>
@@ -586,6 +877,59 @@ template&lt;typename EventType , typename... Args&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Emit an event, invoking all registered handlers. </p>
+<p>Executes every handler registered via <a class="el" href="classRegistry.html#a519b37b5089d58e931f941147cdb741d" title="Register an event handler with unique identifier.">on()</a> for this event type, in the order they were registered. Handlers receive the event object and a reference to this <a class="el" href="classRegistry.html" title="The Registry class is the core of the ECS (Entity-Component-System) architecture.">Registry</a>.</p>
+<p>This is the type-safe emission method - the event is constructed directly in code and passed by reference. For JSON or binary emission, see the overloaded variants.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Event</td><td>Event type (must satisfy event_type concept) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">event</td><td>Event object to pass to handlers</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>Handlers execute immediately in registration order </dd>
+<dd>
+If a handler throws, subsequent handlers may not execute </dd>
+<dd>
+Handlers can emit new events (recursive emission supported)</dd></dl>
+<div class="fragment"><div class="line"><span class="comment">// Notify all handlers that player took damage</span></div>
+<div class="line">registry.emit(PlayerDamaged{</div>
+<div class="line">  .player_id = player_entity,</div>
+<div class="line">  .damage = 25,</div>
+<div class="line">  .damage_type = DamageType::Fire</div>
+<div class="line">});</div>
+</div><!-- fragment --><div class="fragment"><div class="line">registry.on&lt;EnemyDestroyed&gt;([](<span class="keyword">const</span> EnemyDestroyed&amp; e, <a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r) {</div>
+<div class="line">  <span class="comment">// Handler can emit new events</span></div>
+<div class="line">  r.emit(SpawnPickup{.position = e.position});</div>
+<div class="line">  r.emit(AddScore{.points = e.points});</div>
+<div class="line">});</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// This triggers a cascade</span></div>
+<div class="line">registry.emit(EnemyDestroyed{...});</div>
+</div><!-- fragment --><div class="fragment"><div class="line"><span class="keywordtype">void</span> apply_damage(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <a class="code hl_typedef" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Entity</a> target, <span class="keywordtype">int</span> damage) {</div>
+<div class="line">  <span class="keyword">auto</span>&amp; healths = r.<a class="code hl_function" href="classRegistry.html#ab8ff3522b765d882b46262ad345db07b">get_components</a>&lt;<a class="code hl_struct" href="structHealth.html">Health</a>&gt;();</div>
+<div class="line">  <span class="keywordflow">if</span> (healths[target]) {</div>
+<div class="line">    healths[target]-&gt;current -= damage;</div>
+<div class="line"> </div>
+<div class="line">    <span class="keywordflow">if</span> (healths[target]-&gt;current &lt;= 0) {</div>
+<div class="line">      r.<a class="code hl_function" href="classRegistry.html#ac065676212c7e627cb54d88db52bba0e">emit</a>(EntityDied{.entity = target});</div>
+<div class="line">    }</div>
+<div class="line">  }</div>
+<div class="line">}</div>
+<div class="ttc" id="aclassRegistry_html_a0f7878e7be2d225f4f7ca38b85911110"><div class="ttname"><a href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a></div><div class="ttdeci">std::size_t Entity</div><div class="ttdoc">Type alias for an entity identifier.</div><div class="ttdef"><b>Definition</b> Registry.hpp:356</div></div>
+<div class="ttc" id="aclassRegistry_html_ab8ff3522b765d882b46262ad345db07b"><div class="ttname"><a href="classRegistry.html#ab8ff3522b765d882b46262ad345db07b">Registry::get_components</a></div><div class="ttdeci">SparseArray&lt; Component &gt; &amp; get_components()</div><div class="ttdoc">Get the components object.</div><div class="ttdef"><b>Definition</b> Registry.hpp:432</div></div>
+<div class="ttc" id="aclassRegistry_html_ac065676212c7e627cb54d88db52bba0e"><div class="ttname"><a href="classRegistry.html#ac065676212c7e627cb54d88db52bba0e">Registry::emit</a></div><div class="ttdeci">void emit(std::string const &amp;name, JsonObject const &amp;args)</div><div class="ttdoc">Emit an event from JSON representation.</div><div class="ttdef"><b>Definition</b> Registry.cpp:89</div></div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="classRegistry.html#a519b37b5089d58e931f941147cdb741d" title="Register an event handler with unique identifier.">on()</a> to register handlers </dd>
+<dd>
+emit&lt;Event&gt;(const nlohmann::json&amp;) for JSON emission </dd>
+<dd>
+emit&lt;Event&gt;(const byte*, std::size_t) for binary emission </dd></dl>
 
 </div>
 </div>
@@ -615,6 +959,38 @@ template&lt;typename EventType , typename... Args&gt; </div>
       </table>
 </div><div class="memdoc">
 
+<p>Emit an event from binary representation. </p>
+<p>Deserializes an event from binary data using Event::from_bytes(), then emits it to all registered handlers. This is the most efficient method for network transmission.</p>
+<p>The event type must provide: </p><div class="fragment"><div class="line"><span class="keyword">static</span> Event from_bytes(<span class="keyword">const</span> <span class="keywordtype">byte</span>* data, std::size_t length);</div>
+</div><!-- fragment --><dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Event</td><td>Event type (must satisfy event_type concept) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>Pointer to binary event data </td></tr>
+    <tr><td class="paramname">length</td><td>Number of bytes in data</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::exception</td><td>If from_bytes() fails or data is malformed</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>Internally calls emit(event) after deserialization </dd>
+<dd>
+More efficient than JSON for network transmission </dd>
+<dd>
+Binary format must match Event::from_bytes() expectations</dd></dl>
+<div class="fragment"><div class="line"><span class="comment">// TODO: real example</span></div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd>emit(const Event&amp;) for direct type-safe emission </dd>
+<dd>
+emit&lt;Event&gt;(const nlohmann::json&amp;) for JSON emission </dd></dl>
+
 </div>
 </div>
 <a id="ac065676212c7e627cb54d88db52bba0e" name="ac065676212c7e627cb54d88db52bba0e"></a>
@@ -642,6 +1018,35 @@ template&lt;typename EventType , typename... Args&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Emit an event from JSON representation. </p>
+<p>Deserializes an event from JSON using Event::from_json(), then emits it to all registered handlers. This is the primary method for network-received events or configuration-driven events.</p>
+<p>The event type must provide: </p><div class="fragment"><div class="line"><span class="keyword">static</span> Event from_json(<span class="keyword">const</span> nlohmann::json&amp; j);</div>
+</div><!-- fragment --><dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Event</td><td>Event type (must satisfy event_type concept) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">j</td><td>JSON object containing event data</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::exception</td><td>If from_json() fails or JSON is malformed</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>Internally calls emit(event) after deserialization </dd>
+<dd>
+JSON structure must match Event::from_json() expectations</dd></dl>
+<div class="fragment"><div class="line"><span class="comment">// TODO: real example</span></div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd>emit(const Event&amp;) for direct type-safe emission </dd>
+<dd>
+emit&lt;Event&gt;(const byte*, std::size_t) for binary emission </dd></dl>
 
 </div>
 </div>
@@ -681,22 +1086,44 @@ template&lt;typename Component , typename... Params&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Constructs and adds a component to an entity. </p>
+<p>Constructs a component in-place on an entity. </p>
+<p>Creates a component directly in storage by forwarding constructor arguments. More efficient than <a class="el" href="classRegistry.html#a9990d86dfe7f90e314f8e93773b307d4" title="Adds a component to an entity by moving.">add_component()</a> when constructing from parameters.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">Component</td><td>The type of the component to add. </td></tr>
-    <tr><td class="paramname">Params</td><td>The types of the parameters to construct the component. </td></tr>
+    <tr><td class="paramname">Component</td><td>The component type to construct </td></tr>
+    <tr><td class="paramname">Params</td><td>Constructor parameter types (deduced) </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">to</td><td>The entity to which the component will be added. </td></tr>
-    <tr><td class="paramname">p</td><td>The parameters to construct the component. </td></tr>
+    <tr><td class="paramname">to</td><td>The entity to receive the component </td></tr>
+    <tr><td class="paramname">p</td><td>Constructor arguments forwarded to Component constructor </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd><a class="el" href="classSparseArray.html#afcb68b007a0a116f234324bcc5a27ffc">SparseArray&lt;Component&gt;::Ref</a> A reference to the added component. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Reference to the constructed component</dd></dl>
+<p>Constructs the component directly in the <a class="el" href="classSparseArray.html" title="A sparse array implementation that stores components in an optional vector.">SparseArray</a>, avoiding temporary objects and move operations. Equivalent to: </p><div class="fragment"><div class="line">storage[entity] = Component(args...);  <span class="comment">// But without temporary</span></div>
+</div><!-- fragment --><dl class="section note"><dt>Note</dt><dd>More efficient than <a class="el" href="classRegistry.html#a9990d86dfe7f90e314f8e93773b307d4" title="Adds a component to an entity by moving.">add_component()</a> for complex components </dd>
+<dd>
+Replaces existing component if present</dd></dl>
+<div class="fragment"><div class="line"><span class="comment">// Direct construction</span></div>
+<div class="line">registry.emplace_component&lt;<a class="code hl_struct" href="structPosition.html">Position</a>&gt;(entity, 100.0, 200.0, 1);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Equivalent to (but more efficient than):</span></div>
+<div class="line">registry.add_component(entity, <a class="code hl_struct" href="structPosition.html">Position</a>(100.0, 200.0, 1));</div>
+</div><!-- fragment --><div class="fragment"><div class="line"><span class="comment">// Sprite with multiple parameters</span></div>
+<div class="line">registry.emplace_component&lt;<a class="code hl_struct" href="structSprite.html">Sprite</a>&gt;(</div>
+<div class="line">  entity,</div>
+<div class="line">  <span class="stringliteral">&quot;player.png&quot;</span>,           <span class="comment">// texture</span></div>
+<div class="line">  <a class="code hl_struct" href="structRect.html">Rect</a>{0, 0, 32, 32},    <span class="comment">// source rect</span></div>
+<div class="line">  <a class="code hl_class" href="classVector2D.html">Vector2D</a>{16, 16},      <span class="comment">// origin</span></div>
+<div class="line">  Color::WHITE           <span class="comment">// tint</span></div>
+<div class="line">);</div>
+<div class="ttc" id="aclassVector2D_html"><div class="ttname"><a href="classVector2D.html">Vector2D</a></div><div class="ttdoc">Two-dimensional vector with mathematical operations.</div><div class="ttdef"><b>Definition</b> Vector2D.hpp:43</div></div>
+<div class="ttc" id="astructRect_html"><div class="ttname"><a href="structRect.html">Rect</a></div><div class="ttdoc">Center-based rectangle with collision detection methods.</div><div class="ttdef"><b>Definition</b> Rect.hpp:22</div></div>
+<div class="ttc" id="astructSprite_html"><div class="ttname"><a href="structSprite.html">Sprite</a></div><div class="ttdef"><b>Definition</b> Sprite.hpp:13</div></div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="classRegistry.html#a9990d86dfe7f90e314f8e93773b307d4" title="Adds a component to an entity by moving.">add_component()</a> to move existing components </dd></dl>
 
 </div>
 </div>
@@ -732,15 +1159,46 @@ template&lt;typename Component , typename... Params&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Constructs and adds a component to an entity using byte array (for bytable components). </p>
+<p>Constructs a component from binary data by string ID. </p>
+<p>Deserializes a component from a byte array and attaches it to an entity. Used for network synchronization and state loading.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">to</td><td>The entity to which the component will be added. </td></tr>
-    <tr><td class="paramname">string_id</td><td>The string identifier of the component type. </td></tr>
-    <tr><td class="paramname">bytes</td><td>The byte array to construct the component from. </td></tr>
+    <tr><td class="paramname">to</td><td>The entity to receive the component </td></tr>
+    <tr><td class="paramname">string_id</td><td>The component type identifier (from registration) </td></tr>
+    <tr><td class="paramname">bytes</td><td>Binary representation of the component</td></tr>
   </table>
   </dd>
 </dl>
+<p>Lookup process:</p><ol type="1">
+<li>Find type_index via string_id in _index_getter</li>
+<li>Find emplace function in _emplace_functions</li>
+<li>Call function to deserialize and insert component</li>
+</ol>
+<p>If string_id is unknown, prints error to stderr and does nothing.</p>
+<dl class="section note"><dt>Note</dt><dd>Component type must be registered with this string_id </dd>
+<dd>
+Byte array must be valid serialized component data </dd>
+<dd>
+Used internally by network systems</dd></dl>
+<div class="fragment"><div class="line"><span class="comment">// Server sends component update</span></div>
+<div class="line"><a class="code hl_typedef" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> bytes = position_component.to_bytes();</div>
+<div class="line">network.send(client, <span class="stringliteral">&quot;Position&quot;</span>, bytes);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Client receives and applies</span></div>
+<div class="line">std::string comp_id;</div>
+<div class="line"><a class="code hl_typedef" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> data;</div>
+<div class="line">network.receive(comp_id, data);</div>
+<div class="line">registry.emplace_component(entity, comp_id, data);</div>
+<div class="ttc" id="aByte_8hpp_html_ae5dac5ad63f62fe37b5a8cfd8f269493"><div class="ttname"><a href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a></div><div class="ttdeci">std::vector&lt; Byte &gt; ByteArray</div><div class="ttdef"><b>Definition</b> Byte.hpp:27</div></div>
+</div><!-- fragment --><div class="fragment"><div class="line"><a class="code hl_struct" href="structComponentState.html">ComponentState</a> state = load_from_file(<span class="stringliteral">&quot;save.dat&quot;</span>);</div>
+<div class="line"><span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; [entity_id, comp_data] : state.comps) {</div>
+<div class="line">  registry.emplace_component(entity_id, state.<a class="code hl_variable" href="structComponentState.html#a994fa4db9043fd49c780e12f098af193">id</a>, comp_data);</div>
+<div class="line">}</div>
+<div class="ttc" id="astructComponentState_html"><div class="ttname"><a href="structComponentState.html">ComponentState</a></div><div class="ttdoc">Captures the state of a component type across all entities.</div><div class="ttdef"><b>Definition</b> ComponentState.hpp:24</div></div>
+<div class="ttc" id="astructComponentState_html_a994fa4db9043fd49c780e12f098af193"><div class="ttname"><a href="structComponentState.html#a994fa4db9043fd49c780e12f098af193">ComponentState::id</a></div><div class="ttdeci">std::string id</div><div class="ttdoc">Component type identifier (format: &quot;plugin:component&quot;)</div><div class="ttdef"><b>Definition</b> ComponentState.hpp:25</div></div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="classRegistry.html#aa3c7728231c60cf0e6742d693aa50bbf" title="Registers a bytable component type with a string identifier.">register_component()</a> which sets up the emplace function </dd>
+<dd>
+<a class="el" href="structComponentState.html" title="Captures the state of a component type across all entities.">ComponentState</a> for serialization format </dd></dl>
 
 </div>
 </div>
@@ -803,9 +1261,17 @@ template&lt;class Component &gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>SparseArray&lt;Component&gt;&amp; A reference to the sparse array of the specified component type. </dd></dl>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2runner_2work_2R-Type_2R-Type_2include_2ecs_2zipper_2Zipper_8hpp-example.html#a27">/home/runner/work/R-Type/R-Type/include/ecs/zipper/Zipper.hpp</a>, and <a class="el" href="_2home_2runner_2work_2R-Type_2R-Type_2include_2ecs_2zipper_2ZipperIndex_8hpp-example.html#a20">/home/runner/work/R-Type/R-Type/include/ecs/zipper/ZipperIndex.hpp</a>.</dd>
+<dl class="section return"><dt>Returns</dt><dd>SparseArray&lt;Component&gt;&amp; A reference to the sparse array of the specified component type.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::bad_any_cast</td><td>if component type not registered </td></tr>
+    <tr><td class="paramname">std::out_of_range</td><td>if component type not found</td></tr>
+  </table>
+  </dd>
 </dl>
+<dl class="section note"><dt>Note</dt><dd>Component must be registered via <a class="el" href="classRegistry.html#aa3c7728231c60cf0e6742d693aa50bbf" title="Registers a bytable component type with a string identifier.">register_component()</a> first </dd>
+<dd>
+Make sure to use <a class="el" href="classZipper.html" title="Range adapter that simultaneously iterates over multiple Comps.">Zipper</a> or <a class="el" href="classZipperIndex.html" title="Range adapter that zips multiple Comps and includes indices in the iteration.">ZipperIndex</a> </dd></dl>
 
 </div>
 </div>
@@ -833,15 +1299,8 @@ template&lt;class Component &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-
-<p>Get the components object (const version) </p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">Component</td><td>The type of the component to retrieve. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>SparseArray&lt;Component&gt; const&amp; A const reference to the sparse array of the specified component type. </dd></dl>
+<p>Same as SparseArray&lt;Component&gt;&amp; <a class="el" href="classRegistry.html#ab8ff3522b765d882b46262ad345db07b" title="Get the components object.">get_components()</a> but const <a class="el" href="classRegistry.html#ab8ff3522b765d882b46262ad345db07b" title="Get the components object.">get_components()</a></p>
+<p><a class="el" href="classRegistry.html#ab8ff3522b765d882b46262ad345db07b" title="Get the components object.">get_components()</a> </p>
 
 </div>
 </div>
@@ -859,6 +1318,36 @@ template&lt;class Component &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Get list of currently active scene names. </p>
+<p>Returns the names of all scenes in MAIN or ACTIVE state. DISABLED scenes are not included. The order may be significant (MAIN typically first).</p>
+<dl class="section return"><dt>Returns</dt><dd>Vector of active scene names (may be empty)</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Returned vector is const - use set/remove to modify scenes </dd>
+<dd>
+Empty vector means no scenes are active</dd></dl>
+<div class="fragment"><div class="line"><span class="keywordtype">void</span> show_debug_info(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r) {</div>
+<div class="line">  <span class="keyword">auto</span> scenes = r.<a class="code hl_function" href="classRegistry.html#a0b9eb2723831a87cb5602c43e2b05b0a">get_current_scene</a>();</div>
+<div class="line">  std::cout &lt;&lt; <span class="stringliteral">&quot;Active scenes: &quot;</span>;</div>
+<div class="line">  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; scene : scenes) {</div>
+<div class="line">    std::cout &lt;&lt; scene &lt;&lt; <span class="stringliteral">&quot; &quot;</span>;</div>
+<div class="line">  }</div>
+<div class="line">  std::cout &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line">}</div>
+<div class="ttc" id="aclassRegistry_html_a0b9eb2723831a87cb5602c43e2b05b0a"><div class="ttname"><a href="classRegistry.html#a0b9eb2723831a87cb5602c43e2b05b0a">Registry::get_current_scene</a></div><div class="ttdeci">std::vector&lt; std::string &gt; const &amp; get_current_scene() const</div><div class="ttdoc">Get list of currently active scene names.</div><div class="ttdef"><b>Definition</b> Registry.cpp:155</div></div>
+</div><!-- fragment --><div class="fragment"><div class="line"><span class="keywordtype">void</span> update_system(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r) {</div>
+<div class="line">  <span class="keyword">auto</span> scenes = r.<a class="code hl_function" href="classRegistry.html#a0b9eb2723831a87cb5602c43e2b05b0a">get_current_scene</a>();</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Check if gameplay is active</span></div>
+<div class="line">  <span class="keywordtype">bool</span> in_game = std::find(scenes.begin(), scenes.end(), <span class="stringliteral">&quot;gameplay&quot;</span>)</div>
+<div class="line">                 != scenes.end();</div>
+<div class="line"> </div>
+<div class="line">  <span class="keywordflow">if</span> (in_game) {</div>
+<div class="line">    <span class="comment">// Run gameplay logic</span></div>
+<div class="line">  }</div>
+<div class="line">}</div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="classRegistry.html#ad1c9d136cf9da966ef0977d3c698a963" title="Activate a scene, making its entities visible to systems.">set_current_scene()</a> to modify active scenes </dd>
+<dd>
+is_in_current_scene() to check specific entity </dd></dl>
 
 </div>
 </div>
@@ -915,6 +1404,46 @@ template&lt;<a class="el" href="conceptevent.html">event</a> Event&gt; </div>
       </table>
 </div><div class="memdoc">
 
+<p>Construct an event from JSON and serialize to binary. </p>
+<p>Builds an event object from JSON parameters using the registered event builder, then serializes it to binary format. The result can be transmitted over the network or stored.</p>
+<p>The event type must have been registered with <a class="el" href="classRegistry.html#a57983d07871bbe2bd574a290e5813875" title="Register a JSON builder for an event type.">add_event_builder()</a> (which happens automatically when using <a class="el" href="classRegistry.html#a519b37b5089d58e931f941147cdb741d" title="Register an event handler with unique identifier.">on()</a>).</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">id</td><td>Event type name (string identifier) </td></tr>
+    <tr><td class="paramname">params</td><td>JSON object with event parameters </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Binary representation of the constructed event</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::out_of_range</td><td>If event type not registered </td></tr>
+    <tr><td class="paramname">std::exception</td><td>If JSON is malformed or event construction fails</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>Event type must be registered via <a class="el" href="classRegistry.html#a57983d07871bbe2bd574a290e5813875" title="Register a JSON builder for an event type.">add_event_builder()</a> </dd>
+<dd>
+Returned bytes can be deserialized with Event::from_bytes()</dd></dl>
+<div class="fragment"><div class="line"><span class="comment">// Server builds event from JSON</span></div>
+<div class="line">JsonObject json = {</div>
+<div class="line">  {<span class="stringliteral">&quot;player_id&quot;</span>, 42},</div>
+<div class="line">  {<span class="stringliteral">&quot;position&quot;</span>, {{<span class="stringliteral">&quot;x&quot;</span>, 100.0}, {<span class="stringliteral">&quot;y&quot;</span>, 200.0}}}</div>
+<div class="line">};</div>
+<div class="line"> </div>
+<div class="line"><a class="code hl_typedef" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> event_data = registry.get_event_with_id(<span class="stringliteral">&quot;PlayerMoved&quot;</span>, json);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Send over network</span></div>
+<div class="line">send_to_clients(event_data);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Client receives and emits</span></div>
+<div class="line">registry.emit&lt;PlayerMoved&gt;(event_data.data(), event_data.size());</div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="classRegistry.html#a57983d07871bbe2bd574a290e5813875" title="Register a JSON builder for an event type.">add_event_builder()</a> to register <a class="el" href="conceptevent.html" title="Requires a type to be a valid event with serialization and JSON construction.">event</a> types </dd>
+<dd>
+emit&lt;Event&gt;(const byte*, std::size_t) to <a class="el" href="classRegistry.html#ac065676212c7e627cb54d88db52bba0e" title="Emit an event from JSON representation.">emit</a> binary events </dd>
+<dd>
+<a class="el" href="classRegistry.html#a519b37b5089d58e931f941147cdb741d" title="Register an event handler with unique identifier.">on()</a> which registers builders automatically </dd></dl>
+
 </div>
 </div>
 <a id="a3c5b1d39982cf8c8a5159f048478faf9" name="a3c5b1d39982cf8c8a5159f048478faf9"></a>
@@ -953,6 +1482,104 @@ template&lt;typename <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140d
 </table>
 </div><div class="memdoc">
 
+<p>Retrieve a reference to a hooked component field. </p>
+<p>Returns a reference to a specific field of a hooked component. The component must have been registered with <a class="el" href="classRegistry.html#a988dbbf41e2d34202090c4b47a17d4f7" title="Register component hooks for runtime field access.">register_hook()</a>. Returns std::nullopt if the hook name doesn't exist, the entity was deleted, or the field name is invalid.</p>
+<p>The returned value is a reference_wrapper - changes to the original field are reflected in the reference.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>Field type (must match the actual field type) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">comp</td><td>Hook name (from <a class="el" href="classRegistry.html#a988dbbf41e2d34202090c4b47a17d4f7" title="Register component hooks for runtime field access.">register_hook()</a>) </td></tr>
+    <tr><td class="paramname">value</td><td>Field name (from <a class="el" href="HookMacros_8hpp.html#a64db554aa76425e63b60d0fd6ccb1e26" title="Registers a component field using its variable name as the hook key.">HOOK()</a> declaration) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Optional reference to the field, or std::nullopt if not found</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Returns std::nullopt if hook name is invalid </dd>
+<dd>
+Returns std::nullopt if entity no longer has component </dd>
+<dd>
+Returns std::nullopt if field name is invalid </dd>
+<dd>
+Returned reference is valid until component is removed</dd></dl>
+<div class="fragment"><div class="line"><span class="comment">// Setup</span></div>
+<div class="line">registry.register_hook&lt;<a class="code hl_struct" href="structPosition.html">Position</a>&gt;(<span class="stringliteral">&quot;player&quot;</span>, player_entity);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Read field</span></div>
+<div class="line"><span class="keyword">auto</span> x_ref = registry.get_hooked_value&lt;<span class="keywordtype">float</span>&gt;(<span class="stringliteral">&quot;player&quot;</span>, <span class="stringliteral">&quot;x&quot;</span>);</div>
+<div class="line"><span class="keywordflow">if</span> (x_ref) {</div>
+<div class="line">  <span class="keywordtype">float</span> x = x_ref-&gt;get();  <span class="comment">// Dereference reference_wrapper</span></div>
+<div class="line">  std::cout &lt;&lt; <span class="stringliteral">&quot;Player X: &quot;</span> &lt;&lt; x &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line">}</div>
+</div><!-- fragment --><div class="fragment"><div class="line"><span class="keyword">auto</span> health_ref = registry.get_hooked_value&lt;<span class="keywordtype">int</span>&gt;(<span class="stringliteral">&quot;player&quot;</span>, <span class="stringliteral">&quot;health&quot;</span>);</div>
+<div class="line"><span class="keywordflow">if</span> (health_ref) {</div>
+<div class="line">  health_ref-&gt;get() -= 10;  <span class="comment">// Modify original component field</span></div>
+<div class="line">}</div>
+</div><!-- fragment --><div class="fragment"><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a class="code hl_enumvalue" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> get_config_value(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <span class="keyword">const</span> std::string&amp; key) {</div>
+<div class="line">  <span class="comment">// Config stored in &quot;GameConfig&quot; hook</span></div>
+<div class="line">  <span class="keyword">auto</span> ref = r.<a class="code hl_function" href="classRegistry.html#a3c5b1d39982cf8c8a5159f048478faf9">get_hooked_value</a>&lt;<a class="code hl_enumvalue" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a>&gt;(<span class="stringliteral">&quot;GameConfig&quot;</span>, key);</div>
+<div class="line">  <span class="keywordflow">if</span> (ref) {</div>
+<div class="line">    <span class="keywordflow">return</span> ref-&gt;get();</div>
+<div class="line">  }</div>
+<div class="line">  <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Config key not found: &quot;</span> + key);</div>
+<div class="line">}</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">float</span> gravity = get_config_value&lt;float&gt;(registry, <span class="stringliteral">&quot;gravity&quot;</span>);</div>
+<div class="line"><span class="keywordtype">int</span> max_enemies = get_config_value&lt;int&gt;(registry, <span class="stringliteral">&quot;max_enemies&quot;</span>);</div>
+<div class="ttc" id="aIoEvents_8hpp_html_a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce"><div class="ttname"><a href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a></div><div class="ttdeci">@ T</div><div class="ttdef"><b>Definition</b> IoEvents.hpp:53</div></div>
+<div class="ttc" id="aclassRegistry_html_a3c5b1d39982cf8c8a5159f048478faf9"><div class="ttname"><a href="classRegistry.html#a3c5b1d39982cf8c8a5159f048478faf9">Registry::get_hooked_value</a></div><div class="ttdeci">std::optional&lt; std::reference_wrapper&lt; T &gt; &gt; get_hooked_value(std::string const &amp;comp, std::string const &amp;value)</div><div class="ttdoc">Retrieve a reference to a hooked component field.</div><div class="ttdef"><b>Definition</b> Registry.hpp:2089</div></div>
+</div><!-- fragment --><div class="fragment"><div class="line"><span class="keywordtype">void</span> update_enemy_ai(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <a class="code hl_typedef" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Entity</a> enemy) {</div>
+<div class="line">  <span class="comment">// Track player position through hook</span></div>
+<div class="line">  <span class="keyword">auto</span> target_x = r.<a class="code hl_function" href="classRegistry.html#a3c5b1d39982cf8c8a5159f048478faf9">get_hooked_value</a>&lt;<span class="keywordtype">float</span>&gt;(<span class="stringliteral">&quot;player&quot;</span>, <span class="stringliteral">&quot;x&quot;</span>);</div>
+<div class="line">  <span class="keyword">auto</span> target_y = r.<a class="code hl_function" href="classRegistry.html#a3c5b1d39982cf8c8a5159f048478faf9">get_hooked_value</a>&lt;<span class="keywordtype">float</span>&gt;(<span class="stringliteral">&quot;player&quot;</span>, <span class="stringliteral">&quot;y&quot;</span>);</div>
+<div class="line"> </div>
+<div class="line">  <span class="keywordflow">if</span> (target_x &amp;&amp; target_y) {</div>
+<div class="line">    <span class="keyword">auto</span>&amp; enemy_pos = r.<a class="code hl_function" href="classRegistry.html#ab8ff3522b765d882b46262ad345db07b">get_components</a>&lt;<a class="code hl_struct" href="structPosition.html">Position</a>&gt;()[enemy];</div>
+<div class="line">    <span class="keywordflow">if</span> (enemy_pos) {</div>
+<div class="line">      <span class="comment">// Move towards player</span></div>
+<div class="line">      <span class="keywordtype">float</span> dx = target_x-&gt;get() - enemy_pos-&gt;x;</div>
+<div class="line">      <span class="keywordtype">float</span> dy = target_y-&gt;get() - enemy_pos-&gt;y;</div>
+<div class="line">      <span class="comment">// ... movement logic</span></div>
+<div class="line">    }</div>
+<div class="line">  }</div>
+<div class="line">}</div>
+</div><!-- fragment --><div class="fragment"><div class="line"><span class="comment">// This is how register_binding() uses get_hooked_value()</span></div>
+<div class="line"><span class="keywordtype">void</span> sync_follower_position(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <a class="code hl_typedef" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Entity</a> follower) {</div>
+<div class="line">  <span class="keyword">auto</span> leader_x = r.<a class="code hl_function" href="classRegistry.html#a3c5b1d39982cf8c8a5159f048478faf9">get_hooked_value</a>&lt;<span class="keywordtype">float</span>&gt;(<span class="stringliteral">&quot;leader&quot;</span>, <span class="stringliteral">&quot;x&quot;</span>);</div>
+<div class="line">  <span class="keyword">auto</span> leader_y = r.<a class="code hl_function" href="classRegistry.html#a3c5b1d39982cf8c8a5159f048478faf9">get_hooked_value</a>&lt;<span class="keywordtype">float</span>&gt;(<span class="stringliteral">&quot;leader&quot;</span>, <span class="stringliteral">&quot;y&quot;</span>);</div>
+<div class="line"> </div>
+<div class="line">  <span class="keywordflow">if</span> (leader_x &amp;&amp; leader_y) {</div>
+<div class="line">    <span class="keyword">auto</span>&amp; follower_pos = r.<a class="code hl_function" href="classRegistry.html#ab8ff3522b765d882b46262ad345db07b">get_components</a>&lt;<a class="code hl_struct" href="structPosition.html">Position</a>&gt;()[follower];</div>
+<div class="line">    <span class="keywordflow">if</span> (follower_pos) {</div>
+<div class="line">      follower_pos-&gt;x = leader_x-&gt;get();</div>
+<div class="line">      follower_pos-&gt;y = leader_y-&gt;get();</div>
+<div class="line">    }</div>
+<div class="line">  }</div>
+<div class="line">}</div>
+</div><!-- fragment --><div class="fragment"><div class="line"><span class="keywordtype">void</span> debug_print_hook(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <span class="keyword">const</span> std::string&amp; hook_name) {</div>
+<div class="line">  std::cout &lt;&lt; <span class="stringliteral">&quot;Hook &#39;&quot;</span> &lt;&lt; hook_name &lt;&lt; <span class="stringliteral">&quot;&#39; fields:\n&quot;</span>;</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Try common field names</span></div>
+<div class="line">  <span class="keyword">auto</span> x = r.<a class="code hl_function" href="classRegistry.html#a3c5b1d39982cf8c8a5159f048478faf9">get_hooked_value</a>&lt;<span class="keywordtype">float</span>&gt;(hook_name, <span class="stringliteral">&quot;x&quot;</span>);</div>
+<div class="line">  <span class="keywordflow">if</span> (x) std::cout &lt;&lt; <span class="stringliteral">&quot;  x: &quot;</span> &lt;&lt; x-&gt;get() &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line"> </div>
+<div class="line">  <span class="keyword">auto</span> y = r.<a class="code hl_function" href="classRegistry.html#a3c5b1d39982cf8c8a5159f048478faf9">get_hooked_value</a>&lt;<span class="keywordtype">float</span>&gt;(hook_name, <span class="stringliteral">&quot;y&quot;</span>);</div>
+<div class="line">  <span class="keywordflow">if</span> (y) std::cout &lt;&lt; <span class="stringliteral">&quot;  y: &quot;</span> &lt;&lt; y-&gt;get() &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line"> </div>
+<div class="line">  <span class="keyword">auto</span> health = r.<a class="code hl_function" href="classRegistry.html#a3c5b1d39982cf8c8a5159f048478faf9">get_hooked_value</a>&lt;<span class="keywordtype">int</span>&gt;(hook_name, <span class="stringliteral">&quot;health&quot;</span>);</div>
+<div class="line">  <span class="keywordflow">if</span> (health) std::cout &lt;&lt; <span class="stringliteral">&quot;  health: &quot;</span> &lt;&lt; health-&gt;get() &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line">}</div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="classRegistry.html#a988dbbf41e2d34202090c4b47a17d4f7" title="Register component hooks for runtime field access.">register_hook()</a> to register <a class="el" href="conceptcomponent.html" title="Requires a type to be serializable and entity-convertible for network sync.">component</a> hooks </dd>
+<dd>
+<a class="el" href="classRegistry.html#a529bdf9002188825f7b03f33b2991624" title="Registers a dynamic binding between component fields.">register_binding()</a> which uses this for dynamic data binding </dd>
+<dd>
+<a class="el" href="HookMacros_8hpp.html#a8f0cb5d5dff2b9cbbd63e1e50cc30e6a" title="Makes a component type hookable by generating a static hook map.">HOOKABLE()</a> macro for declaring <a class="el" href="concepthookable.html" title="Requires a type to provide a static hook_map() method.">hookable</a> fields </dd></dl>
+
 </div>
 </div>
 <a id="aa1f44e83eaea9570fb48f4f20eeeb103" name="aa1f44e83eaea9570fb48f4f20eeeb103"></a>
@@ -969,6 +1596,53 @@ template&lt;typename <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140d
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Get the complete ECS state as serialized components. </p>
+<p>Captures a snapshot of all component data across all entities. Returns a vector where each entry contains one component type's complete state: the component type identifier and all (entity, component data) pairs.</p>
+<p>This is used for:</p><ul>
+<li>Full state synchronization for new players</li>
+<li>Save/load game functionality</li>
+<li>Replay recording</li>
+<li>State diffing for delta compression</li>
+</ul>
+<p>The returned data is fully serialized and can be transmitted over network or written to disk.</p>
+<dl class="section return"><dt>Returns</dt><dd>Vector of <a class="el" href="structComponentState.html" title="Captures the state of a component type across all entities.">ComponentState</a> (one per component type)</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>This is a complete snapshot - can be large for complex worlds </dd>
+<dd>
+Each <a class="el" href="structComponentState.html" title="Captures the state of a component type across all entities.">ComponentState</a> contains component ID and entity-data pairs </dd>
+<dd>
+Order is not guaranteed</dd></dl>
+<div class="fragment"><div class="line"><span class="keywordtype">void</span> send_world_state_to_new_player(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; server_registry,</div>
+<div class="line">                                    <a class="code hl_class" href="classNetworkClient.html">NetworkClient</a>&amp; client,</div>
+<div class="line">                                    <span class="keyword">const</span> EntityMapping&amp; id_map) {</div>
+<div class="line">  <span class="comment">// Get complete server state</span></div>
+<div class="line">  <span class="keyword">auto</span> state = server_registry.<a class="code hl_function" href="classRegistry.html#aa1f44e83eaea9570fb48f4f20eeeb103">get_state</a>();</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Send each component type</span></div>
+<div class="line">  <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; comp_state : state) {</div>
+<div class="line">    <span class="comment">// comp_state.id = &quot;Position&quot;, &quot;Velocity&quot;, etc.</span></div>
+<div class="line">    <span class="comment">// comp_state.comps = [(entity, bytes), (entity, bytes), ...]</span></div>
+<div class="line"> </div>
+<div class="line">    <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; [entity, data] : comp_state.comps) {</div>
+<div class="line">      <span class="comment">// Remap entity IDs to client space</span></div>
+<div class="line">      <a class="code hl_typedef" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> client_data = server_registry.<a class="code hl_function" href="classRegistry.html#a649dbdf578a8498e6282d88a0d81d8d5">convert_comp_entity</a>(</div>
+<div class="line">        comp_state.id,</div>
+<div class="line">        data,</div>
+<div class="line">        id_map</div>
+<div class="line">      );</div>
+<div class="line"> </div>
+<div class="line">      <span class="comment">// Send to client</span></div>
+<div class="line">      client.send_component(comp_state.id, id_map.at(entity),</div>
+<div class="line">client_data);</div>
+<div class="line">    }</div>
+<div class="line">  }</div>
+<div class="line">}</div>
+<div class="ttc" id="aclassNetworkClient_html"><div class="ttname"><a href="classNetworkClient.html">NetworkClient</a></div><div class="ttdef"><b>Definition</b> Network.hpp:19</div></div>
+<div class="ttc" id="aclassRegistry_html_a649dbdf578a8498e6282d88a0d81d8d5"><div class="ttname"><a href="classRegistry.html#a649dbdf578a8498e6282d88a0d81d8d5">Registry::convert_comp_entity</a></div><div class="ttdeci">ByteArray convert_comp_entity(std::string const &amp;id, ByteArray const &amp;comp, std::unordered_map&lt; Entity, Entity &gt; const &amp;map)</div><div class="ttdoc">Convert entity IDs in a serialized component using provided mapping.</div><div class="ttdef"><b>Definition</b> Registry.cpp:202</div></div>
+<div class="ttc" id="aclassRegistry_html_aa1f44e83eaea9570fb48f4f20eeeb103"><div class="ttname"><a href="classRegistry.html#aa1f44e83eaea9570fb48f4f20eeeb103">Registry::get_state</a></div><div class="ttdeci">std::vector&lt; ComponentState &gt; get_state()</div><div class="ttdoc">Get the complete ECS state as serialized components.</div><div class="ttdef"><b>Definition</b> Registry.cpp:210</div></div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="structComponentState.html" title="Captures the state of a component type across all entities.">ComponentState</a> structure </dd>
+<dd>
+<a class="el" href="classRegistry.html#a649dbdf578a8498e6282d88a0d81d8d5" title="Convert entity IDs in a serialized component using provided mapping.">convert_comp_entity()</a> to remap entity IDs in state </dd></dl>
 
 </div>
 </div>
@@ -987,6 +1661,46 @@ template&lt;typename <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140d
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Retrieve a registered entity template. </p>
+<p>Returns a copy of the JSON configuration for the named template. The returned JSON can be modified and passed to <a class="el" href="classEntityLoader.html#ab23eea9052153a6664b5e93a88bdef09">EntityLoader::load_entity()</a> to create an entity instance.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">name</td><td>Template identifier (from <a class="el" href="classRegistry.html#afbd9ddbdd3cd1b607c381951afd032e7" title="Register an entity template for reuse.">add_template()</a>) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Copy of the template JSON configuration</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Returns empty/default JSON if template not found (prints error) </dd>
+<dd>
+Returned JSON is a copy - modifications don't affect stored template </dd>
+<dd>
+Use <a class="el" href="classRegistry.html#afbd9ddbdd3cd1b607c381951afd032e7" title="Register an entity template for reuse.">add_template()</a> to update the stored template</dd></dl>
+<div class="fragment"><div class="line"><span class="comment">// Get template and customize</span></div>
+<div class="line"><span class="keyword">auto</span> enemy_config = registry.get_template(<span class="stringliteral">&quot;basic_enemy&quot;</span>);</div>
+<div class="line">enemy_config[<span class="stringliteral">&quot;components&quot;</span>][<span class="stringliteral">&quot;Position&quot;</span>][<span class="stringliteral">&quot;x&quot;</span>] = 500;</div>
+<div class="line">enemy_config[<span class="stringliteral">&quot;components&quot;</span>][<span class="stringliteral">&quot;Position&quot;</span>][<span class="stringliteral">&quot;y&quot;</span>] = 300;</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Create entity</span></div>
+<div class="line"><a class="code hl_class" href="classEntityLoader.html">EntityLoader</a> loader(registry);</div>
+<div class="line"><a class="code hl_typedef" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Entity</a> enemy = loader.load_entity(enemy_config);</div>
+</div><!-- fragment --><div class="fragment"><div class="line"><span class="keywordtype">bool</span> has_template(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <span class="keyword">const</span> std::string&amp; name) {</div>
+<div class="line">  <span class="keyword">auto</span> config = r.<a class="code hl_function" href="classRegistry.html#a6e6e2effbd9f3ba4f3e92e693c360538">get_template</a>(name);</div>
+<div class="line">  <span class="keywordflow">return</span> !config.empty();  <span class="comment">// Empty if not found</span></div>
+<div class="line">}</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">void</span> load_entity_safe(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <span class="keyword">const</span> std::string&amp; template_name) {</div>
+<div class="line">  <span class="keywordflow">if</span> (has_template(r, template_name)) {</div>
+<div class="line">    <span class="keyword">auto</span> config = r.<a class="code hl_function" href="classRegistry.html#a6e6e2effbd9f3ba4f3e92e693c360538">get_template</a>(template_name);</div>
+<div class="line">    <a class="code hl_class" href="classEntityLoader.html">EntityLoader</a>(r).<a class="code hl_function" href="classEntityLoader.html#ab23eea9052153a6664b5e93a88bdef09">load_entity</a>(config);</div>
+<div class="line">  } <span class="keywordflow">else</span> {</div>
+<div class="line">    std::cerr &lt;&lt; <span class="stringliteral">&quot;Template not found: &quot;</span> &lt;&lt; template_name &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line">  }</div>
+<div class="line">}</div>
+<div class="ttc" id="aclassRegistry_html_a6e6e2effbd9f3ba4f3e92e693c360538"><div class="ttname"><a href="classRegistry.html#a6e6e2effbd9f3ba4f3e92e693c360538">Registry::get_template</a></div><div class="ttdeci">JsonObject get_template(std::string const &amp;name)</div><div class="ttdoc">Retrieve a registered entity template.</div><div class="ttdef"><b>Definition</b> Registry.cpp:175</div></div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="classRegistry.html#afbd9ddbdd3cd1b607c381951afd032e7" title="Register an entity template for reuse.">add_template()</a> to register templates </dd>
+<dd>
+<a class="el" href="classEntityLoader.html#ab23eea9052153a6664b5e93a88bdef09">EntityLoader::load_entity()</a> to instantiate entities </dd></dl>
 
 </div>
 </div>
@@ -1016,6 +1730,34 @@ template&lt;class... Component&gt; </div>
 </table>
 </div><div class="memdoc">
 
+<p>Checks if an entity has all specified components. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Component...</td><td>One or more component types to check </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">e</td><td>The entity to check </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if entity has all specified components, false otherwise</dd></dl>
+<p>Uses fold expression to check all component types in a single call. Returns false if:</p><ul>
+<li>Entity ID is out of bounds for any component array</li>
+<li>Any component is not present (nullopt)</li>
+</ul>
+<div class="fragment"><div class="line"><span class="keywordflow">if</span> (registry.has_component&lt;<a class="code hl_struct" href="structPosition.html">Position</a>&gt;(entity)) {</div>
+<div class="line">  <span class="keyword">auto</span>&amp; pos = registry.get_components&lt;<a class="code hl_struct" href="structPosition.html">Position</a>&gt;()[entity];</div>
+<div class="line">  <span class="comment">// Use pos</span></div>
+<div class="line">}</div>
+</div><!-- fragment --><div class="fragment"><div class="line"><span class="comment">// Check if entity is a moving sprite</span></div>
+<div class="line"><span class="keywordflow">if</span> (registry.has_component&lt;<a class="code hl_struct" href="structPosition.html">Position</a>, <a class="code hl_struct" href="structVelocity.html">Velocity</a>, <a class="code hl_struct" href="structSprite.html">Sprite</a>&gt;(entity)) {</div>
+<div class="line">  <span class="comment">// Entity has all three components</span></div>
+<div class="line">  process_moving_sprite(entity);</div>
+<div class="line">}</div>
+</div><!-- fragment --> 
 </div>
 </div>
 <a id="a676be837cc2defb394f38b32d664fd30" name="a676be837cc2defb394f38b32d664fd30"></a>
@@ -1032,6 +1774,19 @@ template&lt;class... Component&gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Initialize the scene management system. </p>
+<p>Must be called before using any scene-related methods. Sets up internal data structures for scene tracking and filtering.</p>
+<dl class="section note"><dt>Note</dt><dd>Call this once during <a class="el" href="classRegistry.html" title="The Registry class is the core of the ECS (Entity-Component-System) architecture.">Registry</a> initialization </dd>
+<dd>
+Safe to call multiple times (idempotent)</dd></dl>
+<div class="fragment"><div class="line"><a class="code hl_class" href="classRegistry.html">Registry</a> registry;</div>
+<div class="line">registry.<a class="code hl_function" href="classRegistry.html#a676be837cc2defb394f38b32d664fd30">init_scene_management</a>();  <span class="comment">// Enable scenes</span></div>
+<div class="line">registry.<a class="code hl_function" href="classRegistry.html#a0298d7d46f1cca897273a7fd9fa2bbc2">add_scene</a>(<span class="stringliteral">&quot;menu&quot;</span>, <a class="code hl_enumvalue" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19a186495f7da296bf880df3a22a492b378">SceneState::MAIN</a>);</div>
+<div class="ttc" id="aclassRegistry_html_a676be837cc2defb394f38b32d664fd30"><div class="ttname"><a href="classRegistry.html#a676be837cc2defb394f38b32d664fd30">Registry::init_scene_management</a></div><div class="ttdeci">void init_scene_management()</div><div class="ttdoc">Initialize the scene management system.</div><div class="ttdef"><b>Definition</b> Registry.cpp:120</div></div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="classRegistry.html#a0298d7d46f1cca897273a7fd9fa2bbc2" title="Register a scene with the given name and initial state.">add_scene()</a> to register scenes </dd>
+<dd>
+<a class="el" href="classRegistry.html#a35e8c1f487a94aaf2752678d814a942a" title="Setup automatic scene management systems.">setup_scene_systems()</a> for automatic scene management </dd></dl>
 
 </div>
 </div>
@@ -1051,6 +1806,22 @@ template&lt;class... Component&gt; </div>
       </table>
 </div><div class="memdoc">
 
+<p>Checks if an entity is marked for deletion. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">e</td><td>The entity to check </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true if entity is in _entities_to_kill set, false otherwise</dd></dl>
+<p>Useful to avoid processing entities that will be deleted soon. Entity remains accessible but should be treated as "dead".</p>
+<div class="fragment"><div class="line">registry.kill_entity(enemy);</div>
+<div class="line"> </div>
+<div class="line"><span class="keywordflow">if</span> (!registry.is_entity_dying(enemy)) {</div>
+<div class="line">  <span class="comment">// Safe to process</span></div>
+<div class="line">  process_enemy(enemy);</div>
+<div class="line">}</div>
+</div><!-- fragment --> 
 </div>
 </div>
 <a id="aa173e9399b055aa64d39a86ebd0d90b9" name="aa173e9399b055aa64d39a86ebd0d90b9"></a>
@@ -1087,13 +1858,42 @@ template&lt;class... Component&gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Kills an entity, marking it for deletion and allowing its ID to be reused. </p>
+<p>Marks an entity for deletion. </p>
+<p>Queues an entity to be destroyed at the end of the current frame. Actual deletion occurs during <a class="el" href="classRegistry.html#a2cf00a9ea3b232b551de02598cbc7756" title="Deletes all entities marked for killing.">process_entity_deletions()</a>, typically called at the end of <a class="el" href="classRegistry.html#a15a6de78dc2259220850e60b540148aa" title="Registers a system function to run every frame.">run_systems()</a>.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">e</td><td>The entity to kill. </td></tr>
+    <tr><td class="paramname">e</td><td>The entity to kill</td></tr>
   </table>
   </dd>
 </dl>
+<p>Deferred deletion prevents iterator invalidation and mid-system crashes:</p><ul>
+<li>Entity added to _entities_to_kill set</li>
+<li>Systems can still access the entity this frame</li>
+<li>Components removed at frame end</li>
+<li>Entity ID recycled for future use</li>
+</ul>
+<p>Multiple kills of same entity are safe (set deduplicates).</p>
+<dl class="section warning"><dt>Warning</dt><dd>Entity remains accessible until <a class="el" href="classRegistry.html#a2cf00a9ea3b232b551de02598cbc7756" title="Deletes all entities marked for killing.">process_entity_deletions()</a> </dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Killing already-dead entity is safe (no-op)</dd></dl>
+<div class="fragment"><div class="line">registry.kill_entity(bullet);</div>
+<div class="line"><span class="comment">// Bullet still exists here</span></div>
+<div class="line"> </div>
+<div class="line">registry.run_systems();  <span class="comment">// Calls process_entity_deletions()</span></div>
+<div class="line"><span class="comment">// Bullet deleted now</span></div>
+</div><!-- fragment --><div class="fragment"><div class="line">registry.add_system&lt;<a class="code hl_struct" href="structPosition.html">Position</a>, <a class="code hl_struct" href="structHealth.html">Health</a>&gt;([](<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <span class="keyword">auto</span>&amp; pos, <span class="keyword">auto</span>&amp; hp)</div>
+<div class="line">{ <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp;&amp; [e, p, h] : <a class="code hl_class" href="classZipper.html">Zipper</a>(pos, hp)) { <span class="keywordflow">if</span> (h.current &lt;= 0) {</div>
+<div class="line">      r.kill_entity(e.entity());  <span class="comment">// Safe - deferred deletion</span></div>
+<div class="line">    }</div>
+<div class="line">  }</div>
+<div class="line">  <span class="comment">// All entities still valid during iteration</span></div>
+<div class="line">});</div>
+</div><!-- fragment --><div class="fragment"><div class="line">registry.kill_entity(enemy);</div>
+<div class="line"><span class="keywordflow">if</span> (registry.is_entity_dying(enemy)) {</div>
+<div class="line">  <span class="comment">// Don&#39;t interact with dying entity</span></div>
+<div class="line">}</div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="classRegistry.html#a2cf00a9ea3b232b551de02598cbc7756" title="Deletes all entities marked for killing.">process_entity_deletions()</a> for actual deletion </dd>
+<dd>
+<a class="el" href="classRegistry.html#ac4b33f8cf1890733209cf94c0d15da4f" title="Checks if an entity is marked for deletion.">is_entity_dying()</a> to check pending deletion </dd></dl>
 
 </div>
 </div>
@@ -1123,6 +1923,55 @@ template&lt;typename EventType &gt; </div>
 </table>
 </div><div class="memdoc">
 
+<p>Unregister a specific event handler by ID. </p>
+<p>Removes the handler that was registered with the given ID. The ID is returned by <a class="el" href="classRegistry.html#a519b37b5089d58e931f941147cdb741d" title="Register an event handler with unique identifier.">on()</a> when registering the handler.</p>
+<p>After unregistration, the handler will not execute when the event is emitted. Other handlers for the same event type remain active.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Event</td><td>Event type (must satisfy event_type concept) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">id</td><td>Handler ID returned by <a class="el" href="classRegistry.html#a519b37b5089d58e931f941147cdb741d" title="Register an event handler with unique identifier.">on()</a></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>Safe to call with invalid/already-removed IDs (no-op) </dd>
+<dd>
+Does not affect other handlers for the same event type</dd></dl>
+<div class="fragment"><div class="line"><span class="comment">// Register handler for one-time use</span></div>
+<div class="line"><span class="keyword">auto</span> <span class="keywordtype">id</span> = registry.on&lt;GameStarted&gt;(</div>
+<div class="line">  [](<span class="keyword">const</span> GameStarted&amp; e, <a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r) {</div>
+<div class="line">    show_intro_cinematic();</div>
+<div class="line">  }</div>
+<div class="line">);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// After cinematic plays, remove handler</span></div>
+<div class="line">registry.off&lt;GameStarted&gt;(id);</div>
+</div><!-- fragment --><div class="fragment"><div class="line"><span class="keyword">class </span>DebugSystem {</div>
+<div class="line">  std::string debug_handler_id;</div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">public</span>:</div>
+<div class="line">  <span class="keywordtype">void</span> enable_debug_mode(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r) {</div>
+<div class="line">    debug_handler_id = r.<a class="code hl_function" href="classRegistry.html#a519b37b5089d58e931f941147cdb741d">on</a>&lt;EntitySpawned&gt;(</div>
+<div class="line">      [](<span class="keyword">const</span> EntitySpawned&amp; e, <a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r) {</div>
+<div class="line">        std::cout &lt;&lt; <span class="stringliteral">&quot;DEBUG: Entity &quot;</span> &lt;&lt; e.id &lt;&lt; <span class="stringliteral">&quot; spawned\n&quot;</span>;</div>
+<div class="line">      }</div>
+<div class="line">    );</div>
+<div class="line">  }</div>
+<div class="line"> </div>
+<div class="line">  <span class="keywordtype">void</span> disable_debug_mode(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r) {</div>
+<div class="line">    r.<a class="code hl_function" href="classRegistry.html#aaa995f6e5fb98a63e02df08c17395c4c">off</a>&lt;EntitySpawned&gt;(debug_handler_id);</div>
+<div class="line">  }</div>
+<div class="line">};</div>
+<div class="ttc" id="aclassRegistry_html_a519b37b5089d58e931f941147cdb741d"><div class="ttname"><a href="classRegistry.html#a519b37b5089d58e931f941147cdb741d">Registry::on</a></div><div class="ttdeci">HandlerId on(std::string const &amp;name, std::function&lt; void(const EventType &amp;)&gt; handler)</div><div class="ttdoc">Register an event handler with unique identifier.</div><div class="ttdef"><b>Definition</b> Registry.hpp:1323</div></div>
+<div class="ttc" id="aclassRegistry_html_aaa995f6e5fb98a63e02df08c17395c4c"><div class="ttname"><a href="classRegistry.html#aaa995f6e5fb98a63e02df08c17395c4c">Registry::off</a></div><div class="ttdeci">bool off(HandlerId handler_id)</div><div class="ttdoc">Unregister a specific event handler by ID.</div><div class="ttdef"><b>Definition</b> Registry.hpp:1397</div></div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="classRegistry.html#a519b37b5089d58e931f941147cdb741d" title="Register an event handler with unique identifier.">on()</a> to register handler </dd>
+<dd>
+<a class="el" href="classRegistry.html#a279352508a910ee9eafb1b2454bf484c" title="Remove all event handlers for a specific event type.">off_all()</a> to remove all handlers </dd></dl>
+
 </div>
 </div>
 <a id="a279352508a910ee9eafb1b2454bf484c" name="a279352508a910ee9eafb1b2454bf484c"></a>
@@ -1149,6 +1998,21 @@ template&lt;typename EventType &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Remove all event handlers for a specific event type. </p>
+<p>Unregisters every handler that was registered for the given event type. After this call, emitting the event will have no effect until new handlers are registered.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Event</td><td>Event type (must satisfy event_type concept)</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>Safe to call even if no handlers are registered (no-op) </dd>
+<dd>
+Does not affect handlers for other event types</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classRegistry.html#a519b37b5089d58e931f941147cdb741d" title="Register an event handler with unique identifier.">on()</a> to register handlers </dd>
+<dd>
+<a class="el" href="classRegistry.html#aaa995f6e5fb98a63e02df08c17395c4c" title="Unregister a specific event handler by ID.">off()</a> to remove specific handler </dd></dl>
 
 </div>
 </div>
@@ -1188,6 +2052,88 @@ template&lt;<a class="el" href="conceptevent.html">event</a> EventType&gt; </div
 </table>
 </div><div class="memdoc">
 
+<p>Register an event handler with unique identifier. </p>
+<p>Creates a callback that executes when the specified event type is emitted. Returns a unique string ID for later unregistration with <a class="el" href="classRegistry.html#aaa995f6e5fb98a63e02df08c17395c4c" title="Unregister a specific event handler by ID.">off()</a>.</p>
+<p>The handler function receives the event object and <a class="el" href="classRegistry.html" title="The Registry class is the core of the ECS (Entity-Component-System) architecture.">Registry</a> reference: </p><div class="fragment"><div class="line"><span class="keywordtype">void</span> handler(<span class="keyword">const</span> EventType&amp; evt, <a class="code hl_class" href="classRegistry.html">Registry</a>&amp; reg) { ... }</div>
+</div><!-- fragment --><p>Multiple handlers can be registered for the same event type - they execute in registration order. Each handler gets a unique ID for selective removal.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Event</td><td>Event type (must satisfy event_type concept) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">handler</td><td>Callback function taking (const Event&amp;, <a class="el" href="classRegistry.html" title="The Registry class is the core of the ECS (Entity-Component-System) architecture.">Registry</a>&amp;) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Unique string ID for unregistering this specific handler</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Handler is not invoked immediately - only when <a class="el" href="classRegistry.html#ac065676212c7e627cb54d88db52bba0e" title="Emit an event from JSON representation.">emit()</a> is called </dd>
+<dd>
+ID must be stored if you need to unregister later </dd>
+<dd>
+Handlers persist across scenes unless explicitly removed</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::bad_alloc</td><td>If handler registration fails</td></tr>
+  </table>
+  </dd>
+</dl>
+<div class="fragment"><div class="line"><span class="keyword">struct </span>PlayerDied {</div>
+<div class="line">  std::size_t player_id;</div>
+<div class="line">  std::string cause;</div>
+<div class="line">};</div>
+<div class="line"> </div>
+<div class="line">std::string handler_id = registry.on&lt;PlayerDied&gt;(</div>
+<div class="line">  [](<span class="keyword">const</span> PlayerDied&amp; evt, <a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r) {</div>
+<div class="line">    std::cout &lt;&lt; <span class="stringliteral">&quot;Player &quot;</span> &lt;&lt; evt.player_id</div>
+<div class="line">              &lt;&lt; <span class="stringliteral">&quot; died: &quot;</span> &lt;&lt; evt.cause &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line">    <span class="comment">// Spawn explosion effect, update score, etc.</span></div>
+<div class="line">  }</div>
+<div class="line">);</div>
+</div><!-- fragment --><div class="fragment"><div class="line"><span class="comment">// Audio system handler</span></div>
+<div class="line"><span class="keyword">auto</span> audio_id = registry.on&lt;EnemyDestroyed&gt;(</div>
+<div class="line">  [](<span class="keyword">const</span> EnemyDestroyed&amp; e, <a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r) {</div>
+<div class="line">    play_sound(<span class="stringliteral">&quot;explosion.wav&quot;</span>);</div>
+<div class="line">  }</div>
+<div class="line">);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Score system handler</span></div>
+<div class="line"><span class="keyword">auto</span> score_id = registry.on&lt;EnemyDestroyed&gt;(</div>
+<div class="line">  [](<span class="keyword">const</span> EnemyDestroyed&amp; e, <a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r) {</div>
+<div class="line">    add_score(e.points);</div>
+<div class="line">  }</div>
+<div class="line">);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// VFX system handler</span></div>
+<div class="line"><span class="keyword">auto</span> vfx_id = registry.on&lt;EnemyDestroyed&gt;(</div>
+<div class="line">  [](<span class="keyword">const</span> EnemyDestroyed&amp; e, <a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r) {</div>
+<div class="line">    spawn_explosion_at(e.position);</div>
+<div class="line">  }</div>
+<div class="line">);</div>
+<div class="line"><span class="comment">// All three handlers execute when event is emitted</span></div>
+</div><!-- fragment --><div class="fragment"><div class="line"><span class="keyword">auto</span> <span class="keywordtype">id</span> = registry.on&lt;LevelComplete&gt;(</div>
+<div class="line">  [](<span class="keyword">const</span> LevelComplete&amp; evt, <a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r) {</div>
+<div class="line">    <span class="comment">// Modify components</span></div>
+<div class="line">    <span class="keyword">auto</span>&amp; players = r.get_components&lt;Player&gt;();</div>
+<div class="line">    <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; player : players) {</div>
+<div class="line">      <span class="keywordflow">if</span> (player) player-&gt;level_up();</div>
+<div class="line">    }</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">// Emit new events</span></div>
+<div class="line">    r.emit(ShowLevelCompleteUI{evt.score});</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">// Change scenes</span></div>
+<div class="line">    r.set_current_scene(<span class="stringliteral">&quot;victory_screen&quot;</span>);</div>
+<div class="line">  }</div>
+<div class="line">);</div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="classRegistry.html#ac065676212c7e627cb54d88db52bba0e" title="Emit an event from JSON representation.">emit()</a> to trigger handlers </dd>
+<dd>
+<a class="el" href="classRegistry.html#aaa995f6e5fb98a63e02df08c17395c4c" title="Unregister a specific event handler by ID.">off()</a> to unregister specific handler </dd>
+<dd>
+<a class="el" href="classRegistry.html#a279352508a910ee9eafb1b2454bf484c" title="Remove all event handlers for a specific event type.">off_all()</a> to remove all handlers for <a class="el" href="conceptevent.html" title="Requires a type to be a valid event with serialization and JSON construction.">event</a> type </dd></dl>
+
 </div>
 </div>
 <a id="a2cf00a9ea3b232b551de02598cbc7756" name="a2cf00a9ea3b232b551de02598cbc7756"></a>
@@ -1204,6 +2150,33 @@ template&lt;<a class="el" href="conceptevent.html">event</a> EventType&gt; </div
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Deletes all entities marked for killing. </p>
+<p>Processes the _entities_to_kill set, removing all components from those entities and recycling their IDs.</p>
+<p>For each entity in _entities_to_kill:</p><ol type="1">
+<li>Call delete function for every registered component type</li>
+<li>Add entity ID to _dead_entities queue for recycling</li>
+<li>Clear _entities_to_kill set</li>
+</ol>
+<p>This is automatically called at the end of <a class="el" href="classRegistry.html#a15a6de78dc2259220850e60b540148aa" title="Registers a system function to run every frame.">run_systems()</a>.</p>
+<dl class="section note"><dt>Note</dt><dd>Generally called automatically - manual use rarely needed </dd>
+<dd>
+Safe to call multiple times (clears empty set) <div class="fragment"><div class="line"><span class="comment">// Batch kill entities</span></div>
+<div class="line"><span class="keywordflow">for</span> (<span class="keyword">auto</span> enemy : enemies_to_remove) {</div>
+<div class="line">  registry.kill_entity(enemy);</div>
+<div class="line">}</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Force immediate deletion (unusual)</span></div>
+<div class="line">registry.process_entity_deletions();</div>
+<div class="line"><span class="comment">// Entities deleted now instead of at frame end</span></div>
+</div><!-- fragment --></dd></dl>
+<div class="fragment"><div class="line"><span class="keywordflow">while</span> (game_running) {</div>
+<div class="line">  registry.run_systems();</div>
+<div class="line">  <span class="comment">// process_entity_deletions() called automatically here</span></div>
+<div class="line">}</div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="classRegistry.html#a9f8e76e4f67a4e33dd7273d065d6be7a" title="Marks an entity for deletion.">kill_entity()</a> to mark entities for deletion </dd>
+<dd>
+<a class="el" href="classRegistry.html#a15a6de78dc2259220850e60b540148aa" title="Registers a system function to run every frame.">run_systems()</a> which calls this automatically </dd></dl>
 
 </div>
 </div>
@@ -1249,22 +2222,93 @@ template&lt;<a class="el" href="conceptcomponent.html">component</a> ComponentTy
 </table>
 </div><div class="memdoc">
 
-<p>Registers a binding that syncs a variable to a hooked source every tick. </p>
+<p>Registers a dynamic binding between component fields. </p>
+<p>Creates a live connection where a target field automatically updates to match a source field every frame. Used for data-driven behaviors like followers, turrets tracking targets, or <a class="el" href="classUI.html">UI</a> elements following entities.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">ComponentType</td><td>The type of component containing the field. </td></tr>
-    <tr><td class="paramname">T</td><td>The type of the field being bound. </td></tr>
+    <tr><td class="paramname">ComponentType</td><td>Type of component containing the target field </td></tr>
+    <tr><td class="paramname">T</td><td>Type of the field being bound </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">entity</td><td>The entity containing the component. </td></tr>
-    <tr><td class="paramname">field_name</td><td>The name of the field to bind. </td></tr>
-    <tr><td class="paramname">source_hook</td><td>The hook string (e.g., "player:position"). </td></tr>
+    <tr><td class="paramname">entity</td><td>Entity owning the target component </td></tr>
+    <tr><td class="paramname">field_name</td><td>Name of the target field (must be hookable) </td></tr>
+    <tr><td class="paramname">source_hook</td><td>Source identifier in format "ComponentName:fieldName"</td></tr>
   </table>
   </dd>
 </dl>
+<p>Creates a Binding struct containing:</p><ul>
+<li>updater: Lambda that copies source value to target field each frame</li>
+<li>serializer: Lambda that serializes target component for network sync</li>
+</ul>
+<p>The binding is executed every frame during <a class="el" href="classRegistry.html#a8f89de6aea32015de47de101f941e53d" title="Updates all registered dynamic bindings.">update_bindings()</a>.</p>
+<dl class="section note"><dt>Note</dt><dd><a class="el" href="classTarget.html">Target</a> component type must be hookable (use HOOKABLE macro) </dd>
+<dd>
+Source component must exist and be hookable </dd>
+<dd>
+Binding survives until <a class="el" href="classRegistry.html#ab44989c0361996ad2c4aefbf4636b664" title="Removes all registered bindings.">clear_bindings()</a> or entity deletion </dd>
+<dd>
+Typically called automatically during component JSON construction</dd></dl>
+<div class="fragment"><div class="line"><span class="keyword">struct </span><a class="code hl_struct" href="structFollower.html">Follower</a> {</div>
+<div class="line">  <a class="code hl_class" href="classVector2D.html">Vector2D</a> target_pos;</div>
+<div class="line"> </div>
+<div class="line">  <a class="code hl_struct" href="structFollower.html">Follower</a>(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, JsonObject <span class="keyword">const</span>&amp; obj, <a class="code hl_typedef" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Entity</a> self) {</div>
+<div class="line">    <span class="comment">// JSON: {&quot;target_pos&quot;: &quot;#Leader:pos&quot;}</span></div>
+<div class="line">    target_pos = get_value&lt;Follower, Vector2D&gt;(</div>
+<div class="line">      r, obj, self, <span class="stringliteral">&quot;target_pos&quot;</span></div>
+<div class="line">    ).value_or(<a class="code hl_class" href="classVector2D.html">Vector2D</a>{0, 0});</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">// register_binding called internally by get_value</span></div>
+<div class="line">    <span class="comment">// Creates: Follower.target_pos &lt;- Leader.pos binding</span></div>
+<div class="line">  }</div>
+<div class="line"> </div>
+<div class="line">  <a class="code hl_define" href="HookMacros_8hpp.html#a8f0cb5d5dff2b9cbbd63e1e50cc30e6a">HOOKABLE</a>(<a class="code hl_struct" href="structFollower.html">Follower</a>, <a class="code hl_define" href="HookMacros_8hpp.html#a64db554aa76425e63b60d0fd6ccb1e26">HOOK</a>(target_pos))</div>
+<div class="line">};</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Every frame:</span></div>
+<div class="line"><span class="comment">// 1. Leader moves to new position</span></div>
+<div class="line"><span class="comment">// 2. update_bindings() executes</span></div>
+<div class="line"><span class="comment">// 3. Follower.target_pos = Leader.pos (automatic!)</span></div>
+<div class="ttc" id="aHookMacros_8hpp_html_a64db554aa76425e63b60d0fd6ccb1e26"><div class="ttname"><a href="HookMacros_8hpp.html#a64db554aa76425e63b60d0fd6ccb1e26">HOOK</a></div><div class="ttdeci">#define HOOK(var)</div><div class="ttdoc">Registers a component field using its variable name as the hook key.</div><div class="ttdef"><b>Definition</b> HookMacros.hpp:179</div></div>
+<div class="ttc" id="aHookMacros_8hpp_html_a8f0cb5d5dff2b9cbbd63e1e50cc30e6a"><div class="ttname"><a href="HookMacros_8hpp.html#a8f0cb5d5dff2b9cbbd63e1e50cc30e6a">HOOKABLE</a></div><div class="ttdeci">#define HOOKABLE(type,...)</div><div class="ttdoc">Makes a component type hookable by generating a static hook map.</div><div class="ttdef"><b>Definition</b> HookMacros.hpp:233</div></div>
+<div class="ttc" id="astructFollower_html"><div class="ttname"><a href="structFollower.html">Follower</a></div><div class="ttdef"><b>Definition</b> Follower.hpp:11</div></div>
+</div><!-- fragment --><div class="fragment"><div class="line"><span class="keyword">struct </span>Turret {</div>
+<div class="line">  <a class="code hl_class" href="classVector2D.html">Vector2D</a> aim_target;</div>
+<div class="line">  <span class="keywordtype">float</span> rotation;</div>
+<div class="line"> </div>
+<div class="line">  <a class="code hl_define" href="HookMacros_8hpp.html#a8f0cb5d5dff2b9cbbd63e1e50cc30e6a">HOOKABLE</a>(Turret, <a class="code hl_define" href="HookMacros_8hpp.html#a64db554aa76425e63b60d0fd6ccb1e26">HOOK</a>(aim_target), <a class="code hl_define" href="HookMacros_8hpp.html#a64db554aa76425e63b60d0fd6ccb1e26">HOOK</a>(rotation))</div>
+<div class="line">};</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Bind turret aim to player position</span></div>
+<div class="line">registry.register_binding&lt;Turret, <a class="code hl_class" href="classVector2D.html">Vector2D</a>&gt;(</div>
+<div class="line">  turret_entity,</div>
+<div class="line">  <span class="stringliteral">&quot;aim_target&quot;</span>,</div>
+<div class="line">  <span class="stringliteral">&quot;Player:pos&quot;</span></div>
+<div class="line">);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Turret automatically aims at player position every frame</span></div>
+</div><!-- fragment --><div class="fragment"><div class="line"><span class="keyword">struct </span>HealthBar {</div>
+<div class="line">  <span class="keywordtype">int</span> current_value;</div>
+<div class="line">  <a class="code hl_define" href="HookMacros_8hpp.html#a8f0cb5d5dff2b9cbbd63e1e50cc30e6a">HOOKABLE</a>(HealthBar, <a class="code hl_define" href="HookMacros_8hpp.html#a64db554aa76425e63b60d0fd6ccb1e26">HOOK</a>(current_value))</div>
+<div class="line">};</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Bind UI to player health</span></div>
+<div class="line">registry.register_binding&lt;HealthBar, <span class="keywordtype">int</span>&gt;(</div>
+<div class="line">  health_bar_entity,</div>
+<div class="line">  <span class="stringliteral">&quot;current_value&quot;</span>,</div>
+<div class="line">  <span class="stringliteral">&quot;Player:health.current&quot;</span></div>
+<div class="line">);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Health bar automatically reflects player damage</span></div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="classRegistry.html#a8f89de6aea32015de47de101f941e53d" title="Updates all registered dynamic bindings.">update_bindings()</a> which executes bindings </dd>
+<dd>
+<a class="el" href="Hooks_8hpp.html#ac691828d534a0e4dd453f2419b40c4bf" title="Gets a value and registers a dynamic binding for auto-updates.">get_value()</a> which calls this for # hooks </dd>
+<dd>
+<a class="el" href="HookMacros_8hpp.html#a8f0cb5d5dff2b9cbbd63e1e50cc30e6a" title="Makes a component type hookable by generating a static hook map.">HOOKABLE</a> macro to make components bindable </dd>
+<dd>
+<a class="el" href="Hooks_8hpp.html" title="Hook resolution and JSON value extraction functions.">Hooks.hpp</a> for hook syntax details </dd></dl>
 
 </div>
 </div>
@@ -1307,7 +2351,13 @@ template&lt;<a class="el" href="conceptcomponent.html">component</a> Component&g
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>SparseArray&lt;Component&gt;&amp; A reference to the sparse array of the registered component type. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>SparseArray&lt;Component&gt;&amp; A reference to the sparse array of the registered component type.</dd></dl>
+<dl class="section note"><dt>Note</dt><dd>Must be called before using the component type </dd>
+<dd>
+String ID must be unique across all component types </dd>
+<dd>
+Registration is idempotent - re-registering replaces existing </dd></dl>
+<dl class="section see"><dt>See also</dt><dd>// TODO: Mention Macros </dd></dl>
 
 </div>
 </div>
@@ -1347,6 +2397,91 @@ template&lt;<a class="el" href="concepthookable.html">hookable</a> T&gt; </div>
 </table>
 </div><div class="memdoc">
 
+<p>Register component hooks for runtime field access. </p>
+<p>Makes the specified entity's component fields accessible via string names. The component type must be hookable (declared with HOOKABLE macro).</p>
+<p>After registration, <a class="el" href="classRegistry.html#a3c5b1d39982cf8c8a5159f048478faf9" title="Retrieve a reference to a hooked component field.">get_hooked_value()</a> can retrieve field values using the hook name and field name. This enables JSON configuration to reference runtime values with syntax like "%hookname:fieldname".</p>
+<p>The hook persists until the <a class="el" href="classRegistry.html" title="The Registry class is the core of the ECS (Entity-Component-System) architecture.">Registry</a> is destroyed or the entity is deleted. Registering the same name again overwrites the previous registration.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>Component type (must satisfy hookable concept) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">name</td><td>Unique identifier for this hook (user-defined) </td></tr>
+    <tr><td class="paramname">e</td><td>Entity containing the component</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>Component must have <a class="el" href="HookMacros_8hpp.html#a8f0cb5d5dff2b9cbbd63e1e50cc30e6a" title="Makes a component type hookable by generating a static hook map.">HOOKABLE()</a> declaration </dd>
+<dd>
+Hook name should be unique within the <a class="el" href="classRegistry.html" title="The Registry class is the core of the ECS (Entity-Component-System) architecture.">Registry</a> </dd>
+<dd>
+Entity must have the component when accessed</dd></dl>
+<div class="fragment"><div class="line"><span class="comment">// Component with hookable fields</span></div>
+<div class="line"><span class="keyword">struct </span>PlayerConfig {</div>
+<div class="line">  <span class="keywordtype">float</span> max_speed = 100.0f;</div>
+<div class="line">  <span class="keywordtype">int</span> max_health = 100;</div>
+<div class="line"> </div>
+<div class="line">  <a class="code hl_define" href="HookMacros_8hpp.html#a8f0cb5d5dff2b9cbbd63e1e50cc30e6a">HOOKABLE</a>(PlayerConfig,</div>
+<div class="line">           <a class="code hl_define" href="HookMacros_8hpp.html#a64db554aa76425e63b60d0fd6ccb1e26">HOOK</a>(max_speed),</div>
+<div class="line">           <a class="code hl_define" href="HookMacros_8hpp.html#a64db554aa76425e63b60d0fd6ccb1e26">HOOK</a>(max_health))</div>
+<div class="line">};</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Register hook for global config entity</span></div>
+<div class="line"><a class="code hl_typedef" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Entity</a> config_entity = registry.spawn_entity();</div>
+<div class="line">registry.add_component&lt;PlayerConfig&gt;(config_entity);</div>
+<div class="line">registry.register_hook&lt;PlayerConfig&gt;(<span class="stringliteral">&quot;PlayerConfig&quot;</span>, config_entity);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Now JSON can reference these values</span></div>
+<div class="line"><span class="comment">// {&quot;speed&quot;: &quot;%PlayerConfig:max_speed&quot;}  // Uses hooked value</span></div>
+</div><!-- fragment --><div class="fragment"><div class="line"><span class="comment">// Register multiple player entities</span></div>
+<div class="line"><a class="code hl_typedef" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Entity</a> p1 = registry.spawn_entity();</div>
+<div class="line"><a class="code hl_typedef" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Entity</a> p2 = registry.spawn_entity();</div>
+<div class="line">registry.add_component&lt;<a class="code hl_struct" href="structPosition.html">Position</a>&gt;(p1, 10.0f, 20.0f);</div>
+<div class="line">registry.add_component&lt;<a class="code hl_struct" href="structPosition.html">Position</a>&gt;(p2, 50.0f, 60.0f);</div>
+<div class="line"> </div>
+<div class="line">registry.register_hook&lt;<a class="code hl_struct" href="structPosition.html">Position</a>&gt;(<span class="stringliteral">&quot;player1&quot;</span>, p1);</div>
+<div class="line">registry.register_hook&lt;<a class="code hl_struct" href="structPosition.html">Position</a>&gt;(<span class="stringliteral">&quot;player2&quot;</span>, p2);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Access specific player positions</span></div>
+<div class="line"><span class="keyword">auto</span> p1_x = registry.get_hooked_value&lt;<span class="keywordtype">float</span>&gt;(<span class="stringliteral">&quot;player1&quot;</span>, <span class="stringliteral">&quot;x&quot;</span>);</div>
+<div class="line"><span class="keyword">auto</span> p2_x = registry.get_hooked_value&lt;<span class="keywordtype">float</span>&gt;(<span class="stringliteral">&quot;player2&quot;</span>, <span class="stringliteral">&quot;x&quot;</span>);</div>
+</div><!-- fragment --><div class="fragment"><div class="line"><span class="comment">// Register player as target for AI</span></div>
+<div class="line"><a class="code hl_typedef" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Entity</a> player = spawn_player(registry);</div>
+<div class="line">registry.register_hook&lt;<a class="code hl_struct" href="structPosition.html">Position</a>&gt;(<span class="stringliteral">&quot;player&quot;</span>, player);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Enemy JSON can reference player position</span></div>
+<div class="line"><span class="comment">// {</span></div>
+<div class="line"><span class="comment">//   &quot;enemy&quot;: {</span></div>
+<div class="line"><span class="comment">//     &quot;components&quot;: {</span></div>
+<div class="line"><span class="comment">//       &quot;AI&quot;: {</span></div>
+<div class="line"><span class="comment">//         &quot;target&quot;: &quot;#player:pos&quot;  // Binds to player position</span></div>
+<div class="line"><span class="comment">//       }</span></div>
+<div class="line"><span class="comment">//     }</span></div>
+<div class="line"><span class="comment">//   }</span></div>
+<div class="line"><span class="comment">// }</span></div>
+</div><!-- fragment --><div class="fragment"><div class="line"><span class="keyword">struct </span>GameConfig {</div>
+<div class="line">  <span class="keywordtype">float</span> gravity = 9.8f;</div>
+<div class="line">  <span class="keywordtype">float</span> friction = 0.95f;</div>
+<div class="line"> </div>
+<div class="line">  <a class="code hl_define" href="HookMacros_8hpp.html#a8f0cb5d5dff2b9cbbd63e1e50cc30e6a">HOOKABLE</a>(GameConfig, <a class="code hl_define" href="HookMacros_8hpp.html#a64db554aa76425e63b60d0fd6ccb1e26">HOOK</a>(gravity), <a class="code hl_define" href="HookMacros_8hpp.html#a64db554aa76425e63b60d0fd6ccb1e26">HOOK</a>(friction))</div>
+<div class="line">};</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Create global config entity</span></div>
+<div class="line"><a class="code hl_typedef" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Entity</a> config = registry.spawn_entity();</div>
+<div class="line">registry.add_component&lt;GameConfig&gt;(config);</div>
+<div class="line">registry.register_hook&lt;GameConfig&gt;(<span class="stringliteral">&quot;GameConfig&quot;</span>, config);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// All entity configs can reference global settings</span></div>
+<div class="line"><span class="comment">// {&quot;friction&quot;: &quot;%GameConfig:friction&quot;}</span></div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="classRegistry.html#a3c5b1d39982cf8c8a5159f048478faf9" title="Retrieve a reference to a hooked component field.">get_hooked_value()</a> to retrieve field values </dd>
+<dd>
+<a class="el" href="HookMacros_8hpp.html#a8f0cb5d5dff2b9cbbd63e1e50cc30e6a" title="Makes a component type hookable by generating a static hook map.">HOOKABLE()</a> macro to declare <a class="el" href="concepthookable.html" title="Requires a type to provide a static hook_map() method.">hookable</a> components </dd>
+<dd>
+<a class="el" href="classRegistry.html#a529bdf9002188825f7b03f33b2991624" title="Registers a dynamic binding between component fields.">register_binding()</a> which uses hooks for dynamic data binding </dd></dl>
+
 </div>
 </div>
 <a id="aa3aabe22621e394e0e17f2f2b35a59c8" name="aa3aabe22621e394e0e17f2f2b35a59c8"></a>
@@ -1364,6 +2499,18 @@ template&lt;<a class="el" href="concepthookable.html">hookable</a> T&gt; </div>
       </table>
 </div><div class="memdoc">
 
+<p>Deactivate all scenes. </p>
+<p>Sets all scenes to DISABLED state. No entities will be processed by systems until scenes are reactivated with <a class="el" href="classRegistry.html#ad1c9d136cf9da966ef0977d3c698a963" title="Activate a scene, making its entities visible to systems.">set_current_scene()</a>.</p>
+<dl class="section note"><dt>Note</dt><dd>Does not delete scenes - they can be reactivated </dd>
+<dd>
+Does not delete entities </dd>
+<dd>
+Useful for complete state resets</dd></dl>
+<div class="fragment"><div class="line"><span class="keywordtype">void</span> restart_game(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r) {</div>
+<div class="line">  r.<a class="code hl_function" href="classRegistry.html#aa3aabe22621e394e0e17f2f2b35a59c8">remove_all_scenes</a>();  <span class="comment">// Disable everything</span></div>
+<div class="line">  r.<a class="code hl_function" href="classRegistry.html#ad1c9d136cf9da966ef0977d3c698a963">set_current_scene</a>(<span class="stringliteral">&quot;main_menu&quot;</span>);</div>
+<div class="ttc" id="aclassRegistry_html_aa3aabe22621e394e0e17f2f2b35a59c8"><div class="ttname"><a href="classRegistry.html#aa3aabe22621e394e0e17f2f2b35a59c8">Registry::remove_all_scenes</a></div><div class="ttdeci">void remove_all_scenes()</div><div class="ttdoc">Deactivate all scenes.</div><div class="ttdef"><b>Definition</b> Registry.cpp:150</div></div>
+</div><!-- fragment --> 
 </div>
 </div>
 <a id="ae83c694e0e30125b850edcc343406b76" name="ae83c694e0e30125b850edcc343406b76"></a>
@@ -1393,18 +2540,39 @@ template&lt;typename Component &gt; </div>
 </div><div class="memdoc">
 
 <p>Removes a component from an entity. </p>
+<p>Erases the component at the entity's index in the component storage array. If the entity doesn't have this component, this is a no-op.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">Component</td><td>The type of the component to remove. </td></tr>
+    <tr><td class="paramname">Component</td><td>The component type to remove </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">from</td><td>The entity from which the component will be removed. </td></tr>
+    <tr><td class="paramname">from</td><td>The entity to remove the component from</td></tr>
   </table>
   </dd>
 </dl>
+<p>Sets the <a class="el" href="classSparseArray.html" title="A sparse array implementation that stores components in an optional vector.">SparseArray</a> slot to std::nullopt. The entity remains valid and can still have other component types.</p>
+<dl class="section note"><dt>Note</dt><dd>Safe to call on entities without the component </dd>
+<dd>
+Component type must be registered (or bad_any_cast thrown) </dd>
+<dd>
+Does not kill the entity - only removes one component</dd></dl>
+<div class="fragment"><div class="line"><span class="comment">// Remove velocity to stop movement</span></div>
+<div class="line">registry.remove_component&lt;<a class="code hl_struct" href="structVelocity.html">Velocity</a>&gt;(entity);</div>
+<div class="line"><span class="comment">// Entity still exists with other components</span></div>
+</div><!-- fragment --><div class="fragment"><div class="line">registry.add_system&lt;<a class="code hl_struct" href="structPosition.html">Position</a>, <a class="code hl_struct" href="structSprite.html">Sprite</a>&gt;([](<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <span class="keyword">auto</span>&amp; pos, <span class="keyword">auto</span>&amp; spr)</div>
+<div class="line">{ <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp;&amp; [e, p, s] : <a class="code hl_class" href="classZipper.html">Zipper</a>(pos, spr)) { <span class="keywordflow">if</span> (p.x &lt; 0 || p.x &gt;</div>
+<div class="line">screen_width) {</div>
+<div class="line">      <span class="comment">// Remove offscreen sprites to save rendering</span></div>
+<div class="line">      r.remove_component&lt;<a class="code hl_struct" href="structSprite.html">Sprite</a>&gt;(e.entity());</div>
+<div class="line">    }</div>
+<div class="line">  }</div>
+<div class="line">});</div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="classRegistry.html#a9f8e76e4f67a4e33dd7273d065d6be7a" title="Marks an entity for deletion.">kill_entity()</a> to remove all components and delete entity </dd>
+<dd>
+<a class="el" href="classRegistry.html#a9990d86dfe7f90e314f8e93773b307d4" title="Adds a component to an entity by moving.">add_component()</a> to add components back </dd></dl>
 
 </div>
 </div>
@@ -1424,6 +2592,36 @@ template&lt;typename Component &gt; </div>
       </table>
 </div><div class="memdoc">
 
+<p>Deactivate a specific scene. </p>
+<p>Sets the scene to DISABLED state. Entities in this scene will no longer be processed by systems until the scene is reactivated with <a class="el" href="classRegistry.html#ad1c9d136cf9da966ef0977d3c698a963" title="Activate a scene, making its entities visible to systems.">set_current_scene()</a>.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">scene_name</td><td>Name of the scene to deactivate</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>Safe to call with non-existent scene names (no-op) </dd>
+<dd>
+Does not delete the scene or its entities </dd>
+<dd>
+<a class="el" href="structScene.html" title="Component that associates an entity with a specific scene.">Scene</a> can be reactivated later with <a class="el" href="classRegistry.html#ad1c9d136cf9da966ef0977d3c698a963" title="Activate a scene, making its entities visible to systems.">set_current_scene()</a></dd></dl>
+<div class="fragment"><div class="line"><span class="comment">// User clicks &quot;Start Game&quot;</span></div>
+<div class="line">registry.remove_current_scene(<span class="stringliteral">&quot;main_menu&quot;</span>);</div>
+<div class="line">registry.set_current_scene(<span class="stringliteral">&quot;gameplay&quot;</span>);</div>
+</div><!-- fragment --><div class="fragment"><div class="line"><span class="keywordtype">void</span> toggle_pause(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <span class="keywordtype">bool</span>&amp; paused) {</div>
+<div class="line">  <span class="keywordflow">if</span> (paused) {</div>
+<div class="line">    r.<a class="code hl_function" href="classRegistry.html#a936cd3eebe707ee32e2aac62eb079404">remove_current_scene</a>(<span class="stringliteral">&quot;pause_menu&quot;</span>);</div>
+<div class="line">    paused = <span class="keyword">false</span>;</div>
+<div class="line">  } <span class="keywordflow">else</span> {</div>
+<div class="line">    r.<a class="code hl_function" href="classRegistry.html#ad1c9d136cf9da966ef0977d3c698a963">set_current_scene</a>(<span class="stringliteral">&quot;pause_menu&quot;</span>);</div>
+<div class="line">    paused = <span class="keyword">true</span>;</div>
+<div class="line">  }</div>
+<div class="line">}</div>
+<div class="ttc" id="aclassRegistry_html_a936cd3eebe707ee32e2aac62eb079404"><div class="ttname"><a href="classRegistry.html#a936cd3eebe707ee32e2aac62eb079404">Registry::remove_current_scene</a></div><div class="ttdeci">void remove_current_scene(std::string const &amp;scene_name)</div><div class="ttdoc">Deactivate a specific scene.</div><div class="ttdef"><b>Definition</b> Registry.cpp:143</div></div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="classRegistry.html#ad1c9d136cf9da966ef0977d3c698a963" title="Activate a scene, making its entities visible to systems.">set_current_scene()</a> to reactivate </dd>
+<dd>
+<a class="el" href="classRegistry.html#aa3aabe22621e394e0e17f2f2b35a59c8" title="Deactivate all scenes.">remove_all_scenes()</a> to deactivate all scenes </dd></dl>
+
 </div>
 </div>
 <a id="a15a6de78dc2259220850e60b540148aa" name="a15a6de78dc2259220850e60b540148aa"></a>
@@ -1441,7 +2639,96 @@ template&lt;typename Component &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Runs all registered systems. </p>
+<p>Registers a system function to run every frame. </p>
+<p>Adds a system to the execution pipeline. Systems are functions that process entities with specific component combinations. They run in priority order during <a class="el" href="classRegistry.html#a15a6de78dc2259220850e60b540148aa" title="Registers a system function to run every frame.">run_systems()</a>.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Components</td><td>Component types the system operates on </td></tr>
+    <tr><td class="paramname">Function</td><td><a class="el" href="classSystem.html" title="Encapsulates a system function with priority-based execution ordering.">System</a> function type (deduced) </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">f</td><td>The system function - signature: void(Registry&amp;,
+SparseArray&lt;Component&gt;&amp;...) </td></tr>
+    <tr><td class="paramname">priority</td><td>Execution priority (lower = earlier, default: 0)</td></tr>
+  </table>
+  </dd>
+</dl>
+<p><a class="el" href="classSystem.html" title="Encapsulates a system function with priority-based execution ordering.">System</a> execution:</p><ol type="1">
+<li>Systems stored in priority order in _frequent_systems</li>
+<li><a class="el" href="classRegistry.html#a15a6de78dc2259220850e60b540148aa" title="Registers a system function to run every frame.">run_systems()</a> calls each system with registry and component arrays</li>
+<li><a class="el" href="classSystem.html" title="Encapsulates a system function with priority-based execution ordering.">System</a> iterates entities (typically using <a class="el" href="classZipper.html" title="Range adapter that simultaneously iterates over multiple Comps.">Zipper</a>)</li>
+</ol>
+<p>Priority ordering:</p><ul>
+<li>Lower values run first (e.g., priority 0 before priority 100)</li>
+<li>Same priority = insertion order</li>
+<li>Use priority to enforce dependencies (physics before rendering)</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd>Systems run every frame in <a class="el" href="classRegistry.html#a15a6de78dc2259220850e60b540148aa" title="Registers a system function to run every frame.">run_systems()</a> </dd>
+<dd>
+Component types must be registered before adding systems </dd>
+<dd>
+Systems are copyable - lambda captures must be copy-safe</dd></dl>
+<div class="fragment"><div class="line">registry.add_system&lt;<a class="code hl_struct" href="structPosition.html">Position</a>, <a class="code hl_struct" href="structVelocity.html">Velocity</a>&gt;(</div>
+<div class="line">  [](<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <span class="keyword">auto</span>&amp; positions, <span class="keyword">auto</span>&amp; velocities) {</div>
+<div class="line">    <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp;&amp; [pos, vel] : <a class="code hl_class" href="classZipper.html">Zipper</a>(positions, velocities)) {</div>
+<div class="line">      pos.x += vel.speed.x * r.clock().delta_time();</div>
+<div class="line">      pos.y += vel.speed.y * r.clock().delta_time();</div>
+<div class="line">    }</div>
+<div class="line">  }</div>
+<div class="line">);</div>
+</div><!-- fragment --><div class="fragment"><div class="line"><span class="comment">// Physics runs first (priority 10)</span></div>
+<div class="line">registry.add_system&lt;<a class="code hl_struct" href="structPosition.html">Position</a>, <a class="code hl_struct" href="structVelocity.html">Velocity</a>&gt;(</div>
+<div class="line">  [](<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <span class="keyword">auto</span>&amp; pos, <span class="keyword">auto</span>&amp; vel) {</div>
+<div class="line">    <span class="comment">// Update positions</span></div>
+<div class="line">  },</div>
+<div class="line">  10</div>
+<div class="line">);</div>
+<div class="line"> </div>
+<div class="line"><span class="comment">// Collision detection after physics (priority 20)</span></div>
+<div class="line">registry.add_system&lt;<a class="code hl_struct" href="structPosition.html">Position</a>, <a class="code hl_struct" href="structCollidable.html">Collidable</a>&gt;(</div>
+<div class="line">  [](<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <span class="keyword">auto</span>&amp; pos, <span class="keyword">auto</span>&amp; col) {</div>
+<div class="line">    <span class="comment">// Check collisions</span></div>
+<div class="line">  },</div>
+<div class="line">  20</div>
+<div class="line">);</div>
+<div class="ttc" id="astructCollidable_html"><div class="ttname"><a href="structCollidable.html">Collidable</a></div><div class="ttdef"><b>Definition</b> Collidable.hpp:24</div></div>
+</div><!-- fragment --><div class="fragment"><div class="line">registry.add_system&lt;<a class="code hl_struct" href="structPosition.html">Position</a>, <a class="code hl_struct" href="structVelocity.html">Velocity</a>, <a class="code hl_struct" href="structSprite.html">Sprite</a>, <a class="code hl_struct" href="structHealth.html">Health</a>&gt;(</div>
+<div class="line">  [](<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <span class="keyword">auto</span>&amp; pos, <span class="keyword">auto</span>&amp; vel, <span class="keyword">auto</span>&amp; spr, <span class="keyword">auto</span>&amp; hp) {</div>
+<div class="line">    <span class="comment">// Zipper automatically filters to entities with ALL components</span></div>
+<div class="line">    <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp;&amp; [p, v, s, h] : <a class="code hl_class" href="classZipper.html">Zipper</a>(pos, vel, spr, hp)) {</div>
+<div class="line">      <span class="comment">// Only entities with all 4 components</span></div>
+<div class="line">      <span class="keywordflow">if</span> (h.current &lt;= h.max * 0.3f) {</div>
+<div class="line">        s.tint = Color::RED;  <span class="comment">// Low health = red tint</span></div>
+<div class="line">      }</div>
+<div class="line">    }</div>
+<div class="line">  }</div>
+<div class="line">);</div>
+</div><!-- fragment --><div class="fragment"><div class="line">registry.add_system&lt;<a class="code hl_struct" href="structPosition.html">Position</a>, <a class="code hl_struct" href="structHealth.html">Health</a>&gt;(</div>
+<div class="line">  [](<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <span class="keyword">auto</span>&amp; positions, <span class="keyword">auto</span>&amp; healths) {</div>
+<div class="line">    <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp;&amp; [entity_wrapper, pos, hp] : IndexedZipper(positions,</div>
+<div class="line">healths)) { <span class="keywordflow">if</span> (hp.current &lt;= 0) { r.kill_entity(entity_wrapper.entity());</div>
+<div class="line"><span class="comment">// Access entity ID</span></div>
+<div class="line">      }</div>
+<div class="line">    }</div>
+<div class="line">  }</div>
+<div class="line">);</div>
+</div><!-- fragment --><div class="fragment"><div class="line">registry.add_system&lt;<a class="code hl_struct" href="structPosition.html">Position</a>, <a class="code hl_struct" href="structVelocity.html">Velocity</a>&gt;(</div>
+<div class="line">  [](<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <span class="keyword">auto</span>&amp; pos, <span class="keyword">auto</span>&amp; vel) {</div>
+<div class="line">    <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp;&amp; [e, p, v] : IndexedZipper(pos, vel)) {</div>
+<div class="line">      <span class="keywordflow">if</span> (p.x &lt; 0 || p.x &gt; screen_width) {</div>
+<div class="line">        r.emit&lt;EntityOffscreenEvent&gt;(e.entity(), p.x, p.y);</div>
+<div class="line">      }</div>
+<div class="line">    }</div>
+<div class="line">  }</div>
+<div class="line">);</div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="classRegistry.html#a15a6de78dc2259220850e60b540148aa" title="Registers a system function to run every frame.">run_systems()</a> to execute all registered systems </dd>
+<dd>
+<a class="el" href="classZipper.html" title="Range adapter that simultaneously iterates over multiple Comps.">Zipper</a> for entity iteration </dd>
+<dd>
+<a class="el" href="classSystem.html" title="Encapsulates a system function with priority-based execution ordering.">System</a> class for wrapper details </dd></dl>
 
 </div>
 </div>
@@ -1461,6 +2748,47 @@ template&lt;typename Component &gt; </div>
       </table>
 </div><div class="memdoc">
 
+<p>Activate a scene, making its entities visible to systems. </p>
+<p>Sets the scene to MAIN or ACTIVE state (implementation-dependent). Entities with this scene's <a class="el" href="structScene.html" title="Component that associates an entity with a specific scene.">Scene</a> component will be processed by systems.</p>
+<p>If another scene is currently MAIN and this scene is set to MAIN, the previous MAIN scene typically becomes ACTIVE or DISABLED.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">scene_name</td><td>Name of the scene to activate</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd><a class="el" href="structScene.html" title="Component that associates an entity with a specific scene.">Scene</a> must be registered with <a class="el" href="classRegistry.html#a0298d7d46f1cca897273a7fd9fa2bbc2" title="Register a scene with the given name and initial state.">add_scene()</a> first </dd>
+<dd>
+Entities in the scene become visible to system iteration </dd>
+<dd>
+Only one scene should be MAIN at a time</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::exception</td><td>If scene_name was not registered</td></tr>
+  </table>
+  </dd>
+</dl>
+<div class="fragment"><div class="line"><span class="comment">// Switch from menu to gameplay</span></div>
+<div class="line">registry.remove_current_scene(<span class="stringliteral">&quot;menu&quot;</span>);</div>
+<div class="line">registry.set_current_scene(<span class="stringliteral">&quot;gameplay&quot;</span>);</div>
+</div><!-- fragment --><div class="fragment"><div class="line"><span class="comment">// Show pause menu over gameplay</span></div>
+<div class="line"><span class="comment">// (both scenes active - systems process both)</span></div>
+<div class="line">registry.set_current_scene(<span class="stringliteral">&quot;gameplay&quot;</span>);  <span class="comment">// MAIN</span></div>
+<div class="line">registry.set_current_scene(<span class="stringliteral">&quot;pause_menu&quot;</span>);  <span class="comment">// ACTIVE overlay</span></div>
+</div><!-- fragment --><div class="fragment"><div class="line"><span class="keywordtype">void</span> start_level(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <span class="keyword">const</span> std::string&amp; level) {</div>
+<div class="line">  <span class="comment">// Hide menu</span></div>
+<div class="line">  r.<a class="code hl_function" href="classRegistry.html#a936cd3eebe707ee32e2aac62eb079404">remove_current_scene</a>(<span class="stringliteral">&quot;menu&quot;</span>);</div>
+<div class="line"> </div>
+<div class="line">  <span class="comment">// Show gameplay and HUD</span></div>
+<div class="line">  r.<a class="code hl_function" href="classRegistry.html#ad1c9d136cf9da966ef0977d3c698a963">set_current_scene</a>(level);  <span class="comment">// Gameplay scene</span></div>
+<div class="line">  r.<a class="code hl_function" href="classRegistry.html#ad1c9d136cf9da966ef0977d3c698a963">set_current_scene</a>(<span class="stringliteral">&quot;hud&quot;</span>);  <span class="comment">// HUD overlay</span></div>
+<div class="line">}</div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="classRegistry.html#a0298d7d46f1cca897273a7fd9fa2bbc2" title="Register a scene with the given name and initial state.">add_scene()</a> to register scenes </dd>
+<dd>
+<a class="el" href="classRegistry.html#a936cd3eebe707ee32e2aac62eb079404" title="Deactivate a specific scene.">remove_current_scene()</a> to deactivate </dd>
+<dd>
+<a class="el" href="classRegistry.html#a0b9eb2723831a87cb5602c43e2b05b0a" title="Get list of currently active scene names.">get_current_scene()</a> to query active scenes </dd></dl>
+
 </div>
 </div>
 <a id="a35e8c1f487a94aaf2752678d814a942a" name="a35e8c1f487a94aaf2752678d814a942a"></a>
@@ -1477,6 +2805,16 @@ template&lt;typename Component &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Setup automatic scene management systems. </p>
+<p>Registers systems that automatically handle scene transitions, entity filtering, and scene state updates. This is optional but recommended for automatic scene behavior.</p>
+<dl class="section note"><dt>Note</dt><dd>Call after <a class="el" href="classRegistry.html#a676be837cc2defb394f38b32d664fd30" title="Initialize the scene management system.">init_scene_management()</a> </dd>
+<dd>
+Adds systems to the <a class="el" href="classRegistry.html" title="The Registry class is the core of the ECS (Entity-Component-System) architecture.">Registry</a>'s system pipeline</dd></dl>
+<div class="fragment"><div class="line">registry.init_scene_management();</div>
+<div class="line">registry.setup_scene_systems();  <span class="comment">// Enable automatic scene handling</span></div>
+<div class="line">registry.add_scene(<span class="stringliteral">&quot;gameplay&quot;</span>, <a class="code hl_enumvalue" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19a186495f7da296bf880df3a22a492b378">SceneState::MAIN</a>);</div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="classRegistry.html#a676be837cc2defb394f38b32d664fd30" title="Initialize the scene management system.">init_scene_management()</a> must be called first </dd></dl>
 
 </div>
 </div>
@@ -1495,6 +2833,46 @@ template&lt;typename Component &gt; </div>
       </table>
 </div><div class="memdoc">
 
+<p>Spawns a new entity. </p>
+<p>Allocates a unique entity ID by either:</p><ul>
+<li>Recycling a previously deleted entity ID from _dead_entities queue</li>
+<li>Incrementing _max counter to create a new ID</li>
+</ul>
+<dl class="section return"><dt>Returns</dt><dd>Unique entity identifier</dd></dl>
+<p>Entities are lightweight indices. This function only allocates the ID; components must be added separately via <a class="el" href="classRegistry.html#a9990d86dfe7f90e314f8e93773b307d4" title="Adds a component to an entity by moving.">add_component()</a> or <a class="el" href="classRegistry.html#aedaff3e905a52a1945250cd16ffbb5fb" title="Constructs a component in-place on an entity.">emplace_component()</a>.</p>
+<p>The recycling mechanism ensures ID space stays compact:</p><ul>
+<li>When entities are killed, their IDs go into _dead_entities queue</li>
+<li><a class="el" href="classRegistry.html#a3afa81d52e66afd192bfb44f191c1510" title="Spawns a new entity.">spawn_entity()</a> prefers recycled IDs over creating new ones</li>
+<li>This prevents unbounded ID growth in long-running games</li>
+</ul>
+<dl class="section note"><dt>Note</dt><dd>Entity 0 is valid - entities start from 0 </dd>
+<dd>
+No maximum entity limit (bounded by size_t max) </dd>
+<dd>
+Thread-unsafe - single-threaded use only</dd></dl>
+<div class="fragment"><div class="line"><a class="code hl_class" href="classRegistry.html">Registry</a> registry;</div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">auto</span> player = registry.<a class="code hl_function" href="classRegistry.html#a3afa81d52e66afd192bfb44f191c1510">spawn_entity</a>();    <span class="comment">// ID: 0</span></div>
+<div class="line"><span class="keyword">auto</span> enemy1 = registry.<a class="code hl_function" href="classRegistry.html#a3afa81d52e66afd192bfb44f191c1510">spawn_entity</a>();    <span class="comment">// ID: 1</span></div>
+<div class="line"><span class="keyword">auto</span> enemy2 = registry.<a class="code hl_function" href="classRegistry.html#a3afa81d52e66afd192bfb44f191c1510">spawn_entity</a>();    <span class="comment">// ID: 2</span></div>
+</div><!-- fragment --><div class="fragment"><div class="line"><span class="keyword">auto</span> bullet = registry.<a class="code hl_function" href="classRegistry.html#a3afa81d52e66afd192bfb44f191c1510">spawn_entity</a>();</div>
+<div class="line">registry.<a class="code hl_function" href="classRegistry.html#a9990d86dfe7f90e314f8e93773b307d4">add_component</a>(bullet, <a class="code hl_struct" href="structPosition.html">Position</a>{100, 50});</div>
+<div class="line">registry.<a class="code hl_function" href="classRegistry.html#a9990d86dfe7f90e314f8e93773b307d4">add_component</a>(bullet, <a class="code hl_struct" href="structVelocity.html">Velocity</a>{10, 0});</div>
+<div class="line">registry.<a class="code hl_function" href="classRegistry.html#a9990d86dfe7f90e314f8e93773b307d4">add_component</a>(bullet, <a class="code hl_struct" href="structSprite.html">Sprite</a>{<span class="stringliteral">&quot;bullet.png&quot;</span>});</div>
+</div><!-- fragment --><div class="fragment"><div class="line"><span class="keyword">auto</span> e1 = registry.<a class="code hl_function" href="classRegistry.html#a3afa81d52e66afd192bfb44f191c1510">spawn_entity</a>();  <span class="comment">// 0</span></div>
+<div class="line"><span class="keyword">auto</span> e2 = registry.<a class="code hl_function" href="classRegistry.html#a3afa81d52e66afd192bfb44f191c1510">spawn_entity</a>();  <span class="comment">// 1</span></div>
+<div class="line"><span class="keyword">auto</span> e3 = registry.<a class="code hl_function" href="classRegistry.html#a3afa81d52e66afd192bfb44f191c1510">spawn_entity</a>();  <span class="comment">// 2</span></div>
+<div class="line"> </div>
+<div class="line">registry.<a class="code hl_function" href="classRegistry.html#a9f8e76e4f67a4e33dd7273d065d6be7a">kill_entity</a>(e2);           <span class="comment">// Mark 1 for deletion</span></div>
+<div class="line">registry.<a class="code hl_function" href="classRegistry.html#a2cf00a9ea3b232b551de02598cbc7756">process_entity_deletions</a>(); <span class="comment">// Delete 1, add to queue</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">auto</span> e4 = registry.<a class="code hl_function" href="classRegistry.html#a3afa81d52e66afd192bfb44f191c1510">spawn_entity</a>();  <span class="comment">// 1 (recycled!)</span></div>
+<div class="line"><span class="keyword">auto</span> e5 = registry.<a class="code hl_function" href="classRegistry.html#a3afa81d52e66afd192bfb44f191c1510">spawn_entity</a>();  <span class="comment">// 3 (new)</span></div>
+<div class="ttc" id="aclassRegistry_html_a2cf00a9ea3b232b551de02598cbc7756"><div class="ttname"><a href="classRegistry.html#a2cf00a9ea3b232b551de02598cbc7756">Registry::process_entity_deletions</a></div><div class="ttdeci">void process_entity_deletions()</div><div class="ttdoc">Deletes all entities marked for killing.</div><div class="ttdef"><b>Definition</b> Registry.cpp:34</div></div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="classRegistry.html#a9f8e76e4f67a4e33dd7273d065d6be7a" title="Marks an entity for deletion.">kill_entity()</a> to destroy entities </dd>
+<dd>
+<a class="el" href="classRegistry.html#a2cf00a9ea3b232b551de02598cbc7756" title="Deletes all entities marked for killing.">process_entity_deletions()</a> to recycle IDs </dd></dl>
+
 </div>
 </div>
 <a id="a8f89de6aea32015de47de101f941e53d" name="a8f89de6aea32015de47de101f941e53d"></a>
@@ -1512,7 +2890,33 @@ template&lt;typename Component &gt; </div>
       </table>
 </div><div class="memdoc">
 
-<p>Updates all variable bindings from their hooked sources. </p>
+<p>Updates all registered dynamic bindings. </p>
+<p>Synchronizes component fields that are bound to other component values. For each binding, copies the source value to the target field.</p>
+<p>Called automatically at the start of <a class="el" href="classRegistry.html#a15a6de78dc2259220850e60b540148aa" title="Registers a system function to run every frame.">run_systems()</a>. Processes _bindings vector, executing each binding's updater function to copy values.</p>
+<p>Bindings are created via <a class="el" href="classRegistry.html#a529bdf9002188825f7b03f33b2991624" title="Registers a dynamic binding between component fields.">register_binding()</a> during component construction from JSON with # hook syntax.</p>
+<dl class="section note"><dt>Note</dt><dd>Automatically called by <a class="el" href="classRegistry.html#a15a6de78dc2259220850e60b540148aa" title="Registers a system function to run every frame.">run_systems()</a> - manual call rarely needed </dd>
+<dd>
+Order of binding updates matches registration order </dd>
+<dd>
+Failed bindings are silently ignored (no error thrown)</dd></dl>
+<div class="fragment"><div class="line"><span class="comment">// Bindings updated automatically</span></div>
+<div class="line"><span class="keywordflow">while</span> (running) {</div>
+<div class="line">  <span class="comment">// Leader moves</span></div>
+<div class="line">  leader_pos.x += 10;</div>
+<div class="line"> </div>
+<div class="line">  registry.run_systems();</div>
+<div class="line">  <span class="comment">// update_bindings() called here</span></div>
+<div class="line">  <span class="comment">// Follower.target_pos now equals Leader.pos</span></div>
+<div class="line">}</div>
+</div><!-- fragment --><div class="fragment"><div class="line"><span class="comment">// Force binding sync mid-frame (unusual)</span></div>
+<div class="line">leader_position.x = 500;</div>
+<div class="line">registry.update_bindings();  <span class="comment">// Sync immediately</span></div>
+<div class="line"><span class="comment">// Follower now tracks new position</span></div>
+</div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="classRegistry.html#a529bdf9002188825f7b03f33b2991624" title="Registers a dynamic binding between component fields.">register_binding()</a> to create bindings </dd>
+<dd>
+<a class="el" href="classRegistry.html#a15a6de78dc2259220850e60b540148aa" title="Registers a system function to run every frame.">run_systems()</a> which calls this automatically </dd>
+<dd>
+<a class="el" href="classRegistry.html#ab44989c0361996ad2c4aefbf4636b664" title="Removes all registered bindings.">clear_bindings()</a> to remove all bindings </dd></dl>
 
 </div>
 </div>

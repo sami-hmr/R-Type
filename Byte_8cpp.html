@@ -94,14 +94,19 @@ Include dependency graph for Byte.cpp:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:adbabaf8dc35295d559aff2223ce00d6a" id="r_adbabaf8dc35295d559aff2223ce00d6a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Byte_8cpp.html#adbabaf8dc35295d559aff2223ce00d6a">operator+</a> (<a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> first, <a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> const &amp;second)</td></tr>
+<tr class="memdesc:adbabaf8dc35295d559aff2223ce00d6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">ByteArray concatenation operator.  <br /></td></tr>
 <tr class="separator:adbabaf8dc35295d559aff2223ce00d6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a01328e885dd18776d06e06ad635d5b99" id="r_a01328e885dd18776d06e06ad635d5b99"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Byte_8cpp.html#a01328e885dd18776d06e06ad635d5b99">operator+=</a> (<a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> &amp;first, <a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> const &amp;second)</td></tr>
+<tr class="memdesc:a01328e885dd18776d06e06ad635d5b99"><td class="mdescLeft">&#160;</td><td class="mdescRight">ByteArray append operator.  <br /></td></tr>
 <tr class="separator:a01328e885dd18776d06e06ad635d5b99"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a20d43856fdb8ef111a9b55ceeb1f96f8" id="r_a20d43856fdb8ef111a9b55ceeb1f96f8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Byte_8cpp.html#a20d43856fdb8ef111a9b55ceeb1f96f8">string_to_byte</a> (std::string const &amp;str)</td></tr>
+<tr class="memdesc:a20d43856fdb8ef111a9b55ceeb1f96f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Serializes a string to ByteArray.  <br /></td></tr>
 <tr class="separator:a20d43856fdb8ef111a9b55ceeb1f96f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0560dc82432acb9db609e091da727855" id="r_a0560dc82432acb9db609e091da727855"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Byte_8cpp.html#a0560dc82432acb9db609e091da727855">json_value_to_byte</a> (JsonValue const &amp;v)</td></tr>
+<tr class="memdesc:a0560dc82432acb9db609e091da727855"><td class="mdescLeft">&#160;</td><td class="mdescRight">Serializes a JsonValue (variant type)  <br /></td></tr>
 <tr class="separator:a0560dc82432acb9db609e091da727855"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a51f08e914416ea5c05e36a83e11efb0d" id="r_a51f08e914416ea5c05e36a83e11efb0d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Byte_8cpp.html#a51f08e914416ea5c05e36a83e11efb0d">json_object_to_byte</a> (JsonObject const &amp;object)</td></tr>
+<tr class="memdesc:a51f08e914416ea5c05e36a83e11efb0d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Serializes a JsonObject (map of string to JsonValue)  <br /></td></tr>
 <tr class="separator:a51f08e914416ea5c05e36a83e11efb0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
@@ -121,6 +126,15 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Serializes a JsonObject (map of string to JsonValue) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">object</td><td>JsonObject to serialize </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>ByteArray containing the entire object structure </dd></dl>
+
 </div>
 </div>
 <a id="a0560dc82432acb9db609e091da727855" name="a0560dc82432acb9db609e091da727855"></a>
@@ -138,6 +152,15 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Serializes a JsonValue (variant type) </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">v</td><td>JsonValue to serialize </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>ByteArray: type index followed by serialized value </dd></dl>
 
 </div>
 </div>
@@ -167,6 +190,16 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>ByteArray concatenation operator. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">first</td><td>First array (copied) </td></tr>
+    <tr><td class="paramname">second</td><td>Second array to append </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>New ByteArray containing first + second </dd></dl>
+
 </div>
 </div>
 <a id="a01328e885dd18776d06e06ad635d5b99" name="a01328e885dd18776d06e06ad635d5b99"></a>
@@ -195,6 +228,16 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>ByteArray append operator. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">first</td><td>Array to modify </td></tr>
+    <tr><td class="paramname">second</td><td>Array to append </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Reference to modified first array </dd></dl>
+
 </div>
 </div>
 <a id="a20d43856fdb8ef111a9b55ceeb1f96f8" name="a20d43856fdb8ef111a9b55ceeb1f96f8"></a>
@@ -212,6 +255,15 @@ Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Serializes a string to ByteArray. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">str</td><td>String to serialize </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>ByteArray: length (uint32) followed by UTF-8 bytes </dd></dl>
 
 </div>
 </div>

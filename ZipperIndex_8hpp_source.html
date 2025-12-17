@@ -90,147 +90,147 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;<a class="code" href="Zipper_8hpp.html">Zipper.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &quot;<a class="code" href="Registry_8hpp.html">ecs/Registry.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="keyword">template</span>&lt;<span class="keyword">class</span>... Comps&gt;</div>
-<div class="foldopen" id="foldopen00038" data-start="{" data-end="};">
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="classZipperIndexIterator.html">   38</a></span><span class="keyword">class </span><a class="code hl_class" href="classZipperIndexIterator.html">ZipperIndexIterator</a></div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>{</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno"><a class="line" href="classZipperIndexIterator.html#ac9feccfe8c9a7f819e331fb0b94ccb3a">   42</a></span>  <span class="keyword">using </span><a class="code hl_class" href="classZipperIterator.html">Base</a> = <a class="code hl_class" href="classZipperIterator.html">ZipperIterator</a>&lt;Comps...&gt;;</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>  <span class="keyword">template</span>&lt;<span class="keyword">class</span> Container&gt;</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno"><a class="line" href="classZipperIndexIterator.html#a0a084bdfa1bee5af916d8dcbe2ac9b2e">   50</a></span>  <span class="keyword">using </span><a class="code hl_typedef" href="classZipperIndexIterator.html#a0a084bdfa1bee5af916d8dcbe2ac9b2e">Value</a> = <span class="keyword">typename</span> Base::template <a class="code hl_typedef" href="classZipperIndexIterator.html#a0a084bdfa1bee5af916d8dcbe2ac9b2e">Value&lt;Container&gt;</a>;</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno"><a class="line" href="classZipperIndexIterator.html#a59ba088b4eba5af7f939ceff608dbd4c">   54</a></span>  <span class="keyword">using </span><a class="code hl_typedef" href="classZipperIndexIterator.html#a59ba088b4eba5af7f939ceff608dbd4c">ValueType</a> = std::tuple&lt;std::size_t, Value&lt;Comps&gt;...&gt;;</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>  <span class="keyword">template</span>&lt;<span class="keyword">class</span>... Args&gt;</div>
-<div class="foldopen" id="foldopen00063" data-start="{" data-end="}">
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno"><a class="line" href="classZipperIndexIterator.html#a4ae8bb76506cdf873ae40ccd787910f1">   63</a></span>  <a class="code hl_function" href="classZipperIndexIterator.html#a4ae8bb76506cdf873ae40ccd787910f1">ZipperIndexIterator</a>(Args&amp;&amp;... args)</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>      : _base(args...)</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>  {</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>  }</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="keyword">template</span>&lt;<span class="keyword">class</span>... Comps&gt;</div>
+<div class="foldopen" id="foldopen00037" data-start="{" data-end="};">
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno"><a class="line" href="classZipperIndexIterator.html">   37</a></span><span class="keyword">class </span><a class="code hl_class" href="classZipperIndexIterator.html">ZipperIndexIterator</a></div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>{</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno"><a class="line" href="classZipperIndexIterator.html#ac9feccfe8c9a7f819e331fb0b94ccb3a">   41</a></span>  <span class="keyword">using </span><a class="code hl_class" href="classZipperIterator.html">Base</a> = <a class="code hl_class" href="classZipperIterator.html">ZipperIterator</a>&lt;Comps...&gt;;</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>  <span class="keyword">template</span>&lt;<span class="keyword">class</span> Container&gt;</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno"><a class="line" href="classZipperIndexIterator.html#a0a084bdfa1bee5af916d8dcbe2ac9b2e">   49</a></span>  <span class="keyword">using </span><a class="code hl_typedef" href="classZipperIndexIterator.html#a0a084bdfa1bee5af916d8dcbe2ac9b2e">Value</a> = <span class="keyword">typename</span> Base::template <a class="code hl_typedef" href="classZipperIndexIterator.html#a0a084bdfa1bee5af916d8dcbe2ac9b2e">Value&lt;Container&gt;</a>;</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno"><a class="line" href="classZipperIndexIterator.html#a59ba088b4eba5af7f939ceff608dbd4c">   53</a></span>  <span class="keyword">using </span><a class="code hl_typedef" href="classZipperIndexIterator.html#a59ba088b4eba5af7f939ceff608dbd4c">ValueType</a> = std::tuple&lt;std::size_t, Value&lt;Comps&gt;...&gt;;</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>  <span class="keyword">template</span>&lt;<span class="keyword">class</span>... Args&gt;</div>
+<div class="foldopen" id="foldopen00062" data-start="{" data-end="}">
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno"><a class="line" href="classZipperIndexIterator.html#a4ae8bb76506cdf873ae40ccd787910f1">   62</a></span>  <a class="code hl_function" href="classZipperIndexIterator.html#a4ae8bb76506cdf873ae40ccd787910f1">ZipperIndexIterator</a>(Args&amp;&amp;... args)</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>      : _base(args...)</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>  {</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>  }</div>
 </div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
-<div class="foldopen" id="foldopen00076" data-start="{" data-end="}">
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno"><a class="line" href="classZipperIndexIterator.html#a94afe244fb938e9f0121453849c37d31">   76</a></span>  <a class="code hl_class" href="classZipperIndexIterator.html">ZipperIndexIterator</a>&amp; <a class="code hl_function" href="classZipperIndexIterator.html#a94afe244fb938e9f0121453849c37d31">operator++</a>()</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>  {</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>    ++this-&gt;_base;</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>  }</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span> </div>
+<div class="foldopen" id="foldopen00075" data-start="{" data-end="}">
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno"><a class="line" href="classZipperIndexIterator.html#a94afe244fb938e9f0121453849c37d31">   75</a></span>  <a class="code hl_class" href="classZipperIndexIterator.html">ZipperIndexIterator</a>&amp; <a class="code hl_function" href="classZipperIndexIterator.html#a94afe244fb938e9f0121453849c37d31">operator++</a>()</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>  {</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    ++this-&gt;_base;</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>    <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>  }</div>
 </div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span> </div>
-<div class="foldopen" id="foldopen00086" data-start="{" data-end="}">
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno"><a class="line" href="classZipperIndexIterator.html#a37f5fd84da0070769ef114129766dd3f">   86</a></span>  <a class="code hl_class" href="classZipperIndexIterator.html">ZipperIndexIterator</a> <a class="code hl_function" href="classZipperIndexIterator.html#a37f5fd84da0070769ef114129766dd3f">operator++</a>(<span class="keywordtype">int</span>)</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>  {</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>    <span class="keyword">auto</span>&amp; tmp = *<span class="keyword">this</span>;</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    ++(*this);</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    <span class="keywordflow">return</span> tmp;</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>  }</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span> </div>
+<div class="foldopen" id="foldopen00085" data-start="{" data-end="}">
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno"><a class="line" href="classZipperIndexIterator.html#a37f5fd84da0070769ef114129766dd3f">   85</a></span>  <a class="code hl_class" href="classZipperIndexIterator.html">ZipperIndexIterator</a> <a class="code hl_function" href="classZipperIndexIterator.html#a37f5fd84da0070769ef114129766dd3f">operator++</a>(<span class="keywordtype">int</span>)</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>  {</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    <span class="keyword">auto</span>&amp; tmp = *<span class="keyword">this</span>;</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>    ++(*this);</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    <span class="keywordflow">return</span> tmp;</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>  }</div>
 </div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span> </div>
-<div class="foldopen" id="foldopen00099" data-start="{" data-end="}">
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno"><a class="line" href="classZipperIndexIterator.html#ac9af972d7e751efc686ea7a137936183">   99</a></span>  <a class="code hl_typedef" href="classZipperIndexIterator.html#a59ba088b4eba5af7f939ceff608dbd4c">ValueType</a> <a class="code hl_function" href="classZipperIndexIterator.html#ac9af972d7e751efc686ea7a137936183">operator*</a>()</div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>  {</div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>    <span class="keywordflow">return</span> std::tuple_cat(std::make_tuple(this-&gt;_base.<a class="code hl_variable" href="classZipperIterator.html#ae6892020c61c3b09b90a70dbe1af16b7">_idx</a>), *this-&gt;_base);</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>  }</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span> </div>
+<div class="foldopen" id="foldopen00098" data-start="{" data-end="}">
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno"><a class="line" href="classZipperIndexIterator.html#ac9af972d7e751efc686ea7a137936183">   98</a></span>  <a class="code hl_typedef" href="classZipperIndexIterator.html#a59ba088b4eba5af7f939ceff608dbd4c">ValueType</a> <a class="code hl_function" href="classZipperIndexIterator.html#ac9af972d7e751efc686ea7a137936183">operator*</a>()</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>  {</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    <span class="keywordflow">return</span> std::tuple_cat(std::make_tuple(this-&gt;_base.<a class="code hl_variable" href="classZipperIterator.html#ae6892020c61c3b09b90a70dbe1af16b7">_idx</a>), *this-&gt;_base);</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>  }</div>
 </div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span> </div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno"><a class="line" href="classZipperIndexIterator.html#aae2f535d190b8ecc3bbdad2cc4ae2f66">  109</a></span>  <a class="code hl_typedef" href="classZipperIndexIterator.html#a59ba088b4eba5af7f939ceff608dbd4c">ValueType</a> <a class="code hl_function" href="classZipperIndexIterator.html#aae2f535d190b8ecc3bbdad2cc4ae2f66">operator-&gt;</a>() { <span class="keywordflow">return</span> *(*this); }</div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span> </div>
-<div class="foldopen" id="foldopen00117" data-start="{" data-end="}">
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno"><a class="line" href="classZipperIndexIterator.html#aa3c96ea573e53d0fba8718da5116603e">  117</a></span>  <span class="keywordtype">bool</span> <a class="code hl_function" href="classZipperIndexIterator.html#aa3c96ea573e53d0fba8718da5116603e">operator==</a>(<a class="code hl_class" href="classZipperIndexIterator.html">ZipperIndexIterator</a> <span class="keyword">const</span>&amp; rhs)</div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>  {</div>
-<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>    <span class="keywordflow">return</span> this-&gt;_base.<a class="code hl_variable" href="classZipperIterator.html#ae6892020c61c3b09b90a70dbe1af16b7">_idx</a> == rhs._base.<a class="code hl_variable" href="classZipperIterator.html#ae6892020c61c3b09b90a70dbe1af16b7">_idx</a>;</div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>  }</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span> </div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno"><a class="line" href="classZipperIndexIterator.html#aae2f535d190b8ecc3bbdad2cc4ae2f66">  108</a></span>  <a class="code hl_typedef" href="classZipperIndexIterator.html#a59ba088b4eba5af7f939ceff608dbd4c">ValueType</a> <a class="code hl_function" href="classZipperIndexIterator.html#aae2f535d190b8ecc3bbdad2cc4ae2f66">operator-&gt;</a>() { <span class="keywordflow">return</span> *(*this); }</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span> </div>
+<div class="foldopen" id="foldopen00116" data-start="{" data-end="}">
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno"><a class="line" href="classZipperIndexIterator.html#aa3c96ea573e53d0fba8718da5116603e">  116</a></span>  <span class="keywordtype">bool</span> <a class="code hl_function" href="classZipperIndexIterator.html#aa3c96ea573e53d0fba8718da5116603e">operator==</a>(<a class="code hl_class" href="classZipperIndexIterator.html">ZipperIndexIterator</a> <span class="keyword">const</span>&amp; rhs)</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>  {</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>    <span class="keywordflow">return</span> this-&gt;_base.<a class="code hl_variable" href="classZipperIterator.html#ae6892020c61c3b09b90a70dbe1af16b7">_idx</a> == rhs._base.<a class="code hl_variable" href="classZipperIterator.html#ae6892020c61c3b09b90a70dbe1af16b7">_idx</a>;</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>  }</div>
 </div>
-<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span> </div>
-<div class="line"><a id="l00128" name="l00128"></a><span class="lineno"><a class="line" href="classZipperIndexIterator.html#a63d13f6ebaa573d0bdebd212e62da931">  128</a></span>  <span class="keywordtype">bool</span> <a class="code hl_function" href="classZipperIndexIterator.html#a63d13f6ebaa573d0bdebd212e62da931">operator!=</a>(<a class="code hl_class" href="classZipperIndexIterator.html">ZipperIndexIterator</a> <span class="keyword">const</span>&amp; rhs) { <span class="keywordflow">return</span> !(*<span class="keyword">this</span> == rhs); }</div>
-<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span> </div>
-<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>  <a class="code hl_typedef" href="classZipperIndexIterator.html#ac9feccfe8c9a7f819e331fb0b94ccb3a">Base</a> _base;  </div>
-<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>};</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span> </div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno"><a class="line" href="classZipperIndexIterator.html#a63d13f6ebaa573d0bdebd212e62da931">  127</a></span>  <span class="keywordtype">bool</span> <a class="code hl_function" href="classZipperIndexIterator.html#a63d13f6ebaa573d0bdebd212e62da931">operator!=</a>(<a class="code hl_class" href="classZipperIndexIterator.html">ZipperIndexIterator</a> <span class="keyword">const</span>&amp; rhs) { <span class="keywordflow">return</span> !(*<span class="keyword">this</span> == rhs); }</div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span> </div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>  <a class="code hl_typedef" href="classZipperIndexIterator.html#ac9feccfe8c9a7f819e331fb0b94ccb3a">Base</a> _base;  </div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>};</div>
 </div>
-<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span> </div>
-<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span><span class="keyword">template</span>&lt;<span class="keyword">class</span>... Comps&gt;</div>
-<div class="foldopen" id="foldopen00163" data-start="{" data-end="};">
-<div class="line"><a id="l00163" name="l00163"></a><span class="lineno"><a class="line" href="classZipperIndex.html">  163</a></span><span class="keyword">class </span><a class="code hl_class" href="classZipperIndex.html">ZipperIndex</a></div>
-<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>{</div>
-<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00167" name="l00167"></a><span class="lineno"><a class="line" href="classZipperIndex.html#ab19ce959ed663da5fc2d93117d9326d2">  167</a></span>  <span class="keyword">using </span><a class="code hl_class" href="classZipperIndexIterator.html">Iterator</a> = <a class="code hl_class" href="classZipperIndexIterator.html">ZipperIndexIterator</a>&lt;Comps...&gt;;</div>
-<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span> </div>
-<div class="line"><a id="l00170" name="l00170"></a><span class="lineno"><a class="line" href="classZipperIndex.html#a430d18450ffe660d2411e32b9bc9d344">  170</a></span>  <span class="keyword">using </span><a class="code hl_typedef" href="classZipperIndex.html#a430d18450ffe660d2411e32b9bc9d344">IteratorTuple</a> = <span class="keyword">typename</span> Iterator::Base::iterator_tuple;</div>
-<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span> </div>
-<div class="foldopen" id="foldopen00180" data-start="{" data-end="}">
-<div class="line"><a id="l00180" name="l00180"></a><span class="lineno"><a class="line" href="classZipperIndex.html#ac1ee106e82b0cb84e13dc173d6382dfd">  180</a></span>  <a class="code hl_function" href="classZipperIndex.html#ac1ee106e82b0cb84e13dc173d6382dfd">ZipperIndex</a>(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r)</div>
-<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>      : _size(compute_size(r))</div>
-<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>      , _begin(std::make_tuple(r.get_components&lt;Comps&gt;().<a class="code hl_function" href="classZipperIndex.html#a3fa7cd8bda1b55ddf883058e075ce7a6">begin</a>()...))</div>
-<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>      , _end(compute_end(r))</div>
-<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>      , _scenes(r.get_components&lt;<a class="code hl_struct" href="structScene.html">Scene</a>&gt;())</div>
-<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>      , _active_scenes(r.get_current_scene())</div>
-<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span>  {</div>
-<div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>  }</div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span> </div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span><span class="keyword">template</span>&lt;<span class="keyword">class</span>... Comps&gt;</div>
+<div class="foldopen" id="foldopen00161" data-start="{" data-end="};">
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno"><a class="line" href="classZipperIndex.html">  161</a></span><span class="keyword">class </span><a class="code hl_class" href="classZipperIndex.html">ZipperIndex</a></div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>{</div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno"><a class="line" href="classZipperIndex.html#ab19ce959ed663da5fc2d93117d9326d2">  165</a></span>  <span class="keyword">using </span><a class="code hl_class" href="classZipperIndexIterator.html">Iterator</a> = <a class="code hl_class" href="classZipperIndexIterator.html">ZipperIndexIterator</a>&lt;Comps...&gt;;</div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span> </div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno"><a class="line" href="classZipperIndex.html#a430d18450ffe660d2411e32b9bc9d344">  168</a></span>  <span class="keyword">using </span><a class="code hl_typedef" href="classZipperIndex.html#a430d18450ffe660d2411e32b9bc9d344">IteratorTuple</a> = <span class="keyword">typename</span> Iterator::Base::iterator_tuple;</div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span> </div>
+<div class="foldopen" id="foldopen00178" data-start="{" data-end="}">
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno"><a class="line" href="classZipperIndex.html#ac1ee106e82b0cb84e13dc173d6382dfd">  178</a></span>  <a class="code hl_function" href="classZipperIndex.html#ac1ee106e82b0cb84e13dc173d6382dfd">ZipperIndex</a>(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r)</div>
+<div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>      : _size(compute_size(r))</div>
+<div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>      , _begin(std::make_tuple(r.get_components&lt;Comps&gt;().<a class="code hl_function" href="classZipperIndex.html#a3fa7cd8bda1b55ddf883058e075ce7a6">begin</a>()...))</div>
+<div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>      , _end(compute_end(r))</div>
+<div class="line"><a id="l00182" name="l00182"></a><span class="lineno">  182</span>      , _scenes(r.get_components&lt;<a class="code hl_struct" href="structScene.html">Scene</a>&gt;())</div>
+<div class="line"><a id="l00183" name="l00183"></a><span class="lineno">  183</span>      , _active_scenes(r.get_current_scene())</div>
+<div class="line"><a id="l00184" name="l00184"></a><span class="lineno">  184</span>  {</div>
+<div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span>  }</div>
 </div>
-<div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span> </div>
-<div class="foldopen" id="foldopen00196" data-start="{" data-end="}">
-<div class="line"><a id="l00196" name="l00196"></a><span class="lineno"><a class="line" href="classZipperIndex.html#a3fa7cd8bda1b55ddf883058e075ce7a6">  196</a></span>  <a class="code hl_class" href="classZipperIndexIterator.html">Iterator</a> <a class="code hl_function" href="classZipperIndex.html#a3fa7cd8bda1b55ddf883058e075ce7a6">begin</a>()</div>
-<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>  {</div>
-<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>    <span class="keywordflow">return</span> <a class="code hl_class" href="classZipperIndexIterator.html">ZipperIndexIterator</a>&lt;Comps...&gt;(</div>
-<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>        this-&gt;_begin, this-&gt;_scenes, this-&gt;_active_scenes, this-&gt;_size);</div>
-<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>  }</div>
+<div class="line"><a id="l00186" name="l00186"></a><span class="lineno">  186</span> </div>
+<div class="foldopen" id="foldopen00194" data-start="{" data-end="}">
+<div class="line"><a id="l00194" name="l00194"></a><span class="lineno"><a class="line" href="classZipperIndex.html#a3fa7cd8bda1b55ddf883058e075ce7a6">  194</a></span>  <a class="code hl_class" href="classZipperIndexIterator.html">Iterator</a> <a class="code hl_function" href="classZipperIndex.html#a3fa7cd8bda1b55ddf883058e075ce7a6">begin</a>()</div>
+<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>  {</div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>    <span class="keywordflow">return</span> <a class="code hl_class" href="classZipperIndexIterator.html">ZipperIndexIterator</a>&lt;Comps...&gt;(</div>
+<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>        this-&gt;_begin, this-&gt;_scenes, this-&gt;_active_scenes, this-&gt;_size);</div>
+<div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>  }</div>
 </div>
-<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span> </div>
-<div class="foldopen" id="foldopen00206" data-start="{" data-end="}">
-<div class="line"><a id="l00206" name="l00206"></a><span class="lineno"><a class="line" href="classZipperIndex.html#a4c1c215315e98885987b28be1a01c9dd">  206</a></span>  <a class="code hl_class" href="classZipperIndexIterator.html">Iterator</a> <a class="code hl_function" href="classZipperIndex.html#a4c1c215315e98885987b28be1a01c9dd">end</a>()</div>
-<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>  {</div>
-<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>    <span class="keywordflow">return</span> <a class="code hl_class" href="classZipperIndexIterator.html">ZipperIndexIterator</a>&lt;Comps...&gt;(this-&gt;_end,</div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>                                         this-&gt;_scenes,</div>
-<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>                                         this-&gt;_active_scenes,</div>
-<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>                                         this-&gt;_size,</div>
-<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>                                         this-&gt;_size);</div>
-<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>  }</div>
+<div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span> </div>
+<div class="foldopen" id="foldopen00204" data-start="{" data-end="}">
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno"><a class="line" href="classZipperIndex.html#a4c1c215315e98885987b28be1a01c9dd">  204</a></span>  <a class="code hl_class" href="classZipperIndexIterator.html">Iterator</a> <a class="code hl_function" href="classZipperIndex.html#a4c1c215315e98885987b28be1a01c9dd">end</a>()</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>  {</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>    <span class="keywordflow">return</span> <a class="code hl_class" href="classZipperIndexIterator.html">ZipperIndexIterator</a>&lt;Comps...&gt;(this-&gt;_end,</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>                                         this-&gt;_scenes,</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>                                         this-&gt;_active_scenes,</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>                                         this-&gt;_size,</div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>                                         this-&gt;_size);</div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>  }</div>
 </div>
-<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span> </div>
-<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>  <span class="keyword">static</span> std::size_t compute_size(<a class="code hl_class" href="classRegistry.html">Registry</a> <span class="keyword">const</span>&amp; r)</div>
-<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>  {</div>
-<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>    <span class="keywordflow">return</span> std::min({r.<a class="code hl_function" href="classRegistry.html#ab8ff3522b765d882b46262ad345db07b">get_components</a>&lt;Comps&gt;().size()...});</div>
-<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>  }</div>
-<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span> </div>
-<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>  <a class="code hl_typedef" href="classZipperIndex.html#a430d18450ffe660d2411e32b9bc9d344">IteratorTuple</a> compute_end(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r)</div>
-<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>  {</div>
-<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>    <span class="keywordflow">return</span> std::make_tuple(r.<a class="code hl_function" href="classRegistry.html#ab8ff3522b765d882b46262ad345db07b">get_components</a>&lt;Comps&gt;().begin() + _size...);</div>
-<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>  }</div>
-<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span> </div>
-<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>  std::size_t _size;  </div>
-<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>  <a class="code hl_typedef" href="classZipperIndex.html#a430d18450ffe660d2411e32b9bc9d344">IteratorTuple</a> _begin;  </div>
-<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>  <a class="code hl_typedef" href="classZipperIndex.html#a430d18450ffe660d2411e32b9bc9d344">IteratorTuple</a> _end;  </div>
-<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>  <a class="code hl_class" href="classSparseArray.html">SparseArray&lt;Scene&gt;</a>&amp; _scenes;</div>
-<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>  std::vector&lt;std::string&gt; _active_scenes;</div>
-<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>};</div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span> </div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>  <span class="keyword">static</span> std::size_t compute_size(<a class="code hl_class" href="classRegistry.html">Registry</a> <span class="keyword">const</span>&amp; r)</div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>  {</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>    <span class="keywordflow">return</span> std::min({r.<a class="code hl_function" href="classRegistry.html#ab8ff3522b765d882b46262ad345db07b">get_components</a>&lt;Comps&gt;().size()...});</div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>  }</div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span> </div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>  <a class="code hl_typedef" href="classZipperIndex.html#a430d18450ffe660d2411e32b9bc9d344">IteratorTuple</a> compute_end(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r)</div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>  {</div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>    <span class="keywordflow">return</span> std::make_tuple(r.<a class="code hl_function" href="classRegistry.html#ab8ff3522b765d882b46262ad345db07b">get_components</a>&lt;Comps&gt;().begin() + _size...);</div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>  }</div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span> </div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>  std::size_t _size;  </div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>  <a class="code hl_typedef" href="classZipperIndex.html#a430d18450ffe660d2411e32b9bc9d344">IteratorTuple</a> _begin;  </div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>  <a class="code hl_typedef" href="classZipperIndex.html#a430d18450ffe660d2411e32b9bc9d344">IteratorTuple</a> _end;  </div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>  <a class="code hl_class" href="classSparseArray.html">SparseArray&lt;Scene&gt;</a>&amp; _scenes;</div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>  std::vector&lt;std::string&gt; _active_scenes;</div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>};</div>
 </div>
-<div class="ttc" id="aRegistry_8hpp_html"><div class="ttname"><a href="Registry_8hpp.html">Registry.hpp</a></div></div>
+<div class="ttc" id="aRegistry_8hpp_html"><div class="ttname"><a href="Registry_8hpp.html">Registry.hpp</a></div><div class="ttdoc">Central hub of the ECS architecture managing entities, components, systems, and events.</div></div>
 <div class="ttc" id="aZipper_8hpp_html"><div class="ttname"><a href="Zipper_8hpp.html">Zipper.hpp</a></div></div>
-<div class="ttc" id="aclassRegistry_html"><div class="ttname"><a href="classRegistry.html">Registry</a></div><div class="ttdoc">The Registry class is the core of the ECS (Entity-Component-System) architecture.</div><div class="ttdef"><b>Definition</b> Registry.hpp:44</div></div>
-<div class="ttc" id="aclassRegistry_html_ab8ff3522b765d882b46262ad345db07b"><div class="ttname"><a href="classRegistry.html#ab8ff3522b765d882b46262ad345db07b">Registry::get_components</a></div><div class="ttdeci">SparseArray&lt; Component &gt; &amp; get_components()</div><div class="ttdoc">Get the components object.</div><div class="ttdef"><b>Definition</b> Registry.hpp:104</div></div>
+<div class="ttc" id="aclassRegistry_html"><div class="ttname"><a href="classRegistry.html">Registry</a></div><div class="ttdoc">The Registry class is the core of the ECS (Entity-Component-System) architecture.</div><div class="ttdef"><b>Definition</b> Registry.hpp:348</div></div>
+<div class="ttc" id="aclassRegistry_html_ab8ff3522b765d882b46262ad345db07b"><div class="ttname"><a href="classRegistry.html#ab8ff3522b765d882b46262ad345db07b">Registry::get_components</a></div><div class="ttdeci">SparseArray&lt; Component &gt; &amp; get_components()</div><div class="ttdoc">Get the components object.</div><div class="ttdef"><b>Definition</b> Registry.hpp:432</div></div>
 <div class="ttc" id="aclassSparseArray_html"><div class="ttname"><a href="classSparseArray.html">SparseArray</a></div><div class="ttdoc">A sparse array implementation that stores components in an optional vector.</div><div class="ttdef"><b>Definition</b> SparseArray.hpp:16</div></div>
-<div class="ttc" id="aclassZipperIndexIterator_html"><div class="ttname"><a href="classZipperIndexIterator.html">ZipperIndexIterator</a></div><div class="ttdoc">Iterator that zips multiple Comps and includes the current index in the result.</div><div class="ttdef"><b>Definition</b> ZipperIndex.hpp:39</div></div>
-<div class="ttc" id="aclassZipperIndexIterator_html_a0a084bdfa1bee5af916d8dcbe2ac9b2e"><div class="ttname"><a href="classZipperIndexIterator.html#a0a084bdfa1bee5af916d8dcbe2ac9b2e">ZipperIndexIterator::Value</a></div><div class="ttdeci">typename Base::template Value&lt; Container &gt; Value</div><div class="ttdoc">Value type extracted from each container through the base iterator.</div><div class="ttdef"><b>Definition</b> ZipperIndex.hpp:50</div></div>
-<div class="ttc" id="aclassZipperIndexIterator_html_a37f5fd84da0070769ef114129766dd3f"><div class="ttname"><a href="classZipperIndexIterator.html#a37f5fd84da0070769ef114129766dd3f">ZipperIndexIterator::operator++</a></div><div class="ttdeci">ZipperIndexIterator operator++(int)</div><div class="ttdoc">Post-increment operator. Advances to the next valid position.</div><div class="ttdef"><b>Definition</b> ZipperIndex.hpp:86</div></div>
-<div class="ttc" id="aclassZipperIndexIterator_html_a4ae8bb76506cdf873ae40ccd787910f1"><div class="ttname"><a href="classZipperIndexIterator.html#a4ae8bb76506cdf873ae40ccd787910f1">ZipperIndexIterator::ZipperIndexIterator</a></div><div class="ttdeci">ZipperIndexIterator(Args &amp;&amp;... args)</div><div class="ttdoc">Constructs a zipper index iterator by forwarding arguments to the base iterator.</div><div class="ttdef"><b>Definition</b> ZipperIndex.hpp:63</div></div>
-<div class="ttc" id="aclassZipperIndexIterator_html_a59ba088b4eba5af7f939ceff608dbd4c"><div class="ttname"><a href="classZipperIndexIterator.html#a59ba088b4eba5af7f939ceff608dbd4c">ZipperIndexIterator::ValueType</a></div><div class="ttdeci">std::tuple&lt; std::size_t, Value&lt; Comps &gt;... &gt; ValueType</div><div class="ttdoc">Tuple type containing the index followed by values from all Comps.</div><div class="ttdef"><b>Definition</b> ZipperIndex.hpp:54</div></div>
-<div class="ttc" id="aclassZipperIndexIterator_html_a63d13f6ebaa573d0bdebd212e62da931"><div class="ttname"><a href="classZipperIndexIterator.html#a63d13f6ebaa573d0bdebd212e62da931">ZipperIndexIterator::operator!=</a></div><div class="ttdeci">bool operator!=(ZipperIndexIterator const &amp;rhs)</div><div class="ttdoc">Inequality comparison operator.</div><div class="ttdef"><b>Definition</b> ZipperIndex.hpp:128</div></div>
-<div class="ttc" id="aclassZipperIndexIterator_html_a94afe244fb938e9f0121453849c37d31"><div class="ttname"><a href="classZipperIndexIterator.html#a94afe244fb938e9f0121453849c37d31">ZipperIndexIterator::operator++</a></div><div class="ttdeci">ZipperIndexIterator &amp; operator++()</div><div class="ttdoc">Pre-increment operator. Advances to the next valid position.</div><div class="ttdef"><b>Definition</b> ZipperIndex.hpp:76</div></div>
-<div class="ttc" id="aclassZipperIndexIterator_html_aa3c96ea573e53d0fba8718da5116603e"><div class="ttname"><a href="classZipperIndexIterator.html#aa3c96ea573e53d0fba8718da5116603e">ZipperIndexIterator::operator==</a></div><div class="ttdeci">bool operator==(ZipperIndexIterator const &amp;rhs)</div><div class="ttdoc">Equality comparison operator.</div><div class="ttdef"><b>Definition</b> ZipperIndex.hpp:117</div></div>
-<div class="ttc" id="aclassZipperIndexIterator_html_aae2f535d190b8ecc3bbdad2cc4ae2f66"><div class="ttname"><a href="classZipperIndexIterator.html#aae2f535d190b8ecc3bbdad2cc4ae2f66">ZipperIndexIterator::operator-&gt;</a></div><div class="ttdeci">ValueType operator-&gt;()</div><div class="ttdoc">Arrow operator. Returns tuple with index and values from all Comps.</div><div class="ttdef"><b>Definition</b> ZipperIndex.hpp:109</div></div>
-<div class="ttc" id="aclassZipperIndexIterator_html_ac9af972d7e751efc686ea7a137936183"><div class="ttname"><a href="classZipperIndexIterator.html#ac9af972d7e751efc686ea7a137936183">ZipperIndexIterator::operator*</a></div><div class="ttdeci">ValueType operator*()</div><div class="ttdoc">Dereference operator. Returns tuple with index and values from all Comps.</div><div class="ttdef"><b>Definition</b> ZipperIndex.hpp:99</div></div>
-<div class="ttc" id="aclassZipperIndexIterator_html_ac9feccfe8c9a7f819e331fb0b94ccb3a"><div class="ttname"><a href="classZipperIndexIterator.html#ac9feccfe8c9a7f819e331fb0b94ccb3a">ZipperIndexIterator::Base</a></div><div class="ttdeci">ZipperIterator&lt; Comps... &gt; Base</div><div class="ttdoc">Base iterator type (ZipperIterator) used internally.</div><div class="ttdef"><b>Definition</b> ZipperIndex.hpp:42</div></div>
-<div class="ttc" id="aclassZipperIndex_html"><div class="ttname"><a href="classZipperIndex.html">ZipperIndex</a></div><div class="ttdoc">Range adapter that zips multiple Comps and includes indices in the iteration.</div><div class="ttdef"><b>Definition</b> ZipperIndex.hpp:164</div></div>
-<div class="ttc" id="aclassZipperIndex_html_a3fa7cd8bda1b55ddf883058e075ce7a6"><div class="ttname"><a href="classZipperIndex.html#a3fa7cd8bda1b55ddf883058e075ce7a6">ZipperIndex::begin</a></div><div class="ttdeci">Iterator begin()</div><div class="ttdoc">Returns an iterator to the beginning of the indexed zipped range.</div><div class="ttdef"><b>Definition</b> ZipperIndex.hpp:196</div></div>
-<div class="ttc" id="aclassZipperIndex_html_a430d18450ffe660d2411e32b9bc9d344"><div class="ttname"><a href="classZipperIndex.html#a430d18450ffe660d2411e32b9bc9d344">ZipperIndex::IteratorTuple</a></div><div class="ttdeci">typename Iterator::Base::iterator_tuple IteratorTuple</div><div class="ttdoc">Tuple type containing iterators for all Comps.</div><div class="ttdef"><b>Definition</b> ZipperIndex.hpp:170</div></div>
-<div class="ttc" id="aclassZipperIndex_html_a4c1c215315e98885987b28be1a01c9dd"><div class="ttname"><a href="classZipperIndex.html#a4c1c215315e98885987b28be1a01c9dd">ZipperIndex::end</a></div><div class="ttdeci">Iterator end()</div><div class="ttdoc">Returns an iterator to the end of the indexed zipped range.</div><div class="ttdef"><b>Definition</b> ZipperIndex.hpp:206</div></div>
-<div class="ttc" id="aclassZipperIndex_html_ac1ee106e82b0cb84e13dc173d6382dfd"><div class="ttname"><a href="classZipperIndex.html#ac1ee106e82b0cb84e13dc173d6382dfd">ZipperIndex::ZipperIndex</a></div><div class="ttdeci">ZipperIndex(Registry &amp;r)</div><div class="ttdoc">Constructs an indexed zipper from multiple container references.</div><div class="ttdef"><b>Definition</b> ZipperIndex.hpp:180</div></div>
+<div class="ttc" id="aclassZipperIndexIterator_html"><div class="ttname"><a href="classZipperIndexIterator.html">ZipperIndexIterator</a></div><div class="ttdoc">Iterator that zips multiple Comps and includes the current index in the result.</div><div class="ttdef"><b>Definition</b> ZipperIndex.hpp:38</div></div>
+<div class="ttc" id="aclassZipperIndexIterator_html_a0a084bdfa1bee5af916d8dcbe2ac9b2e"><div class="ttname"><a href="classZipperIndexIterator.html#a0a084bdfa1bee5af916d8dcbe2ac9b2e">ZipperIndexIterator::Value</a></div><div class="ttdeci">typename Base::template Value&lt; Container &gt; Value</div><div class="ttdoc">Value type extracted from each container through the base iterator.</div><div class="ttdef"><b>Definition</b> ZipperIndex.hpp:49</div></div>
+<div class="ttc" id="aclassZipperIndexIterator_html_a37f5fd84da0070769ef114129766dd3f"><div class="ttname"><a href="classZipperIndexIterator.html#a37f5fd84da0070769ef114129766dd3f">ZipperIndexIterator::operator++</a></div><div class="ttdeci">ZipperIndexIterator operator++(int)</div><div class="ttdoc">Post-increment operator. Advances to the next valid position.</div><div class="ttdef"><b>Definition</b> ZipperIndex.hpp:85</div></div>
+<div class="ttc" id="aclassZipperIndexIterator_html_a4ae8bb76506cdf873ae40ccd787910f1"><div class="ttname"><a href="classZipperIndexIterator.html#a4ae8bb76506cdf873ae40ccd787910f1">ZipperIndexIterator::ZipperIndexIterator</a></div><div class="ttdeci">ZipperIndexIterator(Args &amp;&amp;... args)</div><div class="ttdoc">Constructs a zipper index iterator by forwarding arguments to the base iterator.</div><div class="ttdef"><b>Definition</b> ZipperIndex.hpp:62</div></div>
+<div class="ttc" id="aclassZipperIndexIterator_html_a59ba088b4eba5af7f939ceff608dbd4c"><div class="ttname"><a href="classZipperIndexIterator.html#a59ba088b4eba5af7f939ceff608dbd4c">ZipperIndexIterator::ValueType</a></div><div class="ttdeci">std::tuple&lt; std::size_t, Value&lt; Comps &gt;... &gt; ValueType</div><div class="ttdoc">Tuple type containing the index followed by values from all Comps.</div><div class="ttdef"><b>Definition</b> ZipperIndex.hpp:53</div></div>
+<div class="ttc" id="aclassZipperIndexIterator_html_a63d13f6ebaa573d0bdebd212e62da931"><div class="ttname"><a href="classZipperIndexIterator.html#a63d13f6ebaa573d0bdebd212e62da931">ZipperIndexIterator::operator!=</a></div><div class="ttdeci">bool operator!=(ZipperIndexIterator const &amp;rhs)</div><div class="ttdoc">Inequality comparison operator.</div><div class="ttdef"><b>Definition</b> ZipperIndex.hpp:127</div></div>
+<div class="ttc" id="aclassZipperIndexIterator_html_a94afe244fb938e9f0121453849c37d31"><div class="ttname"><a href="classZipperIndexIterator.html#a94afe244fb938e9f0121453849c37d31">ZipperIndexIterator::operator++</a></div><div class="ttdeci">ZipperIndexIterator &amp; operator++()</div><div class="ttdoc">Pre-increment operator. Advances to the next valid position.</div><div class="ttdef"><b>Definition</b> ZipperIndex.hpp:75</div></div>
+<div class="ttc" id="aclassZipperIndexIterator_html_aa3c96ea573e53d0fba8718da5116603e"><div class="ttname"><a href="classZipperIndexIterator.html#aa3c96ea573e53d0fba8718da5116603e">ZipperIndexIterator::operator==</a></div><div class="ttdeci">bool operator==(ZipperIndexIterator const &amp;rhs)</div><div class="ttdoc">Equality comparison operator.</div><div class="ttdef"><b>Definition</b> ZipperIndex.hpp:116</div></div>
+<div class="ttc" id="aclassZipperIndexIterator_html_aae2f535d190b8ecc3bbdad2cc4ae2f66"><div class="ttname"><a href="classZipperIndexIterator.html#aae2f535d190b8ecc3bbdad2cc4ae2f66">ZipperIndexIterator::operator-&gt;</a></div><div class="ttdeci">ValueType operator-&gt;()</div><div class="ttdoc">Arrow operator. Returns tuple with index and values from all Comps.</div><div class="ttdef"><b>Definition</b> ZipperIndex.hpp:108</div></div>
+<div class="ttc" id="aclassZipperIndexIterator_html_ac9af972d7e751efc686ea7a137936183"><div class="ttname"><a href="classZipperIndexIterator.html#ac9af972d7e751efc686ea7a137936183">ZipperIndexIterator::operator*</a></div><div class="ttdeci">ValueType operator*()</div><div class="ttdoc">Dereference operator. Returns tuple with index and values from all Comps.</div><div class="ttdef"><b>Definition</b> ZipperIndex.hpp:98</div></div>
+<div class="ttc" id="aclassZipperIndexIterator_html_ac9feccfe8c9a7f819e331fb0b94ccb3a"><div class="ttname"><a href="classZipperIndexIterator.html#ac9feccfe8c9a7f819e331fb0b94ccb3a">ZipperIndexIterator::Base</a></div><div class="ttdeci">ZipperIterator&lt; Comps... &gt; Base</div><div class="ttdoc">Base iterator type (ZipperIterator) used internally.</div><div class="ttdef"><b>Definition</b> ZipperIndex.hpp:41</div></div>
+<div class="ttc" id="aclassZipperIndex_html"><div class="ttname"><a href="classZipperIndex.html">ZipperIndex</a></div><div class="ttdoc">Range adapter that zips multiple Comps and includes indices in the iteration.</div><div class="ttdef"><b>Definition</b> ZipperIndex.hpp:162</div></div>
+<div class="ttc" id="aclassZipperIndex_html_a3fa7cd8bda1b55ddf883058e075ce7a6"><div class="ttname"><a href="classZipperIndex.html#a3fa7cd8bda1b55ddf883058e075ce7a6">ZipperIndex::begin</a></div><div class="ttdeci">Iterator begin()</div><div class="ttdoc">Returns an iterator to the beginning of the indexed zipped range.</div><div class="ttdef"><b>Definition</b> ZipperIndex.hpp:194</div></div>
+<div class="ttc" id="aclassZipperIndex_html_a430d18450ffe660d2411e32b9bc9d344"><div class="ttname"><a href="classZipperIndex.html#a430d18450ffe660d2411e32b9bc9d344">ZipperIndex::IteratorTuple</a></div><div class="ttdeci">typename Iterator::Base::iterator_tuple IteratorTuple</div><div class="ttdoc">Tuple type containing iterators for all Comps.</div><div class="ttdef"><b>Definition</b> ZipperIndex.hpp:168</div></div>
+<div class="ttc" id="aclassZipperIndex_html_a4c1c215315e98885987b28be1a01c9dd"><div class="ttname"><a href="classZipperIndex.html#a4c1c215315e98885987b28be1a01c9dd">ZipperIndex::end</a></div><div class="ttdeci">Iterator end()</div><div class="ttdoc">Returns an iterator to the end of the indexed zipped range.</div><div class="ttdef"><b>Definition</b> ZipperIndex.hpp:204</div></div>
+<div class="ttc" id="aclassZipperIndex_html_ac1ee106e82b0cb84e13dc173d6382dfd"><div class="ttname"><a href="classZipperIndex.html#ac1ee106e82b0cb84e13dc173d6382dfd">ZipperIndex::ZipperIndex</a></div><div class="ttdeci">ZipperIndex(Registry &amp;r)</div><div class="ttdoc">Constructs an indexed zipper from multiple container references.</div><div class="ttdef"><b>Definition</b> ZipperIndex.hpp:178</div></div>
 <div class="ttc" id="aclassZipperIterator_html"><div class="ttname"><a href="classZipperIterator.html">ZipperIterator&lt; Comps... &gt;</a></div></div>
-<div class="ttc" id="aclassZipperIterator_html_ae6892020c61c3b09b90a70dbe1af16b7"><div class="ttname"><a href="classZipperIterator.html#ae6892020c61c3b09b90a70dbe1af16b7">ZipperIterator::_idx</a></div><div class="ttdeci">std::size_t _idx</div><div class="ttdoc">Current index position in the iteration.</div><div class="ttdef"><b>Definition</b> Zipper.hpp:261</div></div>
-<div class="ttc" id="astructScene_html"><div class="ttname"><a href="structScene.html">Scene</a></div><div class="ttdef"><b>Definition</b> Scenes.hpp:26</div></div>
+<div class="ttc" id="aclassZipperIterator_html_ae6892020c61c3b09b90a70dbe1af16b7"><div class="ttname"><a href="classZipperIterator.html#ae6892020c61c3b09b90a70dbe1af16b7">ZipperIterator::_idx</a></div><div class="ttdeci">std::size_t _idx</div><div class="ttdoc">Current index position in the iteration.</div><div class="ttdef"><b>Definition</b> Zipper.hpp:260</div></div>
+<div class="ttc" id="astructScene_html"><div class="ttname"><a href="structScene.html">Scene</a></div><div class="ttdoc">Component that associates an entity with a specific scene.</div><div class="ttdef"><b>Definition</b> Scenes.hpp:67</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
