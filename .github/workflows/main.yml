@@ -202,13 +202,26 @@ jobs:
         CMAKE_CXX_COMPILER_LAUNCHER: ccache
 
     - name: Build docs
-      run: cmake --build build/docs --target docs
+      run: cmake --preset=docs && cmake --build build/docs --preset=docs-build && cmake --build build/docs --target docs-run
 
     - name: Deploy docs to GitHub Pages
       uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: build/docs/html
+        publish_dir: docs/html
       continue-on-error: true
 
+  push_to_mirror:
+    runs-on: ubuntu-latest
+    name: push_to_mirror
+    steps:
+      - name: push_to_mirror
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          target_repo_url: "git@github.com:EpitechPGE3-2025/G-CPP-500-PAR-5-2-rtype-5.git"
+          ssh_private_key: ${{ secrets.GIT_SSH_PRIVATE_KEY }}
 
