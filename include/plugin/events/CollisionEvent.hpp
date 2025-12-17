@@ -49,7 +49,7 @@ struct CollisionEvent
   }
 };
 
-struct UpdateVelocity
+struct UpdateDirection
 {
   std::size_t entity;
   double x_axis;
@@ -57,16 +57,16 @@ struct UpdateVelocity
 
   CHANGE_ENTITY(result.entity = map.at(entity))
 
-  UpdateVelocity(std::size_t e, double x, double y)
+  UpdateDirection(std::size_t e, double x, double y)
       : entity(e)
       , x_axis(x)
       , y_axis(y)
   {
   }
 
-  DEFAULT_BYTE_CONSTRUCTOR(UpdateVelocity,
+  DEFAULT_BYTE_CONSTRUCTOR(UpdateDirection,
                            ([](std::size_t e, double x, double y)
-                            { return UpdateVelocity(e, x, y); }),
+                            { return UpdateDirection(e, x, y); }),
                            parseByte<std::size_t>(),
                            parseByte<double>(),
                            parseByte<double>())
@@ -75,7 +75,7 @@ struct UpdateVelocity
                     type_to_byte(x_axis),
                     type_to_byte(y_axis))
 
-  UpdateVelocity(Registry& r, JsonObject const& e)
+  UpdateDirection(Registry& r, JsonObject const& e)
       : entity(get_value_copy<int>(r, e, "entity").value())
       , x_axis(get_value_copy<double>(r, e, "x").value())
       , y_axis(get_value_copy<double>(r, e, "y").value())

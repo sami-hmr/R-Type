@@ -14,7 +14,6 @@
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Controllable.hpp"
-#include "plugin/components/Velocity.hpp"
 #include "plugin/events/CollisionEvent.hpp"
 #include "plugin/events/IoEvents.hpp"
 #include "plugin/events/LoggerEvent.hpp"

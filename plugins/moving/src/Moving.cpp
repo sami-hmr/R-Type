@@ -14,7 +14,8 @@
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Facing.hpp"
 #include "plugin/components/Position.hpp"
-#include "plugin/components/Velocity.hpp"
+#include "plugin/components/Direction.hpp"
+#include "plugin/components/Speed.hpp"
 #include "plugin/events/CollisionEvent.hpp"
 
 Moving::Moving(Registry& r, EntityLoader& l)
@@ -23,21 +24,23 @@ Moving::Moving(Registry& r, EntityLoader& l)
               l,
               {},
               {COMP_INIT(Position, Position, init_pos),
-               COMP_INIT(Velocity, Velocity, init_velocity),
+               COMP_INIT(Direction, Direction, init_direction),
+               COMP_INIT(Speed, Speed, init_speed),
                COMP_INIT(Facing, Facing, init_facing)})
 {
   REGISTER_COMPONENT(Position)
-  REGISTER_COMPONENT(Velocity)
+  REGISTER_COMPONENT(Direction)
+  REGISTER_COMPONENT(Speed)
   REGISTER_COMPONENT(Facing)
 
   this->_registry.get().add_system(
       [this](Registry& r) { this->moving_system(r); }, 4);
 
-  SUBSCRIBE_EVENT(UpdateVelocity, {
-    if (!this->_registry.get().has_component<Velocity>(event.entity)) {
+  SUBSCRIBE_EVENT(UpdateDirection, {
+    if (!this->_registry.get().has_component<Direction>(event.entity)) {
       return;
     }
-    auto& comp = this->_registry.get().get_components<Velocity>()[event.entity];
+    auto& comp = this->_registry.get().get_components<Direction>()[event.entity];
     comp->direction.x =
         std::max(-1.0, std::min(comp->direction.x + event.x_axis, 1.0));
     comp->direction.y =
@@ -49,10 +52,10 @@ void Moving::moving_system(Registry& reg)
 {
   double dt = reg.clock().delta_seconds();
 
-  for (auto&& [index, position, velocity] :
-       ZipperIndex<Position, Velocity>(reg))
+  for (auto&& [index, position, direction, speed] :
+       ZipperIndex<Position, Direction, Speed>(reg))
   {
-    Vector2D movement = (velocity.direction).normalize() * velocity.speed * dt;
+    Vector2D movement = (direction.direction).normalize() * speed.speed * dt;
     position.pos += movement;
     if (movement.length() != 0) {
       reg.emit<ComponentBuilder>(
@@ -90,24 +93,42 @@ void Moving::init_pos(Registry::Entity const& entity, JsonObject& obj)
   }
 }
 
-void Moving::init_velocity(Registry::Entity const& entity, JsonObject& obj)
+void Moving::init_direction(Registry::Entity const& entity, JsonObject& obj)
 {
-  auto speed = get_value<Velocity, Vector2D>(
-      this->_registry.get(), obj, entity, "speed");
-  auto dir = get_value<Velocity, Vector2D>(
+  auto dir = get_value<Direction, Vector2D>(
       this->_registry.get(), obj, entity, "direction");
 
-  if (!speed || !dir) {
-    std::cerr << "Error loading velocity component: missing speed or direction "
+  if (!dir) {
+    std::cerr << "Error loading Direction component: missing direction "
                  "in JsonObject\n";
     return;
   }
 
-  auto& vel_opt = init_component<Velocity>(
-      this->_registry.get(), entity, speed.value(), dir.value());
+  auto& vel_opt = init_component<Direction>(
+      this->_registry.get(), entity, dir.value());
 
   if (!vel_opt.has_value()) {
-    std::cerr << "Error creating Velocity component\n";
+    std::cerr << "Error creating Direction component\n";
+    return;
+  }
+}
+
+void Moving::init_speed(Registry::Entity const& entity, JsonObject& obj)
+{
+  auto speed = get_value<Speed, Vector2D>(
+      this->_registry.get(), obj, entity, "speed");
+
+  if (!speed) {
+    std::cerr << "Error loading Speed component: missing speed "
+                 "in JsonObject\n";
+    return;
+  }
+
+  auto& vel_opt = init_component<Speed>(
+      this->_registry.get(), entity, speed.value());
+
+  if (!vel_opt.has_value()) {
+    std::cerr << "Error creating Speed component\n";
     return;
   }
 }

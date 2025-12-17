@@ -36,7 +36,7 @@
           "controller:Controllable": {
             "pressed": [
               {
-                "name": "UpdateVelocity",
+                "name": "UpdateDirection",
                 "key": "Z",
                 "params": {
                   "x": 0.0,
@@ -44,7 +44,7 @@
                 }
               },
               {
-                "name": "UpdateVelocity",
+                "name": "UpdateDirection",
                 "key": "Q",
                 "params": {
                   "x": -1.0,
@@ -52,7 +52,7 @@
                 }
               },
               {
-                "name": "UpdateVelocity",
+                "name": "UpdateDirection",
                 "key": "S",
                 "params": {
                   "x": 0.0,
@@ -60,7 +60,7 @@
                 }
               },
               {
-                "name": "UpdateVelocity",
+                "name": "UpdateDirection",
                 "key": "D",
                 "params": {
                   "x": 1.0,
@@ -75,7 +75,7 @@
             ],
             "released": [
               {
-                "name": "UpdateVelocity",
+                "name": "UpdateDirection",
                 "key": "Z",
                 "params": {
                   "x": 0.0,
@@ -83,7 +83,7 @@
                 }
               },
               {
-                "name": "UpdateVelocity",
+                "name": "UpdateDirection",
                 "key": "Q",
                 "params": {
                   "x": 1.0,
@@ -91,7 +91,7 @@
                 }
               },
               {
-                "name": "UpdateVelocity",
+                "name": "UpdateDirection",
                 "key": "S",
                 "params": {
                   "x": 0.0,
@@ -99,7 +99,7 @@
                 }
               },
               {
-                "name": "UpdateVelocity",
+                "name": "UpdateDirection",
                 "key": "D",
                 "params": {
                   "x": -1.0,

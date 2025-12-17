@@ -10,7 +10,6 @@
 #include "plugin/components/Follower.hpp"
 #include "plugin/components/InteractionZone.hpp"
 #include "plugin/components/Position.hpp"
-#include "plugin/components/Velocity.hpp"
 #include "plugin/events/InteractionZoneEvent.hpp"
 
 class Target : public APlugin

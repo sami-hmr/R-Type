@@ -19,7 +19,8 @@
 #include "plugin/components/InteractionZone.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Team.hpp"
-#include "plugin/components/Velocity.hpp"
+#include "plugin/components/Speed.hpp"
+#include "plugin/components/Direction.hpp"
 #include "plugin/events/CollisionEvent.hpp"
 #include "plugin/events/InteractionZoneEvent.hpp"
 #include "plugin/events/LoggerEvent.hpp"
@@ -180,7 +181,8 @@ void Collision::interaction_zone_system(Registry& r)
 
 void Collision::on_collision(const CollisionEvent& c)
 {
-  auto& velocities = this->_registry.get().get_components<Velocity>();
+  auto& directions = this->_registry.get().get_components<Direction>();
+  auto& speeds = this->_registry.get().get_components<Speed>();
   auto& positions = this->_registry.get().get_components<Position>();
   auto const& teams = this->_registry.get().get_components<Team>();
   auto const& collidables = this->_registry.get().get_components<Collidable>();
@@ -212,13 +214,13 @@ void Collision::on_collision(const CollisionEvent& c)
   }
   double dt = this->_registry.get().clock().delta_seconds();
 
-  if (this->_registry.get().has_component<Velocity>(c.a)) {
+  if (this->_registry.get().has_component<Direction>(c.a) && this->_registry.get().has_component<Speed>(c.a)) {
     Vector2D movement =
-        (velocities[c.a]->direction).normalize() * velocities[c.a]->speed * dt;
+        (directions[c.a]->direction).normalize() * speeds[c.a]->speed * dt;
     Vector2D collision_normal =
         (positions[c.a]->pos - positions[c.b]->pos).normalize();
 
-    if (this->_registry.get().has_component<Velocity>(c.b)
+    if (this->_registry.get().has_component<Direction>(c.b) && this->_registry.get().has_component<Speed>(c.b)
         && type_a == CollisionType::Push)
     {
       positions[c.a]->pos -= movement;
@@ -235,11 +237,11 @@ void Collision::on_collision(const CollisionEvent& c)
         positions[c.a]->pos -= perpendicular_vector;
       }
     } else if (type_a == CollisionType::Bounce) {
-      double dot_product = velocities[c.a]->direction.dot(collision_normal);
+      double dot_product = directions[c.a]->direction.dot(collision_normal);
       Vector2D reflected_direction =
-          velocities[c.a]->direction - (collision_normal * (2.0 * dot_product));
+          directions[c.a]->direction - (collision_normal * (2.0 * dot_product));
 
-      velocities[c.a]->direction = reflected_direction.normalize();
+      directions[c.a]->direction = reflected_direction.normalize();
       positions[c.a]->pos += collision_normal * 0.01;
     } else {
       positions[c.a]->pos -= movement;
