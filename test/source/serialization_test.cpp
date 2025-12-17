@@ -4,11 +4,12 @@
 
 #include "libs/Color.hpp"
 #include "plugin/Byte.hpp"
+#include "plugin/components/Direction.hpp"
 #include "plugin/components/Position.hpp"
+#include "plugin/components/Speed.hpp"
 #include "plugin/components/Sprite.hpp"
 #include "plugin/components/Team.hpp"
 #include "plugin/components/Text.hpp"
-#include "plugin/components/Velocity.hpp"
 #include "plugin/events/CliEvents.hpp"
 
 // ==================== Serialization Tests ====================
@@ -244,73 +245,63 @@ TEST_CASE("Serialization - Position with extreme double values",
   REQUIRE(deserialized.pos.y == original.pos.y);
 }
 
-TEST_CASE("Serialization - Velocity to_bytes", "[serialization]")
+TEST_CASE("Serialization - Speed to_bytes", "[serialization]")
 {
-  Velocity vel(1.0, 2.0, 3.0, 4.0);
-  ByteArray bytes = vel.to_bytes();
+  Speed spd(1.0, 2.0);
+  ByteArray bytes = spd.to_bytes();
 
-  // Should contain 4 doubles
-  REQUIRE(bytes.size() == 4 * sizeof(double));
+  // Should contain 2 doubles
+  REQUIRE(bytes.size() == 2 * sizeof(double));
 }
 
-TEST_CASE("Serialization - Velocity round-trip", "[serialization]")
+TEST_CASE("Serialization - Speed round-trip", "[serialization]")
 {
-  Velocity original(10.5, 20.5, 0.707, 0.707);
+  Speed original(10.5, 20.5);
   ByteArray bytes = original.to_bytes();
-  Velocity deserialized(bytes);
+  Speed deserialized(bytes);
 
   REQUIRE(deserialized.speed.x == original.speed.x);
   REQUIRE(deserialized.speed.y == original.speed.y);
-  REQUIRE(deserialized.direction.x == original.direction.x);
-  REQUIRE(deserialized.direction.y == original.direction.y);
 }
 
-TEST_CASE("Serialization - Velocity with zero speed", "[serialization]")
+TEST_CASE("Serialization - Speed with zero speed", "[serialization]")
 {
-  Velocity original(0.0, 0.0, 1.0, 0.0);
+  Speed original(0.0, 0.0);
   ByteArray bytes = original.to_bytes();
-  Velocity deserialized(bytes);
+  Speed deserialized(bytes);
 
   REQUIRE(deserialized.speed.x == 0.0);
   REQUIRE(deserialized.speed.y == 0.0);
-  REQUIRE(deserialized.direction.x == 1.0);
-  REQUIRE(deserialized.direction.y == 0.0);
 }
 
-TEST_CASE("Serialization - Velocity with negative values", "[serialization]")
+TEST_CASE("Serialization - Speed with negative values", "[serialization]")
 {
-  Velocity original(-5.5, -10.5, -0.6, -0.8);
+  Speed original(-5.5, -10.5);
   ByteArray bytes = original.to_bytes();
-  Velocity deserialized(bytes);
+  Speed deserialized(bytes);
 
   REQUIRE(deserialized.speed.x == original.speed.x);
   REQUIRE(deserialized.speed.y == original.speed.y);
-  REQUIRE(deserialized.direction.x == original.direction.x);
-  REQUIRE(deserialized.direction.y == original.direction.y);
 }
 
-TEST_CASE("Serialization - Velocity all zeros", "[serialization]")
+TEST_CASE("Serialization - Speed all zeros", "[serialization]")
 {
-  Velocity original(0.0, 0.0, 0.0, 0.0);
+  Speed original(0.0, 0.0);
   ByteArray bytes = original.to_bytes();
-  Velocity deserialized(bytes);
+  Speed deserialized(bytes);
 
   REQUIRE(deserialized.speed.x == 0.0);
   REQUIRE(deserialized.speed.y == 0.0);
-  REQUIRE(deserialized.direction.x == 0.0);
-  REQUIRE(deserialized.direction.y == 0.0);
 }
 
-TEST_CASE("Serialization - Velocity with fractional values", "[serialization]")
+TEST_CASE("Serialization - Speed with fractional values", "[serialization]")
 {
-  Velocity original(0.123456789, 9.876543210, 0.707106781, -0.707106781);
+  Speed original(0.123456789, 9.876543210);
   ByteArray bytes = original.to_bytes();
-  Velocity deserialized(bytes);
+  Speed deserialized(bytes);
 
   REQUIRE(deserialized.speed.x == original.speed.x);
   REQUIRE(deserialized.speed.y == original.speed.y);
-  REQUIRE(deserialized.direction.x == original.direction.x);
-  REQUIRE(deserialized.direction.y == original.direction.y);
 }
 
 TEST_CASE("Serialization - Team to_bytes", "[serialization]")
@@ -468,16 +459,29 @@ TEST_CASE("Serialization - Sprite with large scale values", "[serialization]")
 
 TEST_CASE("Serialization - Text to_bytes", "[serialization]")
 {
-  Text text("assets/font.ttf", Vector2D {1.0, 1.0}, "Hello", WHITE, BLACK, true, 1.0f);
+  Text text("assets/font.ttf",
+            Vector2D {1.0, 1.0},
+            "Hello",
+            WHITE,
+            BLACK,
+            true,
+            1.0f);
   ByteArray bytes = text.to_bytes();
 
   // Should contain: 2 string sizes + 2 string contents + 2 doubles
-  REQUIRE(bytes.size() > 2 * sizeof(std::uint32_t) + 2 * sizeof(double) + 2 * sizeof(Color) + sizeof(bool) + sizeof(float));
+  REQUIRE(bytes.size() > 2 * sizeof(std::uint32_t) + 2 * sizeof(double)
+              + 2 * sizeof(Color) + sizeof(bool) + sizeof(float));
 }
 
 TEST_CASE("Serialization - Text round-trip", "[serialization]")
 {
-  Text original("assets/roboto.ttf", Vector2D {2.0, 2.5}, "Test Message", WHITE, BLACK, false, 2.0f);
+  Text original("assets/roboto.ttf",
+                Vector2D {2.0, 2.5},
+                "Test Message",
+                WHITE,
+                BLACK,
+                false,
+                2.0f);
   ByteArray bytes = original.to_bytes();
   Text deserialized(bytes);
 
@@ -520,7 +524,8 @@ TEST_CASE("Serialization - Text with empty strings", "[serialization]")
 TEST_CASE("Serialization - Text with long content", "[serialization]")
 {
   std::string long_text(1000, 'A');
-  Text original("font.ttf", Vector2D {1.0, 1.0}, long_text, WHITE, BLACK, true, 1.0f);
+  Text original(
+      "font.ttf", Vector2D {1.0, 1.0}, long_text, WHITE, BLACK, true, 1.0f);
   ByteArray bytes = original.to_bytes();
   Text deserialized(bytes);
 
@@ -540,7 +545,13 @@ TEST_CASE("Serialization - Text with long content", "[serialization]")
 
 TEST_CASE("Serialization - Text with special characters", "[serialization]")
 {
-  Text original("font.ttf", Vector2D {1.0, 1.0}, "Hello\nWorld\t!", WHITE, BLACK, true, 1.0f);
+  Text original("font.ttf",
+                Vector2D {1.0, 1.0},
+                "Hello\nWorld\t!",
+                WHITE,
+                BLACK,
+                true,
+                1.0f);
   ByteArray bytes = original.to_bytes();
   Text deserialized(bytes);
 
@@ -560,7 +571,13 @@ TEST_CASE("Serialization - Text with special characters", "[serialization]")
 TEST_CASE("Serialization - Text with unicode-like characters",
           "[serialization]")
 {
-  Text original("font.ttf", Vector2D {1.5, 1.5}, "Test: !@#$%^&*()", WHITE, BLACK, false, 1.5f);
+  Text original("font.ttf",
+                Vector2D {1.5, 1.5},
+                "Test: !@#$%^&*()",
+                WHITE,
+                BLACK,
+                false,
+                1.5f);
   ByteArray bytes = original.to_bytes();
   Text deserialized(bytes);
 
@@ -579,10 +596,11 @@ TEST_CASE("Serialization - Text with unicode-like characters",
 
 TEST_CASE("Serialization - Text with only whitespace", "[serialization]")
 {
-  Text original("font.ttf", Vector2D {1.0, 1.0}, "   \t\n   ", WHITE, BLACK, true, 1.0f);
+  Text original(
+      "font.ttf", Vector2D {1.0, 1.0}, "   \t\n   ", WHITE, BLACK, true, 1.0f);
   ByteArray bytes = original.to_bytes();
   Text deserialized(bytes);
-  
+
   REQUIRE(deserialized.text == "   \t\n   ");
   REQUIRE(deserialized.fill_color.r == original.fill_color.r);
   REQUIRE(deserialized.fill_color.g == original.fill_color.g);
@@ -668,20 +686,19 @@ TEST_CASE("Serialization - empty ByteArray for Position throws",
   REQUIRE_THROWS_AS(Position(empty_bytes), InvalidPackage);
 }
 
-TEST_CASE("Serialization - invalid ByteArray for Velocity throws",
+TEST_CASE("Serialization - invalid ByteArray for Speed throws",
           "[serialization]")
 {
-  ByteArray invalid_bytes = {1, 2, 3, 4};  // Too short for Velocity
+  ByteArray invalid_bytes = {1, 2};  // Too short for Speed
 
-  REQUIRE_THROWS_AS(Velocity(invalid_bytes), InvalidPackage);
+  REQUIRE_THROWS_AS(Speed(invalid_bytes), InvalidPackage);
 }
 
-TEST_CASE("Serialization - empty ByteArray for Velocity throws",
-          "[serialization]")
+TEST_CASE("Serialization - empty ByteArray for Speed throws", "[serialization]")
 {
   ByteArray empty_bytes;
 
-  REQUIRE_THROWS_AS(Velocity(empty_bytes), InvalidPackage);
+  REQUIRE_THROWS_AS(Speed(empty_bytes), InvalidPackage);
 }
 
 TEST_CASE("Serialization - invalid ByteArray for Team throws",
@@ -746,18 +763,18 @@ TEST_CASE("Serialization - multiple consecutive serializations",
 TEST_CASE("Serialization - mixed component serialization", "[serialization]")
 {
   Position pos(100.0, 200.0);
-  Velocity vel(1.0, 2.0, 0.707, 0.707);
+  Speed spd(1.0, 2.0);
   Team team("TestTeam");
 
   ByteArray pos_bytes = pos.to_bytes();
-  ByteArray vel_bytes = vel.to_bytes();
+  ByteArray spd_bytes = spd.to_bytes();
   ByteArray team_bytes = team.to_bytes();
 
   Position pos_deser(pos_bytes);
-  Velocity vel_deser(vel_bytes);
+  Speed spd_deser(spd_bytes);
   Team team_deser(team_bytes);
 
   REQUIRE(pos_deser.pos.x == 100.0);
-  REQUIRE(vel_deser.speed.x == 1.0);
+  REQUIRE(spd_deser.speed.x == 1.0);
   REQUIRE(team_deser.name == "TestTeam");
 }

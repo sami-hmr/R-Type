@@ -14,7 +14,8 @@
 #include "plugin/components/Health.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Team.hpp"
-#include "plugin/components/Velocity.hpp"
+#include "plugin/components/Direction.hpp"
+#include "plugin/components/Speed.hpp"
 #include "plugin/events/InteractionZoneEvent.hpp"
 
 Target::Target(Registry& r, EntityLoader& l)
@@ -40,9 +41,10 @@ void Target::target_system(Registry& reg)
   auto const& positions = reg.get_components<Position>();
   auto& faces = reg.get_components<Facing>();
 
-  for (auto&& [i, follower, position, velocity] :
-       ZipperIndex<Follower, Position, Velocity>(reg))
+  for (auto&& [i, follower, position, direction, speed] :
+       ZipperIndex<Follower, Position, Direction, Speed>(reg))
   {
+
     if (reg.is_entity_dying(i) || follower.lost_target) {
       continue;
     }
@@ -74,19 +76,23 @@ void Target::target_system(Registry& reg)
 
     Vector2D new_direction = vect.normalize();
 
-    Vector2D direction_diff = new_direction - velocity.direction;
+    Vector2D direction_diff = new_direction - direction.direction;
     double direction_change = direction_diff.length();
 
     if (direction_change > DIRECTION_TOLERANCE) {
-      velocity.direction = new_direction;
+      direction.direction = new_direction;
       if (reg.has_component<Facing>(i)) {
         faces[i]->direction = new_direction;
+        this->_registry.get().emit<ComponentBuilder>(
+          i,
+          this->_registry.get().get_component_key<Facing>(),
+          faces[i]->to_bytes());
       }
 
       this->_registry.get().emit<ComponentBuilder>(
           i,
-          this->_registry.get().get_component_key<Velocity>(),
-          velocity.to_bytes());
+          this->_registry.get().get_component_key<Direction>(),
+          direction.to_bytes());
     }
   }
 }

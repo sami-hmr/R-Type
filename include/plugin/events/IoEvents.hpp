@@ -66,7 +66,7 @@ enum Key : int
   THREE,
   FOUR,
   FIVE,
-  SIX, //SIX SEVEN HAHAHAHA
+  SIX,  // SIX SEVEN HAHAHAHA
   SEVEN,
   EIGHT,
   NINE,
@@ -74,54 +74,22 @@ enum Key : int
 };
 
 static const TwoWayMap<std::string, Key> KEY_MAPPING = {
-    {"ENTER", Key::ENTER},
-    {"SPACE", Key::SPACE},
-    {"ECHAP", Key::ECHAP},
-    {"DELETE", Key::DELETE},
-    {"LEFT", Key::LEFT},
-    {"RIGHT", Key::RIGHT},
-    {"UP", Key::UP},
-    {"DOWN", Key::DOWN},
-    {"SHIFT", Key::SHIFT},
-    {"CTRL", Key::CTRL},
-    {"ALT", Key::ALT},
-    {"A", Key::A},
-    {"B", Key::B},
-    {"C", Key::C},
-    {"D", Key::D},
-    {"E", Key::E},
-    {"F", Key::F},
-    {"G", Key::G},
-    {"H", Key::H},
-    {"I", Key::I},
-    {"J", Key::J},
-    {"K", Key::K},
-    {"L", Key::L},
-    {"M", Key::M},
-    {"N", Key::N},
-    {"O", Key::O},
-    {"P", Key::P},
-    {"Q", Key::Q},
-    {"R", Key::R},
-    {"S", Key::S},
-    {"T", Key::T},
-    {"U", Key::U},
-    {"V", Key::V},
-    {"W", Key::W},
-    {"X", Key::X},
-    {"Y", Key::Y},
-    {"Z", Key::Z},
-    {"/", Key::SLASH},
-    {"1", Key::ONE},
-    {"2", Key::TWO},
-    {"3", Key::THREE},
-    {"4", Key::FOUR},
-    {"5", Key::FIVE},
-    {"6", Key::SIX},
-    {"7", Key::SEVEN},
-    {"8", Key::EIGHT},
-    {"9", Key::NINE},
-    {"0", Key::ZERO}};
+    {"ENTER", Key::ENTER},   {"SPACE", Key::SPACE}, {"ECHAP", Key::ECHAP},
+    {"DELETE", Key::DELETE}, {"LEFT", Key::LEFT},   {"RIGHT", Key::RIGHT},
+    {"UP", Key::UP},         {"DOWN", Key::DOWN},   {"SHIFT", Key::SHIFT},
+    {"CTRL", Key::CTRL},     {"ALT", Key::ALT},     {"A", Key::A},
+    {"B", Key::B},           {"C", Key::C},         {"D", Key::D},
+    {"E", Key::E},           {"F", Key::F},         {"G", Key::G},
+    {"H", Key::H},           {"I", Key::I},         {"J", Key::J},
+    {"K", Key::K},           {"L", Key::L},         {"M", Key::M},
+    {"N", Key::N},           {"O", Key::O},         {"P", Key::P},
+    {"Q", Key::Q},           {"R", Key::R},         {"S", Key::S},
+    {"T", Key::T},           {"U", Key::U},         {"V", Key::V},
+    {"W", Key::W},           {"X", Key::X},         {"Y", Key::Y},
+    {"Z", Key::Z},           {"/", Key::SLASH},     {"1", Key::ONE},
+    {"2", Key::TWO},         {"3", Key::THREE},     {"4", Key::FOUR},
+    {"5", Key::FIVE},        {"6", Key::SIX},       {"7", Key::SEVEN},
+    {"8", Key::EIGHT},       {"9", Key::NINE},      {"0", Key::ZERO}};
 
 struct KeyPressedEvent
 {
@@ -181,7 +149,8 @@ struct KeyReleasedEvent
 
   KeyReleasedEvent() = default;
 
-  KeyReleasedEvent(std::unordered_map<Key, bool> kr, std::optional<std::string> ku)
+  KeyReleasedEvent(std::unordered_map<Key, bool> kr,
+                   std::optional<std::string> ku)
       : key_released(std::move(kr))
       , key_unicode(std::move(ku))
   {
@@ -240,11 +209,13 @@ struct MousePressedEvent
   CHANGE_ENTITY_DEFAULT
 
   MousePressedEvent() = default;
+
   MousePressedEvent(Vector2D pos, MouseButton btn)
       : position(pos)
       , button(btn)
   {
   }
+
   MousePressedEvent(Registry& r, JsonObject const& e)
       : position(get_value_copy<Vector2D>(r, e, "position").value())
       , button(static_cast<MouseButton>(
@@ -256,8 +227,7 @@ struct MousePressedEvent
                             { return MousePressedEvent(pos, btn); }),
                            parseVector2D(),
                            parseByte<MouseButton>())
-  DEFAULT_SERIALIZE(
-       vector2DToByte(this->position), type_to_byte(this->button))
+  DEFAULT_SERIALIZE(vector2DToByte(this->position), type_to_byte(this->button))
 };
 
 struct MouseReleasedEvent
@@ -268,11 +238,13 @@ struct MouseReleasedEvent
   CHANGE_ENTITY_DEFAULT
 
   MouseReleasedEvent() = default;
+
   MouseReleasedEvent(Vector2D pos, MouseButton btn)
       : position(pos)
       , button(btn)
   {
   }
+
   MouseReleasedEvent(Registry& r, JsonObject const& e)
       : position(get_value_copy<Vector2D>(r, e, "position").value())
       , button(static_cast<MouseButton>(
@@ -284,6 +256,5 @@ struct MouseReleasedEvent
                             { return MouseReleasedEvent(pos, btn); }),
                            parseVector2D(),
                            parseByte<MouseButton>())
-  DEFAULT_SERIALIZE(
-       vector2DToByte(this->position), type_to_byte(this->button))
+  DEFAULT_SERIALIZE(vector2DToByte(this->position), type_to_byte(this->button))
 };

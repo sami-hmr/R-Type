@@ -1,27 +1,28 @@
 #pragma once
 
 #include "ByteParser/ByteParser.hpp"
+#include "ParserUtils.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
 
-struct Facing
+struct Direction
 {
-  Facing() = default;
+  Direction() = default;
 
-  Facing(double dir_x, double dir_y)
+  Direction(double dir_x, double dir_y)
       : direction(dir_x, dir_y)
   {
   }
 
-  Facing(Vector2D direction)
+  Direction(Vector2D direction)
       : direction(direction)
   {
   }
 
-  DEFAULT_BYTE_CONSTRUCTOR(Facing,
+  DEFAULT_BYTE_CONSTRUCTOR(Direction,
                            ([](double dir_x, double dir_y)
-                            { return (Facing) {dir_x, dir_y}; }),
+                            { return (Direction) {dir_x, dir_y}; }),
                            parseByte<double>(),
                            parseByte<double>())
   DEFAULT_SERIALIZE(type_to_byte(this->direction.x),
@@ -31,5 +32,5 @@ struct Facing
 
   Vector2D direction;
 
-  HOOKABLE(Facing, HOOK(direction), HOOK(direction.x), HOOK(direction.y))
+  HOOKABLE(Direction, HOOK(direction), HOOK(direction.x), HOOK(direction.y), )
 };

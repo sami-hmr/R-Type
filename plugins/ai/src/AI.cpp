@@ -9,7 +9,8 @@
 #include "plugin/components/AttackBehavior.hpp"
 #include "plugin/components/MovementBehavior.hpp"
 #include "plugin/components/Position.hpp"
-#include "plugin/components/Velocity.hpp"
+#include "plugin/components/Speed.hpp"
+#include "plugin/components/Direction.hpp"
 
 AI::AI(Registry& r, EntityLoader& l)
     : APlugin("ai",
@@ -76,14 +77,14 @@ void AI::movement_behavior_system(Registry& r)
 {
   double dt = r.clock().delta_seconds();
 
-  for (auto&& [entity, behavior, pos, vel] :
-       ZipperIndex<MovementBehavior, Position, Velocity>(r))
+  for (auto&& [entity, behavior, pos, speed, direction] :
+       ZipperIndex<MovementBehavior, Position, Direction, Speed>(r))
   {
     if (_movement_patterns.find(behavior.movement_type)
         != _movement_patterns.end())
     {
       _movement_patterns[behavior.movement_type]->update(
-          entity, r, behavior, pos, vel, dt);
+          entity, r, behavior, pos, speed, direction, dt);
     }
   }
 }
@@ -92,8 +93,8 @@ void AI::attack_behavior_system(Registry& r)
 {
   double dt = r.clock().delta_seconds();
 
-  for (auto&& [entity, behavior, pos, vel] :
-       ZipperIndex<AttackBehavior, Position, Velocity>(r))
+  for (auto&& [entity, behavior, pos, speed, direction] :
+       ZipperIndex<AttackBehavior, Position, Direction, Speed>(r))
   {
     if (!behavior.active) {
       continue;
@@ -101,7 +102,7 @@ void AI::attack_behavior_system(Registry& r)
 
     if (_attack_patterns.find(behavior.attack_type) != _attack_patterns.end()) {
       _attack_patterns[behavior.attack_type]->execute(
-          entity, r, behavior, pos, vel, dt);
+          entity, r, behavior, pos, speed, direction, dt);
     }
   }
 }

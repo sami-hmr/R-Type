@@ -7,7 +7,8 @@
 #include "plugin/components/MovementBehavior.hpp"
 #include "plugin/components/AttackBehavior.hpp"
 #include "plugin/components/Position.hpp"
-#include "plugin/components/Velocity.hpp"
+#include "plugin/components/Direction.hpp"
+#include "plugin/components/Speed.hpp"
 #include "movement/MovementPattern.hpp"
 #include "attack/AttackPattern.hpp"
 #include <memory>

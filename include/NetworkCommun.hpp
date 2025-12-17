@@ -8,6 +8,7 @@
 #include <asio/error_code.hpp>
 #include <asio/io_context.hpp>
 #include <asio/ip/udp.hpp>
+
 #include "ServerCommands.hpp"
 #include "plugin/Byte.hpp"
 
@@ -15,20 +16,23 @@
 #define BUFFER_SIZE 2048
 
 #define NETWORK_LOGGER(category, level, message) \
-  std::cerr  << (category) << ": " << (message) << "\n"
+  std::cerr << (category) << ": " << (message) << "\n"
 
 #define __VERSION_MAGIC_SEQUENCE__ 0x436482793
-//#define MAGIC_SEQUENCE std::uint32_t(0x436482793)
 
-consteval std::array<Byte, 4> __generate_index_sequence__() {
-    auto magic = static_cast<uint32_t>(__VERSION_MAGIC_SEQUENCE__);
-    return std::bit_cast<std::array<Byte, 4>>(magic);
+// #define MAGIC_SEQUENCE std::uint32_t(0x436482793)
+
+consteval std::array<Byte, 4> __generate_index_sequence__()
+{
+  auto magic = static_cast<uint32_t>(__VERSION_MAGIC_SEQUENCE__);
+  return std::bit_cast<std::array<Byte, 4>>(magic);
 }
 
-static constexpr std::array<Byte, 4> __MAGIC_SEQUENCE__ = __generate_index_sequence__();
+static constexpr std::array<Byte, 4> __MAGIC_SEQUENCE__ =
+    __generate_index_sequence__();
 
-
-static const ByteArray MAGIC_SEQUENCE = {__MAGIC_SEQUENCE__.begin(), __MAGIC_SEQUENCE__.end()};
+static const ByteArray MAGIC_SEQUENCE = {__MAGIC_SEQUENCE__.begin(),
+                                         __MAGIC_SEQUENCE__.end()};
 static const ByteArray PROTOCOL_EOF = {0x42, 0x67, 0xab, 0x01};
 
 #define HOSTNAME_LENGTH 64
@@ -83,12 +87,11 @@ enum DisconnectedCommands : std::uint8_t
   DISCONNECT
 };
 
-
 enum ConnectedOpcodes : std::uint8_t
 {
-    SENDEVENT = 0x01,
-    SENDCOMP = 0x02,
-    ENTITYCREATION = 0x05,
+  SENDEVENT = 0x01,
+  SENDCOMP = 0x02,
+  ENTITYCREATION = 0x05,
 };
 
 enum class ConnectionState : std::uint8_t

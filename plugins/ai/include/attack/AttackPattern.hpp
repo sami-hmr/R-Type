@@ -3,8 +3,10 @@
 #include "ecs/Registry.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/AttackBehavior.hpp"
+#include "plugin/components/Direction.hpp"
 #include "plugin/components/Position.hpp"
-#include "plugin/components/Velocity.hpp"
+#include "plugin/components/Direction.hpp"
+#include "plugin/components/Speed.hpp"
 
 class AttackPattern
 {
@@ -15,6 +17,7 @@ public:
                        Registry& registry,
                        AttackBehavior& behavior,
                        Position& pos,
-                       Velocity& vel,
+                       Direction& dir,
+                       Speed& speed,
                        double dt) = 0;
 };

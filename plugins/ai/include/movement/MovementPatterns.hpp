@@ -5,10 +5,11 @@
 #include "MovementPattern.hpp"
 #include "NetworkShared.hpp"
 #include "libs/Vector2D.hpp"
+#include "plugin/components/Direction.hpp"
 #include "plugin/components/Follower.hpp"
 #include "plugin/components/InteractionZone.hpp"
 #include "plugin/components/MovementBehavior.hpp"
-#include "plugin/components/Velocity.hpp"
+#include "plugin/components/Speed.hpp"
 
 class StraightPattern : public MovementPattern
 {
@@ -19,18 +20,20 @@ public:
               Registry& registry,
               MovementBehavior& /*behavior*/,
               Position& /*pos*/,
-              Velocity& vel,
+              Direction& direction,
+              Speed& /*speed*/,
               double /*dt*/) override
   {
     Vector2D new_direction(-1.0, 0.0);
     new_direction = new_direction.normalize();
 
-    Vector2D direction_diff = new_direction - vel.direction;
+    Vector2D direction_diff = new_direction - direction.direction;
     double direction_change = direction_diff.length();
     if (direction_change > DIRECTION_TOLERANCE) {
-      vel.direction = new_direction;
-      registry.emit<ComponentBuilder>(
-          entity, registry.get_component_key<Velocity>(), vel.to_bytes());
+      direction.direction = new_direction;
+      registry.emit<ComponentBuilder>(entity,
+                                      registry.get_component_key<Direction>(),
+                                      direction.to_bytes());
     }
   }
 };
@@ -44,14 +47,15 @@ public:
               Registry& registry,
               MovementBehavior& behavior,
               Position& /*pos*/,
-              Velocity& vel,
+              Direction& direction,
+              Speed& /*speed*/,
               double dt) override
   {
     behavior.movement_delta += dt;
     registry.emit<ComponentBuilder>(
-      entity,
-      registry.get_component_key<MovementBehavior>(),
-      behavior.to_bytes());
+        entity,
+        registry.get_component_key<MovementBehavior>(),
+        behavior.to_bytes());
 
     double amplitude = 0.7;
     double frequency = 2.0;
@@ -61,12 +65,13 @@ public:
     new_direction.y = std::sin(behavior.movement_delta * frequency) * amplitude;
     new_direction = new_direction.normalize();
 
-    Vector2D direction_diff = new_direction - vel.direction;
+    Vector2D direction_diff = new_direction - direction.direction;
     double direction_change = direction_diff.length();
     if (direction_change > DIRECTION_TOLERANCE) {
-      vel.direction = new_direction;
-      registry.emit<ComponentBuilder>(
-          entity, registry.get_component_key<Velocity>(), vel.to_bytes());
+      direction.direction = new_direction;
+      registry.emit<ComponentBuilder>(entity,
+                                      registry.get_component_key<Direction>(),
+                                      direction.to_bytes());
     }
   }
 };
@@ -80,33 +85,34 @@ public:
               Registry& registry,
               MovementBehavior& behavior,
               Position& /*pos*/,
-              Velocity& vel,
+              Direction& direction,
+              Speed& /*speed*/,
               double dt) override
   {
     behavior.movement_delta += dt;
     registry.emit<ComponentBuilder>(
-      entity,
-      registry.get_component_key<MovementBehavior>(),
-      behavior.to_bytes());
+        entity,
+        registry.get_component_key<MovementBehavior>(),
+        behavior.to_bytes());
 
     double switch_interval = 1.0;
     double angle = 45.0;
 
-    int direction =
-        static_cast<int>(behavior.movement_delta / switch_interval) % 2;
+    int dir = static_cast<int>(behavior.movement_delta / switch_interval) % 2;
     double rad = angle * M_PI / 180.0;
 
     Vector2D new_direction;
     new_direction.x = -1.0;
-    new_direction.y = direction == 0 ? std::tan(rad) : -std::tan(rad);
+    new_direction.y = dir == 0 ? std::tan(rad) : -std::tan(rad);
     new_direction = new_direction.normalize();
 
-    Vector2D direction_diff = new_direction - vel.direction;
+    Vector2D direction_diff = new_direction - direction.direction;
     double direction_change = direction_diff.length();
     if (direction_change > DIRECTION_TOLERANCE) {
-      vel.direction = new_direction;
-      registry.emit<ComponentBuilder>(
-          entity, registry.get_component_key<Velocity>(), vel.to_bytes());
+      direction.direction = new_direction;
+      registry.emit<ComponentBuilder>(entity,
+                                      registry.get_component_key<Direction>(),
+                                      direction.to_bytes());
     }
   }
 };
@@ -120,7 +126,8 @@ public:
               Registry& registry,
               MovementBehavior& behavior,
               Position& pos,
-              Velocity& vel,
+              Direction& direction,
+              Speed& /*speed*/,
               double dt) override
 
   {
@@ -142,13 +149,14 @@ public:
     Vector2D to_target = target_pos - pos.pos;
     if (to_target.length() > 0.1) {
       Vector2D new_direction = to_target.normalize();
-      Vector2D direction_diff = new_direction - vel.direction;
+      Vector2D direction_diff = new_direction - direction.direction;
       double direction_change = direction_diff.length();
 
       if (direction_change > DIRECTION_TOLERANCE) {
-        vel.direction = new_direction;
-        registry.emit<ComponentBuilder>(
-            entity, registry.get_component_key<Velocity>(), vel.to_bytes());
+        direction.direction = new_direction;
+        registry.emit<ComponentBuilder>(entity,
+                                        registry.get_component_key<Direction>(),
+                                        direction.to_bytes());
       }
     }
   }
@@ -161,20 +169,26 @@ public:
               Registry& registry,
               MovementBehavior& /*behavior*/,
               Position& /*pos*/,
-              Velocity& vel,
+              Direction& direction,
+              Speed& speed,
               double /*dt*/) override
   {
-    Vector2D speed(0.0, 0.0);
-    Vector2D direction(0.0, 0.0);
+    Vector2D default_speed(0.0, 0.0);
+    Vector2D default_direction(0.0, 0.0);
 
-    if (vel.speed != speed || vel.direction != direction) {
-      vel.speed.x = 0.0;
+    if (speed.speed != default_speed) {
+      speed.speed.x = 0.0;
+      speed.speed.y = 0.0;
+      registry.emit<ComponentBuilder>(
+          entity, registry.get_component_key<Speed>(), speed.to_bytes());
     }
-    vel.speed.y = 0.0;
-    vel.direction.x = 0.0;
-    vel.direction.y = 0.0;
-    registry.emit<ComponentBuilder>(
-        entity, registry.get_component_key<Velocity>(), vel.to_bytes());
+    if (direction.direction != default_direction) {
+      direction.direction.x = 0.0;
+      direction.direction.y = 0.0;
+      registry.emit<ComponentBuilder>(entity,
+                                      registry.get_component_key<Direction>(),
+                                      direction.to_bytes());
+    }
   }
 };
 
@@ -185,22 +199,25 @@ public:
               Registry& registry,
               MovementBehavior& /*behavior*/,
               Position& /*pos*/,
-              Velocity& vel,
+              Direction& direction,
+              Speed& /*speed*/,
               double /*dt*/) override
   {
     if (!registry.has_component<Follower>(entity)) {
       registry.add_component(entity, Follower());
-      vel.direction.x = -1.0;
-      vel.direction.y = 0.0;
-      registry.emit<ComponentBuilder>(
-          entity, registry.get_component_key<Velocity>(), vel.to_bytes());
+      direction.direction.x = -1.0;
+      direction.direction.y = 0.0;
+      registry.emit<ComponentBuilder>(entity,
+                                      registry.get_component_key<Direction>(),
+                                      direction.to_bytes());
     }
     if (!registry.has_component<InteractionZone>(entity)) {
       registry.add_component(entity, InteractionZone(1.5));
-      vel.direction.x = -1.0;
-      vel.direction.y = 0.0;
-      registry.emit<ComponentBuilder>(
-          entity, registry.get_component_key<Velocity>(), vel.to_bytes());
+      direction.direction.x = -1.0;
+      direction.direction.y = 0.0;
+      registry.emit<ComponentBuilder>(entity,
+                                      registry.get_component_key<Direction>(),
+                                      direction.to_bytes());
     }
   }
 };

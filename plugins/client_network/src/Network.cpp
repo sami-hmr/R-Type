@@ -91,7 +91,7 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
       //   {"Z",
       //       {
       //           {"name",
-      //           this->_registry.get().get_event_key<UpdateVelocity>()},
+      //           this->_registry.get().get_event_key<UpdateDirection>()},
       //           {"params", {
       //               {"entity", JsonValue(static_cast<int>(new_entity))},
       //               {"x", JsonValue(static_cast<double>(0))},

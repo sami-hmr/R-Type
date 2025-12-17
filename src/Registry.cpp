@@ -69,7 +69,6 @@ void Registry::run_systems()
 void Registry::update_bindings()
 {
   for (auto& binding : _bindings) {
-
     binding.updater();
     ByteArray component_data = binding.serializer();
     if (!component_data.empty()) {

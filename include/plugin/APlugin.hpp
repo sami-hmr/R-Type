@@ -33,10 +33,12 @@
    }}
 
 #define REGISTER_COMPONENT(comp) \
-    this->_registry.get().register_component<comp>(std::format("{}:{}", this->name, #comp));
+  this->_registry.get().register_component<comp>( \
+      std::format("{}:{}", this->name, #comp));
 
 #define SUBSCRIBE_EVENT(event_name, function) \
-    this->_registry.get().on<event_name>(#event_name, [this]([[maybe_unused]] event_name const& event) function);
+  this->_registry.get().on<event_name>( \
+      #event_name, [this]([[maybe_unused]] event_name const& event) function);
 
 class APlugin : public IPlugin
 {

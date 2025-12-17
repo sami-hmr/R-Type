@@ -39,4 +39,4 @@ struct Button
   HOOKABLE(Button, HOOK(pressed), HOOK(hovered), HOOK(toggle));
 };
 
-void init_button(Registry &r, Registry::Entity const &e, JsonObject const &obj);
+void init_button(Registry& r, Registry::Entity const& e, JsonObject const& obj);

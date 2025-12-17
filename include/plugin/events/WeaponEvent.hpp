@@ -9,11 +9,17 @@
 struct FireBullet
 {
   FireBullet() = default;
-  FireBullet(Registry::Entity e): entity(e) {}
+
+  FireBullet(Registry::Entity e)
+      : entity(e)
+  {
+  }
 
   CHANGE_ENTITY(result.entity = map.at(entity))
 
-  DEFAULT_BYTE_CONSTRUCTOR(FireBullet, ([](Registry::Entity e){return FireBullet(e);}), parseByte<Registry::Entity>())
+  DEFAULT_BYTE_CONSTRUCTOR(FireBullet,
+                           ([](Registry::Entity e) { return FireBullet(e); }),
+                           parseByte<Registry::Entity>())
 
   DEFAULT_SERIALIZE(type_to_byte(entity))
 

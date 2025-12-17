@@ -23,8 +23,7 @@ struct Position
 
   DEFAULT_BYTE_CONSTRUCTOR(Position,
                            ([](double x, double y, int z)
-                            {
-                            return (Position) {x, y, z}; }),
+                            { return (Position) {x, y, z}; }),
                            parseByte<double>(),
                            parseByte<double>(),
                            parseByte<int>())

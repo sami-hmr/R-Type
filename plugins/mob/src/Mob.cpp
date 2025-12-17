@@ -11,11 +11,8 @@
 #include "plugin/events/EntityManagementEvent.hpp"
 
 Mob::Mob(Registry& r, EntityLoader& l)
-    : APlugin("mob",
-              r,
-              l,
-              {"moving"},
-              {COMP_INIT(Spawner, Spawner, init_spawner)})
+    : APlugin(
+          "mob", r, l, {"moving"}, {COMP_INIT(Spawner, Spawner, init_spawner)})
     , entity_loader(l)
 {
   _registry.get().register_component<Spawner>("mob:Spawner");
@@ -37,8 +34,10 @@ void Mob::init_spawner(Registry::Entity const& entity, JsonObject const& obj)
                  "missing value in JsonObject\n";
     return;
   }
-  this->_registry.get().emplace_component<Spawner>(
-      entity, entity_template.value(), spawn_interval.value(), max_spawns.value());
+  this->_registry.get().emplace_component<Spawner>(entity,
+                                                   entity_template.value(),
+                                                   spawn_interval.value(),
+                                                   max_spawns.value());
 }
 
 void Mob::spawner_system(Registry& r)
@@ -49,6 +48,9 @@ void Mob::spawner_system(Registry& r)
     if (r.is_entity_dying(i)) {
       continue;
     }
+    if (!spawner.active) {
+      continue;
+    }
     spawner.spawn_delta += r.clock().delta_seconds();
     if (spawner.spawn_delta < spawner.spawn_interval) {
       continue;
@@ -57,6 +59,9 @@ void Mob::spawner_system(Registry& r)
       spawner.spawn_delta = 0;
       spawner.current_spawns += 1;
       spawner.active = spawner.current_spawns < spawner.max_spawns;
+      if (spawner.current_spawns >= spawner.max_spawns) {
+        spawner.active = false;
+      }
       r.emit<ComponentBuilder>(
           i, r.get_component_key<Spawner>(), spawner.to_bytes());
       r.emit<LoadEntityTemplate>(

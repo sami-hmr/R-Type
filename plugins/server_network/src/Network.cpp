@@ -27,7 +27,6 @@
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Team.hpp"
 #include "plugin/components/Facing.hpp"
-#include "plugin/components/Velocity.hpp"
 #include "plugin/events/CleanupEvent.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
 #include "plugin/events/LoggerEvent.hpp"

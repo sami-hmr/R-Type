@@ -4,7 +4,8 @@
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/MovementBehavior.hpp"
 #include "plugin/components/Position.hpp"
-#include "plugin/components/Velocity.hpp"
+#include "plugin/components/Direction.hpp"
+#include "plugin/components/Speed.hpp"
 
 class MovementPattern
 {
@@ -15,6 +16,7 @@ public:
                      Registry& registry,
                      MovementBehavior& behavior,
                      Position& pos,
-                     Velocity& vel,
+                     Direction& dir,
+                     Speed& speed,
                      double dt) = 0;
 };

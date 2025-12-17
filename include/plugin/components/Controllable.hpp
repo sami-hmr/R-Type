@@ -31,7 +31,7 @@ struct Controllable
       ([](std::unordered_map<std::uint16_t, Trigger> const& map)
        { return Controllable(map); }),
       parseByteMap(parseByte<std::uint16_t>(),
-          parseBytePair(parseByteString(), parseByteJsonObject())))
+                   parseBytePair(parseByteString(), parseByteJsonObject())))
 
   DEFAULT_SERIALIZE(
       map_to_byte(event_map,

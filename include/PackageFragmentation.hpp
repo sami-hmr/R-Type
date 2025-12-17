@@ -8,7 +8,7 @@ struct FragmentedPackage
 {
   class Hash
   {
-    public:
+  public:
     std::size_t operator()(FragmentedPackage const& d) const
     {
       std::size_t r = d.sequence;

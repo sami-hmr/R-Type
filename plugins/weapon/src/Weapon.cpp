@@ -13,7 +13,7 @@
 #include "plugin/components/Facing.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Team.hpp"
-#include "plugin/components/Velocity.hpp"
+#include "plugin/components/Direction.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
 #include "plugin/events/IoEvents.hpp"
 #include "plugin/events/WeaponEvent.hpp"
@@ -46,17 +46,16 @@ void Weapon::on_fire(Registry& r, const FireBullet& e)
   auto const& scene = *this->_registry.get().get_components<Scene>()[e.entity];
 
   auto const& vel_direction =
-      (this->_registry.get().has_component<Velocity>(e.entity))
-      ? this->_registry.get().get_components<Velocity>()[e.entity]->direction
-      : Vector2D(0, 0);
+      (this->_registry.get().has_component<Direction>(e.entity))
+      ? this->_registry.get().get_components<Direction>()[e.entity]->direction
+      : Vector2D(0,0);
 
   auto const& fire_direction =
       (this->_registry.get().has_component<Facing>(e.entity))
       ? this->_registry.get().get_components<Facing>()[e.entity]->direction
       : vel_direction;
 
-  auto velocity = *this->_registry.get().get_components<Velocity>()[e.entity];
-  velocity.direction = fire_direction;
+  auto direction = Direction(fire_direction);
 
   auto const& team = (this->_registry.get().has_component<Team>(e.entity))
       ? *this->_registry.get().get_components<Team>()[e.entity]
@@ -70,8 +69,8 @@ void Weapon::on_fire(Registry& r, const FireBullet& e)
       LoadEntityTemplate::Additional {
           {this->_registry.get().get_component_key<Position>(), pos.to_bytes()},
           {this->_registry.get().get_component_key<Scene>(), scene.to_bytes()},
-          {this->_registry.get().get_component_key<Velocity>(),
-           velocity.to_bytes()},
+          {this->_registry.get().get_component_key<Direction>(),
+           direction.to_bytes()},
           {this->_registry.get().get_component_key<Team>(), team.to_bytes()}});
 }
 

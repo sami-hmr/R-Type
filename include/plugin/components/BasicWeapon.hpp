@@ -13,7 +13,11 @@ struct BasicWeapon
 {
   BasicWeapon() = default;
 
-  BasicWeapon(std::string bullet_type, int magazine_size, int magazine_nb, double reload_time, double cooldown)
+  BasicWeapon(std::string bullet_type,
+              int magazine_size,
+              int magazine_nb,
+              double reload_time,
+              double cooldown)
       : bullet_type(std::move(bullet_type))
       , magazine_size(magazine_size)
       , magazine_nb(magazine_nb)
@@ -24,22 +28,24 @@ struct BasicWeapon
   {
   }
 
-  DEFAULT_BYTE_CONSTRUCTOR(
-      BasicWeapon,
-      ([](std::string bullet_type, int mag_size, int mag_nb, double reload_time, double cooldown)
-       {
-         return BasicWeapon(
-             bullet_type,
-             mag_size,
-             mag_nb,
-             reload_time,
-             cooldown);
-       }),
-      parseByteString(),
-      parseByte<int>(),
-      parseByte<int>(),
-      parseByte<double>(),
-      parseByte<double>())
+  DEFAULT_BYTE_CONSTRUCTOR(BasicWeapon,
+                           (
+                               [](std::string bullet_type,
+                                  int mag_size,
+                                  int mag_nb,
+                                  double reload_time,
+                                  double cooldown) {
+                                 return BasicWeapon(bullet_type,
+                                                    mag_size,
+                                                    mag_nb,
+                                                    reload_time,
+                                                    cooldown);
+                               }),
+                           parseByteString(),
+                           parseByte<int>(),
+                           parseByte<int>(),
+                           parseByte<double>(),
+                           parseByte<double>())
   DEFAULT_SERIALIZE(string_to_byte(this->bullet_type),
                     type_to_byte(this->magazine_size),
                     type_to_byte(this->magazine_nb),
@@ -59,8 +65,16 @@ struct BasicWeapon
   std::chrono::high_resolution_clock::time_point last_shot_time;
   std::chrono::high_resolution_clock::time_point last_reload_time;
 
-  HOOKABLE(BasicWeapon, HOOK(bullet_type), HOOK(magazine_size), HOOK(magazine_nb), HOOK(remaining_ammo), HOOK(remaining_magazine), HOOK(reload_time),
-           HOOK(reloading), HOOK(last_reload_time), HOOK(cooldown))
+  HOOKABLE(BasicWeapon,
+           HOOK(bullet_type),
+           HOOK(magazine_size),
+           HOOK(magazine_nb),
+           HOOK(remaining_ammo),
+           HOOK(remaining_magazine),
+           HOOK(reload_time),
+           HOOK(reloading),
+           HOOK(last_reload_time),
+           HOOK(cooldown))
 
   bool update_basic_weapon(std::chrono::high_resolution_clock::time_point now);
 };
