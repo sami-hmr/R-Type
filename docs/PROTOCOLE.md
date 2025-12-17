@@ -1,33 +1,51 @@
 # R-Type Multiplayer Co-op UDP Protocol Specification
 
-The protocol is in big-endian.
+This document describes the wire protocol for R-Type multiplayer communication. All implementations (regardless of programming language) must follow this specification to ensure interoperability.
 
-Table of types:
+## Protocol Overview
 
-- string: A byte (8 bits) list that start
-with the nb of elements (32-bit signed integer)
-- list<type>: 32 bits (4 bytes) signed integer corresponding to the number of <type> to be interpreted
+- **Transport**: UDP (User Datagram Protocol)
+- **Byte Order**: Big-endian (network byte order) for all multi-byte values
+- **Character Encoding**: UTF-8 for all text strings
+- **Max Packet Size**: 2048 bytes (including headers and EOF marker)
+
+### Quick Reference - Common Data Types
+
+| Type | Wire Format | Description |
+|------|-------------|-------------|
+| **String** | `[length:32][bytes:variable]` | Length-prefixed UTF-8 string |
+| **List** | `[count:32][elements:variable]` | Count-prefixed sequence |
+| **Optional** | `[has_value:8][value:variable?]` | Boolean flag + optional value |
+| **Boolean** | `[value:8]` | 0x00 = false, 0x01 = true |
 
 
 ## 1. Connectionless Packets
 
-Connectionless packets are identified by a magic sequence of 0x67676767 at the end.
-[MAGIC_SEQUENCE] is a 4 bytes integer changing for each version that guarantee integrity of tha package.
+Connectionless packets are used for server discovery and connection establishment before entering connected mode.
+
+### Protocol Constants
+
+- **MAGIC_SEQUENCE**: `0x93 0x27 0x48 0x43` (4 bytes, identifies protocol version)
+- **PROTOCOL_EOF**: `0x42 0x67 0xAB 0x01` (4 bytes, marks end of packet)
 
 ### 1.1 Connectionless Packet Structure
 
-<!-- Magic=0x67676767:32;Command:32 -->
+```
+[MAGIC_SEQUENCE:32] [Command:8] [Arguments:variable] [PROTOCOL_EOF:32]
+```
 
-Magic=0x67676767:32
-Command:variable
-End of Packet:8
+All connectionless packets follow this structure:
+- **MAGIC_SEQUENCE**: 4 bytes - Protocol version identifier (0x93 0x27 0x48 0x43 in big-endian)
+- **Command**: 1 byte opcode
+- **Arguments**: Variable length command-specific data
+- **PROTOCOL_EOF**: 4 bytes - End-of-packet marker (0x42 0x67 0xAB 0x01)
 
 ### 1.2 Client-to-Server Connectionless Commands
 
 All connectionless commands follow the format:
 
 ```
-[MAGIC_SEQUENCE] <command> <arg1> <arg2> ... 0x67676767
+[MAGIC_SEQUENCE] <command:8> <arguments> [PROTOCOL_EOF]
 ```
 
 Arguments are sent in binary format.
@@ -35,7 +53,7 @@ Arguments are sent in binary format.
 **getinfo**: Request basic server information (=> 0x01 : 8 bits)
 
 ```
-[MAGIC_SEQUENCE] 0x01 0x67676767
+[MAGIC_SEQUENCE] 0x01 [PROTOCOL_EOF]
 ```
 
 Server responds with infoResponse.
@@ -43,40 +61,40 @@ Server responds with infoResponse.
 **getstatus**: Request detailed server status including connected players (=> 0x02 : 8 bits)
 
 ```
-[MAGIC_SEQUENCE] 0x02 0x67676767
+[MAGIC_SEQUENCE] 0x02 [PROTOCOL_EOF]
 ```
 
-Server responds with statusResponse.
+Server responds with statusResponse (same as infoResponse but includes player list).
 
 **getchallenge**: Request a challenge token for connection authentication (=> 0x03 : 8 bits)
 
 ```
-[MAGIC_SEQUENCE] 0x03 0x67676767
+[MAGIC_SEQUENCE] 0x03 [PROTOCOL_EOF]
 ```
 
-Server responds with challengeResponse containing a 32-bits challenge number.
+Server responds with challengeResponse containing a 32-bit challenge number.
 
 **connect**: Initiate connection with challenge response and player information (=> 0x04 : 8 bits)
 
 ```
-[MAGIC_SEQUENCE] 0x04 <challenge> <player_name> 0x67676767
+[MAGIC_SEQUENCE] 0x04 <challenge:32> <player_name:string> [PROTOCOL_EOF]
 ```
 
 Arguments:
 
-- challenge: 32-bits integer (from challengeResponse) (4-bytes)
-- player_name: string (cf. Table of types | Beginning of the documentation)
+- challenge: 32-bit integer (from challengeResponse) (4 bytes)
+- player_name: string (null-terminated with length prefix)
 
-Example: `[MAGIC_SEQUENCE] 0x04 2847561 toto 0x67676767`
+Example: `[MAGIC_SEQUENCE] 0x04 [challenge:4 bytes] [name_length:4][name bytes] [PROTOCOL_EOF]`
 
 Server responds with connectResponse if successful.
 
 ### 1.3 Server-to-Client Connectionless Responses
 
-All connectionless commands follow the format:
+All connectionless responses follow the format:
 
 ```
-[MAGIC_SEQUENCE] <command> <arg1> <arg2> ... 0x67676767
+[MAGIC_SEQUENCE] <command:8> <arguments> [PROTOCOL_EOF]
 ```
 
 Arguments are sent in binary format.
@@ -84,361 +102,387 @@ Arguments are sent in binary format.
 **infoResponse**: Basic server information response (=> 0x05 : 8 bits)
 
 ```
-[MAGIC_SEQUENCE] 0x05 <value1> <value2>... 0x67676767
+[MAGIC_SEQUENCE] 0x05 <hostname> <mapname> <gametype:8> <max_players:32> <protocol_version:8> [PROTOCOL_EOF]
 ```
 
-Required keys:
+Fields:
+- hostname: String (max 64 bytes) - Server display name
+- mapname: String (max 32 bytes) - Current map/level name
+- gametype: 8-bit integer (0x01 = SOLO, 0x02 = COOP)
+- max_players: 32-bit integer - Maximum number of players (typically 4)
+- protocol_version: 8-bit integer - Current protocol version (currently 1)
 
-- game: Game name : string
-- placesleft: Number of places left for the clients : 32-bits signed integer (4 bytes)
-
-Example: `[MAGIC_SEQUENCE] 0x05 game placesleft 0x67676767`
+Example: `[MAGIC_SEQUENCE] 0x05 "R-Type Server" "level1" 0x02 0x00000004 0x01 [PROTOCOL_EOF]`
 
 **statusResponse**: Detailed status response with player list (=> 0x06 : 8 bits)
 
 ```
-[MAGIC_SEQUENCE] 0x06 <server_info> <player1_info> <player2_info> ... 0x67676767
+[MAGIC_SEQUENCE] 0x06 <server_info> <player_list> [PROTOCOL_EOF]
 ```
 
 Format:
+- server_info: Same as infoResponse (hostname, mapname, gametype, max_players, protocol_version)
+- player_list: For each connected player:
+  - score: 32-bit integer
+  - ping: 8-bit integer (milliseconds)
+  - player_name: String
 
-- server_info: Same key-value pairs as infoResponse
-- player_info entries: list<player_info>
-
-player_info format:
-
-- name: Player name (max 256-bits) (= 32-bytes)
-- ping: Ping in milliseconds (32-bits integer) (= 4-bytes)
-
-Example: `[MAGIC_SEQUENCE] 0x06 game placesleft player1 40 player2 300 0x67676767`
+Example: `[MAGIC_SEQUENCE] 0x06 [server_info] [score1:32][ping1:8][name1] [score2:32][ping2:8][name2] ... [PROTOCOL_EOF]`
 
 **challengeResponse**: Challenge token for connection authentication (=> 0x07 : 8 bits)
 
 ```
-[MAGIC_SEQUENCE] 0x07 <challenge_number>
+[MAGIC_SEQUENCE] 0x07 <challenge_number:32> [PROTOCOL_EOF]
 ```
 
 Argument:
+- challenge_number: 32-bit unsigned integer
 
-- challenge_number: 32-bits unsigned integer
+The challenge number is a cryptographically random value generated by the server. Valid range: 1 to 4,294,967,295.
 
-The challenge number is a cryptographically random value generated by the server. Valid range: 1 to 4 294 967 295.
-
-Example: `[MAGIC_SEQUENCE] 0x07 2847561 0x67676767`
+Example: `[MAGIC_SEQUENCE] 0x07 0x002B7F39 [PROTOCOL_EOF]`
 
 **connectResponse**: Connection acknowledgment with client ID (=> 0x08 : 8 bits)
 
 ```
-[MAGIC_SEQUENCE] 0x08 <client_id> <server_id> 0x67676767
+[MAGIC_SEQUENCE] 0x08 <client_id:8> <server_id:32> [PROTOCOL_EOF]
 ```
 
 Arguments:
+- client_id: Player slot assigned to this client (8-bit integer 0-3)
+- server_id: Unique server instance identifier (32-bit unsigned integer)
 
-- client_id: Player slot assigned to this client (8-bits integer 0-3)
-- server_id: Unique server instance identifier (32-bits unsigned integer)
+After receiving this, the client transitions to connected mode and can start sending/receiving connected packets.
 
+Example: `[MAGIC_SEQUENCE] 0x08 0x00 0x0125AE62 [PROTOCOL_EOF]`
 
-After receiving this, the client transitions to connected mode and expects srv_gamestate.
-
-Example: `[MAGIC_SEQUENCE] 0x08 0 19283746 0x67676767`
-
-**disconnectResponse**: Refusal of client's connection (=> 0x09 : 8 bits)
+**disconnectResponse**: Refusal of client's connection or server-initiated disconnect (=> 0x09 : 8 bits)
 
 ```
-[MAGIC_SEQUENCE] 0x09 <error_message>
+[MAGIC_SEQUENCE] 0x09 <error_message:string> [PROTOCOL_EOF]
 ```
 
 Argument:
+- error_message: Reason for disconnection (string, max 32 bytes)
 
-- error_message: Reason why the server refused to let the client connect (256-bits) (32-bytes)
+Common disconnect reasons:
+- "Server shutting down"
+- "Server full"  
+- "Protocol version mismatch"
+- "Invalid challenge"
 
-Example: `[MAGIC_SEQUENCE] 0x09 "protocol version mismatched" 0x67676767`
+Example: `[MAGIC_SEQUENCE] 0x09 "Server full" [PROTOCOL_EOF]`
 
 ## 2. Connected Packets
 
-All connected packets use binary format and include reliability mechanisms for critical messages.
+All connected packets use binary format. Connected mode is entered after receiving a connectResponse.
 
-### 2.0 Reliability and Acknowledgment Mechanism
+### 2.1 Packet Fragmentation
 
-Connected packets implement selective reliability on top of UDP. While snapshots are sent unreliably (packet loss is acceptable), commands must be reliably delivered.
+Connected packets are always smaller than 2048 bytes (including EOF and header). If a message exceeds this size, it is fragmented across multiple packets with the same sequence number. The `end_of_content` flag indicates whether this is the final fragment (true) or more fragments follow (false).
 
-**Reliable Acknowledge Field:**
+### 2.2 Server-to-Client Packet Structure
 
-The `reliable_acknowledge` field in server-to-client packets tells the client: "I received all your cli_command messages up to sequence number X". This allows the client to stop retransmitting acknowledged commands.
-
-**How It Works:**
-
-1. Client sends `cli_command` with sequence number N
-2. Server receives the command and processes it
-3. Server includes `reliable_acknowledge = N` in next packet
-4. Client sees the acknowledgment and stops retransmitting that command
-
-**Retransmission Strategy:**
-
-For `srv_command` and `cli_command` messages:
-
-- **Server-to-Client Commands:**
-  - Retransmit every 200ms if not acknowledged
-  - Maximum 5 retries (1 second total timeout)
-  - After 5 failed retries, consider client disconnected
-- **Client-to-Server Commands:**
-  - Retransmit every 200ms if not acknowledged
-  - Maximum 10 retries (2 seconds total timeout)
-  - After 10 failed retries, consider server disconnected
-  - Client gets more retries because server is typically more stable
-
-- **Disconnect Messages (srv_disconnect):**
-  - Send 3 times with 100ms intervals
-  - No acknowledgment required
-  - Multiple rapid sends increase delivery probability
-
-**Why 200ms:**
-
-- Good balance between responsiveness and network efficiency
-- Works well even with 100-150ms network latency
-- Not too fast (avoids spam), not too slow (user notices delay)
-
-**Example Flow:**
-
-```
-Time  Client                          Server
-0ms   Send cli_command seq=5 ------->
-                                      Receive seq=5
-50ms                     <--------    Send packet with reliable_ack=5
-      Receive ack=5
-      Stop retransmitting seq=5
-```
-
-**Example with Packet Loss:**
-
-```
-Time  Client                          Server
-0ms   Send cli_command seq=6 ----X    (packet lost)
-200ms Send cli_command seq=6 ------->
-                                      Receive seq=6
-250ms                     <--------    Send packet with reliable_ack=6
-      Receive ack=6
-      Stop retransmitting seq=6
-```
-
-### 2.1 Server-to-Client Packet Structure
-
-All server-to-client packets begin with a 32-bits sequence number in little-endian format. If this sequence equals 0x67676767, the packet is connectionless (see section 1). Otherwise, the packet follows the connected format below.
-
-PACKETS are always smaller than 2048 (eof and header included) otherwise the package is considered fragmented, another package with the same sequence will be sent until end of content byte is 1.
+All server-to-client connected packets follow this structure:
 
 **Header:**
 
+```
+[MAGIC_SEQUENCE:32] [Sequence_Number:32] [Acknowledge:32] [End_Of_Content:8] [Payload:variable] [PROTOCOL_EOF:32]
+```
+
 Fields:
-
-- Sequence Number (32 bits): Incrementing packet sequence (starts at 1, wraps at 2^32)
-- Reliable Acknowledge (32 bits): Highest cli_command sequence number received from this client
-- End of content (8 bits): (0/1), cf previous warning about packet size
-
-The Reliable Acknowledge field tells the client which commands have been successfully received. The client can stop retransmitting any cli_command with sequence <= Reliable Acknowledge.
-
-Following the header, the packet contains one server operation messages.
+- **MAGIC_SEQUENCE**: 4 bytes (0x93 0x27 0x48 0x43)
+- **Sequence_Number**: 32-bit unsigned integer (big-endian) - Incrementing packet sequence (starts at 0)
+- **Acknowledge**: 32-bit unsigned integer (big-endian) - Currently unused (set to 0)
+- **End_Of_Content**: 8-bit boolean - 1 if last fragment, 0 if more fragments follow
+- **Payload**: Variable length - Contains one or more server operations
+- **PROTOCOL_EOF**: 4 bytes (0x42 0x67 0xAB 0x01)
 
 **Server Operations:**
 
-Server must send the first srv_snapshot immediately after connectResponse.
+##### **srv_sendcomp (opcode 0x02):**
 
-##### **srv_event (opcode 1):**
+Sends component data for a specific entity.
+
+Format:
+```
+[0x02] [entity_id:64] [component_id:string] [component_data:variable]
+```
+
+Fields:
+- **Opcode**: 0x02
+- **Entity_ID**: 64-bit unsigned integer (big-endian) - Entity identifier
+- **Component_ID**: String - Component type identifier (e.g., "Position", "Velocity")
+- **Component_Data**: Byte array - Serialized component data (format depends on component type)
+
+##### **srv_sendevent (opcode 0x01):**
 
 Sends an event from server to client.
-Fields:
 
-- Opcode=1:8
-- EventString:string
-- EventData:byte-list
-
-##### **srv_snapshot (opcode 2):**
-
-Transmits a game state snapshot entity updates. Snapshots are sent at regular intervals.
-They contain multiple gs_... until the gs_oef
+Format:
+```
+[0x01] [event_id:string] [event_data:variable]
+```
 
 Fields:
+- **Opcode**: 0x01
+- **Event_ID**: String - Event type identifier (e.g., "PlayerDeath", "LevelComplete")
+- **Event_Data**: Byte array - Serialized event data (format depends on event type)
 
-- Opcode=2:8
-- Server_Time:32
-- Delta_Frame:8
+### 2.3 Client-to-Server Packet Structure
 
-**gs_entity_remove** (opcode 1)
-
-- Entity_Number:32
-
-**gs_entity_update/init** (opcode 2)
-
-- Entity_Number:32
-- Components of said entity in this format:
-- - component_string_id:variable
-- - component_data:component_size
-
-Must end with **gs_oef** (8 bits: 0x69696969)
-
-**Delta Compression:**
-
-When Delta Frame > 0, only components that have changed since the referenced snapshot are transmitted. The client must maintain a history of the last 32 snapshots to support delta decompression.
-
-If the client does not have the referenced snapshot (packet loss), it should:
-
-1. Request a full snapshot via cli_acknowledge with special flag
-2. Continue rendering using last known good state
-3. Extrapolate entity positions based on last known velocities
-
-##### **srv_disconnect (opcode 4):**
-
-Notifies client of disconnection with reason. After receiving this, the client should close the connection and return to the main menu.
-
-Fields:
-
-- Opcode=4:8
-- Reason:string
-
-Common disconnect reasons:
-
-- "Server shutting down": Normal server shutdown
-- "Kicked by admin": Player was kicked
-- "Timeout": Client stopped responding
-- "Protocol version mismatch": Client using wrong protocol version
-- "Server full": No available player slots
-- "Duplicate connection": Player already connected from another address
-
-The server should send srv_disconnect at least 3 times with 100ms intervals to ensure receipt, then close the socket. No acknowledgment is required - multiple rapid transmissions increase probability of delivery even with packet loss.
-
-##### **srv_end (0x6767676767):**
-
-Marks the end of server operations in the packet. All server packets must end with this opcode.
-
-Fields:
-
-- Opcode=0:8
-
-No additional data follows. The packet ends immediately after this opcode.
-
-### 2.2 Client-to-Server Packet Structure
-
-All client-to-server packets begin with a 32-bits sequence number in little-endian format. If this sequence equals 0x67676767, the packet is connectionless (see section 1). Otherwise, the packet follows the connected format below.
+All client-to-server connected packets follow this structure:
 
 **Header:**
 
+```
+[MAGIC_SEQUENCE:32] [Sequence_Number:32] [Acknowledge:32] [End_Of_Content:8] [Payload:variable] [PROTOCOL_EOF:32]
+```
+
 Fields:
-
-- Sequence_Number:32
-- Server_ID:32
-- Server_Message_Sequence:32
-- Server_Command_Sequence:32
-
-The Server Command Sequence field acknowledges srv_command messages. When the server sees this field increment, it knows that command was received and stops retransmitting it.
-
-Following the header, the packet contains one or more client operation messages, each terminated by a cli_end operation (opcode 0).
+- **MAGIC_SEQUENCE**: 4 bytes (0x93 0x27 0x48 0x43)
+- **Sequence_Number**: 32-bit unsigned integer (big-endian) - Incrementing packet sequence (starts at 0)
+- **Acknowledge**: 32-bit unsigned integer (big-endian) - Currently unused (set to 0)
+- **End_Of_Content**: 8-bit boolean - 1 if last fragment, 0 if more fragments follow
+- **Payload**: Variable length - Contains client operation
+- **PROTOCOL_EOF**: 4 bytes (0x42 0x67 0xAB 0x01)
 
 **Client Operations:**
 
-##### **cli_command (opcode 1):**
+##### **cli_sendevent (opcode 0x01):**
 
->[TODO]: Need to figure more specific commands the client could send
+Sends an event from client to server (e.g., player actions, game events).
 
-Sends a reliable command from client to server. Commands are acknowledged via reliable_acknowledge field and retransmitted if lost.
-
-Fields:
-
-- Opcode=1:8
-- Command_Sequence:32
-- Command:variable
-
-Command format: `<command_opcode>;<arg1>;<arg2>;...`
-
-Arguments are separated by semicolons.
-
-Standard client commands:
-
-**chat**: Send chat message
-
-- Format: `chat;<message_text>`
-- Example: `chat;Great teamwork!`
-- Max message length: 256 characters
-
-**disconnect**: Graceful disconnect request
-
-- Format: `disconnect`
-- No arguments
-- Server should respond with srv_disconnect acknowledgment
-
-Commands use the reliable acknowledgment mechanism:
-
-- Client tracks each command by its Command Sequence number
-- Client includes the highest received srv_command sequence in the Server Command Sequence field
-- Server sees this acknowledgment and stops retransmitting that command
-- Client retransmits unacknowledged cli_command messages every 200ms
-- Maximum 10 retries (2 seconds timeout)
-- After 10 failed retries, client considers server disconnected
-- Client gets more retries than server because clients typically have less stable networks
-
-##### **cli_move (opcode 2):**
-
->[TOFIX]: not really sure what is the best way to process inputs yet
-
-Transmits player input commands. Multiple input samples can be included in a single packet for redundancy against packet loss.
-Fields:
-
-- Opcode=2:8
-- Command_Count:8
-
-Each input command in the sequence:
+Format:
+```
+[0x01] [event_id:string] [event_data:variable]
+```
 
 Fields:
+- **Opcode**: 0x01
+- **Event_ID**: String - Event type identifier (e.g., "PlayerMove", "FireWeapon")
+- **Event_Data**: Byte array - Serialized event data (format depends on event type)
 
-- Server*Time*Δ:8
-- Input_Mask:8
-- Input_Bits:variable
+## 3. Data Types and Wire Format
 
-Input mask bits (each corresponds to a 1-bit input flag if set):
+All multi-byte values use **big-endian** byte order (most significant byte first).
 
-- Bit 0 (0x01): Input 1 (application-defined)
-- Bit 1 (0x02): Input 2 (application-defined)
-- Bit 2 (0x04): Input 3 (application-defined)
-- Bit 3 (0x08): Input 4 (application-defined)
-- Bit 4 (0x10): Input 5 (application-defined)
-- Bit 5 (0x20): Input 6 (application-defined)
-- Bit 6 (0x40): Input 7 (application-defined)
-- Bit 7 (0x80): Input 8 (application-defined)
+### 3.1 Primitive Types
 
-The meaning of each input bit is defined by the game application. Common mappings include directional movement (up, down, left, right) and action buttons (primary fire, secondary fire, special ability, etc.).
+**Unsigned Integers:**
+| Type | Size | Example Value | Wire Bytes (hex) |
+|------|------|---------------|------------------|
+| 8-bit | 1 byte | 255 | `0xFF` |
+| 16-bit | 2 bytes | 1000 | `0x03 0xE8` |
+| 32-bit | 4 bytes | 65536 | `0x00 0x01 0x00 0x00` |
+| 64-bit | 8 bytes | 1000000 | `0x00 0x00 0x00 0x00 0x00 0x0F 0x42 0x40` |
 
-**Redundancy Strategy:**
-Clients should send the current input plus 2-3 previous inputs (Command Count = 3-4) to handle packet loss. Server deduplicates by tracking last processed Server Time Delta per client.
+**Signed Integers:**
+Signed integers use two's complement representation in big-endian byte order.
 
-##### **cli_acknowledge (opcode 3):**
+| Type | Size | Example Value | Wire Bytes (hex) |
+|------|------|---------------|------------------|
+| 8-bit | 1 byte | -1 | `0xFF` |
+| 16-bit | 2 bytes | -1000 | `0xFC 0x18` |
+| 32-bit | 4 bytes | -65536 | `0xFF 0xFF 0x00 0x00` |
+| 64-bit | 8 bytes | -1000000 | `0xFF 0xFF 0xFF 0xFF 0xFF 0xF0 0xBD 0xC0` |
 
-Acknowledges receipt of a server snapshot. Used for reliability tracking and packet loss statistics.
+**Floating Point:**
+| Type | Size | Format | Byte Order |
+|------|------|--------|------------|
+| 32-bit float | 4 bytes | IEEE 754 single precision | Big-endian |
+| 64-bit double | 8 bytes | IEEE 754 double precision | Big-endian |
 
-Fields:
+**Boolean:**
+| Value | Wire Byte |
+|-------|-----------|
+| false | `0x00` |
+| true | `0x01` |
 
-- Opcode=3:8
-- Snapshot_Sequence:32
+### 3.2 String Format
 
-Clients should send cli_acknowledge for every received snapshot to help server track:
+Strings are UTF-8 encoded with a length prefix:
 
-- Round-trip time (RTT) for lag compensation
-- Packet loss rate for adaptive quality adjustment
-- Client responsiveness for timeout detection
+```
+[length:32] [utf8_bytes:variable]
+```
 
-Server uses acknowledgments to:
+- **length**: 32-bit unsigned integer (big-endian) - Number of bytes in the string
+- **utf8_bytes**: UTF-8 encoded characters (NOT null-terminated)
 
-- Calculate average RTT per client (exponential moving average)
-- Detect packet loss patterns
-- Adjust snapshot send rate if network conditions degrade
-- Determine appropriate Delta Frame values
+**Example**: String "Hello"
+```
+Offset  Hex                                      ASCII
+0x0000  00 00 00 05 48 65 6C 6C 6F               ....Hello
+        [  length  ] [H][e][l][l][o]
+```
 
-If client misses multiple consecutive snapshots (>5), it should send cli_acknowledge with sequence 0 to request a full snapshot (Delta Frame = 0) in the next transmission.
+**Example**: Empty string ""
+```
+Offset  Hex
+0x0000  00 00 00 00
+        [  length=0]
+```
 
-##### **cli_end (opcode 0x67676767):**
+### 3.3 List/Array Format
 
-Marks the end of client operations in the packet. All client packets must end with this opcode.
+Lists are serialized with a count prefix followed by elements:
 
-Fields:
+```
+[count:32] [element1] [element2] ... [elementN]
+```
 
-- Opcode (8 bits): Always 0x67676767
+- **count**: 32-bit unsigned integer (big-endian) - Number of elements in the list
+- **elements**: Each element serialized according to its type
 
-No additional data follows. The packet ends immediately after this opcode.
+**Example**: List of three 32-bit integers [10, 20, 30]
+```
+Offset  Hex
+0x0000  00 00 00 03  00 00 00 0A  00 00 00 14  00 00 00 1E
+        [  count=3] [    10    ] [    20    ] [    30    ]
+```
+
+**Example**: List of two strings ["foo", "bar"]
+```
+Offset  Hex
+0x0000  00 00 00 02                              ....        (count=2)
+0x0004  00 00 00 03 66 6F 6F                     ....foo     (length=3, "foo")
+0x000B  00 00 00 03 62 61 72                     ....bar     (length=3, "bar")
+```
+
+### 3.4 Optional Value Format
+
+Optional values use a presence flag followed by the value (if present):
+
+```
+[has_value:8] [value:variable (if has_value == 1)]
+```
+
+- **has_value**: 1 byte - `0x00` = no value, `0x01` = value present
+- **value**: Only present if has_value is `0x01`, serialized according to its type
+
+**Example**: Optional 32-bit integer with value 42
+```
+Offset  Hex
+0x0000  01 00 00 00 2A
+        [Y][    42    ]
+```
+
+**Example**: Optional 32-bit integer with no value
+```
+Offset  Hex
+0x0000  00
+        [N]
+```
+
+### 3.5 Map/Dictionary Format
+
+Maps are serialized as lists of key-value pairs:
+
+```
+[count:32] [key1][value1] [key2][value2] ... [keyN][valueN]
+```
+
+- **count**: 32-bit unsigned integer (big-endian) - Number of key-value pairs
+- **pairs**: Each key and value serialized according to their types
+
+**Example**: Map {"age": 25, "score": 1000} (string keys, 32-bit integer values)
+```
+Offset  Hex
+0x0000  00 00 00 02                              ....        (count=2 pairs)
+0x0004  00 00 00 03 61 67 65                     ....age     (key "age")
+0x000B  00 00 00 19                              ....        (value 25)
+0x000F  00 00 00 05 73 63 6F 72 65               ....score   (key "score")
+0x0019  00 00 00 03 E8                           ....        (value 1000)
+```
+
+### 3.6 Component and Event Data
+
+Component and event data are application-specific byte sequences. The structure of these byte sequences depends on the component or event type identified by the Component_ID or Event_ID string.
+
+Implementations should define their own serialization formats for each component and event type. Common examples:
+
+**Position Component** (hypothetical):
+```
+Component_ID: "Position"
+Data format: [x:64 (double)] [y:64 (double)]
+```
+
+**Velocity Component** (hypothetical):
+```
+Component_ID: "Velocity"
+Data format: [dx:64 (double)] [dy:64 (double)]
+```
+
+**PlayerMove Event** (hypothetical):
+```
+Event_ID: "PlayerMove"
+Data format: [direction:8] [speed:32 (float)]
+```
+
+## 4. Connection Flow
+
+1. Client sends `getchallenge` (connectionless)
+2. Server responds with `challengeResponse` containing random challenge number
+3. Client sends `connect` with challenge and player name (connectionless)
+4. Server validates challenge and responds with `connectResponse` containing client_id and server_id
+5. Client transitions to connected mode
+6. Server sends initial game state via `srv_sendcomp` and `srv_sendevent` packets
+7. Client and server exchange connected packets for game synchronization
+
+## 5. Protocol Notes
+
+### 5.1 No Reliability Layer
+
+The protocol does NOT include automatic retransmission or acknowledgment of lost packets. Applications must handle packet loss:
+- Accept loss of component updates (next update will overwrite)
+- Implement application-level acknowledgment for critical events if needed
+- Use redundant packets for important state transitions
+
+### 5.2 Packet Fragmentation
+
+Messages larger than 2048 bytes (including all headers and EOF marker) are fragmented:
+1. Split message into chunks
+2. Send each chunk with the SAME sequence number
+3. Set `End_Of_Content` to 0 for all fragments except the last
+4. Set `End_Of_Content` to 1 for the final fragment
+5. Receiver reassembles all fragments with matching sequence numbers
+
+### 5.3 Entity-Component System
+
+The protocol supports component-based entity architecture:
+- **Entities**: Identified by unique 64-bit unsigned integers
+- **Components**: Identified by string names (e.g., "Position", "Velocity", "Health")
+- Component data format is application-specific and not defined by this protocol
+
+### 5.4 Event System
+
+Events carry application-specific game state changes:
+- **Events**: Identified by string names (e.g., "PlayerDeath", "EnemySpawn")
+- Event data format is application-specific and not defined by this protocol
+- Events flow bidirectionally (client→server and server→client)
+
+## 6. Protocol Constants
+
+| Constant | Value | Description |
+|----------|-------|-------------|
+| **MAGIC_SEQUENCE** | `0x93 0x27 0x48 0x43` | Protocol version identifier |
+| **PROTOCOL_EOF** | `0x42 0x67 0xAB 0x01` | End-of-packet marker |
+| **MAX_PLAYERS** | 4 | Maximum number of simultaneous players |
+| **MAX_PACKET_SIZE** | 2048 bytes | Maximum packet size (including headers) |
+| **PROTOCOL_VERSION** | 1 | Current protocol version number |
+| **MAX_PLAYERNAME** | 32 bytes | Maximum player name length |
+| **MAX_HOSTNAME** | 64 bytes | Maximum server hostname length |
+| **MAX_MAPNAME** | 32 bytes | Maximum map name length |
+
+## 7. Implementation Reference
+
+The reference implementation is written in C++ and can be found in:
+- `include/plugin/Byte.hpp` - Serialization utilities
+- `src/plugins/Byte.cpp` - Serialization implementation
+- `plugins/client_network/` - Client network plugin
+- `plugins/server_network/` - Server network plugin
+- `include/NetworkCommun.hpp` - Protocol constants and structures
+
+Implementers in other languages should follow this specification, not the C++ implementation details.

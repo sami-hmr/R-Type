@@ -3,11 +3,11 @@ name: CI - Production Branch
 on:
   push:
     branches:
-    - dev
+    - main
 
   pull_request:
     branches:
-    - dev
+    - main
 
 jobs:
   lint:
@@ -20,34 +20,9 @@ jobs:
 
     - name: Check formatting with clang-format
       id: lint-check
-      run: |
-        set +e
-        cmake -D FORMAT_COMMAND=clang-format-18 -P cmake/lint.cmake
-        rc=$?
-        echo "lint_exit_code=$rc" >> "$GITHUB_OUTPUT"
-        exit 0
+      run: cmake -D FORMAT_COMMAND=clang-format-18 -P cmake/lint.cmake
 
-    - name: Auto-fix formatting with clang-format
-      if: steps.lint-check.outputs.lint_exit_code != '0'
-      run: |
-        cmake -D FORMAT_COMMAND=clang-format-18 -D FIX=YES -P cmake/lint.cmake
-
-    - name: Commit and push formatting changes
-      if: steps.lint-check.outputs.lint_exit_code != '0' && github.event_name == 'push'
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        if git diff --quiet; then
-          echo "No formatting changes to commit."
-          exit 0
-        fi
-        git config user.name "github-actions[bot]"
-        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git add .
-        git commit -m "chore(style): auto-format with clang-format-18"
-        git push || echo "Push failed, continuing without failing lint job."
-
-  build-and-test:
+  build-release:
     needs: [lint]
     runs-on: ubuntu-24.04
 
@@ -83,12 +58,11 @@ jobs:
     - name: Verify C++ compiler version
       run: clang++ --version
 
-    - name: Run CMake with preset (configure, build, and test)
+    - name: Run CMake with preset (configure, build)
       uses: lukka/run-cmake@v10
       with:
-        configurePreset: 'tests'
-        buildPreset: 'tests-build'
-        testPreset: 'dev-test'
+        configurePreset: 'release'
+        buildPreset: 'release-build'
       env:
         CC: clang-18
         CXX: clang++-18
@@ -202,13 +176,26 @@ jobs:
         CMAKE_CXX_COMPILER_LAUNCHER: ccache
 
     - name: Build docs
-      run: cmake --build build/docs --target docs
+      run: cmake --preset=docs && cmake --build build/docs --preset=docs-build && cmake --build build/docs --target docs-run
 
     - name: Deploy docs to GitHub Pages
       uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: build/docs/html
+        publish_dir: docs/html
       continue-on-error: true
 
+  push_to_mirror:
+    runs-on: ubuntu-latest
+    name: push_to_mirror
+    steps:
+      - name: push_to_mirror
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          target_repo_url: "git@github.com:EpitechPGE3-2025/G-CPP-500-PAR-5-2-rtype-5.git"
+          ssh_private_key: ${{ secrets.GIT_SSH_PRIVATE_KEY }}
 

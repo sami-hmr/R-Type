@@ -4,11 +4,12 @@
  * @brief Maps a vector of Registry::Entity using a TwoWayMap
  * @details Creates a new vector with all entities mapped.
  *
- * @example
+ * @code
  * DEFINE_CHANGE_ENTITY(
  *   result.source = map.at(source);
  *   result.candidates = MAP_ENTITY_VECTOR(candidates);
  * )
+ * @endcode
  */
 #define MAP_ENTITY_VECTOR(vec) \
   [&]() \
@@ -31,7 +32,7 @@
  * @param ... Statements to modify entity fields (e.g., result.field =
  * map.at_second(field))
  *
- * @example
+ * @code
  * struct MyEvent {
  *   Registry::Entity actor;
  *   Registry::Entity target;
@@ -42,10 +43,11 @@
  *     result.target = map.at(target);
  *   )
  * };
+ * @endcode
  */
 #define CHANGE_ENTITY(...) \
-  auto change_entity(std::unordered_map<Registry::Entity, Registry::Entity> const& map) \
-      const \
+  auto change_entity( \
+      std::unordered_map<Registry::Entity, Registry::Entity> const& map) const \
   { \
     try { \
       auto result = *this; \

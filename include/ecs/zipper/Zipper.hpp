@@ -31,7 +31,6 @@ class ZipperIndexIterator;
  * @note Iteration stops at the size of the smallest Comp to prevent
  * out-of-bounds access.
  *
- * @example
  * @code
  * SparseArray<int> arr1;
  * SparseArray<float> arr2;
@@ -277,7 +276,6 @@ protected:
  * @note Only positions where all Comps have valid values are yielded
  * during iteration.
  *
- * @example
  * @code
  * SparseArray<Position> positions;
  * SparseArray<Velocity> velocities;
