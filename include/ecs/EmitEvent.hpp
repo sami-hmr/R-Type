@@ -70,7 +70,7 @@ void emit_event(Registry& r, std::string const& id, Event event)
   try {
     r.emit<EventBuilder>(EventBuilder(id, event.to_bytes()));
   } catch (std::out_of_range const&) {
-    r.emit<LogEvent>("init", LogLevel::ERROR, "unknow event");
+    r.emit<LogEvent>("init", LogLevel::ERROR, "unknown event");
   }
   r.emit(id, event.to_bytes());
 }

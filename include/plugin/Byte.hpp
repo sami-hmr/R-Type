@@ -106,7 +106,7 @@ concept bytable = serializable<T> && unserializable<T>;
  *     parseByte<double>()
  *   )
  * };
- * @encode
+ * @endcode
  */
 #define DEFAULT_BYTE_CONSTRUCTOR(classname, construct, ...) \
   classname(ByteArray const& array) \
@@ -166,7 +166,7 @@ ByteArray byte_array_join(Args... arrays)
  *   double x, y;
  *   DEFAULT_SERIALIZE(type_to_byte(x), type_to_byte(y))
  * };
- * @encode
+ * @endcode
  */
 #define DEFAULT_SERIALIZE(...) \
   ByteArray to_bytes() const \

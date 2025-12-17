@@ -9,7 +9,7 @@
  *   result.source = map.at(source);
  *   result.candidates = MAP_ENTITY_VECTOR(candidates);
  * )
- * @encode
+ * @endcode
  */
 #define MAP_ENTITY_VECTOR(vec) \
   [&]() \
@@ -43,7 +43,7 @@
  *     result.target = map.at(target);
  *   )
  * };
- * @encode
+ * @endcode
  */
 #define CHANGE_ENTITY(...) \
   auto change_entity( \
