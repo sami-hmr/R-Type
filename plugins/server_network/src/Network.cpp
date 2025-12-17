@@ -13,6 +13,7 @@
 #include "Server.hpp"
 #include "ServerLaunch.hpp"
 #include "ecs/ComponentState.hpp"
+#include "ecs/EmitEvent.hpp"
 #include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/Scenes.hpp"
@@ -189,6 +190,14 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
     for (auto const& [id, comp] : event.aditionals) {
       init_component(this->_registry.get(), *entity, id, comp);
     }
+  })
+
+  SUBSCRIBE_EVENT(DeleteEntity, {
+    this->_registry.get().kill_entity(event.entity);
+    this->_registry.get().emit<EventBuilderId>(
+        std::nullopt,
+        "DeleteClientEntity",
+        DeleteClientEntity(event.entity).to_bytes());
   })
 }
 

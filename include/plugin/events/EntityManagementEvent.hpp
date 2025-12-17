@@ -60,3 +60,41 @@ struct LoadEntityTemplate
   std::string template_name;
   Additional aditionals;
 };
+
+struct DeleteEntity
+{
+  DeleteEntity() = default;
+  DeleteEntity(Registry::Entity e): entity(e) {}
+
+  CHANGE_ENTITY(result.entity = map.at(entity))
+
+  DEFAULT_BYTE_CONSTRUCTOR(DeleteEntity, ([](Registry::Entity e){return DeleteEntity(e);}), parseByte<Registry::Entity>())
+
+  DEFAULT_SERIALIZE(type_to_byte(entity))
+
+  DeleteEntity(Registry& r, JsonObject const& conf)
+      : entity(*get_value_copy<int>(r, conf, "entity"))
+  {
+  }
+
+  Registry::Entity entity;
+};
+
+struct DeleteClientEntity
+{
+  DeleteClientEntity() = default;
+  DeleteClientEntity(Registry::Entity e): entity(e) {}
+
+  CHANGE_ENTITY(result.entity = map.at(entity))
+
+  DEFAULT_BYTE_CONSTRUCTOR(DeleteClientEntity, ([](Registry::Entity e){return DeleteClientEntity(e);}), parseByte<Registry::Entity>())
+
+  DEFAULT_SERIALIZE(type_to_byte(entity))
+
+  DeleteClientEntity(Registry& r, JsonObject const& conf)
+      : entity(*get_value_copy<int>(r, conf, "entity"))
+  {
+  }
+
+  Registry::Entity entity;
+};

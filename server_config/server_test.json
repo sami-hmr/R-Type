@@ -156,21 +156,84 @@
       "state": "disabled",
       "plugins": [],
       "entities": [
+        // {
+        //   "moving:Position": {
+        //     "pos": {
+        //       "x": -0.5,
+        //       "y": 0.0
+        //     }
+        //   },
+        //   "ui:Drawable": {},
+        //   "ui:Text": {
+        //     "font": "assets/fonts/roboto.ttf",
+        //     "size": {
+        //       "width": 30.0,
+        //       "height": 30.0
+        //     },
+        //     "text": "this is the game"
+        //   }
+        // },
         {
           "moving:Position": {
+            "hook": "enemy_pos",
             "pos": {
-              "x": -0.5,
-              "y": 0.0
+              "x": 0.5,
+              "y": -0.3
             }
           },
-          "ui:Drawable": {},
-          "ui:Text": {
-            "font": "assets/fonts/roboto.ttf",
+          "ui:Sprite": {
+            "texture": "assets/enemy.png",
             "size": {
-              "width": 30.0,
-              "height": 30.0
+              "width": "20.0%",
+              "height": "20.0%"
+            }
+          },
+          "life:Health": {
+            "hook": "enemy_health",
+            "current": 50.0,
+            "max": 100.0
+          },
+          "ath:Bar": {
+            "size": {
+              "x": "10.0%",
+              "y": "1.0%"
             },
-            "text": "this is the game"
+            "max_value": "#enemy_health:max",
+            "current_value": "#enemy_health:current",
+            "offset": {
+              "x": 0.0,
+              "y": -0.12
+            },
+            "color": {
+              "r": 255,
+              "g": 255,
+              "b": 255,
+              "a": 255
+            },
+            "outline": false,
+            "texture_path": "assets/backgrounds/background.png"
+          },
+          "ui:Drawable": {},
+          "collision:Collidable": {
+            "width": 0.2,
+            "height": 0.2,
+            "collision_type": "solid"
+          },
+          "life:Team": {
+            "name": "test"
+          },
+          "life:Damage": {
+            "amount": 1
+          },
+          "moving:Velocity": {
+            "speed": {
+              "x": 0.005,
+              "y": 0.005
+            },
+            "direction": {
+              "x": 0.0,
+              "y": 0.0
+            }
           }
         }
       ]
