@@ -96,30 +96,25 @@
         "life:Team": {
           "name": "player"
         },
-        "moving:Facing": {
-          "direction": {
-            "x": 1.0,
-            "y": 0.0
-          }
-        },"ath:Bar": {
-            "size": {
-              "x": "10.0%",
-              "y": "1.0%"
-            },
-            "max_value": "#player_health:max",
-            "current_value": "#player_health:current",
-            "offset": {
-              "x": 0.0,
-              "y": -0.1
-            },
-            "color": {
-              "r": 100,
-              "g": 255,
-              "b": 100,
-              "a": 255
-            },
-            "outline": true
-          }
+        "ath:Bar": {
+          "size": {
+            "x": "10.0%",
+            "y": "1.0%"
+          },
+          "max_value": "#player_health:max",
+          "current_value": "#player_health:current",
+          "offset": {
+            "x": 0.0,
+            "y": -0.1
+          },
+          "color": {
+            "r": 100,
+            "g": 255,
+            "b": 100,
+            "a": 255
+          },
+          "outline": true
+        }
       }
     }
   ]

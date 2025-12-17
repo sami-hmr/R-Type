@@ -30,6 +30,7 @@ class NetworkServer : public APlugin
   private:
     void launch_server(ServerLaunching const& s);
 
+
     std::thread _thread;
     std::counting_semaphore<> _comp_semaphore;
     SharedQueue<ComponentBuilderId> _components_to_update;
@@ -39,6 +40,7 @@ class NetworkServer : public APlugin
     std::counting_semaphore<> _event_semaphore;
     SharedQueue<EventBuilderId> _event_queue_to_client;
     std::unordered_map<std::size_t, bool> _player_ready;
+    std::unordered_map<Registry::Entity, size_t> _player_entities;
 };
 
 CUSTOM_EXCEPTION(ClientNotFound)
