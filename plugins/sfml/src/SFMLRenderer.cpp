@@ -601,7 +601,6 @@ void SFMLRenderer::animation_system(Registry& r)
 
     if (facings.size() > entity && facings[entity].has_value()) {
       facing = facings[entity].value();
-      std::cout << facing.direction << "\n";
       Vector2D norm = (pos.pos - facing.direction).normalize();
       rotation = std::atan2(norm.y, norm.x);
     }

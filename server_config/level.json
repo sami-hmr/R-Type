@@ -82,6 +82,25 @@
             "spawn_interval": 6.0,
             "max_spawns": 3
           }
+        },
+        {
+          "collision:Collidable": {
+            "width": 1.0,
+            "height": 100.0,
+            "collision_type": "solid"
+          },
+          "moving:Position": {
+            "pos": {
+              "x": -1.5,
+              "y": 0.0
+            }
+          },
+          "life:Team": {
+            "name": "player"
+          },
+          "life:Damage": {
+            "amount": 100000
+          }
         }
       ]
     }

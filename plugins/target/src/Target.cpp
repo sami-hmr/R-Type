@@ -122,7 +122,6 @@ void Target::on_interaction_zone(const InteractionZoneEvent& event)
     {
       continue;
     }
-    std::cout << "aled" << std::endl;
     Vector2D distance =
         positions[candidate]->pos - positions[event.source]->pos;
     double distance_sq = distance.length();
