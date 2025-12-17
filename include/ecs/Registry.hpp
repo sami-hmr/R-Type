@@ -1119,7 +1119,8 @@ public:
     std::function<void()> updater = [this, entity, field_name, source_hook]()
     {
       try {
-        std::string comp = source_hook.substr(0, source_hook.find(':')) + "{" + std::to_string(entity) + "}";
+        std::string comp = source_hook.substr(0, source_hook.find(':')) + "{"
+            + std::to_string(entity) + "}";
         std::string value = source_hook.substr(source_hook.find(':') + 1);
         auto ref = this->get_hooked_value<T>(comp, value);
 
@@ -1152,7 +1153,8 @@ public:
 
     std::function<void()> deleter = [this, entity, source_hook]()
     {
-      std::string hook_name = source_hook.substr(0, source_hook.find(':')) + "{" + std::to_string(entity) + "}";
+      std::string hook_name = source_hook.substr(0, source_hook.find(':')) + "{"
+          + std::to_string(entity) + "}";
       this->_hooked_components.erase(hook_name);
     };
 
