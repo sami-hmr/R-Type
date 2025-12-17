@@ -1,224 +1,124 @@
-# Building with CMake
+# Building
 
 ## Quick Start
 
+Load aliases from `aliases.sh` for convenient commands:
+
 ```sh
-cmake --preset=dev
-cmake --build build
-./r-type
+source aliases.sh
+dev-all
 ```
 
-## Build Requirements
+if vcpkg isn't setup:
 
-- CMake 3.14 or later
-- C++23 compatible compiler (GCC 12+, Clang 15+)
-- Git (for fetching dependencies)
+```bash
+git clone git@github.com:microsoft/vcpkg.git && cd ./vcpkg/ && ./bootstrap-vcpkg.sh && cd -
+```
 
-### Optional: Coverage Reports
+After sourcing aliases, use CMake commands directly as shown below.
 
-For generating HTML coverage reports:
-- lcov
-- perl-gd (Perl GD module)
+## Requirements
 
-### Optional: Documentation Coverage
+- CMake 3.14+
+- C++23 compiler (GCC 12+, Clang 15+)
+- Git
 
-For generating documentation coverage reports:
-- Python 3
-- coverxygen (`pip3 install coverxygen`)
-- lcov (for HTML reports)
+### Optional Dependencies
 
-### Installing Dependencies
+- lcov, perl-gd: Coverage reports
+- Python 3, coverxygen: Documentation coverage
+- Doxygen: API documentation
+
+### Installation
 
 **Debian/Ubuntu:**
 ```sh
-sudo apt update
-sudo apt install cmake g++ git
-
-# For coverage reports:
-sudo apt install lcov libgd-perl
-
-# For documentation coverage:
+sudo apt install cmake g++ git lcov libgd-perl doxygen
 pip3 install coverxygen
 ```
 
 **Arch Linux:**
 ```sh
-sudo pacman -S cmake gcc git
-
-# For coverage reports:
-sudo pacman -S lcov perl-gd
-
-# For documentation coverage:
+sudo pacman -S cmake gcc git lcov perl-gd doxygen
 pip3 install coverxygen
 ```
 
 **macOS:**
 ```sh
-brew install cmake git
-
-# For coverage reports:
-brew install lcov
+brew install cmake git lcov doxygen
 cpan install GD
-
-# For documentation coverage:
 pip3 install coverxygen
 ```
 
-## Build Presets
+## Build Configurations
 
-This project uses CMake presets for different build configurations:
-
-### Development Build
-
-Development build includes test coverage instrumentation:
+### Development
 
 ```sh
 cmake --preset=dev
-cmake --build build
+cmake --build build --preset=dev-build
 ```
 
-### Release Build
+### Release
 
 ```sh
 cmake --preset=release
-cmake --build build/release
+cmake --build build/release --preset=release-build
 ```
 
-### Coverage Report
-
-The dev build includes coverage by default:
+### Tests
 
 ```sh
-cmake --preset=dev
-cmake --build build
-ctest --test-dir build
-cmake --build build --target coverage
+cmake --preset=tests
+cmake --build build/tests --preset=tests-build
+ctest --preset=dev-test
 ```
 
-The coverage report will be generated in `build/coverage_html/index.html`.
-
-### Documentation Build
+### Documentation
 
 ```sh
 cmake --preset=docs
-cmake --build build --target docs
+cmake --build build/docs --preset=docs-build
+cmake --build build/docs --target docs-run
 ```
-
-Requires Doxygen to be installed. Output is in `build/docs/html/index.html`.
-
-### Documentation Coverage
-
-Check how much of your code is documented:
-
-```sh
-cmake --preset=docs
-cmake --build build --target docs-coverage
-```
-
-Or generate an HTML report:
-
-```sh
-cmake --preset=docs
-cmake --build build --target docs-coverage-html
-```
-
-Requires Python 3 and coverxygen to be installed. HTML output is in `build/doc-coverage/index.html`.
 
 ## Available Targets
 
-- `r-type_exe` - Main executable
-- `format-check` - Check code formatting with clang-format
-- `format-fix` - Automatically fix code formatting
-- `coverage` - Generate coverage report (dev preset only)
-- `docs` - Generate documentation (docs preset only)
-- `docs-coverage` - Check documentation coverage (docs preset only)
-- `docs-coverage-html` - Generate documentation coverage HTML report (docs preset only)
+- `format-check`: Verify code formatting
+- `format-fix`: Auto-fix code formatting
+- `coverage`: Generate test coverage report (tests preset)
+- `docs`: Generate API documentation (docs preset)
+- `docs-coverage`: Documentation coverage summary (docs preset)
+- `docs-coverage-html`: Documentation coverage HTML report (docs preset)
 
-## Testing
-
-Run tests with CTest:
+## Code Formatting
 
 ```sh
-ctest --test-dir build --output-on-failure
+cmake --build build --target format-check
+cmake --build build --target format-fix
 ```
 
-## Development Tools
-
-### Code Formatting
-
-The project uses clang-format for code style enforcement:
+## Coverage Reports
 
 ```sh
-cmake --build build --target format-check  # Check formatting
-cmake --build build --target format-fix    # Fix formatting
+cmake --preset=tests
+cmake --build build/tests --preset=tests-build
+ctest --preset=dev-test
+cmake --build build/tests --target coverage
 ```
 
-### Static Analysis
+Report output: `build/tests/coverage_html/index.html`
 
-Use clang-tidy via the dedicated preset:
-
-```sh
-cmake --preset=clang-tidy
-cmake --build build
-```
-
-### Code Coverage
-
-Generate test coverage reports:
-
-```sh
-cmake --preset=dev
-cmake --build build
-ctest --test-dir build
-cmake --build build --target coverage
-```
-
-Requires lcov to be installed.
-
-### Documentation Generation
-
-Generate API documentation with Doxygen:
+## Documentation Coverage
 
 ```sh
 cmake --preset=docs
-cmake --build build --target docs
+cmake --build build/docs --target docs-coverage
 ```
 
-Requires Doxygen to be installed.
-
-### Documentation Coverage
-
-Check documentation coverage with a summary table:
-
+HTML report:
 ```sh
-cmake --preset=docs
-cmake --build build --target docs-coverage
+cmake --build build/docs --target docs-coverage-html
 ```
 
-Or generate an HTML report similar to code coverage:
-
-```sh
-cmake --preset=docs
-cmake --build build --target docs-coverage-html
-```
-
-Requires Python 3 and coverxygen to be installed.
-
-## Manual Build Commands
-
-If you prefer not to use presets:
-
-### Debug Build
-
-```sh
-cmake -B build -DCMAKE_BUILD_TYPE=Debug
-cmake --build build
-```
-
-### Release Build
-
-```sh
-cmake -B build -DCMAKE_BUILD_TYPE=Release
-cmake --build build
-```
-
+Output: `build/doc-coverage/index.html`

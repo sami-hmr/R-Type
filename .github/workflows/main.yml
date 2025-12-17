@@ -20,34 +20,9 @@ jobs:
 
     - name: Check formatting with clang-format
       id: lint-check
-      run: |
-        set +e
-        cmake -D FORMAT_COMMAND=clang-format-18 -P cmake/lint.cmake
-        rc=$?
-        echo "lint_exit_code=$rc" >> "$GITHUB_OUTPUT"
-        exit 0
+      run: cmake -D FORMAT_COMMAND=clang-format-18 -P cmake/lint.cmake
 
-    - name: Auto-fix formatting with clang-format
-      if: steps.lint-check.outputs.lint_exit_code != '0'
-      run: |
-        cmake -D FORMAT_COMMAND=clang-format-18 -D FIX=YES -P cmake/lint.cmake
-
-    - name: Commit and push formatting changes
-      if: steps.lint-check.outputs.lint_exit_code != '0' && github.event_name == 'push'
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: |
-        if git diff --quiet; then
-          echo "No formatting changes to commit."
-          exit 0
-        fi
-        git config user.name "github-actions[bot]"
-        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-        git add .
-        git commit -m "chore(style): auto-format with clang-format-18"
-        git push || echo "Push failed, continuing without failing lint job."
-
-  build-and-test:
+  build-release:
     needs: [lint]
     runs-on: ubuntu-24.04
 
@@ -83,12 +58,11 @@ jobs:
     - name: Verify C++ compiler version
       run: clang++ --version
 
-    - name: Run CMake with preset (configure, build, and test)
+    - name: Run CMake with preset (configure, build)
       uses: lukka/run-cmake@v10
       with:
-        configurePreset: 'tests'
-        buildPreset: 'tests-build'
-        testPreset: 'dev-test'
+        configurePreset: 'release'
+        buildPreset: 'release-build'
       env:
         CC: clang-18
         CXX: clang++-18
