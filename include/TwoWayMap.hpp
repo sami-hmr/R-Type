@@ -38,6 +38,19 @@ public:
 
   std::unordered_map<B, A> const& get_second() const { return _left; }
 
+  void remove_first(A const &a) {
+      if (!this->_right.contains(a)) {return;}
+      B const &b = this->at_first(a);
+      this->_left.erase(b);
+      this->_right.erase(a);
+  }
+
+  void remove_second(B const &b) {
+      if (!this->_left.contains(b)) {return;}
+      A const &a = this->at_second(b);
+      this->_right.erase(a);
+      this->_left.erase(b);
+  }
 private:
   std::unordered_map<A, B> _right;
   std::unordered_map<B, A> _left;

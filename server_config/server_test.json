@@ -41,7 +41,12 @@
       ],
       "entities": [
         {
-          "moving:Position": { "pos": { "x": 0.5, "y": -0.3 } },
+          "moving:Position": {
+            "pos": {
+              "x": 0.5,
+              "y": -0.3
+            }
+          },
           "ui:Drawable": {},
           "ui:Sprite": {
             "texture": "assets/enemy.png",
@@ -55,8 +60,13 @@
             "height": 0.1,
             "collision_type": "Solid"
           },
-          "life:Health": { "current": 5.0, "max": 100.0 },
-          "life:Team": { "name": "test" }
+          "life:Health": {
+            "current": 5.0,
+            "max": 100.0
+          },
+          "life:Team": {
+            "name": "test"
+          }
         },
         {
           "moving:Position": {
@@ -66,28 +76,28 @@
             }
           },
           "ui:Drawable": {},
-          "ui:Text": {
-            "font": "assets/fonts/roboto.ttf",
-            "size": {
-              "width": "100.0%",
-              "height": "100.0%"
-            },
-            "fill_color": {
-              "r": 255,
-              "g": 0,
-              "b": 255,
-              "a": 255
-            },
-            "outline_color": {
-              "r": 0,
-              "g": 0,
-              "b": 0,
-              "a": 255
-            },
-            "outline_thickness": 30.0,
-            "outline": true,
-            "text": "LOBBY: get ready with R"
-          },
+          // "ui:Text": {
+          //   "font": "assets/fonts/roboto.ttf",
+          //   "size": {
+          //     "width": "100.0%",
+          //     "height": "100.0%"
+          //   },
+          //   "fill_color": {
+          //     "r": 255,
+          //     "g": 0,
+          //     "b": 255,
+          //     "a": 255
+          //   },
+          //   "outline_color": {
+          //     "r": 0,
+          //     "g": 0,
+          //     "b": 0,
+          //     "a": 255
+          //   },
+          //   "outline_thickness": 30.0,
+          //   "outline": true,
+          //   "text": "LOBBY: get ready with R"
+          // },
           "actions:ActionTrigger": {
             "trigger": {
               "type": "KeyPressed",
@@ -111,7 +121,12 @@
       "plugins": [],
       "entities": [
         {
-          "moving:Position": { "pos": { "x": 0.5, "y": -0.3 } },
+          "moving:Position": {
+            "pos": {
+              "x": 0.5,
+              "y": -0.3
+            }
+          },
           "ui:Drawable": {},
           "ui:Sprite": {
             "texture": "assets/enemy.png",
@@ -125,11 +140,21 @@
             "height": 0.1,
             "collision_type": "Solid"
           },
-          "life:Health": { "current": 5.0, "max": 100.0 },
-          "life:Team": { "name": "test" }
+          "life:Health": {
+            "current": 5.0,
+            "max": 100.0
+          },
+          "life:Team": {
+            "name": "test"
+          }
         },
         {
-          "moving:Position": { "pos": { "x": 0.5, "y": -0.3 } },
+          "moving:Position": {
+            "pos": {
+              "x": 0.5,
+              "y": -0.3
+            }
+          },
           "ui:Drawable": {},
           "ui:Sprite": {
             "texture": "assets/enemy.png",
@@ -143,8 +168,13 @@
             "height": 0.1,
             "collision_type": "Solid"
           },
-          "life:Health": { "current": 5.0, "max": 100.0 },
-          "life:Team": { "name": "test" }
+          "life:Health": {
+            "current": 5.0,
+            "max": 100.0
+          },
+          "life:Team": {
+            "name": "test"
+          }
         },
         {
           "moving:Position": {
