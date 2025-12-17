@@ -22,7 +22,7 @@ Weapon::Weapon(Registry& r, EntityLoader& l)
     : APlugin("weapon",
               r,
               l,
-              {"moving"},
+              {"moving", "life"},
               {COMP_INIT(BasicWeapon, BasicWeapon, init_basic_weapon)})
     , entity_loader(l)
 {
