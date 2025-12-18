@@ -83,6 +83,12 @@
           ],
           "default_animation": "idle"
         },
+        "moving:Facing": {
+          "direction": {
+            "x": 1.0,
+            "y": 0.0
+          }
+        },
         "collision:Collidable": {
           "width": 0.2,
           "height": 0.2,

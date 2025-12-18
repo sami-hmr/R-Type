@@ -53,7 +53,7 @@ static void zoom_cam(Camera& cam)
 static void shake_cam(Camera& cam)
 {
   if (cam.shaking) {
-    // Vector2D offset();
+    return;
   }
 }
 
@@ -77,6 +77,7 @@ void SFMLRenderer::camera_system(Registry& r)
     move_cam(pos, cam);
     rotate_cam(cam);
     zoom_cam(cam);
+    shake_cam(cam);
     sf::Vector2f new_center(
         static_cast<float>((pos.pos.x + 1.0) * window_size.x / 2.0),
         static_cast<float>((pos.pos.y + 1.0) * window_size.y / 2.0));

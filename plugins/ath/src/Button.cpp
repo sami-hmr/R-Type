@@ -4,7 +4,6 @@
 #include "ecs/InitComponent.hpp"
 #include "ecs/zipper/Zipper.hpp"
 #include "plugin/Hooks.hpp"
-#include "plugin/components/AnimatedSprite.hpp"
 
 void ATH::init_button(Registry::Entity const& e, JsonObject const& obj)
 {
