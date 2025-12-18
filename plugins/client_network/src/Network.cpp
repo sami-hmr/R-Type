@@ -166,7 +166,6 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
 NetworkClient::~NetworkClient()
 {
   _running = false;
-
   if (this->_thread.joinable()) {
     this->_thread.join();
   }

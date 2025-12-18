@@ -34,7 +34,7 @@ struct ClientConnection
 
   ClientConnection(Registry& r, JsonObject const& e)
       : host(get_value_copy<std::string>(r, e, "host").value())
-      , port(get_value_copy<std::size_t>(r, e, "port").value())
+      , port(get_value_copy<int>(r, e, "port").value())
   {
   }
 };

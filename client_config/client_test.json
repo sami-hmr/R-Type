@@ -110,6 +110,181 @@
           }
         }
       ]
+    },
+    {
+      "name": "preconnect",
+      "state": "active",
+      "plugins": [],
+      "entities": [
+        {
+          "moving:Position": {
+            "pos": {
+              "x": 0.0,
+              "y": -0.35
+            }
+          },
+          "ui:Drawable": {},
+          "ui:Text": {
+            "font": "assets/fonts/roboto.ttf",
+            "size": {
+              "width": "60.0%",
+              "height": "30.0%"
+            },
+            "fill_color": {
+              "r": 255,
+              "g": 255,
+              "b": 255,
+              "a": 255
+            },
+            "outline_color": {
+              "r": 0,
+              "g": 0,
+              "b": 0,
+              "a": 255
+            },
+            "outline_thickness": 30.0,
+            "outline": true,
+            "text": "Desole Ilias, on a pas d'inputs..."
+          }
+        },
+        {
+          "moving:Position": {
+            "pos": {
+              "x": 0.0,
+              "y": -0.05
+            }
+          },
+          "ui:Drawable": {},
+          "ui:Text": {
+            "font": "assets/fonts/roboto.ttf",
+            "size": {
+              "width": "80.0%",
+              "height": "30.0%"
+            },
+            "fill_color": {
+              "r": 255,
+              "g": 255,
+              "b": 255,
+              "a": 255
+            },
+            "outline_color": {
+              "r": 0,
+              "g": 0,
+              "b": 0,
+              "a": 255
+            },
+            "outline_thickness": 30.0,
+            "outline": true,
+            "text": "appuis sur ce bouton pour te connecter au server"
+          }
+        },
+        {
+          "ui:AnimatedSprite": {
+            "animations": [
+              {
+                "name": "idle",
+                "texture": "assets/ui/buttons/start.png",
+                "frame_size": {
+                  "x": 410.0,
+                  "y": 121.0
+                },
+                "frame_pos": {
+                  "x": 0.0,
+                  "y": 0.0
+                },
+                "sprite_size": {
+                  "width": "30.0%",
+                  "height": "30.0%"
+                },
+                "direction": {
+                  "x": 0.0,
+                  "y": 0.0
+                },
+                "framerate": 1.0,
+                "nb_frames": 1,
+                "loop": true,
+                "rollback": false
+              },
+              {
+                "name": "hover",
+                "texture": "assets/ui/buttons/start_hover.png",
+                "frame_size": {
+                  "x": 410.0,
+                  "y": 121.0
+                },
+                "frame_pos": {
+                  "x": 0.0,
+                  "y": 0.0
+                },
+                "sprite_size": {
+                  "width": "30.0%",
+                  "height": "30.0%"
+                },
+                "direction": {
+                  "x": 0.0,
+                  "y": 0.0
+                },
+                "framerate": 1.0,
+                "nb_frames": 1,
+                "loop": false,
+                "rollback": false
+              },
+              {
+                "name": "pressed",
+                "texture": "assets/ui/buttons/start.png",
+                "frame_size": {
+                  "x": 410.0,
+                  "y": 121.0
+                },
+                "frame_pos": {
+                  "x": 0.0,
+                  "y": 0.0
+                },
+                "sprite_size": {
+                  "width": "30.0%",
+                  "height": "30.0%"
+                },
+                "direction": {
+                  "x": 0.0,
+                  "y": 0.0
+                },
+                "framerate": 1.0,
+                "nb_frames": 1,
+                "loop": true,
+                "rollback": false
+              }
+            ],
+            "default_animation": "idle"
+          },
+          "ui:Drawable": {},
+          "ath:Clickable": {
+            "to_emit": [
+              {
+                "ClientConnection": {
+                  "host": "0.0.0.0",
+                  "port": 4242
+                }
+              }
+            ]
+          },
+          "moving:Position": {
+            "pos": {
+              "x": 0.0,
+              "y": 0.5
+            }
+          },
+          "collision:Collidable": {
+            "width": 0.2,
+            "height": 0.2,
+            "collision_type": "solid"
+          },
+          "ath:Button": {
+            "hover": false,
+            "toggle": false,
+            "pressed": false
+          }
+        }
+      ]
     }
   ]
 }
