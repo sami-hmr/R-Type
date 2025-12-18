@@ -16,11 +16,11 @@
 #include "plugin/components/Drawable.hpp"
 #include "plugin/components/Health.hpp"
 #include "plugin/components/Position.hpp"
-#include "plugin/events/LoggerEvent.hpp"
+#include "plugin/components/Speed.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
+#include "plugin/events/LoggerEvent.hpp"
 
 static const double deux = 2.0;
-
 
 void AnimatedSprite::update_anim(
     Registry& r, std::chrono::high_resolution_clock::time_point now, int entity)
@@ -59,7 +59,6 @@ void AnimatedSprite::update_anim(
 
 void AnimatedSprite::on_death(Registry& r, const DeathEvent& event)
 {
-
   if (r.is_entity_dying(event.entity)) {
     return;
   }
@@ -70,11 +69,14 @@ void AnimatedSprite::on_death(Registry& r, const DeathEvent& event)
 
   auto& animated_sprites = r.get_components<AnimatedSprite>();
 
-  if (animated_sprites[event.entity].value().animations.contains("death")) {
+  if (animated_sprites[event.entity].value().animations.contains("death")
+      && animated_sprites[event.entity]->current_animation != "death")
+  {
     AnimationData& animdata =
         animated_sprites[event.entity].value().animations.at("death");
     r.emit<PlayAnimationEvent>(
         "death", event.entity, animdata.framerate, false, false);
+    r.remove_component<Speed>(event.entity);
   } else {
     r.emit<DeleteEntity>(event.entity);
   }
@@ -112,17 +114,16 @@ void AnimatedSprite::on_play_animation(Registry& r,
   animData.loop = event.loop;
   animData.rollback = event.rollback;
   animSprite.current_animation = event.name;
-  r.emit<ComponentBuilder>(
-      event.entity,
-      r.get_component_key<AnimatedSprite>(),
-      animSprite.to_bytes());
+  r.emit<ComponentBuilder>(event.entity,
+                           r.get_component_key<AnimatedSprite>(),
+                           animSprite.to_bytes());
 }
 
-void UI::update_anim_system(Registry &r)
+void UI::update_anim_system(Registry& r)
 {
   auto now = r.clock().now();
- 
-  for (auto &&[e, drawable, anim] : ZipperIndex<Drawable, AnimatedSprite>(r)) {
+
+  for (auto&& [e, drawable, anim] : ZipperIndex<Drawable, AnimatedSprite>(r)) {
     if (!drawable.enabled) {
       continue;
     }

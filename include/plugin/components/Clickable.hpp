@@ -27,7 +27,7 @@ struct Clickable
       Clickable,
       [](std::vector<std::pair<std::string, JsonObject>> to_emit)
       { return Clickable(std::move(to_emit)); },
-      parseByteArray(parseBytePair(parseByteString(), parseJsonObject())))
+      parseByteArray(parseBytePair(parseByteString(), parseByteJsonObject())))
 
   DEFAULT_SERIALIZE(vector_to_byte(
       to_emit,

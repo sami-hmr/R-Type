@@ -1,6 +1,83 @@
 {
   "scenes": [
     {
+      "name": "loby",
+      "state": "active",
+      "plugins": [
+        {
+          "name": "logger",
+          "config": {
+            "level": "DEBUG"
+          }
+        },
+        {
+          "name": "cli",
+          "config": {}
+        },
+        {
+          "name": "server_network",
+          "config": {}
+        },
+        {
+          "name": "collision",
+          "config": {}
+        },
+        {
+          "name": "life",
+          "config": {}
+        },
+        {
+          "name": "moving",
+          "config": {}
+        },
+        {
+          "name": "ui",
+          "config": {}
+        },
+        {
+          "name": "weapon",
+          "config": {}
+        },
+        {
+          "name": "mob",
+          "config": {}
+        }
+      ],
+      "entities": [
+        {
+          "ui:Drawable": {},
+          "ui:Background": {
+            "layers": [
+              {
+                "path": "assets/backgrounds/moon/moon_sky.png"
+              },
+              {
+                "path": "assets/backgrounds/moon/moon_back.png"
+              },
+              {
+                "path": "assets/backgrounds/moon/moon_mid.png"
+              },
+              {
+                "path": "assets/backgrounds/moon/moon_front.png"
+              },
+              {
+                "path": "assets/backgrounds/moon/moon_floor.png"
+              }
+            ],
+            "render_type": "STRETCH",
+            "parallax": {
+              "active": true,
+              "speed": {
+                "x": -300.0,
+                "y": 0.0
+              },
+              "framerate": 60.0
+            }
+          }
+        }
+      ]
+    },
+    {
       "name": "game",
       "state": "disabled",
       "plugins": [],

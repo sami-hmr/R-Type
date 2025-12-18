@@ -60,14 +60,14 @@
         {
           "moving:Position": {
             "pos": {
-              "x": 2.0,
+              "x": 1.0,
               "y": -0.3
             }
           },
           "mob:Spawner": {
             "entity_template": "enemy_circle_1",
-            "spawn_interval": 4.0,
-            "max_spawns": 4
+            "spawn_interval": 6.7,
+            "max_spawns": 3
           }
         },
         {

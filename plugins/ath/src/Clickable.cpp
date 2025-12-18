@@ -6,25 +6,6 @@
 #include "plugin/components/Collidable.hpp"
 #include "libs/Rect.hpp"
 
-static void on_click(Registry& r, const MousePressedEvent& event)
-{
-  for (const auto& [draw, clickable, pos, collision] :
-       Zipper<Drawable, Clickable, Position, Collidable>(r))
-  {
-    if (!draw.enabled) {
-      continue;
-    }
-    Rect entity_rect = {.x = pos.pos.x,
-                        .y = pos.pos.y,
-                        .width = collision.width,
-                        .height = collision.height};
-    if (entity_rect.contains(event.position.x, event.position.y)) {
-      for (const auto& [name, obj] : clickable.to_emit) {
-        r.emit(name, obj);
-      }
-    }
-  }
-}
 
 void ATH::init_clickable(Registry::Entity const& e, JsonObject const& obj)
 {
@@ -53,5 +34,4 @@ void ATH::init_clickable(Registry::Entity const& e, JsonObject const& obj)
         }
     }
     init_component<Clickable>(this->_registry.get(), e, emits);
-    SUBSCRIBE_EVENT(MousePressedEvent, { on_click(this->_registry.get(), event); } );
 }

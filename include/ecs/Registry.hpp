@@ -1119,7 +1119,8 @@ public:
     std::function<void()> updater = [this, entity, field_name, source_hook]()
     {
       try {
-        std::string comp = source_hook.substr(0, source_hook.find(':'));
+        std::string comp = source_hook.substr(0, source_hook.find(':')) + "{"
+            + std::to_string(entity) + "}";
         std::string value = source_hook.substr(source_hook.find(':') + 1);
         auto ref = this->get_hooked_value<T>(comp, value);
 
@@ -1150,11 +1151,19 @@ public:
       return ByteArray {};
     };
 
+    std::function<void()> deleter = [this, entity, source_hook]()
+    {
+      std::string hook_name = source_hook.substr(0, source_hook.find(':')) + "{"
+          + std::to_string(entity) + "}";
+      this->_hooked_components.erase(hook_name);
+    };
+
     _bindings.emplace_back(entity,
                            ti,
                            field_name,
                            source_hook,
                            std::move(updater),
+                           std::move(deleter),
                            std::move(serializer));
   }
 
@@ -1964,7 +1973,7 @@ public:
   void register_hook(std::string name, Entity const& e)
   {
     this->_hooked_components.insert_or_assign(
-        name,
+        (name + "{" + std::to_string(e) + "}"),
         [this, e](std::string const& key) -> std::optional<std::any>
         {
           auto& array = this->get_components<T>();
@@ -2519,6 +2528,7 @@ private:
     std::string target_field;  ///< Field name to update
     std::string source_hook;  ///< Hook string (e.g., "player:position")
     std::function<void()> updater;  ///< Copies value from hook to field
+    std::function<void()> deleter;  ///< Cleans up binding
     std::function<ByteArray()>
         serializer;  ///< Serializes component for network sync
 
@@ -2527,12 +2537,14 @@ private:
             std::string tf,
             std::string sh,
             std::function<void()> u,
+            std::function<void()> d,
             std::function<ByteArray()> s)
         : target_entity(e)
         , target_component(ti)
         , target_field(std::move(tf))
         , source_hook(std::move(sh))
         , updater(std::move(u))
+        , deleter(std::move(d))
         , serializer(std::move(s))
     {
     }

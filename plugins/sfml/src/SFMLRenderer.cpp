@@ -483,6 +483,8 @@ void SFMLRenderer::bar_system(Registry& r)
           sf::IntRect({0, 0},
                       {static_cast<int>(texture.getSize().x * fill_percentage),
                        static_cast<int>(texture.getSize().y)}));
+    } else {
+      this->_rectangle.setTexture(nullptr, true);
     }
     this->_rectangle.setSize(sf::Vector2f(size.x * fill_percentage, size.y));
     this->_rectangle.setOutlineColor(sf::Color::Transparent);
