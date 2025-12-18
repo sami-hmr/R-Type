@@ -24,12 +24,7 @@
 #include "plugin/events/ShutdownEvent.hpp"
 
 CLI::CLI(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config)
-    : APlugin("cli",
-              r,
-              l,
-              {"logger"},
-              {},
-              config)
+    : APlugin("cli", r, l, {"logger"}, {}, config)
 {
   SUBSCRIBE_EVENT(ShutdownEvent, { _running = false; })
   SUBSCRIBE_EVENT(CleanupEvent, { _running = false; })
@@ -187,11 +182,8 @@ void CLI::process_command(const std::string& cmd)
       {"ready",
        {.usage = "ready",
         .description = "ready",
-        .handler =
-            [this](std::istringstream&)
-        {
-          _registry.get().emit<WantReady>();
-        }}},
+        .handler = [this](std::istringstream&)
+        { _registry.get().emit<WantReady>(); }}},
       {"spawn",
        {.usage = "spawn",
         .description = "spawn entity with drawing at 0,0",

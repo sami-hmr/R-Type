@@ -127,7 +127,7 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
     this->_registry.get().emit<EventBuilderId>(
         event.client_id,
         "SceneChangeEvent",
-        SceneChangeEvent("ready", "", true).to_bytes());
+        SceneChangeEvent("ready", "", false).to_bytes());
 
     if (std::find_if(this->_player_ready.begin(),
                      this->_player_ready.end(),
