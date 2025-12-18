@@ -1,0 +1,792 @@
+
+
+
+
+
+Network Working Group                                       EPITECH 2025
+Request for Comments: RTYPE-1                              R-Type Project
+Category: Informational                                    December 2025
+
+
+            R-Type Multiplayer Co-op UDP Protocol (RTCP/1.0)
+
+
+Status of This Memo
+
+   This memo provides information for the Internet community describing
+   the R-Type Multiplayer Co-op UDP Protocol (RTCP). It does not
+   specify an Internet standard of any kind. Distribution of this memo
+   is unlimited.
+
+Copyright Notice
+
+   Copyright (C) EPITECH (2025). All Rights Reserved.
+
+Abstract
+
+   This document describes the R-Type Multiplayer Co-op UDP Protocol
+   (RTCP), a binary protocol for real-time multiplayer gaming
+   communication. RTCP uses UDP as its transport protocol and provides
+   mechanisms for server discovery, client authentication, and game
+   state synchronization through an entity-component architecture.
+
+
+Table of Contents
+
+   1. Introduction ....................................................2
+      1.1. Purpose ....................................................2
+      1.2. Requirements Language ......................................2
+      1.3. Terminology ................................................2
+   2. Protocol Overview ...............................................3
+      2.1. Transport Layer ............................................3
+      2.2. Byte Order and Encoding ....................................3
+      2.3. Packet Categories ..........................................3
+   3. Protocol Constants ..............................................4
+   4. Data Type Specifications ........................................5
+      4.1. Primitive Types ............................................5
+      4.2. String Type ................................................6
+      4.3. List Type ..................................................6
+      4.4. Optional Type ..............................................7
+      4.5. Map Type ...................................................7
+   5. Connectionless Packets ..........................................8
+      5.1. Packet Structure ...........................................8
+      5.2. Client-to-Server Commands ..................................8
+         5.2.1. GETINFO Command .......................................9
+         5.2.2. GETSTATUS Command .....................................9
+         5.2.3. GETCHALLENGE Command ..................................9
+         5.2.4. CONNECT Command ......................................10
+      5.3. Server-to-Client Responses ................................10
+         5.3.1. INFORESPONSE .........................................10
+         5.3.2. STATUSRESPONSE .......................................11
+         5.3.3. CHALLENGERESPONSE ....................................12
+         5.3.4. CONNECTRESPONSE ......................................12
+         5.3.5. DISCONNECTRESPONSE ...................................13
+   6. Connected Packets ..............................................14
+      6.1. Packet Structure ..........................................14
+      6.2. Packet Fragmentation ......................................15
+      6.3. Server-to-Client Operations ...............................15
+         6.3.1. SRV_SENDEVENT ........................................15
+         6.3.2. SRV_SENDCOMP .........................................16
+      6.4. Client-to-Server Operations ...............................16
+         6.4.1. CLI_SENDEVENT ........................................16
+   7. Connection Establishment .......................................17
+   8. Security Considerations ........................................18
+   9. IANA Considerations ............................................18
+   10. References ....................................................18
+      10.1. Normative References .....................................18
+      10.2. Informative References ...................................18
+
+
+1. Introduction
+
+1.1. Purpose
+
+   This document describes the R-Type Multiplayer Co-op UDP Protocol
+   (RTCP), designed for real-time multiplayer gaming communication. The
+   protocol supports up to 4 simultaneous players and uses an entity-
+   component system for game state synchronization.
+
+   RTCP is optimized for low-latency communication where occasional
+   packet loss is acceptable. It does not implement reliability
+   mechanisms at the protocol level, leaving such concerns to the
+   application layer.
+
+1.2. Requirements Language
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
+   document are to be interpreted as described in RFC 2119 [RFC2119].
+
+1.3. Terminology
+
+   Entity: A game object identified by a unique 64-bit unsigned integer.
+
+   Component: A data structure associated with an entity, identified by
+   a string name (e.g., "Position", "Velocity").
+
+   Event: A message representing a game state change, identified by a
+   string name (e.g., "PlayerDeath", "EnemySpawn").
+
+   Connectionless Packet: A packet used for server discovery and
+   connection establishment.
+
+   Connected Packet: A packet used for game state synchronization after
+   connection establishment.
+
+   Magic Sequence: A 4-byte identifier marking the beginning of all
+   packets (0x93 0x27 0x48 0x43).
+
+   EOF Marker: A 4-byte identifier marking the end of all packets
+   (0x42 0x67 0xAB 0x01).
+
+
+2. Protocol Overview
+
+2.1. Transport Layer
+
+   RTCP uses UDP (User Datagram Protocol) as its transport protocol.
+   Implementations MUST use UDP port numbers in the range 1024-65535.
+   The default port SHOULD be negotiated out-of-band.
+
+2.2. Byte Order and Encoding
+
+   All multi-byte numeric values MUST be transmitted in network byte
+   order (big-endian). Single-byte values do not require byte order
+   conversion.
+
+   All text strings MUST be encoded in UTF-8 format as specified in
+   RFC 3629 [RFC3629].
+
+2.3. Packet Categories
+
+   RTCP defines two categories of packets:
+
+   Connectionless Packets: Used for server discovery, querying server
+   status, and establishing connections. These packets can be sent
+   without prior connection establishment.
+
+   Connected Packets: Used for game state synchronization after a
+   successful connection. These packets MUST only be sent after
+   receiving a CONNECTRESPONSE.
+
+
+3. Protocol Constants
+
+   The following constants are defined for RTCP:
+
+   MAGIC_SEQUENCE: 0x93 0x27 0x48 0x43 (4 bytes)
+      A unique identifier that MUST appear at the beginning of every
+      packet.
+
+   PROTOCOL_EOF: 0x42 0x67 0xAB 0x01 (4 bytes)
+      A unique identifier that MUST appear at the end of every packet.
+
+   PROTOCOL_VERSION: 1 (1 byte)
+      The current version of the protocol.
+
+   MAX_PLAYERS: 4
+      The maximum number of simultaneous players supported.
+
+   MAX_PACKET_SIZE: 2048 bytes
+      The maximum size of a single packet, including all headers and
+      the EOF marker.
+
+   MAX_PLAYERNAME: 32 bytes
+      The maximum length of a player name string (UTF-8 encoded).
+
+   MAX_HOSTNAME: 64 bytes
+      The maximum length of a server hostname string (UTF-8 encoded).
+
+   MAX_MAPNAME: 32 bytes
+      The maximum length of a map name string (UTF-8 encoded).
+
+
+4. Data Type Specifications
+
+4.1. Primitive Types
+
+   RTCP defines the following primitive data types:
+
+   UINT8: 8-bit unsigned integer (0 to 255)
+      Wire format: 1 byte
+
+   UINT16: 16-bit unsigned integer (0 to 65,535)
+      Wire format: 2 bytes, big-endian
+
+   UINT32: 32-bit unsigned integer (0 to 4,294,967,295)
+      Wire format: 4 bytes, big-endian
+
+   UINT64: 64-bit unsigned integer (0 to 18,446,744,073,709,551,615)
+      Wire format: 8 bytes, big-endian
+
+   INT8: 8-bit signed integer (-128 to 127)
+      Wire format: 1 byte, two's complement
+
+   INT16: 16-bit signed integer (-32,768 to 32,767)
+      Wire format: 2 bytes, big-endian, two's complement
+
+   INT32: 32-bit signed integer (-2,147,483,648 to 2,147,483,647)
+      Wire format: 4 bytes, big-endian, two's complement
+
+   INT64: 64-bit signed integer
+      Wire format: 8 bytes, big-endian, two's complement
+
+   FLOAT32: 32-bit floating point number
+      Wire format: 4 bytes, IEEE 754 single precision, big-endian
+
+   FLOAT64: 64-bit floating point number
+      Wire format: 8 bytes, IEEE 754 double precision, big-endian
+
+   BOOLEAN: Boolean value
+      Wire format: 1 byte (0x00 = false, 0x01 = true)
+
+4.2. String Type
+
+   Strings are encoded as length-prefixed UTF-8 byte sequences:
+
+      0                   1                   2                   3
+      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |                       Length (UINT32)                         |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |                    UTF-8 Bytes (variable)                     |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+   Length: A UINT32 value indicating the number of bytes in the UTF-8
+           encoded string.
+
+   UTF-8 Bytes: The actual string data, encoded in UTF-8. This field
+                MUST NOT include a null terminator.
+
+   Example: The string "Hello" is encoded as:
+      0x00 0x00 0x00 0x05 0x48 0x65 0x6C 0x6C 0x6F
+
+4.3. List Type
+
+   Lists are encoded as count-prefixed sequences:
+
+      0                   1                   2                   3
+      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |                       Count (UINT32)                          |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |                    Element 1 (variable)                       |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |                    Element 2 (variable)                       |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |                         ...                                   |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+   Count: A UINT32 value indicating the number of elements in the list.
+
+   Elements: Each element is serialized according to its type. The
+             total number of elements MUST match the Count field.
+
+4.4. Optional Type
+
+   Optional values use a presence flag followed by the value (if
+   present):
+
+      0                   1                   2                   3
+      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |   Has Value   |         Value (variable, if present)          |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+   Has Value: A BOOLEAN indicating whether a value is present.
+
+   Value: Present only if Has Value is 0x01. The value is serialized
+          according to its type.
+
+4.5. Map Type
+
+   Maps are encoded as lists of key-value pairs:
+
+      0                   1                   2                   3
+      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |                       Count (UINT32)                          |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |                     Key 1 (variable)                          |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |                    Value 1 (variable)                         |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |                     Key 2 (variable)                          |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |                         ...                                   |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+   Count: A UINT32 value indicating the number of key-value pairs.
+
+   Key/Value Pairs: Each key and value is serialized according to its
+                    type. The total number of pairs MUST match the
+                    Count field.
+
+
+5. Connectionless Packets
+
+5.1. Packet Structure
+
+   All connectionless packets follow this structure:
+
+      0                   1                   2                   3
+      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |                    Magic Sequence (0x93274843)                |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |    Opcode     |        Arguments (variable)                   |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |                    Protocol EOF (0x4267AB01)                  |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+   Magic Sequence: MUST be 0x93 0x27 0x48 0x43 (MAGIC_SEQUENCE).
+
+   Opcode: A UINT8 identifying the command or response type.
+
+   Arguments: Variable-length data specific to each command/response.
+
+   Protocol EOF: MUST be 0x42 0x67 0xAB 0x01 (PROTOCOL_EOF).
+
+5.2. Client-to-Server Commands
+
+   Clients send connectionless commands to discover servers, query
+   server status, and establish connections.
+
+5.2.1. GETINFO Command
+
+   Opcode: 0x01
+
+   Description: Requests basic server information.
+
+   Arguments: None
+
+   Wire format:
+      [MAGIC_SEQUENCE] 0x01 [PROTOCOL_EOF]
+
+   The server MUST respond with an INFORESPONSE (Section 5.3.1).
+
+5.2.2. GETSTATUS Command
+
+   Opcode: 0x02
+
+   Description: Requests detailed server status including connected
+                players.
+
+   Arguments: None
+
+   Wire format:
+      [MAGIC_SEQUENCE] 0x02 [PROTOCOL_EOF]
+
+   The server MUST respond with a STATUSRESPONSE (Section 5.3.2).
+
+5.2.3. GETCHALLENGE Command
+
+   Opcode: 0x03
+
+   Description: Requests a challenge token for authentication.
+
+   Arguments: None
+
+   Wire format:
+      [MAGIC_SEQUENCE] 0x03 [PROTOCOL_EOF]
+
+   The server MUST respond with a CHALLENGERESPONSE (Section 5.3.3).
+
+5.2.4. CONNECT Command
+
+   Opcode: 0x04
+
+   Description: Initiates connection with challenge response and player
+                information.
+
+   Arguments:
+      Challenge (UINT32): The challenge value received from
+                          CHALLENGERESPONSE.
+      Player Name (String): The player's display name (max 32 bytes).
+
+   Wire format:
+      [MAGIC_SEQUENCE] 0x04 [Challenge] [Player Name] [PROTOCOL_EOF]
+
+   The server MUST respond with either CONNECTRESPONSE (Section 5.3.4)
+   or DISCONNECTRESPONSE (Section 5.3.5).
+
+5.3. Server-to-Client Responses
+
+5.3.1. INFORESPONSE
+
+   Opcode: 0x05
+
+   Description: Provides basic server information.
+
+   Arguments:
+      Hostname (String): Server display name (max 64 bytes).
+      Mapname (String): Current map/level name (max 32 bytes).
+      Gametype (UINT8): Game mode (0x01 = SOLO, 0x02 = COOP).
+      Max Players (UINT32): Maximum number of players (typically 4).
+      Protocol Version (UINT8): Protocol version (currently 1).
+
+   Wire format:
+      [MAGIC_SEQUENCE] 0x05 [Hostname] [Mapname] [Gametype]
+      [Max Players] [Protocol Version] [PROTOCOL_EOF]
+
+   Example:
+      [MAGIC_SEQUENCE] 0x05
+      [0x00 0x00 0x00 0x0D "R-Type Server"]
+      [0x00 0x00 0x00 0x06 "level1"]
+      0x02
+      [0x00 0x00 0x00 0x04]
+      0x01
+      [PROTOCOL_EOF]
+
+5.3.2. STATUSRESPONSE
+
+   Opcode: 0x06
+
+   Description: Provides detailed server status including connected
+                players.
+
+   Arguments:
+      Hostname (String): Server display name (max 64 bytes).
+      Mapname (String): Current map/level name (max 32 bytes).
+      Gametype (UINT8): Game mode (0x01 = SOLO, 0x02 = COOP).
+      Max Players (UINT32): Maximum number of players.
+      Protocol Version (UINT8): Protocol version.
+      Player List: For each connected player:
+         Score (UINT32): Player's current score.
+         Ping (UINT8): Player's ping in milliseconds.
+         Name (String): Player's display name.
+
+   Wire format:
+      [MAGIC_SEQUENCE] 0x06 [Hostname] [Mapname] [Gametype]
+      [Max Players] [Protocol Version]
+      [Score1] [Ping1] [Name1]
+      [Score2] [Ping2] [Name2]
+      ...
+      [PROTOCOL_EOF]
+
+5.3.3. CHALLENGERESPONSE
+
+   Opcode: 0x07
+
+   Description: Provides a challenge token for connection
+                authentication.
+
+   Arguments:
+      Challenge (UINT32): A cryptographically random value generated by
+                          the server. Valid range: 1 to 4,294,967,295.
+
+   Wire format:
+      [MAGIC_SEQUENCE] 0x07 [Challenge] [PROTOCOL_EOF]
+
+   The challenge value MUST be unique for each GETCHALLENGE request and
+   SHOULD be generated using a cryptographically secure random number
+   generator.
+
+5.3.4. CONNECTRESPONSE
+
+   Opcode: 0x08
+
+   Description: Acknowledges successful connection and assigns a client
+                ID.
+
+   Arguments:
+      Client ID (UINT8): Player slot assigned to this client (0-3).
+      Server ID (UINT32): Unique server instance identifier.
+
+   Wire format:
+      [MAGIC_SEQUENCE] 0x08 [Client ID] [Server ID] [PROTOCOL_EOF]
+
+   Upon receiving this response, the client MUST transition to
+   connected mode and MAY begin sending connected packets.
+
+5.3.5. DISCONNECTRESPONSE
+
+   Opcode: 0x09
+
+   Description: Notifies client of connection refusal or disconnection.
+
+   Arguments:
+      Error Message (String): Reason for disconnection (max 32 bytes).
+
+   Wire format:
+      [MAGIC_SEQUENCE] 0x09 [Error Message] [PROTOCOL_EOF]
+
+   Common error messages:
+      "Server full"
+      "Server shutting down"
+      "Protocol version mismatch"
+      "Invalid challenge"
+
+   Upon receiving this response, the client MUST NOT send connected
+   packets.
+
+
+6. Connected Packets
+
+6.1. Packet Structure
+
+   All connected packets follow this structure:
+
+      0                   1                   2                   3
+      0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |                    Magic Sequence (0x93274843)                |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |                       Sequence Number                         |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |                         Acknowledge                           |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     | End of Content|            Payload (variable)                 |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     |                    Protocol EOF (0x4267AB01)                  |
+     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+
+   Magic Sequence: MUST be 0x93 0x27 0x48 0x43 (MAGIC_SEQUENCE).
+
+   Sequence Number: A UINT32 that MUST increment for each packet sent.
+                    Starts at 0.
+
+   Acknowledge: A UINT32 currently unused. MUST be set to 0.
+
+   End of Content: A BOOLEAN indicating whether this is the final
+                   fragment (0x01) or more fragments follow (0x00).
+
+   Payload: Variable-length data containing one or more operations.
+
+   Protocol EOF: MUST be 0x42 0x67 0xAB 0x01 (PROTOCOL_EOF).
+
+6.2. Packet Fragmentation
+
+   If a message exceeds MAX_PACKET_SIZE (2048 bytes), it MUST be
+   fragmented:
+
+   1. The message is split into multiple fragments.
+   2. Each fragment uses the SAME sequence number.
+   3. All fragments except the last MUST set End of Content to 0x00.
+   4. The final fragment MUST set End of Content to 0x01.
+   5. The receiver MUST reassemble fragments with matching sequence
+      numbers in order.
+
+6.3. Server-to-Client Operations
+
+   Server operations are identified by an opcode in the payload.
+
+6.3.1. SRV_SENDEVENT
+
+   Opcode: 0x01
+
+   Description: Sends an event from server to client.
+
+   Payload format:
+      0x01 [Event ID (String)] [Event Data (variable)]
+
+   Event ID: A string identifying the event type (e.g., "PlayerDeath",
+             "LevelComplete").
+
+   Event Data: Application-specific byte sequence. The format depends
+               on the Event ID.
+
+   Example:
+      0x01
+      [0x00 0x00 0x00 0x0B "PlayerDeath"]
+      [application-specific data]
+
+6.3.2. SRV_SENDCOMP
+
+   Opcode: 0x02
+
+   Description: Sends component data for a specific entity.
+
+   Payload format:
+      0x02 [Entity ID (UINT64)] [Component ID (String)]
+      [Component Data (variable)]
+
+   Entity ID: A UINT64 identifying the entity.
+
+   Component ID: A string identifying the component type (e.g.,
+                 "Position", "Velocity").
+
+   Component Data: Application-specific byte sequence. The format
+                   depends on the Component ID.
+
+   Example:
+      0x02
+      [0x00 0x00 0x00 0x00 0x00 0x00 0x00 0x2A]  // Entity 42
+      [0x00 0x00 0x00 0x08 "Position"]
+      [application-specific position data]
+
+6.4. Client-to-Server Operations
+
+6.4.1. CLI_SENDEVENT
+
+   Opcode: 0x01
+
+   Description: Sends an event from client to server.
+
+   Payload format:
+      0x01 [Event ID (String)] [Event Data (variable)]
+
+   Event ID: A string identifying the event type (e.g., "PlayerMove",
+             "FireWeapon").
+
+   Event Data: Application-specific byte sequence. The format depends
+               on the Event ID.
+
+   Example:
+      0x01
+      [0x00 0x00 0x00 0x0A "PlayerMove"]
+      [application-specific movement data]
+
+
+7. Connection Establishment
+
+   The connection establishment process follows these steps:
+
+   1. Client sends GETCHALLENGE to server.
+
+   2. Server responds with CHALLENGERESPONSE containing a random
+      challenge value.
+
+   3. Client sends CONNECT with the challenge value and player name.
+
+   4. Server validates the challenge and responds with either:
+      - CONNECTRESPONSE (success): Client transitions to connected mode.
+      - DISCONNECTRESPONSE (failure): Connection is rejected.
+
+   5. After receiving CONNECTRESPONSE, the client and server exchange
+      connected packets for game synchronization.
+
+   Example message flow:
+
+      Client                                      Server
+        |                                           |
+        |-- GETCHALLENGE -------------------------->|
+        |                                           |
+        |<- CHALLENGERESPONSE (challenge=12345) ---|
+        |                                           |
+        |-- CONNECT (challenge=12345, name="Bob") ->|
+        |                                           |
+        |<- CONNECTRESPONSE (client_id=0) ---------|
+        |                                           |
+        |<==== Connected Packets Exchange ========>|
+        |                                           |
+
+
+8. Security Considerations
+
+   Challenge-Response Authentication: The protocol uses a simple
+   challenge-response mechanism to prevent replay attacks. However,
+   this does not provide strong authentication. Implementations SHOULD
+   consider additional authentication mechanisms for production use.
+
+   No Encryption: The protocol does not provide encryption. All data is
+   transmitted in clear text. Implementations requiring confidentiality
+   SHOULD use a secure transport layer such as DTLS.
+
+   Denial of Service: The protocol is vulnerable to various DoS
+   attacks, including challenge exhaustion and connection flooding.
+   Implementations SHOULD implement rate limiting and connection limits.
+
+   UDP Vulnerabilities: As the protocol uses UDP, it inherits all
+   security considerations of UDP, including IP spoofing. Implementors
+   SHOULD be aware of these limitations.
+
+
+9. IANA Considerations
+
+   This document has no IANA actions. The protocol uses application-
+   specific constants and does not require IANA registration.
+
+
+10. References
+
+10.1. Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119, March 1997.
+
+   [RFC3629]  Yergeau, F., "UTF-8, a transformation format of ISO
+              10646", STD 63, RFC 3629, November 2003.
+
+   [RFC768]   Postel, J., "User Datagram Protocol", STD 6, RFC 768,
+              August 1980.
+
+   [IEEE754]  IEEE, "IEEE Standard for Floating-Point Arithmetic",
+              IEEE 754-2008, August 2008.
+
+10.2. Informative References
+
+   [RFC1149]  Waitzman, D., "Standard for the transmission of IP
+              datagrams on avian carriers", RFC 1149, April 1990.
+
+
+Appendix A. Packet Examples
+
+A.1. GETINFO Request
+
+   Hexadecimal dump:
+
+   0000  93 27 48 43 01 42 67 ab  01                       .'HC.Bg..
+
+   Field breakdown:
+   - Magic Sequence: 93 27 48 43
+   - Opcode: 01 (GETINFO)
+   - Protocol EOF: 42 67 ab 01
+
+A.2. CONNECTRESPONSE
+
+   Hexadecimal dump:
+
+   0000  93 27 48 43 08 00 12 34  56 78 42 67 ab 01        .'HC...4Vx...
+
+   Field breakdown:
+   - Magic Sequence: 93 27 48 43
+   - Opcode: 08 (CONNECTRESPONSE)
+   - Client ID: 00
+   - Server ID: 12 34 56 78
+   - Protocol EOF: 42 67 ab 01
+
+A.3. Connected Packet with SRV_SENDEVENT
+
+   Hexadecimal dump:
+
+   0000  93 27 48 43 00 00 00 01  00 00 00 00 01 01 00 00  .'HC............
+   0010  00 04 54 65 73 74 42 67  ab 01                    ..TestBg..
+
+   Field breakdown:
+   - Magic Sequence: 93 27 48 43
+   - Sequence Number: 00 00 00 01 (1)
+   - Acknowledge: 00 00 00 00 (0)
+   - End of Content: 01
+   - Opcode: 01 (SRV_SENDEVENT)
+   - Event ID Length: 00 00 00 04 (4 bytes)
+   - Event ID: 54 65 73 74 ("Test")
+   - Event Data: (empty)
+   - Protocol EOF: 42 67 ab 01
+
+
+Appendix B. Implementation Notes
+
+B.1. Reference Implementation
+
+   A reference implementation in C++ is available in the R-Type project
+   repository:
+
+   - include/plugin/Byte.hpp: Serialization utilities
+   - plugins/client_network/: Client implementation
+   - plugins/server_network/: Server implementation
+
+   Implementers in other languages SHOULD follow this specification
+   rather than the C++ implementation details.
+
+B.2. Common Pitfalls
+
+   Byte Order: Ensure all multi-byte values use big-endian byte order.
+   Many languages default to little-endian on x86/x64 architectures.
+
+   String Encoding: Strings MUST be UTF-8 encoded. ASCII-only strings
+   are a valid subset of UTF-8.
+
+   Packet Size: Implementations MUST respect the 2048-byte maximum
+   packet size and implement fragmentation for larger messages.
+
+   EOF Marker: Do not forget to append the Protocol EOF marker to every
+   packet.
+
+
+Authors' Addresses
+
+   EPITECH R-Type Team
+   EPITECH
+   France
+
+   Email: r-type@epitech.eu
+
+
+Full Copyright Statement
+
+   Copyright (C) EPITECH (2025). All Rights Reserved.
+
+   This document may be reproduced and distributed in whole or in part
+   for educational purposes, provided that this copyright notice is
+   included on all such copies and derivative works.

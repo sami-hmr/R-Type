@@ -1,0 +1,160 @@
+{
+  "scenes": [
+    {
+      "name": "loby",
+      "state": "active",
+      "plugins": [
+        {
+          "name": "logger",
+          "config": {
+            "level": "DEBUG"
+          }
+        },
+        {
+          "name": "cli",
+          "config": {}
+        },
+        {
+          "name": "server_network",
+          "config": {}
+        },
+        {
+          "name": "collision",
+          "config": {}
+        },
+        {
+          "name": "life",
+          "config": {}
+        },
+        {
+          "name": "moving",
+          "config": {}
+        },
+        {
+          "name": "ui",
+          "config": {}
+        },
+        {
+          "name": "weapon",
+          "config": {}
+        },
+        {
+          "name": "mob",
+          "config": {}
+        }
+      ],
+      "entities": []
+      // {
+      //   "moving:Position": {
+      //     "pos": {
+      //       "x": 0.5,
+      //       "y": -0.3
+      //     }
+      //   },
+      //   "ui:Drawable": {},
+      //   "ui:Sprite": {
+      //     "texture": "assets/enemy.png",
+      //     "size": {
+      //       "width": "20.0%",
+      //       "height": "20.0%"
+      //     }
+      //   },
+      //   "collision:Collidable": {
+      //     "width": 0.1,
+      //     "height": 0.1,
+      //     "collision_type": "Solid"
+      //   },
+      //   "life:Health": {
+      //     "current": 5.0,
+      //     "max": 100.0
+      //   },
+      //   "life:Team": {
+      //     "name": "test"
+      //   }
+      // },
+      // {
+      //   "moving:Position": {
+      //     "pos": {
+      //       "x": -0.5,
+      //       "y": 0.0
+      //     }
+      //   },
+      //   "ui:Drawable": {},
+      //   "ui:Text": {
+      //     "font": "assets/fonts/roboto.ttf",
+      //     "size": {
+      //       "width": "100.0%",
+      //       "height": "100.0%"
+      //     },
+      //     "fill_color": {
+      //       "r": 255,
+      //       "g": 0,
+      //       "b": 255,
+      //       "a": 255
+      //     },
+      //     "outline_color": {
+      //       "r": 0,
+      //       "g": 0,
+      //       "b": 0,
+      //       "a": 255
+      //     },
+      //     "outline_thickness": 30.0,
+      //     "outline": true,
+      //     "text": "LOBBY: get ready with R"
+      //   },
+      //   "actions:ActionTrigger": {
+      //     "trigger": {
+      //       "type": "KeyPressed",
+      //       "params": {
+      //         "key": "R"
+      //       }
+      //     },
+      //     "to_emit": [
+      //       {
+      //         "name": "WantReady",
+      //         "params": {}
+      //       }
+      //     ]
+      //   }
+      // }
+    },
+    {
+      "name": "ready",
+      "state": "disabled",
+      "plugins": [],
+      "entities": [
+        {
+          "moving:Position": {
+            "pos": {
+              "x": 0.0,
+              "y": 0.5
+            }
+          },
+          "ui:Drawable": {},
+          "ui:Text": {
+            "font": "assets/fonts/roboto.ttf",
+            "size": {
+              "width": "30.0%",
+              "height": "30.0%"
+            },
+            "fill_color": {
+              "r": 255,
+              "g": 255,
+              "b": 255,
+              "a": 255
+            },
+            "outline_color": {
+              "r": 0,
+              "g": 0,
+              "b": 0,
+              "a": 255
+            },
+            "outline_thickness": 30.0,
+            "outline": true,
+            "text": "Ready"
+          }
+        }
+      ]
+    }
+  ]
+}

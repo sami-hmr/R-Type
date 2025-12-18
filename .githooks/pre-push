@@ -1,0 +1,31 @@
+#!/bin/bash
+
+if command -v clang-format-18 &>/dev/null; then
+    FORMAT_CMD="clang-format-18"
+elif command -v clang-format &>/dev/null; then
+    FORMAT_CMD="clang-format"
+else
+    echo "Error: clang-format not found. Please install clang-format-18."
+    echo "On Ubuntu/Debian: sudo apt-get install clang-format-18"
+    echo "On macOS: brew install clang-format"
+    exit 1
+fi
+
+if ! cmake -D FORMAT_COMMAND="$FORMAT_CMD" -P cmake/lint.cmake 2>&1; then
+    echo ""
+    echo "=========================================="
+    echo "ERROR: Code formatting check failed!"
+    echo "=========================================="
+    echo ""
+    echo "Please fix the formatting issues before pushing."
+    echo "To auto-fix formatting, run:"
+    echo "  cmake --build build --target format-fix"
+    echo ""
+    echo "Or use the provided alias:"
+    echo "  source aliases.sh && format-fix"
+    echo ""
+    exit 1
+fi
+
+echo "Code formatting check passed!"
+exit 0

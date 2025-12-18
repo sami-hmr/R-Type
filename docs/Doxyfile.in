@@ -1,0 +1,53 @@
+# Configuration for Doxygen for use with CMake
+# Only options that deviate from the default are included
+# To create a new Doxyfile containing all available options, call `doxygen -g`
+
+# Get Project name and version from CMake
+PROJECT_NAME = "@PROJECT_NAME@"
+PROJECT_NUMBER = "@PROJECT_VERSION@"
+
+# Add sources
+INPUT = "@PROJECT_SOURCE_DIR@/README.md" "@PROJECT_SOURCE_DIR@/include" "@PROJECT_SOURCE_DIR@/src" "@PROJECT_SOURCE_DIR@/docs/pages" "@PROJECT_SOURCE_DIR@/plugins/"
+EXTRACT_ALL = YES
+RECURSIVE = YES
+OUTPUT_DIRECTORY = "@DOXYGEN_OUTPUT_DIRECTORY@"
+
+# Use the README as a main page
+USE_MDFILE_AS_MAINPAGE = "@PROJECT_SOURCE_DIR@/README.md"
+
+# Set relative include paths
+FULL_PATH_NAMES = YES
+STRIP_FROM_PATH = "@PROJECT_SOURCE_DIR@"
+STRIP_FROM_INC_PATH =
+
+# Generate HTML documentation
+GENERATE_HTML = YES
+GENERATE_XML = YES
+GENERATE_LATEX = NO
+XML_PROGRAMLISTING = YES
+CREATE_SUBDIRS = NO
+HTML_OUTPUT = html
+
+# Include all directories, files and namespaces in the documentation
+SHOW_FILES = YES
+SHOW_NAMESPACES = YES
+
+# Graph generation options
+HAVE_DOT = YES
+DOT_NUM_THREADS = 0
+CLASS_DIAGRAMS = YES
+CLASS_GRAPH = YES
+COLLABORATION_GRAPH = YES
+GROUP_GRAPHS = YES
+UML_LOOK = NO
+TEMPLATE_RELATIONS = YES
+INCLUDE_GRAPH = YES
+INCLUDED_BY_GRAPH = YES
+CALL_GRAPH = NO
+CALLER_GRAPH = NO
+GRAPHICAL_HIERARCHY = YES
+DIRECTORY_GRAPH = YES
+DOT_IMAGE_FORMAT = svg
+INTERACTIVE_SVG = YES
+DOT_GRAPH_MAX_NODES = 100
+MAX_DOT_GRAPH_DEPTH = 0

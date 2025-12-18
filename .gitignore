@@ -1,41 +1,42 @@
-# Prerequisites
-*.d
+**/.DS_Store
+.idea/
+.vs/
+.vscode/
+build/
+cmake-build-*/
+prefix/
+CMakeLists.txt.user
+compile_commands.json
+compile_flags.txt
+activate.fish
+*.so*
+r-type
+r-type_test
+**/*.profraw
+coverage.profdata
+coverage.info
+coverage_html/
+.clangd
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+# Documentation files
+docs/html/
+docs/xml/
+docs/Doxyfile
 
-# Precompiled Headers
-*.gch
-*.pch
-
-# Linker files
-*.ilk
-
-# Debugger Files
-*.pdb
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
+rtype.log
+vcpkg
+.cache
 *.a
-*.lib
 
-# Executables
-*.exe
-*.out
-*.app
+docs/html
+docs/xml
+docs/Doxyfile
+triplets
+activate.sh
+include/Vector2D.hpp
+test.cpp
+a.out
+aliases.fish
+Testing
 
-# debug information files
-*.dwo
+*.log

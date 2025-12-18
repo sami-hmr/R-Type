@@ -1,0 +1,138 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 14,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "vcpkg",
+      "hidden": true,
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+    },
+    {
+      "name": "dev",
+      "displayName": "Development",
+      "inherits": "vcpkg",
+      "description": "Development build",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_STANDARD": "23",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "r-type_DEVELOPER_MODE": "ON",
+        "BUILD_TESTING": "OFF"
+      }
+    },
+    {
+      "name": "tests",
+      "displayName": "Development",
+      "inherits": "vcpkg",
+      "description": "Development build with tests and coverage",
+      "binaryDir": "${sourceDir}/build/tests",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_STANDARD": "23",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "r-type_DEVELOPER_MODE": "ON",
+        "BUILD_TESTING": "ON",
+        "ENABLE_COVERAGE": "ON",
+        "CMAKE_CXX_FLAGS": "-O0 -g --coverage -fPIC",
+        "VCPKG_MANIFEST_FEATURES": "tests"
+      }
+    },
+    {
+      "name": "docs",
+      "displayName": "Documentation",
+      "description": "Build with documentation generation enabled",
+      "inherits": "vcpkg",
+      "binaryDir": "${sourceDir}/build/docs",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_STANDARD": "23",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "r-type_DEVELOPER_MODE": "ON",
+        "BUILD_DOCS": "ON",
+        "BUILD_TESTING": "OFF"
+      }
+    },
+    {
+      "name": "release",
+      "displayName": "Release",
+      "description": "Release build",
+      "inherits": "vcpkg",
+      "binaryDir": "${sourceDir}/build/release",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_STANDARD": "23",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "r-type_DEVELOPER_MODE": "OFF"
+      }
+    },
+    {
+      "name": "release-tek",
+      "displayName": "Release epitech",
+      "description": "DEUUUUUUUX binaires",
+      "inherits": "vcpkg",
+      "binaryDir": "${sourceDir}/build/release-tek",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_CXX_STANDARD": "23",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "r-type_DEVELOPER_MODE": "OFF",
+        "BUILD_EPITECH_BINARIES": "ON"
+      }
+    },
+    {
+      "name": "clang-tidy",
+      "displayName": "Clang-Tidy",
+      "description": "Development build with clang-tidy enabled",
+      "inherits": "dev",
+      "cacheVariables": {
+        "CMAKE_CXX_CLANG_TIDY": "clang-tidy;--header-filter=^${sourceDir}/"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "dev-build",
+      "configurePreset": "dev"
+    },
+    {
+      "name": "tests-build",
+      "configurePreset": "tests"
+    },
+    {
+      "name": "docs-build",
+      "configurePreset": "docs"
+    },
+    {
+      "name": "release-build",
+      "configurePreset": "release"
+    },
+    {
+      "name": "release-tek-build",
+      "configurePreset": "release-tek"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "dev-test",
+      "configurePreset": "tests",
+      "output": {
+        "outputOnFailure": true
+      }
+    }
+  ]
+}

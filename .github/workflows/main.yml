@@ -1,0 +1,206 @@
+name: CI - Production Branch
+
+on:
+  push:
+    branches:
+    - main
+
+  pull_request:
+    branches:
+    - main
+
+jobs:
+  lint:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Install clang-format-18
+      run: |
+        sudo apt-get update -q
+        sudo apt-get install -y -q clang-format-18
+
+    - name: Check formatting with clang-format
+      id: lint-check
+      run: cmake -P cmake/lint.cmake
+
+  build-release:
+    needs: [lint]
+    runs-on: ubuntu-24.04
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+
+    - name: Install latest CMake and Ninja
+      uses: lukka/get-cmake@latest
+
+    - name: Install Clang 18 and dependencies
+      run: |
+        sudo apt-get update -q
+        sudo apt-get install -y -q \
+          clang-18 libc++-18-dev libc++abi-18-dev ccache \
+          libx11-dev libxrandr-dev libxcursor-dev libxi-dev \
+          libudev-dev libgl1-mesa-dev
+        sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
+        sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
+
+    - name: Setup vcpkg
+      uses: lukka/run-vcpkg@v11
+      with:
+        vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+        vcpkgGitCommitId: 'ae8fa5ae5e6162a88e412618245809ed2aa579d9'
+
+    - name: Setup ccache
+      uses: hendrikmuhs/ccache-action@v1.2
+      with:
+        key: ${{ github.job }}-${{ runner.os }}
+
+    - name: Verify C++ compiler version
+      run: clang++ --version
+
+    - name: Run CMake with preset (configure, build)
+      uses: lukka/run-cmake@v10
+      with:
+        configurePreset: 'release'
+        buildPreset: 'release-build'
+      env:
+        CC: clang-18
+        CXX: clang++-18
+        CMAKE_C_COMPILER_LAUNCHER: ccache
+        CMAKE_CXX_COMPILER_LAUNCHER: ccache
+
+  coverage:
+    needs: [lint]
+    runs-on: ubuntu-24.04
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+
+    - name: Install latest CMake and Ninja
+      uses: lukka/get-cmake@latest
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update -q
+        sudo apt-get install -y -q \
+          clang-18 llvm-18 libc++-18-dev libc++abi-18-dev lcov ccache \
+          libx11-dev libxrandr-dev libxcursor-dev libxi-dev \
+          libudev-dev libgl1-mesa-dev
+        sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
+        sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
+        sudo update-alternatives --install /usr/bin/llvm-cov llvm-cov /usr/bin/llvm-cov-18 100
+
+    - name: Setup vcpkg
+      uses: lukka/run-vcpkg@v11
+      with:
+        vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+        vcpkgGitCommitId: 'ae8fa5ae5e6162a88e412618245809ed2aa579d9'
+
+    - name: Setup ccache
+      uses: hendrikmuhs/ccache-action@v1.2
+      with:
+        key: ${{ github.job }}-${{ runner.os }}
+
+    - name: Verify C++ compiler version
+      run: clang++ --version
+
+    - name: Run CMake with preset (configure and build)
+      uses: lukka/run-cmake@v10
+      with:
+        configurePreset: 'tests'
+        buildPreset: 'tests-build'
+      env:
+        CC: clang-18
+        CXX: clang++-18
+        CMAKE_C_COMPILER_LAUNCHER: ccache
+        CMAKE_CXX_COMPILER_LAUNCHER: ccache
+
+    - name: Generate coverage report
+      run: cmake --build build/tests --target coverage
+
+    - name: Upload coverage to codecov
+      uses: codecov/codecov-action@v4
+      with:
+        file: build/tests/coverage.info
+        token: ${{ secrets.CODECOV_TOKEN }}
+      continue-on-error: true
+
+  docs:
+    needs: [build-and-test]
+    runs-on: ubuntu-24.04
+
+    if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
+
+    permissions:
+      contents: write
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+
+    - name: Install latest CMake and Ninja
+      uses: lukka/get-cmake@latest
+
+    - name: Install Clang 18 and Doxygen
+      run: |
+        sudo apt-get update -q
+        sudo apt-get install -y -q \
+          clang-18 libc++-18-dev libc++abi-18-dev doxygen ccache \
+          libx11-dev libxrandr-dev libxcursor-dev libxi-dev \
+          libudev-dev libgl1-mesa-dev
+        sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
+        sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
+
+    - name: Setup vcpkg
+      uses: lukka/run-vcpkg@v11
+      with:
+        vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+        vcpkgGitCommitId: 'ae8fa5ae5e6162a88e412618245809ed2aa579d9'
+
+    - name: Setup ccache
+      uses: hendrikmuhs/ccache-action@v1.2
+      with:
+        key: ${{ github.job }}-${{ runner.os }}
+
+    - name: Run CMake with preset (configure)
+      uses: lukka/run-cmake@v10
+      with:
+        configurePreset: 'docs'
+      env:
+        CC: clang-18
+        CXX: clang++-18
+        CMAKE_C_COMPILER_LAUNCHER: ccache
+        CMAKE_CXX_COMPILER_LAUNCHER: ccache
+
+    - name: Build docs
+      run: cmake --preset=docs && cmake --build build/docs --preset=docs-build && cmake --build build/docs --target docs-run
+
+    - name: Deploy docs to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: docs/html
+      continue-on-error: true
+
+  push_to_mirror:
+    runs-on: ubuntu-latest
+    name: push_to_mirror
+    steps:
+      - name: push_to_mirror
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pixta-dev/repository-mirroring-action@v1
+        with:
+          target_repo_url: "git@github.com:EpitechPGE3-2025/G-CPP-500-PAR-5-2-rtype-5.git"
+          ssh_private_key: ${{ secrets.GIT_SSH_PRIVATE_KEY }}
+
