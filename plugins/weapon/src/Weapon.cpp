@@ -4,6 +4,7 @@
 
 #include "NetworkShared.hpp"
 #include "ecs/EmitEvent.hpp"
+#include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/Scenes.hpp"
 #include "ecs/zipper/Zipper.hpp"
@@ -18,9 +19,10 @@
 #include "plugin/events/IoEvents.hpp"
 #include "plugin/events/WeaponEvent.hpp"
 
-Weapon::Weapon(Registry& r, EntityLoader& l)
+Weapon::Weapon(Registry& r, EventManager &em, EntityLoader& l)
     : APlugin("weapon",
               r,
+              em,
               l,
               {"moving", "life"},
               {COMP_INIT(BasicWeapon, BasicWeapon, init_basic_weapon)})
@@ -64,7 +66,7 @@ void Weapon::on_fire(Registry& r, const FireBullet& e)
   if (!weapon.update_basic_weapon(now)) {
     return;
   }
-  this->_registry.get().emit<LoadEntityTemplate>(
+  this->_event_manager.get().emit<LoadEntityTemplate>(
       weapon.bullet_type,
       LoadEntityTemplate::Additional {
           {this->_registry.get().get_component_key<Position>(), pos.to_bytes()},
@@ -92,8 +94,8 @@ void Weapon::basic_weapon_system(
 
 extern "C"
 {
-void* entry_point(Registry& r, EntityLoader& l)
+void* entry_point(Registry& r, EventManager &em, EntityLoader& l)
 {
-  return new Weapon(r, l);
+  return new Weapon(r, em, l);
 }
 }

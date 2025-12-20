@@ -13,7 +13,7 @@
 class ATH : public APlugin
 {
 public:
-  ATH(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config);
+  ATH(Registry& r, EventManager &em, EntityLoader& l, std::optional<JsonObject> const& config);
 
   void init_bar(Registry::Entity& e, const JsonObject& obj);
 

@@ -22,6 +22,7 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Mouse.hpp>
 
+#include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/Scenes.hpp"
 #include "ecs/SparseArray.hpp"
@@ -122,8 +123,8 @@ static sf::Texture gen_placeholder()
   return sf::Texture(image);
 }
 
-SFMLRenderer::SFMLRenderer(Registry& r, EntityLoader& l)
-    : APlugin("sfml", r, l, {"moving", "ath", "ui", "collision"}, {})
+SFMLRenderer::SFMLRenderer(Registry& r, EventManager &em, EntityLoader& l)
+    : APlugin("sfml", r, em, l, {"moving", "ath", "ui", "collision"}, {})
 {
   _window =
       sf::RenderWindow(sf::VideoMode(window_size), "R-Type - SFML Renderer");
@@ -225,7 +226,7 @@ void SFMLRenderer::mouse_events(const sf::Event& events)
       MouseButton button = MOUSEBUTTONMAP.at(mouse_pressed->button);
       Vector2D position = screen_to_world(mouse_pos);
       MousePressedEvent mouse_event(position, button);
-      this->_registry.get().emit<MousePressedEvent>(mouse_event);
+      this->_event_manager.get().emit<MousePressedEvent>(mouse_event);
     }
   }
   if (mouse_released != nullptr) {
@@ -233,7 +234,7 @@ void SFMLRenderer::mouse_events(const sf::Event& events)
       MouseButton button = MOUSEBUTTONMAP.at(mouse_released->button);
       Vector2D position = screen_to_world(mouse_pos);
       MouseReleasedEvent mouse_event(position, button);
-      this->_registry.get().emit<MouseReleasedEvent>(mouse_event);
+      this->_event_manager.get().emit<MouseReleasedEvent>(mouse_event);
     }
   }
 }
@@ -257,7 +258,7 @@ void SFMLRenderer::handle_events()
   while (const std::optional event = _window.pollEvent()) {
     if (event->is<sf::Event::Closed>()) {
       _window.close();
-      _registry.get().emit<ShutdownEvent>("Window closed", 0);
+      _event_manager.get().emit<ShutdownEvent>("Window closed", 0);
     }
     this->mouse_events(event.value());
     if (const auto* key_pressed = event->getIf<sf::Event::KeyPressed>()) {
@@ -287,10 +288,10 @@ void SFMLRenderer::handle_events()
   }
   if (!_key_pressed.key_pressed.empty() || _key_pressed.key_unicode.has_value())
   {
-    _registry.get().emit<KeyPressedEvent>(_key_pressed);
+    _event_manager.get().emit<KeyPressedEvent>(_key_pressed);
   }
   if (!_key_released.key_released.empty()) {
-    _registry.get().emit<KeyReleasedEvent>(_key_released);
+    _event_manager.get().emit<KeyReleasedEvent>(_key_released);
   }
 }
 
@@ -520,13 +521,13 @@ void SFMLRenderer::button_system(Registry& r)
     if (entity_rect.contains(mouse_pos.x, mouse_pos.y)) {
       if (!button.hovered) {
         button.hovered = true;
-        r.emit<PlayAnimationEvent>(
+        this->_event_manager.get().emit<PlayAnimationEvent>(
             "hover", e, hover_anim_data.framerate, false, false);
       }
     } else {
       if (button.hovered) {
         button.hovered = false;
-        r.emit<PlayAnimationEvent>(
+        this->_event_manager.get().emit<PlayAnimationEvent>(
             "idle", e, hover_anim_data.framerate, true, false);
       }
     }
@@ -647,8 +648,8 @@ void SFMLRenderer::animation_system(Registry& r)
 
 extern "C"
 {
-void* entry_point(Registry& r, EntityLoader& e)
+void* entry_point(Registry& r, EventManager &em, EntityLoader& e)
 {
-  return new SFMLRenderer(r, e);
+  return new SFMLRenderer(r, em, e);
 }
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Json/JsonParser.hpp"
+#include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/SparseArray.hpp"
 #include "plugin/APlugin.hpp"
@@ -10,7 +11,7 @@
 class Moving : public APlugin
 {
 public:
-  Moving(Registry& r, EntityLoader& l);
+  Moving(Registry& r, EventManager &em, EntityLoader& l);
 
 private:
   void init_pos(Registry::Entity const& entity, JsonObject& obj);

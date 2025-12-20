@@ -2,6 +2,7 @@
 
 #include "Json/JsonParser.hpp"
 #include "NetworkShared.hpp"
+#include "ecs/EventManager.hpp"
 #include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/SparseArray.hpp"
@@ -18,9 +19,10 @@
 #include "plugin/components/Speed.hpp"
 #include "plugin/events/InteractionZoneEvent.hpp"
 
-Target::Target(Registry& r, EntityLoader& l)
+Target::Target(Registry& r, EventManager &em, EntityLoader& l)
     : APlugin("target",
               r,
+              em,
               l,
               {"moving", "life"},
               {COMP_INIT(Follower, Follower, init_follower)})
@@ -31,9 +33,9 @@ Target::Target(Registry& r, EntityLoader& l)
   SUBSCRIBE_EVENT(InteractionZoneEvent, { this->on_interaction_zone(event); })
 }
 
-void Target::init_follower(Registry::Entity entity, JsonObject const& obj)
+void Target::init_follower(Registry::Entity entity, JsonObject const& /*obj*/)
 {
-  init_component<Follower>(this->_registry.get(), entity);
+  init_component<Follower>(this->_registry.get(), this->_event_manager.get(), entity);
 }
 
 void Target::target_system(Registry& reg)
@@ -52,7 +54,7 @@ void Target::target_system(Registry& reg)
 
     if (target_id == i) {
       follower.lost_target = true;
-      this->_registry.get().emit<ComponentBuilder>(
+      this->_event_manager.get().emit<ComponentBuilder>(
           i,
           this->_registry.get().get_component_key<Follower>(),
           follower.to_bytes());
@@ -64,7 +66,7 @@ void Target::target_system(Registry& reg)
     {
       follower.lost_target = true;
 
-      this->_registry.get().emit<ComponentBuilder>(
+      this->_event_manager.get().emit<ComponentBuilder>(
           i,
           this->_registry.get().get_component_key<Follower>(),
           follower.to_bytes());
@@ -83,13 +85,13 @@ void Target::target_system(Registry& reg)
       direction.direction = new_direction;
       if (reg.has_component<Facing>(i)) {
         faces[i]->direction = new_direction;
-        this->_registry.get().emit<ComponentBuilder>(
+        this->_event_manager.get().emit<ComponentBuilder>(
           i,
           this->_registry.get().get_component_key<Facing>(),
           faces[i]->to_bytes());
       }
 
-      this->_registry.get().emit<ComponentBuilder>(
+      this->_event_manager.get().emit<ComponentBuilder>(
           i,
           this->_registry.get().get_component_key<Direction>(),
           direction.to_bytes());
@@ -137,7 +139,7 @@ void Target::on_interaction_zone(const InteractionZoneEvent& event)
     followers[event.source]->target = closest_entity.value();
     followers[event.source]->lost_target = false;
 
-    this->_registry.get().emit<ComponentBuilder>(
+    this->_event_manager.get().emit<ComponentBuilder>(
         event.source,
         this->_registry.get().get_component_key<Follower>(),
         followers[event.source]->to_bytes());
@@ -146,8 +148,8 @@ void Target::on_interaction_zone(const InteractionZoneEvent& event)
 
 extern "C"
 {
-void* entry_point(Registry& r, EntityLoader& e)
+void* entry_point(Registry& r, EventManager &em, EntityLoader& e)
 {
-  return new Target(r, e);
+  return new Target(r, em, e);
 }
 }

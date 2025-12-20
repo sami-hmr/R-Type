@@ -4,6 +4,7 @@
 
 #include "Logger.hpp"
 
+#include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
@@ -11,9 +12,10 @@
 #include "plugin/events/ShutdownEvent.hpp"
 
 Logger::Logger(Registry& r,
+               EventManager& em,
                EntityLoader& l,
                std::optional<JsonObject> const& config)
-    : APlugin("logger", r, l, {}, {}, config)
+    : APlugin("logger", r, em, l, {}, {}, config)
     , _min_log_level(LogLevel::INFO)
 {
   _log_file.open("rtype.log", std::ios::app);
@@ -38,7 +40,7 @@ Logger::Logger(Registry& r,
 
   SUBSCRIBE_EVENT(LogEvent, { this->on_log_event(event); })
   SUBSCRIBE_EVENT(ShutdownEvent, {
-    this->_registry.get().emit<LogEvent>(
+    this->_event_manager.get().emit<LogEvent>(
         "System",
         event.exit_code == 0 ? LogLevel::INFO : LogLevel::WARNING,
         std::format(
@@ -113,9 +115,10 @@ std::string Logger::level_to_string(LogLevel level)
 extern "C"
 {
 void* entry_point(Registry& r,
+                  EventManager& em,
                   EntityLoader& e,
                   std::optional<JsonObject> const& config)
 {
-  return new Logger(r, e, config);
+  return new Logger(r, em, e, config);
 }
 }

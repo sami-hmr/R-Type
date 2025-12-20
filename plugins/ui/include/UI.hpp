@@ -3,6 +3,7 @@
 #include <optional>
 
 #include "Json/JsonParser.hpp"
+#include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
@@ -13,7 +14,7 @@
 class UI : public APlugin
 {
 public:
-  UI(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config);
+  UI(Registry& r, EventManager &em, EntityLoader& l, std::optional<JsonObject> const& config);
   ~UI() override = default;
 
 private:
@@ -34,7 +35,7 @@ private:
   void cam_zoom_event(const CamZoomEvent &e);
   void cam_rotate_event(const CamRotateEvent &e);
   void cam_speed_event(const CamSpeedEvent &e);
-  
+
   void update_anim_system(Registry &r);
 
   void handle_key_pressed(const KeyPressedEvent& event);

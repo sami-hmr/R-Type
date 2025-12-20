@@ -18,7 +18,7 @@
 class NetworkClient : public APlugin
 {
   public:
-    NetworkClient(Registry& r, EntityLoader& l);
+    NetworkClient(Registry& r, EventManager &em, EntityLoader& l);
     ~NetworkClient() override;
 
   private:

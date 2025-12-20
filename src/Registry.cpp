@@ -6,6 +6,7 @@
 #include "ecs/Registry.hpp"
 
 #include "NetworkShared.hpp"
+#include "ecs/EventManager.hpp"
 #include "ecs/Systems.hpp"
 
 Registry::Entity Registry::spawn_entity()
@@ -63,9 +64,9 @@ void Registry::emplace_component(Entity const& to,
   }
 }
 
-void Registry::run_systems()
+void Registry::run_systems(EventManager &em)
 {
-  update_bindings();
+  update_bindings(em);
 
   std::vector<System<>> pending = this->_frequent_systems;
   for (auto const& f : pending) {
@@ -75,13 +76,14 @@ void Registry::run_systems()
   this->clock().tick();
 }
 
-void Registry::update_bindings()
+void Registry::update_bindings(EventManager &em)
 {
   for (auto& binding : _bindings) {
     binding.updater();
     ByteArray component_data = binding.serializer();
+
     if (!component_data.empty()) {
-      this->emit<ComponentBuilder>(
+        em.emit<ComponentBuilder>(
           binding.target_entity,
           this->_index_getter.at_first(binding.target_component),
           component_data);
@@ -95,32 +97,6 @@ void Registry::clear_bindings()
     binding.deleter();
   }
   _bindings.clear();
-}
-
-void Registry::emit(std::string const& name, JsonObject const& args)
-{
-  std::type_index type_id = _events_index_getter.at_second(name);
-  if (!_event_handlers.contains(type_id)) {
-    return;
-  }
-
-  auto builder =
-      std::any_cast<std::function<std::any(Registry&, JsonObject const&)>>(
-          _event_builders.at(type_id));
-  std::any event = builder(*this, args);
-
-  auto invoker =
-      std::any_cast<std::function<void(const std::any&, const std::any&)>>(
-          _event_invokers.at(type_id));
-  invoker(_event_handlers.at(type_id), event);
-}
-
-void Registry::emit(std::string const& name, ByteArray const& data)
-{
-  if (!this->_byte_event_emitter.contains(name)) {
-    return;
-  }
-  this->_byte_event_emitter.at(name)(data);
 }
 
 void Registry::add_scene(std::string const& scene_name, SceneState state)
@@ -199,17 +175,6 @@ bool Registry::is_in_current_cene(Entity e)
       != this->_current_scene.end();
 }
 
-ByteArray Registry::convert_event_entity(
-    std::string const& id,
-    ByteArray const& event,
-    std::unordered_map<Entity, Entity> const& map)
-{
-  if (!this->_event_entity_converters.contains(id)) {
-    return event;
-  }
-  return this->_event_entity_converters.at(id)(event, map);
-}
-
 ByteArray Registry::convert_comp_entity(
     std::string const& id,
     ByteArray const& comp,
@@ -225,11 +190,4 @@ std::vector<ComponentState> Registry::get_state()
     r.emplace_back(this->_state_getters.at(it.first)());
   }
   return r;
-}
-
-ByteArray Registry::get_event_with_id(std::string const& id,
-                                      JsonObject const& params)
-{
-  return this->_event_json_builder.at(this->_events_index_getter.at_second(id))(
-      params);
 }

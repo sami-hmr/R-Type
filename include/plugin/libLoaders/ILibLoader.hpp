@@ -5,6 +5,7 @@
 
 #include "CustomException.hpp"
 #include "ecs/Registry.hpp"
+#include "ecs/EventManager.hpp"
 #include "plugin/IPlugin.hpp"
 
 class EntityLoader;
@@ -24,6 +25,7 @@ public:
   virtual std::unique_ptr<Module> get_instance(
       const std::string& entry_point,
       Registry& r,
+      EventManager &em,
       EntityLoader& e,
       std::optional<JsonObject> const& config) = 0;
 };

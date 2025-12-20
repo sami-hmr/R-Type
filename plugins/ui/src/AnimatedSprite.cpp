@@ -8,6 +8,7 @@
 #include "Json/JsonParser.hpp"
 #include "NetworkShared.hpp"
 #include "UI.hpp"
+#include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/Scenes.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
@@ -23,7 +24,10 @@
 static const double deux = 2.0;
 
 void AnimatedSprite::update_anim(
-    Registry& r, std::chrono::high_resolution_clock::time_point now, int entity)
+    Registry& /*r*/,
+    EventManager& em,
+    std::chrono::high_resolution_clock::time_point now,
+    Registry::Entity entity)
 {
   AnimationData& animation = this->animations.at(this->current_animation);
 
@@ -31,14 +35,14 @@ void AnimatedSprite::update_anim(
 
   if (elapsed >= (1.0 / animation.framerate)) {
     if (animation.current_frame == 0) {
-      r.emit<AnimationStartEvent>(this->current_animation, entity);
+      em.emit<AnimationStartEvent>(this->current_animation, entity);
     }
     animation.current_frame += 1;
     animation.frame_pos += animation.direction * animation.frame_size;
     if (animation.current_frame >= animation.nb_frames
         || animation.current_frame < 0)
     {
-      r.emit<AnimationEndEvent>(this->current_animation, entity);
+      em.emit<AnimationEndEvent>(this->current_animation, entity);
       if (!animation.loop) {
         animation.current_frame = animation.nb_frames - 1;
         animation.frame_pos -= animation.direction * animation.frame_size;
@@ -57,13 +61,15 @@ void AnimatedSprite::update_anim(
   }
 }
 
-void AnimatedSprite::on_death(Registry& r, const DeathEvent& event)
+void AnimatedSprite::on_death(Registry& r,
+                              EventManager& em,
+                              const DeathEvent& event)
 {
   if (r.is_entity_dying(event.entity)) {
     return;
   }
   if (!r.has_component<AnimatedSprite>(event.entity)) {
-    r.emit<DeleteEntity>(event.entity);
+    em.emit<DeleteEntity>(event.entity);
     return;
   }
 
@@ -74,15 +80,16 @@ void AnimatedSprite::on_death(Registry& r, const DeathEvent& event)
   {
     AnimationData& animdata =
         animated_sprites[event.entity].value().animations.at("death");
-    r.emit<PlayAnimationEvent>(
+    em.emit<PlayAnimationEvent>(
         "death", event.entity, animdata.framerate, false, false);
     r.remove_component<Speed>(event.entity);
   } else {
-    r.emit<DeleteEntity>(event.entity);
+    em.emit<DeleteEntity>(event.entity);
   }
 }
 
 void AnimatedSprite::on_animation_end(Registry& r,
+                                      EventManager& em,
                                       const AnimationEndEvent& event)
 {
   if (!r.has_component<AnimatedSprite>(event.entity)) {
@@ -90,11 +97,12 @@ void AnimatedSprite::on_animation_end(Registry& r,
   }
 
   if (event.name == "death") {
-    r.emit<DeleteEntity>(event.entity);
+    em.emit<DeleteEntity>(event.entity);
   }
 }
 
 void AnimatedSprite::on_play_animation(Registry& r,
+                                       EventManager& em,
                                        const PlayAnimationEvent& event)
 {
   if (!r.has_component<AnimatedSprite>(event.entity)) {
@@ -109,14 +117,14 @@ void AnimatedSprite::on_play_animation(Registry& r,
   }
   AnimationData& animData = animSprite.animations.at(event.name);
 
-  r.emit<AnimationStartEvent>(event.name, event.entity);
+  em.emit<AnimationStartEvent>(event.name, event.entity);
   animData.framerate = event.framerate;
   animData.loop = event.loop;
   animData.rollback = event.rollback;
   animSprite.current_animation = event.name;
-  r.emit<ComponentBuilder>(event.entity,
-                           r.get_component_key<AnimatedSprite>(),
-                           animSprite.to_bytes());
+  em.emit<ComponentBuilder>(event.entity,
+                            r.get_component_key<AnimatedSprite>(),
+                            animSprite.to_bytes());
 }
 
 void UI::update_anim_system(Registry& r)
@@ -127,8 +135,8 @@ void UI::update_anim_system(Registry& r)
     if (!drawable.enabled) {
       continue;
     }
-    anim.update_anim(r, now, e);
-    // r.emit<ComponentBuilder>(
+    anim.update_anim(r, this->_event_manager.get(), now, e);
+    // this->_event_manager.get().emit<ComponentBuilder>(
     //     e,
     //     r.get_component_key<AnimatedSprite>(),
     //     anim.to_bytes());

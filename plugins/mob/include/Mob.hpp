@@ -2,6 +2,7 @@
 
 #include <functional>
 #include "Json/JsonParser.hpp"
+#include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
@@ -10,7 +11,7 @@
 class Mob : public APlugin
 {
 public:
-  Mob(Registry& r, EntityLoader& l);
+  Mob(Registry& r, EventManager &em, EntityLoader& l);
   ~Mob() override = default;
   EntityLoader &entity_loader;
 

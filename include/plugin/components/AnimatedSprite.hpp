@@ -13,6 +13,7 @@
 
 #include "BaseTypes.hpp"
 #include "ByteParser/ByteParser.hpp"
+#include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/Byte.hpp"
@@ -180,11 +181,16 @@ public:
   std::chrono::high_resolution_clock::time_point last_update;
 
   void update_anim(Registry& r,
+                   EventManager& em,
                    std::chrono::high_resolution_clock::time_point now,
-                   int entity);
-  static void on_death(Registry& r, const DeathEvent& event);
-  static void on_animation_end(Registry& r, const AnimationEndEvent& event);
-  static void on_play_animation(Registry& r, const PlayAnimationEvent& event);
+                   Registry::Entity entity);
+  static void on_death(Registry& r, EventManager& em, const DeathEvent& event);
+  static void on_animation_end(Registry& r,
+                               EventManager& em,
+                               const AnimationEndEvent& event);
+  static void on_play_animation(Registry& r,
+                                EventManager& em,
+                                const PlayAnimationEvent& event);
 
   DEFAULT_BYTE_CONSTRUCTOR(
       AnimatedSprite,

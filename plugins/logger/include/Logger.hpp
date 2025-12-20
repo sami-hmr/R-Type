@@ -9,6 +9,7 @@
 #include "BaseTypes.hpp"
 #include "ByteParser/ByteParser.hpp"
 #include "Json/JsonParser.hpp"
+#include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/Byte.hpp"
@@ -40,7 +41,7 @@ struct LogComponent
 class Logger : public APlugin
 {
 public:
-  Logger(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config);
+  Logger(Registry& r, EventManager &em, EntityLoader& l, std::optional<JsonObject> const& config);
 
 private:
   void on_log_event(const LogEvent& event);
