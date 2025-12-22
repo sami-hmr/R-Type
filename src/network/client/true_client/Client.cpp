@@ -6,6 +6,7 @@
 */
 
 #include "network/client/Client.hpp"
+
 #include <asio/ip/address.hpp>
 
 #include "NetworkCommun.hpp"
@@ -38,7 +39,7 @@ void Client::close()
   this->_running.get() = false;
   this->_events_to_transmit.get().release();
   if (this->_queue_reader.joinable()) {
-      this->_queue_reader.join();
+    this->_queue_reader.join();
   }
   if (_socket.is_open()) {
     _socket.close();
@@ -50,7 +51,7 @@ Client::~Client()
   this->_running.get() = false;
   this->_events_to_transmit.get().release();
   if (this->_queue_reader.joinable()) {
-      this->_queue_reader.join();
+    this->_queue_reader.join();
   }
   if (_socket.is_open()) {
     _socket.close();
@@ -80,7 +81,6 @@ void Client::receive_loop()
         //                std::format("received buffer, size : {}", len));
       }
 
-
       if (ec) {
         if (_running.get()) {
           NETWORK_LOGGER("client",
@@ -89,7 +89,6 @@ void Client::receive_loop()
         }
         break;
       }
-
 
       while (std::optional<ByteArray> p = recv_buf.extract(PROTOCOL_EOF)) {
         // NETWORK_LOGGER("client", LogLevel::DEBUG, "package extracted");

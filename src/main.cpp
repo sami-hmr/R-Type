@@ -23,32 +23,32 @@ static int true_main(Registry& r,
   int exit_code = 0;
 
   em.on<ShutdownEvent>("ShutdownEvent",
-                      [&should_exit, &exit_code](const ShutdownEvent& event)
-                      {
-                        should_exit = true;
-                        exit_code = event.exit_code;
-                        std::cout << "Shutdown requested: " << event.reason
-                                  << "\n";
-                      });
+                       [&should_exit, &exit_code](const ShutdownEvent& event)
+                       {
+                         should_exit = true;
+                         exit_code = event.exit_code;
+                         std::cout << "Shutdown requested: " << event.reason
+                                   << "\n";
+                       });
 
   em.on<SceneChangeEvent>("SceneChangeEvent",
-                         [&r](const SceneChangeEvent& event)
-                         {
-                           if (event.force) {
-                             r.remove_all_scenes();
-                           }
-                           r.set_current_scene(event.target_scene);
-                         });
+                          [&r](const SceneChangeEvent& event)
+                          {
+                            if (event.force) {
+                              r.remove_all_scenes();
+                            }
+                            r.set_current_scene(event.target_scene);
+                          });
 
   em.on<SpawnEntityRequestEvent>("SpawnEntity",
-                                [&r, &e](const SpawnEntityRequestEvent& event)
-                                {
-                                  Registry::Entity entity = r.spawn_entity();
-                                  JsonObject base =
-                                      r.get_template(event.entity_template);
-                                  e.load_components(entity, base);
-                                  e.load_components(entity, event.params);
-                                });
+                                 [&r, &e](const SpawnEntityRequestEvent& event)
+                                 {
+                                   Registry::Entity entity = r.spawn_entity();
+                                   JsonObject base =
+                                       r.get_template(event.entity_template);
+                                   e.load_components(entity, base);
+                                   e.load_components(entity, event.params);
+                                 });
 
   r.init_scene_management();
 

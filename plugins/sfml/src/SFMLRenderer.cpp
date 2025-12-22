@@ -123,7 +123,7 @@ static sf::Texture gen_placeholder()
   return sf::Texture(image);
 }
 
-SFMLRenderer::SFMLRenderer(Registry& r, EventManager &em, EntityLoader& l)
+SFMLRenderer::SFMLRenderer(Registry& r, EventManager& em, EntityLoader& l)
     : APlugin("sfml", r, em, l, {"moving", "ath", "ui", "collision"}, {})
 {
   _window =
@@ -608,13 +608,12 @@ void SFMLRenderer::animation_system(Registry& r)
       rotation = std::atan2(norm.y, norm.x);
     }
 
-    drawables.emplace_back(
-        std::ref(texture),
-        sf::Vector2f(uniform_scale, uniform_scale),
-        new_pos,
-        rotation,
-        pos.z,
-        anim_data);
+    drawables.emplace_back(std::ref(texture),
+                           sf::Vector2f(uniform_scale, uniform_scale),
+                           new_pos,
+                           rotation,
+                           pos.z,
+                           anim_data);
   }
 
   std::sort(drawables.begin(),
@@ -648,7 +647,7 @@ void SFMLRenderer::animation_system(Registry& r)
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager &em, EntityLoader& e)
+void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
   return new SFMLRenderer(r, em, e);
 }

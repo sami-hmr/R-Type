@@ -25,11 +25,11 @@ void Client::send(ByteArray const& command)
 
 void Client::send_connected(ByteArray const& response)
 {
-    ByteArray pkg = type_to_byte(this->_current_index_sequence)
-        + type_to_byte<std::uint32_t>(0) + type_to_byte<bool>(true) + response;
+  ByteArray pkg = type_to_byte(this->_current_index_sequence)
+      + type_to_byte<std::uint32_t>(0) + type_to_byte<bool>(true) + response;
 
-    this->_current_index_sequence += 1;
-    this->send(pkg);
+  this->_current_index_sequence += 1;
+  this->send(pkg);
 }
 
 void Client::handle_connectionless_response(
@@ -106,6 +106,5 @@ void Client::handle_disconnect_response(ByteArray const& package)
   _running.get() = false;
 
   ShutdownEvent e(std::format("Server disconnected: {}", reason), 0);
-  this->transmit_event(
-      EventBuilder("shutdown", e.to_bytes()));
+  this->transmit_event(EventBuilder("shutdown", e.to_bytes()));
 }

@@ -4,8 +4,8 @@
 #include <string_view>
 #include <thread>
 
-
 #include "../plugins/rtype_client/include/RtypeClient.hpp"
+
 #include "NetworkShared.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"

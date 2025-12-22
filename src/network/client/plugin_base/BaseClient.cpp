@@ -99,8 +99,7 @@ BaseClient::BaseClient(std::string const& name,
                   e.data,
                   this->_server_indexes.get_first()));  // SERVER -> CLIENT
         }
-      }
-  );
+      });
 
   SUBSCRIBE_EVENT(DeleteClientEntity, {
     this->_server_indexes.remove_second(event.entity);
@@ -119,11 +118,8 @@ BaseClient::~BaseClient()
 void BaseClient::connection_thread(ClientConnection const& c)
 {
   try {
-    Client client(c,
-                  _component_queue,
-                  _event_to_server,
-                  _event_from_server,
-                  _running);
+    Client client(
+        c, _component_queue, _event_to_server, _event_from_server, _running);
     client.connect();
   } catch (std::exception& e) {
     LOGGER("client",

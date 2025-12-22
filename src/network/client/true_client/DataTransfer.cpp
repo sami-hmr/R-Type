@@ -21,9 +21,9 @@ void Client::send_evt()
 {
   while (_running.get()) {
     this->_events_to_transmit.get().wait();
-    auto const &events = this->_events_to_transmit.get().flush();
+    auto const& events = this->_events_to_transmit.get().flush();
 
-    for (auto const &evt : events) {
+    for (auto const& evt : events) {
       auto data = type_to_byte<Byte>(SENDEVENT) + evt.to_bytes();
       this->send_connected(data);
     }

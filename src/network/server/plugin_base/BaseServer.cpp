@@ -8,7 +8,10 @@
 #include "plugin/events/NetworkEvents.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
 
-BaseServer::BaseServer(std::string const &name, Registry& r, EventManager& em, EntityLoader& l)
+BaseServer::BaseServer(std::string const& name,
+                       Registry& r,
+                       EventManager& em,
+                       EntityLoader& l)
     : APlugin(name, r, em, l, {}, {})
 {
   SUBSCRIBE_EVENT(ServerLaunching, {
@@ -33,19 +36,16 @@ BaseServer::BaseServer(std::string const &name, Registry& r, EventManager& em, E
     this->_event_manager.get().emit<ComponentBuilderId>(std::nullopt, event);
   })
 
-  SUBSCRIBE_EVENT(ComponentBuilderId, {
-    this->_components_to_update.push(event);
-  })
+  SUBSCRIBE_EVENT(ComponentBuilderId,
+                  { this->_components_to_update.push(event); })
 
-  SUBSCRIBE_EVENT(EventBuilderId, {
-    this->_event_queue_to_client.push(event);
-  })
+  SUBSCRIBE_EVENT(EventBuilderId, { this->_event_queue_to_client.push(event); })
 
   this->_registry.get().add_system<>(
       [this](Registry& /*r*/)
       {
         auto events = this->_event_queue.flush();
-        for (auto &evt : events) {
+        for (auto& evt : events) {
           this->_event_manager.get().emit(evt.event_id, evt.data);
         }
       });

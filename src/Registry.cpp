@@ -64,7 +64,7 @@ void Registry::emplace_component(Entity const& to,
   }
 }
 
-void Registry::run_systems(EventManager &em)
+void Registry::run_systems(EventManager& em)
 {
   update_bindings(em);
 
@@ -76,14 +76,14 @@ void Registry::run_systems(EventManager &em)
   this->clock().tick();
 }
 
-void Registry::update_bindings(EventManager &em)
+void Registry::update_bindings(EventManager& em)
 {
   for (auto& binding : _bindings) {
     binding.updater();
     ByteArray component_data = binding.serializer();
 
     if (!component_data.empty()) {
-        em.emit<ComponentBuilder>(
+      em.emit<ComponentBuilder>(
           binding.target_entity,
           this->_index_getter.at_first(binding.target_component),
           component_data);

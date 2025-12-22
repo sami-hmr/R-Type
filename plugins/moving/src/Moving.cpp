@@ -13,13 +13,13 @@
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
+#include "plugin/components/Direction.hpp"
 #include "plugin/components/Facing.hpp"
 #include "plugin/components/Position.hpp"
-#include "plugin/components/Direction.hpp"
 #include "plugin/components/Speed.hpp"
 #include "plugin/events/CollisionEvent.hpp"
 
-Moving::Moving(Registry& r, EventManager &em, EntityLoader& l)
+Moving::Moving(Registry& r, EventManager& em, EntityLoader& l)
     : APlugin("moving",
               r,
               em,
@@ -42,7 +42,8 @@ Moving::Moving(Registry& r, EventManager &em, EntityLoader& l)
     if (!this->_registry.get().has_component<Direction>(event.entity)) {
       return;
     }
-    auto& comp = this->_registry.get().get_components<Direction>()[event.entity];
+    auto& comp =
+        this->_registry.get().get_components<Direction>()[event.entity];
     comp->direction.x =
         std::max(-1.0, std::min(comp->direction.x + event.x_axis, 1.0));
     comp->direction.y =
@@ -86,8 +87,11 @@ void Moving::init_pos(Registry::Entity const& entity, JsonObject& obj)
                    "(expected z: int)\n";
     }
   }
-  auto& pos_opt = init_component<Position>(
-      this->_registry.get(), this->_event_manager.get(), entity, values.value(), z);
+  auto& pos_opt = init_component<Position>(this->_registry.get(),
+                                           this->_event_manager.get(),
+                                           entity,
+                                           values.value(),
+                                           z);
 
   if (!pos_opt.has_value()) {
     std::cerr << "Error creating Position component\n";
@@ -117,12 +121,12 @@ void Moving::init_direction(Registry::Entity const& entity, JsonObject& obj)
 
 void Moving::init_speed(Registry::Entity const& entity, JsonObject& obj)
 {
-  auto speed = get_value<Speed, Vector2D>(
-      this->_registry.get(), obj, entity, "speed");
+  auto speed =
+      get_value<Speed, Vector2D>(this->_registry.get(), obj, entity, "speed");
 
   if (!speed) {
-    std::cerr << "Error loading Speed component: missing speed "
-                 "in JsonObject\n";
+    std::cerr
+        << "Error loading Speed component: missing speed " "in JsonObject\n";
     return;
   }
 
@@ -156,7 +160,7 @@ void Moving::init_facing(Registry::Entity const& entity, JsonObject& obj)
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager &em, EntityLoader& e)
+void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
   return new Moving(r, em, e);
 }

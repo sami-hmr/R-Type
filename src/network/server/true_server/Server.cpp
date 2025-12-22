@@ -7,9 +7,10 @@
 #include <atomic>
 #include <vector>
 
+#include "network/server/Server.hpp"
+
 #include <asio/system_error.hpp>
 
-#include "network/server/Server.hpp"
 #include "NetworkCommun.hpp"
 #include "NetworkShared.hpp"
 #include "plugin/Byte.hpp"

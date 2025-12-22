@@ -1,9 +1,9 @@
 #include <stdexcept>
 
-#include "network/server/Server.hpp"
 #include "NetworkCommun.hpp"
 #include "PackageFragmentation.hpp"
 #include "ServerCommands.hpp"
+#include "network/server/Server.hpp"
 #include "plugin/Byte.hpp"
 
 const std::unordered_map<std::uint8_t,

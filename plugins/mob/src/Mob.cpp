@@ -11,9 +11,13 @@
 #include "plugin/components/Position.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
 
-Mob::Mob(Registry& r, EventManager &em, EntityLoader& l)
-    : APlugin(
-          "mob", r, em, l, {"moving"}, {COMP_INIT(Spawner, Spawner, init_spawner)})
+Mob::Mob(Registry& r, EventManager& em, EntityLoader& l)
+    : APlugin("mob",
+              r,
+              em,
+              l,
+              {"moving"},
+              {COMP_INIT(Spawner, Spawner, init_spawner)})
     , entity_loader(l)
 {
   _registry.get().register_component<Spawner>("mob:Spawner");
@@ -80,7 +84,7 @@ void Mob::spawner_system(Registry& r)
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager &em, EntityLoader& e)
+void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
   return new Mob(r, em, e);
 }
