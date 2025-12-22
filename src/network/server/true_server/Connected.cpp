@@ -16,26 +16,14 @@ const std::unordered_map<std::uint8_t,
 void Server::handle_connected_packet(ConnectedPackage const& command,
                                      const asio::ip::udp::endpoint& sender)
 {
-  // HANDLE ACKNOWLEDGE DEUXIEME DEFENSE LA VIE DE MA MERE JE FAIS PAS CA
-  // MAINTENANT
 
   this->_client_mutex.lock();
-  FragmentedPackage frag(command.sequence_number,
-                         this->find_client_by_endpoint(sender).client_id);
+  this->update_acknowledge(command.acknowledge, this->find_client_by_endpoint(sender));
   this->_client_mutex.unlock();
 
-  if (!command.end_of_content) {
-    this->_waiting_packages[frag] += command.real_package;
-    return;
-  }
-  ByteArray entire;
-  if (this->_waiting_packages.contains(frag)) {
-    entire = this->_waiting_packages.at(frag) + command.real_package;
-  } else {
-    entire = command.real_package;
-  }
-  auto const& parsed = parse_connected_command(entire);
+  ByteArray entire = command.real_package;
 
+  auto const& parsed = parse_connected_command(entire);
   if (!parsed) {
     return;
   }

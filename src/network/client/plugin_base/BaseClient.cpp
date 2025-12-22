@@ -1,3 +1,4 @@
+#include <chrono>
 #include <cstring>
 #include <format>
 #include <stdexcept>
@@ -9,16 +10,13 @@
 #include "ClientConnection.hpp"
 #include "NetworkShared.hpp"
 #include "ecs/Registry.hpp"
-#include "ecs/zipper/ZipperIndex.hpp"
 #include "network/client/Client.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/EntityLoader.hpp"
-#include "plugin/components/Controllable.hpp"
 #include "plugin/events/CleanupEvent.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
 #include "plugin/events/LoggerEvent.hpp"
-#include "plugin/events/NetworkEvents.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
 
 BaseClient::BaseClient(std::string const& name,
@@ -50,6 +48,12 @@ BaseClient::BaseClient(std::string const& name,
     _running = false;
     LOGGER("client", LogLevel::DEBUG, "Cleanup requested");
     // _socket->close();
+  })
+
+  SUBSCRIBE_EVENT(NewConnection, {
+      this->_connected = true;
+
+      this->_id_in_server = event.client;
   })
 
   SUBSCRIBE_EVENT(EventBuilder, {
@@ -98,6 +102,21 @@ BaseClient::BaseClient(std::string const& name,
                   e.event_id,
                   e.data,
                   this->_server_indexes.get_first()));  // SERVER -> CLIENT
+        }
+      });
+
+  this->_registry.get().add_system(
+      [this](Registry& /*r*/)
+      {
+        if (!this->_connected) {
+          return;
+        };
+        std::size_t milliseconds =
+            this->_registry.get().clock().millisecond_now();
+        if (this->_hearth_beat_delta < milliseconds) {
+          this->_event_manager.get().emit<EventBuilder>(
+              "HearthBeat", HeathBeat(this->_id_in_server).to_bytes());
+          this->_hearth_beat_delta = milliseconds + 100; /* 0.1 second */
         }
       });
 

@@ -10,6 +10,7 @@
 #include <atomic>
 #include <cstdint>
 #include <functional>
+#include <map>
 #include <queue>
 #include <semaphore>
 #include <string>
@@ -45,6 +46,7 @@ private:
   void send_connected(ByteArray const& response);
   void handle_connectionless_response(ConnectionlessCommand const& response);
   void handle_connected_package(ConnectedPackage const& package);
+  void compute_connected_package(ConnectedPackage const& package);
   void handle_connected_command(ConnectedCommand const& command);
   void handle_package(ByteArray const& package);
 
@@ -101,10 +103,11 @@ private:
   std::reference_wrapper<SharedQueue<EventBuilder>> _event_to_exec;
   std::reference_wrapper<std::atomic<bool>> _running;
 
-  std::unordered_map<std::uint32_t, ByteArray> _waiting_packages;
+  //std::unordered_map<std::uint32_t, ByteArray> _waiting_packages;
 
   void send_evt();
   std::thread _queue_reader;
 
-  std::uint32_t _current_index_sequence = 0;
+  std::size_t _last_interpreted_sequence = 0;
+  std::map<std::size_t, ConnectedPackage> _awaiting_packages;
 };

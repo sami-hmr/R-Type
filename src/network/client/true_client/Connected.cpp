@@ -1,3 +1,5 @@
+#include <algorithm>
+
 #include "NetworkCommun.hpp"
 #include "ServerCommands.hpp"
 #include "network/client/Client.hpp"
@@ -9,18 +11,24 @@ const std::unordered_map<std::uint8_t, void (Client::*)(ByteArray const&)>
 
 void Client::handle_connected_package(ConnectedPackage const& package)
 {
-  if (!package.end_of_content) {
-    this->_waiting_packages[package.sequence_number] += package.real_package;
-    return;
+  this->_awaiting_packages[package.sequence_number] = package;
+
+  for (auto const& [sequence, pkg] : this->_awaiting_packages) {
+    if (sequence != (this->_last_interpreted_sequence + 1)) {
+      break;
+    }
+    //std::cout << sequence << std::endl;
+    this->_last_interpreted_sequence += 1;
+    this->compute_connected_package(pkg);
   }
-  ByteArray entire;
-  if (this->_waiting_packages.contains(package.sequence_number)) {
-    entire = this->_waiting_packages.at(package.sequence_number)
-        + package.real_package;
-  } else {
-    entire = package.real_package;
-  }
-  auto const& parsed = parse_connected_command(entire);
+  this->_awaiting_packages.erase(
+      this->_awaiting_packages.begin(),
+      this->_awaiting_packages.upper_bound(this->_last_interpreted_sequence));
+}
+
+void Client::compute_connected_package(ConnectedPackage const& package)
+{
+  auto const& parsed = parse_connected_command(package.real_package);
 
   if (!parsed) {
     return;
@@ -57,4 +65,13 @@ void Client::handle_event_creation(ByteArray const& package)
     return;
   }
   this->transmit_event(std::move(*parsed));
+}
+
+void Client::send_connected(ByteArray const& response)
+{
+  ByteArray pkg = type_to_byte<std::size_t>(0)
+      + type_to_byte<std::size_t>(this->_last_interpreted_sequence)
+      + type_to_byte<bool>(true) + response;
+
+  this->send(pkg);
 }

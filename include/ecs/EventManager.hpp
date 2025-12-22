@@ -47,8 +47,10 @@
 #include <any>
 #include <random>
 #include <typeindex>
+#include <vector>
 
 #include "Registry.hpp"
+#include "ecs/Events.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/events/EventConcept.hpp"
 
@@ -64,7 +66,6 @@ public:
    * Handler IDs are unique UUIDs generated when registering event handlers.
    * Used to unregister specific handlers via off().
    */
-  using HandlerId = std::size_t;
 
   // ============================================================================
   // EVENT SYSTEM
@@ -179,8 +180,9 @@ public:
    * @see off_all() to remove all handlers for event type
    */
   template<event EventType>
-  HandlerId on(std::string const& name,
-               std::function<void(const EventType&)> handler)
+  void on(std::string const& name,
+          std::function<void(const EventType&)> handler,
+          std::size_t priority = 1)
   {
     std::type_index type_id(typeid(EventType));
     _index_getter.insert(type_id, name);
@@ -201,7 +203,7 @@ public:
 
     this->add_event_builder<EventType>();
 
-    return this->on<EventType>(handler);
+    return this->on<EventType>(handler, priority);
   }
 
   /**
@@ -247,75 +249,6 @@ public:
   ByteArray get_event_with_id(Registry& r,
                               std::string const&,
                               JsonObject const&);
-
-  /**
-   * @brief Unregister a specific event handler by ID.
-   *
-   * Removes the handler that was registered with the given ID. The ID is
-   * returned by on() when registering the handler.
-   *
-   * After unregistration, the handler will not execute when the event is
-   * emitted. Other handlers for the same event type remain active.
-   *
-   * @tparam Event Event type (must satisfy event_type concept)
-   * @param id Handler ID returned by on()
-   *
-   * @note Safe to call with invalid/already-removed IDs (no-op)
-   * @note Does not affect other handlers for the same event type
-   *
-   * @code
-   * // Register handler for one-time use
-   * auto id = registry.on<GameStarted>(
-   *   [](const GameStarted& e, Registry& r) {
-   *     show_intro_cinematic();
-   *   }
-   * );
-   *
-   * // After cinematic plays, remove handler
-   * registry.off<GameStarted>(id);
-   * @endcode
-   *
-   * @code
-   * class DebugSystem {
-   *   std::string debug_handler_id;
-   *
-   * public:
-   *   void enable_debug_mode(Registry& r) {
-   *     debug_handler_id = r.on<EntitySpawned>(
-   *       [](const EntitySpawned& e, Registry& r) {
-   *         std::cout << "DEBUG: Entity " << e.id << " spawned\n";
-   *       }
-   *     );
-   *   }
-   *
-   *   void disable_debug_mode(Registry& r) {
-   *     r.off<EntitySpawned>(debug_handler_id);
-   *   }
-   * };
-   * @endcode
-   *
-   * @see on() to register handler
-   * @see off_all() to remove all handlers
-   */
-  template<typename EventType>
-  bool off(HandlerId handler_id)
-  {
-    std::type_index type_id(typeid(EventType));
-    if (!_handlers.contains(type_id)) {
-      return false;
-    }
-
-    auto& handlers = std::any_cast<
-        std::unordered_map<HandlerId, std::function<void(const EventType&)>>&>(
-        _handlers[type_id]);
-
-    if (!handlers.contains(handler_id)) {
-      return false;
-    }
-
-    handlers.erase(handler_id);
-    return true;
-  }
 
   /**
    * @brief Remove all event handlers for a specific event type.
@@ -433,11 +366,10 @@ public:
 
     EventType event(std::forward<Args>(args)...);
 
-    auto handlers_copy = std::any_cast<
-        std::unordered_map<HandlerId, std::function<void(const EventType&)>>>(
-        _handlers.at(type_id));
+    auto handlers_copy =
+        std::any_cast<std::vector<Event<EventType>>>(_handlers.at(type_id));
 
-    for (auto const& [id, handler] : handlers_copy) {
+    for (auto const& handler : handlers_copy) {
       handler(event);
     }
   }
@@ -554,12 +486,9 @@ private:
         type_id,
         [](const std::any& handlers_any, const std::any& event_any)
         {
-          auto& handlers = std::any_cast<
-              const std::unordered_map<HandlerId,
-                                       std::function<void(const T&)>>&>(
-              handlers_any);
+          auto& handlers = std::any_cast<const std::vector<Event<T>>&>(handlers_any);
           auto& event = std::any_cast<const T&>(event_any);
-          for (auto const& [id, handler] : handlers) {
+          for (auto const& handler : handlers) {
             handler(event);
           }
         });
@@ -569,35 +498,21 @@ private:
                                    { return T(r, params).to_bytes(); });
   }
 
-  static HandlerId generate_uuid()
-  {
-    static std::random_device rd;
-    static std::mt19937_64 gen(rd());
-    static std::uniform_int_distribution<HandlerId> dis;
-    return dis(gen);
-  }
-
-  template<typename EventType>
-  HandlerId on(std::function<void(const EventType&)> handler)
+  template<event EventType>
+  void on(std::function<void(const EventType&)> handler, size_t precision = 1)
   {
     std::type_index type_id(typeid(EventType));
 
-    HandlerId handler_id = generate_uuid();
-
     if (!_handlers.contains(type_id)) {
-      _handlers.insert_or_assign(
-          type_id,
-          std::unordered_map<HandlerId,
-                             std::function<void(const EventType&)>>());
+      _handlers.insert_or_assign(type_id, std::vector<Event<EventType>>());
     }
 
-    auto& handlers = std::any_cast<
-        std::unordered_map<HandlerId, std::function<void(const EventType&)>>&>(
-        _handlers[type_id]);
+    Event<EventType> tmp(handler, precision);
+    auto& handlers =
+        std::any_cast<std::vector<Event<EventType>>&>(_handlers[type_id]);
 
-    handlers[handler_id] = std::move(handler);
-
-    return handler_id;
+    auto it = std::upper_bound(handlers.begin(), handlers.end(), tmp);
+    handlers.insert(it, std::move(tmp));
   }
 
   std::unordered_map<

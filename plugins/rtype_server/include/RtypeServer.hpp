@@ -32,5 +32,3 @@ class RtypeServer : public BaseServer
     std::unordered_map<std::size_t, bool> _player_ready;
     std::unordered_map<Registry::Entity, size_t> _player_entities;
 };
-
-CUSTOM_EXCEPTION(ClientNotFound)

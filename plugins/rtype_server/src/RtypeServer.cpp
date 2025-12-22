@@ -27,6 +27,7 @@ RtypeServer::RtypeServer(Registry& r, EventManager& em, EntityLoader& l)
   SUBSCRIBE_EVENT(NewConnection, {
     std::size_t entity = this->_registry.get().spawn_entity();
 
+    std::cout << "PLAYER CREATION\n";
     this->_event_manager.get().emit<EventBuilderId>(
         event.client,
         "PlayerCreation",
@@ -39,6 +40,7 @@ RtypeServer::RtypeServer(Registry& r, EventManager& em, EntityLoader& l)
   SUBSCRIBE_EVENT(PlayerCreated, {
     this->_event_manager.get().emit<StateTransfer>(event.client_id);
 
+    std::cout << event.client_id << std::endl;
     this->_event_manager.get().emit<EventBuilderId>(
         event.client_id,
         "SceneChangeEvent",

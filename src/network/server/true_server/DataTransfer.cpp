@@ -23,14 +23,14 @@ void Server::send_event_to_client()
     for (auto const& evt : events) {
       ByteArray data = type_to_byte(SENDEVENT) + evt.event.to_bytes();
       if (evt.client) {
-        auto const& client = this->find_client_by_id(*evt.client);
-        this->send_connected(data, client.endpoint);
+        auto &client = this->find_client_by_id(*evt.client);
+        this->send_connected(data, client);
       } else {
-        for (auto const& it : this->_clients) {
+        for (auto &it : this->_clients) {
           if (it.state != ClientState::CONNECTED) {
             continue;
           }
-          this->send_connected(data, it.endpoint);
+          this->send_connected(data, it);
         }
       }
     }
@@ -50,13 +50,13 @@ void Server::send_comp()
           + string_to_byte(comp.component.id) + comp.component.data;
       if (comp.client) {
         this->send_connected(
-            data, this->find_client_by_id(comp.client.value()).endpoint);
+            data, this->find_client_by_id(comp.client.value()));
       } else {
-        for (auto const& it : this->_clients) {
+        for (auto &it : this->_clients) {
           if (it.state != ClientState::CONNECTED) {
             continue;
           }
-          this->send_connected(data, it.endpoint);
+          this->send_connected(data, it);
         }
       }
     }

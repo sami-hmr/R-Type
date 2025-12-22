@@ -20,7 +20,6 @@ RtypeClient::RtypeClient(Registry& r, EventManager& em, EntityLoader& l)
     : BaseClient("rtype_client", r, em, l)
 {
   SUBSCRIBE_EVENT(PlayerCreation, {
-    this->_id_in_server = event.server_id;
     auto zipper = ZipperIndex<Controllable>(this->_registry.get());
 
     if (zipper.begin() != zipper.end()) {
@@ -52,6 +51,7 @@ RtypeClient::RtypeClient(Registry& r, EventManager& em, EntityLoader& l)
       // this->_server_indexes.insert(event.server_index,
       //                              new_entity);  // SERVER -> CLIENT
     }
+
     this->_event_manager.get().emit<EventBuilder>(
         "PlayerCreated",
         PlayerCreated(event.server_index, this->_id_in_server).to_bytes());

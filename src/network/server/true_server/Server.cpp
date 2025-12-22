@@ -142,18 +142,15 @@ void Server::send(ByteArray const& response,
   } catch (asio::system_error const&) {
     this->remove_client_by_endpoint(endpoint);
   }
-
-  // NETWORK_LOGGER("server",
-  //                std::uint8_t(LogLevel::DEBUG),
-  //                std::format("Sent package of size: {}", pkg.size()));
 }
 
-void Server::send_connected(ByteArray const& response,
-                            const asio::ip::udp::endpoint& endpoint)
+void Server::send_connected(ByteArray const& response, ClientInfo& client)
 {
-  ByteArray pkg = type_to_byte(this->_current_index_sequence)
-      + type_to_byte<std::uint32_t>(0) + type_to_byte<bool>(true) + response;
+  ByteArray pkg = type_to_byte(client.next_send_sequence)
+      + type_to_byte<std::size_t>(0) + type_to_byte<bool>(true) + response;
 
-  this->_current_index_sequence += 1;
-  this->send(pkg, endpoint);
+  client.waiting_aprouval.emplace_back(client.next_send_sequence, pkg);
+
+  client.next_send_sequence += 1;
+  this->send(pkg, client.endpoint);
 }

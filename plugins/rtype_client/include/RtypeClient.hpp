@@ -11,7 +11,5 @@ class RtypeClient : public BaseClient
   public:
     RtypeClient(Registry& r, EventManager &em, EntityLoader& l);
     ~RtypeClient() override = default;
-
   private:
-    std::size_t _id_in_server;
 };

@@ -5,6 +5,7 @@
 // #include <random>
 
 #include <memory>
+#include <optional>
 #include <semaphore>
 #include <thread>
 #include <unordered_map>
@@ -18,6 +19,7 @@
 #include "NetworkShared.hpp"
 #include "ServerLaunch.hpp"
 #include "ecs/Registry.hpp"
+#include "network/server/Server.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 
@@ -30,9 +32,12 @@ class BaseServer : public APlugin
   private:
     void launch_server(ServerLaunching const& s);
 
+    std::optional<Server> _server_class;
     std::thread _actual_server;
     SharedQueue<ComponentBuilderId> _components_to_update;
     std::atomic<bool> _running = false;
     SharedQueue<EventBuilder> _event_queue;
     SharedQueue<EventBuilderId> _event_queue_to_client;
+
+    std::map<std::size_t, std::size_t> _heathbeat;
 };

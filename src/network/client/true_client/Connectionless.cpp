@@ -23,15 +23,6 @@ void Client::send(ByteArray const& command)
   //     std::format("Sent package of size: {}", pkg.size()));
 }
 
-void Client::send_connected(ByteArray const& response)
-{
-  ByteArray pkg = type_to_byte(this->_current_index_sequence)
-      + type_to_byte<std::uint32_t>(0) + type_to_byte<bool>(true) + response;
-
-  this->_current_index_sequence += 1;
-  this->send(pkg);
-}
-
 void Client::handle_connectionless_response(
     ConnectionlessCommand const& response)
 {

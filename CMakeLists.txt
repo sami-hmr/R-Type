@@ -58,6 +58,7 @@ find_package(asio CONFIG REQUIRED)
 set(SERVER_LIB r-type_server_lib)
 
 add_library(${SERVER_LIB} STATIC
+    src/network/server/true_server/ClientManagement.cpp
     src/network/server/true_server/CommandParsing.cpp
     src/network/server/true_server/Connected.cpp
     src/network/server/true_server/Connectionless.cpp

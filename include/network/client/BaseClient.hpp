@@ -31,6 +31,8 @@ private:
   SharedQueue<EventBuilder> _event_to_server;
   std::thread _thread;
   std::atomic<bool> _running = false;
+  bool _connected = false;
+  std::size_t _hearth_beat_delta = 0;
 
 protected:
   TwoWayMap<Registry::Entity /*server */, Registry::Entity /*client */>

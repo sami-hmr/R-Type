@@ -248,6 +248,56 @@ struct PlayerCreated
   }
 };
 
+struct HeathBeat
+{
+  std::size_t client;
+
+  HeathBeat() = default;
+
+  HeathBeat(std::size_t c)
+      : client(c)
+  {
+  }
+
+  DEFAULT_BYTE_CONSTRUCTOR(HeathBeat,
+                           ([](std::size_t c) { return HeathBeat(c); }),
+                           parseByte<std::size_t>())
+
+  DEFAULT_SERIALIZE(type_to_byte(client))
+
+  CHANGE_ENTITY_DEFAULT
+
+  HeathBeat(Registry& r, JsonObject const& e)
+      : client(get_value_copy<std::size_t>(r, e, "client").value())
+  {
+  }
+};
+
+struct DisconnectClient
+{
+  std::size_t client;
+
+  DisconnectClient() = default;
+
+  DisconnectClient(std::size_t c)
+      : client(c)
+  {
+  }
+
+  DEFAULT_BYTE_CONSTRUCTOR(DisconnectClient,
+                           ([](std::size_t c) { return DisconnectClient(c); }),
+                           parseByte<std::size_t>())
+
+  DEFAULT_SERIALIZE(type_to_byte(client))
+
+  CHANGE_ENTITY_DEFAULT
+
+  DisconnectClient(Registry& r, JsonObject const& e)
+      : client(get_value_copy<std::size_t>(r, e, "client").value())
+  {
+  }
+};
+
 template<typename T>
 struct SharedQueue
 {

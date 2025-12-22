@@ -3,7 +3,9 @@
 #include <array>
 #include <bit>
 #include <cstdint>
+#include <deque>
 #include <string>
+#include <utility>
 
 #include <asio/error_code.hpp>
 #include <asio/io_context.hpp>
@@ -114,7 +116,9 @@ struct ClientInfo
   asio::ip::udp::endpoint endpoint;
   std::string player_name;
   ClientState state = ClientState::DISCONNECTED;
-  std::uint32_t last_sequence = 0;
+  std::size_t next_send_sequence = 1;
+  std::deque<std::pair<std::size_t /* index sequence */, ByteArray>>
+      waiting_aprouval;
   std::uint32_t challenge = 0;
   std::uint8_t client_id = 0;
   std::uint32_t score = 0;

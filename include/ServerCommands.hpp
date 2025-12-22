@@ -76,18 +76,18 @@ inline Parser<ChallengeResponse> parse_challenge_rsp()
 
 struct ConnectedPackage
 {
-  std::uint32_t sequence_number;
-  std::uint32_t acknowledge;
+  std::size_t sequence_number;
+  std::size_t acknowledge;
   bool end_of_content;
   ByteArray real_package;
 };
 
 inline Parser<ConnectedPackage> parse_connected()
 {
-  return apply([](std::uint32_t sn, std::uint32_t a, bool eoc, ByteArray r)
+  return apply([](std::size_t sn, std::size_t a, bool eoc, ByteArray r)
                { return ConnectedPackage(sn, a, eoc, std::move(r)); },
-               parseByte<std::uint32_t>(),
-               parseByte<std::uint32_t>(),
+               parseByte<std::size_t>(),
+               parseByte<std::size_t>(),
                parseByte<bool>(),
                parseByte<Byte>().many());
 }

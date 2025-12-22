@@ -1,7 +1,10 @@
 #include "network/server/BaseServer.hpp"
 
+#include "NetworkShared.hpp"
 #include "ecs/InitComponent.hpp"
+#include "ecs/Registry.hpp"
 #include "network/server/Server.hpp"
+#include "plugin/APlugin.hpp"
 #include "plugin/events/CleanupEvent.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
 #include "plugin/events/LoggerEvent.hpp"
@@ -32,6 +35,12 @@ BaseServer::BaseServer(std::string const& name,
     // server.close();
   })
 
+  SUBSCRIBE_EVENT_PRIORITY(NewConnection, {
+      std::cout << "NEW CONNECTION\n";
+    this->_event_manager.get().emit<EventBuilderId>(
+        event.client, "NewConnection", event.to_bytes());
+  }, 10)
+
   SUBSCRIBE_EVENT(ComponentBuilder, {
     this->_event_manager.get().emit<ComponentBuilderId>(std::nullopt, event);
   })
@@ -41,7 +50,33 @@ BaseServer::BaseServer(std::string const& name,
 
   SUBSCRIBE_EVENT(EventBuilderId, { this->_event_queue_to_client.push(event); })
 
-  this->_registry.get().add_system<>(
+  SUBSCRIBE_EVENT(HeathBeat, {
+    this->_heathbeat[event.client] =
+        this->_registry.get().clock().millisecond_now();
+  });
+
+  SUBSCRIBE_EVENT(DisconnectClient, {
+    if (!this->_server_class) {
+      return;
+    }
+
+    this->_server_class->disconnect_client(event.client);
+  })
+
+  this->_registry.get().add_system(
+      [this](Registry& /*r*/)
+      {
+        std::size_t milliseconds =
+            this->_registry.get().clock().millisecond_now();
+
+        for (auto const& [client, delta] : this->_heathbeat) {
+          if ((milliseconds - delta) > (1000 * 5 /* 5 seconds */)) {
+            this->_event_manager.get().emit<DisconnectClient>(client);
+          }
+        }
+      });
+
+  this->_registry.get().add_system(
       [this](Registry& /*r*/)
       {
         auto events = this->_event_queue.flush();
@@ -98,17 +133,16 @@ void BaseServer::launch_server(ServerLaunching const& s)
   try {
     _running = true;
 
-    Server server(s,
-                  _components_to_update,
-                  _event_queue_to_client,
-                  _event_queue,
-                  _running);
-
+    this->_server_class.emplace(s,
+                                _components_to_update,
+                                _event_queue_to_client,
+                                _event_queue,
+                                _running);
     LOGGER("server",
            LogLevel::INFO,
            std::format("Server started on port {}", s.port));
 
-    server.receive_loop();
+    this->_server_class->receive_loop();
   } catch (std::exception& e) {
     LOGGER("server",
            LogLevel::ERROR,
