@@ -37,10 +37,7 @@ public:
          SharedQueue<ComponentBuilderId>& comp_queue,
          SharedQueue<EventBuilderId>& event_to_client,
          SharedQueue<EventBuilder>& event_to_server,
-         std::atomic<bool>& running,
-         std::counting_semaphore<>& comp_sem,
-         std::counting_semaphore<>& event_sem,
-         std::counting_semaphore<>& event_to_serv_sem);
+         std::atomic<bool>& running);
   ~Server();
 
   void close();
@@ -70,9 +67,6 @@ private:
 
   void handle_event_receive(ByteArray const&, const asio::ip::udp::endpoint&);
   void handle_entity_creation(ByteArray const&, const asio::ip::udp::endpoint&);
-
-  // static asio::socket_base::message_flags handle_receive(
-  //     const asio::error_code& error, std::size_t bytes_transferred);
 
   void handle_package(ByteArray const&, const asio::ip::udp::endpoint&);
 
@@ -121,13 +115,11 @@ private:
 
   std::reference_wrapper<SharedQueue<ComponentBuilderId>> _components_to_create;
 
-  void transmit_event_to_client(EventBuilderId&& to_transmit);
+  void transmit_event_to_client(EventBuilderId const& to_transmit);
   void send_event_to_client();
-  std::reference_wrapper<std::counting_semaphore<>> _semaphore_event_to_client;
   std::reference_wrapper<SharedQueue<EventBuilderId>> _events_queue_to_client;
 
-  void transmit_event_to_server(EventBuilder&& to_transmit);
-  std::reference_wrapper<std::counting_semaphore<>> _semaphore_event_to_server;
+  void transmit_event_to_server(EventBuilder const& to_transmit);
   std::reference_wrapper<SharedQueue<EventBuilder>> _events_queue_to_serv;
 
   std::atomic<bool>& _running;
@@ -136,6 +128,7 @@ private:
       _waiting_packages;
 
   void send_comp();
-  std::reference_wrapper<std::counting_semaphore<>> _semaphore;
   std::vector<std::thread> _queue_readers;
 };
+
+CUSTOM_EXCEPTION(ClientNotFound)

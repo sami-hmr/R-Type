@@ -53,6 +53,29 @@ target_include_directories(${CORE_LIB}
 
 target_link_libraries(${CORE_LIB} PRIVATE parser)
 
+set(SERVER_LIB r-type_server_lib)
+
+add_library(${SERVER_LIB} STATIC
+    src/network/server/true_server/CommandParsing.cpp
+    src/network/server/true_server/Connected.cpp
+    src/network/server/true_server/Connectionless.cpp
+    src/network/server/true_server/DataTransfer.cpp
+    src/network/server/true_server/Server.cpp
+    src/network/server/plugin_base/BaseServer.cpp
+)
+
+target_include_directories(${SERVER_LIB}
+    PUBLIC
+        include
+        ${parser_SOURCE_DIR}/include
+)
+
+target_link_libraries(${SERVER_LIB} PRIVATE
+    parser
+    ${CORE_LIB}
+)
+
+
 if(BUILD_EPITECH_BINARIES)
     add_executable(r-type_client
         src/main.cpp

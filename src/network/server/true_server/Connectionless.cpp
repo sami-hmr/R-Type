@@ -2,10 +2,9 @@
 #include <cstdint>
 #include <random>
 
-#include "Network.hpp"
 #include "NetworkCommun.hpp"
 #include "NetworkShared.hpp"
-#include "Server.hpp"
+#include "network/server/Server.hpp"
 
 const std::unordered_map<std::uint8_t,
                          void (Server::*)(ByteArray const&,
@@ -146,7 +145,7 @@ void Server::handle_connect(ByteArray const& cmd,
 
     send(pkg, sender);
     this->transmit_event_to_server(
-        EventBuilder("EntityCreation", EntityCreation(client_id).to_bytes()));
+        EventBuilder("NewConnection", NewConnection(client_id).to_bytes()));
   } catch (ClientNotFound&) {
     NETWORK_LOGGER(
         "server", std::uint8_t(LogLevel::WARNING), "Invalid challenge");

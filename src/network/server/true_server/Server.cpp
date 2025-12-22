@@ -5,15 +5,11 @@
 ** Server
 */
 #include <atomic>
-#include <queue>
-#include <semaphore>
 #include <vector>
-
-#include "Server.hpp"
 
 #include <asio/system_error.hpp>
 
-#include "Network.hpp"
+#include "network/server/Server.hpp"
 #include "NetworkCommun.hpp"
 #include "NetworkShared.hpp"
 #include "plugin/Byte.hpp"
@@ -22,18 +18,12 @@ Server::Server(ServerLaunching const& s,
                SharedQueue<ComponentBuilderId>& comp_queue,
                SharedQueue<EventBuilderId>& event_to_client,
                SharedQueue<EventBuilder>& event_to_server,
-               std::atomic<bool>& running,
-               std::counting_semaphore<>& comp_sem,
-               std::counting_semaphore<>& event_sem,
-               std::counting_semaphore<>& event_to_serv_sem)
+               std::atomic<bool>& running)
     : _socket(_io_c, asio::ip::udp::endpoint(asio::ip::udp::v4(), s.port))
     , _components_to_create(std::ref(comp_queue))
-    , _semaphore_event_to_client(std::ref(event_sem))
     , _events_queue_to_client(std::ref(event_to_client))
-    , _semaphore_event_to_server(std::ref(event_to_serv_sem))
     , _events_queue_to_serv(std::ref(event_to_server))
     , _running(running)
-    , _semaphore(std::ref(comp_sem))
 {
   this->_queue_readers.emplace_back([this]() { this->send_comp(); });
   this->_queue_readers.emplace_back([this]() { this->send_event_to_client(); });
@@ -52,9 +42,9 @@ void Server::close()
 
 Server::~Server()
 {
-  this->_semaphore.get().release();
-  this->_semaphore_event_to_client.get().release();
-  this->_semaphore_event_to_server.get().release();
+  this->_events_queue_to_client.get().release();
+  this->_events_queue_to_serv.get().release();
+  this->_components_to_create.get().release();
   for (auto& it : this->_queue_readers) {
     if (it.joinable()) {
       it.join();
@@ -89,8 +79,6 @@ void Server::receive_loop()
       }
 
       while (std::optional<ByteArray> p = recv_buf.extract(PROTOCOL_EOF)) {
-        // NETWORK_LOGGER(
-        //     "server", std::uint8_t(LogLevel::DEBUG), "package extracted");
         this->handle_package(*p, sender_endpoint);
       }
     } catch (std::exception& e) {

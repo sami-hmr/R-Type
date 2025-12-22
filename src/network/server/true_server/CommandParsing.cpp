@@ -4,12 +4,10 @@
 
 #include <sys/types.h>
 
-// #include "ByteParser/ByteParser.hpp"
 #include "NetworkShared.hpp"
-#include "Server.hpp"
+#include "network/server/Server.hpp"
 #include "Parser.hpp"
 #include "ParserTypes.hpp"
-// #include "ParserUtils.hpp"
 #include "Rest.hpp"
 #include "ServerCommands.hpp"
 #include "plugin/Byte.hpp"

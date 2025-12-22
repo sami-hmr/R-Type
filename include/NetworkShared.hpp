@@ -4,9 +4,11 @@
 #include <mutex>
 #include <optional>
 #include <queue>
+#include <semaphore>
 #include <string>
 #include <tuple>
 #include <unordered_map>
+#include <vector>
 
 #include "ByteParser/ByteParser.hpp"
 #include "ParserUtils.hpp"
@@ -192,26 +194,26 @@ struct EventBuilderId
   }
 };
 
-struct EntityCreation
+struct NewConnection
 {
   std::size_t client;
 
-  EntityCreation() = default;
+  NewConnection() = default;
 
-  EntityCreation(std::size_t c)
+  NewConnection(std::size_t c)
       : client(c)
   {
   }
 
-  DEFAULT_BYTE_CONSTRUCTOR(EntityCreation,
-                           ([](std::size_t c) { return EntityCreation(c); }),
+  DEFAULT_BYTE_CONSTRUCTOR(NewConnection,
+                           ([](std::size_t c) { return NewConnection(c); }),
                            parseByte<std::size_t>())
 
   DEFAULT_SERIALIZE(type_to_byte(client))
 
   CHANGE_ENTITY_DEFAULT
 
-  EntityCreation(Registry& r, JsonObject const& e)
+  NewConnection(Registry& r, JsonObject const& e)
       : client(get_value_copy<std::size_t>(r, e, "client").value())
   {
   }
@@ -249,7 +251,42 @@ struct PlayerCreated
 template<typename T>
 struct SharedQueue
 {
+  SharedQueue(): semaphore(0) {}
+
+  void push(T const &obj) {
+      this->lock.lock();
+      this->queue.push(obj);
+      this->lock.unlock();
+      this->semaphore.release();
+  }
+  T pop() {
+      this->lock.lock();
+      auto tmp = this->queue.front();
+      this->queue.pop();
+      this->lock.unlock();
+      return std::move(tmp);
+  }
+  std::vector<T> flush() {
+      this->lock.lock();
+      std::vector<T> tmp;
+      while (!this->queue.empty()) {
+          tmp.push_back(this->queue.front());
+          this->queue.pop();
+      }
+      this->lock.unlock();
+      return std::move(tmp);
+  }
+
+  void wait() {
+      this->semaphore.acquire();
+  }
+
+  void release() {
+      this->semaphore.release();
+  }
+
   std::mutex lock;
+  std::counting_semaphore<> semaphore;
   std::queue<T> queue;
 };
 

@@ -25,7 +25,7 @@
 #include "plugin/events/NetworkEvents.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
 
-NetworkClient::NetworkClient(Registry& r, EventManager &em, EntityLoader& l)
+NetworkClient::NetworkClient(Registry& r, EventManager& em, EntityLoader& l)
     : APlugin("network_client", r, em, l, {}, {})
     , _sem(0)
 {
@@ -114,10 +114,10 @@ NetworkClient::NetworkClient(Registry& r, EventManager &em, EntityLoader& l)
   })
 
   SUBSCRIBE_EVENT(DeleteClientEntity, {
+    //std::cout << "entitée deleted" << std::endl;
     this->_server_indexes.remove_second(event.entity);
     this->_registry.get().kill_entity(event.entity);
   })
-
 
   this->_registry.get().add_system<>(
       [this](Registry& r)
@@ -125,10 +125,8 @@ NetworkClient::NetworkClient(Registry& r, EventManager &em, EntityLoader& l)
         if (!this->_running) {
           return;
         }
-        this->_component_queue.lock.lock();
-        while (!this->_component_queue.queue.empty()) {
-          auto& server_comp = this->_component_queue.queue.front();
-
+        auto components = this->_component_queue.flush();
+        for (auto& server_comp : components) {
           if (!this->_server_indexes.contains_first(server_comp.entity)) {
             auto new_entity = r.spawn_entity();
             this->_server_indexes.insert(server_comp.entity, new_entity);
@@ -138,28 +136,24 @@ NetworkClient::NetworkClient(Registry& r, EventManager &em, EntityLoader& l)
           try {
             this->_loader.get().load_byte_component(
                 true_entity, server_comp, this->_server_indexes);
-            this->_component_queue.queue.pop();
-          } catch (InvalidPackage const &e) {
+          } catch (InvalidPackage const& e) {
             LOGGER("client", LogLevel::ERROR, e.what());
           }
         }
-        this->_component_queue.lock.unlock();
       });
 
   this->_registry.get().add_system<>(
       [this](Registry& /*r*/)
       {
-        this->_event_from_server.lock.lock();
-        while (!this->_event_from_server.queue.empty()) {
-          auto& e = this->_event_from_server.queue.front();
-          this->_event_manager.get().emit(e.event_id,
-                 this->_event_manager.get().convert_event_entity(
-                     e.event_id,
-                     e.data,
-                     this->_server_indexes.get_first()));  // SERVER -> CLIENT
-          this->_event_from_server.queue.pop();
+        auto events = this->_event_from_server.flush();
+        for (auto& e : events) {
+          this->_event_manager.get().emit(
+              e.event_id,
+              this->_event_manager.get().convert_event_entity(
+                  e.event_id,
+                  e.data,
+                  this->_server_indexes.get_first()));  // SERVER -> CLIENT
         }
-        this->_event_from_server.lock.unlock();
       });
 }
 
@@ -191,7 +185,7 @@ void NetworkClient::connection_thread(ClientConnection const& c)
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager &em, EntityLoader& e)
+void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
   return new NetworkClient(r, em, e);
 }

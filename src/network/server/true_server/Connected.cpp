@@ -1,9 +1,8 @@
 #include <stdexcept>
 
+#include "network/server/Server.hpp"
 #include "NetworkCommun.hpp"
-#include "NetworkShared.hpp"
 #include "PackageFragmentation.hpp"
-#include "Server.hpp"
 #include "ServerCommands.hpp"
 #include "plugin/Byte.hpp"
 
@@ -56,12 +55,12 @@ void Server::handle_connected_command(ConnectedCommand const& command,
 }
 
 void Server::handle_event_receive(ByteArray const& package,
-                                  const asio::ip::udp::endpoint&)
+                                  const asio::ip::udp::endpoint& /*endpoint*/)
 {
   auto parsed = parse_event_build_cmd(package);
 
   if (!parsed) {
     return;
   }
-  this->transmit_event_to_server(std::move(parsed.value()));
+  this->transmit_event_to_server(parsed.value());
 }
