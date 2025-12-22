@@ -254,26 +254,24 @@ struct SharedQueue
   SharedQueue(): semaphore(0) {}
 
   void push(T const &obj) {
-      this->lock.lock();
+      std::lock_guard<std::mutex> guard(this->lock);
       this->queue.push(obj);
-      this->lock.unlock();
       this->semaphore.release();
   }
   T pop() {
-      this->lock.lock();
+      std::lock_guard<std::mutex> guard(this->lock);
       auto tmp = this->queue.front();
       this->queue.pop();
-      this->lock.unlock();
       return std::move(tmp);
   }
   std::vector<T> flush() {
-      this->lock.lock();
+      std::lock_guard<std::mutex> guard(this->lock);
       std::vector<T> tmp;
+      tmp.reserve(this->queue.size());
       while (!this->queue.empty()) {
           tmp.push_back(this->queue.front());
           this->queue.pop();
       }
-      this->lock.unlock();
       return std::move(tmp);
   }
 

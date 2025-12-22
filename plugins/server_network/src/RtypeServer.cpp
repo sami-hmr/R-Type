@@ -77,21 +77,6 @@ RtypeServer::RtypeServer(Registry& r, EventManager& em, EntityLoader& l)
     }
   })
 
-  SUBSCRIBE_EVENT(LoadEntityTemplate, {
-    auto const& entity = this->_loader.get().load_entity(
-        JsonObject({{"template", JsonValue(event.template_name)}}));
-
-    if (!entity) {
-      LOGGER("load entity template",
-             LogLevel::ERROR,
-             "failed to load entity template " + event.template_name);
-    }
-    for (auto const& [id, comp] : event.aditionals) {
-      init_component(
-          this->_registry.get(), this->_event_manager.get(), *entity, id, comp);
-    }
-  })
-
   SUBSCRIBE_EVENT(DeleteEntity, {
     if (this->_player_entities.contains(event.entity)) {
       this->_event_manager.get().emit<EventBuilderId>(
