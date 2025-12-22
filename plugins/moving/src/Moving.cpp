@@ -5,6 +5,7 @@
 
 #include "Json/JsonParser.hpp"
 #include "NetworkShared.hpp"
+#include "ecs/EventManager.hpp"
 #include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
@@ -18,9 +19,10 @@
 #include "plugin/components/Speed.hpp"
 #include "plugin/events/CollisionEvent.hpp"
 
-Moving::Moving(Registry& r, EntityLoader& l)
+Moving::Moving(Registry& r, EventManager &em, EntityLoader& l)
     : APlugin("moving",
               r,
+              em,
               l,
               {},
               {COMP_INIT(Position, Position, init_pos),
@@ -58,7 +60,7 @@ void Moving::moving_system(Registry& reg)
     Vector2D movement = (direction.direction).normalize() * speed.speed * dt;
     position.pos += movement;
     if (movement.length() != 0) {
-      reg.emit<ComponentBuilder>(
+      this->_event_manager.get().emit<ComponentBuilder>(
           index, reg.get_component_key<Position>(), position.to_bytes());
     }
   }
@@ -85,7 +87,7 @@ void Moving::init_pos(Registry::Entity const& entity, JsonObject& obj)
     }
   }
   auto& pos_opt = init_component<Position>(
-      this->_registry.get(), entity, values.value(), z);
+      this->_registry.get(), this->_event_manager.get(), entity, values.value(), z);
 
   if (!pos_opt.has_value()) {
     std::cerr << "Error creating Position component\n";
@@ -105,7 +107,7 @@ void Moving::init_direction(Registry::Entity const& entity, JsonObject& obj)
   }
 
   auto& vel_opt = init_component<Direction>(
-      this->_registry.get(), entity, dir.value());
+      this->_registry.get(), this->_event_manager.get(), entity, dir.value());
 
   if (!vel_opt.has_value()) {
     std::cerr << "Error creating Direction component\n";
@@ -125,7 +127,7 @@ void Moving::init_speed(Registry::Entity const& entity, JsonObject& obj)
   }
 
   auto& vel_opt = init_component<Speed>(
-      this->_registry.get(), entity, speed.value());
+      this->_registry.get(), this->_event_manager.get(), entity, speed.value());
 
   if (!vel_opt.has_value()) {
     std::cerr << "Error creating Speed component\n";
@@ -154,8 +156,8 @@ void Moving::init_facing(Registry::Entity const& entity, JsonObject& obj)
 
 extern "C"
 {
-void* entry_point(Registry& r, EntityLoader& e)
+void* entry_point(Registry& r, EventManager &em, EntityLoader& e)
 {
-  return new Moving(r, e);
+  return new Moving(r, em, e);
 }
 }

@@ -2,9 +2,9 @@
 
 #include "Json/JsonParser.hpp"
 #include "NetworkShared.hpp"
+#include "ecs/EventManager.hpp"
 #include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
-#include "ecs/SparseArray.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
@@ -14,15 +14,17 @@
 #include "plugin/events/CollisionEvent.hpp"
 #include "plugin/events/DeathEvent.hpp"
 
-Projectile::Projectile(Registry& r, EntityLoader& l)
-    : APlugin("projectile", r,
+Projectile::Projectile(Registry& r, EventManager& em, EntityLoader& l)
+    : APlugin("projectile",
+              r,
+              em,
               l,
               {"moving", "collision"},
               {COMP_INIT(Temporal, Temporal, init_temporal),
                COMP_INIT(Fragile, Fragile, init_fragile)})
 {
-    REGISTER_COMPONENT(Temporal)
-    REGISTER_COMPONENT(Fragile)
+  REGISTER_COMPONENT(Temporal)
+  REGISTER_COMPONENT(Fragile)
 
   this->_registry.get().add_system<>(
       [this](Registry& r) { this->temporal_system(r); }, 2);
@@ -43,7 +45,10 @@ void Projectile::init_temporal(Registry::Entity entity, JsonObject const& obj)
     return;
   }
 
-  init_component<Temporal>(this->_registry.get(), entity, lifetime.value());
+  init_component<Temporal>(this->_registry.get(),
+                           this->_event_manager.get(),
+                           entity,
+                           lifetime.value());
 }
 
 void Projectile::init_fragile(Registry::Entity entity, JsonObject const& obj)
@@ -57,7 +62,10 @@ void Projectile::init_fragile(Registry::Entity entity, JsonObject const& obj)
     return;
   }
   init_component<Fragile>(this->_registry.get(),
-      entity, hits.value(), fragile_cooldown);
+                          this->_event_manager.get(),
+                          entity,
+                          hits.value(),
+                          fragile_cooldown);
 }
 
 void Projectile::temporal_system(Registry& reg)
@@ -68,13 +76,13 @@ void Projectile::temporal_system(Registry& reg)
     if (!reg.is_entity_dying(i)) {
       temporal.elapsed += dt;
 
-      this->_registry.get().emit<ComponentBuilder>(
+      this->_event_manager.get().emit<ComponentBuilder>(
           i,
           this->_registry.get().get_component_key<Temporal>(),
           temporal.to_bytes());
 
       if (temporal.elapsed >= temporal.lifetime) {
-        this->_registry.get().emit<DeathEvent>(i);
+        this->_event_manager.get().emit<DeathEvent>(i);
       }
     }
   }
@@ -88,7 +96,7 @@ void Projectile::fragile_system(Registry& reg)
     if (!reg.is_entity_dying(i)) {
       fragile.fragile_delta += dt;
 
-      this->_registry.get().emit<ComponentBuilder>(
+      this->_event_manager.get().emit<ComponentBuilder>(
           i,
           this->_registry.get().get_component_key<Fragile>(),
           fragile.to_bytes());
@@ -117,7 +125,7 @@ void Projectile::on_collision(const CollisionEvent& event)
   if (fragiles[event.a]->fragile_delta >= fragile_cooldown) {
     fragiles[event.a]->fragile_delta = 0.0;
 
-    this->_registry.get().emit<ComponentBuilder>(
+    this->_event_manager.get().emit<ComponentBuilder>(
         event.a,
         this->_registry.get().get_component_key<Fragile>(),
         fragiles[event.a]->to_bytes());
@@ -125,12 +133,12 @@ void Projectile::on_collision(const CollisionEvent& event)
     if (fragiles[event.a]->counter >= fragiles[event.a]->hits
         && !this->_registry.get().is_entity_dying(event.a))
     {
-      this->_registry.get().emit<DeathEvent>(event.a);
+      this->_event_manager.get().emit<DeathEvent>(event.a);
       return;
     }
     fragiles[event.a]->counter += 1;
 
-    this->_registry.get().emit<ComponentBuilder>(
+    this->_event_manager.get().emit<ComponentBuilder>(
         event.a,
         this->_registry.get().get_component_key<Fragile>(),
         fragiles[event.a]->to_bytes());
@@ -139,8 +147,8 @@ void Projectile::on_collision(const CollisionEvent& event)
 
 extern "C"
 {
-void* entry_point(Registry& r, EntityLoader& e)
+void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
-  return new Projectile(r, e);
+  return new Projectile(r, em, e);
 }
 }

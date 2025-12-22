@@ -1,5 +1,6 @@
 #pragma once
 
+#include <functional>
 #include <memory>
 #include <string>
 #include <typeindex>
@@ -9,6 +10,7 @@
 #include "Json/JsonParser.hpp"
 #include "NetworkShared.hpp"
 #include "TwoWayMap.hpp"
+#include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/IPlugin.hpp"
 #include "plugin/libLoaders/ILibLoader.hpp"
@@ -16,7 +18,7 @@
 class EntityLoader
 {
 public:
-  explicit EntityLoader(Registry& registry);
+  explicit EntityLoader(Registry& registry, EventManager &em);
 
   void load(std::string const& directory);
 
@@ -40,6 +42,7 @@ private:
   std::unordered_map<std::string, std::unique_ptr<LibLoader<IPlugin>>> _loaders;
   std::unordered_map<std::string, std::unique_ptr<IPlugin>> _plugins;
   std::reference_wrapper<Registry> _registry;
+  std::reference_wrapper<EventManager> _event_manager;
 };
 
 CUSTOM_EXCEPTION(BadComponentDefinition)

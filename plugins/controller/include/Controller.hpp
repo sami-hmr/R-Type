@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "Json/JsonParser.hpp"
+#include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/SparseArray.hpp"
 #include "ecs/zipper/Zipper.hpp"
@@ -20,7 +21,7 @@
 class Controller : public APlugin
 {
 public:
-  Controller(Registry& r, EntityLoader& l);
+  Controller(Registry& r, EventManager &em, EntityLoader& l);
 
 private:
   void init_controller(Registry::Entity const &entity, JsonObject const& obj);

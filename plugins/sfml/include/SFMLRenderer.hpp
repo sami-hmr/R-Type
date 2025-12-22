@@ -18,6 +18,7 @@
 #include <SFML/Window.hpp>
 
 #include "Json/JsonParser.hpp"
+#include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/SparseArray.hpp"
 #include "libs/Vector2D.hpp"
@@ -37,7 +38,7 @@
 class SFMLRenderer : public APlugin
 {
 public:
-  SFMLRenderer(Registry& r, EntityLoader& l);
+  SFMLRenderer(Registry& r, EventManager &em, EntityLoader& l);
   ~SFMLRenderer() override;
 
   static constexpr sf::Vector2u window_size = {1080, 1080};
@@ -60,7 +61,7 @@ private:
   void bar_system(Registry &r);
   void button_system(Registry& r);
 
-  
+
   void animation_system(Registry& r);
   void display();
 

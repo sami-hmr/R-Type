@@ -25,8 +25,8 @@
 #include "plugin/events/NetworkEvents.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
 
-NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
-    : APlugin("network_client", r, l, {}, {})
+NetworkClient::NetworkClient(Registry& r, EventManager &em, EntityLoader& l)
+    : APlugin("network_client", r, em, l, {}, {})
     , _sem(0)
 {
   SUBSCRIBE_EVENT(ClientConnection, {
@@ -60,7 +60,7 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
     }
     EventBuilder true_e(
         event.event_id,
-        this->_registry.get().convert_event_entity(
+        this->_event_manager.get().convert_event_entity(
             event.event_id,
             event.data,
             this->_server_indexes.get_second()));  // CLIENT -> SERVER
@@ -103,13 +103,13 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
       // this->_server_indexes.insert(event.server_index,
       //                              new_entity);  // SERVER -> CLIENT
     }
-    this->_registry.get().emit<EventBuilder>(
+    this->_event_manager.get().emit<EventBuilder>(
         "PlayerCreated",
         PlayerCreated(event.server_index, this->_id_in_server).to_bytes());
   })
 
   SUBSCRIBE_EVENT(WantReady, {
-    this->_registry.get().emit<EventBuilder>(
+    this->_event_manager.get().emit<EventBuilder>(
         "PlayerReady", PlayerReady(this->_id_in_server).to_bytes());
   })
 
@@ -147,13 +147,13 @@ NetworkClient::NetworkClient(Registry& r, EntityLoader& l)
       });
 
   this->_registry.get().add_system<>(
-      [this](Registry& r)
+      [this](Registry& /*r*/)
       {
         this->_event_from_server.lock.lock();
         while (!this->_event_from_server.queue.empty()) {
           auto& e = this->_event_from_server.queue.front();
-          r.emit(e.event_id,
-                 this->_registry.get().convert_event_entity(
+          this->_event_manager.get().emit(e.event_id,
+                 this->_event_manager.get().convert_event_entity(
                      e.event_id,
                      e.data,
                      this->_server_indexes.get_first()));  // SERVER -> CLIENT
@@ -191,8 +191,8 @@ void NetworkClient::connection_thread(ClientConnection const& c)
 
 extern "C"
 {
-void* entry_point(Registry& r, EntityLoader& e)
+void* entry_point(Registry& r, EventManager &em, EntityLoader& e)
 {
-  return new NetworkClient(r, e);
+  return new NetworkClient(r, em, e);
 }
 }

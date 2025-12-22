@@ -7,6 +7,7 @@
 
 #include "Json/JsonParser.hpp"
 #include "ecs/EmitEvent.hpp"
+#include "ecs/EventManager.hpp"
 #include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
@@ -18,9 +19,10 @@
 #include "plugin/events/IoEvents.hpp"
 #include "plugin/events/LoggerEvent.hpp"
 
-Controller::Controller(Registry& r, EntityLoader& l)
+Controller::Controller(Registry& r, EventManager& em, EntityLoader& l)
     : APlugin("controller",
               r,
+              em,
               l,
               {"logger"},
               {COMP_INIT(Controllable, Controllable, init_controller)})
@@ -112,7 +114,10 @@ void Controller::handle_key_change(Key key, bool is_pressed)
     }
     auto const& event = c.event_map.at(key_map);
 
-    emit_event(this->_registry.get(), event.first, event.second);
+    emit_event(this->_event_manager.get(),
+               this->_registry.get(),
+               event.first,
+               event.second);
   }
 };
 
@@ -137,8 +142,8 @@ double Controller::compute_axis(Key negative, Key positive) const
 
 extern "C"
 {
-void* entry_point(Registry& r, EntityLoader& e)
+void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
-  return new Controller(r, e);
+  return new Controller(r, em, e);
 }
 }

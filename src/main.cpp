@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "Json/JsonParser.hpp"
+#include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/events/ActionEvents.hpp"
@@ -14,13 +15,14 @@
 #include "plugin/libLoaders/ILibLoader.hpp"
 
 static int true_main(Registry& r,
+                     EventManager& em,
                      EntityLoader& e,
                      const std::vector<std::string>& argv)
 {
   bool should_exit = false;
   int exit_code = 0;
 
-  r.on<ShutdownEvent>("ShutdownEvent",
+  em.on<ShutdownEvent>("ShutdownEvent",
                       [&should_exit, &exit_code](const ShutdownEvent& event)
                       {
                         should_exit = true;
@@ -29,7 +31,7 @@ static int true_main(Registry& r,
                                   << "\n";
                       });
 
-  r.on<SceneChangeEvent>("SceneChangeEvent",
+  em.on<SceneChangeEvent>("SceneChangeEvent",
                          [&r](const SceneChangeEvent& event)
                          {
                            if (event.force) {
@@ -38,7 +40,7 @@ static int true_main(Registry& r,
                            r.set_current_scene(event.target_scene);
                          });
 
-  r.on<SpawnEntityRequestEvent>("SpawnEntity",
+  em.on<SpawnEntityRequestEvent>("SpawnEntity",
                                 [&r, &e](const SpawnEntityRequestEvent& event)
                                 {
                                   Registry::Entity entity = r.spawn_entity();
@@ -66,7 +68,7 @@ static int true_main(Registry& r,
       r.clock().now().time_since_epoch());
 
   while (!should_exit) {
-    r.run_systems();
+    r.run_systems(em);
 
     // Calculate when the next frame should start
     next_frame_time += frame_duration;
@@ -92,14 +94,15 @@ int main(int argc, char* argv[])
 {
   std::optional<Registry> r;
   r.emplace();
-  EntityLoader e(*r);
+  EventManager em;
+  EntityLoader e(*r, em);
 #ifdef RTYPE_EPITECH_CLIENT
-  int result = true_main(*r, e, {"client_config"});
+  int result = true_main(*r, em, e, {"client_config"});
 #elif RTYPE_EPITECH_SERVER
-  int result = true_main(*r, e, {"server_config"});
+  int result = true_main(*r, em, e, {"server_config"});
 #else
   int result =
-      true_main(*r, e, std::vector<std::string>(argv + 1, argv + argc));
+      true_main(*r, em, e, std::vector<std::string>(argv + 1, argv + argc));
 #endif
   r.reset();
   return result;

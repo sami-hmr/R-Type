@@ -33,14 +33,14 @@ void Weapon::init_basic_weapon(Registry::Entity const& entity,
                      "(magazine_nb: int)\n";
     return;
   }
-  auto const & reload_time = get_value<BasicWeapon, double>(
+  auto const& reload_time = get_value<BasicWeapon, double>(
       this->_registry.get(), obj, entity, "reload_time");
   if (!reload_time) {
     std::cerr << "Error loading BasicWeapon component: unexpected value type "
                      "(reload_time: double)\n";
     return;
   }
-  auto const & cooldown = get_value<BasicWeapon, double>(
+  auto const& cooldown = get_value<BasicWeapon, double>(
       this->_registry.get(), obj, entity, "cooldown");
   if (!cooldown) {
     std::cerr << "Error loading BasicWeapon component: unexpected value type "
@@ -49,10 +49,17 @@ void Weapon::init_basic_weapon(Registry::Entity const& entity,
   }
 
   init_component<BasicWeapon>(this->_registry.get(),
-      entity, bullet_type.value(), magazine_size.value(), magazine_nb.value(), reload_time.value(), cooldown.value());
+                              this->_event_manager.get(),
+                              entity,
+                              bullet_type.value(),
+                              magazine_size.value(),
+                              magazine_nb.value(),
+                              reload_time.value(),
+                              cooldown.value());
 }
 
-bool BasicWeapon::update_basic_weapon(std::chrono::high_resolution_clock::time_point now)
+bool BasicWeapon::update_basic_weapon(
+    std::chrono::high_resolution_clock::time_point now)
 {
   if (this->reloading) {
     return false;

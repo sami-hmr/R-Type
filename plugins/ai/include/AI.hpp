@@ -17,7 +17,7 @@
 class AI : public APlugin
 {
 public:
-  AI(Registry& r, EntityLoader& l);
+  AI(Registry& r, EventManager &em, EntityLoader& l);
   ~AI() override = default;
 
 private:

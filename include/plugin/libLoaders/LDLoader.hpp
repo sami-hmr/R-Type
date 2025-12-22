@@ -8,6 +8,7 @@
 
 #include "ILibLoader.hpp"
 #include "Json/JsonParser.hpp"
+#include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/IPlugin.hpp"
 #include "plugin/libLoaders/ILibLoader.hpp"
@@ -45,18 +46,19 @@ public:
   std::unique_ptr<Module> get_instance(
       const std::string& entry_point,
       Registry& r,
+      EventManager &em,
       EntityLoader& e,
       std::optional<JsonObject> const& config) override
   {
     auto* function =
         (IPlugin
-         * (*)(Registry&, EntityLoader&, std::optional<JsonObject> const&))(
+         * (*)(Registry&, EventManager &, EntityLoader&, std::optional<JsonObject> const&))(
             dlsym(this->_lib, entry_point.c_str()));
 
     if (function == nullptr) {
       throw LoaderException("not a rtype Plugin lib");
     }
-    auto* instance = dynamic_cast<Module*>(function(r, e, config));
+    auto* instance = dynamic_cast<Module*>(function(r, em, e, config));
     if (instance == nullptr) {
       throw LoaderException("wrong plugin type");
     }

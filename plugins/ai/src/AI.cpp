@@ -7,14 +7,15 @@
 #include "movement/MovementPatterns.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/AttackBehavior.hpp"
+#include "plugin/components/Direction.hpp"
 #include "plugin/components/MovementBehavior.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Speed.hpp"
-#include "plugin/components/Direction.hpp"
 
-AI::AI(Registry& r, EntityLoader& l)
+AI::AI(Registry& r, EventManager& em, EntityLoader& l)
     : APlugin("ai",
               r,
+              em,
               l,
               {"moving", "collision", "target"},
               {COMP_INIT(
@@ -84,7 +85,14 @@ void AI::movement_behavior_system(Registry& r)
         != _movement_patterns.end())
     {
       _movement_patterns[behavior.movement_type]->update(
-          entity, r, behavior, pos, speed, direction, dt);
+          entity,
+          r,
+          this->_event_manager.get(),
+          behavior,
+          pos,
+          speed,
+          direction,
+          dt);
     }
   }
 }
@@ -102,15 +110,22 @@ void AI::attack_behavior_system(Registry& r)
 
     if (_attack_patterns.find(behavior.attack_type) != _attack_patterns.end()) {
       _attack_patterns[behavior.attack_type]->execute(
-          entity, r, behavior, pos, speed, direction, dt);
+          entity,
+          r,
+          this->_event_manager.get(),
+          behavior,
+          pos,
+          speed,
+          direction,
+          dt);
     }
   }
 }
 
 extern "C"
 {
-void* entry_point(Registry& r, EntityLoader& e)
+void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
-  return new AI(r, e);
+  return new AI(r, em, e);
 }
 }

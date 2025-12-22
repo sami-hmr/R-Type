@@ -4,6 +4,7 @@
 
 #include "MovementPattern.hpp"
 #include "NetworkShared.hpp"
+#include "ecs/EventManager.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/components/Direction.hpp"
 #include "plugin/components/Follower.hpp"
@@ -18,6 +19,7 @@ public:
 
   void update(Registry::Entity entity,
               Registry& registry,
+              EventManager &em,
               MovementBehavior& /*behavior*/,
               Position& /*pos*/,
               Direction& direction,
@@ -31,7 +33,7 @@ public:
     double direction_change = direction_diff.length();
     if (direction_change > DIRECTION_TOLERANCE) {
       direction.direction = new_direction;
-      registry.emit<ComponentBuilder>(entity,
+      em.emit<ComponentBuilder>(entity,
                                       registry.get_component_key<Direction>(),
                                       direction.to_bytes());
     }
@@ -45,6 +47,7 @@ public:
 
   void update(Registry::Entity entity,
               Registry& registry,
+              EventManager &em,
               MovementBehavior& behavior,
               Position& /*pos*/,
               Direction& direction,
@@ -52,7 +55,7 @@ public:
               double dt) override
   {
     behavior.movement_delta += dt;
-    registry.emit<ComponentBuilder>(
+    em.emit<ComponentBuilder>(
         entity,
         registry.get_component_key<MovementBehavior>(),
         behavior.to_bytes());
@@ -69,7 +72,7 @@ public:
     double direction_change = direction_diff.length();
     if (direction_change > DIRECTION_TOLERANCE) {
       direction.direction = new_direction;
-      registry.emit<ComponentBuilder>(entity,
+      em.emit<ComponentBuilder>(entity,
                                       registry.get_component_key<Direction>(),
                                       direction.to_bytes());
     }
@@ -83,6 +86,7 @@ public:
 
   void update(Registry::Entity entity,
               Registry& registry,
+              EventManager &em,
               MovementBehavior& behavior,
               Position& /*pos*/,
               Direction& direction,
@@ -90,7 +94,7 @@ public:
               double dt) override
   {
     behavior.movement_delta += dt;
-    registry.emit<ComponentBuilder>(
+    em.emit<ComponentBuilder>(
         entity,
         registry.get_component_key<MovementBehavior>(),
         behavior.to_bytes());
@@ -110,7 +114,7 @@ public:
     double direction_change = direction_diff.length();
     if (direction_change > DIRECTION_TOLERANCE) {
       direction.direction = new_direction;
-      registry.emit<ComponentBuilder>(entity,
+      em.emit<ComponentBuilder>(entity,
                                       registry.get_component_key<Direction>(),
                                       direction.to_bytes());
     }
@@ -124,6 +128,7 @@ public:
 
   void update(Registry::Entity entity,
               Registry& registry,
+              EventManager &em,
               MovementBehavior& behavior,
               Position& pos,
               Direction& direction,
@@ -132,7 +137,7 @@ public:
 
   {
     behavior.movement_delta += dt;
-    registry.emit<ComponentBuilder>(
+    em.emit<ComponentBuilder>(
         entity,
         registry.get_component_key<MovementBehavior>(),
         behavior.to_bytes());
@@ -154,7 +159,7 @@ public:
 
       if (direction_change > DIRECTION_TOLERANCE) {
         direction.direction = new_direction;
-        registry.emit<ComponentBuilder>(entity,
+        em.emit<ComponentBuilder>(entity,
                                         registry.get_component_key<Direction>(),
                                         direction.to_bytes());
       }
@@ -167,6 +172,7 @@ class TurretPattern : public MovementPattern
 public:
   void update(Registry::Entity entity,
               Registry& registry,
+              EventManager &em,
               MovementBehavior& /*behavior*/,
               Position& /*pos*/,
               Direction& direction,
@@ -179,13 +185,13 @@ public:
     if (speed.speed != default_speed) {
       speed.speed.x = 0.0;
       speed.speed.y = 0.0;
-      registry.emit<ComponentBuilder>(
+      em.emit<ComponentBuilder>(
           entity, registry.get_component_key<Speed>(), speed.to_bytes());
     }
     if (direction.direction != default_direction) {
       direction.direction.x = 0.0;
       direction.direction.y = 0.0;
-      registry.emit<ComponentBuilder>(entity,
+      em.emit<ComponentBuilder>(entity,
                                       registry.get_component_key<Direction>(),
                                       direction.to_bytes());
     }
@@ -197,6 +203,7 @@ class FollowTargetPattern : public MovementPattern
 public:
   void update(Registry::Entity entity,
               Registry& registry,
+              EventManager &em,
               MovementBehavior& /*behavior*/,
               Position& /*pos*/,
               Direction& direction,
@@ -207,7 +214,7 @@ public:
       registry.add_component(entity, Follower());
       direction.direction.x = -1.0;
       direction.direction.y = 0.0;
-      registry.emit<ComponentBuilder>(entity,
+      em.emit<ComponentBuilder>(entity,
                                       registry.get_component_key<Direction>(),
                                       direction.to_bytes());
     }
@@ -215,7 +222,7 @@ public:
       registry.add_component(entity, InteractionZone(1.5));
       direction.direction.x = -1.0;
       direction.direction.y = 0.0;
-      registry.emit<ComponentBuilder>(entity,
+      em.emit<ComponentBuilder>(entity,
                                       registry.get_component_key<Direction>(),
                                       direction.to_bytes());
     }

@@ -8,6 +8,7 @@
 #include "Json/JsonParser.hpp"
 #include "NetworkShared.hpp"
 #include "algorithm/QuadTreeCollision.hpp"
+#include "ecs/EventManager.hpp"
 #include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
@@ -25,10 +26,11 @@
 #include "plugin/events/InteractionZoneEvent.hpp"
 #include "plugin/events/LoggerEvent.hpp"
 
-Collision::Collision(Registry& r, EntityLoader& l)
+Collision::Collision(Registry& r , EventManager &em, EntityLoader& l)
     : APlugin(
           "collision",
           r,
+          em,
           l,
           {"moving"},
           {COMP_INIT(Collidable, Collidable, init_collision),
@@ -89,7 +91,7 @@ void Collision::init_collision(Registry::Entity const& entity,
   }
 
   init_component<Collidable>(
-      this->_registry.get(), entity, width.value(), height.value(), type, true);
+      this->_registry.get(), this->_event_manager.get(), entity, width.value(), height.value(), type, true);
 }
 
 void Collision::init_interaction_zone(Registry::Entity const& entity,
@@ -104,7 +106,7 @@ void Collision::init_interaction_zone(Registry::Entity const& entity,
   }
 
   init_component<InteractionZone>(
-      this->_registry.get(), entity, radius.value());
+      this->_registry.get(), this->_event_manager.get(), entity, radius.value());
 }
 
 void Collision::collision_system(Registry& r)
@@ -135,8 +137,8 @@ void Collision::collision_system(Registry& r)
     std::size_t entity_a = collision.entity_a;
     std::size_t entity_b = collision.entity_b;
 
-    this->_registry.get().emit<CollisionEvent>(entity_a, entity_b);
-    this->_registry.get().emit<CollisionEvent>(entity_b, entity_a);
+    this->_event_manager.get().emit<CollisionEvent>(entity_a, entity_b);
+    this->_event_manager.get().emit<CollisionEvent>(entity_b, entity_a);
   }
 }
 
@@ -173,7 +175,7 @@ void Collision::interaction_zone_system(Registry& r)
       }
     }
     if (!detected_entities.empty()) {
-      this->_registry.get().emit<InteractionZoneEvent>(
+      this->_event_manager.get().emit<InteractionZoneEvent>(
           i, zone.radius, detected_entities);
     }
   }
@@ -225,7 +227,7 @@ void Collision::on_collision(const CollisionEvent& c)
     {
       positions[c.a]->pos -= movement;
       positions[c.b]->pos += movement;
-      this->_registry.get().emit<ComponentBuilder>(
+      this->_event_manager.get().emit<ComponentBuilder>(
           c.b,
           this->_registry.get().get_component_key<Position>(),
           positions[c.b]->to_bytes());
@@ -247,7 +249,7 @@ void Collision::on_collision(const CollisionEvent& c)
       positions[c.a]->pos -= movement;
     }
 
-    this->_registry.get().emit<ComponentBuilder>(
+    this->_event_manager.get().emit<ComponentBuilder>(
         c.a,
         this->_registry.get().get_component_key<Position>(),
         positions[c.a]->to_bytes());
@@ -256,8 +258,8 @@ void Collision::on_collision(const CollisionEvent& c)
 
 extern "C"
 {
-void* entry_point(Registry& r, EntityLoader& e)
+void* entry_point(Registry& r, EventManager &em, EntityLoader& e)
 {
-  return new Collision(r, e);
+  return new Collision(r, em, e);
 }
 }
