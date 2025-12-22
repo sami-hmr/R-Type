@@ -1,9 +1,9 @@
 
 #include <optional>
 
-#include "Client.hpp"
 #include "ParserTypes.hpp"
 #include "ServerCommands.hpp"
+#include "network/client/Client.hpp"
 
 std::optional<Package> Client::parse_package(ByteArray const& package)
 {

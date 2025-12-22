@@ -5,27 +5,23 @@
 ** Client
 */
 
-#include <semaphore>
-
-#include "Client.hpp"
+#include "network/client/Client.hpp"
+#include <asio/ip/address.hpp>
 
 #include "NetworkCommun.hpp"
 #include "NetworkShared.hpp"
 #include "plugin/CircularBuffer.hpp"
-#include "Client.hpp"
 
 Client::Client(ClientConnection const& c,
                SharedQueue<ComponentBuilder>& shared_components,
                SharedQueue<EventBuilder>& shared_events,
                SharedQueue<EventBuilder>& shared_exec_events,
-               std::atomic<bool>& running,
-               std::counting_semaphore<>& sem)
+               std::atomic<bool>& running)
     : _socket(_io_c)
     , _components_to_create(std::ref(shared_components))
     , _events_to_transmit(std::ref(shared_events))
     , _event_to_exec(std::ref(shared_exec_events))
     , _running(running)
-    , _semaphore(sem)
 {
   _socket.open(asio::ip::udp::v4());
   _server_endpoint =
@@ -39,7 +35,8 @@ Client::Client(ClientConnection const& c,
 
 void Client::close()
 {
-  this->_semaphore.get().release();
+  this->_running.get() = false;
+  this->_events_to_transmit.get().release();
   if (this->_queue_reader.joinable()) {
       this->_queue_reader.join();
   }
@@ -51,11 +48,13 @@ void Client::close()
 Client::~Client()
 {
   this->_running.get() = false;
-  this->_semaphore.get().release();
+  this->_events_to_transmit.get().release();
   if (this->_queue_reader.joinable()) {
       this->_queue_reader.join();
   }
-  _socket.close();
+  if (_socket.is_open()) {
+    _socket.close();
+  }
 }
 
 void Client::connect()

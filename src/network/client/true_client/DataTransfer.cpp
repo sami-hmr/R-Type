@@ -1,6 +1,6 @@
-#include "Client.hpp"
 #include "NetworkCommun.hpp"
 #include "NetworkShared.hpp"
+#include "network/client/Client.hpp"
 #include "plugin/Byte.hpp"
 
 void Client::transmit_component(ComponentBuilder&& to_transmit)
@@ -20,15 +20,12 @@ void Client::transmit_event(EventBuilder&& to_transmit)
 void Client::send_evt()
 {
   while (_running.get()) {
-    this->_semaphore.get().acquire();
-    this->_events_to_transmit.get().lock.lock();
-    auto& queue = this->_events_to_transmit.get().queue;
+    this->_events_to_transmit.get().wait();
+    auto const &events = this->_events_to_transmit.get().flush();
 
-    while (!queue.empty()) {
-      auto data = type_to_byte<Byte>(SENDEVENT) + queue.front().to_bytes();
+    for (auto const &evt : events) {
+      auto data = type_to_byte<Byte>(SENDEVENT) + evt.to_bytes();
       this->send_connected(data);
-      queue.pop();
     }
-    this->_events_to_transmit.get().lock.unlock();
   }
 }

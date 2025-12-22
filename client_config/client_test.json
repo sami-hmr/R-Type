@@ -11,7 +11,7 @@
           }
         },
         {
-          "name": "client_network",
+          "name": "rtype_client",
           "config": {}
         },
         {

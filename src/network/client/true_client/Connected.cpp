@@ -1,6 +1,6 @@
-#include "Client.hpp"
 #include "NetworkCommun.hpp"
 #include "ServerCommands.hpp"
+#include "network/client/Client.hpp"
 #include "plugin/Byte.hpp"
 
 const std::unordered_map<std::uint8_t, void (Client::*)(ByteArray const&)>

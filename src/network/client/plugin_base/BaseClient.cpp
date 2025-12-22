@@ -4,30 +4,28 @@
 #include <string_view>
 #include <thread>
 
-#include "Network.hpp"
+#include "network/client/BaseClient.hpp"
 
-#include "Client.hpp"
 #include "ClientConnection.hpp"
-#include "Json/JsonParser.hpp"
 #include "NetworkShared.hpp"
-#include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
+#include "network/client/Client.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Controllable.hpp"
-#include "plugin/components/Position.hpp"
 #include "plugin/events/CleanupEvent.hpp"
-#include "plugin/events/CollisionEvent.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
 #include "plugin/events/LoggerEvent.hpp"
 #include "plugin/events/NetworkEvents.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
 
-NetworkClient::NetworkClient(Registry& r, EventManager& em, EntityLoader& l)
-    : APlugin("network_client", r, em, l, {}, {})
-    , _sem(0)
+BaseClient::BaseClient(std::string const& name,
+                       Registry& r,
+                       EventManager& em,
+                       EntityLoader& l)
+    : APlugin(name, r, em, l, {}, {})
 {
   SUBSCRIBE_EVENT(ClientConnection, {
     if (!this->_running) {
@@ -58,68 +56,15 @@ NetworkClient::NetworkClient(Registry& r, EventManager& em, EntityLoader& l)
     if (!this->_running) {
       return;
     }
-    EventBuilder true_e(
+    this->_event_to_server.push(EventBuilder(
         event.event_id,
         this->_event_manager.get().convert_event_entity(
             event.event_id,
             event.data,
-            this->_server_indexes.get_second()));  // CLIENT -> SERVER
-    this->_event_to_server.lock.lock();
-    this->_event_to_server.queue.push(std::move(true_e));
-    this->_event_to_server.lock.unlock();
-    this->_sem.release();
+            this->_server_indexes.get_second())));  // CLIENT -> SERVER
   })
 
-  SUBSCRIBE_EVENT(PlayerCreation, {
-    this->_id_in_server = event.server_id;
-    auto zipper = ZipperIndex<Controllable>(this->_registry.get());
-
-    if (zipper.begin() != zipper.end()) {
-      std::size_t index = std::get<0>(*zipper.begin());
-
-      this->_server_indexes.insert(event.server_index, index);
-    } else {
-      LOGGER("client",
-             LogLevel::INFO,
-             "no bindings detected for client, default applicated (z q s "
-             "d, les bindings de thresh tu connais (de la dinde) ? (le joueur de quake "
-             "pas le main de baptiste ahah mdr))");
-
-      // std::size_t new_entity = this->_registry.get().spawn_entity();
-
-      // init_component<Controllable>(this->_registry.get(), {
-      //   {"Z",
-      //       {
-      //           {"name",
-      //           this->_registry.get().get_event_key<UpdateDirection>()},
-      //           {"params", {
-      //               {"entity", JsonValue(static_cast<int>(new_entity))},
-      //               {"x", JsonValue(static_cast<double>(0))},
-      //               {"y", JsonValue(static_cast<double>(1))}
-      //           }}
-      //       }
-      //   }
-      // });
-      // this->_server_indexes.insert(event.server_index,
-      //                              new_entity);  // SERVER -> CLIENT
-    }
-    this->_event_manager.get().emit<EventBuilder>(
-        "PlayerCreated",
-        PlayerCreated(event.server_index, this->_id_in_server).to_bytes());
-  })
-
-  SUBSCRIBE_EVENT(WantReady, {
-    this->_event_manager.get().emit<EventBuilder>(
-        "PlayerReady", PlayerReady(this->_id_in_server).to_bytes());
-  })
-
-  SUBSCRIBE_EVENT(DeleteClientEntity, {
-    //std::cout << "entitée deleted" << std::endl;
-    this->_server_indexes.remove_second(event.entity);
-    this->_registry.get().kill_entity(event.entity);
-  })
-
-  this->_registry.get().add_system<>(
+  this->_registry.get().add_system(
       [this](Registry& r)
       {
         if (!this->_running) {
@@ -142,7 +87,7 @@ NetworkClient::NetworkClient(Registry& r, EventManager& em, EntityLoader& l)
         }
       });
 
-  this->_registry.get().add_system<>(
+  this->_registry.get().add_system(
       [this](Registry& /*r*/)
       {
         auto events = this->_event_from_server.flush();
@@ -154,10 +99,16 @@ NetworkClient::NetworkClient(Registry& r, EventManager& em, EntityLoader& l)
                   e.data,
                   this->_server_indexes.get_first()));  // SERVER -> CLIENT
         }
-      });
+      }
+  );
+
+  SUBSCRIBE_EVENT(DeleteClientEntity, {
+    this->_server_indexes.remove_second(event.entity);
+    this->_registry.get().kill_entity(event.entity);
+  })
 }
 
-NetworkClient::~NetworkClient()
+BaseClient::~BaseClient()
 {
   _running = false;
   if (this->_thread.joinable()) {
@@ -165,15 +116,14 @@ NetworkClient::~NetworkClient()
   }
 }
 
-void NetworkClient::connection_thread(ClientConnection const& c)
+void BaseClient::connection_thread(ClientConnection const& c)
 {
   try {
     Client client(c,
                   _component_queue,
                   _event_to_server,
                   _event_from_server,
-                  _running,
-                  _sem);
+                  _running);
     client.connect();
   } catch (std::exception& e) {
     LOGGER("client",
@@ -181,12 +131,4 @@ void NetworkClient::connection_thread(ClientConnection const& c)
            std::format("Connection failed: {}", e.what()));
     _running = false;
   }
-}
-
-extern "C"
-{
-void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
-{
-  return new NetworkClient(r, em, e);
-}
 }

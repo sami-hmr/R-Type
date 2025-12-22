@@ -33,8 +33,7 @@ public:
          SharedQueue<ComponentBuilder>&,
          SharedQueue<EventBuilder>&,
          SharedQueue<EventBuilder>&,
-         std::atomic<bool>& running,
-         std::counting_semaphore<>&);
+         std::atomic<bool>& running);
   ~Client();
 
   void close();
@@ -105,7 +104,6 @@ private:
   std::unordered_map<std::uint32_t, ByteArray> _waiting_packages;
 
   void send_evt();
-  std::reference_wrapper<std::counting_semaphore<>> _semaphore;
   std::thread _queue_reader;
 
   std::uint32_t _current_index_sequence = 0;

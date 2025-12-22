@@ -27,9 +27,8 @@ class BaseServer : public APlugin
     BaseServer(std::string const &name, Registry& r, EventManager &em, EntityLoader& l);
     ~BaseServer() override;
 
-  protected:
+  private:
     void launch_server(ServerLaunching const& s);
-
 
     std::thread _actual_server;
     SharedQueue<ComponentBuilderId> _components_to_update;

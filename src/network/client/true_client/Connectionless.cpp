@@ -1,6 +1,6 @@
-#include "Client.hpp"
 #include "NetworkShared.hpp"
 #include "ServerCommands.hpp"
+#include "network/client/Client.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
 

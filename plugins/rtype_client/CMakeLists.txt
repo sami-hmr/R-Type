@@ -1,19 +1,16 @@
 cmake_minimum_required(VERSION 3.14)
 
-set(LIB_NAME rtype_server)
-
-find_package(asio CONFIG REQUIRED)
+set(LIB_NAME rtype_client)
 
 add_library(${LIB_NAME} SHARED
-    src/RtypeServer.cpp
+    src/RtypeClient.cpp
 )
 
 target_compile_features(${LIB_NAME} PRIVATE cxx_std_23)
 
 target_link_libraries(${LIB_NAME}
     PRIVATE
-    ${SERVER_LIB}
-    asio::asio
+    ${CLIENT_LIB}
 )
 
 target_include_directories(${LIB_NAME}
