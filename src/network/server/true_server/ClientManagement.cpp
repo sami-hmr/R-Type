@@ -59,13 +59,3 @@ void Server::disconnect_client(std::size_t client_id)
   NETWORK_LOGGER(
       "server", info, std::format("client {} disconected", client_id));
 }
-
-void Server::update_acknowledge(std::size_t acknowledge, ClientInfo &infos) {
-    auto &pkgs = infos.waiting_aprouval;
-    while (!pkgs.empty() && (pkgs.front().first <= acknowledge)) {
-        pkgs.pop_front();
-    }
-    for (auto const &it : pkgs) {
-        this->send(it.second, infos.endpoint);
-    }
-}

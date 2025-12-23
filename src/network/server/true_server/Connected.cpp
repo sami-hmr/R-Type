@@ -1,4 +1,5 @@
 #include <stdexcept>
+#include <vector>
 
 #include "NetworkCommun.hpp"
 #include "PackageFragmentation.hpp"
@@ -16,18 +17,33 @@ const std::unordered_map<std::uint8_t,
 void Server::handle_connected_packet(ConnectedPackage const& command,
                                      const asio::ip::udp::endpoint& sender)
 {
-
   this->_client_mutex.lock();
-  this->update_acknowledge(command.acknowledge, this->find_client_by_endpoint(sender));
+  ClientInfo& client = this->find_client_by_endpoint(sender);
+  client.acknowledge_manager.register_received_package(command);
+  std::vector<ConnectedPackage> packages =
+      client.acknowledge_manager.extract_available_packages();
   this->_client_mutex.unlock();
 
-  ByteArray entire = command.real_package;
+  for (auto const& pkg : packages) {
+    ByteArray entire = pkg.real_package;
 
-  auto const& parsed = parse_connected_command(entire);
-  if (!parsed) {
-    return;
+    auto const& parsed = parse_connected_command(entire);
+    if (!parsed) {
+      continue;
+    }
+    this->handle_connected_command(parsed.value(), sender);
   }
-  this->handle_connected_command(parsed.value(), sender);
+  this->_client_mutex.lock();
+  ClientInfo& same_client = this->find_client_by_endpoint(sender);
+  if (packages.size() != 0) {
+    same_client.acknowledge_manager.approuve_packages(
+        packages[packages.size() - 1].acknowledge);
+  }
+  for (auto const& it : same_client.acknowledge_manager.get_packages_to_send())
+  {
+    this->send(it, same_client.endpoint);
+  }
+  this->_client_mutex.unlock();
 }
 
 void Server::handle_connected_command(ConnectedCommand const& command,

@@ -1,4 +1,6 @@
 
+#include <iostream>
+
 #include "NetworkCommun.hpp"
 #include "NetworkShared.hpp"
 #include "network/server/Server.hpp"
@@ -23,10 +25,14 @@ void Server::send_event_to_client()
     for (auto const& evt : events) {
       ByteArray data = type_to_byte(SENDEVENT) + evt.event.to_bytes();
       if (evt.client) {
-        auto &client = this->find_client_by_id(*evt.client);
-        this->send_connected(data, client);
+        try {
+          auto& client = this->find_client_by_id(*evt.client);
+          this->send_connected(data, client);
+        } catch (ClientNotFound const&) {
+          std::cerr << "Client not found, skipping\n";
+        }
       } else {
-        for (auto &it : this->_clients) {
+        for (auto& it : this->_clients) {
           if (it.state != ClientState::CONNECTED) {
             continue;
           }
@@ -49,10 +55,14 @@ void Server::send_comp()
           + type_to_byte(comp.component.entity)
           + string_to_byte(comp.component.id) + comp.component.data;
       if (comp.client) {
-        this->send_connected(
-            data, this->find_client_by_id(comp.client.value()));
+        try {
+          this->send_connected(data,
+                               this->find_client_by_id(comp.client.value()));
+        } catch (ClientNotFound const&) {
+          std::cerr << "Client not found, skipping\n";
+        }
       } else {
-        for (auto &it : this->_clients) {
+        for (auto& it : this->_clients) {
           if (it.state != ClientState::CONNECTED) {
             continue;
           }

@@ -13,6 +13,7 @@
 
 #include "NetworkCommun.hpp"
 #include "NetworkShared.hpp"
+#include "ServerCommands.hpp"
 #include "plugin/Byte.hpp"
 
 Server::Server(ServerLaunching const& s,
@@ -117,18 +118,22 @@ void Server::handle_package(ByteArray const& package,
   } catch (ClientNotFound const&) {
   }
   this->_client_mutex.unlock();
-  if (state == ClientState::CONNECTED) {
-    auto const& parsed = parse_connected_package(pkg->real_package);
-    if (!parsed) {
-      return;
+  try {
+    if (state == ClientState::CONNECTED) {
+      auto const& parsed = parse_connected_package(pkg->real_package);
+      if (!parsed) {
+        return;
+      }
+      this->handle_connected_packet(parsed.value(), sender);
+    } else {
+      auto const& parsed = parse_connectionless_package(pkg->real_package);
+      if (!parsed) {
+        return;
+      }
+      this->handle_connectionless_packet(parsed.value(), sender);
     }
-    this->handle_connected_packet(parsed.value(), sender);
-  } else {
-    auto const& parsed = parse_connectionless_package(pkg->real_package);
-    if (!parsed) {
-      return;
-    }
-    this->handle_connectionless_packet(parsed.value(), sender);
+  } catch (ClientNotFound const&) {
+    std::cerr << "Client not found, skipping\n";
   }
 }
 
@@ -146,11 +151,13 @@ void Server::send(ByteArray const& response,
 
 void Server::send_connected(ByteArray const& response, ClientInfo& client)
 {
-  ByteArray pkg = type_to_byte(client.next_send_sequence)
-      + type_to_byte<std::size_t>(0) + type_to_byte<bool>(true) + response;
+  ConnectedPackage pkg(client.next_send_sequence,
+                       client.acknowledge_manager.get_acknowledge(),
+                       true,
+                       response);
 
-  client.waiting_aprouval.emplace_back(client.next_send_sequence, pkg);
-
+  client.acknowledge_manager.register_sent_package(pkg);
   client.next_send_sequence += 1;
-  this->send(pkg, client.endpoint);
+
+  this->send(pkg.to_bytes(), client.endpoint);
 }

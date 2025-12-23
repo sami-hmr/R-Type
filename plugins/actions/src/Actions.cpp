@@ -39,6 +39,8 @@ Actions::Actions(Registry& r, EventManager& em, EntityLoader& l)
       5);
 
   SUBSCRIBE_EVENT(KeyPressedEvent, {
+    std::vector<std::function<void()>> to_emit;
+
     for (auto&& [entity, action] :
          ZipperIndex<ActionTrigger>(this->_registry.get()))
     {
@@ -51,10 +53,17 @@ Actions::Actions(Registry& r, EventManager& em, EntityLoader& l)
               KEY_MAPPING.at_first(key)))
       {
         for (auto& i : action.event_to_emit) {
-          this->_event_manager.get().emit(
-              this->_registry.get(), i.first, i.second);
+          to_emit.emplace_back(
+              [&]()
+              {
+                this->_event_manager.get().emit(
+                    this->_registry.get(), i.first, i.second);
+              });
         }
       }
+    }
+    for (auto const& it : to_emit) {
+      it();
     }
   })
 }

@@ -1,3 +1,6 @@
+#include <iostream>
+#include <vector>
+
 #include "network/server/BaseServer.hpp"
 
 #include "NetworkShared.hpp"
@@ -35,11 +38,16 @@ BaseServer::BaseServer(std::string const& name,
     // server.close();
   })
 
-  SUBSCRIBE_EVENT_PRIORITY(NewConnection, {
-      std::cout << "NEW CONNECTION\n";
-    this->_event_manager.get().emit<EventBuilderId>(
-        event.client, "NewConnection", event.to_bytes());
-  }, 10)
+  SUBSCRIBE_EVENT_PRIORITY(
+      NewConnection,
+      {
+        std::cout << "NEW CONNECTION\n";
+        this->_heathbeat[event.client] =
+            this->_registry.get().clock().millisecond_now();
+        this->_event_manager.get().emit<EventBuilderId>(
+            event.client, "NewConnection", event.to_bytes());
+      },
+      10)
 
   SUBSCRIBE_EVENT(ComponentBuilder, {
     this->_event_manager.get().emit<ComponentBuilderId>(std::nullopt, event);
@@ -50,18 +58,19 @@ BaseServer::BaseServer(std::string const& name,
 
   SUBSCRIBE_EVENT(EventBuilderId, { this->_event_queue_to_client.push(event); })
 
-  SUBSCRIBE_EVENT(HeathBeat, {
+  SUBSCRIBE_EVENT(HearthBeat, {
     this->_heathbeat[event.client] =
         this->_registry.get().clock().millisecond_now();
   });
 
-  SUBSCRIBE_EVENT(DisconnectClient, {
+  SUBSCRIBE_EVENT_PRIORITY(DisconnectClient, {
     if (!this->_server_class) {
       return;
     }
 
+    std::cout << "DISCONNECT\n";
     this->_server_class->disconnect_client(event.client);
-  })
+  }, 2)
 
   this->_registry.get().add_system(
       [this](Registry& /*r*/)
@@ -69,10 +78,15 @@ BaseServer::BaseServer(std::string const& name,
         std::size_t milliseconds =
             this->_registry.get().clock().millisecond_now();
 
+        std::vector<std::size_t> clients_to_remove;
         for (auto const& [client, delta] : this->_heathbeat) {
-          if ((milliseconds - delta) > (1000 * 5 /* 5 seconds */)) {
-            this->_event_manager.get().emit<DisconnectClient>(client);
+          if ((milliseconds - delta) > (1000 * 3 /* 3 seconds */)) {
+            clients_to_remove.push_back(client);
           }
+        }
+        for (auto const &client : clients_to_remove) {
+            this->_event_manager.get().emit<DisconnectClient>(client);
+            this->_heathbeat.erase(client);
         }
       });
 

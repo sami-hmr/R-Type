@@ -248,26 +248,26 @@ struct PlayerCreated
   }
 };
 
-struct HeathBeat
+struct HearthBeat
 {
   std::size_t client;
 
-  HeathBeat() = default;
+  HearthBeat() = default;
 
-  HeathBeat(std::size_t c)
+  HearthBeat(std::size_t c)
       : client(c)
   {
   }
 
-  DEFAULT_BYTE_CONSTRUCTOR(HeathBeat,
-                           ([](std::size_t c) { return HeathBeat(c); }),
+  DEFAULT_BYTE_CONSTRUCTOR(HearthBeat,
+                           ([](std::size_t c) { return HearthBeat(c); }),
                            parseByte<std::size_t>())
 
   DEFAULT_SERIALIZE(type_to_byte(client))
 
   CHANGE_ENTITY_DEFAULT
 
-  HeathBeat(Registry& r, JsonObject const& e)
+  HearthBeat(Registry& r, JsonObject const& e)
       : client(get_value_copy<std::size_t>(r, e, "client").value())
   {
   }

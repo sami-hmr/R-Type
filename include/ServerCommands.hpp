@@ -80,6 +80,13 @@ struct ConnectedPackage
   std::size_t acknowledge;
   bool end_of_content;
   ByteArray real_package;
+
+  ByteArray to_bytes() const
+  {
+    return type_to_byte<std::size_t>(this->sequence_number)
+        + type_to_byte<std::size_t>(this->acknowledge)
+        + type_to_byte<bool>(this->end_of_content) + real_package;
+  }
 };
 
 inline Parser<ConnectedPackage> parse_connected()

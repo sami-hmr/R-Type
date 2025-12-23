@@ -47,6 +47,8 @@ void Mob::init_spawner(Registry::Entity const& entity, JsonObject const& obj)
 
 void Mob::spawner_system(Registry& r)
 {
+  std::vector<std::function<void()>> event_to_emit;
+
   for (auto&& [i, spawner, pos, scene] :
        ZipperIndex<Spawner, Position, Scene>(r))
   {
@@ -67,18 +69,25 @@ void Mob::spawner_system(Registry& r)
       if (spawner.current_spawns >= spawner.max_spawns) {
         spawner.active = false;
       }
-      this->_event_manager.get().emit<ComponentBuilder>(
-          i, r.get_component_key<Spawner>(), spawner.to_bytes());
-      this->_event_manager.get().emit<LoadEntityTemplate>(
-          spawner.entity_template,
-          LoadEntityTemplate::Additional {
-              {
-                  this->_registry.get().get_component_key<Position>(),
-                  pos.to_bytes(),
-              },
-              {this->_registry.get().get_component_key<Scene>(),
-               scene.to_bytes()}});
+      event_to_emit.emplace_back(
+          [&]()
+          {
+            this->_event_manager.get().emit<ComponentBuilder>(
+                i, r.get_component_key<Spawner>(), spawner.to_bytes());
+            this->_event_manager.get().emit<LoadEntityTemplate>(
+                spawner.entity_template,
+                LoadEntityTemplate::Additional {
+                    {
+                        this->_registry.get().get_component_key<Position>(),
+                        pos.to_bytes(),
+                    },
+                    {this->_registry.get().get_component_key<Scene>(),
+                     scene.to_bytes()}});
+          });
     }
+  }
+  for (auto const &fn : event_to_emit) {
+      fn();
   }
 }
 

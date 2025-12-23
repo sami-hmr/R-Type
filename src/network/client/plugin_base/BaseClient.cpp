@@ -114,8 +114,9 @@ BaseClient::BaseClient(std::string const& name,
         std::size_t milliseconds =
             this->_registry.get().clock().millisecond_now();
         if (this->_hearth_beat_delta < milliseconds) {
+
           this->_event_manager.get().emit<EventBuilder>(
-              "HearthBeat", HeathBeat(this->_id_in_server).to_bytes());
+              "HearthBeat", HearthBeat(this->_id_in_server).to_bytes());
           this->_hearth_beat_delta = milliseconds + 100; /* 0.1 second */
         }
       });

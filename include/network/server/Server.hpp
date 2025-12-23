@@ -95,7 +95,6 @@ private:
       void (Server::*)(ByteArray const&, const asio::ip::udp::endpoint&)>
       connected_table;
 
-  void update_acknowledge(std::size_t acknowledge, ClientInfo &infos);
 
   asio::io_context _io_c;
   asio::ip::udp::socket _socket;

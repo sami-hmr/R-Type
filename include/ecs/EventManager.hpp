@@ -45,7 +45,6 @@
  */
 
 #include <any>
-#include <random>
 #include <typeindex>
 #include <vector>
 
@@ -503,17 +502,19 @@ private:
   {
     std::type_index type_id(typeid(EventType));
 
+    // Ensure the vector exists BEFORE trying to get a reference
     if (!_handlers.contains(type_id)) {
-      _handlers.insert_or_assign(type_id, std::vector<Event<EventType>>());
+      _handlers.emplace(type_id, std::vector<Event<EventType>>());
     }
 
     Event<EventType> tmp(handler, precision);
-    auto& handlers =
-        std::any_cast<std::vector<Event<EventType>>&>(_handlers[type_id]);
 
-    auto it = std::upper_bound(handlers.begin(), handlers.end(), tmp);
-    handlers.insert(it, std::move(tmp));
+    // Now safe to get reference using .at() which throws on missing key
+    auto& handlers = std::any_cast<std::vector<Event<EventType>>&>(_handlers.at(type_id));
+    auto insert_pos = std::upper_bound(handlers.begin(), handlers.end(), tmp);
+    handlers.insert(insert_pos, std::move(tmp));
   }
+
 
   std::unordered_map<
       std::string,

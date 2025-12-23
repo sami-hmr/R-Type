@@ -1,7 +1,9 @@
 #include <cstdint>
 #include <format>
+#include <functional>
 #include <iostream>
 #include <iterator>
+#include <vector>
 
 #include "Controller.hpp"
 
@@ -108,16 +110,24 @@ void Controller::handle_key_change(Key key, bool is_pressed)
   std::uint16_t key_map =
       (static_cast<std::uint32_t>(key) << 8) + static_cast<int>(is_pressed);
 
+  std::vector<std::function<void()>> to_emit;
   for (auto&& [c] : Zipper<Controllable>(this->_registry.get())) {
     if (!c.event_map.contains(key_map)) {
       continue;
     }
     auto const& event = c.event_map.at(key_map);
 
-    emit_event(this->_event_manager.get(),
-               this->_registry.get(),
-               event.first,
-               event.second);
+    to_emit.emplace_back(
+        [&]()
+        {
+          emit_event(this->_event_manager.get(),
+                     this->_registry.get(),
+                     event.first,
+                     event.second);
+        });
+  }
+  for (auto const &it : to_emit) {
+      it();
   }
 };
 

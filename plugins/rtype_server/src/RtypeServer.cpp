@@ -16,7 +16,6 @@
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
-#include "plugin/events/LoggerEvent.hpp"
 #include "plugin/events/NetworkEvents.hpp"
 #include "plugin/events/SceneChangeEvent.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
@@ -40,7 +39,6 @@ RtypeServer::RtypeServer(Registry& r, EventManager& em, EntityLoader& l)
   SUBSCRIBE_EVENT(PlayerCreated, {
     this->_event_manager.get().emit<StateTransfer>(event.client_id);
 
-    std::cout << event.client_id << std::endl;
     this->_event_manager.get().emit<EventBuilderId>(
         event.client_id,
         "SceneChangeEvent",
@@ -96,6 +94,21 @@ RtypeServer::RtypeServer(Registry& r, EventManager& em, EntityLoader& l)
       }
     }
   })
+
+  SUBSCRIBE_EVENT_PRIORITY(
+      DisconnectClient,
+      {
+        std::vector<Registry::Entity> to_delete;
+        for (auto const& [entity, id] : this->_player_entities) {
+          if (id == event.client) {
+            to_delete.push_back(entity);
+          }
+        }
+        for (auto const& it : to_delete) {
+          this->_event_manager.get().emit<DeleteEntity>(it);
+        }
+      },
+      4)
 }
 
 extern "C"

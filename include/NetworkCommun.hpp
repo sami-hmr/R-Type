@@ -12,6 +12,7 @@
 #include <asio/ip/udp.hpp>
 
 #include "ServerCommands.hpp"
+#include "network/AcknowledgeManager.hpp"
 #include "plugin/Byte.hpp"
 
 #define MAX_PLAYERS 4
@@ -117,8 +118,7 @@ struct ClientInfo
   std::string player_name;
   ClientState state = ClientState::DISCONNECTED;
   std::size_t next_send_sequence = 1;
-  std::deque<std::pair<std::size_t /* index sequence */, ByteArray>>
-      waiting_aprouval;
+  AcknowledgeManager acknowledge_manager;
   std::uint32_t challenge = 0;
   std::uint8_t client_id = 0;
   std::uint32_t score = 0;

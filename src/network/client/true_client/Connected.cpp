@@ -11,19 +11,19 @@ const std::unordered_map<std::uint8_t, void (Client::*)(ByteArray const&)>
 
 void Client::handle_connected_package(ConnectedPackage const& package)
 {
-  this->_awaiting_packages[package.sequence_number] = package;
+  this->_acknowledge_manager.register_received_package(package);
 
-  for (auto const& [sequence, pkg] : this->_awaiting_packages) {
-    if (sequence != (this->_last_interpreted_sequence + 1)) {
-      break;
-    }
-    //std::cout << sequence << std::endl;
-    this->_last_interpreted_sequence += 1;
+  auto const &packages = this->_acknowledge_manager.extract_available_packages();
+  for (auto const& pkg : packages)
+  {
     this->compute_connected_package(pkg);
   }
-  this->_awaiting_packages.erase(
-      this->_awaiting_packages.begin(),
-      this->_awaiting_packages.upper_bound(this->_last_interpreted_sequence));
+  if (packages.size() != 0) {
+      this->_acknowledge_manager.approuve_packages(packages[packages.size() - 1].acknowledge);
+  }
+  for (auto const &to_send : this->_acknowledge_manager.get_packages_to_send()) {
+      this->send(to_send);
+  }
 }
 
 void Client::compute_connected_package(ConnectedPackage const& package)
@@ -69,9 +69,10 @@ void Client::handle_event_creation(ByteArray const& package)
 
 void Client::send_connected(ByteArray const& response)
 {
-  ByteArray pkg = type_to_byte<std::size_t>(0)
-      + type_to_byte<std::size_t>(this->_last_interpreted_sequence)
-      + type_to_byte<bool>(true) + response;
+  ConnectedPackage pkg(this->_index_sequence, this->_acknowledge_manager.get_acknowledge(), true, response);
 
-  this->send(pkg);
+  this->_acknowledge_manager.register_sent_package(pkg);
+  this->_index_sequence += 1;
+
+  this->send(pkg.to_bytes());
 }

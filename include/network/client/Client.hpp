@@ -25,6 +25,7 @@
 #include "NetworkShared.hpp"
 #include "ServerCommands.hpp"
 #include "ServerLaunch.hpp"
+#include "network/AcknowledgeManager.hpp"
 #include "plugin/Byte.hpp"
 
 class Client
@@ -108,6 +109,6 @@ private:
   void send_evt();
   std::thread _queue_reader;
 
-  std::size_t _last_interpreted_sequence = 0;
-  std::map<std::size_t, ConnectedPackage> _awaiting_packages;
+  std::size_t _index_sequence = 1;
+  AcknowledgeManager _acknowledge_manager;
 };

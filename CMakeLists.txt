@@ -65,6 +65,7 @@ add_library(${SERVER_LIB} STATIC
     src/network/server/true_server/DataTransfer.cpp
     src/network/server/true_server/Server.cpp
     src/network/server/plugin_base/BaseServer.cpp
+    src/network/AcknowledgeManager.cpp
 )
 
 target_include_directories(${SERVER_LIB}
@@ -88,6 +89,7 @@ add_library(${CLIENT_LIB} STATIC
     src/network/client/true_client/DataTransfer.cpp
     src/network/client/true_client/Client.cpp
     src/network/client/plugin_base/BaseClient.cpp
+    src/network/AcknowledgeManager.cpp
 )
 
 target_include_directories(${CLIENT_LIB}
