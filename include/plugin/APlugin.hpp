@@ -8,6 +8,8 @@
 #include "IPlugin.hpp"
 #include "Json/JsonParser.hpp"
 #include "ecs/Registry.hpp"
+#include "ecs/EventManager.hpp"
+
 #include "plugin/IPlugin.hpp"
 
 #define COMP_INIT(comp_name, comp_type, method_name) \
@@ -38,7 +40,7 @@
       std::format("{}:{}", this->name, #comp));
 
 #define SUBSCRIBE_EVENT(event_name, function) \
-  this->_registry.get().on<event_name>( \
+  this->_event_manager.get().on<event_name>( \
       #event_name, [this]([[maybe_unused]] event_name const& event) function);
 
 class APlugin : public IPlugin
@@ -47,6 +49,7 @@ public:
   APlugin(
       std::string name,
       Registry& registry,
+      EventManager &event_manager,
       EntityLoader& loader,
       std::vector<std::string> const& depends_on,
       std::unordered_map<
@@ -65,6 +68,7 @@ protected:
       std::function<void(Registry::Entity, JsonVariant const&)>>
       components;
   std::reference_wrapper<Registry> _registry;
+  std::reference_wrapper<EventManager> _event_manager;
   std::reference_wrapper<EntityLoader> _loader;
   std::optional<JsonObject> _config;
 };

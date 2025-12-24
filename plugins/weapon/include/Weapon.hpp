@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
@@ -9,7 +10,7 @@
 class Weapon : public APlugin
 {
 public:
-  Weapon(Registry& r, EntityLoader& l);
+  Weapon(Registry& r, EventManager &em, EntityLoader& l);
 
   EntityLoader &entity_loader;
 

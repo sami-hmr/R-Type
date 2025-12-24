@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/APlugin.hpp"
 #include "Json/JsonParser.hpp"
@@ -18,7 +19,7 @@
 class Collision : public APlugin
 {
 public:
-  Collision(Registry& r, EntityLoader& l);
+  Collision(Registry& r, EventManager &em, EntityLoader& l);
 
   void set_algorithm(std::unique_ptr<ICollisionAlgorithm> algo);
 

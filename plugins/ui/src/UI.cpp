@@ -1,5 +1,6 @@
 #include "UI.hpp"
 
+#include "ecs/EventManager.hpp"
 #include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "libs/Color.hpp"
@@ -14,9 +15,13 @@
 #include "plugin/components/Sprite.hpp"
 #include "plugin/components/Text.hpp"
 
-UI::UI(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config)
+UI::UI(Registry& r,
+       EventManager& em,
+       EntityLoader& l,
+       std::optional<JsonObject> const& config)
     : APlugin("ui",
               r,
+              em,
               l,
               {},
               {COMP_INIT(input, Input, init_input),
@@ -38,8 +43,8 @@ UI::UI(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config)
   REGISTER_COMPONENT(Background)
   REGISTER_COMPONENT(AnimatedSprite)
 
-  this->_registry.get().add_system([this](Registry& r)
-                                   { this->update_anim_system(r); }, 1000);
+  this->_registry.get().add_system(
+      [this](Registry& r) { this->update_anim_system(r); }, 1000);
 
   SUBSCRIBE_EVENT(CamAggroEvent, { this->cam_target_event(event); })
   SUBSCRIBE_EVENT(CamZoomEvent, { this->cam_zoom_event(event); })
@@ -47,18 +52,19 @@ UI::UI(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config)
   SUBSCRIBE_EVENT(CamSpeedEvent, { this->cam_speed_event(event); })
   SUBSCRIBE_EVENT(CamMoveEvent, { this->cam_move_event(event); })
   SUBSCRIBE_EVENT(PlayAnimationEvent, {
-    AnimatedSprite::on_play_animation(this->_registry.get(), event);
+    AnimatedSprite::on_play_animation(this->_registry.get(), this->_event_manager.get(), event);
   })
   SUBSCRIBE_EVENT(AnimationEndEvent, {
-    AnimatedSprite::on_animation_end(this->_registry.get(), event);
+    AnimatedSprite::on_animation_end(this->_registry.get(), this->_event_manager.get(), event);
   })
   SUBSCRIBE_EVENT(DeathEvent,
-                  { AnimatedSprite::on_death(this->_registry.get(), event); })
+                  { AnimatedSprite::on_death(this->_registry.get(), this->_event_manager.get(), event); })
 }
 
 void UI::init_drawable(Registry::Entity const& entity, JsonObject const&)
 {
-  init_component<Drawable>(this->_registry.get(), entity);
+  init_component<Drawable>(
+      this->_registry.get(), this->_event_manager.get(), entity);
 }
 
 void UI::init_sprite(Registry::Entity const& entity, JsonObject const& obj)
@@ -78,8 +84,11 @@ void UI::init_sprite(Registry::Entity const& entity, JsonObject const& obj)
                 this->_registry.get(), obj, entity, "size", "width", "height")
                 .value();
   }
-  init_component<Sprite>(
-      this->_registry.get(), entity, texture_path.value(), scale);
+  init_component<Sprite>(this->_registry.get(),
+                         this->_event_manager.get(),
+                         entity,
+                         texture_path.value(),
+                         scale);
 }
 
 void UI::init_text(Registry::Entity const& entity, JsonObject const& obj)
@@ -144,6 +153,7 @@ void UI::init_text(Registry::Entity const& entity, JsonObject const& obj)
   }
 
   init_component(this->_registry.get(),
+                 this->_event_manager.get(),
                  entity,
                  Text(font_path.value(),
                       scale,
@@ -168,8 +178,10 @@ void UI::init_input(Registry::Entity entity, const JsonVariant& config)
       buffer = std::get<std::string>(obj.at("buffer").value);
     }
 
-    init_component<Input>(
-        this->_registry.get(), entity, Input(enabled, buffer));
+    init_component<Input>(this->_registry.get(),
+                          this->_event_manager.get(),
+                          entity,
+                          Input(enabled, buffer));
   } catch (std::bad_variant_access const&) {
   }
 }
@@ -263,8 +275,10 @@ void UI::init_background(Registry::Entity const& entity, JsonObject const& obj)
                    "value, using default (inactive)\n";
     }
   }
-  init_component<Background>(
-      this->_registry.get(), entity, Background(paths, render_type, parallax));
+  init_component<Background>(this->_registry.get(),
+                             this->_event_manager.get(),
+                             entity,
+                             Background(paths, render_type, parallax));
 }
 
 std::optional<AnimationData> UI::parse_animation_data(JsonObject const& obj,
@@ -391,6 +405,7 @@ void UI::init_animated_sprite(Registry::Entity const& entity,
     default_animation = default_animation_value.value();
   }
   init_component<AnimatedSprite>(this->_registry.get(),
+                                 this->_event_manager.get(),
                                  entity,
                                  std::move(animations),
                                  default_animation,
@@ -430,15 +445,19 @@ void UI::init_cam(Registry::Entity const& entity, JsonObject const& obj)
         << "Camera component missing speed field, using default (10%, 15%)\n";
     return;
   }
-  init_component(this->_registry.get(), entity, Camera(size, target, speed));
+  init_component(this->_registry.get(),
+                 this->_event_manager.get(),
+                 entity,
+                 Camera(size, target, speed));
 }
 
 extern "C"
 {
 void* entry_point(Registry& r,
+                  EventManager& em,
                   EntityLoader& l,
                   std::optional<JsonObject> const& config)
 {
-  return new UI(r, l, config);
+  return new UI(r, em, l, config);
 }
 }

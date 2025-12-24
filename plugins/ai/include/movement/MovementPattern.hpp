@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/MovementBehavior.hpp"
@@ -11,9 +12,10 @@ class MovementPattern
 {
 public:
   virtual ~MovementPattern() = default;
-  
+
   virtual void update(Registry::Entity entity,
                      Registry& registry,
+                     EventManager &em,
                      MovementBehavior& behavior,
                      Position& pos,
                      Direction& dir,

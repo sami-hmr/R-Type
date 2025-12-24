@@ -3,6 +3,7 @@
 #include "Mob.hpp"
 
 #include "NetworkShared.hpp"
+#include "ecs/EventManager.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/EntityLoader.hpp"
@@ -10,9 +11,9 @@
 #include "plugin/components/Position.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
 
-Mob::Mob(Registry& r, EntityLoader& l)
+Mob::Mob(Registry& r, EventManager &em, EntityLoader& l)
     : APlugin(
-          "mob", r, l, {"moving"}, {COMP_INIT(Spawner, Spawner, init_spawner)})
+          "mob", r, em, l, {"moving"}, {COMP_INIT(Spawner, Spawner, init_spawner)})
     , entity_loader(l)
 {
   _registry.get().register_component<Spawner>("mob:Spawner");
@@ -62,9 +63,9 @@ void Mob::spawner_system(Registry& r)
       if (spawner.current_spawns >= spawner.max_spawns) {
         spawner.active = false;
       }
-      r.emit<ComponentBuilder>(
+      this->_event_manager.get().emit<ComponentBuilder>(
           i, r.get_component_key<Spawner>(), spawner.to_bytes());
-      r.emit<LoadEntityTemplate>(
+      this->_event_manager.get().emit<LoadEntityTemplate>(
           spawner.entity_template,
           LoadEntityTemplate::Additional {
               {
@@ -79,8 +80,8 @@ void Mob::spawner_system(Registry& r)
 
 extern "C"
 {
-void* entry_point(Registry& r, EntityLoader& e)
+void* entry_point(Registry& r, EventManager &em, EntityLoader& e)
 {
-  return new Mob(r, e);
+  return new Mob(r, em, e);
 }
 }

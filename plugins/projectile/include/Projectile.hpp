@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/APlugin.hpp"
 #include "Json/JsonParser.hpp"
@@ -9,7 +10,7 @@
 class Projectile : public APlugin
 {
 public:
-  Projectile(Registry& r, EntityLoader& l);
+  Projectile(Registry& r, EventManager &event, EntityLoader& l);
 
 private:
   void init_temporal(Registry::Entity entity, JsonObject const& obj);

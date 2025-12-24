@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/APlugin.hpp"
 #include "Json/JsonParser.hpp"
@@ -16,7 +17,7 @@
 class Life : public APlugin
 {
 public:
-  Life(Registry& r, EntityLoader& l);
+  Life(Registry& r, EventManager &em, EntityLoader& l);
   static constexpr double heal_cooldown = 0.5;
   static constexpr double damage_cooldown = 0.5;
 

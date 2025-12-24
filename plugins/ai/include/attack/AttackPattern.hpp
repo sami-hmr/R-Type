@@ -1,11 +1,10 @@
 #pragma once
 
+#include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
-#include "plugin/EntityLoader.hpp"
 #include "plugin/components/AttackBehavior.hpp"
 #include "plugin/components/Direction.hpp"
 #include "plugin/components/Position.hpp"
-#include "plugin/components/Direction.hpp"
 #include "plugin/components/Speed.hpp"
 
 class AttackPattern
@@ -15,6 +14,7 @@ public:
 
   virtual void execute(Registry::Entity entity,
                        Registry& registry,
+                       EventManager &em,
                        AttackBehavior& behavior,
                        Position& pos,
                        Direction& dir,

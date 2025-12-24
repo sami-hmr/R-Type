@@ -17,9 +17,10 @@
 #include "plugin/events/ActionEvents.hpp"
 #include "plugin/events/IoEvents.hpp"
 
-Actions::Actions(Registry& r, EntityLoader& l)
+Actions::Actions(Registry& r, EventManager& em, EntityLoader& l)
     : APlugin("actions",
               r,
+              em,
               l,
               {},
               {
@@ -29,11 +30,11 @@ Actions::Actions(Registry& r, EntityLoader& l)
   REGISTER_COMPONENT(ActionTrigger)
 
   _registry.get().add_system<>(
-      [](Registry& r)
+      [this](Registry& r)
       {
         auto now = std::chrono::steady_clock::now();
         auto delta = r.clock().delta_seconds();
-        r.emit<TimerTickEvent>(delta, now);
+        this->_event_manager.get().emit<TimerTickEvent>(delta, now);
       },
       5);
 
@@ -50,7 +51,8 @@ Actions::Actions(Registry& r, EntityLoader& l)
               KEY_MAPPING.at_first(key)))
       {
         for (auto& i : action.event_to_emit) {
-          this->_registry.get().emit(i.first, i.second);
+          this->_event_manager.get().emit(
+              this->_registry.get(), i.first, i.second);
         }
       }
     }
@@ -90,13 +92,16 @@ void Actions::init_action_trigger(Registry::Entity const& entity,
   }
 
   init_component<ActionTrigger>(this->_registry.get(),
-      entity, std::make_pair(type, params), to_emit_map);
+                                this->_event_manager.get(),
+                                entity,
+                                std::make_pair(type, params),
+                                to_emit_map);
 }
 
 extern "C"
 {
-void* entry_point(Registry& r, EntityLoader& e)
+void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
-  return new Actions(r, e);
+  return new Actions(r, em, e);
 }
 }

@@ -14,6 +14,7 @@
 #include "ServerLaunch.hpp"
 #include "ecs/ComponentState.hpp"
 #include "ecs/EmitEvent.hpp"
+#include "ecs/EventManager.hpp"
 #include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/Scenes.hpp"
@@ -26,8 +27,8 @@
 #include "plugin/events/SceneChangeEvent.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
 
-NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
-    : APlugin("network_server", r, l, {}, {})
+NetworkServer::NetworkServer(Registry& r, EventManager& em, EntityLoader& l)
+    : APlugin("network_server", r, em, l, {}, {})
     , _comp_semaphore(0)
     , _semaphore_event_to_server(0)
 
@@ -52,7 +53,7 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
   })
 
   SUBSCRIBE_EVENT(ComponentBuilder, {
-    this->_registry.get().emit<ComponentBuilderId>(std::nullopt, event);
+    this->_event_manager.get().emit<ComponentBuilderId>(std::nullopt, event);
   })
 
   SUBSCRIBE_EVENT(ComponentBuilderId, {
@@ -70,12 +71,12 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
   })
 
   this->_registry.get().add_system<>(
-      [this](Registry& r)
+      [this](Registry& /*r*/)
       {
         this->_event_queue.lock.lock();
         while (!this->_event_queue.queue.empty()) {
           auto& e = this->_event_queue.queue.front();
-          r.emit(e.event_id, e.data);
+          this->_event_manager.get().emit(e.event_id, e.data);
           this->_event_queue.queue.pop();
         }
         this->_event_queue.lock.unlock();
@@ -84,7 +85,7 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
   SUBSCRIBE_EVENT(EntityCreation, {
     std::size_t entity = this->_registry.get().spawn_entity();
 
-    this->_registry.get().emit<EventBuilderId>(
+    this->_event_manager.get().emit<EventBuilderId>(
         event.client,
         "PlayerCreation",
         PlayerCreation(entity, event.client).to_bytes());
@@ -94,9 +95,9 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
   })
 
   SUBSCRIBE_EVENT(PlayerCreated, {
-    this->_registry.get().emit<StateTransfer>(event.client_id);
+    this->_event_manager.get().emit<StateTransfer>(event.client_id);
 
-    this->_registry.get().emit<EventBuilderId>(
+    this->_event_manager.get().emit<EventBuilderId>(
         event.client_id,
         "SceneChangeEvent",
         SceneChangeEvent("loby", "", true).to_bytes());
@@ -104,7 +105,7 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
     this->_loader.get().load_components(
         event.server_index, JsonObject({{"template", JsonValue("player")}}));
     init_component<Scene>(
-        this->_registry.get(), event.server_index, "game", SceneState::ACTIVE);
+        this->_registry.get(), this->_event_manager.get(), event.server_index, "game", SceneState::ACTIVE);
   })
 
   SUBSCRIBE_EVENT(StateTransfer, {
@@ -112,7 +113,7 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
 
     for (auto const& it : s) {
       for (auto const& i : it.comps) {
-        this->_registry.get().emit<ComponentBuilderId>(
+        this->_event_manager.get().emit<ComponentBuilderId>(
             event.client_id, ComponentBuilder(i.first, it.id, i.second));
       }
     }
@@ -124,7 +125,7 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
     }
     this->_player_ready[event.client_id] = true;
 
-    this->_registry.get().emit<EventBuilderId>(
+    this->_event_manager.get().emit<EventBuilderId>(
         event.client_id,
         "SceneChangeEvent",
         SceneChangeEvent("ready", "", false).to_bytes());
@@ -134,8 +135,8 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
                      [](auto const& p) { return !p.second; })
         == this->_player_ready.end())
     {
-      this->_registry.get().emit<SceneChangeEvent>("game", "", true);
-      this->_registry.get().emit<EventBuilderId>(
+      this->_event_manager.get().emit<SceneChangeEvent>("game", "", true);
+      this->_event_manager.get().emit<EventBuilderId>(
           std::nullopt,
           "SceneChangeEvent",
           SceneChangeEvent("game", "", true).to_bytes());
@@ -152,28 +153,28 @@ NetworkServer::NetworkServer(Registry& r, EntityLoader& l)
              "failed to load entity template " + event.template_name);
     }
     for (auto const& [id, comp] : event.aditionals) {
-      init_component(this->_registry.get(), *entity, id, comp);
+      init_component(this->_registry.get(), this->_event_manager.get(), *entity, id, comp);
     }
   })
 
   SUBSCRIBE_EVENT(DeleteEntity, {
     this->_registry.get().kill_entity(event.entity);
-    this->_registry.get().emit<EventBuilderId>(
+    this->_event_manager.get().emit<EventBuilderId>(
         std::nullopt,
         "DeleteClientEntity",
         DeleteClientEntity(event.entity).to_bytes());
     if (this->_player_entities.contains(event.entity)) {
-      this->_registry.get().emit<EventBuilderId>(
+      this->_event_manager.get().emit<EventBuilderId>(
           this->_player_entities[event.entity],
           "SceneChangeEvent",
           SceneChangeEvent("death", "", false).to_bytes());
       if (this->_player_entities.erase(event.entity)) {
         if (this->_player_entities.empty()) {
-          this->_registry.get().emit<EventBuilderId>(
+          this->_event_manager.get().emit<EventBuilderId>(
               std::nullopt,
               "ShutdownEvent",
               ShutdownEvent("death of all players...", 0).to_bytes());
-          this->_registry.get().emit<ShutdownEvent>("game ended", 0);
+          this->_event_manager.get().emit<ShutdownEvent>("game ended", 0);
         }
       }
     }
@@ -216,8 +217,8 @@ void NetworkServer::launch_server(ServerLaunching const& s)
 
 extern "C"
 {
-void* entry_point(Registry& r, EntityLoader& e)
+void* entry_point(Registry& r, EventManager &em, EntityLoader& e)
 {
-  return new NetworkServer(r, e);
+  return new NetworkServer(r, em, e);
 }
 }

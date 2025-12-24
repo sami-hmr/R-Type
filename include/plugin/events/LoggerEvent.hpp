@@ -63,4 +63,4 @@ struct LogEvent
 };
 
 #define LOGGER(category, level, message) \
-  this->_registry.get().emit<LogEvent>(category, level, message);
+  this->_event_manager.get().emit<LogEvent>(category, level, message);

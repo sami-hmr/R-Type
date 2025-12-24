@@ -24,7 +24,7 @@
 class NetworkServer : public APlugin
 {
   public:
-    NetworkServer(Registry& r, EntityLoader& l);
+    NetworkServer(Registry& r, EventManager &em, EntityLoader& l);
     ~NetworkServer() override;
 
   private:
