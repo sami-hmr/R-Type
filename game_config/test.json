@@ -130,10 +130,33 @@
               "collision_type": "solid"
             },
             "controller:Controllable": {
-              "UP": "Z",
-              "DOWN": "S",
-              "LEFT": "Q",
-              "RIGHT": "D"
+                "bindings": [{
+                  "description": "go up",
+                  "key": "Z",
+                  "pressed": {
+                    "name": "UpdateDirection",
+                    "params": {
+                        "x": 0.0,
+                        "y": -1.0
+                    }
+                  },
+                  "released": {
+                    "name": "UpdateDirection",
+                    "params": {
+                        "x": 0.0,
+                        "y": 1.0
+                    }
+                  }
+                },
+                {
+                  "description": "shoot",
+                  "key": "SPACE",
+                  "pressed": {
+                    "name": "FireBullet",
+                    "params": {}
+                  }
+                }
+              ]
             },
             "life:Damage": {
               "amount": 0
@@ -272,6 +295,20 @@
                   }
                 }
               ]
+            }
+          },
+          {
+            "mob:Enemy": {
+              "type": 1
+            },
+            "mob:Spawner": {
+              "spawn_pos": {
+                "x": 12.0,
+                "y": 12.0
+              },
+              "entity_template": "machin",
+              "spawn_delta": 20.0,
+              "max_spawns": 5
             }
           },
           {
