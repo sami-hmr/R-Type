@@ -130,7 +130,8 @@
               "collision_type": "solid"
             },
             "controller:Controllable": {
-                "bindings": [{
+                "bindings": [
+                {
                   "description": "go up",
                   "key": "Z",
                   "pressed": {
@@ -144,7 +145,61 @@
                     "name": "UpdateDirection",
                     "params": {
                         "x": 0.0,
+                        "y": 0.0
+                    }
+                  }
+                },
+                {
+                  "description": "go left",
+                  "key": "Q",
+                  "pressed": {
+                    "name": "UpdateDirection",
+                    "params": {
+                        "x": -1.0,
+                        "y": 0.0
+                    }
+                  },
+                  "released": {
+                    "name": "UpdateDirection",
+                    "params": {
+                        "x": 0.0,
+                        "y": 0.0
+                    }
+                  }
+                },
+                {
+                  "description": "go right",
+                  "key": "D",
+                  "pressed": {
+                    "name": "UpdateDirection",
+                    "params": {
+                        "x": 1.0,
+                        "y": 0.0
+                    }
+                  },
+                  "released": {
+                    "name": "UpdateDirection",
+                    "params": {
+                        "x": 0.0,
+                        "y": 0.0
+                    }
+                  }
+                },
+                {
+                  "description": "go down",
+                  "key": "S",
+                  "pressed": {
+                    "name": "UpdateDirection",
+                    "params": {
+                        "x": 0.0,
                         "y": 1.0
+                    }
+                  },
+                  "released": {
+                    "name": "UpdateDirection",
+                    "params": {
+                        "x": 0.0,
+                        "y": 0.0
                     }
                   }
                 },
@@ -206,7 +261,7 @@
                 "a": 255
               },
               "outline": false,
-              "texture_path": "/home/sami/EPITECH/tek3/RType/R-Type/assets/backgrounds/background.png"
+              "texture_path": "assets/backgrounds/background.png"
             },
             "ui:Drawable": {},
             "collision:Collidable": {

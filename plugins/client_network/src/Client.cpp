@@ -73,15 +73,8 @@ void Client::receive_loop()
   while (_running.get()) {
     try {
       std::error_code ec;
-      std::size_t len = recv_buf.read_socket(_socket, sender_endpoint, ec);
 
-      if (len > 0) {
-        // NETWORK_LOGGER("client",
-        //                LogLevel::DEBUG,
-        //                std::format("received buffer, size : {}", len));
-      }
-
-
+      recv_buf.read_socket(_socket, sender_endpoint, ec);
       if (ec) {
         if (_running.get()) {
           NETWORK_LOGGER("client",
@@ -91,23 +84,14 @@ void Client::receive_loop()
         break;
       }
 
-
       while (std::optional<ByteArray> p = recv_buf.extract(PROTOCOL_EOF)) {
-        // NETWORK_LOGGER("client", LogLevel::DEBUG, "package extracted");
-        // std::cout << "[";
-        // for (auto i : *p) {
-        //     std::cout << " " << (unsigned int)i << ",";
-        // }
-        // std::cout << "]\n";
-
         this->handle_package(*p);
       }
 
     } catch (std::exception& e) {
       if (_running.get()) {
-        NETWORK_LOGGER("client",
-                       LogLevel::ERROR,
-                       std::format("Error in receive loop: {}", e.what()));
+        NETWORK_LOGGER("client", LogLevel::ERROR,
+          std::format("Error in receive loop: {}", e.what()));
       }
       break;
     }
