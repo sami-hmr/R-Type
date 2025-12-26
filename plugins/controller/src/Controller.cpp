@@ -20,7 +20,7 @@
 #include "plugin/events/LoggerEvent.hpp"
 
 Controller::Controller(Registry& r, EventManager& em, EntityLoader& l)
-    : APlugin("controller",
+    : APlugin("Controller",
               r,
               em,
               l,
@@ -31,6 +31,8 @@ Controller::Controller(Registry& r, EventManager& em, EntityLoader& l)
 
   SUBSCRIBE_EVENT(KeyPressedEvent, {
     for (auto const& [key, active] : event.key_pressed) {
+      LOGGER("Controller", LogLevel::INFO,
+             std::format("key {} is {}", char(key + 57), active));
       if (active) {
         this->handle_key_change(key, true);
       }
@@ -48,8 +50,8 @@ Controller::Controller(Registry& r, EventManager& em, EntityLoader& l)
 
 bool Controller::handling_press_release_binding(Registry::Entity const& entity,
                                                 Controllable& result,
-                                                JsonObject &event,
-                                                const std::string &key_string,
+                                                JsonObject& event,
+                                                const std::string& key_string,
                                                 KeyEventType event_type)
 {
   auto event_id =
@@ -57,13 +59,13 @@ bool Controller::handling_press_release_binding(Registry::Entity const& entity,
   auto params =
       get_value_copy<JsonObject>(this->_registry.get(), event, "params");
   if (!event_id) {
-    LOGGER("controller",
+    LOGGER("Controller",
            LogLevel::WARNING,
            "Missing name field in event, skipping");
     return false;
   }
   if (!params) {
-    LOGGER("controller",
+    LOGGER("Controller",
            LogLevel::WARNING,
            std::format("Missing params field in event \"{}\", skipping",
                        *event_id));
@@ -74,6 +76,8 @@ bool Controller::handling_press_release_binding(Registry::Entity const& entity,
       (static_cast<std::uint32_t>(KEY_MAPPING.at_first(key_string)) << 8)
           + static_cast<int>(event_type),
       Controllable::Trigger {*event_id, *params});
+  if (result.event_map.contains((static_cast<std::uint32_t>(KEY_MAPPING.at_first(key_string)) << 8) + static_cast<int>(event_type)))
+    LOGGER("Controller", LogLevel::WARNING, std::format("registered key {} successfully", key_string))
   return true;
 }
 
@@ -92,27 +96,43 @@ void Controller::init_event_map(Registry::Entity const& entity,
     auto release =
         get_value_copy<JsonObject>(this->_registry.get(), event, "released");
     if (!description) {
-      LOGGER("controller",
+      LOGGER("Controller",
              LogLevel::WARNING,
              std::format("Missing description field in event, skipping"));
       continue;
     }
     if (!key_string) {
-      LOGGER("controller",
+      LOGGER("Controller",
              LogLevel::WARNING,
              std::format("Missing key field in event, skipping"));
       continue;
     }
     if (!release && !press) {
-      LOGGER("controller", LogLevel::WARNING, std::format("No action linked to command \"{}\".", *key_string))
+      LOGGER("Controller",
+             LogLevel::WARNING,
+             std::format("No action linked to command \"{}\".", *key_string))
       continue;
     }
     if (press) {
-      handling_press_release_binding(entity, result, *press, *key_string, KEY_PRESSED);
+      if (!handling_press_release_binding(
+        entity, result, *press, *key_string, KEY_PRESSED)) {
+
+        if (result.event_map.contains((static_cast<std::uint32_t>(KEY_MAPPING.at_first(*key_string)) << 8) + static_cast<int>(KEY_PRESSED)))
+                LOGGER("CONTROLLER", LogLevel::ERROR, "pressed registered key successfully")
+        continue;
+      }
     }
     if (release) {
-      handling_press_release_binding(entity, result, *release, *key_string, KEY_RELEASED);
+      if (!handling_press_release_binding(
+        entity, result, *release, *key_string, KEY_RELEASED)) {
+
+        if (result.event_map.contains((static_cast<std::uint32_t>(KEY_MAPPING.at_first(*key_string)) << 8) + static_cast<int>(KEY_RELEASED)))
+                LOGGER("CONTROLLER", LogLevel::ERROR, "released registered key successfully")
+        continue;
+      }
     }
+    LOGGER("Controller", LogLevel::INFO,
+      std::format("Key {} registered as {}", *key_string, *description))
   }
 }
 
@@ -131,15 +151,22 @@ void Controller::init_controller(Registry::Entity const& entity,
 void Controller::handle_key_change(Key key, bool is_pressed)
 {
   this->_key_states[key] = is_pressed;
+
+  LOGGER("Controller",LogLevel::INFO,
+         std::format("key {} is now {}", char(key + 57), is_pressed ? "pressed" : "released"));
   std::uint16_t key_map =
       (static_cast<std::uint32_t>(key) << 8) + static_cast<int>(is_pressed);
 
   for (auto&& [c] : Zipper<Controllable>(this->_registry.get())) {
     if (!c.event_map.contains(key_map)) {
+      LOGGER("Controller",LogLevel::INFO,
+         std::format("Key isn't registered in the event map"));
       continue;
     }
     auto const& event = c.event_map.at(key_map);
 
+    LOGGER("Controller",LogLevel::INFO,
+         std::format("emiting event"));
     emit_event(this->_event_manager.get(),
                this->_registry.get(),
                event.first,
