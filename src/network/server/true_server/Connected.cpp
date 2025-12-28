@@ -78,7 +78,6 @@ void Server::handle_hearthbeat(ByteArray const &package, const asio::ip::udp::en
     auto const &packages_to_send = client.acknowledge_manager.get_packages_to_send(parsed->lost_packages);
     auto const &lost_packages = client.acknowledge_manager.get_lost_packages();
     this->_client_mutex.unlock();
-    std::cout << parsed->lost_packages.size() << "  " << packages_to_send.size() << "\n";
     for (auto const &it : packages_to_send) {
         this->send(it, endpoint);
     }

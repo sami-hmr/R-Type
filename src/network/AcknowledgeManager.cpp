@@ -94,6 +94,10 @@ std::vector<std::size_t> AcknowledgeManager::get_lost_packages()
     }
     last_package = it.first;
   }
+  // for (auto const &it : result) {
+  //     std::cout << it << ", ";
+  // }
+  // std::cout << std::endl;
   return result;
 }
 

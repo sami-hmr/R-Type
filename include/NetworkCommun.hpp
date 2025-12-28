@@ -16,7 +16,7 @@
 #include "plugin/Byte.hpp"
 
 #define MAX_PLAYERS 4
-#define BUFFER_SIZE 2048
+#define BUFFER_SIZE 4096
 
 #define NETWORK_LOGGER(category, level, message) \
   std::cerr << (category) << ": " << (message) << "\n"
