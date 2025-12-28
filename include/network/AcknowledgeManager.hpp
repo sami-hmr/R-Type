@@ -11,15 +11,21 @@
 class AcknowledgeManager
 {
 public:
-  void register_received_package(ConnectedPackage const&);
   std::vector<ConnectedPackage> extract_available_packages();
-  std::size_t get_acknowledge() const;
-
   void register_sent_package(ConnectedPackage const&);
-  std::vector<ByteArray> get_packages_to_send();
+  std::vector<ByteArray> get_packages_to_send(std::vector<std::size_t> const &asked_packages);
   void approuve_packages(std::size_t acknowledge);
 
+  //////////////////
+  // RECEIVER
+  //////////////////
+  std::size_t get_acknowledge() const;
+  std::vector<std::size_t> get_lost_packages();
+  void register_received_package(ConnectedPackage const&);
+
 private:
+
+  static const std::size_t sent_delta = 1000000; // 0.1 second;
 
   struct AwaitingPackage {
       ConnectedPackage package;

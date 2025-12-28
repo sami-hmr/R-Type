@@ -10,14 +10,16 @@
 struct Package
 {
   ByteArray magic;
+  bool hearthbeat;
   ByteArray real_package;
 };
 
 inline Parser<Package> parse_pkg()
 {
-  return apply([](ByteArray magic, ByteArray r)
-               { return Package(std::move(magic), std::move(r)); },
+  return apply([](ByteArray magic, bool hb, ByteArray r)
+               { return Package(std::move(magic), hb, std::move(r)); },
                parseByte<Byte>() * 4,  // magic sequence is 4 bytes
+               parseByte<bool>(),
                parseByte<Byte>().many());
 }
 

@@ -119,12 +119,17 @@ void Server::handle_package(ByteArray const& package,
   }
   this->_client_mutex.unlock();
   try {
+    if (pkg->hearthbeat) {
+        this->handle_hearthbeat(pkg->real_package, sender);
+        return;
+    }
     if (state == ClientState::CONNECTED) {
       auto const& parsed = parse_connected_package(pkg->real_package);
       if (!parsed) {
         return;
       }
       this->handle_connected_packet(parsed.value(), sender);
+
     } else {
       auto const& parsed = parse_connectionless_package(pkg->real_package);
       if (!parsed) {
@@ -138,9 +143,11 @@ void Server::handle_package(ByteArray const& package,
 }
 
 void Server::send(ByteArray const& response,
-                  const asio::ip::udp::endpoint& endpoint)
+                  const asio::ip::udp::endpoint& endpoint,
+                  bool hearthbeat)
 {
-  ByteArray pkg = MAGIC_SEQUENCE + response + PROTOCOL_EOF;
+  ByteArray pkg =
+      MAGIC_SEQUENCE + type_to_byte(hearthbeat) + response + PROTOCOL_EOF;
 
   try {
     _socket.send_to(asio::buffer(pkg), endpoint);

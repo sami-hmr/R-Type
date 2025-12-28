@@ -54,7 +54,7 @@ private:
   void handle_connected_command(ConnectedCommand const& command,
                                 const asio::ip::udp::endpoint& sender);
 
-  void send(ByteArray const& response, const asio::ip::udp::endpoint& endpoint);
+  void send(ByteArray const& response, const asio::ip::udp::endpoint& endpoint,  bool hearthbeat = false);
   void send_connected(ByteArray const& response, ClientInfo& client);
   void handle_getchallenge(ByteArray const& cmd,
                            const asio::ip::udp::endpoint& sender);
@@ -62,7 +62,7 @@ private:
                       const asio::ip::udp::endpoint& sender);
 
   void handle_event_receive(ByteArray const&, const asio::ip::udp::endpoint&);
-  void handle_entity_creation(ByteArray const&, const asio::ip::udp::endpoint&);
+  void handle_hearthbeat(ByteArray const &, const asio::ip::udp::endpoint&);
 
   void handle_package(ByteArray const&, const asio::ip::udp::endpoint&);
 
@@ -79,6 +79,8 @@ private:
   static std::optional<EventBuilder> parse_event_build_cmd(
       ByteArray const& package);
   static std::optional<ComponentBuilder> parse_component_build_cmd(
+      ByteArray const& package);
+  static std::optional<HearthBeat> parse_hearthbeat_cmd(
       ByteArray const& package);
   ClientInfo& find_client_by_endpoint(const asio::ip::udp::endpoint& endpoint);
   ClientInfo& find_client_by_id(std::size_t id);

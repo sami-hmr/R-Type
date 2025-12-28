@@ -250,28 +250,29 @@ struct PlayerCreated
 
 struct HearthBeat
 {
-  std::size_t client;
+  std::vector<std::size_t> lost_packages;
 
   HearthBeat() = default;
 
-  HearthBeat(std::size_t c)
-      : client(c)
+  HearthBeat(std::vector<std::size_t> const& lost_packages): lost_packages(lost_packages)
   {
   }
 
   DEFAULT_BYTE_CONSTRUCTOR(HearthBeat,
-                           ([](std::size_t c) { return HearthBeat(c); }),
-                           parseByte<std::size_t>())
+                           ([](std::vector<std::size_t> const& lp)
+                            { return HearthBeat(lp); }),
+                           parseByteArray(parseByte<std::size_t>()))
 
-  DEFAULT_SERIALIZE(type_to_byte(client))
+  DEFAULT_SERIALIZE(vector_to_byte(lost_packages, TTB_FUNCTION<std::size_t>()))
 
   CHANGE_ENTITY_DEFAULT
 
-  HearthBeat(Registry& r, JsonObject const& e)
-      : client(get_value_copy<std::size_t>(r, e, "client").value())
+  HearthBeat(Registry& /*r*/, JsonObject const& /*e*/) // TODO
   {
   }
 };
+
+
 
 struct DisconnectClient
 {
@@ -301,37 +302,41 @@ struct DisconnectClient
 template<typename T>
 struct SharedQueue
 {
-  SharedQueue(): semaphore(0) {}
-
-  void push(T const &obj) {
-      std::lock_guard<std::mutex> guard(this->lock);
-      this->queue.push(obj);
-      this->semaphore.release();
+  SharedQueue()
+      : semaphore(0)
+  {
   }
-  T pop() {
-      std::lock_guard<std::mutex> guard(this->lock);
-      auto tmp = this->queue.front();
+
+  void push(T const& obj)
+  {
+    std::lock_guard<std::mutex> guard(this->lock);
+    this->queue.push(obj);
+    this->semaphore.release();
+  }
+
+  T pop()
+  {
+    std::lock_guard<std::mutex> guard(this->lock);
+    auto tmp = this->queue.front();
+    this->queue.pop();
+    return std::move(tmp);
+  }
+
+  std::vector<T> flush()
+  {
+    std::lock_guard<std::mutex> guard(this->lock);
+    std::vector<T> tmp;
+    tmp.reserve(this->queue.size());
+    while (!this->queue.empty()) {
+      tmp.push_back(this->queue.front());
       this->queue.pop();
-      return std::move(tmp);
-  }
-  std::vector<T> flush() {
-      std::lock_guard<std::mutex> guard(this->lock);
-      std::vector<T> tmp;
-      tmp.reserve(this->queue.size());
-      while (!this->queue.empty()) {
-          tmp.push_back(this->queue.front());
-          this->queue.pop();
-      }
-      return std::move(tmp);
+    }
+    return std::move(tmp);
   }
 
-  void wait() {
-      this->semaphore.acquire();
-  }
+  void wait() { this->semaphore.acquire(); }
 
-  void release() {
-      this->semaphore.release();
-  }
+  void release() { this->semaphore.release(); }
 
   std::mutex lock;
   std::counting_semaphore<> semaphore;

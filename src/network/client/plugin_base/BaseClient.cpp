@@ -105,22 +105,6 @@ BaseClient::BaseClient(std::string const& name,
         }
       });
 
-  this->_registry.get().add_system(
-      [this](Registry& /*r*/)
-      {
-        if (!this->_connected) {
-          return;
-        };
-        std::size_t milliseconds =
-            this->_registry.get().clock().millisecond_now();
-        if (this->_hearth_beat_delta < milliseconds) {
-
-          this->_event_manager.get().emit<EventBuilder>(
-              "HearthBeat", HearthBeat(this->_id_in_server).to_bytes());
-          this->_hearth_beat_delta = milliseconds + 100; /* 0.1 second */
-        }
-      });
-
   SUBSCRIBE_EVENT(DeleteClientEntity, {
     this->_server_indexes.remove_second(event.entity);
     this->_registry.get().kill_entity(event.entity);

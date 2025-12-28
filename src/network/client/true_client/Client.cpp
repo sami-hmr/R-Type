@@ -31,7 +31,8 @@ Client::Client(ClientConnection const& c,
   NETWORK_LOGGER("client",
                  LogLevel::INFO,
                  std::format("Connecting to {}:{}", c.host, c.port));
-  this->_queue_reader = std::thread([this]() { this->send_evt(); });
+  this->_queue_reader = std::thread(&Client::send_evt, this);
+  this->_hearthbeat = std::thread(&Client::send_hearthbeat, this);
 }
 
 void Client::close()
@@ -52,6 +53,9 @@ Client::~Client()
   this->_events_to_transmit.get().release();
   if (this->_queue_reader.joinable()) {
     this->_queue_reader.join();
+  }
+  if (this->_hearthbeat.joinable()) {
+      this->_hearthbeat.join();
   }
   if (_socket.is_open()) {
     _socket.close();
@@ -125,6 +129,10 @@ void Client::handle_package(ByteArray const& package)
     NETWORK_LOGGER(
         "client", LogLevel::DEBUG, "Invalid magic sequence, ignoring.");
     return;
+  }
+  if (pkg->hearthbeat) {
+      this->handle_hearthbeat(pkg->real_package);
+      return;
   }
   if (this->_state == ConnectionState::CONNECTED) {
     auto const& parsed = parse_connected_package(pkg->real_package);

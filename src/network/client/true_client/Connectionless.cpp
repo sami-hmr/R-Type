@@ -11,9 +11,9 @@ const std::unordered_map<std::uint8_t, void (Client::*)(ByteArray const&)>
         {DISCONNECT, &Client::handle_disconnect_response},
 };
 
-void Client::send(ByteArray const& command)
+void Client::send(ByteArray const& command, bool hearthbeat)
 {
-  ByteArray pkg = MAGIC_SEQUENCE + command + PROTOCOL_EOF;
+  ByteArray pkg = MAGIC_SEQUENCE + type_to_byte(hearthbeat) + command + PROTOCOL_EOF;
 
   _socket.send_to(asio::buffer(pkg), _server_endpoint);
 

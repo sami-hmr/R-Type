@@ -10,9 +10,6 @@
 #include <atomic>
 #include <cstdint>
 #include <functional>
-#include <map>
-#include <queue>
-#include <semaphore>
 #include <string>
 #include <thread>
 #include <unordered_map>
@@ -24,7 +21,6 @@
 #include "NetworkCommun.hpp"
 #include "NetworkShared.hpp"
 #include "ServerCommands.hpp"
-#include "ServerLaunch.hpp"
 #include "network/AcknowledgeManager.hpp"
 #include "plugin/Byte.hpp"
 
@@ -43,9 +39,10 @@ public:
 
 private:
   void receive_loop();
-  void send(ByteArray const& command);
+  void send(ByteArray const& command, bool hearthbeat = false);
   void send_connected(ByteArray const& response);
   void handle_connectionless_response(ConnectionlessCommand const& response);
+  void handle_hearthbeat(ByteArray const &);
   void handle_connected_package(ConnectedPackage const& package);
   void compute_connected_package(ConnectedPackage const& package);
   void handle_connected_command(ConnectedCommand const& command);
@@ -78,6 +75,8 @@ private:
       ByteArray const& package);
   static std::optional<ComponentBuilder> parse_component_build_cmd(
       ByteArray const& package);
+  static std::optional<HearthBeat> parse_hearthbeat_cmd(
+      ByteArray const& package);
 
   void transmit_component(ComponentBuilder&&);
   void transmit_event(EventBuilder&&);
@@ -94,7 +93,7 @@ private:
   asio::ip::udp::socket _socket;
   asio::ip::udp::endpoint _server_endpoint;
 
-  ConnectionState _state = ConnectionState::DISCONNECTED;
+  std::atomic<ConnectionState> _state = ConnectionState::DISCONNECTED;
   std::uint8_t _client_id = 0;
   std::uint32_t _server_id = 0;
   std::string _player_name = "Player";
@@ -109,6 +108,11 @@ private:
   void send_evt();
   std::thread _queue_reader;
 
+  void send_hearthbeat();
+  std::thread _hearthbeat;
+  static const std::size_t hearthbeat_delta = 1000000000 / 15;
+
   std::size_t _index_sequence = 1;
+  std::mutex _acknowledge_mutex;
   AcknowledgeManager _acknowledge_manager;
 };

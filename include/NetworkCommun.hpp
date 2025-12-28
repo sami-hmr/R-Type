@@ -94,7 +94,7 @@ enum ConnectedOpcodes : std::uint8_t
 {
   SENDEVENT = 0x01,
   SENDCOMP = 0x02,
-  ENTITYCREATION = 0x05,
+  SENDHEARTHBEAT = 0x03
 };
 
 enum class ConnectionState : std::uint8_t

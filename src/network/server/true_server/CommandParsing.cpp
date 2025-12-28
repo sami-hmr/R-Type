@@ -2,8 +2,11 @@
 // #include <optional>
 // #include <vector>
 
+#include <optional>
+
 #include <sys/types.h>
 
+#include "NetworkCommun.hpp"
 #include "NetworkShared.hpp"
 #include "Parser.hpp"
 #include "ParserTypes.hpp"
@@ -114,4 +117,17 @@ std::optional<ComponentBuilder> Server::parse_component_build_cmd(
     return std::nullopt;
   }
   return std::get<SUCCESS>(r).value;
+}
+
+std::optional<HearthBeat> Server::parse_hearthbeat_cmd(ByteArray const& package)
+{
+  try {
+    return HearthBeat(package);
+  } catch (InvalidPackage const& e) {
+    NETWORK_LOGGER(
+        "server",
+        LogLevel::ERROR,
+        std::format("Failed to read component command : {}", e.what()));
+  }
+  return std::nullopt;
 }

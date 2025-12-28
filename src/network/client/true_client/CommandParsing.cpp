@@ -123,3 +123,16 @@ std::optional<ComponentBuilder> Client::parse_component_build_cmd(
   }
   return std::get<SUCCESS>(r).value;
 }
+
+std::optional<HearthBeat> Client::parse_hearthbeat_cmd(ByteArray const& package)
+{
+  try {
+    return HearthBeat(package);
+  } catch (InvalidPackage const& e) {
+    NETWORK_LOGGER(
+        "server",
+        LogLevel::ERROR,
+        std::format("Failed to read component command : {}", e.what()));
+  }
+  return std::nullopt;
+}

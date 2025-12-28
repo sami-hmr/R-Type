@@ -11,6 +11,7 @@ const std::unordered_map<std::uint8_t, void (Client::*)(ByteArray const&)>
 
 void Client::handle_connected_package(ConnectedPackage const& package)
 {
+  this->_acknowledge_mutex.lock();
   this->_acknowledge_manager.register_received_package(package);
 
   auto const &packages = this->_acknowledge_manager.extract_available_packages();
@@ -21,9 +22,10 @@ void Client::handle_connected_package(ConnectedPackage const& package)
   if (packages.size() != 0) {
       this->_acknowledge_manager.approuve_packages(packages[packages.size() - 1].acknowledge);
   }
-  for (auto const &to_send : this->_acknowledge_manager.get_packages_to_send()) {
-      this->send(to_send);
-  }
+  this->_acknowledge_mutex.unlock();
+  // for (auto const &to_send : this->_acknowledge_manager.get_packages_to_send()) {
+  //     this->send(to_send);
+  // }
 }
 
 void Client::compute_connected_package(ConnectedPackage const& package)
@@ -69,10 +71,24 @@ void Client::handle_event_creation(ByteArray const& package)
 
 void Client::send_connected(ByteArray const& response)
 {
+  //this->_acknowledge_mutex.lock();
   ConnectedPackage pkg(this->_index_sequence, this->_acknowledge_manager.get_acknowledge(), true, response);
+  //this->_acknowledge_mutex.unlock();
 
   this->_acknowledge_manager.register_sent_package(pkg);
   this->_index_sequence += 1;
 
   this->send(pkg.to_bytes());
+}
+
+void Client::handle_hearthbeat(ByteArray const &pkg) {
+    auto parsed = parse_hearthbeat_cmd(pkg);
+
+    if (!parsed) {
+        return;
+    }
+    auto const &packages_to_send = this->_acknowledge_manager.get_packages_to_send(parsed->lost_packages);
+    for (auto const &it : packages_to_send) {
+        this->send(it);
+    }
 }

@@ -2,7 +2,7 @@
 #include <vector>
 
 #include "NetworkCommun.hpp"
-#include "PackageFragmentation.hpp"
+#include "NetworkShared.hpp"
 #include "ServerCommands.hpp"
 #include "network/server/Server.hpp"
 #include "plugin/Byte.hpp"
@@ -12,6 +12,7 @@ const std::unordered_map<std::uint8_t,
                                           const asio::ip::udp::endpoint&)>
     Server::connected_table = {
         {SENDEVENT, &Server::handle_event_receive},
+        {SENDHEARTHBEAT, &Server::handle_hearthbeat}
 };
 
 void Server::handle_connected_packet(ConnectedPackage const& command,
@@ -24,6 +25,7 @@ void Server::handle_connected_packet(ConnectedPackage const& command,
       client.acknowledge_manager.extract_available_packages();
   this->_client_mutex.unlock();
 
+  std::cout << packages.size() << std::endl;
   for (auto const& pkg : packages) {
     ByteArray entire = pkg.real_package;
 
@@ -38,10 +40,6 @@ void Server::handle_connected_packet(ConnectedPackage const& command,
   if (packages.size() != 0) {
     same_client.acknowledge_manager.approuve_packages(
         packages[packages.size() - 1].acknowledge);
-  }
-  for (auto const& it : same_client.acknowledge_manager.get_packages_to_send())
-  {
-    this->send(it, same_client.endpoint);
   }
   this->_client_mutex.unlock();
 }
@@ -67,4 +65,23 @@ void Server::handle_event_receive(ByteArray const& package,
     return;
   }
   this->transmit_event_to_server(parsed.value());
+}
+
+void Server::handle_hearthbeat(ByteArray const &package, const asio::ip::udp::endpoint& endpoint) {
+    auto parsed = parse_hearthbeat_cmd(package);
+
+    if (!parsed) {
+        return;
+    }
+    this->_client_mutex.lock();
+    auto &client = this->find_client_by_endpoint(endpoint);
+    auto const &packages_to_send = client.acknowledge_manager.get_packages_to_send(parsed->lost_packages);
+    auto const &lost_packages = client.acknowledge_manager.get_lost_packages();
+    this->_client_mutex.unlock();
+    std::cout << parsed->lost_packages.size() << "  " << packages_to_send.size() << "\n";
+    for (auto const &it : packages_to_send) {
+        this->send(it, endpoint);
+    }
+    HearthBeat response(lost_packages);
+    this->send(response.to_bytes(), endpoint, true);
 }

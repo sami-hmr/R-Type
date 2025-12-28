@@ -42,8 +42,6 @@ BaseServer::BaseServer(std::string const& name,
       NewConnection,
       {
         std::cout << "NEW CONNECTION\n";
-        this->_heathbeat[event.client] =
-            this->_registry.get().clock().millisecond_now();
         this->_event_manager.get().emit<EventBuilderId>(
             event.client, "NewConnection", event.to_bytes());
       },
@@ -58,11 +56,6 @@ BaseServer::BaseServer(std::string const& name,
 
   SUBSCRIBE_EVENT(EventBuilderId, { this->_event_queue_to_client.push(event); })
 
-  SUBSCRIBE_EVENT(HearthBeat, {
-    this->_heathbeat[event.client] =
-        this->_registry.get().clock().millisecond_now();
-  });
-
   SUBSCRIBE_EVENT_PRIORITY(DisconnectClient, {
     if (!this->_server_class) {
       return;
@@ -71,24 +64,6 @@ BaseServer::BaseServer(std::string const& name,
     std::cout << "DISCONNECT\n";
     this->_server_class->disconnect_client(event.client);
   }, 2)
-
-  this->_registry.get().add_system(
-      [this](Registry& /*r*/)
-      {
-        std::size_t milliseconds =
-            this->_registry.get().clock().millisecond_now();
-
-        std::vector<std::size_t> clients_to_remove;
-        for (auto const& [client, delta] : this->_heathbeat) {
-          if ((milliseconds - delta) > (1000 * 3 /* 3 seconds */)) {
-            clients_to_remove.push_back(client);
-          }
-        }
-        for (auto const &client : clients_to_remove) {
-            this->_event_manager.get().emit<DisconnectClient>(client);
-            this->_heathbeat.erase(client);
-        }
-      });
 
   this->_registry.get().add_system(
       [this](Registry& /*r*/)
