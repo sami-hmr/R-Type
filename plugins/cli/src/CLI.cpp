@@ -73,7 +73,7 @@ void CLI::run_cli()
 
     process_command(line);
   }
-  exit(0);
+  //exit(0);
 }
 
 void CLI::process_command(const std::string& cmd)

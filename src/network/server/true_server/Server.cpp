@@ -10,6 +10,8 @@
 
 #include "network/server/Server.hpp"
 
+#include <asio/registered_buffer.hpp>
+#include <asio/socket_base.hpp>
 #include <asio/system_error.hpp>
 
 #include "NetworkCommun.hpp"
@@ -22,7 +24,8 @@ Server::Server(ServerLaunching const& s,
                SharedQueue<EventBuilderId>& event_to_client,
                SharedQueue<EventBuilder>& event_to_server,
                std::atomic<bool>& running)
-    : _socket(_io_c, asio::ip::udp::endpoint(asio::ip::udp::v4(), s.port))
+    : _server_endpoint(asio::ip::udp::endpoint(asio::ip::udp::v4(), s.port))
+    , _socket(_io_c, _server_endpoint)
     , _components_to_create(std::ref(comp_queue))
     , _events_queue_to_client(std::ref(event_to_client))
     , _events_queue_to_serv(std::ref(event_to_server))
@@ -39,7 +42,8 @@ Server::Server(ServerLaunching const& s,
 void Server::close()
 {
   if (_socket.is_open()) {
-    _socket.close();
+    _socket.send_to(asio::buffer(""), this->_server_endpoint);
+    //_socket.close();
   }
 }
 

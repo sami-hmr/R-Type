@@ -118,7 +118,6 @@ BaseClient::BaseClient(std::string const& name,
 
 BaseClient::~BaseClient()
 {
-  this->_event_manager.get().emit<Disconnection>();
   _running = false;
   if (this->_thread.joinable()) {
     this->_thread.join();

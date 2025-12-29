@@ -100,6 +100,7 @@ private:
 
 
   asio::io_context _io_c;
+  asio::ip::udp::endpoint _server_endpoint;
   asio::ip::udp::socket _socket;
 
   std::mutex _client_mutex;

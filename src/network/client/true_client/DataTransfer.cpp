@@ -50,7 +50,7 @@ void Client::send_hearthbeat()
     auto lost_packages = this->_acknowledge_manager.get_lost_packages();
     this->_acknowledge_mutex.unlock();
     this->send(HearthBeat(lost_packages).to_bytes(), true);
-    if (this->should_disconnect()) {
+    if (this->_running.get() && this->should_disconnect()) {
       this->transmit_event(
           EventBuilder("Disconnection", Disconnection().to_bytes()));
     }

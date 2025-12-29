@@ -133,6 +133,9 @@ BaseServer::BaseServer(std::string const& name,
 BaseServer::~BaseServer()
 {
   _running = false;
+  if (_server_class) {
+      this->_server_class->close();
+  }
   if (this->_actual_server.joinable()) {
     this->_actual_server.join();
   }

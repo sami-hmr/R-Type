@@ -93,17 +93,19 @@ static int true_main(Registry& r,
 int main(int argc, char* argv[])
 {
   std::optional<Registry> r;
+  std::optional<EventManager> em;
   r.emplace();
-  EventManager em;
-  EntityLoader e(*r, em);
+  em.emplace();
+  EntityLoader e(*r, *em);
 #ifdef RTYPE_EPITECH_CLIENT
   int result = true_main(*r, em, e, {"client_config"});
 #elif RTYPE_EPITECH_SERVER
   int result = true_main(*r, em, e, {"server_config"});
 #else
   int result =
-      true_main(*r, em, e, std::vector<std::string>(argv + 1, argv + argc));
+      true_main(*r, *em, e, std::vector<std::string>(argv + 1, argv + argc));
 #endif
   r.reset();
+  em.reset();
   return result;
 }
