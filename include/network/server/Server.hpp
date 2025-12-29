@@ -44,6 +44,7 @@ public:
   void receive_loop();
 
   void disconnect_client(std::size_t client_id);
+  std::vector<std::size_t> watch_disconected_clients();
 
 private:
   void handle_connectionless_packet(ConnectionlessCommand const& command,
@@ -102,12 +103,11 @@ private:
   asio::ip::udp::socket _socket;
 
   std::mutex _client_mutex;
+  static const std::size_t client_disconect_timout = 5000000000; // 5 seconds
   std::vector<ClientInfo> _clients;
   std::size_t _c_id_incrementator = 0;
   CircularBuffer<BUFFER_SIZE> _recv_buffer;
   std::uint32_t _server_id;
-
-  int _max_players = MAX_PLAYERS;
 
   std::reference_wrapper<SharedQueue<ComponentBuilderId>> _components_to_create;
 

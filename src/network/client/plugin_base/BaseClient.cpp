@@ -1,8 +1,5 @@
 #include <chrono>
-#include <cstring>
 #include <format>
-#include <stdexcept>
-#include <string_view>
 #include <thread>
 
 #include "network/client/BaseClient.hpp"
@@ -17,6 +14,7 @@
 #include "plugin/events/CleanupEvent.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
 #include "plugin/events/LoggerEvent.hpp"
+#include "plugin/events/NetworkEvents.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
 
 BaseClient::BaseClient(std::string const& name,
@@ -29,8 +27,7 @@ BaseClient::BaseClient(std::string const& name,
     if (!this->_running) {
       _running = true;
 
-      this->_thread =
-          std::thread([this, event]() { this->connection_thread(event); });
+      this->_thread = std::thread(&BaseClient::connection_thread, this, event);
     } else {
       LOGGER("client", LogLevel::WARNING, "client already running");
     }
@@ -51,9 +48,9 @@ BaseClient::BaseClient(std::string const& name,
   })
 
   SUBSCRIBE_EVENT(NewConnection, {
-      this->_connected = true;
+    this->_connected = true;
 
-      this->_id_in_server = event.client;
+    this->_id_in_server = event.client;
   })
 
   SUBSCRIBE_EVENT(EventBuilder, {
@@ -109,10 +106,19 @@ BaseClient::BaseClient(std::string const& name,
     this->_server_indexes.remove_second(event.entity);
     this->_registry.get().kill_entity(event.entity);
   })
+
+  SUBSCRIBE_EVENT(Disconnection, {
+    this->_event_manager.get().emit<EventBuilder>(
+        "DisconnectClient", DisconnectClient(this->_id_in_server).to_bytes());
+
+    // for now, disconnection will close the game, it will be cool a "return to loby"
+    this->_event_manager.get().emit<ShutdownEvent>("Disconnection", 0);
+  })
 }
 
 BaseClient::~BaseClient()
 {
+  this->_event_manager.get().emit<Disconnection>();
   _running = false;
   if (this->_thread.joinable()) {
     this->_thread.join();

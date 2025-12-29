@@ -21,7 +21,18 @@ BaseServer::BaseServer(std::string const& name,
     : APlugin(name, r, em, l, {}, {})
 {
   SUBSCRIBE_EVENT(ServerLaunching, {
-    this->_actual_server = std::thread(&BaseServer::launch_server, this, event);
+      _running = true;
+
+      this->_server_class.emplace(event,
+                                  _components_to_update,
+                                  _event_queue_to_client,
+                                  _event_queue,
+                                  _running);
+      LOGGER("server",
+             LogLevel::INFO,
+             std::format("Server started on port {}", event.port));
+
+    this->_actual_server = std::thread(&BaseServer::launch_server, this);
   })
 
   SUBSCRIBE_EVENT(ShutdownEvent, {
@@ -64,6 +75,16 @@ BaseServer::BaseServer(std::string const& name,
     std::cout << "DISCONNECT\n";
     this->_server_class->disconnect_client(event.client);
   }, 2)
+
+  this->_registry.get().add_system([this](Registry& /*r*/) {
+      if (!this->_server_class) {
+          return;
+      }
+
+      for (auto const &it : this->_server_class->watch_disconected_clients()) {
+          this->_event_manager.get().emit<DisconnectClient>(it);
+      }
+  });
 
   this->_registry.get().add_system(
       [this](Registry& /*r*/)
@@ -117,20 +138,9 @@ BaseServer::~BaseServer()
   }
 }
 
-void BaseServer::launch_server(ServerLaunching const& s)
+void BaseServer::launch_server()
 {
   try {
-    _running = true;
-
-    this->_server_class.emplace(s,
-                                _components_to_update,
-                                _event_queue_to_client,
-                                _event_queue,
-                                _running);
-    LOGGER("server",
-           LogLevel::INFO,
-           std::format("Server started on port {}", s.port));
-
     this->_server_class->receive_loop();
   } catch (std::exception& e) {
     LOGGER("server",

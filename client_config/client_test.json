@@ -260,6 +260,14 @@
           "ath:Clickable": {
             "to_emit": [
               {
+                "SceneChangeEvent": {
+                  "target_scene": "connecting",
+                  "state": "main",
+                  "reason": "User clicked connect button",
+                  "force": false
+                }
+              },
+              {
                 "ClientConnection": {
                   "host": "0.0.0.0",
                   "port": 4242
@@ -282,6 +290,44 @@
             "hover": false,
             "toggle": false,
             "pressed": false
+          }
+        }
+      ]
+    },
+    {
+      "name": "connecting",
+      "state": "disabled",
+      "plugins": [],
+      "entities": [
+        {
+          "moving:Position": {
+            "pos": {
+              "x": 0.0,
+              "y": -0.5
+            }
+          },
+          "ui:Drawable": {},
+          "ui:Text": {
+            "font": "assets/fonts/roboto.ttf",
+            "size": {
+              "width": "60.0%",
+              "height": "30.0%"
+            },
+            "fill_color": {
+              "r": 255,
+              "g": 255,
+              "b": 255,
+              "a": 255
+            },
+            "outline_color": {
+              "r": 0,
+              "g": 0,
+              "b": 0,
+              "a": 255
+            },
+            "outline_thickness": 30.0,
+            "outline": true,
+            "text": "Connecting to server..."
           }
         }
       ]

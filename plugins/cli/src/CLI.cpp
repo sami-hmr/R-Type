@@ -183,6 +183,14 @@ void CLI::process_command(const std::string& cmd)
           _event_manager.get().emit<ClientConnection>(host, port);
           std::cout << "Connecting to " << host << ":" << port << "\n";
         }}},
+      {"deco",
+       {.usage = "deco",
+        .description = "autre commande de goat pour deconnect le client",
+        .handler =
+            [this](std::istringstream&)
+        {
+          _event_manager.get().emit<Disconnection>();
+        }}},
       {"ready",
        {.usage = "ready",
         .description = "ready",

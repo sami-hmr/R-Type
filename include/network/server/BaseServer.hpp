@@ -30,7 +30,7 @@ class BaseServer : public APlugin
     ~BaseServer() override;
 
   private:
-    void launch_server(ServerLaunching const& s);
+    void launch_server();
 
     std::optional<Server> _server_class;
     std::thread _actual_server;

@@ -5,6 +5,7 @@
 ** Server
 */
 #include <atomic>
+#include <chrono>
 #include <vector>
 
 #include "network/server/Server.hpp"
@@ -75,9 +76,24 @@ void Server::receive_loop()
         if (_running) {
           NETWORK_LOGGER("server",
                          std::uint8_t(LogLevel::ERROR),
-                         std::format("Receive error: {}", ec.message()));
+                         std::format("Receive error: {}. Disconnecting client",
+                                     ec.message()));
+          try {
+            this->transmit_event_to_server(EventBuilder(
+                "DisconnectClient",
+                DisconnectClient(
+                    this->find_client_by_endpoint(sender_endpoint).client_id)
+                    .to_bytes()));
+          } catch (ClientNotFound const&) {
+            NETWORK_LOGGER("server",
+                           "WARING",
+                           "A strange unknow client tried something, surely "
+                           "not /dev/urandom :)");
+          }
+          this->_client_mutex.unlock();
         }
-        break;
+        continue;
+        ;
       }
 
       while (std::optional<ByteArray> p = recv_buf.extract(PROTOCOL_EOF)) {
@@ -114,14 +130,17 @@ void Server::handle_package(ByteArray const& package,
   ClientState state = ClientState::CHALLENGING;
   this->_client_mutex.lock();
   try {
-    state = this->find_client_by_endpoint(sender).state;
+    ClientInfo& client = this->find_client_by_endpoint(sender);
+    client.last_ping =
+        std::chrono::steady_clock::now().time_since_epoch().count();
+    state = client.state;
   } catch (ClientNotFound const&) {
   }
   this->_client_mutex.unlock();
   try {
     if (pkg->hearthbeat) {
-        this->handle_hearthbeat(pkg->real_package, sender);
-        return;
+      this->handle_hearthbeat(pkg->real_package, sender);
+      return;
     }
     if (state == ClientState::CONNECTED) {
       auto const& parsed = parse_connected_package(pkg->real_package);

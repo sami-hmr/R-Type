@@ -23,6 +23,7 @@ Client::Client(ClientConnection const& c,
     , _events_to_transmit(std::ref(shared_events))
     , _event_to_exec(std::ref(shared_exec_events))
     , _running(running)
+    , _last_ping(std::chrono::steady_clock::now().time_since_epoch().count())
 {
   _socket.open(asio::ip::udp::v4());
   _server_endpoint =
@@ -55,7 +56,7 @@ Client::~Client()
     this->_queue_reader.join();
   }
   if (this->_hearthbeat.joinable()) {
-      this->_hearthbeat.join();
+    this->_hearthbeat.join();
   }
   if (_socket.is_open()) {
     _socket.close();
@@ -91,7 +92,7 @@ void Client::receive_loop()
                          LogLevel::ERROR,
                          std::format("Receive error: {}", ec.message()));
         }
-        break;
+        continue;
       }
 
       while (std::optional<ByteArray> p = recv_buf.extract(PROTOCOL_EOF)) {
@@ -130,9 +131,11 @@ void Client::handle_package(ByteArray const& package)
         "client", LogLevel::DEBUG, "Invalid magic sequence, ignoring.");
     return;
   }
+  this->_last_ping =
+      std::chrono::steady_clock::now().time_since_epoch().count();
   if (pkg->hearthbeat) {
-      this->handle_hearthbeat(pkg->real_package);
-      return;
+    this->handle_hearthbeat(pkg->real_package);
+    return;
   }
   if (this->_state == ConnectionState::CONNECTED) {
     auto const& parsed = parse_connected_package(pkg->real_package);
@@ -147,4 +150,10 @@ void Client::handle_package(ByteArray const& package)
     }
     this->handle_connectionless_response(parsed.value());
   }
+}
+
+bool Client::should_disconnect() const
+{
+  std::size_t now = std::chrono::steady_clock::now().time_since_epoch().count();
+  return (this->_last_ping + disconnection_timeout) < now;
 }

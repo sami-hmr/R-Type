@@ -34,6 +34,7 @@ public:
          std::atomic<bool>& running);
   ~Client();
 
+  bool should_disconnect() const;
   void close();
   void connect();
 
@@ -111,6 +112,9 @@ private:
   void send_hearthbeat();
   std::thread _hearthbeat;
   static const std::size_t hearthbeat_delta = 1000000000 / 15;
+
+  std::atomic<std::size_t> _last_ping;
+  static const std::size_t disconnection_timeout = 5000000000; // 5 seconds
 
   std::size_t _index_sequence = 1;
   std::mutex _acknowledge_mutex;

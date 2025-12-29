@@ -71,3 +71,17 @@ struct WantReady
 
   HOOKABLE(WantReady)
 };
+
+struct Disconnection
+{
+  Disconnection() = default;
+
+  EMPTY_BYTE_CONSTRUCTOR(Disconnection)
+  DEFAULT_SERIALIZE(ByteArray {})
+
+  CHANGE_ENTITY_DEFAULT
+
+  Disconnection(Registry&, JsonObject const&) {}
+
+  HOOKABLE(Disconnection)
+};

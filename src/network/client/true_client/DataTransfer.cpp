@@ -4,6 +4,7 @@
 #include "NetworkShared.hpp"
 #include "network/client/Client.hpp"
 #include "plugin/Byte.hpp"
+#include "plugin/events/NetworkEvents.hpp"
 
 void Client::transmit_component(ComponentBuilder&& to_transmit)
 {
@@ -34,18 +35,24 @@ void Client::send_evt()
 
 void Client::send_hearthbeat()
 {
-  std::size_t delta = std::chrono::steady_clock::now().time_since_epoch().count() + hearthbeat_delta;
+  std::size_t delta =
+      std::chrono::steady_clock::now().time_since_epoch().count()
+      + hearthbeat_delta;
 
   while (_running.get()) {
     while (delta > static_cast<std::size_t>(
-                std::chrono::steady_clock::now().time_since_epoch().count()))
+               std::chrono::steady_clock::now().time_since_epoch().count()))
     {
-    std::this_thread::yield();
+      std::this_thread::yield();
     }
     delta += Client::hearthbeat_delta;
     this->_acknowledge_mutex.lock();
     auto lost_packages = this->_acknowledge_manager.get_lost_packages();
     this->_acknowledge_mutex.unlock();
     this->send(HearthBeat(lost_packages).to_bytes(), true);
+    if (this->should_disconnect()) {
+      this->transmit_event(
+          EventBuilder("Disconnection", Disconnection().to_bytes()));
+    }
   }
 }
