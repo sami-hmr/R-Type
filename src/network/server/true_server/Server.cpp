@@ -43,7 +43,6 @@ void Server::close()
 {
   if (_socket.is_open()) {
     _socket.send_to(asio::buffer(""), this->_server_endpoint);
-    //_socket.close();
   }
 }
 
