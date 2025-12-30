@@ -28,8 +28,25 @@
       }
     },
     {
+      "name": "dev-sanitize",
+      "displayName": "Development sanitized",
+      "inherits": "vcpkg",
+      "description": "Development build",
+      "binaryDir": "${sourceDir}/build",
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_STANDARD": "23",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "r-type_DEVELOPER_MODE": "ON",
+        "CMAKE_CXX_FLAGS": "-fsanitize=address",
+        "BUILD_TESTING": "OFF"
+      }
+    },
+    {
       "name": "tests",
-      "displayName": "Development",
+      "displayName": "tests",
       "inherits": "vcpkg",
       "description": "Development build with tests and coverage",
       "binaryDir": "${sourceDir}/build/tests",

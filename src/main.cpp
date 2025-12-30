@@ -14,6 +14,7 @@
 #include "plugin/events/ShutdownEvent.hpp"
 #include "plugin/libLoaders/ILibLoader.hpp"
 
+// exists to take controle over destroying order of Registry and EntityLoader
 static int true_main(Registry& r,
                      EventManager& em,
                      EntityLoader& e,
@@ -94,18 +95,24 @@ int main(int argc, char* argv[])
 {
   std::optional<Registry> r;
   std::optional<EventManager> em;
+  std::optional<EntityLoader> e;
+
   r.emplace();
   em.emplace();
-  EntityLoader e(*r, *em);
+  e.emplace(*r, *em);
+
 #ifdef RTYPE_EPITECH_CLIENT
-  int result = true_main(*r, em, e, {"client_config"});
+  int result = true_main(*r, *em, *e, {"client_config"});
 #elif RTYPE_EPITECH_SERVER
-  int result = true_main(*r, em, e, {"server_config"});
+  int result = true_main(*r, *em, *e, {"server_config"});
 #else
   int result =
-      true_main(*r, *em, e, std::vector<std::string>(argv + 1, argv + argc));
+      true_main(*r, *em, *e, std::vector<std::string>(argv + 1, argv + argc));
 #endif
+
   r.reset();
   em.reset();
+  e.reset();
+
   return result;
 }

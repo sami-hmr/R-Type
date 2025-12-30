@@ -110,18 +110,26 @@ void AI::attack_behavior_system(Registry& r)
     }
 
     if (_attack_patterns.find(behavior.attack_type) != _attack_patterns.end()) {
+      auto* pattern = _attack_patterns[behavior.attack_type].get();
       to_exec.emplace_back(
-          [&]()
+          [this,
+           pattern,
+           &r,
+           behavior = behavior,
+           entity = entity,
+           pos = pos,
+           speed = speed,
+           direction = direction,
+           dt = dt]() mutable
           {
-            _attack_patterns[behavior.attack_type]->execute(
-                entity,
-                r,
-                this->_event_manager.get(),
-                behavior,
-                pos,
-                speed,
-                direction,
-                dt);
+            pattern->execute(entity,
+                             r,
+                             this->_event_manager.get(),
+                             behavior,
+                             pos,
+                             speed,
+                             direction,
+                             dt);
           });
     }
   }

@@ -70,24 +70,30 @@ void Mob::spawner_system(Registry& r)
         spawner.active = false;
       }
       event_to_emit.emplace_back(
-          [&]()
+          [this,
+           &r,
+           i = i,
+           spawner_bytes = spawner.to_bytes(),
+           entity_template = spawner.entity_template,
+           pos_bytes = pos.to_bytes(),
+           scene_bytes = scene.to_bytes()]()
           {
             this->_event_manager.get().emit<ComponentBuilder>(
-                i, r.get_component_key<Spawner>(), spawner.to_bytes());
+                i, r.get_component_key<Spawner>(), spawner_bytes);
             this->_event_manager.get().emit<LoadEntityTemplate>(
-                spawner.entity_template,
+                entity_template,
                 LoadEntityTemplate::Additional {
                     {
                         this->_registry.get().get_component_key<Position>(),
-                        pos.to_bytes(),
+                        pos_bytes,
                     },
                     {this->_registry.get().get_component_key<Scene>(),
-                     scene.to_bytes()}});
+                     scene_bytes}});
           });
     }
   }
-  for (auto const &fn : event_to_emit) {
-      fn();
+  for (auto const& fn : event_to_emit) {
+    fn();
   }
 }
 
