@@ -1,14 +1,14 @@
 #include <iostream>
 
 #include "Mob.hpp"
-
+#include "plugin/Hooks.hpp"
 #include "NetworkShared.hpp"
 #include "ecs/EventManager.hpp"
-#include "ecs/zipper/ZipperIndex.hpp"
-#include "libs/Vector2D.hpp"
 #include "plugin/EntityLoader.hpp"
-#include "plugin/Hooks.hpp"
+#include "ecs/zipper/ZipperIndex.hpp"
+#include "plugin/components/Spawner.hpp"
 #include "plugin/components/Position.hpp"
+#include "plugin/components/Parasite.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
 
 Mob::Mob(Registry& r, EventManager &em, EntityLoader& l)

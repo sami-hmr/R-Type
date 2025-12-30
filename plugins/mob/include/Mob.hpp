@@ -1,12 +1,10 @@
 #pragma once
 
-#include <functional>
 #include "Json/JsonParser.hpp"
 #include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
-#include "plugin/components/Spawner.hpp"
 
 class Mob : public APlugin
 {
