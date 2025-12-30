@@ -16,6 +16,8 @@ public:
 private:
   void init_enemy(Registry::Entity const& entity, JsonObject const& obj);
   void init_spawner(Registry::Entity const& entity, JsonObject const& obj);
+  void init_parasite(Registry::Entity const& entity, JsonObject const& obj);
 
   void spawner_system(Registry& r);
+  void parasite_system(Registry& r);
 };

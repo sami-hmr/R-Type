@@ -32,6 +32,16 @@ struct Parasite
   {
   }
 
+    Parasite(std::string behaviour,
+           std::string effect,
+           Vector2D dflt_speed)
+      : player_linked(std::nullopt)
+      , behaviour(std::move(behaviour))
+      , effect(std::move(effect))
+      , dflt_speed(dflt_speed)
+  {
+  }
+
   HOOKABLE(Parasite,
            HOOK(player_linked),
            HOOK(behaviour),
