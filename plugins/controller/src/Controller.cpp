@@ -76,8 +76,6 @@ bool Controller::handling_press_release_binding(Registry::Entity const& entity,
       (static_cast<std::uint32_t>(KEY_MAPPING.at_first(key_string)) << 8)
           + static_cast<int>(event_type),
       Controllable::Trigger {*event_id, *params});
-  if (result.event_map.contains((static_cast<std::uint32_t>(KEY_MAPPING.at_first(key_string)) << 8) + static_cast<int>(event_type)))
-    LOGGER("Controller", LogLevel::WARNING, std::format("registered key {} successfully", key_string))
   return true;
 }
 
@@ -116,23 +114,17 @@ void Controller::init_event_map(Registry::Entity const& entity,
     if (press) {
       if (!handling_press_release_binding(
         entity, result, *press, *key_string, KEY_PRESSED)) {
-
-        if (result.event_map.contains((static_cast<std::uint32_t>(KEY_MAPPING.at_first(*key_string)) << 8) + static_cast<int>(KEY_PRESSED)))
-                LOGGER("CONTROLLER", LogLevel::ERROR, "pressed registered key successfully")
         continue;
       }
     }
     if (release) {
       if (!handling_press_release_binding(
         entity, result, *release, *key_string, KEY_RELEASED)) {
-
-        if (result.event_map.contains((static_cast<std::uint32_t>(KEY_MAPPING.at_first(*key_string)) << 8) + static_cast<int>(KEY_RELEASED)))
-                LOGGER("CONTROLLER", LogLevel::ERROR, "released registered key successfully")
         continue;
       }
     }
-    LOGGER("Controller", LogLevel::INFO,
-      std::format("Key {} registered as {}", *key_string, *description))
+    // LOGGER("Controller", LogLevel::INFO,
+    //   std::format("Key {} registered as {}", *key_string, *description))
   }
 }
 
