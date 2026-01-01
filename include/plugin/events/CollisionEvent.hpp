@@ -34,7 +34,7 @@ struct CollisionEvent
   DEFAULT_BYTE_CONSTRUCTOR(CollisionEvent,
                            ([](Registry::Entity const& c,
                                Registry::Entity const& d)
-                            { return (CollisionEvent) {c, d}; }),
+                            { return CollisionEvent(c, d); }),
                            parseByte<Registry::Entity>(),
                            parseByte<Registry::Entity>())
 
