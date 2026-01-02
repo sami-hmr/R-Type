@@ -91,6 +91,8 @@ private:
       connected_table;
 
   asio::io_context _io_c;
+
+  asio::ip::udp::endpoint _client_endpoint;
   asio::ip::udp::socket _socket;
   asio::ip::udp::endpoint _server_endpoint;
 

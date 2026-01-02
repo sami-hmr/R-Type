@@ -71,7 +71,6 @@ void Mob::spawner_system(Registry& r)
       }
       event_to_emit.emplace_back(
           [this,
-           &r,
            i = i,
            spawner_bytes = spawner.to_bytes(),
            entity_template = spawner.entity_template,
@@ -79,7 +78,9 @@ void Mob::spawner_system(Registry& r)
            scene_bytes = scene.to_bytes()]()
           {
             this->_event_manager.get().emit<ComponentBuilder>(
-                i, r.get_component_key<Spawner>(), spawner_bytes);
+                i,
+                this->_registry.get().get_component_key<Spawner>(),
+                spawner_bytes);
             this->_event_manager.get().emit<LoadEntityTemplate>(
                 entity_template,
                 LoadEntityTemplate::Additional {

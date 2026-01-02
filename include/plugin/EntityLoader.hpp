@@ -20,6 +20,23 @@ class EntityLoader
 public:
   explicit EntityLoader(Registry& registry, EventManager &em);
 
+  ~EntityLoader() {
+      std::cout << this->_plugins.size() << std::endl;
+      std::cout << this->_loaders.size() << std::endl;
+
+      while (!this->_plugins.empty()) {
+          std::cout << this->_plugins.begin()->first << std::endl;
+          this->_plugins.erase(this->_plugins.begin());
+      }
+
+      while (!this->_loaders.empty()) {
+          std::cout << this->_loaders.begin()->first << std::endl;
+          this->_loaders.erase(this->_loaders.begin());
+      }
+
+      std::cout << "WHATTTT\n";
+  }
+
   void load(std::string const& directory);
 
   void load_file(std::string const& filepath);

@@ -42,6 +42,7 @@ Server::Server(ServerLaunching const& s,
 void Server::close()
 {
   if (_socket.is_open()) {
+      std::cout << "closing server\n";
     _socket.send_to(asio::buffer(""), this->_server_endpoint);
   }
 }

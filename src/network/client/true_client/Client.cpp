@@ -8,6 +8,8 @@
 #include "network/client/Client.hpp"
 
 #include <asio/ip/address.hpp>
+#include <asio/ip/udp.hpp>
+#include <asio/registered_buffer.hpp>
 
 #include "NetworkCommun.hpp"
 #include "NetworkShared.hpp"
@@ -26,6 +28,8 @@ Client::Client(ClientConnection const& c,
     , _last_ping(std::chrono::steady_clock::now().time_since_epoch().count())
 {
   _socket.open(asio::ip::udp::v4());
+  _socket.bind(asio::ip::udp::endpoint(asio::ip::udp::v4(), 0));
+  _client_endpoint = asio::ip::udp::endpoint(_socket.local_endpoint());
   _server_endpoint =
       asio::ip::udp::endpoint(asio::ip::address::from_string(c.host), c.port);
 
@@ -43,9 +47,6 @@ void Client::close()
   if (this->_queue_reader.joinable()) {
     this->_queue_reader.join();
   }
-  if (_socket.is_open()) {
-    _socket.close();
-  }
 }
 
 Client::~Client()
@@ -58,6 +59,7 @@ Client::~Client()
   if (this->_hearthbeat.joinable()) {
     this->_hearthbeat.join();
   }
+  //this->_socket.send_to(asio::buffer(""), this->_client_endpoint);
   if (_socket.is_open()) {
     _socket.close();
   }

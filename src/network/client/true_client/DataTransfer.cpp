@@ -55,4 +55,5 @@ void Client::send_hearthbeat()
           EventBuilder("Disconnection", Disconnection().to_bytes()));
     }
   }
+  this->_socket.send_to(asio::buffer(""), _client_endpoint);
 }

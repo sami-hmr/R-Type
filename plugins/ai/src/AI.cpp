@@ -102,9 +102,10 @@ void AI::attack_behavior_system(Registry& r)
   double dt = r.clock().delta_seconds();
 
   std::vector<std::function<void()>> to_exec;
-  for (auto&& [entity, behavior, pos, speed, direction] :
+  for (auto&& index :
        ZipperIndex<AttackBehavior, Position, Direction, Speed>(r))
   {
+    auto&& [entity, behavior, pos, speed, direction] = index;
     if (!behavior.active) {
       continue;
     }
@@ -112,18 +113,11 @@ void AI::attack_behavior_system(Registry& r)
     if (_attack_patterns.find(behavior.attack_type) != _attack_patterns.end()) {
       auto* pattern = _attack_patterns[behavior.attack_type].get();
       to_exec.emplace_back(
-          [this,
-           pattern,
-           &r,
-           behavior = behavior,
-           entity = entity,
-           pos = pos,
-           speed = speed,
-           direction = direction,
-           dt = dt]() mutable
+          [this, index, pattern, dt = dt]()
           {
+            auto&& [entity, behavior, pos, speed, direction] = index;
             pattern->execute(entity,
-                             r,
+                             this->_registry.get(),
                              this->_event_manager.get(),
                              behavior,
                              pos,

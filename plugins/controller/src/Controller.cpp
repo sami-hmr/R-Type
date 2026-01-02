@@ -118,7 +118,7 @@ void Controller::handle_key_change(Key key, bool is_pressed)
     auto const& event = c.event_map.at(key_map);
 
     to_emit.emplace_back(
-        [&]()
+        [this, &event]()
         {
           emit_event(this->_event_manager.get(),
                      this->_registry.get(),
