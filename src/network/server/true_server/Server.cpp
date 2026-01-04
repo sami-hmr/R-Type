@@ -18,6 +18,7 @@
 #include "NetworkShared.hpp"
 #include "ServerCommands.hpp"
 #include "plugin/Byte.hpp"
+#include "plugin/CircularBuffer.hpp"
 
 Server::Server(ServerLaunching const& s,
                SharedQueue<ComponentBuilderId>& comp_queue,

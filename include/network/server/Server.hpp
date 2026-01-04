@@ -10,12 +10,8 @@
 #include <cstdint>
 #include <functional>
 #include <mutex>
-#include <queue>
-#include <semaphore>
-#include <string>
 #include <thread>
 #include <unordered_map>
-#include <utility>
 #include <vector>
 
 #include <asio/error_code.hpp>
@@ -100,7 +96,6 @@ private:
       std::uint8_t,
       void (Server::*)(ByteArray const&, const asio::ip::udp::endpoint&)>
       connected_table;
-
 
   asio::io_context _io_c;
   asio::ip::udp::endpoint _server_endpoint;
