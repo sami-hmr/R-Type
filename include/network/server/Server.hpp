@@ -28,7 +28,6 @@
 #include "ServerCommands.hpp"
 #include "ServerLaunch.hpp"
 #include "plugin/Byte.hpp"
-#include "plugin/CircularBuffer.hpp"
 
 class Server
 {
