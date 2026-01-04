@@ -1,3 +1,4 @@
+#include <system_error>
 #include "NetworkShared.hpp"
 #include "ServerCommands.hpp"
 #include "network/client/Client.hpp"
@@ -15,12 +16,11 @@ void Client::send(ByteArray const& command, bool hearthbeat)
 {
   ByteArray pkg = MAGIC_SEQUENCE + type_to_byte(hearthbeat) + command + PROTOCOL_EOF;
 
-  _socket.send_to(asio::buffer(pkg), _server_endpoint);
-
-  // NETWORK_LOGGER(
-  //     "client",
-  //     LogLevel::DEBUG,
-  //     std::format("Sent package of size: {}", pkg.size()));
+  try {
+      _socket.send_to(asio::buffer(pkg), _server_endpoint);
+  } catch (std::system_error const &e) {
+      std::cout << "system error: " << e.what() << "\n";
+  }
 }
 
 void Client::handle_connectionless_response(

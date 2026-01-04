@@ -119,13 +119,13 @@ void AcknowledgeManager::reset()
 {
   if (!this->_awaiting_packages.empty()) {
     this->_last_extracted = this->_awaiting_packages.crbegin()->first;
-    std::cout << "LAST EXTRACTED " << this->_last_extracted << std::endl;
+    //std::cout << "LAST EXTRACTED " << this->_last_extracted << std::endl;
   }
-  this->_waiting_for_aprouval.clear();
+  //this->_waiting_for_aprouval.clear();
 }
 
 void AcknowledgeManager::reset(std::size_t sequence)
 {
   this->_last_extracted = sequence;
-  this->_waiting_for_aprouval.clear();
+  //this->_waiting_for_aprouval.clear();
 }

@@ -89,7 +89,7 @@ private:
   void remove_client_by_id(std::size_t client_id);
 
   static const std::size_t reset_delta = 2000000000; // 2 second
-  static const std::uint8_t reset_max_count = 10;
+  static const std::uint8_t reset_max_count = 20;
   void reset_client_by_endpoint(asio::ip::udp::endpoint const &);
 
   static const std::unordered_map<

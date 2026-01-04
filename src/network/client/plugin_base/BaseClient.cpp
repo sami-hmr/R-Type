@@ -109,12 +109,13 @@ BaseClient::BaseClient(std::string const& name,
   })
 
   SUBSCRIBE_EVENT(ResetClient, {
-      std::cout << "RESET EVENT\n";
-      for (auto const &entity : this->_server_created) {
-          this->_registry.get().kill_entity(entity);
-          this->_server_indexes.remove_second(entity);
-      }
-      this->_server_created.clear();
+      // std::cout << "RESET EVENT\n";
+      // for (auto const &entity : this->_server_created) {
+      //     //this->_registry.get().kill_entity(entity);
+      //     //this->_server_indexes.remove_second(entity);
+      // }
+      // std::cout << "SERVER_ENTITY SIZE " << this->_server_indexes.get_second().size() << std::endl;
+      // this->_server_created.clear();
   })
 
   SUBSCRIBE_EVENT(Disconnection, {
