@@ -63,7 +63,7 @@ static int true_main(Registry& r,
       std::chrono::microseconds(1000000 / 60);  // ~33333 microseconds
   if (argv[0].contains("server")) {
     frame_duration =
-        std::chrono::microseconds(1000000 / 60);  // ~33333 microseconds
+        std::chrono::microseconds(1000000 / 40);  // ~33333 microseconds
   }
   auto next_frame_time = std::chrono::duration_cast<std::chrono::microseconds>(
       r.clock().now().time_since_epoch());

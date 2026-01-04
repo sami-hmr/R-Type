@@ -56,7 +56,7 @@ private:
                                 const asio::ip::udp::endpoint& sender);
 
   void send(ByteArray const& response, const asio::ip::udp::endpoint& endpoint,  bool hearthbeat = false);
-  void send_connected(ByteArray const& response, ClientInfo& client);
+  void send_connected(ByteArray const& response, ClientInfo& client, bool prioritary = false);
   void handle_getchallenge(ByteArray const& cmd,
                            const asio::ip::udp::endpoint& sender);
   void handle_connect(ByteArray const& cmd,
@@ -88,6 +88,10 @@ private:
   void remove_client_by_endpoint(const asio::ip::udp::endpoint& endpoint);
   void remove_client_by_id(std::size_t client_id);
 
+  static const std::size_t reset_delta = 2000000000; // 2 second
+  static const std::uint8_t reset_max_count = 10;
+  void reset_client_by_endpoint(asio::ip::udp::endpoint const &);
+
   static const std::unordered_map<
       std::uint8_t,
       void (Server::*)(ByteArray const&, const asio::ip::udp::endpoint&)>
@@ -107,7 +111,6 @@ private:
   static const std::size_t client_disconect_timout = 5000000000; // 5 seconds
   std::vector<ClientInfo> _clients;
   std::size_t _c_id_incrementator = 0;
-  CircularBuffer<BUFFER_SIZE> _recv_buffer;
   std::uint32_t _server_id;
 
   std::reference_wrapper<SharedQueue<ComponentBuilderId>> _components_to_create;

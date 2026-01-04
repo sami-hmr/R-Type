@@ -23,6 +23,7 @@
 #include "ServerCommands.hpp"
 #include "network/AcknowledgeManager.hpp"
 #include "plugin/Byte.hpp"
+#include "plugin/events/NetworkEvents.hpp"
 
 class Client
 {
@@ -41,9 +42,9 @@ public:
 private:
   void receive_loop();
   void send(ByteArray const& command, bool hearthbeat = false);
-  void send_connected(ByteArray const& response);
+  void send_connected(ByteArray const& response, bool prioritary = false);
   void handle_connectionless_response(ConnectionlessCommand const& response);
-  void handle_hearthbeat(ByteArray const &);
+  void handle_hearthbeat(ByteArray const&);
   void handle_connected_package(ConnectedPackage const& package);
   void compute_connected_package(ConnectedPackage const& package);
   void handle_connected_command(ConnectedCommand const& command);
@@ -51,6 +52,7 @@ private:
 
   void handle_component_update(ByteArray const& package);
   void handle_event_creation(ByteArray const& package);
+  void reset_acknowledge(ByteArray const&);
 
   void send_getchallenge();
   void send_connect(std::uint32_t challenge);
@@ -78,6 +80,7 @@ private:
       ByteArray const& package);
   static std::optional<HearthBeat> parse_hearthbeat_cmd(
       ByteArray const& package);
+  static std::optional<ResetClient> parse_reset_cmd(ByteArray const& package);
 
   void transmit_component(ComponentBuilder&&);
   void transmit_event(EventBuilder&&);
@@ -106,7 +109,7 @@ private:
   std::reference_wrapper<SharedQueue<EventBuilder>> _event_to_exec;
   std::reference_wrapper<std::atomic<bool>> _running;
 
-  //std::unordered_map<std::uint32_t, ByteArray> _waiting_packages;
+  // std::unordered_map<std::uint32_t, ByteArray> _waiting_packages;
 
   void send_evt();
   std::thread _queue_reader;
@@ -116,7 +119,7 @@ private:
   static const std::size_t hearthbeat_delta = 1000000000 / 15;
 
   std::atomic<std::size_t> _last_ping;
-  static const std::size_t disconnection_timeout = 5000000000; // 5 seconds
+  static const std::size_t disconnection_timeout = 5000000000;  // 5 seconds
 
   std::size_t _index_sequence = 1;
   std::mutex _acknowledge_mutex;

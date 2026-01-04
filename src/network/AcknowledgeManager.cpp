@@ -30,6 +30,10 @@ std::vector<ConnectedPackage> AcknowledgeManager::extract_available_packages()
   this->_awaiting_packages.erase(
       this->_awaiting_packages.begin(),
       this->_awaiting_packages.upper_bound(this->_last_extracted));
+  this->_asked_delta.erase(
+      this->_asked_delta.begin(),
+      this->_asked_delta.upper_bound(this->_last_extracted));
+
   return result;
 }
 
@@ -85,11 +89,16 @@ std::vector<std::size_t> AcknowledgeManager::get_lost_packages()
 {
   std::size_t last_package = this->_last_extracted;
   std::vector<std::size_t> result;
+  std::size_t const& now =
+      std::chrono::steady_clock::now().time_since_epoch().count();
 
   for (auto const& it : this->_awaiting_packages) {
     if (it.first != last_package + 1) {
       for (std::size_t i = last_package + 1; i < it.first; i++) {
-        result.push_back(i);
+        if (now - this->_asked_delta[i] > ask_cooldown) {
+          result.push_back(i);
+          this->_asked_delta[i] = now;
+        }
       }
     }
     last_package = it.first;
@@ -104,4 +113,19 @@ std::vector<std::size_t> AcknowledgeManager::get_lost_packages()
 std::size_t AcknowledgeManager::get_acknowledge() const
 {
   return this->_last_extracted;
+}
+
+void AcknowledgeManager::reset()
+{
+  if (!this->_awaiting_packages.empty()) {
+    this->_last_extracted = this->_awaiting_packages.crbegin()->first;
+    std::cout << "LAST EXTRACTED " << this->_last_extracted << std::endl;
+  }
+  this->_waiting_for_aprouval.clear();
+}
+
+void AcknowledgeManager::reset(std::size_t sequence)
+{
+  this->_last_extracted = sequence;
+  this->_waiting_for_aprouval.clear();
 }

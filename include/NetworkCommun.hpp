@@ -16,7 +16,7 @@
 #include "plugin/Byte.hpp"
 
 #define MAX_PLAYERS 4
-#define BUFFER_SIZE 4096
+#define BUFFER_SIZE 9092
 
 #define NETWORK_LOGGER(category, level, message) \
   std::cerr << (category) << ": " << (message) << "\n"
@@ -94,7 +94,8 @@ enum ConnectedOpcodes : std::uint8_t
 {
   SENDEVENT = 0x01,
   SENDCOMP = 0x02,
-  SENDHEARTHBEAT = 0x03
+  SENDHEARTHBEAT = 0x03,
+  FFGONEXT = 0x04,
 };
 
 enum class ConnectionState : std::uint8_t
@@ -122,4 +123,6 @@ struct ClientInfo
   std::uint32_t challenge = 0;
   std::uint8_t client_id = 0;
   std::size_t last_ping;
+  std::size_t last_reset;
+  std::uint8_t reset_count;
 };

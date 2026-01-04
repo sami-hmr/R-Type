@@ -81,24 +81,28 @@ struct ConnectedPackage
   std::size_t sequence_number;
   std::size_t acknowledge;
   bool end_of_content;
+  bool prioritary;
   ByteArray real_package;
 
   ByteArray to_bytes() const
   {
     return type_to_byte<std::size_t>(this->sequence_number)
         + type_to_byte<std::size_t>(this->acknowledge)
-        + type_to_byte<bool>(this->end_of_content) + real_package;
+        + type_to_byte<bool>(this->end_of_content)
+        + type_to_byte<bool>(this->prioritary) + real_package;
   }
 };
 
 inline Parser<ConnectedPackage> parse_connected()
 {
-  return apply([](std::size_t sn, std::size_t a, bool eoc, ByteArray r)
-               { return ConnectedPackage(sn, a, eoc, std::move(r)); },
-               parseByte<std::size_t>(),
-               parseByte<std::size_t>(),
-               parseByte<bool>(),
-               parseByte<Byte>().many());
+  return apply(
+      [](std::size_t sn, std::size_t a, bool eoc, bool prioritary, ByteArray r)
+      { return ConnectedPackage(sn, a, eoc, prioritary, std::move(r)); },
+      parseByte<std::size_t>(),
+      parseByte<std::size_t>(),
+      parseByte<bool>(),
+      parseByte<bool>(),
+      parseByte<Byte>().many());
 }
 
 struct ConnectedCommand

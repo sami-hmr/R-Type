@@ -4,6 +4,7 @@
 #include "ParserTypes.hpp"
 #include "ServerCommands.hpp"
 #include "network/client/Client.hpp"
+#include "plugin/events/NetworkEvents.hpp"
 
 std::optional<Package> Client::parse_package(ByteArray const& package)
 {
@@ -132,7 +133,20 @@ std::optional<HearthBeat> Client::parse_hearthbeat_cmd(ByteArray const& package)
     NETWORK_LOGGER(
         "server",
         LogLevel::ERROR,
-        std::format("Failed to read component command : {}", e.what()));
+        std::format("Failed to read hearthbeat command : {}", e.what()));
+  }
+  return std::nullopt;
+}
+
+std::optional<ResetClient> Client::parse_reset_cmd(ByteArray const& package)
+{
+  try {
+    return ResetClient(package);
+  } catch (InvalidPackage const& e) {
+    NETWORK_LOGGER(
+        "server",
+        LogLevel::ERROR,
+        std::format("Failed to read reset command : {}", e.what()));
   }
   return std::nullopt;
 }

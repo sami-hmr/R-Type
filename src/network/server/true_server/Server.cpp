@@ -42,7 +42,7 @@ Server::Server(ServerLaunching const& s,
 void Server::close()
 {
   if (_socket.is_open()) {
-      std::cout << "closing server\n";
+    std::cout << "closing server\n";
     _socket.send_to(asio::buffer(""), this->_server_endpoint);
   }
 }
@@ -78,16 +78,13 @@ void Server::receive_loop()
 
       if (ec) {
         if (_running) {
-          NETWORK_LOGGER("server",
-                         std::uint8_t(LogLevel::ERROR),
-                         std::format("Receive error: {}. Disconnecting client",
-                                     ec.message()));
+          NETWORK_LOGGER(
+              "server",
+              std::uint8_t(LogLevel::ERROR),
+              std::format("Receive error: {}. reseting client", ec.message()));
+          this->_client_mutex.lock();
           try {
-            this->transmit_event_to_server(EventBuilder(
-                "DisconnectClient",
-                DisconnectClient(
-                    this->find_client_by_endpoint(sender_endpoint).client_id)
-                    .to_bytes()));
+            this->reset_client_by_endpoint(sender_endpoint);
           } catch (ClientNotFound const&) {
             NETWORK_LOGGER("server",
                            "WARING",
@@ -179,11 +176,14 @@ void Server::send(ByteArray const& response,
   }
 }
 
-void Server::send_connected(ByteArray const& response, ClientInfo& client)
+void Server::send_connected(ByteArray const& response,
+                            ClientInfo& client,
+                            bool prioritary)
 {
   ConnectedPackage pkg(client.next_send_sequence,
                        client.acknowledge_manager.get_acknowledge(),
                        true,
+                       prioritary,
                        response);
 
   client.acknowledge_manager.register_sent_package(pkg);

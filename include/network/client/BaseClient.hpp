@@ -31,7 +31,7 @@ private:
   SharedQueue<EventBuilder> _event_from_server;
   SharedQueue<EventBuilder> _event_to_server;
 
-  //std::optional<Client> _client_class;
+  // std::optional<Client> _client_class;
   std::thread _thread;
   std::atomic<bool> _running = false;
   bool _connected = false;
@@ -40,7 +40,8 @@ protected:
   TwoWayMap<Registry::Entity /*server */, Registry::Entity /*client */>
       _server_indexes;
 
-
   std::size_t _id_in_server = 0;
 
+private:
+  std::vector<Registry::Entity> _server_created;
 };
