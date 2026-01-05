@@ -34,76 +34,85 @@
       "entities": [
         {
           "controller:Controllable": {
-            "pressed": [
+            "bindings": [
               {
-                "name": "UpdateDirection",
+                "description": "go up",
                 "key": "Z",
-                "params": {
-                  "x": 0.0,
-                  "y": -1.0
+                "pressed": {
+                  "name": "UpdateDirection",
+                  "params": {
+                      "x": 0.0,
+                      "y": -1.0
+                  }
+                },
+                "released": {
+                  "name": "UpdateDirection",
+                  "params": {
+                      "x": 0.0,
+                      "y": 1.0
+                  }
                 }
               },
               {
-                "name": "UpdateDirection",
+                "description": "go left",
                 "key": "Q",
-                "params": {
-                  "x": -1.0,
-                  "y": 0.0
+                "pressed": {
+                  "name": "UpdateDirection",
+                  "params": {
+                      "x": -1.0,
+                      "y": 0.0
+                  }
+                },
+                "released": {
+                  "name": "UpdateDirection",
+                  "params": {
+                      "x": 1.0,
+                      "y": 0.0
+                  }
                 }
               },
               {
-                "name": "UpdateDirection",
-                "key": "S",
-                "params": {
-                  "x": 0.0,
-                  "y": 1.0
-                }
-              },
-              {
-                "name": "UpdateDirection",
+                "description": "go right",
                 "key": "D",
-                "params": {
-                  "x": 1.0,
-                  "y": 0.0
+                "pressed": {
+                  "name": "UpdateDirection",
+                  "params": {
+                      "x": 1.0,
+                      "y": 0.0
+                  }
+                },
+                "released": {
+                  "name": "UpdateDirection",
+                  "params": {
+                      "x": -1.0,
+                      "y": 0.0
+                  }
                 }
               },
               {
-                "name": "FireBullet",
+                "description": "go down",
+                "key": "S",
+                "pressed": {
+                  "name": "UpdateDirection",
+                  "params": {
+                      "x": 0.0,
+                      "y": 1.0
+                  }
+                },
+                "released": {
+                  "name": "UpdateDirection",
+                  "params": {
+                      "x": 0.0,
+                      "y": -1.0
+                  }
+                }
+              },
+              {
+                "description": "shoot",
                 "key": "SPACE",
-                "params": {}
-              }
-            ],
-            "released": [
-              {
-                "name": "UpdateDirection",
-                "key": "Z",
-                "params": {
-                  "x": 0.0,
-                  "y": 1.0
-                }
-              },
-              {
-                "name": "UpdateDirection",
-                "key": "Q",
-                "params": {
-                  "x": 1.0,
-                  "y": 0.0
-                }
-              },
-              {
-                "name": "UpdateDirection",
-                "key": "S",
-                "params": {
-                  "x": 0.0,
-                  "y": -1.0
-                }
-              },
-              {
-                "name": "UpdateDirection",
-                "key": "D",
-                "params": {
-                  "x": -1.0,
-                  "y": 0.0
+                "pressed": {
+                  "name": "FireBullet",
+                  "params": {}
                 }
               }
             ]

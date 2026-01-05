@@ -44,92 +44,125 @@
         ],
         "entities": [
           {
-            "moving:Position": {
-              "hook": "playerpos",
-              "pos": {
-                "x": 0.0,
-                "y": 0.0
-              },
-              "z": 2
-            },
-            "ui:Drawable": {},
-            "moving:Velocity": {
-              "hook": "player",
-              "speed": {
-                "x": 0.01,
-                "y": 0.01
-              },
-              "direction": {
-                "x": 0.0,
-                "y": 0.0
-              }
-            },
-            "weapon:BasicWeapon": {
-              "bullet_type": "basic_bullet",
-              "magazine_size": 6,
-              "magazine_nb": 3,
-              "reload_time": 2.0,
-              "cooldown": 0.3
-            },
-            "ui:AnimatedSprite": {
-              "animations": [
-                {
-                  "name": "idle",
-                  "texture": "assets/player.png",
-                  "frame_size": {
-                    "x": 350.0,
-                    "y": 150.0
-                  },
-                  "frame_pos": {
-                    "x": 0.0,
-                    "y": 0.0
-                  },
-                  "direction": {
-                    "x": 1.0,
-                    "y": 0.0
-                  },
-                  "sprite_size": {
-                    "width": "20.0%",
-                    "height": "20.0%"
-                  },
-                  "framerate": 10.0,
-                  "nb_frames": 7,
-                  "loop": true,
-                  "rollback": true
+              "moving:Position": {
+                "pos": {
+                  "x": 0.0,
+                  "y": 0.0
                 },
-                {
-                  "name": "death",
-                  "texture": "assets/explosion.png",
-                  "frame_size": {
-                    "x": 128.0,
-                    "y": 128.0
-                  },
-                  "frame_pos": {
-                    "x": 0.0,
-                    "y": 0.0
-                  },
-                  "direction": {
-                    "x": 1.0,
-                    "y": 0.0
-                  },
-                  "sprite_size": {
-                    "width": "20.0%",
-                    "height": "20.0%"
-                  },
-                  "framerate": 10.0,
-                  "nb_frames": 12,
-                  "loop": false,
-                  "rollback": false
+                "z": 2
+              },
+              "ui:Drawable": {},
+              "moving:Speed": {
+                "speed": {
+                  "x": 1.0,
+                  "y": 1.0
                 }
-              ],
-              "default_animation": "idle"
-            },
-            "collision:Collidable": {
-              "width": 0.2,
-              "height": 0.2,
-              "collision_type": "solid"
-            },
-            "controller:Controllable": {
+              },
+              "moving:Direction": {
+                "direction": {
+                  "x": 0.0,
+                  "y": 0.0
+                }
+              },
+              "weapon:BasicWeapon": {
+                "bullet_type": "bounce_bullet",
+                "magazine_size": 60000,
+                "magazine_nb": 30000,
+                "reload_time": 0.0,
+                "cooldown": 0.01
+              },
+              "ui:AnimatedSprite": {
+                "animations": [
+                  {
+                    "name": "idle",
+                    "texture": "assets/player.png",
+                    "frame_size": {
+                      "x": 350.0,
+                      "y": 150.0
+                    },
+                    "frame_pos": {
+                      "x": 0.0,
+                      "y": 0.0
+                    },
+                    "direction": {
+                      "x": 1.0,
+                      "y": 0.0
+                    },
+                    "sprite_size": {
+                      "width": "20.0%",
+                      "height": "20.0%"
+                    },
+                    "framerate": 10.0,
+                    "nb_frames": 7,
+                    "loop": true,
+                    "rollback": true
+                  },
+                  {
+                    "name": "death",
+                    "texture": "assets/explosion.png",
+                    "frame_size": {
+                      "x": 128.0,
+                      "y": 128.0
+                    },
+                    "frame_pos": {
+                      "x": 0.0,
+                      "y": 0.0
+                    },
+                    "direction": {
+                      "x": 1.0,
+                      "y": 0.0
+                    },
+                    "sprite_size": {
+                      "width": "20.0%",
+                      "height": "20.0%"
+                    },
+                    "framerate": 10.0,
+                    "nb_frames": 12,
+                    "loop": false,
+                    "rollback": false
+                  }
+                ],
+                "default_animation": "idle"
+              },
+              "moving:Facing": {
+                "direction": {
+                  "x": 1.0,
+                  "y": 0.0
+                }
+              },
+              "collision:Collidable": {
+                "width": 0.2,
+                "height": 0.2,
+                "collision_type": "solid"
+              },
+              "life:Health": {
+                "hook": "player_health",
+                "current": 100.0,
+                "max": 100.0
+              },
+              "life:Team": {
+                "name": "player"
+              },
+              "ath:Bar": {
+                "size": {
+                  "x": "10.0%",
+                  "y": "1.0%"
+                },
+                "max_value": "#player_health:max",
+                "current_value": "#player_health:current",
+                "offset": {
+                  "x": 0.0,
+                  "y": -0.1
+                },
+                "color": {
+                  "r": 100,
+                  "g": 255,
+                  "b": 100,
+                  "a": 255
+                },
+                "outline": true
+              },
+              "controller:Controllable": {
                 "bindings": [
                 {
                   "description": "go up",
@@ -145,7 +178,7 @@
                     "name": "UpdateDirection",
                     "params": {
                         "x": 0.0,
-                        "y": 0.0
+                        "y": 1.0
                     }
                   }
                 },
@@ -162,7 +195,7 @@
                   "released": {
                     "name": "UpdateDirection",
                     "params": {
-                        "x": 0.0,
+                        "x": 1.0,
                         "y": 0.0
                     }
                   }
@@ -180,7 +213,7 @@
                   "released": {
                     "name": "UpdateDirection",
                     "params": {
-                        "x": 0.0,
+                        "x": -1.0,
                         "y": 0.0
                     }
                   }
@@ -199,7 +232,7 @@
                     "name": "UpdateDirection",
                     "params": {
                         "x": 0.0,
-                        "y": 0.0
+                        "y": -1.0
                     }
                   }
                 },
@@ -212,15 +245,6 @@
                   }
                 }
               ]
-            },
-            "life:Damage": {
-              "amount": 0
-            },
-            "life:Heal": {
-              "amount": 1
-            },
-            "life:Team": {
-              "name": "test1"
             }
           },
           {

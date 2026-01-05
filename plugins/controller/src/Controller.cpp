@@ -31,8 +31,6 @@ Controller::Controller(Registry& r, EventManager& em, EntityLoader& l)
 
   SUBSCRIBE_EVENT(KeyPressedEvent, {
     for (auto const& [key, active] : event.key_pressed) {
-      LOGGER("Controller", LogLevel::INFO,
-             std::format("key {} is {}", char(key + 57), active));
       if (active) {
         this->handle_key_change(key, true);
       }
@@ -144,21 +142,15 @@ void Controller::handle_key_change(Key key, bool is_pressed)
 {
   this->_key_states[key] = is_pressed;
 
-  LOGGER("Controller",LogLevel::INFO,
-         std::format("key {} is now {}", char(key + 57), is_pressed ? "pressed" : "released"));
   std::uint16_t key_map =
       (static_cast<std::uint32_t>(key) << 8) + static_cast<int>(is_pressed);
 
   for (auto&& [c] : Zipper<Controllable>(this->_registry.get())) {
     if (!c.event_map.contains(key_map)) {
-      LOGGER("Controller",LogLevel::INFO,
-         std::format("Key isn't registered in the event map"));
       continue;
     }
     auto const& event = c.event_map.at(key_map);
 
-    LOGGER("Controller",LogLevel::INFO,
-         std::format("emiting event"));
     emit_event(this->_event_manager.get(),
                this->_registry.get(),
                event.first,
