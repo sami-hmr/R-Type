@@ -39,8 +39,12 @@ void Client::handle_connected_package(ConnectedPackage const& package)
 
 void Client::compute_connected_package(ConnectedPackage const& package)
 {
-  auto const& parsed = parse_connected_command(package.real_package);
-
+  this->_receive_frag_buffer += package.real_package;
+  if (!package.end_of_content) {
+      return;
+  }
+  auto const& parsed = parse_connected_command(this->_receive_frag_buffer);
+  this->_receive_frag_buffer.clear();
   if (!parsed) {
     return;
   }
@@ -81,18 +85,19 @@ void Client::handle_event_creation(ByteArray const& package)
 
 void Client::send_connected(ByteArray const& response, bool prioritary)
 {
-  // this->_acknowledge_mutex.lock();
-  ConnectedPackage pkg(this->_index_sequence,
-                       this->_acknowledge_manager.get_acknowledge(),
-                       true,
-                       prioritary,
-                       response);
-  // this->_acknowledge_mutex.unlock();
+  std::vector<ByteArray> const &packages = response / get_package_division(response.size());
+  for (std::size_t i = 0; i < packages.size(); i++) {
+      ConnectedPackage pkg(this->_index_sequence,
+        this->_acknowledge_manager.get_acknowledge(),
+        (i + 1) == packages.size(),
+        prioritary,
+        packages[i]
+      );
 
-  this->_acknowledge_manager.register_sent_package(pkg);
-  this->_index_sequence += 1;
-
-  this->send(pkg.to_bytes());
+      this->_acknowledge_manager.register_sent_package(pkg);
+      this->_index_sequence += 1;
+      this->send(pkg.to_bytes());
+  }
 }
 
 void Client::handle_hearthbeat(ByteArray const& pkg)

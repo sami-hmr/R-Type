@@ -181,14 +181,16 @@ void Server::send_connected(ByteArray const& response,
                             ClientInfo& client,
                             bool prioritary)
 {
-  ConnectedPackage pkg(client.next_send_sequence,
-                       client.acknowledge_manager.get_acknowledge(),
-                       true,
-                       prioritary,
-                       response);
-
-  client.acknowledge_manager.register_sent_package(pkg);
-  client.next_send_sequence += 1;
-
-  this->send(pkg.to_bytes(), client.endpoint);
+  std::vector<ByteArray> const &packages = response / get_package_division(response.size());
+  for (std::size_t i = 0; i < packages.size(); i++) {
+      ConnectedPackage pkg(client.next_send_sequence,
+        client.acknowledge_manager.get_acknowledge(),
+        (i + 1) == packages.size(),
+        prioritary,
+        packages[i]
+      );
+      client.acknowledge_manager.register_sent_package(pkg);
+      client.next_send_sequence += 1;
+      this->send(pkg.to_bytes(), client.endpoint);
+  }
 }

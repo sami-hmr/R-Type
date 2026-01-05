@@ -27,9 +27,12 @@ void Server::handle_connected_packet(ConnectedPackage const& command,
 
   std::cout << packages.size() << std::endl;
   for (auto const& pkg : packages) {
-    ByteArray entire = pkg.real_package;
-
-    auto const& parsed = parse_connected_command(entire);
+    client.frag_buffer += pkg.real_package;
+    if (!pkg.end_of_content) {
+        continue;
+    }
+    auto const& parsed = parse_connected_command(client.frag_buffer);
+    client.frag_buffer.clear();
     if (!parsed) {
       continue;
     }

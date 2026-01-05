@@ -1,7 +1,9 @@
 #include <array>
+#include <cmath>
 #include <cstdint>
 #include <functional>
 #include <unordered_map>
+#include <vector>
 
 #include "plugin/Byte.hpp"
 
@@ -60,4 +62,21 @@ ByteArray json_object_to_byte(JsonObject const& object)
           [](std::string const& s) { return string_to_byte(s); }),
       std::function<ByteArray(const JsonValue&)>(
           [](JsonValue const& s) { return json_value_to_byte(s); }));
+}
+
+std::vector<ByteArray> operator/(ByteArray const& array, std::size_t nb)
+{
+  std::vector<ByteArray> result(nb);
+  std::int64_t begin = 0;
+
+  for (std::size_t i = 0; i < nb; i++) {
+    std::int64_t end = (i + 1) == nb
+        ? array.size()
+        : std::round(
+              (i + 1)
+              * (static_cast<double>(array.size()) / static_cast<double>(nb)));
+    result[i] = ByteArray(array.begin() + begin, array.begin() + end);
+    begin = end;
+  }
+  return result;
 }

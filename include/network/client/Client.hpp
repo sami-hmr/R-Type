@@ -103,6 +103,7 @@ private:
   std::uint8_t _client_id = 0;
   std::uint32_t _server_id = 0;
   std::string _player_name = "Player";
+  ByteArray _receive_frag_buffer;
 
   std::reference_wrapper<SharedQueue<ComponentBuilder>> _components_to_create;
   std::reference_wrapper<SharedQueue<EventBuilder>> _events_to_transmit;

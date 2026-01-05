@@ -3,20 +3,24 @@
 #include <array>
 #include <bit>
 #include <cstdint>
-#include <deque>
 #include <string>
-#include <utility>
 
 #include <asio/error_code.hpp>
 #include <asio/io_context.hpp>
 #include <asio/ip/udp.hpp>
 
-#include "ServerCommands.hpp"
 #include "network/AcknowledgeManager.hpp"
 #include "plugin/Byte.hpp"
 
 #define MAX_PLAYERS 4
 #define BUFFER_SIZE 9092
+
+static inline std::size_t get_package_division(std::size_t size) {
+    std::size_t const max = BUFFER_SIZE - sizeof(ConnectedPackage);
+    std::size_t const div = size / max;
+
+    return div + 1;
+}
 
 #define NETWORK_LOGGER(category, level, message) \
   std::cerr << (category) << ": " << (message) << "\n"
@@ -125,4 +129,5 @@ struct ClientInfo
   std::size_t last_ping;
   std::size_t last_reset;
   std::uint8_t reset_count;
+  ByteArray frag_buffer;
 };
