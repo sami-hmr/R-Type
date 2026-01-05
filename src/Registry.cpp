@@ -191,3 +191,7 @@ std::vector<ComponentState> Registry::get_state()
   }
   return r;
 }
+
+void Registry::delete_systems() {
+    this->_frequent_systems.clear();
+}

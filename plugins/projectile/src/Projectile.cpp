@@ -26,10 +26,10 @@ Projectile::Projectile(Registry& r, EventManager& em, EntityLoader& l)
   REGISTER_COMPONENT(Temporal)
   REGISTER_COMPONENT(Fragile)
 
-  this->_registry.get().add_system<>(
+  this->_registry.get().add_system(
       [this](Registry& r) { this->temporal_system(r); }, 2);
-  this->_registry.get().add_system<>([this](Registry& r)
-                                     { this->fragile_system(r); });
+  this->_registry.get().add_system([this](Registry& r)
+                                   { this->fragile_system(r); });
 
   SUBSCRIBE_EVENT(CollisionEvent, { this->on_collision(event); })
 }

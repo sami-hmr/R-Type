@@ -105,24 +105,32 @@ void AI::attack_behavior_system(Registry& r)
   for (auto&& index :
        ZipperIndex<AttackBehavior, Position, Direction, Speed>(r))
   {
-    auto&& [entity, behavior, pos, speed, direction] = index;
+    std::size_t entity = std::get<0>(index);
+    AttackBehavior const &behavior = std::get<1>(index);
     if (!behavior.active) {
       continue;
     }
 
-    if (_attack_patterns.find(behavior.attack_type) != _attack_patterns.end()) {
+    if (_attack_patterns.contains(behavior.attack_type)) {
       auto* pattern = _attack_patterns[behavior.attack_type].get();
       to_exec.emplace_back(
-          [this, index, pattern, dt = dt]()
+          [this, entity, pattern, dt]()
           {
-            auto&& [entity, behavior, pos, speed, direction] = index;
+            auto& behavior =
+                *this->_registry.get().get_components<AttackBehavior>()[entity];
+            auto& pos =
+                *this->_registry.get().get_components<Position>()[entity];
+            auto& speed =
+                *this->_registry.get().get_components<Speed>()[entity];
+            auto& direction =
+                *this->_registry.get().get_components<Direction>()[entity];
             pattern->execute(entity,
                              this->_registry.get(),
                              this->_event_manager.get(),
                              behavior,
                              pos,
-                             speed,
                              direction,
+                             speed,
                              dt);
           });
     }

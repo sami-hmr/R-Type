@@ -29,9 +29,11 @@ public:
           this->_plugins.erase(this->_plugins.begin());
       }
 
+      this->_registry.get().delete_systems();
       while (!this->_loaders.empty()) {
           std::cout << this->_loaders.begin()->first << std::endl;
           this->_loaders.erase(this->_loaders.begin());
+          std::cout << "erased" << std::endl;
       }
 
       std::cout << "WHATTTT\n";

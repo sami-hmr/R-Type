@@ -21,7 +21,7 @@ public:
   DlLoader& operator=(DlLoader&&) = delete;
 
   explicit DlLoader(const std::string& file_name)
-      : _lib(dlopen((file_name + ".so").c_str(), RTLD_LAZY))
+      : hey(file_name), _lib(dlopen((file_name + ".so").c_str(), RTLD_LAZY))
   {
     if (this->_lib == nullptr) {
       throw NotExistingLib(dlerror());
@@ -38,8 +38,12 @@ public:
 
   ~DlLoader() override
   {
+    std::cout << hey << std::endl;
+    std::cout << "ho\n";
     if (this->_lib != nullptr) {
+      std::cout << "ah\n";
       (void)dlclose(this->_lib);
+      std::cout << "bé\n";
     }
   }
 
@@ -67,5 +71,6 @@ public:
   }
 
 private:
+  std::string hey;
   void* _lib = nullptr;
 };
