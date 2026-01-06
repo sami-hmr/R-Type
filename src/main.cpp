@@ -110,9 +110,9 @@ int main(int argc, char* argv[])
       true_main(*r, *em, *e, std::vector<std::string>(argv + 1, argv + argc));
 #endif
 
-  em.reset();
-  r.reset();
-  e.reset();
+  r.reset();  // Registry first (destroys systems while plugins still loaded)
+  e.reset();  // EntityLoader second (unloads plugins after systems destroyed)
+  em.reset();  // EventManager last (no plugin dependencies)
 
   return result;
 }
