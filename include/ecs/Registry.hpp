@@ -358,6 +358,17 @@ public:
           }
           return r;
         });
+    this->_component_bytes_getters.insert_or_assign(
+        string_id,
+        [&comp](Entity const& e)
+        {
+          std::optional<ByteArray> data;
+
+          if (e < comp.size() && comp[e].has_value()) {
+            data.emplace(comp[e]->to_bytes());
+          }
+          return data;
+        });
     this->_index_getter.insert(ti, string_id);
     return comp;
   }
@@ -1892,6 +1903,17 @@ public:
     return this->_index_getter.at_first(typeid(Component));
   }
 
+
+  std::optional<ByteArray> get_component_bytes(Entity entity,
+                                               std::string const& component_key)
+  {
+    auto it = this->_component_bytes_getters.find(component_key);
+    if (it == this->_component_bytes_getters.end()) {
+      return std::nullopt;
+    }
+    return it->second(entity);
+  }
+
   /**
    * @brief Get the complete ECS state as serialized components.
    *
@@ -1986,6 +2008,9 @@ private:
       _emplace_functions;
   std::unordered_map<std::type_index, std::function<ComponentState()>>
       _state_getters;
+  std::unordered_map<std::string,
+                     std::function<std::optional<ByteArray>(Entity const&)>>
+      _component_bytes_getters;
   TwoWayMap<std::type_index, std::string> _index_getter;
 
   std::unordered_map<
