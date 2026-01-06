@@ -38,9 +38,12 @@
   this->_registry.get().register_component<comp>( \
       std::format("{}:{}", this->name, #comp));
 
-#define SUBSCRIBE_EVENT(event_name, function) \
-  this->_event_manager.get().on<event_name>( \
-      #event_name, [this]([[maybe_unused]] event_name const& event) function);
+#define SUBSCRIBE_EVENT_PRIORITY(event_name, function, priority) \
+this->_event_manager.get().on<event_name>( \
+    #event_name, [this]([[maybe_unused]] event_name const& event) function, priority);
+
+
+#define SUBSCRIBE_EVENT(event_name, function) SUBSCRIBE_EVENT_PRIORITY(event_name, function, 1)
 
 class APlugin : public IPlugin
 {

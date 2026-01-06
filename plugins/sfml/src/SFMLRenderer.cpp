@@ -508,6 +508,7 @@ void SFMLRenderer::unified_render_system(Registry& r)
       rotation = static_cast<float>(std::atan2(norm.y, norm.x));
     }
 
+
     if (!this->_sprite.has_value()) {
       this->_sprite = sf::Sprite(texture);
     }

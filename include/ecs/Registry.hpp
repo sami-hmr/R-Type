@@ -1945,7 +1945,7 @@ public:
    */
   std::vector<ComponentState> get_state();
 
-private:
+  private:
   struct Binding
   {
     Entity target_entity;  ///< Entity containing the target component

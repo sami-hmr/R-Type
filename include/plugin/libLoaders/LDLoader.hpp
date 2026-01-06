@@ -21,7 +21,8 @@ public:
   DlLoader& operator=(DlLoader&&) = delete;
 
   explicit DlLoader(const std::string& file_name)
-      : _lib(dlopen((file_name + ".so").c_str(), RTLD_LAZY))
+      : hey(file_name)
+      , _lib(dlopen((file_name + ".so").c_str(), RTLD_LAZY))
   {
     if (this->_lib == nullptr) {
       throw NotExistingLib(dlerror());
@@ -38,9 +39,20 @@ public:
 
   ~DlLoader() override
   {
-    if (this->_lib != nullptr) {
-      (void)dlclose(this->_lib);
-    }
+    // NOTE: We intentionally do NOT call dlclose() here.
+    // Reason: Plugins may have registered static/global destructors, TLS
+    // destructors, or atexit handlers that contain code from the .so file. If
+    // we dlclose() here, those destructors will crash when they try to execute
+    // code from unmapped memory. The OS will clean up the loaded libraries when
+    // the process exits.
+    //
+    // This is a known limitation of dynamic library unloading in C++.
+    // See: https://stackoverflow.com/questions/7977869/segfault-on-dlclose
+
+    // if (this->_lib != nullptr) {
+    //   dlclose(this->_lib);
+    // }
+    _lib = nullptr;  // Mark as cleaned up
   }
 
   std::unique_ptr<Module> get_instance(
@@ -69,5 +81,6 @@ public:
   }
 
 private:
+  std::string hey;
   void* _lib = nullptr;
 };

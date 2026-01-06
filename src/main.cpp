@@ -14,6 +14,7 @@
 #include "plugin/events/ShutdownEvent.hpp"
 #include "plugin/libLoaders/ILibLoader.hpp"
 
+// exists to take controle over destroying order of Registry and EntityLoader
 static int true_main(Registry& r,
                      EventManager& em,
                      EntityLoader& e,
@@ -58,11 +59,11 @@ static int true_main(Registry& r,
 
   r.setup_scene_systems();
 
-  const auto frame_duration =
+  auto frame_duration =
       std::chrono::microseconds(1000000 / 60);  // ~33333 microseconds
-  if (argv[1].contains("server")) {
-    const auto frame_duration =
-        std::chrono::microseconds(1000000 / 20);  // ~33333 microseconds
+  if (argv[0].contains("server")) {
+    frame_duration =
+        std::chrono::microseconds(1000000 / 40);  // ~33333 microseconds
   }
   auto next_frame_time = std::chrono::duration_cast<std::chrono::microseconds>(
       r.clock().now().time_since_epoch());
@@ -93,17 +94,25 @@ static int true_main(Registry& r,
 int main(int argc, char* argv[])
 {
   std::optional<Registry> r;
+  std::optional<EventManager> em;
+  std::optional<EntityLoader> e;
+
   r.emplace();
-  EventManager em;
-  EntityLoader e(*r, em);
+  em.emplace();
+  e.emplace(*r, *em);
+
 #ifdef RTYPE_EPITECH_CLIENT
-  int result = true_main(*r, em, e, {"client_config"});
+  int result = true_main(*r, *em, *e, {"client_config"});
 #elif RTYPE_EPITECH_SERVER
-  int result = true_main(*r, em, e, {"server_config"});
+  int result = true_main(*r, *em, *e, {"server_config"});
 #else
   int result =
-      true_main(*r, em, e, std::vector<std::string>(argv + 1, argv + argc));
+      true_main(*r, *em, *e, std::vector<std::string>(argv + 1, argv + argc));
 #endif
-  r.reset();
+
+  r.reset();  // Registry first (destroys systems while plugins still loaded)
+  e.reset();  // EntityLoader second (unloads plugins after systems destroyed)
+  em.reset();  // EventManager last (no plugin dependencies)
+
   return result;
 }

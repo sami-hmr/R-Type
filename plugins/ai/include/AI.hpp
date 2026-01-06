@@ -18,7 +18,6 @@ class AI : public APlugin
 {
 public:
   AI(Registry& r, EventManager &em, EntityLoader& l);
-  ~AI() override = default;
 
 private:
   void init_movement_behavior(Registry::Entity const& entity, JsonObject const& obj);

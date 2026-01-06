@@ -71,3 +71,39 @@ struct WantReady
 
   HOOKABLE(WantReady)
 };
+
+struct Disconnection
+{
+  Disconnection() = default;
+
+  EMPTY_BYTE_CONSTRUCTOR(Disconnection)
+  DEFAULT_SERIALIZE(ByteArray {})
+
+  CHANGE_ENTITY_DEFAULT
+
+  Disconnection(Registry&, JsonObject const&) {}
+
+  HOOKABLE(Disconnection)
+};
+
+struct ResetClient
+{
+  ResetClient(std::size_t sequence)
+      : sequence(sequence)
+  {
+  }
+
+  DEFAULT_BYTE_CONSTRUCTOR(
+      ResetClient,
+      [](std::size_t s) { return ResetClient(s); },
+      parseByte<std::size_t>())
+  DEFAULT_SERIALIZE(type_to_byte(this->sequence))
+
+  CHANGE_ENTITY_DEFAULT
+
+  ResetClient(Registry&, JsonObject const&) {}
+
+  HOOKABLE(ResetClient)
+
+  std::size_t sequence;
+};
