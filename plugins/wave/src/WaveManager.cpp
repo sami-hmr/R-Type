@@ -1,21 +1,21 @@
-#include <cmath>
 #include <iostream>
 
 #include "WaveManager.hpp"
 
-#include "NetworkShared.hpp"
-#include "ecs/EventManager.hpp"
 #include "ecs/InitComponent.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
-#include "libs/Vector2D.hpp"
-#include "plugin/EntityLoader.hpp"
+#include "patterns/ArcPattern.hpp"
+#include "patterns/CirclePattern.hpp"
+#include "patterns/FormationVPattern.hpp"
+#include "patterns/GridPattern.hpp"
+#include "patterns/LinePattern.hpp"
+#include "patterns/PointPattern.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Formation.hpp"
-#include "plugin/components/Position.hpp"
 #include "plugin/components/Wave.hpp"
+#include "plugin/components/WaveTag.hpp"
 #include "plugin/events/DeathEvent.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
-#include "plugin/events/WaveEvents.hpp"
 
 WaveManager::WaveManager(Registry& r, EventManager& em, EntityLoader& l)
     : APlugin("wave",
@@ -28,11 +28,78 @@ WaveManager::WaveManager(Registry& r, EventManager& em, EntityLoader& l)
 {
   REGISTER_COMPONENT(Wave)
   REGISTER_COMPONENT(Formation)
+  REGISTER_COMPONENT(WaveTag)
+
+  _patterns[WavePatternType::POINT] = std::make_unique<PointPattern>();
+  _patterns[WavePatternType::LINE] = std::make_unique<LinePattern>();
+  _patterns[WavePatternType::CIRCLE] = std::make_unique<CirclePattern>();
+  _patterns[WavePatternType::ARC] = std::make_unique<ArcPattern>();
+  _patterns[WavePatternType::GRID] = std::make_unique<GridPattern>();
+  _patterns[WavePatternType::FORMATION_V] = std::make_unique<FormationVPattern>();
+
+  this->_registry.get().add_system([this](Registry& r)
+                                   { wave_formation_system(r); });
 
   this->_registry.get().add_system([this](Registry& r)
                                    { wave_spawn_system(r); });
-  this->_registry.get().add_system([this](Registry& r)
-                                   { wave_formation_system(r); });
+
+  SUBSCRIBE_EVENT(DeathEvent, {
+    if (!this->_registry.get().has_component<WaveTag>(event.entity)) {
+      return;
+    }
+
+    auto& wave_tag =
+        this->_registry.get().get_components<WaveTag>()[event.entity];
+    std::size_t wave_id = wave_tag->wave_id;
+
+    auto wave_opt = find_wave_by_id(wave_id);
+    if (!wave_opt.has_value()) {
+      return;
+    }
+    auto& wave =
+        this->_registry.get().get_components<Wave>()[wave_opt.value()].value();
+
+    if (!wave.tracked) {
+      return;
+    }
+
+    int remaining = 0;
+    for (auto&& [entity, tag] : ZipperIndex<WaveTag>(this->_registry.get())) {
+      if (tag.wave_id == wave_id && entity != event.entity
+          && !this->_registry.get().is_entity_dying(entity))
+      {
+        remaining++;
+      }
+    }
+
+    if (remaining == 0) {
+      this->_event_manager.get().emit(this->_registry, wave.on_end.event_name, wave.on_end.params);
+      this->_event_manager.get().emit<DeleteEntity>(wave_opt.value());
+    }
+  })
+}
+
+std::optional<Registry::Entity> WaveManager::find_wave_by_id(std::size_t id)
+{
+  std::optional<Registry::Entity> wave_opt;
+
+  for (auto&& [wave_entity, wave] : ZipperIndex<Wave>(this->_registry.get())) {
+    if (wave.id == id) {
+      wave_opt.emplace(wave_entity);
+    }
+  }
+  return wave_opt;
+}
+
+std::size_t WaveManager::generate_wave_id()
+{
+  std::size_t new_id = _next_wave_id++;
+
+  while (find_wave_by_id(new_id).has_value()) {
+    new_id = _next_wave_id++;
+  }
+
+  return new_id;
 }
 
 void WaveManager::init_wave(Registry::Entity const& entity,
@@ -42,11 +109,11 @@ void WaveManager::init_wave(Registry::Entity const& entity,
       this->_registry.get(), obj, entity, "entity_template");
   auto count =
       get_value<Wave, int>(this->_registry.get(), obj, entity, "count");
+  auto tracked =
+      get_value<Wave, bool>(this->_registry.get(), obj, entity, "tracked");
 
-  if (!entity_template || !count) {
-    std::cerr
-        << "Error loading Wave component: missing entity_template or " "count"
-                                                                       "\n";
+  if (!entity_template) {
+    std::cerr << "Error loading Wave component: missing entity_template\n";
     return;
   }
 
@@ -63,24 +130,74 @@ void WaveManager::init_wave(Registry::Entity const& entity,
       }
       pattern.type = parse_wave_pattern_type(type_str.value());
     }
-    pattern.params = pattern_obj;
+
+    if (pattern_obj.contains("origin")) {
+      auto origin_opt = get_value_copy<Vector2D>(
+          this->_registry.get(), pattern_obj, "origin");
+      if (origin_opt) {
+        pattern.origin = origin_opt.value();
+      }
+    }
+
+    if (pattern_obj.contains("params")) {
+      auto params_obj = std::get<JsonObject>(pattern_obj.at("params").value);
+      pattern.params = params_obj;
+    }
   } else {
     std::cerr << "Error loading Wave component: missing pattern\n";
     return;
   }
 
-  init_component<Wave>(this->_registry.get(),
-                       this->_event_manager.get(),
-                       entity,
-                       entity_template.value(),
-                       count.value(),
-                       pattern);
+  OnEndEvent on_end;
+  if (obj.contains("on_end")) {
+    auto on_end_obj = std::get<JsonObject>(obj.at("on_end").value);
+
+    if (on_end_obj.contains("event_name")) {
+      auto name_str = get_value_copy<std::string>(
+          this->_registry.get(), on_end_obj, "event_name");
+      if (!name_str) {
+        std::cerr << "Error loading Wave component: missing on_end event_name\n";
+        return;
+      }
+      on_end.event_name = name_str.value();
+    }
+
+    if (on_end_obj.contains("params")) {
+      auto params_obj = std::get<JsonObject>(on_end_obj.at("params").value);
+      on_end.params = params_obj;
+    }
+  } else {
+    std::cerr << "Error loading Wave component: missing on_end\n";
+    return;
+  }
+
+  std::size_t wave_id = generate_wave_id();
+  bool is_tracked = tracked.value_or(true);
+
+  std::vector<std::string> inheritance;
+  if (obj.contains("components_inheritance")) {
+    auto const& inherit_array =
+        std::get<JsonArray>(obj.at("components_inheritance").value);
+    for (auto const& item : inherit_array) {
+      inheritance.push_back(std::get<std::string>(item.value));
+    }
+  }
+
+  this->_registry.get().emplace_component<Wave>(entity,
+                                                wave_id,
+                                                entity_template.value(),
+                                                count.value_or(1),
+                                                pattern,
+                                                on_end,
+                                                is_tracked,
+                                                false,
+                                                inheritance);
 }
 
 void WaveManager::init_formation(Registry::Entity const& entity,
                                  JsonObject const& obj)
 {
-  auto strength = get_value<Formation, float>(
+  auto strength = get_value<Formation, double>(
       this->_registry.get(), obj, entity, "strength");
 
   if (!strength) {
@@ -88,30 +205,13 @@ void WaveManager::init_formation(Registry::Entity const& entity,
     return;
   }
 
-  init_component<Formation>(this->_registry.get(),
-                            this->_event_manager.get(),
-                            entity,
-                            strength.value());
+  this->_registry.get().emplace_component<Formation>(entity, strength.value());
 }
 
-void WaveManager::wave_spawn_system(Registry& r)
+extern "C"
 {
-  for (auto&& [i, wave] : ZipperIndex<Wave>(r)) {
-    if (r.is_entity_dying(i) || !wave.active || !wave.spawned_entities.empty())
-    {
-      continue;
-    }
-  }
+void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
+{
+  return new WaveManager(r, em, e);
 }
-
-void WaveManager::wave_formation_system(Registry& r)
-{
-  for (auto&& [wave_entity, wave, formation] : ZipperIndex<Wave, Formation>(r))
-  {
-    if (r.is_entity_dying(wave_entity) || !formation.active
-        || wave.spawned_entities.empty())
-    {
-      continue;
-    }
-  }
 }
