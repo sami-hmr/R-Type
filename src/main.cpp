@@ -110,8 +110,8 @@ int main(int argc, char* argv[])
       true_main(*r, *em, *e, std::vector<std::string>(argv + 1, argv + argc));
 #endif
 
-  em.reset();
   e.reset();
+  em.reset();
   r.reset();
 
   return result;

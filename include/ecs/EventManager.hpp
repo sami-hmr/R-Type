@@ -415,6 +415,8 @@ public:
       ByteArray const& event,
       std::unordered_map<Registry::Entity, Registry::Entity> const& map);
 
+void delete_all();
+
 private:
   // ============================================================================
   // EVENT BUILDERS & TEMPLATES

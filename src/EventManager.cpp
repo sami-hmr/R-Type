@@ -47,3 +47,12 @@ ByteArray EventManager::get_event_with_id(Registry& r,
 {
   return this->_json_builder.at(this->_index_getter.at_second(id))(r, params);
 }
+
+void EventManager::delete_all() {
+    this->_handlers.clear();
+    this->_byte_emitter.clear();
+    this->_builders.clear();
+    this->_json_builder.clear();
+    this->_entity_converter.clear();
+    this->_invokers.clear();
+}

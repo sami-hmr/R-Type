@@ -1945,7 +1945,7 @@ public:
    */
   std::vector<ComponentState> get_state();
 
-  void delete_systems();
+  void delete_all();
 
 private:
   struct Binding

@@ -192,6 +192,14 @@ std::vector<ComponentState> Registry::get_state()
   return r;
 }
 
-void Registry::delete_systems() {
+void Registry::delete_all() {
+    this->_components.clear();
+    this->_delete_functions.clear();
+    this->_emplace_functions.clear();
+    this->_state_getters.clear();
+    this->_comp_entity_converters.clear();
     this->_frequent_systems.clear();
+    this->_hooked_components.clear();
+    this->_bindings.clear();
+    this->_entities_templates.clear();
 }
