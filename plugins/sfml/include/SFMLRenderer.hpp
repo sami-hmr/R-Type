@@ -17,6 +17,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window.hpp>
 
+#include "Drawable.hpp"
 #include "Json/JsonParser.hpp"
 #include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
@@ -54,15 +55,10 @@ private:
   void mouse_events(const sf::Event &events);
   void handle_resize();
   Vector2D screen_to_world(sf::Vector2i screen_pos);
-  void render_sprites(Registry& r);
-  void render_text(Registry& r);
+  void unified_render_system(Registry& r);
   void background_system(Registry& r);
   void camera_system(Registry &r);
-  void bar_system(Registry &r);
   void button_system(Registry& r);
-
-
-  void animation_system(Registry& r);
   void display();
 
   std::optional<Key> sfml_key_to_key(sf::Keyboard::Key sfml_key);

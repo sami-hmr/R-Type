@@ -24,18 +24,6 @@ EntityLoader::EntityLoader(Registry& registry, EventManager& em)
 {
 }
 
-EntityLoader::~EntityLoader()
-{
-  // Clear plugins first to run their destructors while .so files are still
-  // "loaded" (even though we don't actually dlclose, the loaders still exist)
-  _plugins.clear();
-
-  // Clear loaders - these will NOT call dlclose() (see DlLoader::~DlLoader)
-  // We intentionally leak the dlopen handles to avoid crashes from static
-  // destructors
-  _loaders.clear();
-}
-
 void EntityLoader::load(std::string const& directory)
 {
   try {
