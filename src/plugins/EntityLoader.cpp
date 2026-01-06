@@ -28,8 +28,8 @@ EntityLoader::~EntityLoader() {
     std::cout << this->_plugins.size() << std::endl;
     std::cout << this->_loaders.size() << std::endl;
 
-    this->_registry.get().delete_all();
-    this->_event_manager.get().delete_all();
+    // this->_registry.get().delete_all();
+    // this->_event_manager.get().delete_all();
     while (!this->_plugins.empty()) {
         std::cout << this->_plugins.begin()->first << std::endl;
         this->_plugins.erase(this->_plugins.begin());
