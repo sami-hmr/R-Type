@@ -207,8 +207,14 @@ Vector2D SFMLRenderer::screen_to_world(sf::Vector2i screen_pos)
 {
   sf::Vector2f world_pos = _window.mapPixelToCoords(screen_pos, _view);
   sf::Vector2u window_size = _window.getSize();
-  return Vector2D((world_pos.x * deux / window_size.x) - 1.0,
-                  (world_pos.y * deux / window_size.y) - 1.0);
+  auto min_dimension =
+      static_cast<float>(std::min(window_size.x, window_size.y));
+  sf::Vector2f offset(
+      (static_cast<float>(window_size.x) - min_dimension) / 2.0f,
+      (static_cast<float>(window_size.y) - min_dimension) / 2.0f);
+
+  return {((world_pos.x - offset.x) * deux / min_dimension) - 1.0,
+          ((world_pos.y - offset.y) * deux / min_dimension) - 1.0};
 }
 
 void SFMLRenderer::mouse_events(const sf::Event& events)
@@ -531,41 +537,34 @@ void SFMLRenderer::button_system(Registry& r)
   sf::Vector2i tmp = sf::Mouse::getPosition(_window);
   Vector2D mouse_pos = screen_to_world(tmp);
 
-  for (auto&& [draw, anim, button, pos, collision] :
-       Zipper<Drawable, AnimatedSprite, Button, Position, Collidable>(r))
+  for (auto&& [e, draw, anim, button, pos, collision] :
+       ZipperIndex<Drawable, AnimatedSprite, Button, Position, Collidable>(r))
   {
-    sf::Vector2i tmp = sf::Mouse::getPosition(_window);
-    Vector2D mouse_pos = screen_to_world(tmp);
-
-    for (auto&& [e, draw, anim, button, pos, collision] :
-         ZipperIndex<Drawable, AnimatedSprite, Button, Position, Collidable>(r))
+    if (!draw.enabled) {
+      continue;
+    }
+    if (!anim.animations.contains("hover")
+        || !anim.animations.contains("pressed")
+        || !anim.animations.contains("idle"))
     {
-      if (!draw.enabled) {
-        continue;
+      continue;
+    }
+    AnimationData hover_anim_data = anim.animations.at("hover");
+    Rect entity_rect = {.x = pos.pos.x,
+                        .y = pos.pos.y,
+                        .width = collision.width,
+                        .height = collision.height};
+    if (entity_rect.contains(mouse_pos.x, mouse_pos.y)) {
+      if (!button.hovered) {
+        button.hovered = true;
+        this->_event_manager.get().emit<PlayAnimationEvent>(
+            "hover", e, hover_anim_data.framerate, false, false);
       }
-      if (!anim.animations.contains("hover")
-          || !anim.animations.contains("pressed")
-          || !anim.animations.contains("idle"))
-      {
-        continue;
-      }
-      AnimationData hover_anim_data = anim.animations.at("hover");
-      Rect entity_rect = {.x = pos.pos.x,
-                          .y = pos.pos.y,
-                          .width = collision.width,
-                          .height = collision.height};
-      if (entity_rect.contains(mouse_pos.x, mouse_pos.y)) {
-        if (!button.hovered) {
-          button.hovered = true;
-          this->_event_manager.get().emit<PlayAnimationEvent>(
-              "hover", e, hover_anim_data.framerate, false, false);
-        }
-      } else {
-        if (button.hovered) {
-          button.hovered = false;
-          this->_event_manager.get().emit<PlayAnimationEvent>(
-              "idle", e, hover_anim_data.framerate, true, false);
-        }
+    } else {
+      if (button.hovered) {
+        button.hovered = false;
+        this->_event_manager.get().emit<PlayAnimationEvent>(
+            "idle", e, hover_anim_data.framerate, true, false);
       }
     }
   }
