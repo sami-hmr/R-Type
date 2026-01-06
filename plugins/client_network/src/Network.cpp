@@ -56,7 +56,7 @@ NetworkClient::NetworkClient(Registry& r, EventManager &em, EntityLoader& l)
 
   SUBSCRIBE_EVENT(EventBuilder, {
     if (!this->_running) {
-      return;
+      return false;
     }
     EventBuilder true_e(
         event.event_id,

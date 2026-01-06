@@ -41,7 +41,7 @@
 
 #define SUBSCRIBE_EVENT(event_name, function) \
   this->_event_manager.get().on<event_name>( \
-      #event_name, [this]([[maybe_unused]] event_name const& event) function);
+      #event_name, [this]([[maybe_unused]] event_name const& event) -> bool {function return false;});
 
 class APlugin : public IPlugin
 {

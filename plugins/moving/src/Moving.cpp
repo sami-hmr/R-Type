@@ -40,7 +40,7 @@ Moving::Moving(Registry& r, EventManager &em, EntityLoader& l)
 
   SUBSCRIBE_EVENT(UpdateDirection, {
     if (!this->_registry.get().has_component<Direction>(event.entity)) {
-      return;
+      return false;
     }
     auto& comp = this->_registry.get().get_components<Direction>()[event.entity];
     comp->direction.x =

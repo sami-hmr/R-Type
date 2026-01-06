@@ -52,6 +52,8 @@
 #include "plugin/Byte.hpp"
 #include "plugin/events/EventConcept.hpp"
 
+#define  PREVENT_DEFAULT true
+
 template<typename T>
 concept event = bytable<T> && entity_convertible<T> && json_buildable<T>;
 
@@ -180,7 +182,7 @@ public:
    */
   template<event EventType>
   HandlerId on(std::string const& name,
-               std::function<void(const EventType&)> handler)
+               std::function<bool(const EventType&)> handler)
   {
     std::type_index type_id(typeid(EventType));
     _index_getter.insert(type_id, name);
@@ -306,7 +308,7 @@ public:
     }
 
     auto& handlers = std::any_cast<
-        std::unordered_map<HandlerId, std::function<void(const EventType&)>>&>(
+        std::unordered_map<HandlerId, std::function<bool(const EventType&)>>&>(
         _handlers[type_id]);
 
     if (!handlers.contains(handler_id)) {
@@ -434,11 +436,13 @@ public:
     EventType event(std::forward<Args>(args)...);
 
     auto handlers_copy = std::any_cast<
-        std::unordered_map<HandlerId, std::function<void(const EventType&)>>>(
+        std::unordered_map<HandlerId, std::function<bool(const EventType&)>>>(
         _handlers.at(type_id));
 
     for (auto const& [id, handler] : handlers_copy) {
-      handler(event);
+      if (handler(event)) {
+        break;
+      }
     }
   }
 
@@ -578,7 +582,7 @@ private:
   }
 
   template<typename EventType>
-  HandlerId on(std::function<void(const EventType&)> handler)
+  HandlerId on(std::function<bool(const EventType&)> handler)
   {
     std::type_index type_id(typeid(EventType));
 
@@ -588,11 +592,11 @@ private:
       _handlers.insert_or_assign(
           type_id,
           std::unordered_map<HandlerId,
-                             std::function<void(const EventType&)>>());
+                             std::function<bool(const EventType&)>>());
     }
 
     auto& handlers = std::any_cast<
-        std::unordered_map<HandlerId, std::function<void(const EventType&)>>&>(
+        std::unordered_map<HandlerId, std::function<bool(const EventType&)>>&>(
         _handlers[type_id]);
 
     handlers[handler_id] = std::move(handler);
