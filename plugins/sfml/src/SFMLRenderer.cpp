@@ -22,6 +22,7 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Mouse.hpp>
 
+#include "Drawable.hpp"
 #include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/Scenes.hpp"
@@ -123,7 +124,7 @@ static sf::Texture gen_placeholder()
   return sf::Texture(image);
 }
 
-SFMLRenderer::SFMLRenderer(Registry& r, EventManager &em, EntityLoader& l)
+SFMLRenderer::SFMLRenderer(Registry& r, EventManager& em, EntityLoader& l)
     : APlugin("sfml", r, em, l, {"moving", "ath", "ui", "collision"}, {})
 {
   _window =
@@ -137,15 +138,10 @@ SFMLRenderer::SFMLRenderer(Registry& r, EventManager &em, EntityLoader& l)
   _registry.get().add_system([this](Registry& r)
                              { this->background_system(r); });
 
-  _registry.get().add_system([this](Registry& r) { this->render_sprites(r); });
-
-  _registry.get().add_system([this](Registry& r) { this->render_text(r); });
-
   _registry.get().add_system([this](Registry& r) { this->button_system(r); });
   _registry.get().add_system([this](Registry& r)
-                             { this->animation_system(r); });
-  _registry.get().add_system([this](Registry& r) { this->bar_system(r); });
-  _registry.get().add_system<>([this](Registry&) { this->display(); });
+                             { this->unified_render_system(r); });
+  _registry.get().add_system([this](Registry&) { this->display(); });
   _textures.insert_or_assign(SFMLRenderer::placeholder_texture,
                              gen_placeholder());
 }
@@ -211,8 +207,14 @@ Vector2D SFMLRenderer::screen_to_world(sf::Vector2i screen_pos)
 {
   sf::Vector2f world_pos = _window.mapPixelToCoords(screen_pos, _view);
   sf::Vector2u window_size = _window.getSize();
-  return Vector2D((world_pos.x * deux / window_size.x) - 1.0,
-                  (world_pos.y * deux / window_size.y) - 1.0);
+  auto min_dimension =
+      static_cast<float>(std::min(window_size.x, window_size.y));
+  sf::Vector2f offset(
+      (static_cast<float>(window_size.x) - min_dimension) / 2.0f,
+      (static_cast<float>(window_size.y) - min_dimension) / 2.0f);
+
+  return {((world_pos.x - offset.x) * deux / min_dimension) - 1.0,
+          ((world_pos.y - offset.y) * deux / min_dimension) - 1.0};
 }
 
 void SFMLRenderer::mouse_events(const sf::Event& events)
@@ -303,21 +305,14 @@ void SFMLRenderer::display()
   _window.display();
 }
 
-void SFMLRenderer::render_sprites(Registry& r)
+void SFMLRenderer::unified_render_system(Registry& r)
 {
-  std::vector<
-      std::
-          tuple<std::reference_wrapper<sf::Texture>, double, sf::Vector2f, int>>
-      drawables;
+  std::vector<DrawableItem> all_drawables;
   sf::Vector2u window_size = _window.getSize();
   sf::Vector2f view_size = this->_view.getSize();
   sf::Vector2f view_pos = this->_view.getCenter();
   float min_dimension =
       static_cast<float>(std::min(window_size.x, window_size.y));
-
-  drawables.reserve(std::max({r.get_components<Position>().size(),
-                              r.get_components<Drawable>().size(),
-                              r.get_components<Sprite>().size()}));
 
   for (auto&& [pos, draw, spr] : Zipper<Position, Drawable, Sprite>(r)) {
     if (!draw.enabled) {
@@ -350,30 +345,21 @@ void SFMLRenderer::render_sprites(Registry& r)
         static_cast<float>(min_dimension * spr.scale.y) / texture.getSize().y;
     float uniform_scale = std::min(scale_x, scale_y);
 
-    drawables.emplace_back(std::ref(texture), uniform_scale, new_pos, pos.z);
-  }
-  std::sort(drawables.begin(),
-            drawables.end(),
-            [](auto const& a, auto const& b)
-            { return std::get<3>(a) < std::get<3>(b); });
-
-  for (auto&& [texture, scale, new_pos, z] : drawables) {
     if (!this->_sprite.has_value()) {
-      this->_sprite.emplace(texture.get());
-    } else {
-      this->_sprite->setTexture(texture.get(), true);
+      this->_sprite = sf::Sprite(texture);
     }
-    this->_sprite->setOrigin(
-        sf::Vector2f(static_cast<float>(texture.get().getSize().x) / 2.0f,
-                     static_cast<float>(texture.get().getSize().y) / 2.0f));
-    this->_sprite->setScale(sf::Vector2f(scale, scale));
-    this->_sprite->setPosition(new_pos);
-    _window.draw(*this->_sprite);
-  }
-}
 
-void SFMLRenderer::render_text(Registry& r)
-{
+    SpriteDrawable sprite_drawable(std::ref(*this->_sprite),
+                                   std::ref(texture),
+                                   new_pos,
+                                   sf::Vector2f(uniform_scale, uniform_scale),
+                                   0.0f,
+                                   pos.z);
+
+    all_drawables.emplace_back(DrawableVariant {std::move(sprite_drawable)},
+                               pos.z);
+  }
+
   for (auto&& [i, pos, draw, txt] : ZipperIndex<Position, Drawable, Text>(r)) {
     if (!draw.enabled) {
       continue;
@@ -381,32 +367,23 @@ void SFMLRenderer::render_text(Registry& r)
 
     sf::Font& font = load_font(txt.font_path);
     if (!_text.has_value()) {
-      _text.emplace(font);
+      _text = sf::Text(font);
     }
-    _text.value().setFont(font);
-
-    _text.value().setString(txt.text);
 
     constexpr unsigned int base_size = 100;
+    _text.value().setFont(font);
+    _text.value().setString(txt.text);
     _text.value().setCharacterSize(base_size);
     sf::Rect<float> text_rect = _text.value().getLocalBounds();
 
-    sf::Vector2u window_size = _window.getSize();
-    double min_dimension = std::min(window_size.x, window_size.y);
-
-    double desired_width = min_dimension * txt.scale.x;
-    double desired_height = min_dimension * txt.scale.y;
-
+    double min_dim = std::min(window_size.x, window_size.y);
+    double desired_width = min_dim * txt.scale.x;
+    double desired_height = min_dim * txt.scale.y;
     double scale_x = desired_width / text_rect.size.x;
     double scale_y = desired_height / text_rect.size.y;
     double text_scale = std::min(scale_x, scale_y);
 
     auto final_size = static_cast<unsigned int>(base_size * text_scale);
-    _text.value().setCharacterSize(final_size);
-
-    text_rect = _text.value().getLocalBounds();
-    _text.value().setOrigin({text_rect.position.x + (text_rect.size.x / 2.0f),
-                             text_rect.position.y + (text_rect.size.y / 2.0f)});
 
     float offset_x = (window_size.x - min_dimension) / deux;
     float offset_y = (window_size.y - min_dimension) / deux;
@@ -415,38 +392,30 @@ void SFMLRenderer::render_text(Registry& r)
         static_cast<float>((pos.pos.x + 1.0) * min_dimension / deux) + offset_x,
         static_cast<float>((pos.pos.y + 1.0) * min_dimension / deux)
             + offset_y);
-    _text.value().setPosition(new_pos);
-    _text.value().setFillColor(sf::Color(txt.fill_color.r,
-                                         txt.fill_color.g,
-                                         txt.fill_color.b,
-                                         txt.fill_color.a));
-    _text.value().setOutlineColor(sf::Color(txt.outline_color.r,
-                                            txt.outline_color.g,
-                                            txt.outline_color.b,
-                                            txt.outline_color.a));
-    if (txt.outline) {
-      _text.value().setOutlineThickness(txt.outline_thickness * 0.1f);
-    } else {
-      _text.value().setOutlineThickness(0.0f);
-    }
-    _window.draw(_text.value());
-  }
-}
 
-void SFMLRenderer::bar_system(Registry& r)
-{
-  sf::Vector2u window_size = _window.getSize();
+    TextDrawable text_drawable(
+        std::ref(*this->_text),
+        std::ref(font),
+        txt.text,
+        new_pos,
+        txt.fill_color,
+        txt.outline_color,
+        txt.outline ? txt.outline_thickness * 0.1f : 0.0f,
+        0.0f,
+        pos.z,
+        final_size,
+        txt.outline);
+
+    all_drawables.emplace_back(DrawableVariant {std::move(text_drawable)},
+                               pos.z);
+  }
 
   for (auto&& [scene, drawable, position, bar] :
        Zipper<Scene, Drawable, Position, Bar>(r))
   {
-    this->_rectangle.setOutlineColor(sf::Color::Transparent);
-    this->_rectangle.setFillColor(sf::Color::Transparent);
     if (!drawable.enabled) {
       continue;
     }
-    float min_dimension =
-        static_cast<float>(std::min(window_size.x, window_size.y));
 
     float offset_x = (window_size.x - min_dimension) / 2.0f;
     float offset_y = (window_size.y - min_dimension) / 2.0f;
@@ -461,98 +430,31 @@ void SFMLRenderer::bar_system(Registry& r)
     sf::Vector2f offset(static_cast<float>(bar.offset.x * min_dimension),
                         static_cast<float>(bar.offset.y * min_dimension));
 
-    _rectangle.setPosition(new_pos + offset);
-    _rectangle.setSize(size);
-    _rectangle.setOrigin(sf::Vector2f(size.x / 2, size.y / 2));
-    if (bar.outline) {
-      _rectangle.setOutlineColor(
-          sf::Color(bar.color.r, bar.color.g, bar.color.b, bar.color.a));
-      _rectangle.setOutlineThickness(size.y * 0.1f);
-      _window.draw(_rectangle);
-    }
-
     float fill_percentage = bar.current_value / bar.max_value;
     if (fill_percentage < 0.0f) {
       fill_percentage = 0.0f;
     } else if (fill_percentage > 1.0f) {
       fill_percentage = 1.0f;
     }
+
+    std::optional<sf::Texture> texture_ptr = std::nullopt;
+    sf::IntRect tex_rect;
     if (bar.texture_path != "") {
-      sf::Texture& texture = load_texture(bar.texture_path);
-      this->_rectangle.setTexture(&texture, true);
-      this->_rectangle.setTextureRect(
-          sf::IntRect({0, 0},
-                      {static_cast<int>(texture.getSize().x * fill_percentage),
-                       static_cast<int>(texture.getSize().y)}));
-    } else {
-      this->_rectangle.setTexture(nullptr, true);
+      texture_ptr = load_texture(bar.texture_path);
     }
-    this->_rectangle.setSize(sf::Vector2f(size.x * fill_percentage, size.y));
-    this->_rectangle.setOutlineColor(sf::Color::Transparent);
-    this->_rectangle.setFillColor(
-        sf::Color(bar.color.r, bar.color.g, bar.color.b, bar.color.a));
-    this->_rectangle.setPosition(new_pos + offset);
-    this->_window.draw(_rectangle);
+
+    BarDrawable bar_drawable(std::ref(this->_rectangle),
+                             new_pos + offset,
+                             sf::Vector2f(size.x, size.y),
+                             bar.color,
+                             fill_percentage,
+                             texture_ptr,
+                             position.z,
+                             true);
+
+    all_drawables.emplace_back(DrawableVariant {std::move(bar_drawable)},
+                               position.z);
   }
-}
-
-void SFMLRenderer::button_system(Registry& r)
-{
-  sf::Vector2i tmp = sf::Mouse::getPosition(_window);
-  Vector2D mouse_pos = screen_to_world(tmp);
-
-  for (auto&& [e, draw, anim, button, pos, collision] :
-       ZipperIndex<Drawable, AnimatedSprite, Button, Position, Collidable>(r))
-  {
-    if (!draw.enabled) {
-      continue;
-    }
-    if (!anim.animations.contains("hover")
-        || !anim.animations.contains("pressed")
-        || !anim.animations.contains("idle"))
-    {
-      continue;
-    }
-    AnimationData hover_anim_data = anim.animations.at("hover");
-    Rect entity_rect = {.x = pos.pos.x,
-                        .y = pos.pos.y,
-                        .width = collision.width,
-                        .height = collision.height};
-    if (entity_rect.contains(mouse_pos.x, mouse_pos.y)) {
-      if (!button.hovered) {
-        button.hovered = true;
-        this->_event_manager.get().emit<PlayAnimationEvent>(
-            "hover", e, hover_anim_data.framerate, false, false);
-      }
-    } else {
-      if (button.hovered) {
-        button.hovered = false;
-        this->_event_manager.get().emit<PlayAnimationEvent>(
-            "idle", e, hover_anim_data.framerate, true, false);
-      }
-    }
-  }
-}
-
-void SFMLRenderer::animation_system(Registry& r)
-{
-  auto now = std::chrono::high_resolution_clock::now();
-
-  std::vector<std::tuple<std::reference_wrapper<sf::Texture>,
-                         sf::Vector2f,
-                         sf::Vector2f,
-                         double,
-                         int,
-                         AnimationData>>
-      drawables;
-
-  sf::Vector2u window_size = _window.getSize();
-  float min_dimension =
-      static_cast<float>(std::min(window_size.x, window_size.y));
-  sf::Vector2f view_size = this->_view.getSize();
-  sf::Vector2f view_pos = this->_view.getCenter();
-
-  drawables.reserve(r.get_components<AnimatedSprite>().size());
 
   for (auto&& [entity, pos, draw, anim, scene] :
        ZipperIndex<Position, Drawable, AnimatedSprite, Scene>(r))
@@ -597,58 +499,80 @@ void SFMLRenderer::animation_system(Registry& r)
         / anim_data.frame_size.y;
     float uniform_scale = std::min(scale_x, scale_y);
 
-    double rotation = 0.0;
+    float rotation = 0.0f;
 
     auto facings = this->_registry.get().get_components<Facing>();
-    Facing facing;
 
     if (facings.size() > entity && facings[entity].has_value()) {
-      facing = facings[entity].value();
-      Vector2D norm = (pos.pos - facing.direction).normalize();
-      rotation = std::atan2(norm.y, norm.x);
+      Vector2D norm = (pos.pos - facings[entity].value().direction).normalize();
+      rotation = static_cast<float>(std::atan2(norm.y, norm.x));
     }
 
-    drawables.emplace_back(
+    if (!this->_sprite.has_value()) {
+      this->_sprite = sf::Sprite(texture);
+    }
+
+    AnimatedSpriteDrawable anim_drawable(
+        std::ref(*this->_sprite),
         std::ref(texture),
-        sf::Vector2f(uniform_scale, uniform_scale),
         new_pos,
+        sf::Vector2f(uniform_scale, uniform_scale),
+        anim_data,
         rotation,
-        pos.z,
-        anim_data);
+        pos.z);
+
+    all_drawables.emplace_back(DrawableVariant {std::move(anim_drawable)},
+                               pos.z);
   }
 
-  std::sort(drawables.begin(),
-            drawables.end(),
-            [](auto const& a, auto const& b)
-            { return std::get<3>(a) < std::get<3>(b); });
-  for (auto&& [texture, scale, new_pos, rotation, z, anim_data] : drawables) {
-    if (!this->_sprite.has_value()) {
-      this->_sprite.emplace(texture.get());
-    } else {
-      this->_sprite->setTexture(texture.get(), true);
+  std::sort(all_drawables.begin(), all_drawables.end());
+
+  for (auto& drawable : all_drawables) {
+    drawable.draw(_window);
+  }
+}
+
+void SFMLRenderer::button_system(Registry& r)
+{
+  sf::Vector2i tmp = sf::Mouse::getPosition(_window);
+  Vector2D mouse_pos = screen_to_world(tmp);
+
+  for (auto&& [e, draw, anim, button, pos, collision] :
+       ZipperIndex<Drawable, AnimatedSprite, Button, Position, Collidable>(r))
+  {
+    if (!draw.enabled) {
+      continue;
     }
-    this->_sprite->setOrigin(
-        sf::Vector2f(static_cast<float>(anim_data.frame_size.x) / 2.0f,
-                     static_cast<float>(anim_data.frame_size.y) / 2.0f));
-    this->_sprite->setTextureRect(
-        sf::IntRect({static_cast<int>(anim_data.frame_pos.x),
-                     static_cast<int>(anim_data.frame_pos.y)},
-                    {
-                        static_cast<int>(anim_data.frame_size.x),
-                        static_cast<int>(anim_data.frame_size.y),
-                    }));
-    this->_sprite->setScale(scale);
-    this->_sprite->setRotation(
-        sf::Angle(sf::radians(static_cast<float>(rotation))));
-    this->_sprite->setPosition(new_pos);
-    _window.draw(*this->_sprite);
-    this->_sprite->setRotation(sf::Angle(sf::degrees(static_cast<float>(0))));
+    if (!anim.animations.contains("hover")
+        || !anim.animations.contains("pressed")
+        || !anim.animations.contains("idle"))
+    {
+      continue;
+    }
+    AnimationData hover_anim_data = anim.animations.at("hover");
+    Rect entity_rect = {.x = pos.pos.x,
+                        .y = pos.pos.y,
+                        .width = collision.width,
+                        .height = collision.height};
+    if (entity_rect.contains(mouse_pos.x, mouse_pos.y)) {
+      if (!button.hovered) {
+        button.hovered = true;
+        this->_event_manager.get().emit<PlayAnimationEvent>(
+            "hover", e, hover_anim_data.framerate, false, false);
+      }
+    } else {
+      if (button.hovered) {
+        button.hovered = false;
+        this->_event_manager.get().emit<PlayAnimationEvent>(
+            "idle", e, hover_anim_data.framerate, true, false);
+      }
+    }
   }
 }
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager &em, EntityLoader& e)
+void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
   return new SFMLRenderer(r, em, e);
 }
