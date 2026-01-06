@@ -7,9 +7,8 @@
 #include "EntityLoader.hpp"
 #include "IPlugin.hpp"
 #include "Json/JsonParser.hpp"
-#include "ecs/Registry.hpp"
 #include "ecs/EventManager.hpp"
-
+#include "ecs/Registry.hpp"
 #include "plugin/IPlugin.hpp"
 
 #define COMP_INIT(comp_name, comp_type, method_name) \
@@ -49,7 +48,7 @@ public:
   APlugin(
       std::string name,
       Registry& registry,
-      EventManager &event_manager,
+      EventManager& event_manager,
       EntityLoader& loader,
       std::vector<std::string> const& depends_on,
       std::unordered_map<

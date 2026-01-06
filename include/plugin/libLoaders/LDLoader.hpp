@@ -46,14 +46,16 @@ public:
   std::unique_ptr<Module> get_instance(
       const std::string& entry_point,
       Registry& r,
-      EventManager &em,
+      EventManager& em,
       EntityLoader& e,
       std::optional<JsonObject> const& config) override
   {
-    auto* function =
-        (IPlugin
-         * (*)(Registry&, EventManager &, EntityLoader&, std::optional<JsonObject> const&))(
-            dlsym(this->_lib, entry_point.c_str()));
+    auto* function = (IPlugin
+                      * (*)(Registry&,
+                            EventManager&,
+                            EntityLoader&,
+                            std::optional<JsonObject> const&))(
+        dlsym(this->_lib, entry_point.c_str()));
 
     if (function == nullptr) {
       throw LoaderException("not a rtype Plugin lib");
