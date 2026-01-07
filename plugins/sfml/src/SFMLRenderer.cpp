@@ -531,6 +531,7 @@ void SFMLRenderer::unified_render_system(Registry& r)
   for (auto& drawable : all_drawables) {
     drawable.draw(_window);
   }
+  this->_sprite->setRotation(sf::degrees(0));
 }
 
 void SFMLRenderer::button_system(Registry& r)

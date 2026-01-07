@@ -15,7 +15,7 @@
           "mob:Spawner": {
             "entity_template": "enemy_wave_1",
             "spawn_interval": 3.0,
-            "max_spawns": 1
+            "max_spawns": 4
           }
         },
         {
@@ -28,7 +28,7 @@
           "mob:Spawner": {
             "entity_template": "enemy_wave_2",
             "spawn_interval": 3.5,
-            "max_spawns": 5
+            "max_spawns": 1
           }
         },
         {
@@ -41,7 +41,7 @@
           "mob:Spawner": {
             "entity_template": "enemy_turret_1",
             "spawn_interval": 5.0,
-            "max_spawns": 3
+            "max_spawns": 0
           }
         },
         {
@@ -54,7 +54,7 @@
           "mob:Spawner": {
             "entity_template": "enemy_turret_2",
             "spawn_interval": 5.5,
-            "max_spawns": 3
+            "max_spawns": 0
           }
         },
         {
@@ -67,7 +67,7 @@
           "mob:Spawner": {
             "entity_template": "enemy_circle_1",
             "spawn_interval": 6.7,
-            "max_spawns": 3
+            "max_spawns": 0
           }
         },
         {

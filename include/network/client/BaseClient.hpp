@@ -1,6 +1,7 @@
 #pragma once
 
 #include <semaphore>
+#include <set>
 #include <thread>
 #include <unordered_map>
 #include <vector>
@@ -43,5 +44,5 @@ protected:
   std::size_t _id_in_server = 0;
 
 private:
-  std::vector<Registry::Entity> _server_created;
+  std::unordered_set<Registry::Entity> _server_created;
 };

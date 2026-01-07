@@ -4,6 +4,7 @@
 #include "NetworkCommun.hpp"
 #include "NetworkShared.hpp"
 #include "ServerCommands.hpp"
+#include "network/PacketCompresser.hpp"
 #include "network/server/Server.hpp"
 #include "plugin/Byte.hpp"
 
@@ -31,7 +32,7 @@ void Server::handle_connected_packet(ConnectedPackage const& command,
     if (!pkg.end_of_content) {
         continue;
     }
-    auto const& parsed = parse_connected_command(client.frag_buffer);
+    auto const& parsed = parse_connected_command(PacketCompresser::uncompress_packet(client.frag_buffer));
     client.frag_buffer.clear();
     if (!parsed) {
       continue;
