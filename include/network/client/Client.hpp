@@ -10,8 +10,6 @@
 #include <atomic>
 #include <cstdint>
 #include <functional>
-#include <queue>
-#include <semaphore>
 #include <string>
 #include <thread>
 #include <unordered_map>
@@ -23,8 +21,9 @@
 #include "NetworkCommun.hpp"
 #include "NetworkShared.hpp"
 #include "ServerCommands.hpp"
-#include "ServerLaunch.hpp"
+#include "network/AcknowledgeManager.hpp"
 #include "plugin/Byte.hpp"
+#include "plugin/events/NetworkEvents.hpp"
 
 class Client
 {
@@ -33,24 +32,27 @@ public:
          SharedQueue<ComponentBuilder>&,
          SharedQueue<EventBuilder>&,
          SharedQueue<EventBuilder>&,
-         std::atomic<bool>& running,
-         std::counting_semaphore<>&);
+         std::atomic<bool>& running);
   ~Client();
 
+  bool should_disconnect() const;
   void close();
   void connect();
 
 private:
   void receive_loop();
-  void send(ByteArray const& command);
-  void send_connected(ByteArray const& response);
+  void send(ByteArray const& command, bool hearthbeat = false);
+  void send_connected(ByteArray const& response, bool prioritary = false);
   void handle_connectionless_response(ConnectionlessCommand const& response);
+  void handle_hearthbeat(ByteArray const&);
   void handle_connected_package(ConnectedPackage const& package);
+  void compute_connected_package(ConnectedPackage const& package);
   void handle_connected_command(ConnectedCommand const& command);
   void handle_package(ByteArray const& package);
 
   void handle_component_update(ByteArray const& package);
   void handle_event_creation(ByteArray const& package);
+  void reset_acknowledge(ByteArray const&);
 
   void send_getchallenge();
   void send_connect(std::uint32_t challenge);
@@ -76,6 +78,9 @@ private:
       ByteArray const& package);
   static std::optional<ComponentBuilder> parse_component_build_cmd(
       ByteArray const& package);
+  static std::optional<HearthBeat> parse_hearthbeat_cmd(
+      ByteArray const& package);
+  static std::optional<ResetClient> parse_reset_cmd(ByteArray const& package);
 
   void transmit_component(ComponentBuilder&&);
   void transmit_event(EventBuilder&&);
@@ -89,24 +94,35 @@ private:
       connected_table;
 
   asio::io_context _io_c;
+
+  asio::ip::udp::endpoint _client_endpoint;
   asio::ip::udp::socket _socket;
   asio::ip::udp::endpoint _server_endpoint;
 
-  ConnectionState _state = ConnectionState::DISCONNECTED;
+  std::atomic<ConnectionState> _state = ConnectionState::DISCONNECTED;
   std::uint8_t _client_id = 0;
   std::uint32_t _server_id = 0;
   std::string _player_name = "Player";
+  ByteArray _receive_frag_buffer;
 
   std::reference_wrapper<SharedQueue<ComponentBuilder>> _components_to_create;
   std::reference_wrapper<SharedQueue<EventBuilder>> _events_to_transmit;
   std::reference_wrapper<SharedQueue<EventBuilder>> _event_to_exec;
   std::reference_wrapper<std::atomic<bool>> _running;
 
-  std::unordered_map<std::uint32_t, ByteArray> _waiting_packages;
+  // std::unordered_map<std::uint32_t, ByteArray> _waiting_packages;
 
   void send_evt();
-  std::reference_wrapper<std::counting_semaphore<>> _semaphore;
   std::thread _queue_reader;
 
-  std::uint32_t _current_index_sequence = 0;
+  void send_hearthbeat();
+  std::thread _hearthbeat;
+  static const std::size_t hearthbeat_delta = 1000000000 / 15;
+
+  std::atomic<std::size_t> _last_ping;
+  static const std::size_t disconnection_timeout = 5000000000;  // 5 seconds
+
+  std::size_t _index_sequence = 1;
+  std::mutex _acknowledge_mutex;
+  AcknowledgeManager _acknowledge_manager;
 };

@@ -8,7 +8,7 @@
 APlugin::APlugin(
     std::string name,
     Registry& registry,
-    EventManager &event_manager,
+    EventManager& event_manager,
     EntityLoader& loader,
     std::vector<std::string> const& depends_on,
     std::unordered_map<

@@ -5,6 +5,7 @@
 // #include <random>
 
 #include <memory>
+#include <optional>
 #include <semaphore>
 #include <thread>
 #include <unordered_map>
@@ -18,29 +19,23 @@
 #include "NetworkShared.hpp"
 #include "ServerLaunch.hpp"
 #include "ecs/Registry.hpp"
+#include "network/server/Server.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 
-class NetworkServer : public APlugin
+class BaseServer : public APlugin
 {
   public:
-    NetworkServer(Registry& r, EventManager &em, EntityLoader& l);
-    ~NetworkServer() override;
+    BaseServer(std::string const &name, Registry& r, EventManager &em, EntityLoader& l);
+    ~BaseServer() override;
 
   private:
-    void launch_server(ServerLaunching const& s);
+    void launch_server();
 
-
-    std::thread _thread;
-    std::counting_semaphore<> _comp_semaphore;
+    std::optional<Server> _server_class;
+    std::thread _actual_server;
     SharedQueue<ComponentBuilderId> _components_to_update;
     std::atomic<bool> _running = false;
-    std::counting_semaphore<> _semaphore_event_to_server;
     SharedQueue<EventBuilder> _event_queue;
-    std::counting_semaphore<> _event_semaphore;
     SharedQueue<EventBuilderId> _event_queue_to_client;
-    std::unordered_map<std::size_t, bool> _player_ready;
-    std::unordered_map<Registry::Entity, size_t> _player_entities;
 };
-
-CUSTOM_EXCEPTION(ClientNotFound)

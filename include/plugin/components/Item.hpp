@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+
 #include <sys/types.h>
 
 #include "ByteParser/ByteParser.hpp"
@@ -10,36 +11,51 @@
 
 struct Item
 {
-  std::string object;
+  using Object = std::pair<std::string, JsonObject>;
+
+  Object object = {"", {}};
   bool consumable;
   bool throwable;
 
-  Item(std::string object, bool consumable, bool throwable)
+  Item() = default;  
+
+  Item(std::pair<std::string, JsonObject> object,
+       bool consumable,
+       bool throwable)
       : object(std::move(object))
       , consumable(consumable)
       , throwable(throwable)
   {
   }
 
-  bool operator<(const Item& other) const {
-    return (this->object < other.object);
+  bool operator<(const Item& other) const
+  {
+    return (this->object.first < other.object.first);
   }
 
-  HOOKABLE(Item,
-           HOOK(object),
-           HOOK(consumable),
-           HOOK(throwable))
+  bool operator==(const Item& other) const
+  {
+    return (this->object.first == other.object.first);
+  }
+
+  HOOKABLE(Item, HOOK(object), HOOK(consumable), HOOK(throwable))
 
   CHANGE_ENTITY_DEFAULT
 
-  DEFAULT_BYTE_CONSTRUCTOR(Item,
-      ([](std::string object, bool consumable, bool throwable)
+  DEFAULT_BYTE_CONSTRUCTOR(
+      Item,
+      ([](std::pair<std::string, JsonObject> object,
+          bool consumable,
+          bool throwable)
        { return Item(std::move(object), consumable, throwable); }),
-      parseByteString(),
+      parseBytePair(parseByteString(), parseByteJsonObject()),
       parseByte<bool>(),
       parseByte<bool>())
 
-  DEFAULT_SERIALIZE(string_to_byte(this->object),
+  DEFAULT_SERIALIZE(SERIALIZE_FUNCTION<Object>(
+                        pair_to_byte<std::string, JsonObject>,
+                        SERIALIZE_FUNCTION<std::string>(string_to_byte),
+                        SERIALIZE_FUNCTION<JsonObject>(json_object_to_byte))(this->object),
                     type_to_byte(this->consumable),
                     type_to_byte(this->throwable))
 };

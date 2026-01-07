@@ -10,16 +10,16 @@
 #include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
+#include "plugin/components/Direction.hpp"
 #include "plugin/components/Facing.hpp"
 #include "plugin/components/Follower.hpp"
 #include "plugin/components/Health.hpp"
 #include "plugin/components/Position.hpp"
-#include "plugin/components/Team.hpp"
-#include "plugin/components/Direction.hpp"
 #include "plugin/components/Speed.hpp"
+#include "plugin/components/Team.hpp"
 #include "plugin/events/InteractionZoneEvent.hpp"
 
-Target::Target(Registry& r, EventManager &em, EntityLoader& l)
+Target::Target(Registry& r, EventManager& em, EntityLoader& l)
     : APlugin("target",
               r,
               em,
@@ -35,7 +35,8 @@ Target::Target(Registry& r, EventManager &em, EntityLoader& l)
 
 void Target::init_follower(Registry::Entity entity, JsonObject const& /*obj*/)
 {
-  init_component<Follower>(this->_registry.get(), this->_event_manager.get(), entity);
+  init_component<Follower>(
+      this->_registry.get(), this->_event_manager.get(), entity);
 }
 
 void Target::target_system(Registry& reg)
@@ -46,7 +47,6 @@ void Target::target_system(Registry& reg)
   for (auto&& [i, follower, position, direction, speed] :
        ZipperIndex<Follower, Position, Direction, Speed>(reg))
   {
-
     if (reg.is_entity_dying(i) || follower.lost_target) {
       continue;
     }
@@ -86,9 +86,9 @@ void Target::target_system(Registry& reg)
       if (reg.has_component<Facing>(i)) {
         faces[i]->direction = new_direction;
         this->_event_manager.get().emit<ComponentBuilder>(
-          i,
-          this->_registry.get().get_component_key<Facing>(),
-          faces[i]->to_bytes());
+            i,
+            this->_registry.get().get_component_key<Facing>(),
+            faces[i]->to_bytes());
       }
 
       this->_event_manager.get().emit<ComponentBuilder>(
@@ -148,7 +148,7 @@ void Target::on_interaction_zone(const InteractionZoneEvent& event)
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager &em, EntityLoader& e)
+void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
   return new Target(r, em, e);
 }

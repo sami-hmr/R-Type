@@ -17,16 +17,16 @@
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Collidable.hpp"
+#include "plugin/components/Direction.hpp"
 #include "plugin/components/InteractionZone.hpp"
 #include "plugin/components/Position.hpp"
-#include "plugin/components/Team.hpp"
 #include "plugin/components/Speed.hpp"
-#include "plugin/components/Direction.hpp"
+#include "plugin/components/Team.hpp"
 #include "plugin/events/CollisionEvent.hpp"
 #include "plugin/events/InteractionZoneEvent.hpp"
 #include "plugin/events/LoggerEvent.hpp"
 
-Collision::Collision(Registry& r , EventManager &em, EntityLoader& l)
+Collision::Collision(Registry& r, EventManager& em, EntityLoader& l)
     : APlugin(
           "collision",
           r,
@@ -90,8 +90,13 @@ void Collision::init_collision(Registry::Entity const& entity,
     type = CollisionType::Bounce;
   }
 
-  init_component<Collidable>(
-      this->_registry.get(), this->_event_manager.get(), entity, width.value(), height.value(), type, true);
+  init_component<Collidable>(this->_registry.get(),
+                             this->_event_manager.get(),
+                             entity,
+                             width.value(),
+                             height.value(),
+                             type,
+                             true);
 }
 
 void Collision::init_interaction_zone(Registry::Entity const& entity,
@@ -105,8 +110,10 @@ void Collision::init_interaction_zone(Registry::Entity const& entity,
     return;
   }
 
-  init_component<InteractionZone>(
-      this->_registry.get(), this->_event_manager.get(), entity, radius.value());
+  init_component<InteractionZone>(this->_registry.get(),
+                                  this->_event_manager.get(),
+                                  entity,
+                                  radius.value());
 }
 
 void Collision::collision_system(Registry& r)
@@ -216,13 +223,16 @@ void Collision::on_collision(const CollisionEvent& c)
   }
   double dt = this->_registry.get().clock().delta_seconds();
 
-  if (this->_registry.get().has_component<Direction>(c.a) && this->_registry.get().has_component<Speed>(c.a)) {
+  if (this->_registry.get().has_component<Direction>(c.a)
+      && this->_registry.get().has_component<Speed>(c.a))
+  {
     Vector2D movement =
         (directions[c.a]->direction).normalize() * speeds[c.a]->speed * dt;
     Vector2D collision_normal =
         (positions[c.a]->pos - positions[c.b]->pos).normalize();
 
-    if (this->_registry.get().has_component<Direction>(c.b) && this->_registry.get().has_component<Speed>(c.b)
+    if (this->_registry.get().has_component<Direction>(c.b)
+        && this->_registry.get().has_component<Speed>(c.b)
         && type_a == CollisionType::Push)
     {
       positions[c.a]->pos -= movement;
@@ -258,7 +268,7 @@ void Collision::on_collision(const CollisionEvent& c)
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager &em, EntityLoader& e)
+void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
   return new Collision(r, em, e);
 }

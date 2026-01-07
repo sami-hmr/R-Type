@@ -27,6 +27,13 @@ public:
 
   TimePoint now() const { return _now; }
 
+  std::size_t millisecond_now() const
+  {
+    return std::chrono::duration_cast<std::chrono::milliseconds>(
+               this->now().time_since_epoch())
+        .count();
+  }
+
 private:
   TimePoint _now;
   TimePoint::duration _delta;

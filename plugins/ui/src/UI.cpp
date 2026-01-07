@@ -52,13 +52,17 @@ UI::UI(Registry& r,
   SUBSCRIBE_EVENT(CamSpeedEvent, { this->cam_speed_event(event); })
   SUBSCRIBE_EVENT(CamMoveEvent, { this->cam_move_event(event); })
   SUBSCRIBE_EVENT(PlayAnimationEvent, {
-    AnimatedSprite::on_play_animation(this->_registry.get(), this->_event_manager.get(), event);
+    AnimatedSprite::on_play_animation(
+        this->_registry.get(), this->_event_manager.get(), event);
   })
   SUBSCRIBE_EVENT(AnimationEndEvent, {
-    AnimatedSprite::on_animation_end(this->_registry.get(), this->_event_manager.get(), event);
+    AnimatedSprite::on_animation_end(
+        this->_registry.get(), this->_event_manager.get(), event);
   })
-  SUBSCRIBE_EVENT(DeathEvent,
-                  { AnimatedSprite::on_death(this->_registry.get(), this->_event_manager.get(), event); })
+  SUBSCRIBE_EVENT(DeathEvent, {
+    AnimatedSprite::on_death(
+        this->_registry.get(), this->_event_manager.get(), event);
+  })
 }
 
 void UI::init_drawable(Registry::Entity const& entity, JsonObject const&)

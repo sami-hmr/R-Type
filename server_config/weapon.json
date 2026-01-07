@@ -87,7 +87,7 @@
           "collision_type": "solid"
         },
         "projectile:Temporal": {
-          "lifetime": 2.0
+          "lifetime": 1.0
         },
         "projectile:Fragile": {
           "hits": 0
@@ -172,7 +172,7 @@
         "life:Team": {
           "name": "test1"
         },
-        "life:Damage" : {
+        "life:Damage": {
           "amount": 2
         },
         "collision:Collidable": {
@@ -182,7 +182,7 @@
         },
         "projectile:Temporal": {
           "lifetime": 4.0
-        }, 
+        },
         "projectile:Fragile": {
           "hits": 4
         }

@@ -15,7 +15,7 @@
           "mob:Spawner": {
             "entity_template": "enemy_wave_1",
             "spawn_interval": 3.0,
-            "max_spawns": 5
+            "max_spawns": 1
           }
         },
         {

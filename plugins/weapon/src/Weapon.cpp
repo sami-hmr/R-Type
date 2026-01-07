@@ -11,15 +11,15 @@
 #include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/components/BasicWeapon.hpp"
+#include "plugin/components/Direction.hpp"
 #include "plugin/components/Facing.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Team.hpp"
-#include "plugin/components/Direction.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
 #include "plugin/events/IoEvents.hpp"
 #include "plugin/events/WeaponEvent.hpp"
 
-Weapon::Weapon(Registry& r, EventManager &em, EntityLoader& l)
+Weapon::Weapon(Registry& r, EventManager& em, EntityLoader& l)
     : APlugin("weapon",
               r,
               em,
@@ -50,7 +50,7 @@ void Weapon::on_fire(Registry& r, const FireBullet& e)
   auto const& vel_direction =
       (this->_registry.get().has_component<Direction>(e.entity))
       ? this->_registry.get().get_components<Direction>()[e.entity]->direction
-      : Vector2D(0,0);
+      : Vector2D(0, 0);
 
   auto const& fire_direction =
       (this->_registry.get().has_component<Facing>(e.entity))
@@ -94,7 +94,7 @@ void Weapon::basic_weapon_system(
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager &em, EntityLoader& l)
+void* entry_point(Registry& r, EventManager& em, EntityLoader& l)
 {
   return new Weapon(r, em, l);
 }

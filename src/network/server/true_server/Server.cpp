@@ -5,35 +5,32 @@
 ** Server
 */
 #include <atomic>
-#include <queue>
-#include <semaphore>
+#include <chrono>
 #include <vector>
 
-#include "Server.hpp"
+#include "network/server/Server.hpp"
 
+#include <asio/registered_buffer.hpp>
+#include <asio/socket_base.hpp>
 #include <asio/system_error.hpp>
 
-#include "Network.hpp"
 #include "NetworkCommun.hpp"
 #include "NetworkShared.hpp"
+#include "ServerCommands.hpp"
 #include "plugin/Byte.hpp"
+#include "plugin/CircularBuffer.hpp"
 
 Server::Server(ServerLaunching const& s,
                SharedQueue<ComponentBuilderId>& comp_queue,
                SharedQueue<EventBuilderId>& event_to_client,
                SharedQueue<EventBuilder>& event_to_server,
-               std::atomic<bool>& running,
-               std::counting_semaphore<>& comp_sem,
-               std::counting_semaphore<>& event_sem,
-               std::counting_semaphore<>& event_to_serv_sem)
-    : _socket(_io_c, asio::ip::udp::endpoint(asio::ip::udp::v4(), s.port))
+               std::atomic<bool>& running)
+    : _server_endpoint(asio::ip::udp::endpoint(asio::ip::udp::v4(), s.port))
+    , _socket(_io_c, _server_endpoint)
     , _components_to_create(std::ref(comp_queue))
-    , _semaphore_event_to_client(std::ref(event_sem))
     , _events_queue_to_client(std::ref(event_to_client))
-    , _semaphore_event_to_server(std::ref(event_to_serv_sem))
     , _events_queue_to_serv(std::ref(event_to_server))
     , _running(running)
-    , _semaphore(std::ref(comp_sem))
 {
   this->_queue_readers.emplace_back([this]() { this->send_comp(); });
   this->_queue_readers.emplace_back([this]() { this->send_event_to_client(); });
@@ -46,15 +43,16 @@ Server::Server(ServerLaunching const& s,
 void Server::close()
 {
   if (_socket.is_open()) {
-    _socket.close();
+    std::cout << "closing server\n";
+    _socket.send_to(asio::buffer(""), this->_server_endpoint);
   }
 }
 
 Server::~Server()
 {
-  this->_semaphore.get().release();
-  this->_semaphore_event_to_client.get().release();
-  this->_semaphore_event_to_server.get().release();
+  this->_events_queue_to_client.get().release();
+  this->_events_queue_to_serv.get().release();
+  this->_components_to_create.get().release();
   for (auto& it : this->_queue_readers) {
     if (it.joinable()) {
       it.join();
@@ -81,16 +79,26 @@ void Server::receive_loop()
 
       if (ec) {
         if (_running) {
-          NETWORK_LOGGER("server",
-                         std::uint8_t(LogLevel::ERROR),
-                         std::format("Receive error: {}", ec.message()));
+          NETWORK_LOGGER(
+              "server",
+              std::uint8_t(LogLevel::ERROR),
+              std::format("Receive error: {}. reseting client", ec.message()));
+          this->_client_mutex.lock();
+          try {
+            this->reset_client_by_endpoint(sender_endpoint);
+          } catch (ClientNotFound const&) {
+            NETWORK_LOGGER("server",
+                           "WARING",
+                           "A strange unknow client tried something, surely "
+                           "not /dev/urandom :)");
+          }
+          this->_client_mutex.unlock();
         }
-        break;
+        continue;
+        ;
       }
 
       while (std::optional<ByteArray> p = recv_buf.extract(PROTOCOL_EOF)) {
-        // NETWORK_LOGGER(
-        //     "server", std::uint8_t(LogLevel::DEBUG), "package extracted");
         this->handle_package(*p, sender_endpoint);
       }
     } catch (std::exception& e) {
@@ -124,47 +132,65 @@ void Server::handle_package(ByteArray const& package,
   ClientState state = ClientState::CHALLENGING;
   this->_client_mutex.lock();
   try {
-    state = this->find_client_by_endpoint(sender).state;
+    ClientInfo& client = this->find_client_by_endpoint(sender);
+    client.last_ping =
+        std::chrono::steady_clock::now().time_since_epoch().count();
+    state = client.state;
   } catch (ClientNotFound const&) {
   }
   this->_client_mutex.unlock();
-  if (state == ClientState::CONNECTED) {
-    auto const& parsed = parse_connected_package(pkg->real_package);
-    if (!parsed) {
+  try {
+    if (pkg->hearthbeat) {
+      this->handle_hearthbeat(pkg->real_package, sender);
       return;
     }
-    this->handle_connected_packet(parsed.value(), sender);
-  } else {
-    auto const& parsed = parse_connectionless_package(pkg->real_package);
-    if (!parsed) {
-      return;
+    if (state == ClientState::CONNECTED) {
+      auto const& parsed = parse_connected_package(pkg->real_package);
+      if (!parsed) {
+        return;
+      }
+      this->handle_connected_packet(parsed.value(), sender);
+
+    } else {
+      auto const& parsed = parse_connectionless_package(pkg->real_package);
+      if (!parsed) {
+        return;
+      }
+      this->handle_connectionless_packet(parsed.value(), sender);
     }
-    this->handle_connectionless_packet(parsed.value(), sender);
+  } catch (ClientNotFound const&) {
+    std::cerr << "Client not found, skipping\n";
   }
 }
 
 void Server::send(ByteArray const& response,
-                  const asio::ip::udp::endpoint& endpoint)
+                  const asio::ip::udp::endpoint& endpoint,
+                  bool hearthbeat)
 {
-  ByteArray pkg = MAGIC_SEQUENCE + response + PROTOCOL_EOF;
+  ByteArray pkg =
+      MAGIC_SEQUENCE + type_to_byte(hearthbeat) + response + PROTOCOL_EOF;
 
   try {
     _socket.send_to(asio::buffer(pkg), endpoint);
   } catch (asio::system_error const&) {
     this->remove_client_by_endpoint(endpoint);
   }
-
-  // NETWORK_LOGGER("server",
-  //                std::uint8_t(LogLevel::DEBUG),
-  //                std::format("Sent package of size: {}", pkg.size()));
 }
 
 void Server::send_connected(ByteArray const& response,
-                            const asio::ip::udp::endpoint& endpoint)
+                            ClientInfo& client,
+                            bool prioritary)
 {
-  ByteArray pkg = type_to_byte(this->_current_index_sequence)
-      + type_to_byte<std::uint32_t>(0) + type_to_byte<bool>(true) + response;
-
-  this->_current_index_sequence += 1;
-  this->send(pkg, endpoint);
+  std::vector<ByteArray> const &packages = response / get_package_division(response.size());
+  for (std::size_t i = 0; i < packages.size(); i++) {
+      ConnectedPackage pkg(client.next_send_sequence,
+        client.acknowledge_manager.get_acknowledge(),
+        (i + 1) == packages.size(),
+        prioritary,
+        packages[i]
+      );
+      client.acknowledge_manager.register_sent_package(pkg);
+      client.next_send_sequence += 1;
+      this->send(pkg.to_bytes(), client.endpoint);
+  }
 }

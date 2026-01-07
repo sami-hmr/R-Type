@@ -5,57 +5,64 @@
 ** Client
 */
 
-#include <semaphore>
+#include "network/client/Client.hpp"
 
-#include "Client.hpp"
+#include <asio/ip/address.hpp>
+#include <asio/ip/udp.hpp>
+#include <asio/registered_buffer.hpp>
 
 #include "NetworkCommun.hpp"
 #include "NetworkShared.hpp"
 #include "plugin/CircularBuffer.hpp"
-#include "Client.hpp"
 
 Client::Client(ClientConnection const& c,
                SharedQueue<ComponentBuilder>& shared_components,
                SharedQueue<EventBuilder>& shared_events,
                SharedQueue<EventBuilder>& shared_exec_events,
-               std::atomic<bool>& running,
-               std::counting_semaphore<>& sem)
+               std::atomic<bool>& running)
     : _socket(_io_c)
     , _components_to_create(std::ref(shared_components))
     , _events_to_transmit(std::ref(shared_events))
     , _event_to_exec(std::ref(shared_exec_events))
     , _running(running)
-    , _semaphore(sem)
+    , _last_ping(std::chrono::steady_clock::now().time_since_epoch().count())
 {
   _socket.open(asio::ip::udp::v4());
+  _socket.bind(asio::ip::udp::endpoint(asio::ip::udp::v4(), 0));
+  _client_endpoint = asio::ip::udp::endpoint(_socket.local_endpoint());
   _server_endpoint =
       asio::ip::udp::endpoint(asio::ip::address::from_string(c.host), c.port);
 
   NETWORK_LOGGER("client",
                  LogLevel::INFO,
                  std::format("Connecting to {}:{}", c.host, c.port));
-  this->_queue_reader = std::thread([this]() { this->send_evt(); });
+  this->_queue_reader = std::thread(&Client::send_evt, this);
+  this->_hearthbeat = std::thread(&Client::send_hearthbeat, this);
 }
 
 void Client::close()
 {
-  this->_semaphore.get().release();
+  this->_running.get() = false;
+  this->_events_to_transmit.get().release();
   if (this->_queue_reader.joinable()) {
-      this->_queue_reader.join();
-  }
-  if (_socket.is_open()) {
-    _socket.close();
+    this->_queue_reader.join();
   }
 }
 
 Client::~Client()
 {
   this->_running.get() = false;
-  this->_semaphore.get().release();
+  this->_events_to_transmit.get().release();
   if (this->_queue_reader.joinable()) {
-      this->_queue_reader.join();
+    this->_queue_reader.join();
   }
-  _socket.close();
+  if (this->_hearthbeat.joinable()) {
+    this->_hearthbeat.join();
+  }
+  //this->_socket.send_to(asio::buffer(""), this->_client_endpoint);
+  if (_socket.is_open()) {
+    _socket.close();
+  }
 }
 
 void Client::connect()
@@ -73,15 +80,21 @@ void Client::receive_loop()
   while (_running.get()) {
     try {
       std::error_code ec;
+      std::size_t len = recv_buf.read_socket(_socket, sender_endpoint, ec);
 
-      recv_buf.read_socket(_socket, sender_endpoint, ec);
+      if (len > 0) {
+        // NETWORK_LOGGER("client",
+        //                LogLevel::DEBUG,
+        //                std::format("received buffer, size : {}", len));
+      }
+
       if (ec) {
         if (_running.get()) {
           NETWORK_LOGGER("client",
                          LogLevel::ERROR,
                          std::format("Receive error: {}", ec.message()));
         }
-        break;
+        continue;
       }
 
       while (std::optional<ByteArray> p = recv_buf.extract(PROTOCOL_EOF)) {
@@ -112,6 +125,12 @@ void Client::handle_package(ByteArray const& package)
         "client", LogLevel::DEBUG, "Invalid magic sequence, ignoring.");
     return;
   }
+  this->_last_ping =
+      std::chrono::steady_clock::now().time_since_epoch().count();
+  if (pkg->hearthbeat) {
+    this->handle_hearthbeat(pkg->real_package);
+    return;
+  }
   if (this->_state == ConnectionState::CONNECTED) {
     auto const& parsed = parse_connected_package(pkg->real_package);
     if (!parsed) {
@@ -125,4 +144,10 @@ void Client::handle_package(ByteArray const& package)
     }
     this->handle_connectionless_response(parsed.value());
   }
+}
+
+bool Client::should_disconnect() const
+{
+  std::size_t now = std::chrono::steady_clock::now().time_since_epoch().count();
+  return (this->_last_ping + disconnection_timeout) < now;
 }

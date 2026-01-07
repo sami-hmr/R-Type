@@ -16,9 +16,7 @@
 
 void SFMLRenderer::background_system(Registry& r)
 {
-  for (const auto&& [draw, background] :
-       Zipper<Drawable, Background>(r))
-  {
+  for (const auto&& [draw, background] : Zipper<Drawable, Background>(r)) {
     if (!draw.enabled) {
       continue;
     }

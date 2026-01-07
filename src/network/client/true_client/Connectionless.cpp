@@ -1,6 +1,7 @@
-#include "Client.hpp"
+#include <system_error>
 #include "NetworkShared.hpp"
 #include "ServerCommands.hpp"
+#include "network/client/Client.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
 
@@ -11,25 +12,15 @@ const std::unordered_map<std::uint8_t, void (Client::*)(ByteArray const&)>
         {DISCONNECT, &Client::handle_disconnect_response},
 };
 
-void Client::send(ByteArray const& command)
+void Client::send(ByteArray const& command, bool hearthbeat)
 {
-  ByteArray pkg = MAGIC_SEQUENCE + command + PROTOCOL_EOF;
+  ByteArray pkg = MAGIC_SEQUENCE + type_to_byte(hearthbeat) + command + PROTOCOL_EOF;
 
-  _socket.send_to(asio::buffer(pkg), _server_endpoint);
-
-  // NETWORK_LOGGER(
-  //     "client",
-  //     LogLevel::DEBUG,
-  //     std::format("Sent package of size: {}", pkg.size()));
-}
-
-void Client::send_connected(ByteArray const& response)
-{
-    ByteArray pkg = type_to_byte(this->_current_index_sequence)
-        + type_to_byte<std::uint32_t>(0) + type_to_byte<bool>(true) + response;
-
-    this->_current_index_sequence += 1;
-    this->send(pkg);
+  try {
+      _socket.send_to(asio::buffer(pkg), _server_endpoint);
+  } catch (std::system_error const &e) {
+      std::cout << "system error: " << e.what() << "\n";
+  }
 }
 
 void Client::handle_connectionless_response(
@@ -106,6 +97,5 @@ void Client::handle_disconnect_response(ByteArray const& package)
   _running.get() = false;
 
   ShutdownEvent e(std::format("Server disconnected: {}", reason), 0);
-  this->transmit_event(
-      EventBuilder("shutdown", e.to_bytes()));
+  this->transmit_event(EventBuilder("shutdown", e.to_bytes()));
 }
