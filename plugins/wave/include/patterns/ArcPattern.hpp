@@ -27,7 +27,7 @@ public:
       return 0.0F;
     }
 
-    double arc_angle_deg = get_value_copy<double>(registry, params, "arc_angle")
+    double arc_angle_deg = get_value_copy<double>(registry, params, "angle")
                                .value_or(DEFAULT_ARC_ANGLE);
 
     double arc_angle_rad = arc_angle_deg * DEG_TO_RAD;

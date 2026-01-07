@@ -1,0 +1,207 @@
+{
+  "scenes": [
+    {
+      "name": "game",
+      "state": "disabled",
+      "plugins": [],
+      "entities": [
+        {
+          "wave:Wave": {
+            "entity_template": "enemy_circle_1",
+            "count": 8,
+            "tracked": true,
+            "components_inheritance": [
+              "scene"
+            ],
+            "pattern": {
+              "type": "circle",
+              "origin": { "x": 1.0, "y": -0.2 },
+              "params": {
+                "radius": 0.1
+              }
+            },
+            "on_end": {
+              "event_name": "LogEvent",
+              "params": {
+                "name": "logEvent",
+                "level": "INFO",
+                "message": "Wave completed"
+              }
+            }
+          },
+          "wave:Formation": {
+            "strength": 0.1
+          }
+        }
+        // {
+        //   "wave:Wave": {
+        //     "entity_template": "enemy_wave_1",
+        //     "count": 8,
+        //     "tracked": true,
+        //     "components_inheritance": [
+        //       "scene"
+        //     ],
+        //     "pattern": {
+        //       "type": "circle",
+        //       "origin": { "x": 2.0, "y": -0.4 },
+        //       "params": {
+        //         "radius": 0.5
+        //       }
+        //     },
+        //     "on_end": {
+        //       "event_name": "LogEvent",
+        //       "params": {
+        //         "name": "logEvent",
+        //         "level": "INFO",
+        //         "message": "Wave completed"
+        //       }
+        //     },
+        //     "wave:Formation": {
+        //       "strength": 0.1
+        //     }
+        //   }
+        // },
+        // {
+        //   "wave:Wave": {
+        //     "entity_template": "enemy_wave_1",
+        //     "count": 7,
+        //     "tracked": true,
+        //     "components_inheritance": [
+        //       "scene"
+        //     ],
+        //     "pattern": {
+        //       "type": "formation_v",
+        //       "origin": { "x": 3.5, "y": 0.0 },
+        //       "params": {
+        //         "spacing_x": 0.2,
+        //         "spacing_y": 0.2
+        //       }
+        //     },
+        //     "on_end": {
+        //       "event_name": "LogEvent",
+        //       "params": {
+        //         "name": "logEvent",
+        //         "level": "INFO",
+        //         "message": "Wave completed"
+        //       }
+        //     }
+        //   },
+        //   "wave:Formation": {
+        //     "strength": 0.1
+        //   }
+        // },
+        // {
+        //   "wave:Wave": {
+        //     "entity_template": "enemy_follow_1",
+        //     "count": 8,
+        //     "tracked": true,
+        //     "components_inheritance": [
+        //       "scene"
+        //     ],
+        //     "pattern": {
+        //       "type": "circle",
+        //       "origin": { "x": 1.2, "y": 0.0 },
+        //       "params": {
+        //         "radius": 0.5
+        //       }
+        //     },
+        //     "on_end": {
+        //       "event_name": "LogEvent",
+        //       "params": {
+        //         "name": "logEvent",
+        //         "level": "INFO",
+        //         "message": "Wave completed"
+        //       }
+        //     }
+        //   },
+        //   "wave:Formation": {
+        //     "strength": 0.6
+        //   }
+        // },
+        // {
+        //   "wave:Wave": {
+        //     "entity_template": "enemy_follow_1",
+        //     "count": 4,
+        //     "tracked": true,
+        //     "components_inheritance": [
+        //       "scene"
+        //     ],
+        //     "pattern": {
+        //       "type": "line",
+        //       "origin": { "x": 0.5, "y": 1.0 },
+        //       "params": {
+        //         "spacing": 0.5
+        //       }
+        //     },
+        //     "on_end": {
+        //       "event_name": "LogEvent",
+        //       "params": {
+        //         "name": "logEvent",
+        //         "level": "INFO",
+        //         "message": "Wave completed"
+        //       }
+        //     }
+        //   },
+        //   "wave:Formation": {
+        //     "strength": 0.1
+        //   }
+        // },
+        // {
+        //   "wave:Wave": {
+        //     "entity_template": "enemy_follow_1",
+        //     "count": 4,
+        //     "tracked": true,
+        //     "components_inheritance": [
+        //       "scene"
+        //     ],
+        //     "pattern": {
+        //       "type": "line",
+        //       "origin": { "x": 0.5, "y": -1.0 },
+        //       "params": {
+        //         "spacing": 0.5
+        //       }
+        //     },
+        //     "on_end": {
+        //       "event_name": "LogEvent",
+        //       "params": {
+        //         "name": "logEvent",
+        //         "level": "INFO",
+        //         "message": "Wave completed"
+        //       }
+        //     }
+        //   },
+        //   "wave:Formation": {
+        //     "strength": 0.1
+        //   }
+        // },
+        // {
+        //   "wave:Wave": {
+        //     "entity_template": "enemy_zigzag_1",
+        //     "count": 12,
+        //     "tracked": true,
+        //     "components_inheritance": [
+        //       "scene"
+        //     ],
+        //     "pattern": {
+        //       "type": "grid",
+        //       "origin": { "x": 2.5, "y": -0.5 },
+        //       "params": {
+        //         "cols": 4,
+        //         "spacing_x": 0.3,
+        //         "spacing_y": 0.3
+        //       }
+        //     },
+        //     "on_end": {
+        //       "event_name": "LogEvent",
+        //       "params": {
+        //         "name": "logEvent",
+        //         "level": "INFO",
+        //         "message": "Wave completed"
+        //       }
+        //     }
+        //   }
+        // }
+      ]
+    }
+  ]
+}
