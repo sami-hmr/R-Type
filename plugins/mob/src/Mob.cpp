@@ -11,9 +11,13 @@
 #include "plugin/components/Position.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
 
-Mob::Mob(Registry& r, EventManager &em, EntityLoader& l)
-    : APlugin(
-          "mob", r, em, l, {"moving"}, {COMP_INIT(Spawner, Spawner, init_spawner)})
+Mob::Mob(Registry& r, EventManager& em, EntityLoader& l)
+    : APlugin("mob",
+              r,
+              em,
+              l,
+              {"moving"},
+              {COMP_INIT(Spawner, Spawner, init_spawner)})
     , entity_loader(l)
 {
   _registry.get().register_component<Spawner>("mob:Spawner");
@@ -43,6 +47,8 @@ void Mob::init_spawner(Registry::Entity const& entity, JsonObject const& obj)
 
 void Mob::spawner_system(Registry& r)
 {
+  std::vector<std::function<void()>> event_to_emit;
+
   for (auto&& [i, spawner, pos, scene] :
        ZipperIndex<Spawner, Position, Scene>(r))
   {
@@ -63,24 +69,38 @@ void Mob::spawner_system(Registry& r)
       if (spawner.current_spawns >= spawner.max_spawns) {
         spawner.active = false;
       }
-      this->_event_manager.get().emit<ComponentBuilder>(
-          i, r.get_component_key<Spawner>(), spawner.to_bytes());
-      this->_event_manager.get().emit<LoadEntityTemplate>(
-          spawner.entity_template,
-          LoadEntityTemplate::Additional {
-              {
-                  this->_registry.get().get_component_key<Position>(),
-                  pos.to_bytes(),
-              },
-              {this->_registry.get().get_component_key<Scene>(),
-               scene.to_bytes()}});
+      event_to_emit.emplace_back(
+          [this,
+           i = i,
+           spawner_bytes = spawner.to_bytes(),
+           entity_template = spawner.entity_template,
+           pos_bytes = pos.to_bytes(),
+           scene_bytes = scene.to_bytes()]()
+          {
+            this->_event_manager.get().emit<ComponentBuilder>(
+                i,
+                this->_registry.get().get_component_key<Spawner>(),
+                spawner_bytes);
+            this->_event_manager.get().emit<LoadEntityTemplate>(
+                entity_template,
+                LoadEntityTemplate::Additional {
+                    {
+                        this->_registry.get().get_component_key<Position>(),
+                        pos_bytes,
+                    },
+                    {this->_registry.get().get_component_key<Scene>(),
+                     scene_bytes}});
+          });
     }
+  }
+  for (auto const& fn : event_to_emit) {
+    fn();
   }
 }
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager &em, EntityLoader& e)
+void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
   return new Mob(r, em, e);
 }

@@ -9,11 +9,18 @@
 #include <asio/io_context.hpp>
 #include <asio/ip/udp.hpp>
 
-#include "ServerCommands.hpp"
+#include "network/AcknowledgeManager.hpp"
 #include "plugin/Byte.hpp"
 
 #define MAX_PLAYERS 4
-#define BUFFER_SIZE 2048
+#define BUFFER_SIZE 9092
+
+static inline std::size_t get_package_division(std::size_t size) {
+    std::size_t const max = BUFFER_SIZE - sizeof(ConnectedPackage);
+    std::size_t const div = size / max;
+
+    return div + 1;
+}
 
 #define NETWORK_LOGGER(category, level, message) \
   std::cerr << (category) << ": " << (message) << "\n"
@@ -91,7 +98,8 @@ enum ConnectedOpcodes : std::uint8_t
 {
   SENDEVENT = 0x01,
   SENDCOMP = 0x02,
-  ENTITYCREATION = 0x05,
+  SENDHEARTHBEAT = 0x03,
+  FFGONEXT = 0x04,
 };
 
 enum class ConnectionState : std::uint8_t
@@ -114,9 +122,12 @@ struct ClientInfo
   asio::ip::udp::endpoint endpoint;
   std::string player_name;
   ClientState state = ClientState::DISCONNECTED;
-  std::uint32_t last_sequence = 0;
+  std::size_t next_send_sequence = 1;
+  AcknowledgeManager acknowledge_manager;
   std::uint32_t challenge = 0;
   std::uint8_t client_id = 0;
-  std::uint32_t score = 0;
-  std::uint8_t ping = 0;
+  std::size_t last_ping;
+  std::size_t last_reset;
+  std::uint8_t reset_count;
+  ByteArray frag_buffer;
 };

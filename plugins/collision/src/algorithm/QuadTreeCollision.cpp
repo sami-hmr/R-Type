@@ -37,7 +37,8 @@ QuadTreeCollision::detect_collisions(
   return collisions;
 }
 
-std::vector<ICollisionAlgorithm::CollisionEntity> QuadTreeCollision::detect_range_collisions(Rect const& range)
+std::vector<ICollisionAlgorithm::CollisionEntity>
+QuadTreeCollision::detect_range_collisions(Rect const& range)
 {
   std::vector<CollisionEntity> entities;
 

@@ -142,6 +142,8 @@ ByteArray operator+(ByteArray first, ByteArray const& second);
  */
 ByteArray& operator+=(ByteArray& first, ByteArray const& second);
 
+std::vector<ByteArray> operator/(ByteArray const &, std::size_t);
+
 /**
  * @brief Joins multiple ByteArrays into one
  * @param arrays Variable number of ByteArrays to concatenate

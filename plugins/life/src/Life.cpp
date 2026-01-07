@@ -84,7 +84,8 @@ void Life::init_damage(Registry::Entity entity, JsonObject const& obj)
                      "missing value in JsonObject\n";
     return;
   }
-  init_component<Damage>(this->_registry.get(), this->_event_manager.get(), entity, value.value());
+  init_component<Damage>(
+      this->_registry.get(), this->_event_manager.get(), entity, value.value());
 }
 
 void Life::init_heal(Registry::Entity entity, JsonObject const& obj)
@@ -97,7 +98,8 @@ void Life::init_heal(Registry::Entity entity, JsonObject const& obj)
                      "missing value in JsonObject\n";
     return;
   }
-  init_component<Heal>(this->_registry.get(), this->_event_manager.get(), entity, value.value());
+  init_component<Heal>(
+      this->_registry.get(), this->_event_manager.get(), entity, value.value());
 }
 
 void Life::init_team(Registry::Entity const& entity, JsonObject const& obj)
@@ -110,7 +112,8 @@ void Life::init_team(Registry::Entity const& entity, JsonObject const& obj)
                      "missing value in JsonObject\n";
     return;
   }
-  init_component<Team>(this->_registry.get(), this->_event_manager.get(), entity, value.value());
+  init_component<Team>(
+      this->_registry.get(), this->_event_manager.get(), entity, value.value());
 }
 
 void Life::damage_entity(const CollisionEvent& event,
@@ -137,7 +140,8 @@ void Life::heal_entity(const CollisionEvent& event,
 
   if (healths[event.a]->heal_delta >= heal_cooldown) {
     healths[event.a]->heal_delta = 0.0;
-    this->_event_manager.get().emit<HealEvent>(event.a, event.b, healers[event.b]->amount);
+    this->_event_manager.get().emit<HealEvent>(
+        event.a, event.b, healers[event.b]->amount);
 
     this->_event_manager.get().emit<ComponentBuilder>(
         event.a,
@@ -236,7 +240,7 @@ void Life::update_cooldowns(Registry& reg)
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager &em, EntityLoader& e)
+void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
   return new Life(r, em, e);
 }

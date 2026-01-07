@@ -73,7 +73,7 @@ void CLI::run_cli()
 
     process_command(line);
   }
-  exit(0);
+  //exit(0);
 }
 
 void CLI::process_command(const std::string& cmd)
@@ -182,6 +182,14 @@ void CLI::process_command(const std::string& cmd)
           }
           _event_manager.get().emit<ClientConnection>(host, port);
           std::cout << "Connecting to " << host << ":" << port << "\n";
+        }}},
+      {"deco",
+       {.usage = "deco",
+        .description = "autre commande de goat pour deconnect le client",
+        .handler =
+            [this](std::istringstream&)
+        {
+          _event_manager.get().emit<Disconnection>();
         }}},
       {"ready",
        {.usage = "ready",

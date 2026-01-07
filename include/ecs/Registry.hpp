@@ -936,7 +936,7 @@ public:
    * @see Zipper for entity iteration
    * @see System class for wrapper details
    */
-  void run_systems(EventManager &);
+  void run_systems(EventManager&);
 
   /**
    * @brief Updates all registered dynamic bindings
@@ -978,7 +978,7 @@ public:
    * @see run_systems() which calls this automatically
    * @see clear_bindings() to remove all bindings
    */
-  void update_bindings(EventManager &);
+  void update_bindings(EventManager&);
 
   /**
    * @brief Registers a dynamic binding between component fields
@@ -1173,7 +1173,6 @@ public:
    * @see update_bindings() which processes bindings
    */
   void clear_bindings();
-
 
   // ============================================================================
   // SCENE MANAGEMENT
@@ -1896,7 +1895,6 @@ public:
                                 ByteArray const& comp,
                                 std::unordered_map<Entity, Entity> const& map);
 
-
   template<component Component>
   std::string get_component_key()
   {
@@ -1969,8 +1967,7 @@ public:
    */
   std::vector<ComponentState> get_state();
 
-private:
-
+  private:
   struct Binding
   {
     Entity target_entity;  ///< Entity containing the target component

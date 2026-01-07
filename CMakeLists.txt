@@ -53,6 +53,59 @@ target_include_directories(${CORE_LIB}
 
 target_link_libraries(${CORE_LIB} PRIVATE parser)
 
+find_package(asio CONFIG REQUIRED)
+
+set(SERVER_LIB r-type_server_lib)
+
+add_library(${SERVER_LIB} STATIC
+    src/network/server/true_server/ClientManagement.cpp
+    src/network/server/true_server/CommandParsing.cpp
+    src/network/server/true_server/Connected.cpp
+    src/network/server/true_server/Connectionless.cpp
+    src/network/server/true_server/DataTransfer.cpp
+    src/network/server/true_server/Server.cpp
+    src/network/server/plugin_base/BaseServer.cpp
+    src/network/AcknowledgeManager.cpp
+)
+
+target_include_directories(${SERVER_LIB}
+    PUBLIC
+        include
+        ${parser_SOURCE_DIR}/include
+)
+
+target_link_libraries(${SERVER_LIB} PRIVATE
+    parser
+    ${CORE_LIB}
+    asio::asio
+)
+
+set(CLIENT_LIB r-type_client_lib)
+
+add_library(${CLIENT_LIB} STATIC
+    src/network/client/true_client/CommandParsing.cpp
+    src/network/client/true_client/Connected.cpp
+    src/network/client/true_client/Connectionless.cpp
+    src/network/client/true_client/DataTransfer.cpp
+    src/network/client/true_client/Client.cpp
+    src/network/client/plugin_base/BaseClient.cpp
+    src/network/AcknowledgeManager.cpp
+)
+
+target_include_directories(${CLIENT_LIB}
+    PUBLIC
+        include
+        ${parser_SOURCE_DIR}/include
+)
+
+target_link_libraries(${CLIENT_LIB} PRIVATE
+    parser
+    ${CORE_LIB}
+    asio::asio
+)
+
+
+
 if(BUILD_EPITECH_BINARIES)
     add_executable(r-type_client
         src/main.cpp

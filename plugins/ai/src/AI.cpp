@@ -101,24 +101,42 @@ void AI::attack_behavior_system(Registry& r)
 {
   double dt = r.clock().delta_seconds();
 
-  for (auto&& [entity, behavior, pos, speed, direction] :
+  std::vector<std::function<void()>> to_exec;
+  for (auto&& index :
        ZipperIndex<AttackBehavior, Position, Direction, Speed>(r))
   {
+    std::size_t entity = std::get<0>(index);
+    AttackBehavior const &behavior = std::get<1>(index);
     if (!behavior.active) {
       continue;
     }
 
-    if (_attack_patterns.find(behavior.attack_type) != _attack_patterns.end()) {
-      _attack_patterns[behavior.attack_type]->execute(
-          entity,
-          r,
-          this->_event_manager.get(),
-          behavior,
-          pos,
-          speed,
-          direction,
-          dt);
+    if (_attack_patterns.contains(behavior.attack_type)) {
+      auto* pattern = _attack_patterns[behavior.attack_type].get();
+      to_exec.emplace_back(
+          [this, entity, pattern, dt]()
+          {
+            auto& behavior =
+                *this->_registry.get().get_components<AttackBehavior>()[entity];
+            auto& pos =
+                *this->_registry.get().get_components<Position>()[entity];
+            auto& speed =
+                *this->_registry.get().get_components<Speed>()[entity];
+            auto& direction =
+                *this->_registry.get().get_components<Direction>()[entity];
+            pattern->execute(entity,
+                             this->_registry.get(),
+                             this->_event_manager.get(),
+                             behavior,
+                             pos,
+                             direction,
+                             speed,
+                             dt);
+          });
     }
+  }
+  for (auto const& it : to_exec) {
+    it();
   }
 }
 

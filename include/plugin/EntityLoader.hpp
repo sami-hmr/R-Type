@@ -18,8 +18,7 @@
 class EntityLoader
 {
 public:
-  explicit EntityLoader(Registry& registry, EventManager &em);
-
+  explicit EntityLoader(Registry& registry, EventManager& em);
   void load(std::string const& directory);
 
   void load_file(std::string const& filepath);

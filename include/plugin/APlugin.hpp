@@ -7,9 +7,8 @@
 #include "EntityLoader.hpp"
 #include "IPlugin.hpp"
 #include "Json/JsonParser.hpp"
-#include "ecs/Registry.hpp"
 #include "ecs/EventManager.hpp"
-
+#include "ecs/Registry.hpp"
 #include "plugin/IPlugin.hpp"
 
 #define COMP_INIT(comp_name, comp_type, method_name) \
@@ -39,9 +38,12 @@
   this->_registry.get().register_component<comp>( \
       std::format("{}:{}", this->name, #comp));
 
-#define SUBSCRIBE_EVENT(event_name, function) \
-  this->_event_manager.get().on<event_name>( \
-      #event_name, [this]([[maybe_unused]] event_name const& event) function);
+#define SUBSCRIBE_EVENT_PRIORITY(event_name, function, priority) \
+this->_event_manager.get().on<event_name>( \
+    #event_name, [this]([[maybe_unused]] event_name const& event) function, priority);
+
+
+#define SUBSCRIBE_EVENT(event_name, function) SUBSCRIBE_EVENT_PRIORITY(event_name, function, 1)
 
 class APlugin : public IPlugin
 {
@@ -49,7 +51,7 @@ public:
   APlugin(
       std::string name,
       Registry& registry,
-      EventManager &event_manager,
+      EventManager& event_manager,
       EntityLoader& loader,
       std::vector<std::string> const& depends_on,
       std::unordered_map<
