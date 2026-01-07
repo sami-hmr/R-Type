@@ -41,6 +41,10 @@
         {
           "name": "mob",
           "config": {}
+        },
+        {
+          "name": "wave",
+          "config": {}
         }
       ],
       "entities": [

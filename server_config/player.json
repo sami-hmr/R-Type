@@ -24,7 +24,7 @@
           }
         },
         "weapon:BasicWeapon": {
-          "bullet_type": "bounce_bullet",
+          "bullet_type": "bullet_spread_3",
           "magazine_size": 60000,
           "magazine_nb": 30000,
           "reload_time": 0.0,

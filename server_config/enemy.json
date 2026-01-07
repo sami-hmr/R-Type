@@ -122,10 +122,10 @@
       }
     },
     {
-      "name": "enemy_wave_2",
+      "name": "enemy_zigzag_1",
       "components": {
         "moving:Position": {
-          "hook": "enemy_wave_pos_2",
+          "hook": "enemy_zigzag_pos_1",
           "pos": {
             "x": 1.5,
             "y": -0.3
@@ -186,7 +186,7 @@
           "default_animation": "idle"
         },
         "life:Health": {
-          "hook": "enemy_wave_health_2",
+          "hook": "enemy_zigzag_health_1",
           "current": 10.0,
           "max": 10.0
         },
@@ -198,8 +198,8 @@
             "x": "10.0%",
             "y": "1.0%"
           },
-          "max_value": "#enemy_wave_health_2:max",
-          "current_value": "#enemy_wave_health_2:current",
+          "max_value": "#enemy_zigzag_health_1:max",
+          "current_value": "#enemy_zigzag_health_1:current",
           "offset": {
             "x": 0.0,
             "y": -0.12
@@ -239,7 +239,7 @@
             "y": 0.0
           }
         },
-        "ai:MovementBehavior": { "movement_type": "wave" }
+        "ai:MovementBehavior": { "movement_type": "zigzag" }
       }
     },
     {
@@ -253,12 +253,58 @@
           }
         },
         "ui:Drawable": {},
-        "ui:Sprite": {
-          "texture": "assets/enemy.png",
-          "size": {
-            "width": "20.0%",
-            "height": "20.0%"
-          }
+        "ui:AnimatedSprite": {
+          "animations": [
+            {
+              "name": "idle",
+              "texture": "assets/backgrounds/assetpack/Bonus (enemies)/enemy_zig_zag-sheet.png",
+              "frame_size": {
+                "x": 362.0,
+                "y": 214.0
+              },
+              "frame_pos": {
+                "x": 0.0,
+                "y": 0.0
+              },
+              "direction": {
+                "x": 1.0,
+                "y": 0.0
+              },
+              "sprite_size": {
+                "width": "20.0%",
+                "height": "20.0%"
+              },
+              "framerate": 10.0,
+              "nb_frames": 4,
+              "loop": true,
+              "rollback": true
+            },
+            {
+              "name": "death",
+              "texture": "assets/explosion.png",
+              "frame_size": {
+                "x": 128.0,
+                "y": 128.0
+              },
+              "frame_pos": {
+                "x": 0.0,
+                "y": 0.0
+              },
+              "direction": {
+                "x": 1.0,
+                "y": 0.0
+              },
+              "sprite_size": {
+                "width": "20.0%",
+                "height": "20.0%"
+              },
+              "framerate": 10.0,
+              "nb_frames": 12,
+              "loop": false,
+              "rollback": false
+            }
+          ],
+          "default_animation": "idle"
         },
         "life:Health": {
           "hook": "enemy_turret_health_1",
@@ -331,94 +377,6 @@
       }
     },
     {
-      "name": "enemy_turret_2",
-      "components": {
-        "moving:Position": {
-          "hook": "enemy_turret_2",
-          "pos": {
-            "x": 1.0,
-            "y": -0.8
-          }
-        },
-        "ui:Drawable": {},
-        "ui:Sprite": {
-          "texture": "assets/enemy.png",
-          "size": {
-            "width": "20.0%",
-            "height": "20.0%"
-          }
-        },
-        "life:Health": {
-          "hook": "enemy_turret_health_2",
-          "current": 10.0,
-          "max": 10.0
-        },
-        "life:Damage": {
-          "amount": 1
-        },
-        "ath:Bar": {
-          "size": {
-            "x": "10.0%",
-            "y": "1.0%"
-          },
-          "max_value": "#enemy_turret_health_2:max",
-          "current_value": "#enemy_turret_health_2:current",
-          "offset": {
-            "x": 0.0,
-            "y": -0.12
-          },
-          "color": {
-            "r": 255,
-            "g": 255,
-            "b": 255,
-            "a": 255
-          },
-          "outline": false,
-          "texture_path": "assets/backgrounds/background.png"
-        },
-        "collision:Collidable": {
-          "width": 0.1,
-          "height": 0.1,
-          "collision_type": "solid"
-        },
-        "life:Team": {
-          "name": "enemy"
-        },
-        "moving:Speed": {
-          "speed": {
-            "x": 0.5,
-            "y": 0.5
-          }
-        },
-        "moving:Direction": {
-          "direction": {
-            "x": 0.0,
-            "y": 0.0
-          }
-        },
-        "moving:Facing": {
-          "direction": {
-            "x": -1.0,
-            "y": 0.0
-          }
-        },
-        "weapon:BasicWeapon": {
-          "bullet_type": "basic_bullet",
-          "magazine_size": 6,
-          "magazine_nb": 3,
-          "reload_time": 2.0,
-          "cooldown": 0.3
-        },
-        "ai:MovementBehavior": { "movement_type": "turret" },
-        "ai:AttackBehavior": {
-          "attack_type": "continuous",
-          "attack_interval": 2.0
-        },
-        "target:Follower": {},
-        "collision:InteractionZone": { "radius": 1.5 }
-      }
-    },
-    {
       "name": "enemy_circle_1",
       "components": {
         "moving:Position": {
@@ -433,10 +391,10 @@
           "animations": [
             {
               "name": "idle",
-              "texture": "assets/backgrounds/assetpack/Bonus (enemies)/enemy_zig_zag-sheet.png",
+              "texture": "assets/backgrounds/assetpack/Bonus (enemies)/enemy_circle-sheet.png",
               "frame_size": {
-                "x": 362.0,
-                "y": 214.0
+                "x": 353.0,
+                "y": 168.0
               },
               "frame_pos": {
                 "x": 0.0,
