@@ -6,6 +6,7 @@
 */
 #include <atomic>
 #include <chrono>
+#include <cstdio>
 #include <vector>
 
 #include "network/server/Server.hpp"
@@ -17,6 +18,7 @@
 #include "NetworkCommun.hpp"
 #include "NetworkShared.hpp"
 #include "ServerCommands.hpp"
+#include "network/PacketCompresser.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/CircularBuffer.hpp"
 
@@ -167,11 +169,11 @@ void Server::send(ByteArray const& response,
                   const asio::ip::udp::endpoint& endpoint,
                   bool hearthbeat)
 {
-  ByteArray pkg =
-      MAGIC_SEQUENCE + type_to_byte(hearthbeat) + response + PROTOCOL_EOF;
+  ByteArray pkg = MAGIC_SEQUENCE + type_to_byte(hearthbeat) + response;
 
+  PacketCompresser::encrypt(pkg);
   try {
-    _socket.send_to(asio::buffer(pkg), endpoint);
+    _socket.send_to(asio::buffer(pkg + PROTOCOL_EOF), endpoint);
   } catch (asio::system_error const&) {
     this->remove_client_by_endpoint(endpoint);
   }
@@ -181,7 +183,8 @@ void Server::send_connected(ByteArray const& response,
                             ClientInfo& client,
                             bool prioritary)
 {
-  std::vector<ByteArray> const &packages = response / get_package_division(response.size());
+  ByteArray compressed = PacketCompresser::compress_packet(response);
+  std::vector<ByteArray> const &packages = compressed / get_package_division(compressed.size());
   for (std::size_t i = 0; i < packages.size(); i++) {
       ConnectedPackage pkg(client.next_send_sequence,
         client.acknowledge_manager.get_acknowledge(),

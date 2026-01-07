@@ -1,6 +1,8 @@
 #include <system_error>
+#include "NetworkCommun.hpp"
 #include "NetworkShared.hpp"
 #include "ServerCommands.hpp"
+#include "network/PacketCompresser.hpp"
 #include "network/client/Client.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
@@ -14,10 +16,11 @@ const std::unordered_map<std::uint8_t, void (Client::*)(ByteArray const&)>
 
 void Client::send(ByteArray const& command, bool hearthbeat)
 {
-  ByteArray pkg = MAGIC_SEQUENCE + type_to_byte(hearthbeat) + command + PROTOCOL_EOF;
+  ByteArray pkg = MAGIC_SEQUENCE + type_to_byte(hearthbeat) + command;
 
+  PacketCompresser::encrypt(pkg);
   try {
-      _socket.send_to(asio::buffer(pkg), _server_endpoint);
+      _socket.send_to(asio::buffer(pkg + PROTOCOL_EOF), _server_endpoint);
   } catch (std::system_error const &e) {
       std::cout << "system error: " << e.what() << "\n";
   }
