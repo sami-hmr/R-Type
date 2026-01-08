@@ -33,12 +33,10 @@ Inventory::Inventory(Registry& r, EventManager& em, EntityLoader& l)
     }
     use_item(event.slot_item, event.nb_to_use, event.consumer);
   })
-  // SUBSCRIBE_EVENT(PickUp, {
-  //   if (event.item >= _inventory.size()) {
-  //     return false;
-  //   }
-  //   add_item(event.item, event.nb_to_use, event.consumer);
-  // })
+  SUBSCRIBE_EVENT(PickUp, {
+    Item item = event.item;
+    add_item(item, event.nb_to_use, event.consumer);
+  })
 }
 
 void Inventory::add_item(Item& item, std::size_t nb, Registry::Entity e)
