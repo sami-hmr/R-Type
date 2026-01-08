@@ -10,7 +10,6 @@
 #include <cstddef>
 #include <optional>
 #include <string>
-#include <utility>
 
 #include "ByteParser/ByteParser.hpp"
 #include "ecs/Registry.hpp"

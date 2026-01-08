@@ -1,0 +1,47 @@
+{
+    "inventory:Item": {
+        "items": [
+            {
+                "name": "apple",
+                "quantity": 1,
+                "consumable": true,
+                "throwable": true,
+                "config": {
+                    "consume": {
+                        "animation": "Consumed",
+                        "event": {
+                            "name": "HealEvent",
+                            "params": {
+                                "dgts": 1
+                            }
+                        }
+                    },
+                    "throw": {
+                        "animation": "Thrown"
+                    }
+                }
+            }
+        ]
+    },
+    "inventory:Item2": {
+        "items": [
+            {
+                "name": "oil",
+                "quantity": 1,
+                "consumable": true,
+                "throwable": false,
+                "config": {
+                    "consume": {
+                        "animation": "Consumed",
+                        "event": {
+                            "name": "HealEvent",
+                            "params": {
+                                "dgts": 1
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+    }
+}

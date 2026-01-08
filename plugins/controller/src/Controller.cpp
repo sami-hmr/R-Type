@@ -86,7 +86,7 @@ void Controller::init_event_map(Registry::Entity const& entity,
   for (auto& it : events) {
     auto& event = std::get<JsonObject>(it.value);
     auto description = get_value_copy<std::string>(
-        this->_registry.get(), event, "description");
+        this->_registry.get(), event, "description"); // insert description into the bindings
     auto key_string =
         get_value_copy<std::string>(this->_registry.get(), event, "key");
     auto press =
@@ -123,8 +123,6 @@ void Controller::init_event_map(Registry::Entity const& entity,
         continue;
       }
     }
-    // LOGGER("Controller", LogLevel::INFO,
-    //   std::format("Key {} registered as {}", *key_string, *description))
   }
 }
 

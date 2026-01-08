@@ -5,8 +5,11 @@
 #include <sys/types.h>
 
 #include "ByteParser/ByteParser.hpp"
+#include "Json/JsonParser.hpp"
+#include "ecs/Registry.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/HookMacros.hpp"
+#include "plugin/Hooks.hpp"
 #include "plugin/events/EventMacros.hpp"
 
 struct Item
@@ -58,4 +61,11 @@ struct Item
                         SERIALIZE_FUNCTION<JsonObject>(json_object_to_byte))(this->object),
                     type_to_byte(this->consumable),
                     type_to_byte(this->throwable))
+
+  Item(Registry& r, JsonObject const& e)
+      : object(std::make_pair(get_value_copy<std::string>(r, e, "name").value(), get_value_copy<JsonObject>(r, e, "config").value()))
+      , consumable(get_value_copy<bool>(r, e, "consumable").value())
+      , throwable(get_value_copy<bool>(r, e, "throwable").value())
+  {
+  }
 };

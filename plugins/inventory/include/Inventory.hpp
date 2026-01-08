@@ -18,5 +18,9 @@ private:
   std::size_t _max_items = MAX_ITEMS;
 
   void use_item(std::uint8_t slot, std::size_t nb, Registry::Entity e);
-  void add_item(Item& item, std::size_t nb, Registry::Entity e);
+  void add_item(const Item& item, std::size_t nb);
+
+  void init_item_vector(Registry::Entity const& entity, JsonArray& inventory);
+
+  void init_inventory(Registry::Entity const& entity, JsonObject const& obj);
 };
