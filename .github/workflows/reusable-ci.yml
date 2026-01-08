@@ -29,6 +29,7 @@ jobs:
       with:
         fetch-depth: 0
         token: ${{ secrets.BOT_TOKEN || secrets.GITHUB_TOKEN }}
+        ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
 
     - name: Cache apt packages
       uses: awalsh128/cache-apt-pkgs-action@latest
@@ -45,7 +46,13 @@ jobs:
             git config --local user.name "github-actions[bot]"
             git add -A
             git commit -m "style: auto-format with clang-format-18"
-            git push
+            
+            # For PRs, push to the head branch
+            if [ "${{ github.event_name }}" == "pull_request" ]; then
+              git push origin HEAD:${{ github.head_ref }}
+            else
+              git push
+            fi
           fi
         else
           cmake -P cmake/lint.cmake
