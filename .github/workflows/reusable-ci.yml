@@ -121,16 +121,16 @@ jobs:
     - name: Install latest CMake and Ninja
       uses: lukka/get-cmake@latest
 
+    - name: Setup MSVC
+      uses: ilammy/msvc-dev-cmd@v1
+
     - name: Setup vcpkg
       uses: lukka/run-vcpkg@v11
       with:
         vcpkgDirectory: '${{ github.workspace }}/vcpkg'
         vcpkgGitCommitId: 'ae8fa5ae5e6162a88e412618245809ed2aa579d9'
 
-    - name: Setup MSVC
-      uses: ilammy/msvc-dev-cmd@v1
-
-    - name: Setup ccache
+    - name: Setup sccache
       uses: hendrikmuhs/ccache-action@v1.2
       with:
         key: windows-${{ runner.os }}-${{ github.ref_name }}
@@ -144,5 +144,6 @@ jobs:
         configurePreset: 'release'
         buildPreset: 'release-build'
       env:
+        VCPKG_ROOT: '${{ github.workspace }}/vcpkg'
         CMAKE_C_COMPILER_LAUNCHER: sccache
         CMAKE_CXX_COMPILER_LAUNCHER: sccache

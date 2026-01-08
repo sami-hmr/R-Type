@@ -14,9 +14,10 @@ on:
 jobs:
   ci:
     uses: ./.github/workflows/reusable-ci.yml
-    secrets: inherit
+    secrets:
+      BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
     with:
-      auto-format: false
+      auto-format: ${{ startsWith(github.ref, 'refs/heads/github-actions') }}
       run-windows: true
 
   docs:
