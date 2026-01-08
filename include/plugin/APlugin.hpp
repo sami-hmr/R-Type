@@ -12,38 +12,42 @@
 #include "plugin/IPlugin.hpp"
 
 #define COMP_INIT(comp_name, comp_type, method_name) \
-  { \
-    #comp_name, [this](size_t entity, const JsonVariant& config) \
-    { \
-      try { \
-        JsonObject obj = std::get<JsonObject>(config); \
-        this->method_name(entity, obj); \
-        if (obj.contains("hook")) { \
-          try { \
-            std::string hook_name = \
-                std::get<std::string>(obj.at("hook").value); \
-            this->_registry.get().register_hook<comp_type>(hook_name, entity); \
-          } catch (...) { \
-          } \
-        } \
-      } catch (std::bad_variant_access const&) { \
-        std::cout << "Error initializing component \"" << #comp_name \
-                  << "\": only JsonObjects are supported\n"; \
-        return; \
-      } \
-    } \
-  }
+  {#comp_name, \
+   [this](size_t entity, const JsonVariant& config) \
+   { \
+     try { \
+       JsonObject obj = std::get<JsonObject>(config); \
+       this->method_name(entity, obj); \
+       if (obj.contains("hook")) { \
+         try { \
+           std::string hook_name = \
+               std::get<std::string>(obj.at("hook").value); \
+           this->_registry.get().register_hook<comp_type>(hook_name, entity); \
+         } catch (std::bad_variant_access const&) { \
+           /* Hook value is not a string */ \
+         } catch (std::out_of_range const&) { \
+           /* Hook key not found (shouldn't happen due to contains check) */ \
+         } \
+       } \
+     } catch (std::bad_variant_access const&) { \
+       std::cout << "Error initializing component \"" << #comp_name \
+                 << "\": only JsonObjects are supported\n"; \
+       return; \
+     } \
+   }}
 
 #define REGISTER_COMPONENT(comp) \
   this->_registry.get().register_component<comp>( \
       std::format("{}:{}", this->name, #comp));
 
 #define SUBSCRIBE_EVENT_PRIORITY(event_name, function, priority) \
-this->_event_manager.get().on<event_name>( \
-    #event_name, [this]([[maybe_unused]] event_name const& event) function, priority);
+  this->_event_manager.get().on<event_name>( \
+      #event_name, \
+      [this]([[maybe_unused]] event_name const& event) function, \
+      priority);
 
-
-#define SUBSCRIBE_EVENT(event_name, function) SUBSCRIBE_EVENT_PRIORITY(event_name, function, 1)
+#define SUBSCRIBE_EVENT(event_name, function) \
+  SUBSCRIBE_EVENT_PRIORITY(event_name, function, 1)
 
 class APlugin : public IPlugin
 {

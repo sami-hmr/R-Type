@@ -1,5 +1,6 @@
 
 #include <iostream>
+
 #include <asio/registered_buffer.hpp>
 
 #include "NetworkCommun.hpp"
@@ -29,8 +30,13 @@ void Server::send_event_to_client()
         try {
           auto& client = this->find_client_by_id(*evt.client);
           this->send_connected(data, client);
-        } catch (ClientNotFound const&) {
-          std::cerr << "Client not found, skipping\n";
+        } catch (ClientNotFound const& e) {
+          LOGGER_EVTLESS(
+              LogLevel::WARNING,
+              "server",
+              std::format("Cannot send event to client: {} (context: {})",
+                          e.what(),
+                          e.format_context()));
         }
       } else {
         for (auto& it : this->_clients) {
@@ -59,8 +65,13 @@ void Server::send_comp()
         try {
           this->send_connected(data,
                                this->find_client_by_id(comp.client.value()));
-        } catch (ClientNotFound const&) {
-          std::cerr << "Client not found, skipping\n";
+        } catch (ClientNotFound const& e) {
+          LOGGER_EVTLESS(
+              LogLevel::WARNING,
+              "server",
+              std::format("Cannot send component to client: {} (context: {})",
+                          e.what(),
+                          e.format_context()));
         }
       } else {
         for (auto& it : this->_clients) {

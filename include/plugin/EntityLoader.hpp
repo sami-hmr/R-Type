@@ -34,6 +34,8 @@ public:
       ComponentBuilder const& component,
       TwoWayMap<Registry::Entity, Registry::Entity> const& indexes);
 
+  bool is_plugin_loaded(std::string const& plugin);
+
 private:
   void load_scene(JsonObject& json_scene);
   void get_loader(std::string const& plugin);

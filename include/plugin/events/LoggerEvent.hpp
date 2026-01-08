@@ -1,30 +1,13 @@
 #pragma once
 
-#include <cstdint>
 #include <optional>
 #include <string>
 #include <utility>
 
-#include "ByteParser/ByteParser.hpp"
 #include "EventMacros.hpp"
-#include "TwoWayMap.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
-
-enum class LogLevel : std::uint8_t
-{
-  DEBUG,
-  INFO,
-  WARNING,
-  ERROR
-};
-static const TwoWayMap<std::string, LogLevel> LOG_LEVEL_STR = {
-    {"DEBUG", LogLevel::DEBUG},
-    {"INFO", LogLevel::INFO},
-    {"WARNING", LogLevel::WARNING},
-    {"ERROR", LogLevel::ERROR},
-};
 
 struct LogEvent
 {
@@ -61,6 +44,3 @@ struct LogEvent
   {
   }
 };
-
-#define LOGGER(category, level, message) \
-  this->_event_manager.get().emit<LogEvent>(category, level, message);
