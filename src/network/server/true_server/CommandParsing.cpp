@@ -36,9 +36,9 @@ std::optional<ConnectionlessCommand> Server::parse_connectionless_package(
 
   if (r.index() == ERROR) {
     LOGGER_EVTLESS(LogLevel::ERROR,
-                "server",
-                std::format("Failed to read connectionless package : {}",
-                            std::get<ERROR>(r).message));
+                   "server",
+                   std::format("Failed to read connectionless package : {}",
+                               std::get<ERROR>(r).message));
     return std::nullopt;
   }
   return std::get<SUCCESS>(r).value;
@@ -51,9 +51,9 @@ std::optional<ConnectCommand> Server::parse_connect_command(
 
   if (r.index() == ERROR) {
     LOGGER_EVTLESS(LogLevel::ERROR,
-                "server",
-                std::format("Failed to read connect command : {}",
-                            std::get<ERROR>(r).message));
+                   "server",
+                   std::format("Failed to read connect command : {}",
+                               std::get<ERROR>(r).message));
     return std::nullopt;
   }
   return std::get<SUCCESS>(r).value;
@@ -66,9 +66,9 @@ std::optional<ConnectedPackage> Server::parse_connected_package(
 
   if (r.index() == ERROR) {
     LOGGER_EVTLESS(LogLevel::ERROR,
-                "server",
-                std::format("Failed to read connected package : {}",
-                            std::get<ERROR>(r).message));
+                   "server",
+                   std::format("Failed to read connected package : {}",
+                               std::get<ERROR>(r).message));
     return std::nullopt;
   }
   return std::get<SUCCESS>(r).value;
@@ -81,9 +81,9 @@ std::optional<ConnectedCommand> Server::parse_connected_command(
 
   if (r.index() == ERROR) {
     LOGGER_EVTLESS(LogLevel::ERROR,
-                "server",
-                std::format("Failed to read connected command : {}",
-                            std::get<ERROR>(r).message));
+                   "server",
+                   std::format("Failed to read connected command : {}",
+                               std::get<ERROR>(r).message));
     return std::nullopt;
   }
   return std::get<SUCCESS>(r).value;
@@ -96,9 +96,9 @@ std::optional<EventBuilder> Server::parse_event_build_cmd(
 
   if (r.index() == ERROR) {
     LOGGER_EVTLESS(LogLevel::ERROR,
-                "server",
-                std::format("Failed to read event command : {}",
-                            std::get<ERROR>(r).message));
+                   "server",
+                   std::format("Failed to read event command : {}",
+                               std::get<ERROR>(r).message));
     return std::nullopt;
   }
   return std::get<SUCCESS>(r).value;
@@ -111,9 +111,9 @@ std::optional<ComponentBuilder> Server::parse_component_build_cmd(
 
   if (r.index() == ERROR) {
     LOGGER_EVTLESS(LogLevel::ERROR,
-                "server",
-                std::format("Failed to read component command : {}",
-                            std::get<ERROR>(r).message));
+                   "server",
+                   std::format("Failed to read component command : {}",
+                               std::get<ERROR>(r).message));
     return std::nullopt;
   }
   return std::get<SUCCESS>(r).value;
@@ -124,9 +124,10 @@ std::optional<HearthBeat> Server::parse_hearthbeat_cmd(ByteArray const& package)
   try {
     return HearthBeat(package);
   } catch (InvalidPackage const& e) {
-    LOGGER_EVTLESS(LogLevel::ERROR,
-                "server",
-                std::format("Failed to read component command : {}", e.what()));
+    LOGGER_EVTLESS(
+        LogLevel::ERROR,
+        "server",
+        std::format("Failed to read component command : {}", e.what()));
   }
   return std::nullopt;
 }
