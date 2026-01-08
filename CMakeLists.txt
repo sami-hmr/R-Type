@@ -76,7 +76,7 @@ target_include_directories(${SERVER_LIB}
         ${parser_SOURCE_DIR}/include
 )
 
-target_link_libraries(${SERVER_LIB} PRIVATE
+target_link_libraries(${SERVER_LIB} PUBLIC
     parser
     ${CORE_LIB}
     asio::asio
@@ -102,7 +102,7 @@ target_include_directories(${CLIENT_LIB}
         ${parser_SOURCE_DIR}/include
 )
 
-target_link_libraries(${CLIENT_LIB} PRIVATE
+target_link_libraries(${CLIENT_LIB} PUBLIC
     parser
     ${CORE_LIB}
     asio::asio
