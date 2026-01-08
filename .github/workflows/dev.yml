@@ -1,4 +1,4 @@
-name: CI - Development Branch
+name: CI - Development
 
 on:
   push:
@@ -10,126 +10,10 @@ on:
     - dev
 
 jobs:
-  lint:
-    runs-on: ubuntu-24.04
-
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-
-    - name: Install clang-format-18
-      run: |
-        sudo apt-get update -q
-        sudo apt-get install -y -q clang-format-18
-
-    - name: Check formatting with clang-format
-      id: lint-check
-      run: cmake -P cmake/lint.cmake
-
-  build-and-test:
-    needs: [lint]
-    runs-on: ubuntu-24.04
-
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        submodules: true
-
-    - name: Install latest CMake and Ninja
-      uses: lukka/get-cmake@latest
-
-    - name: Install Clang 18 and dependencies
-      run: |
-        sudo apt-get update -q
-        sudo apt-get install -y -q \
-          clang-18 libc++-18-dev libc++abi-18-dev ccache \
-          libx11-dev libxrandr-dev libxcursor-dev libxi-dev \
-          libudev-dev libgl1-mesa-dev
-        sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
-        sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
-
-    - name: Setup vcpkg
-      uses: lukka/run-vcpkg@v11
-      with:
-        vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-        vcpkgGitCommitId: 'ae8fa5ae5e6162a88e412618245809ed2aa579d9'
-
-    - name: Setup ccache
-      uses: hendrikmuhs/ccache-action@v1.2
-      with:
-        key: ${{ github.job }}-${{ runner.os }}
-
-    - name: Verify C++ compiler version
-      run: clang++ --version
-
-    - name: Run CMake with preset (configure, build, and test)
-      uses: lukka/run-cmake@v10
-      with:
-        configurePreset: 'tests'
-        buildPreset: 'tests-build'
-        testPreset: 'dev-test'
-      env:
-        CC: clang-18
-        CXX: clang++-18
-        CMAKE_C_COMPILER_LAUNCHER: ccache
-        CMAKE_CXX_COMPILER_LAUNCHER: ccache
-
-  coverage:
-    needs: [lint]
-    runs-on: ubuntu-24.04
-
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        submodules: true
-
-    - name: Install latest CMake and Ninja
-      uses: lukka/get-cmake@latest
-
-    - name: Install dependencies
-      run: |
-        sudo apt-get update -q
-        sudo apt-get install -y -q \
-          clang-18 llvm-18 libc++-18-dev libc++abi-18-dev lcov ccache \
-          libx11-dev libxrandr-dev libxcursor-dev libxi-dev \
-          libudev-dev libgl1-mesa-dev
-        sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
-        sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
-        sudo update-alternatives --install /usr/bin/llvm-cov llvm-cov /usr/bin/llvm-cov-18 100
-
-    - name: Setup vcpkg
-      uses: lukka/run-vcpkg@v11
-      with:
-        vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-        vcpkgGitCommitId: 'ae8fa5ae5e6162a88e412618245809ed2aa579d9'
-
-    - name: Setup ccache
-      uses: hendrikmuhs/ccache-action@v1.2
-      with:
-        key: ${{ github.job }}-${{ runner.os }}
-
-    - name: Verify C++ compiler version
-      run: clang++ --version
-
-    - name: Run CMake with preset (configure and build)
-      uses: lukka/run-cmake@v10
-      with:
-        configurePreset: 'tests'
-        buildPreset: 'tests-build'
-      env:
-        CC: clang-18
-        CXX: clang++-18
-        CMAKE_C_COMPILER_LAUNCHER: ccache
-        CMAKE_CXX_COMPILER_LAUNCHER: ccache
-
-    - name: Generate coverage report
-      run: cmake --build build/tests --target coverage
-
-    - name: Upload coverage to codecov
-      uses: codecov/codecov-action@v4
-      with:
-        file: build/tests/coverage.info
-        token: ${{ secrets.CODECOV_TOKEN }}
-      continue-on-error: true
-
+  ci:
+    uses: ./.github/workflows/reusable-ci.yml
+    secrets:
+      BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+    with:
+      auto-format: true
+      run-windows: true

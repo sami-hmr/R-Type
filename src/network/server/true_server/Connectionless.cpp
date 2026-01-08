@@ -19,17 +19,17 @@ void Server::handle_connectionless_packet(ConnectionlessCommand const& command,
                                           const asio::ip::udp::endpoint& sender)
 {
   LOGGER_EVTLESS(LogLevel::DEBUG,
-              "server",
-              std::format("Received connectionless packet: '{}'",
-                          command.command_code));
+                 "server",
+                 std::format("Received connectionless packet: '{}'",
+                             command.command_code));
 
   try {
     (this->*(connectionless_table.at(command.command_code)))(command.command,
                                                              sender);
   } catch (std::out_of_range const&) {
     LOGGER_EVTLESS(LogLevel::WARNING,
-                "server",
-                std::format("Unknown command: {}", command.command_code));
+                   "server",
+                   std::format("Unknown command: {}", command.command_code));
   }
 }
 
@@ -38,8 +38,8 @@ void Server::handle_getchallenge(ByteArray const& cmd,
 {
   if (!cmd.empty()) {
     LOGGER_EVTLESS(LogLevel::WARNING,
-                "server",
-                "Invalid getchallenge command: command not empty");
+                   "server",
+                   "Invalid getchallenge command: command not empty");
     return;
   }
   uint32_t challenge = generate_challenge();
@@ -89,10 +89,10 @@ void Server::handle_connect(ByteArray const& cmd,
     this->_client_mutex.unlock();
 
     LOGGER_EVTLESS(LogLevel::INFO,
-                "server",
-                std::format("Player '{}' connected as client {}",
-                            parsed->player_name,
-                            static_cast<int>(client_id)));
+                   "server",
+                   std::format("Player '{}' connected as client {}",
+                               parsed->player_name,
+                               static_cast<int>(client_id)));
 
     ByteArray pkg = type_to_byte<Byte>(CONNECTRESPONSE)
         + type_to_byte<std::uint8_t>(client_id)

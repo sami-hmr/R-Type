@@ -60,8 +60,8 @@ void Client::handle_connected_command(ConnectedCommand const& command)
     (this->*(connected_table.at(command.opcode)))(command.real_package);
   } catch (std::out_of_range const&) {
     LOGGER_EVTLESS(LogLevel::WARNING,
-                "client",
-                std::format("Unknow opcode: '{}'", command.opcode));
+                   "client",
+                   std::format("Unknow opcode: '{}'", command.opcode));
   }
 }
 
