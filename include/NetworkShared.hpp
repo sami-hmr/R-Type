@@ -254,7 +254,8 @@ struct HearthBeat
 
   HearthBeat() = default;
 
-  HearthBeat(std::vector<std::size_t> const& lost_packages): lost_packages(lost_packages)
+  HearthBeat(std::vector<std::size_t> const& lost_packages)
+      : lost_packages(lost_packages)
   {
   }
 
@@ -267,12 +268,10 @@ struct HearthBeat
 
   CHANGE_ENTITY_DEFAULT
 
-  HearthBeat(Registry& /*r*/, JsonObject const& /*e*/) // TODO
+  HearthBeat(Registry& /*r*/, JsonObject const& /*e*/)  // TODO
   {
   }
 };
-
-
 
 struct DisconnectClient
 {

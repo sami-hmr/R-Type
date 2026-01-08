@@ -104,8 +104,11 @@ void Server::reset_client_by_endpoint(asio::ip::udp::endpoint const& client)
         "DisconnectClient", DisconnectClient(c.client_id).to_bytes()));
   } else {
     std::cout << "RESET\n";
-    this->send_connected(type_to_byte<Byte>(FFGONEXT) + type_to_byte(c.next_send_sequence), c, true);
-    //std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    this->send_connected(
+        type_to_byte<Byte>(FFGONEXT) + type_to_byte(c.next_send_sequence),
+        c,
+        true);
+    // std::this_thread::sleep_for(std::chrono::milliseconds(100));
     c.acknowledge_manager.reset();
     this->transmit_event_to_server(
         EventBuilder("StateTransfer", StateTransfer(c.client_id).to_bytes()));

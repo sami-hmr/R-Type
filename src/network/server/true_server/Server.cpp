@@ -184,16 +184,16 @@ void Server::send_connected(ByteArray const& response,
                             bool prioritary)
 {
   ByteArray compressed = PacketCompresser::compress_packet(response);
-  std::vector<ByteArray> const &packages = compressed / get_package_division(compressed.size());
+  std::vector<ByteArray> const& packages =
+      compressed / get_package_division(compressed.size());
   for (std::size_t i = 0; i < packages.size(); i++) {
-      ConnectedPackage pkg(client.next_send_sequence,
-        client.acknowledge_manager.get_acknowledge(),
-        (i + 1) == packages.size(),
-        prioritary,
-        packages[i]
-      );
-      client.acknowledge_manager.register_sent_package(pkg);
-      client.next_send_sequence += 1;
-      this->send(pkg.to_bytes(), client.endpoint);
+    ConnectedPackage pkg(client.next_send_sequence,
+                         client.acknowledge_manager.get_acknowledge(),
+                         (i + 1) == packages.size(),
+                         prioritary,
+                         packages[i]);
+    client.acknowledge_manager.register_sent_package(pkg);
+    client.next_send_sequence += 1;
+    this->send(pkg.to_bytes(), client.endpoint);
   }
 }

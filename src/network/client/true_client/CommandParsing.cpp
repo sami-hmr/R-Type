@@ -143,10 +143,9 @@ std::optional<ResetClient> Client::parse_reset_cmd(ByteArray const& package)
   try {
     return ResetClient(package);
   } catch (InvalidPackage const& e) {
-    NETWORK_LOGGER(
-        "server",
-        LogLevel::ERROR,
-        std::format("Failed to read reset command : {}", e.what()));
+    NETWORK_LOGGER("server",
+                   LogLevel::ERROR,
+                   std::format("Failed to read reset command : {}", e.what()));
   }
   return std::nullopt;
 }

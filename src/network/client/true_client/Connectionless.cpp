@@ -1,4 +1,5 @@
 #include <system_error>
+
 #include "NetworkCommun.hpp"
 #include "NetworkShared.hpp"
 #include "ServerCommands.hpp"
@@ -20,9 +21,9 @@ void Client::send(ByteArray const& command, bool hearthbeat)
 
   PacketCompresser::encrypt(pkg);
   try {
-      _socket.send_to(asio::buffer(pkg + PROTOCOL_EOF), _server_endpoint);
-  } catch (std::system_error const &e) {
-      std::cout << "system error: " << e.what() << "\n";
+    _socket.send_to(asio::buffer(pkg + PROTOCOL_EOF), _server_endpoint);
+  } catch (std::system_error const& e) {
+    std::cout << "system error: " << e.what() << "\n";
   }
 }
 

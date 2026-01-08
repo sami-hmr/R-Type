@@ -15,11 +15,12 @@
 #define MAX_PLAYERS 4
 #define BUFFER_SIZE 9092
 
-static inline std::size_t get_package_division(std::size_t size) {
-    std::size_t const max = BUFFER_SIZE - sizeof(ConnectedPackage);
-    std::size_t const div = size / max;
+static inline std::size_t get_package_division(std::size_t size)
+{
+  std::size_t const max = BUFFER_SIZE - sizeof(ConnectedPackage);
+  std::size_t const div = size / max;
 
-    return div + 1;
+  return div + 1;
 }
 
 #define NETWORK_LOGGER(category, level, message) \

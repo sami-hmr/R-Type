@@ -142,9 +142,9 @@ ByteArray operator+(ByteArray first, ByteArray const& second);
  */
 ByteArray& operator+=(ByteArray& first, ByteArray const& second);
 
-std::vector<ByteArray> operator/(ByteArray const &, std::size_t);
-ByteArray operator^(ByteArray const &, std::size_t);
-ByteArray &operator^=(ByteArray &, std::size_t);
+std::vector<ByteArray> operator/(ByteArray const&, std::size_t);
+ByteArray operator^(ByteArray const&, std::size_t);
+ByteArray& operator^=(ByteArray&, std::size_t);
 
 /**
  * @brief Joins multiple ByteArrays into one
