@@ -44,7 +44,8 @@ void Client::compute_connected_package(ConnectedPackage const& package)
   if (!package.end_of_content) {
     return;
   }
-  auto const& parsed = parse_connected_command(PacketCompresser::uncompress_packet(this->_receive_frag_buffer));
+  auto const& parsed = parse_connected_command(
+      PacketCompresser::uncompress_packet(this->_receive_frag_buffer));
   this->_receive_frag_buffer.clear();
   if (!parsed) {
     return;
@@ -58,9 +59,9 @@ void Client::handle_connected_command(ConnectedCommand const& command)
     //   std::cout << (int)command.opcode << std::endl;
     (this->*(connected_table.at(command.opcode)))(command.real_package);
   } catch (std::out_of_range const&) {
-    NETWORK_LOGGER("client",
-                   LogLevel::Waring,
-                   std::format("Unknow opcode: '{}'", command.opcode));
+    LOGGER_EVTLESS(LogLevel::WARNING,
+                "client",
+                std::format("Unknow opcode: '{}'", command.opcode));
   }
 }
 
