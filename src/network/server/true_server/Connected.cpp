@@ -53,9 +53,9 @@ void Server::handle_connected_command(ConnectedCommand const& command,
   try {
     (this->*(connected_table.at(command.opcode)))(command.real_package, sender);
   } catch (std::out_of_range const&) {
-    NETWORK_LOGGER("server",
-                   LogLevel::Waring,
-                   std::format("Unknow opcode: '{}'", command.opcode));
+    LOGGER_EVTLESS(LogLevel::WARNING,
+                "server",
+                std::format("Unknow opcode: '{}'", command.opcode));
   }
 }
 

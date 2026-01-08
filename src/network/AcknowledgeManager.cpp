@@ -53,9 +53,9 @@ std::vector<ByteArray> AcknowledgeManager::get_packages_to_send(
         package.send_delta = now + AcknowledgeManager::sent_delta;
       }
     } catch (std::out_of_range const&) {
-      NETWORK_LOGGER(
+      LOGGER_EVTLESS(
+          LogLevel::WARNING,
           "acknowledge",
-          "WARING",
           std::format("Package {} does not exist or has been approuved already",
                       it));
     }

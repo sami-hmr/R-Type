@@ -368,6 +368,7 @@
 
 #include "Json/JsonParser.hpp"
 #include "ecs/Registry.hpp"
+#include "plugin/events/LogMacros.hpp"
 
 /**
  * @struct is_in_json_variant
@@ -492,12 +493,18 @@ std::optional<std::reference_wrapper<const T>> get_ref(Registry& r,
         return r.get_hooked_value<T>(comp, value);
       }
     } catch (std::bad_any_cast const&) {
-      std::cerr << std::format(
-          R"(Error geting hooked value "{}": Invalid type\n)", hook);
+      LOGGER_EVTLESS(
+          LogLevel::ERROR,
+          "Hooks",
+          std::format(R"(Error geting hooked value "{}": Invalid type\n)",
+                      hook));
       return std::nullopt;
     } catch (std::out_of_range const&) {
-      std::cerr << std::format(
-          R"(Error geting hooked value "{}": Invalid hook\n)", hook);
+      LOGGER_EVTLESS(
+          LogLevel::ERROR,
+          "Hooks",
+          std::format(R"(Error geting hooked value "{}": Invalid hook\n)",
+                      hook));
       return std::nullopt;
     }
   } catch (std::bad_variant_access const&) {  // NOLINT intentional fallthrought
@@ -506,7 +513,7 @@ std::optional<std::reference_wrapper<const T>> get_ref(Registry& r,
   if constexpr (is_in_json_variant_v<T>) {
     try {
       return std::reference_wrapper<const T>(std::get<T>(value));
-    } catch (...) {
+    } catch (std::bad_variant_access const&) {
       return std::nullopt;
     }
   }
@@ -588,7 +595,13 @@ std::optional<T> get_value_copy(Registry& r,
     try {
       const JsonObject& obj = std::get<JsonObject>(object.at(key).value);
       return T(obj, std::forward<Args>(args)...);
-    } catch (...) {
+    } catch (std::bad_variant_access const&) {
+      LOGGER_EVTLESS(LogLevel::ERROR,
+                     "Hooks",
+                     "hooked value construction via jsonobject failed");
+    } catch (std::out_of_range const&) {
+      LOGGER_EVTLESS(
+          LogLevel::ERROR, "Hooks", "hooked value lookup in object failed");
     }
   }
 
@@ -698,12 +711,18 @@ std::optional<T> get_value(Registry& r,
         if (hooked_val) {
           return hooked_val->get();
         }
-      } catch (...) {
+      } catch (std::out_of_range const&) {
+        LOGGER_EVTLESS(
+            LogLevel::ERROR,
+            "Hooks",
+            std::format(
+                R"(Error geting hooked value "{}": couldn't find the hook)",
+                value_str));
       }
       return T {};
-    } else if (value_str.starts_with('%')) {
+    }
+    if (value_str.starts_with('%')) {
       std::string comp = value_str.substr(1, value_str.find(':') - 1);
-      ;
       std::string value = value_str.substr(value_str.find(':') + 1);
       auto hooked_val = r.get_hooked_value<T>(comp, value);
       if (hooked_val) {
@@ -748,7 +767,11 @@ inline bool is_hook(JsonObject const& object, std::string const& key)
   try {
     std::string value = std::get<std::string>(object.at(key).value);
     return value.starts_with('#');
-  } catch (...) {
+  } catch (std::bad_variant_access const&) {
+    // Value is not a string
+    return false;
+  } catch (std::out_of_range const&) {
+    // Key not found
     return false;
   }
 }
