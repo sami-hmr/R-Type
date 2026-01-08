@@ -1,0 +1,148 @@
+name: Reusable CI Workflow
+
+on:
+  workflow_call:
+    inputs:
+      auto-format:
+        description: 'Auto-format code with clang-format-18'
+        required: false
+        type: boolean
+        default: false
+      run-windows:
+        description: 'Run Windows build'
+        required: false
+        type: boolean
+        default: false
+    secrets:
+      BOT_TOKEN:
+        description: 'Optional: PAT for triggering workflows after auto-format'
+        required: false
+
+jobs:
+  format:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.BOT_TOKEN || secrets.GITHUB_TOKEN }}
+
+    - name: Cache apt packages
+      uses: awalsh128/cache-apt-pkgs-action@latest
+      with:
+        packages: clang-format-18
+        version: 1.0
+
+    - name: Check/Apply formatting with clang-format-18
+      run: |
+        if [ "${{ inputs.auto-format }}" == "true" ]; then
+          cmake -D FIX=YES -P cmake/lint.cmake
+          if [ -n "$(git status --porcelain)" ]; then
+            git config --local user.email "github-actions[bot]@users.noreply.github.com"
+            git config --local user.name "github-actions[bot]"
+            git add -A
+            git commit -m "style: auto-format with clang-format-18"
+            git push
+          fi
+        else
+          cmake -P cmake/lint.cmake
+        fi
+
+  test-and-coverage:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+
+    - name: Install latest CMake and Ninja
+      uses: lukka/get-cmake@latest
+
+    - name: Cache apt packages
+      uses: awalsh128/cache-apt-pkgs-action@latest
+      with:
+        packages: clang-18 llvm-18 libc++-18-dev libc++abi-18-dev lcov ccache libx11-dev libxrandr-dev libxcursor-dev libxi-dev libudev-dev libgl1-mesa-dev
+        version: 1.0
+
+    - name: Setup compiler alternatives
+      run: |
+        sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
+        sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
+        sudo update-alternatives --install /usr/bin/llvm-cov llvm-cov /usr/bin/llvm-cov-18 100
+
+    - name: Setup vcpkg
+      uses: lukka/run-vcpkg@v11
+      with:
+        vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+        vcpkgGitCommitId: 'ae8fa5ae5e6162a88e412618245809ed2aa579d9'
+
+    - name: Setup ccache
+      uses: hendrikmuhs/ccache-action@v1.2
+      with:
+        key: test-coverage-${{ runner.os }}-${{ github.ref_name }}
+        restore-keys: |
+          test-coverage-${{ runner.os }}-
+
+    - name: Configure, build, and test
+      uses: lukka/run-cmake@v10
+      with:
+        configurePreset: 'tests'
+        buildPreset: 'tests-build'
+        testPreset: 'dev-test'
+      env:
+        CC: clang-18
+        CXX: clang++-18
+        CMAKE_C_COMPILER_LAUNCHER: ccache
+        CMAKE_CXX_COMPILER_LAUNCHER: ccache
+
+    - name: Generate coverage report
+      run: cmake --build build/tests --target coverage
+
+    - name: Upload coverage to codecov
+      uses: codecov/codecov-action@v4
+      with:
+        file: build/tests/coverage.info
+        token: ${{ secrets.CODECOV_TOKEN }}
+      continue-on-error: true
+
+  build-windows:
+    if: inputs.run-windows
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: true
+
+    - name: Install latest CMake and Ninja
+      uses: lukka/get-cmake@latest
+
+    - name: Setup vcpkg
+      uses: lukka/run-vcpkg@v11
+      with:
+        vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+        vcpkgGitCommitId: 'ae8fa5ae5e6162a88e412618245809ed2aa579d9'
+
+    - name: Setup MSVC
+      uses: ilammy/msvc-dev-cmd@v1
+
+    - name: Setup ccache
+      uses: hendrikmuhs/ccache-action@v1.2
+      with:
+        key: windows-${{ runner.os }}-${{ github.ref_name }}
+        restore-keys: |
+          windows-${{ runner.os }}-
+        variant: sccache
+
+    - name: Configure and build
+      uses: lukka/run-cmake@v10
+      with:
+        configurePreset: 'release'
+        buildPreset: 'release-build'
+      env:
+        CMAKE_C_COMPILER_LAUNCHER: sccache
+        CMAKE_CXX_COMPILER_LAUNCHER: sccache
