@@ -18,8 +18,8 @@ const std::unordered_map<std::uint8_t,
 void Server::handle_connectionless_packet(ConnectionlessCommand const& command,
                                           const asio::ip::udp::endpoint& sender)
 {
-  NETWORK_LOGGER("server",
-                 std::uint8_t(LogLevel::DEBUG),
+  LOGGER_EVTLESS(LogLevel::DEBUG,
+                 "server",
                  std::format("Received connectionless packet: '{}'",
                              command.command_code));
 
@@ -27,8 +27,8 @@ void Server::handle_connectionless_packet(ConnectionlessCommand const& command,
     (this->*(connectionless_table.at(command.command_code)))(command.command,
                                                              sender);
   } catch (std::out_of_range const&) {
-    NETWORK_LOGGER("server",
-                   std::uint8_t(LogLevel::WARNING),
+    LOGGER_EVTLESS(LogLevel::WARNING,
+                   "server",
                    std::format("Unknown command: {}", command.command_code));
   }
 }
@@ -37,8 +37,8 @@ void Server::handle_getchallenge(ByteArray const& cmd,
                                  const asio::ip::udp::endpoint& sender)
 {
   if (!cmd.empty()) {
-    NETWORK_LOGGER("server",
-                   std::uint8_t(LogLevel::WARNING),
+    LOGGER_EVTLESS(LogLevel::WARNING,
+                   "server",
                    "Invalid getchallenge command: command not empty");
     return;
   }
@@ -49,7 +49,8 @@ void Server::handle_getchallenge(ByteArray const& cmd,
   client.endpoint = sender;
   client.challenge = challenge;
   client.state = ClientState::CHALLENGING;
-  client.last_ping = std::chrono::steady_clock::now().time_since_epoch().count();
+  client.last_ping =
+      std::chrono::steady_clock::now().time_since_epoch().count();
 
   this->_client_mutex.lock();
   _clients.push_back(client);
@@ -75,8 +76,7 @@ void Server::handle_connect(ByteArray const& cmd,
     if (client.state != ClientState::CHALLENGING
         || client.challenge != parsed->challenge)
     {
-      NETWORK_LOGGER(
-          "server", std::uint8_t(LogLevel::WARNING), "Invalid challenge");
+      LOGGER_EVTLESS(LogLevel::WARNING, "server", "Invalid challenge");
       this->_client_mutex.unlock();
       return;
     }
@@ -88,8 +88,8 @@ void Server::handle_connect(ByteArray const& cmd,
     client.state = ClientState::CONNECTED;
     this->_client_mutex.unlock();
 
-    NETWORK_LOGGER("server",
-                   std::uint8_t(LogLevel::INFO),
+    LOGGER_EVTLESS(LogLevel::INFO,
+                   "server",
                    std::format("Player '{}' connected as client {}",
                                parsed->player_name,
                                static_cast<int>(client_id)));
@@ -101,9 +101,13 @@ void Server::handle_connect(ByteArray const& cmd,
     send(pkg, sender);
     this->transmit_event_to_server(
         EventBuilder("NewConnection", NewConnection(client_id).to_bytes()));
-  } catch (ClientNotFound&) {
-    NETWORK_LOGGER(
-        "server", std::uint8_t(LogLevel::WARNING), "Invalid challenge");
+  } catch (ClientNotFound const& e) {
+    LOGGER_EVTLESS(
+        LogLevel::WARNING,
+        "server",
+        std::format("Invalid challenge during connect: {} (context: {})",
+                    e.what(),
+                    e.format_context()));
     return;
   }
 }

@@ -3,6 +3,7 @@
 #include "NetworkCommun.hpp"
 #include "NetworkShared.hpp"
 #include "ServerCommands.hpp"
+#include "network/PacketCompresser.hpp"
 #include "network/client/Client.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/events/NetworkEvents.hpp"
@@ -41,9 +42,10 @@ void Client::compute_connected_package(ConnectedPackage const& package)
 {
   this->_receive_frag_buffer += package.real_package;
   if (!package.end_of_content) {
-      return;
+    return;
   }
-  auto const& parsed = parse_connected_command(this->_receive_frag_buffer);
+  auto const& parsed = parse_connected_command(
+      PacketCompresser::uncompress_packet(this->_receive_frag_buffer));
   this->_receive_frag_buffer.clear();
   if (!parsed) {
     return;
@@ -57,8 +59,8 @@ void Client::handle_connected_command(ConnectedCommand const& command)
     //   std::cout << (int)command.opcode << std::endl;
     (this->*(connected_table.at(command.opcode)))(command.real_package);
   } catch (std::out_of_range const&) {
-    NETWORK_LOGGER("client",
-                   LogLevel::Waring,
+    LOGGER_EVTLESS(LogLevel::WARNING,
+                   "client",
                    std::format("Unknow opcode: '{}'", command.opcode));
   }
 }
@@ -85,18 +87,19 @@ void Client::handle_event_creation(ByteArray const& package)
 
 void Client::send_connected(ByteArray const& response, bool prioritary)
 {
-  std::vector<ByteArray> const &packages = response / get_package_division(response.size());
+  ByteArray compressed = PacketCompresser::compress_packet(response);
+  std::vector<ByteArray> const& packages =
+      compressed / get_package_division(compressed.size());
   for (std::size_t i = 0; i < packages.size(); i++) {
-      ConnectedPackage pkg(this->_index_sequence,
-        this->_acknowledge_manager.get_acknowledge(),
-        (i + 1) == packages.size(),
-        prioritary,
-        packages[i]
-      );
+    ConnectedPackage pkg(this->_index_sequence,
+                         this->_acknowledge_manager.get_acknowledge(),
+                         (i + 1) == packages.size(),
+                         prioritary,
+                         packages[i]);
 
-      this->_acknowledge_manager.register_sent_package(pkg);
-      this->_index_sequence += 1;
-      this->send(pkg.to_bytes());
+    this->_acknowledge_manager.register_sent_package(pkg);
+    this->_index_sequence += 1;
+    this->send(pkg.to_bytes());
   }
 }
 
@@ -119,7 +122,7 @@ void Client::reset_acknowledge(ByteArray const& package)
   auto parsed = parse_reset_cmd(package);
 
   if (!parsed) {
-      return;
+    return;
   }
   std::cout << "RESET" << std::endl;
   this->transmit_event(EventBuilder("ResetClient", package));

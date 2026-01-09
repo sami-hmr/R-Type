@@ -80,3 +80,20 @@ std::vector<ByteArray> operator/(ByteArray const& array, std::size_t nb)
   }
   return result;
 }
+
+ByteArray operator^(ByteArray const& data, std::size_t nb)
+{
+  ByteArray r(data.size());
+  for (std::size_t i = 0; i < data.size(); i++) {
+    r[i] = data[i] ^ nb;
+  }
+  return r;
+}
+
+ByteArray& operator^=(ByteArray& data, std::size_t nb)
+{
+  for (auto& i : data) {
+    i = i ^ nb;
+  }
+  return data;
+}

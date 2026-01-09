@@ -4,6 +4,7 @@
 #include <catch2/catch_test_macros.hpp>
 
 #include "TwoWayMap.hpp"
+#include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/SparseArray.hpp"
 #include "plugin/Byte.hpp"
@@ -234,6 +235,7 @@ TEST_CASE("Registry - multiple components per entity", "[registry]")
 TEST_CASE("Registry - add_system and runSystems", "[registry]")
 {
   Registry reg;
+  EventManager event_manager;
   reg.register_component<Position>("Position");
 
   auto entity = reg.spawn_entity();
@@ -245,11 +247,11 @@ TEST_CASE("Registry - add_system and runSystems", "[registry]")
       [&system_runs](Registry& /*r*/, SparseArray<Position>& /*positions*/)
       { system_runs++; });
 
-  reg.run_systems();
+  reg.run_systems(event_manager);
 
   REQUIRE(system_runs == 1);
 
-  reg.run_systems();
+  reg.run_systems(event_manager);
 
   REQUIRE(system_runs == 2);
 }

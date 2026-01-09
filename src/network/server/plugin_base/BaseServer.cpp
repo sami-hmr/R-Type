@@ -21,16 +21,16 @@ BaseServer::BaseServer(std::string const& name,
     : APlugin(name, r, em, l, {}, {})
 {
   SUBSCRIBE_EVENT(ServerLaunching, {
-      _running = true;
+    _running = true;
 
-      this->_server_class.emplace(event,
-                                  _components_to_update,
-                                  _event_queue_to_client,
-                                  _event_queue,
-                                  _running);
-      LOGGER("server",
-             LogLevel::INFO,
-             std::format("Server started on port {}", event.port));
+    this->_server_class.emplace(event,
+                                _components_to_update,
+                                _event_queue_to_client,
+                                _event_queue,
+                                _running);
+    LOGGER("server",
+           LogLevel::INFO,
+           std::format("Server started on port {}", event.port));
 
     this->_actual_server = std::thread(&BaseServer::launch_server, this);
   })
@@ -74,15 +74,18 @@ BaseServer::BaseServer(std::string const& name,
     this->_server_class->disconnect_client(event.client);
   }, 2)
 
-  this->_registry.get().add_system([this](Registry& /*r*/) {
-      if (!this->_server_class) {
+  this->_registry.get().add_system(
+      [this](Registry& /*r*/)
+      {
+        if (!this->_server_class) {
           return;
-      }
+        }
 
-      for (auto const &it : this->_server_class->watch_disconected_clients()) {
+        for (auto const& it : this->_server_class->watch_disconected_clients())
+        {
           this->_event_manager.get().emit<DisconnectClient>(it);
-      }
-  });
+        }
+      });
 
   this->_registry.get().add_system(
       [this](Registry& /*r*/)
@@ -132,7 +135,7 @@ BaseServer::~BaseServer()
 {
   _running = false;
   if (_server_class) {
-      this->_server_class->close();
+    this->_server_class->close();
   }
   if (this->_actual_server.joinable()) {
     this->_actual_server.join();

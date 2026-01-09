@@ -24,6 +24,11 @@ EntityLoader::EntityLoader(Registry& registry, EventManager& em)
 {
 }
 
+bool EntityLoader::is_plugin_loaded(std::string const& plugin)
+{
+  return _plugins.contains(plugin);
+}
+
 void EntityLoader::load(std::string const& directory)
 {
   try {
