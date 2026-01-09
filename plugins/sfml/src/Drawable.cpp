@@ -41,6 +41,7 @@ static void update(SpriteDrawable& drawable)
 
 static void update(TextDrawable& drawable)
 {
+  drawable.text.get().setString(drawable.text_str);
   drawable.text.get().setFont(drawable.font.get());
   drawable.text.get().setCharacterSize(drawable.size);
   sf::FloatRect text_rect = drawable.text.get().getLocalBounds();
