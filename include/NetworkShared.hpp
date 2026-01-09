@@ -3,10 +3,10 @@
 #include <cstddef>
 #include <mutex>
 #include <optional>
+#include <ostream>
 #include <queue>
 #include <semaphore>
 #include <string>
-#include <tuple>
 #include <unordered_map>
 #include <vector>
 
@@ -18,7 +18,7 @@
 
 struct ComponentBuilder
 {
-  std::size_t entity;
+  std::size_t entity = 0;
   std::string id;
   ByteArray data;
 
@@ -97,7 +97,7 @@ struct ComponentBuilderId
   CHANGE_ENTITY_DEFAULT
 
   ComponentBuilderId(Registry& r, JsonObject const& e)
-      : client(get_value_copy<std::size_t>(r, e, "client").value())
+      : client(get_value_copy<std::size_t>(r, e, "client"))
       , component(get_value_copy<std::size_t>(r, e, "entity").value(),
                   get_value_copy<std::string>(r, e, "event_id").value(),
                   get_value_copy<ByteArray>(r, e, "data").value())
@@ -109,7 +109,7 @@ inline Parser<ComponentBuilder> parse_component_builder()
 {
   return apply(
       [](std::size_t entity, std::string const& id, ByteArray const& data)
-      { return ComponentBuilder(entity, std::move(id), std::move(data)); },
+      { return ComponentBuilder(entity, id, data); },
       parseByte<std::size_t>(),
       parseByteString(),
       parseByte<Byte>().many());
@@ -187,7 +187,7 @@ struct EventBuilderId
   CHANGE_ENTITY_DEFAULT
 
   EventBuilderId(Registry& r, JsonObject const& e)
-      : client(get_value_copy<std::size_t>(r, e, "client").value())
+      : client(get_value_copy<std::size_t>(r, e, "client"))
       , event(get_value_copy<std::string>(r, e, "event_id").value(),
               get_value_copy<ByteArray>(r, e, "data").value())
   {
@@ -196,7 +196,7 @@ struct EventBuilderId
 
 struct NewConnection
 {
-  std::size_t client;
+  std::size_t client = 0;
 
   NewConnection() = default;
 
@@ -221,8 +221,8 @@ struct NewConnection
 
 struct PlayerCreated
 {
-  std::size_t server_index;
-  std::size_t client_id;
+  std::size_t server_index = 0;
+  std::size_t client_id = 0;
 
   PlayerCreated() = default;
 
@@ -243,28 +243,91 @@ struct PlayerCreated
   CHANGE_ENTITY_DEFAULT
 
   PlayerCreated(Registry& r, JsonObject const& e)
-      : server_index(get_value_copy<std::size_t>(r, e, "server_index").value())
+      : server_index(get_value_copy<int>(r, e, "server_index").value())
   {
   }
 };
 
+struct NetworkStatus
+{
+  enum PacketLossLevel : std::uint8_t
+  {
+    NONE,
+    LOW,
+    MEDIUM,
+    HIGH,
+  };
+
+  std::size_t ping_in_millisecond = 0;
+  PacketLossLevel packet_loss = NONE;
+
+  NetworkStatus() = default;
+
+  NetworkStatus(std::size_t ping, PacketLossLevel pl)
+      : ping_in_millisecond(ping)
+      , packet_loss(pl)
+  {
+  }
+
+  DEFAULT_BYTE_CONSTRUCTOR(
+      NetworkStatus,
+      ([](std::size_t p, std::uint8_t pl)
+       { return NetworkStatus(p, static_cast<PacketLossLevel>(pl)); }),
+      parseByte<std::size_t>(),
+      parseByte<std::uint8_t>())
+
+  DEFAULT_SERIALIZE(type_to_byte(ping_in_millisecond),
+                    type_to_byte(packet_loss))
+
+  CHANGE_ENTITY_DEFAULT
+
+  NetworkStatus(Registry& r, JsonObject const& e)
+      : ping_in_millisecond(get_value_copy<int>(r, e, "ping").value())
+      , packet_loss(static_cast<PacketLossLevel>(
+            get_value_copy<int>(r, e, "packet_loss").value()))
+  {
+  }
+};
+
+inline std::ostream& operator<<(std::ostream& os,
+                                NetworkStatus::PacketLossLevel level)
+{
+  switch (level) {
+    case NetworkStatus::NONE:
+      return os << "NONE";
+    case NetworkStatus::LOW:
+      return os << "LOW";
+    case NetworkStatus::MEDIUM:
+      return os << "MEDIUM";
+    case NetworkStatus::HIGH:
+      return os << "HIGH";
+  }
+  return os;
+}
+
 struct HearthBeat
 {
+  std::size_t send_timestamp = 0;
   std::vector<std::size_t> lost_packages;
 
   HearthBeat() = default;
 
-  HearthBeat(std::vector<std::size_t> const& lost_packages)
-      : lost_packages(lost_packages)
+  HearthBeat(std::size_t send_timestamp,
+             std::vector<std::size_t> const& lost_packages)
+      : send_timestamp(send_timestamp)
+      , lost_packages(lost_packages)
   {
   }
 
   DEFAULT_BYTE_CONSTRUCTOR(HearthBeat,
-                           ([](std::vector<std::size_t> const& lp)
-                            { return HearthBeat(lp); }),
+                           ([](std::size_t st,
+                               std::vector<std::size_t> const& lp)
+                            { return HearthBeat(st, lp); }),
+                           parseByte<std::size_t>(),
                            parseByteArray(parseByte<std::size_t>()))
 
-  DEFAULT_SERIALIZE(vector_to_byte(lost_packages, TTB_FUNCTION<std::size_t>()))
+  DEFAULT_SERIALIZE(type_to_byte(send_timestamp),
+                    vector_to_byte(lost_packages, TTB_FUNCTION<std::size_t>()))
 
   CHANGE_ENTITY_DEFAULT
 
@@ -275,7 +338,7 @@ struct HearthBeat
 
 struct DisconnectClient
 {
-  std::size_t client;
+  std::size_t client = 0;
 
   DisconnectClient() = default;
 
@@ -351,8 +414,8 @@ struct SharedMap
 
 struct PlayerCreation
 {
-  std::size_t server_index;
-  std::size_t server_id;
+  std::size_t server_index = 0;
+  std::size_t server_id = 0;
 
   PlayerCreation() = default;
 

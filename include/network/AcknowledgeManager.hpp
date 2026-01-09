@@ -21,6 +21,7 @@ public:
   // RECEIVER
   //////////////////
   std::size_t get_acknowledge() const;
+  std::size_t get_last_received() const;
   std::vector<std::size_t> get_lost_packages();
   void register_received_package(ConnectedPackage const&);
 

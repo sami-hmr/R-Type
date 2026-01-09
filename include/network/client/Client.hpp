@@ -10,9 +10,11 @@
 #include <atomic>
 #include <cstdint>
 #include <functional>
+#include <mutex>
 #include <string>
 #include <thread>
 #include <unordered_map>
+#include <vector>
 
 #include <asio/io_context.hpp>
 #include <asio/ip/udp.hpp>
@@ -118,11 +120,15 @@ private:
   void send_hearthbeat();
   std::thread _hearthbeat;
   static const std::size_t hearthbeat_delta = 1000000000 / 15;
+  static const std::size_t rapport_cooldown = 1000000000;
 
   std::atomic<std::size_t> _last_ping;
-  static const std::size_t disconnection_timeout = 5000000000;  // 5 seconds
+  static const std::size_t disconnection_timeout = 15000000000;  // 15 seconds
 
   std::size_t _index_sequence = 1;
   std::mutex _acknowledge_mutex;
   AcknowledgeManager _acknowledge_manager;
+
+  std::mutex _latency_mutex;
+  std::vector<std::size_t> _latencies;
 };
