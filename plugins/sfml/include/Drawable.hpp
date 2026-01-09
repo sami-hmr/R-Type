@@ -6,6 +6,7 @@
 
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
@@ -140,8 +141,21 @@ struct BarDrawable
   }
 };
 
+struct SliderDrawable
+{
+  std::reference_wrapper<sf::RectangleShape> rectangle;
+  std::reference_wrapper<sf::CircleShape> circle;
+  sf::Vector2f pos;
+  sf::Vector2f circle_pos;
+  sf::Vector2f size;
+  Color bar_color;
+  Color circle_color;
+  float radius;
+  int z_index;
+};
+
 using DrawableVariant = std::
-    variant<AnimatedSpriteDrawable, SpriteDrawable, TextDrawable, BarDrawable>;
+    variant<AnimatedSpriteDrawable, SpriteDrawable, TextDrawable, BarDrawable, SliderDrawable>;
 
 struct DrawableItem
 {

@@ -49,7 +49,8 @@ void Server::handle_getchallenge(ByteArray const& cmd,
   client.endpoint = sender;
   client.challenge = challenge;
   client.state = ClientState::CHALLENGING;
-  client.last_ping = std::chrono::steady_clock::now().time_since_epoch().count();
+  client.last_ping =
+      std::chrono::steady_clock::now().time_since_epoch().count();
 
   this->_client_mutex.lock();
   _clients.push_back(client);

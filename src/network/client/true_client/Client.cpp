@@ -59,7 +59,7 @@ Client::~Client()
   if (this->_hearthbeat.joinable()) {
     this->_hearthbeat.join();
   }
-  //this->_socket.send_to(asio::buffer(""), this->_client_endpoint);
+  // this->_socket.send_to(asio::buffer(""), this->_client_endpoint);
   if (_socket.is_open()) {
     _socket.close();
   }

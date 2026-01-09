@@ -22,10 +22,8 @@ void SFMLRenderer::background_system(Registry& r)
     if (!draw.enabled) {
       continue;
     }
-    std::cout <<  "BACKGROUND" << index << std::endl;
     auto facing = this->_registry.get().get_components<Facing>();
     bool has = facing.size() > index && facing[index].has_value();
-    std::cout << "has facing : " << (has ? "yes" : "no") << "\n";
     if (background.parallax.active) {
       double dt = r.clock().delta_seconds();
       background.parallax.pos.x += background.parallax.speed.x * dt;

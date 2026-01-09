@@ -14,10 +14,6 @@
           "name": "rtype_client",
           "config": {}
         },
-        // {
-        //   "name": "cli",
-        //   "config": {}
-        // },
         {
           "name": "controller",
           "config": {}
@@ -116,6 +112,37 @@
       "state": "active",
       "plugins": [],
       "entities": [
+        {
+          "ui:Drawable": {},
+          "moving:Position": {
+            "pos": {
+              "x": -0.0,
+              "y": -0.0
+            }
+          },
+          "ui:Slider": {
+            "size": {
+              "width": 0.2,
+              "height": 0.02
+            },
+            "bar_color": {
+              "a": 255,
+              "r": 255,
+              "g": 255,
+              "b": 255
+            },
+            "circle_color": {
+              "a": 200,
+              "r": 100,
+              "g": 100,
+              "b": 250
+            },
+            "min_value": -1.0,
+            "max_value": 1.0,
+            "current_value": 0.0,
+            "step": 0.1
+          }
+        },
         {
           "moving:Position": {
             "pos": {

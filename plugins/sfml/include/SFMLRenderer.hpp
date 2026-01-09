@@ -5,6 +5,7 @@
 #include <utility>
 #include <vector>
 
+#include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
@@ -39,7 +40,7 @@
 class SFMLRenderer : public APlugin
 {
 public:
-  SFMLRenderer(Registry& r, EventManager &em, EntityLoader& l);
+  SFMLRenderer(Registry& r, EventManager& em, EntityLoader& l);
   ~SFMLRenderer() override;
 
   static constexpr sf::Vector2u window_size = {1080, 1080};
@@ -52,19 +53,46 @@ private:
   sf::Font& load_font(std::string const& path);
 
   void handle_events();
-  void mouse_events(const sf::Event &events);
+  void mouse_events(const sf::Event& events);
   void handle_resize();
   Vector2D screen_to_world(sf::Vector2i screen_pos);
   void unified_render_system(Registry& r);
   void background_system(Registry& r);
-  void camera_system(Registry &r);
+  void camera_system(Registry& r);
   void button_system(Registry& r);
+  void slider_system(Registry& r) const; 
   void display();
+
+  void render_sprites(Registry& r,
+                      std::vector<DrawableItem>& all_drawables,
+                      float min_dimension,
+                      const sf::Vector2u& window_size,
+                      const sf::Vector2f& view_size,
+                      const sf::Vector2f& view_pos);
+  void render_texts(Registry& r,
+                    std::vector<DrawableItem>& all_drawables,
+                    float min_dimension,
+                    const sf::Vector2u& window_size);
+  void render_bars(Registry& r,
+                   std::vector<DrawableItem>& all_drawables,
+                   float min_dimension,
+                   const sf::Vector2u& window_size);
+  void render_animated_sprites(Registry& r,
+                               std::vector<DrawableItem>& all_drawables,
+                               float min_dimension,
+                               const sf::Vector2u& window_size,
+                               const sf::Vector2f& view_size,
+                               const sf::Vector2f& view_pos);
+  void render_sliders(Registry& r,
+                      std::vector<DrawableItem>& all_drawables,
+                      float min_dimension,
+                      const sf::Vector2u& window_size);
 
   std::optional<Key> sfml_key_to_key(sf::Keyboard::Key sfml_key);
 
   sf::RenderWindow _window;
   std::chrono::time_point<std::chrono::high_resolution_clock> _last_update;
+  Vector2D _mouse_pos;
 
   std::unordered_map<std::string, sf::Texture> _textures;
   std::unordered_map<std::string, sf::Font> _fonts;
@@ -72,6 +100,7 @@ private:
   std::optional<sf::Sprite> _sprite;
   std::optional<sf::Text> _text;
   sf::RectangleShape _rectangle;
+  sf::CircleShape _circle;
 
   sf::View _view;
   bool _camera_initialized = false;
@@ -95,4 +124,63 @@ private:
 
   KeyPressedEvent _key_pressed;
   KeyReleasedEvent _key_released;
+};
+
+static const std::map<sf::Keyboard::Key, Key> key_association = {
+    {sf::Keyboard::Key::Enter, Key::ENTER},
+    {sf::Keyboard::Key::Left, Key::LEFT},
+    {sf::Keyboard::Key::Right, Key::RIGHT},
+    {sf::Keyboard::Key::Down, Key::DOWN},
+    {sf::Keyboard::Key::Up, Key::UP},
+    {sf::Keyboard::Key::Escape, Key::ECHAP},
+    {sf::Keyboard::Key::Backspace, Key::DELETE},
+    {sf::Keyboard::Key::Space, Key::SPACE},
+    {sf::Keyboard::Key::LShift, Key::SHIFT},
+    {sf::Keyboard::Key::RShift, Key::SHIFT},
+    {sf::Keyboard::Key::LControl, Key::CTRL},
+    {sf::Keyboard::Key::RControl, Key::CTRL},
+    {sf::Keyboard::Key::LAlt, Key::ALT},
+    {sf::Keyboard::Key::RAlt, Key::ALT},
+    {sf::Keyboard::Key::A, Key::A},
+    {sf::Keyboard::Key::B, Key::B},
+    {sf::Keyboard::Key::D, Key::D},
+    {sf::Keyboard::Key::C, Key::C},
+    {sf::Keyboard::Key::E, Key::E},
+    {sf::Keyboard::Key::F, Key::F},
+    {sf::Keyboard::Key::G, Key::G},
+    {sf::Keyboard::Key::H, Key::H},
+    {sf::Keyboard::Key::I, Key::I},
+    {sf::Keyboard::Key::J, Key::J},
+    {sf::Keyboard::Key::K, Key::K},
+    {sf::Keyboard::Key::L, Key::L},
+    {sf::Keyboard::Key::M, Key::M},
+    {sf::Keyboard::Key::N, Key::N},
+    {sf::Keyboard::Key::O, Key::O},
+    {sf::Keyboard::Key::P, Key::P},
+    {sf::Keyboard::Key::Q, Key::Q},
+    {sf::Keyboard::Key::R, Key::R},
+    {sf::Keyboard::Key::S, Key::S},
+    {sf::Keyboard::Key::T, Key::T},
+    {sf::Keyboard::Key::U, Key::U},
+    {sf::Keyboard::Key::V, Key::V},
+    {sf::Keyboard::Key::W, Key::W},
+    {sf::Keyboard::Key::X, Key::X},
+    {sf::Keyboard::Key::Y, Key::Y},
+    {sf::Keyboard::Key::Z, Key::Z},
+    {sf::Keyboard::Key::Slash, Key::SLASH},
+    {sf::Keyboard::Key::Num1, Key::ONE},
+    {sf::Keyboard::Key::Num2, Key::TWO},
+    {sf::Keyboard::Key::Num3, Key::THREE},
+    {sf::Keyboard::Key::Num4, Key::FOUR},
+    {sf::Keyboard::Key::Num5, Key::FIVE},
+    {sf::Keyboard::Key::Num6, Key::SIX},
+    {sf::Keyboard::Key::Num7, Key::SEVEN},
+    {sf::Keyboard::Key::Num8, Key::EIGHT},
+    {sf::Keyboard::Key::Num9, Key::NINE},
+    {sf::Keyboard::Key::Num0, Key::ZERO}};
+
+static const std::map<sf::Mouse::Button, MouseButton> MOUSEBUTTONMAP = {
+    {sf::Mouse::Button::Left, MouseButton::MOUSELEFT},
+    {sf::Mouse::Button::Right, MouseButton::MOUSERIGHT},
+    {sf::Mouse::Button::Middle, MouseButton::MOUSEMIDDLE},
 };

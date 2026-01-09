@@ -44,7 +44,8 @@ void Client::compute_connected_package(ConnectedPackage const& package)
   if (!package.end_of_content) {
     return;
   }
-  auto const& parsed = parse_connected_command(PacketCompresser::uncompress_packet(this->_receive_frag_buffer));
+  auto const& parsed = parse_connected_command(
+      PacketCompresser::uncompress_packet(this->_receive_frag_buffer));
   this->_receive_frag_buffer.clear();
   if (!parsed) {
     return;

@@ -50,15 +50,19 @@ private:
   void handle_connected_command(ConnectedCommand const& command,
                                 const asio::ip::udp::endpoint& sender);
 
-  void send(ByteArray const& response, const asio::ip::udp::endpoint& endpoint,  bool hearthbeat = false);
-  void send_connected(ByteArray const& response, ClientInfo& client, bool prioritary = false);
+  void send(ByteArray const& response,
+            const asio::ip::udp::endpoint& endpoint,
+            bool hearthbeat = false);
+  void send_connected(ByteArray const& response,
+                      ClientInfo& client,
+                      bool prioritary = false);
   void handle_getchallenge(ByteArray const& cmd,
                            const asio::ip::udp::endpoint& sender);
   void handle_connect(ByteArray const& cmd,
                       const asio::ip::udp::endpoint& sender);
 
   void handle_event_receive(ByteArray const&, const asio::ip::udp::endpoint&);
-  void handle_hearthbeat(ByteArray const &, const asio::ip::udp::endpoint&);
+  void handle_hearthbeat(ByteArray const&, const asio::ip::udp::endpoint&);
 
   void handle_package(ByteArray const&, const asio::ip::udp::endpoint&);
 
@@ -83,9 +87,9 @@ private:
   void remove_client_by_endpoint(const asio::ip::udp::endpoint& endpoint);
   void remove_client_by_id(std::size_t client_id);
 
-  static const std::size_t reset_delta = 2000000000; // 2 second
+  static const std::size_t reset_delta = 2000000000;  // 2 second
   static const std::uint8_t reset_max_count = 20;
-  void reset_client_by_endpoint(asio::ip::udp::endpoint const &);
+  void reset_client_by_endpoint(asio::ip::udp::endpoint const&);
 
   static const std::unordered_map<
       std::uint8_t,
@@ -102,7 +106,7 @@ private:
   asio::ip::udp::socket _socket;
 
   std::mutex _client_mutex;
-  static const std::size_t client_disconect_timout = 5000000000; // 5 seconds
+  static const std::size_t client_disconect_timout = 5000000000;  // 5 seconds
   std::vector<ClientInfo> _clients;
   std::size_t _c_id_incrementator = 0;
   std::uint32_t _server_id;
