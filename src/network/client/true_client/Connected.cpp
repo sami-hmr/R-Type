@@ -44,7 +44,8 @@ void Client::compute_connected_package(ConnectedPackage const& package)
   if (!package.end_of_content) {
     return;
   }
-  auto const& parsed = parse_connected_command(PacketCompresser::uncompress_packet(this->_receive_frag_buffer));
+  auto const& parsed = parse_connected_command(
+      PacketCompresser::uncompress_packet(this->_receive_frag_buffer));
   this->_receive_frag_buffer.clear();
   if (!parsed) {
     return;
@@ -104,6 +105,7 @@ void Client::send_connected(ByteArray const& response, bool prioritary)
 
 void Client::handle_hearthbeat(ByteArray const& pkg)
 {
+  auto now = std::chrono::steady_clock::now().time_since_epoch().count();
   auto parsed = parse_hearthbeat_cmd(pkg);
 
   if (!parsed) {
@@ -114,6 +116,9 @@ void Client::handle_hearthbeat(ByteArray const& pkg)
   for (auto const& it : packages_to_send) {
     this->send(it);
   }
+  this->_latency_mutex.lock();
+  this->_latencies.push_back(now - parsed->send_timestamp);
+  this->_latency_mutex.unlock();
 }
 
 void Client::reset_acknowledge(ByteArray const& package)

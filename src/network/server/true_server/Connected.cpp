@@ -85,6 +85,6 @@ void Server::handle_hearthbeat(ByteArray const &package, const asio::ip::udp::en
     for (auto const &it : packages_to_send) {
         this->send(it, endpoint);
     }
-    HearthBeat response(lost_packages);
+    HearthBeat response(parsed->send_timestamp, lost_packages);
     this->send(response.to_bytes(), endpoint, true);
 }

@@ -129,3 +129,10 @@ void AcknowledgeManager::reset(std::size_t sequence)
   this->_last_extracted = sequence;
   //this->_waiting_for_aprouval.clear();
 }
+
+std::size_t AcknowledgeManager::get_last_received() const {
+    if (this->_awaiting_packages.empty()) {
+        return this->_last_extracted;
+    }
+    return this->_awaiting_packages.crbegin()->first;
+}
