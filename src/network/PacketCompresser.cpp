@@ -9,7 +9,7 @@ ByteArray PacketCompresser::compress_packet(const ByteArray& data)
   std::size_t dest_size = buffer.max_size();
 
   if (compress(buffer.data(), &dest_size, data.data(), data.size()) != Z_OK) {
-    throw CompresserError("");
+    throw CompresserError("Failed to compress packet");
   }
   return {buffer.begin(), buffer.begin() + dest_size};
 }
@@ -20,7 +20,7 @@ ByteArray PacketCompresser::uncompress_packet(const ByteArray& data)
   std::size_t dest_size = buffer.max_size();
 
   if (uncompress(buffer.data(), &dest_size, data.data(), data.size()) != Z_OK) {
-    throw CompresserError("");
+    throw CompresserError("Failed to uncompress packet");
   }
   return {buffer.begin(), buffer.begin() + dest_size};
 }

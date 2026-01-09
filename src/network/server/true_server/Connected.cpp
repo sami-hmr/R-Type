@@ -53,8 +53,8 @@ void Server::handle_connected_command(ConnectedCommand const& command,
   try {
     (this->*(connected_table.at(command.opcode)))(command.real_package, sender);
   } catch (std::out_of_range const&) {
-    NETWORK_LOGGER("server",
-                   LogLevel::Waring,
+    LOGGER_EVTLESS(LogLevel::WARNING,
+                   "server",
                    std::format("Unknow opcode: '{}'", command.opcode));
   }
 }
@@ -87,6 +87,6 @@ void Server::handle_hearthbeat(ByteArray const& package,
   for (auto const& it : packages_to_send) {
     this->send(it, endpoint);
   }
-  HearthBeat response(lost_packages);
+  HearthBeat response(parsed->send_timestamp, lost_packages);
   this->send(response.to_bytes(), endpoint, true);
 }

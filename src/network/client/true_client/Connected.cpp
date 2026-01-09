@@ -59,8 +59,8 @@ void Client::handle_connected_command(ConnectedCommand const& command)
     //   std::cout << (int)command.opcode << std::endl;
     (this->*(connected_table.at(command.opcode)))(command.real_package);
   } catch (std::out_of_range const&) {
-    NETWORK_LOGGER("client",
-                   LogLevel::Waring,
+    LOGGER_EVTLESS(LogLevel::WARNING,
+                   "client",
                    std::format("Unknow opcode: '{}'", command.opcode));
   }
 }
@@ -105,6 +105,7 @@ void Client::send_connected(ByteArray const& response, bool prioritary)
 
 void Client::handle_hearthbeat(ByteArray const& pkg)
 {
+  auto now = std::chrono::steady_clock::now().time_since_epoch().count();
   auto parsed = parse_hearthbeat_cmd(pkg);
 
   if (!parsed) {
@@ -115,6 +116,9 @@ void Client::handle_hearthbeat(ByteArray const& pkg)
   for (auto const& it : packages_to_send) {
     this->send(it);
   }
+  this->_latency_mutex.lock();
+  this->_latencies.push_back(now - parsed->send_timestamp);
+  this->_latency_mutex.unlock();
 }
 
 void Client::reset_acknowledge(ByteArray const& package)

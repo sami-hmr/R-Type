@@ -3,6 +3,7 @@
 #include <array>
 #include <bit>
 #include <cstdint>
+#include <iostream>
 #include <string>
 
 #include <asio/error_code.hpp>
@@ -11,6 +12,7 @@
 
 #include "network/AcknowledgeManager.hpp"
 #include "plugin/Byte.hpp"
+#include "plugin/events/LoggerEvent.hpp"  // For LogLevel enum
 
 #define MAX_PLAYERS 4
 #define BUFFER_SIZE 9092
@@ -22,9 +24,6 @@ static inline std::size_t get_package_division(std::size_t size)
 
   return div + 1;
 }
-
-#define NETWORK_LOGGER(category, level, message) \
-  std::cerr << (category) << ": " << (message) << "\n"
 
 #define __VERSION_MAGIC_SEQUENCE__ 0x436482793
 
