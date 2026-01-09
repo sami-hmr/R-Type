@@ -52,12 +52,18 @@ Inventory::Inventory(Registry& r, EventManager& em, EntityLoader& l)
         auto params = get_value_copy<JsonObject>(
             this->_registry.get(), *evt_throw, "params");
         if (!name || !params) {
-          LOGGER("Inventory",
-                 LogLevel::ERROR,
-                 std::format(
-                     "Invalid event field in item's throw " "configuration. No "
-                                                            "animation nor "
-                                                            "event played"));
+          LOGGER(
+              "Inventory",
+              LogLevel::ERROR,
+              std::
+                  format(
+                      "Invalid event field in item's throw " "configuration. "
+                                                             "No " "animation "
+                                                                   "nor " "even"
+                                                                          "t "
+                                                                          "play"
+                                                                          "e"
+                                                                          "d"));
           return false;
         }
         params->insert_or_assign("entity", JsonValue(*entity));
@@ -132,6 +138,7 @@ void Inventory::init_item_vector(Registry::Entity const& entity,
 void Inventory::init_inventory(Registry::Entity const& entity,
                                JsonObject const& obj)
 {
+  _max_items = std::get<int>(obj.at("max_items").value);
   auto inventory = std::get<JsonArray>(obj.at("items").value);
   this->init_item_vector(entity, inventory);
 }
@@ -150,7 +157,7 @@ void Inventory::add_item(const Item& item, std::size_t nb)
   if (added) {
     return;
   }
-  if (_inventory.size() >= MAX_ITEMS) {
+  if (_inventory.size() >= _max_items) {
     return;
   }
   _inventory.emplace_back(item, nb);

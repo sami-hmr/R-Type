@@ -4,7 +4,6 @@
 #include "plugin/APlugin.hpp"
 #include "plugin/components/Item.hpp"
 
-#define MAX_ITEMS 64
 
 class Inventory : public APlugin
 {
@@ -15,7 +14,7 @@ public:
 
 private:
   std::vector<std::pair<Item, std::size_t>> _inventory;
-  std::size_t _max_items = MAX_ITEMS;
+  std::size_t _max_items;
 
   void use_item(std::uint8_t slot, std::size_t nb, Registry::Entity e);
   void add_item(const Item& item, std::size_t nb);

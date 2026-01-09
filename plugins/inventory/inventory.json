@@ -1,5 +1,6 @@
 {
     "inventory:Item": {
+        "max_items": 5,
         "items": [
             {
                 "name": "apple",
@@ -24,6 +25,7 @@
         ]
     },
     "inventory:Item2": {
+        "max_items": 64,
         "items": [
             {
                 "name": "oil",
