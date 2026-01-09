@@ -67,12 +67,15 @@ BaseServer::BaseServer(std::string const& name,
 
   SUBSCRIBE_EVENT(EventBuilderId, { this->_event_queue_to_client.push(event); })
 
-  SUBSCRIBE_EVENT_PRIORITY(DisconnectClient, {
-    if (!this->_server_class) {
-      return false;
-    }
-    this->_server_class->disconnect_client(event.client);
-  }, 2)
+  SUBSCRIBE_EVENT_PRIORITY(
+      DisconnectClient,
+      {
+        if (!this->_server_class) {
+          return false;
+        }
+        this->_server_class->disconnect_client(event.client);
+      },
+      2)
 
   this->_registry.get().add_system(
       [this](Registry& /*r*/)
