@@ -76,7 +76,7 @@ BaseClient::BaseClient(std::string const& name,
           if (!this->_server_indexes.contains_first(server_comp.entity)) {
             auto new_entity = r.spawn_entity();
             this->_server_indexes.insert(server_comp.entity, new_entity);
-            this->_server_created.push_back(new_entity);
+            this->_server_created.emplace(new_entity);
           }
           auto true_entity = this->_server_indexes.at_first(server_comp.entity);
 
@@ -105,24 +105,28 @@ BaseClient::BaseClient(std::string const& name,
 
   SUBSCRIBE_EVENT(DeleteClientEntity, {
     this->_server_indexes.remove_second(event.entity);
+    this->_server_created.erase(event.entity);
     this->_registry.get().kill_entity(event.entity);
   })
 
   SUBSCRIBE_EVENT(ResetClient, {
-      // std::cout << "RESET EVENT\n";
-      // for (auto const &entity : this->_server_created) {
-      //     //this->_registry.get().kill_entity(entity);
-      //     //this->_server_indexes.remove_second(entity);
-      // }
-      // std::cout << "SERVER_ENTITY SIZE " << this->_server_indexes.get_second().size() << std::endl;
-      // this->_server_created.clear();
+    std::cout << "RESET EVENT\n";
+    for (auto const& entity : this->_server_created) {
+      std::cout << entity << std::endl;
+      this->_registry.get().kill_entity(entity);
+      this->_server_indexes.remove_second(entity);
+    }
+    std::cout << "SERVER_ENTITY SIZE "
+              << this->_server_indexes.get_second().size() << std::endl;
+    this->_server_created.clear();
   })
 
   SUBSCRIBE_EVENT(Disconnection, {
     this->_event_manager.get().emit<EventBuilder>(
         "DisconnectClient", DisconnectClient(this->_id_in_server).to_bytes());
 
-    // for now, disconnection will close the game, it will be cool a "return to loby"
+    // for now, disconnection will close the game, it will be cool a "return to
+    // loby"
     this->_event_manager.get().emit<ShutdownEvent>("Disconnection", 0);
   })
 }

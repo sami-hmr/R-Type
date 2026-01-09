@@ -11,6 +11,7 @@
 #include <asio/impl/read.hpp>
 #include <asio/ip/udp.hpp>
 
+#include "network/PacketCompresser.hpp"
 #include "plugin/Byte.hpp"
 
 #define SIZE 256
@@ -75,6 +76,7 @@ public:
     this->_read =
         (this->_read + std::distance(tmp.begin(), needle) + eof.size()) % Size;
     tmp.erase(needle, tmp.end());
+    PacketCompresser::decrypt(tmp);
     return tmp;
   }
 

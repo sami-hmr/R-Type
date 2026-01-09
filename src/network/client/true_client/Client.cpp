@@ -33,8 +33,8 @@ Client::Client(ClientConnection const& c,
   _server_endpoint =
       asio::ip::udp::endpoint(asio::ip::address::from_string(c.host), c.port);
 
-  NETWORK_LOGGER("client",
-                 LogLevel::INFO,
+  LOGGER_EVTLESS(LogLevel::INFO,
+                 "client",
                  std::format("Connecting to {}:{}", c.host, c.port));
   this->_queue_reader = std::thread(&Client::send_evt, this);
   this->_hearthbeat = std::thread(&Client::send_hearthbeat, this);
@@ -59,7 +59,7 @@ Client::~Client()
   if (this->_hearthbeat.joinable()) {
     this->_hearthbeat.join();
   }
-  //this->_socket.send_to(asio::buffer(""), this->_client_endpoint);
+  // this->_socket.send_to(asio::buffer(""), this->_client_endpoint);
   if (_socket.is_open()) {
     _socket.close();
   }
@@ -83,34 +83,51 @@ void Client::receive_loop()
       std::size_t len = recv_buf.read_socket(_socket, sender_endpoint, ec);
 
       if (len > 0) {
-        // NETWORK_LOGGER("client",
+        // LOGGER_EVTLESS("client",
         //                LogLevel::DEBUG,
         //                std::format("received buffer, size : {}", len));
       }
 
       if (ec) {
         if (_running.get()) {
-          NETWORK_LOGGER("client",
-                         LogLevel::ERROR,
+          LOGGER_EVTLESS(LogLevel::ERROR,
+                         "client",
                          std::format("Receive error: {}", ec.message()));
         }
         continue;
       }
 
       while (std::optional<ByteArray> p = recv_buf.extract(PROTOCOL_EOF)) {
+        // LOGGER_EVTLESSGER("client", LogLevel::DEBUG, "package extracted");
+        // std::cout << "[";
+        // for (auto i : *p) {
+        //     std::cout << " " << (unsigned int)i << ",";
+        // }
+        // std::cout << "]\n";
+
         this->handle_package(*p);
       }
+    } catch (CustomException& e) {
+      LOGGER_EVTLESS(
+          LogLevel::ERROR,
+          "server",
+          std::format(
+              "Error in receive loop: {}: ", e.what(), e.format_context()));
+      break;
+    }
 
-    } catch (std::exception& e) {
+    catch (std::exception& e)
+    {
       if (_running.get()) {
-        NETWORK_LOGGER("client", LogLevel::ERROR,
-          std::format("Error in receive loop: {}", e.what()));
+        LOGGER_EVTLESS(LogLevel::ERROR,
+                       "client",
+                       std::format("Error in receive loop: {}", e.what()));
       }
       break;
     }
   }
 
-  NETWORK_LOGGER("client", LogLevel::INFO, "Client receive loop ended");
+  LOGGER_EVTLESS(LogLevel::INFO, "client", "Client receive loop ended");
 }
 
 void Client::handle_package(ByteArray const& package)
@@ -121,8 +138,8 @@ void Client::handle_package(ByteArray const& package)
     return;
   }
   if (pkg->magic != MAGIC_SEQUENCE) {
-    NETWORK_LOGGER(
-        "client", LogLevel::DEBUG, "Invalid magic sequence, ignoring.");
+    LOGGER_EVTLESS(
+        LogLevel::DEBUG, "client", "Invalid magic sequence, ignoring.");
     return;
   }
   this->_last_ping =

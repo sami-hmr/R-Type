@@ -23,7 +23,10 @@
             std::string hook_name = \
                 std::get<std::string>(obj.at("hook").value); \
             this->_registry.get().register_hook<comp_type>(hook_name, entity); \
-          } catch (...) { \
+          } catch (std::bad_variant_access const&) { \
+            /* Hook value is not a string */ \
+          } catch (std::out_of_range const&) { \
+            /* Hook key not found (shouldn't happen due to contains check) */ \
           } \
         } \
       } catch (std::bad_variant_access const&) { \
@@ -42,8 +45,8 @@
 this->_event_manager.get().on<event_name>( \
     #event_name, [this]([[maybe_unused]] event_name const& event) -> bool {function return false;}, priority);
 
-
-#define SUBSCRIBE_EVENT(event_name, function) SUBSCRIBE_EVENT_PRIORITY(event_name, function, 1)
+#define SUBSCRIBE_EVENT(event_name, function) \
+  SUBSCRIBE_EVENT_PRIORITY(event_name, function, 1)
 
 class APlugin : public IPlugin
 {

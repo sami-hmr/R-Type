@@ -417,7 +417,7 @@ public:
       ByteArray const& event,
       std::unordered_map<Registry::Entity, Registry::Entity> const& map);
 
-void delete_all();
+  void delete_all();
 
 private:
   // ============================================================================
@@ -489,7 +489,8 @@ private:
         type_id,
         [](const std::any& handlers_any, const std::any& event_any)
         {
-          auto& handlers = std::any_cast<const std::vector<Event<T>>&>(handlers_any);
+          auto& handlers =
+              std::any_cast<const std::vector<Event<T>>&>(handlers_any);
           auto& event = std::any_cast<const T&>(event_any);
           for (auto const& handler : handlers) {
             handler(event);
@@ -514,11 +515,11 @@ private:
     Event<EventType> tmp(handler, precision);
 
     // Now safe to get reference using .at() which throws on missing key
-    auto& handlers = std::any_cast<std::vector<Event<EventType>>&>(_handlers.at(type_id));
+    auto& handlers =
+        std::any_cast<std::vector<Event<EventType>>&>(_handlers.at(type_id));
     auto insert_pos = std::upper_bound(handlers.begin(), handlers.end(), tmp);
     handlers.insert(insert_pos, std::move(tmp));
   }
-
 
   std::unordered_map<
       std::string,
