@@ -75,17 +75,18 @@ void Server::handle_hearthbeat(ByteArray const& package,
 {
   auto parsed = parse_hearthbeat_cmd(package);
 
-    if (!parsed) {
-        return;
-    }
-    this->_client_mutex.lock();
-    auto &client = this->find_client_by_endpoint(endpoint);
-    auto const &packages_to_send = client.acknowledge_manager.get_packages_to_send(parsed->lost_packages);
-    auto const &lost_packages = client.acknowledge_manager.get_lost_packages();
-    this->_client_mutex.unlock();
-    for (auto const &it : packages_to_send) {
-        this->send(it, endpoint);
-    }
-    HearthBeat response(parsed->send_timestamp, lost_packages);
-    this->send(response.to_bytes(), endpoint, true);
+  if (!parsed) {
+    return;
+  }
+  this->_client_mutex.lock();
+  auto& client = this->find_client_by_endpoint(endpoint);
+  auto const& packages_to_send =
+      client.acknowledge_manager.get_packages_to_send(parsed->lost_packages);
+  auto const& lost_packages = client.acknowledge_manager.get_lost_packages();
+  this->_client_mutex.unlock();
+  for (auto const& it : packages_to_send) {
+    this->send(it, endpoint);
+  }
+  HearthBeat response(parsed->send_timestamp, lost_packages);
+  this->send(response.to_bytes(), endpoint, true);
 }

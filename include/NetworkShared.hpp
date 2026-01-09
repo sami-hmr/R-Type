@@ -289,14 +289,20 @@ struct NetworkStatus
   }
 };
 
-inline std::ostream &operator<<(std::ostream &os, NetworkStatus::PacketLossLevel level) {
-    switch (level) {
-        case NetworkStatus::NONE: return os << "NONE";
-        case NetworkStatus::LOW: return os << "LOW";
-        case NetworkStatus::MEDIUM: return os << "MEDIUM";
-        case NetworkStatus::HIGH: return os << "HIGH";
-    }
-    return os;
+inline std::ostream& operator<<(std::ostream& os,
+                                NetworkStatus::PacketLossLevel level)
+{
+  switch (level) {
+    case NetworkStatus::NONE:
+      return os << "NONE";
+    case NetworkStatus::LOW:
+      return os << "LOW";
+    case NetworkStatus::MEDIUM:
+      return os << "MEDIUM";
+    case NetworkStatus::HIGH:
+      return os << "HIGH";
+  }
+  return os;
 }
 
 struct HearthBeat

@@ -25,7 +25,6 @@ public:
   std::vector<std::size_t> get_lost_packages();
   void register_received_package(ConnectedPackage const&);
 
-
   void reset(std::size_t sequence);
   void reset();
 

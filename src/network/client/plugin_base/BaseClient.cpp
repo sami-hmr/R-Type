@@ -130,7 +130,8 @@ BaseClient::BaseClient(std::string const& name,
   })
 
   SUBSCRIBE_EVENT(NetworkStatus, {
-      std::cout << "ping: " << event.ping_in_millisecond << ", loss: " << event.packet_loss << std::endl;
+    std::cout << "ping: " << event.ping_in_millisecond
+              << ", loss: " << event.packet_loss << std::endl;
   })
 }
 

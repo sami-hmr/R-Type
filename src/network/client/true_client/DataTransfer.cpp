@@ -36,24 +36,26 @@ void Client::send_evt()
   }
 }
 
-static NetworkStatus::PacketLossLevel get_packet_loss_level(std::vector<std::size_t> const &it, std::size_t begin, std::size_t end) {
-    std::size_t count = std::accumulate(it.begin(), it.end(), 0);
-    std::size_t total = end - begin;
-    if (total == 0) {
-        return NetworkStatus::NONE;
-    }
-    std::size_t percent = (count * 100) / total;
-
-    if (percent > 20) {
-        return NetworkStatus::HIGH;
-    }
-    if (percent > 10) {
-        return NetworkStatus::MEDIUM;
-    }
-    if (percent > 0) {
-        return NetworkStatus::LOW;
-    }
+static NetworkStatus::PacketLossLevel get_packet_loss_level(
+    std::vector<std::size_t> const& it, std::size_t begin, std::size_t end)
+{
+  std::size_t count = std::accumulate(it.begin(), it.end(), 0);
+  std::size_t total = end - begin;
+  if (total == 0) {
     return NetworkStatus::NONE;
+  }
+  std::size_t percent = (count * 100) / total;
+
+  if (percent > 20) {
+    return NetworkStatus::HIGH;
+  }
+  if (percent > 10) {
+    return NetworkStatus::MEDIUM;
+  }
+  if (percent > 0) {
+    return NetworkStatus::LOW;
+  }
+  return NetworkStatus::NONE;
 }
 
 void Client::send_hearthbeat()
@@ -62,7 +64,8 @@ void Client::send_hearthbeat()
       std::chrono::steady_clock::now().time_since_epoch().count()
       + hearthbeat_delta;
   std::size_t rapport_delta =
-      std::chrono::steady_clock::now().time_since_epoch().count() + rapport_cooldown;
+      std::chrono::steady_clock::now().time_since_epoch().count()
+      + rapport_cooldown;
   std::size_t package_begin = 0;
   std::vector<std::size_t> lost_sizes;
 
@@ -86,22 +89,26 @@ void Client::send_hearthbeat()
     if (rapport_delta < static_cast<std::size_t>(
             std::chrono::steady_clock::now().time_since_epoch().count()))
     {
-        this->_latency_mutex.lock();
-        if (this->_latencies.size() != 0) {
-            std::size_t sum = std::accumulate(this->_latencies.begin(), this->_latencies.end(), std::size_t(0));
-            this->_acknowledge_mutex.lock();
-            std::size_t package_end = this->_acknowledge_manager.get_last_received();
-            this->_acknowledge_mutex.unlock();
-            this->transmit_event(EventBuilder(
-                "NetworkStatus",
-                NetworkStatus(((sum / this->_latencies.size()) / 1000000), get_packet_loss_level(lost_sizes, package_begin, package_end))
-                    .to_bytes()));
-            this->_latencies.clear();
-            this->_latency_mutex.unlock();
-            lost_sizes.clear();
-            package_begin = package_end;
-        }
-        rapport_delta += rapport_cooldown;
+      this->_latency_mutex.lock();
+      if (this->_latencies.size() != 0) {
+        std::size_t sum = std::accumulate(
+            this->_latencies.begin(), this->_latencies.end(), std::size_t(0));
+        this->_acknowledge_mutex.lock();
+        std::size_t package_end =
+            this->_acknowledge_manager.get_last_received();
+        this->_acknowledge_mutex.unlock();
+        this->transmit_event(EventBuilder(
+            "NetworkStatus",
+            NetworkStatus(
+                ((sum / this->_latencies.size()) / 1000000),
+                get_packet_loss_level(lost_sizes, package_begin, package_end))
+                .to_bytes()));
+        this->_latencies.clear();
+        this->_latency_mutex.unlock();
+        lost_sizes.clear();
+        package_begin = package_end;
+      }
+      rapport_delta += rapport_cooldown;
     }
   }
   this->_socket.send_to(asio::buffer(""), _client_endpoint);
