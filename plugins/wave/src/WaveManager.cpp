@@ -16,6 +16,7 @@
 #include "plugin/components/WaveTag.hpp"
 #include "plugin/events/DeathEvent.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
+#include "plugin/events/WaveEvent.hpp"
 
 WaveManager::WaveManager(Registry& r, EventManager& em, EntityLoader& l)
     : APlugin("wave",
@@ -35,47 +36,19 @@ WaveManager::WaveManager(Registry& r, EventManager& em, EntityLoader& l)
   _patterns[WavePatternType::CIRCLE] = std::make_unique<CirclePattern>();
   _patterns[WavePatternType::ARC] = std::make_unique<ArcPattern>();
   _patterns[WavePatternType::GRID] = std::make_unique<GridPattern>();
-  _patterns[WavePatternType::FORMATION_V] = std::make_unique<FormationVPattern>();
+  _patterns[WavePatternType::FORMATION_V] =
+      std::make_unique<FormationVPattern>();
 
   this->_registry.get().add_system([this](Registry& r)
                                    { wave_formation_system(r); });
-
   this->_registry.get().add_system([this](Registry& r)
                                    { wave_spawn_system(r); });
+  this->_registry.get().add_system([this](Registry& r)
+                                   { wave_death_system(r); });
 
-  SUBSCRIBE_EVENT(DeathEvent, {
-    if (!this->_registry.get().has_component<WaveTag>(event.entity)) {
-      return;
-    }
-
-    auto& wave_tag =
-        this->_registry.get().get_components<WaveTag>()[event.entity];
-    std::size_t wave_id = wave_tag->wave_id;
-
-    auto wave_opt = find_wave_by_id(wave_id);
-    if (!wave_opt.has_value()) {
-      return;
-    }
-    auto& wave =
-        this->_registry.get().get_components<Wave>()[wave_opt.value()].value();
-
-    if (!wave.tracked) {
-      return;
-    }
-
-    int remaining = 0;
-    for (auto&& [entity, tag] : ZipperIndex<WaveTag>(this->_registry.get())) {
-      if (tag.wave_id == wave_id && entity != event.entity
-          && !this->_registry.get().is_entity_dying(entity))
-      {
-        remaining++;
-      }
-    }
-
-    if (remaining == 0) {
-      this->_event_manager.get().emit(this->_registry, wave.on_end.event_name, wave.on_end.params);
-      this->_event_manager.get().emit<DeleteEntity>(wave_opt.value());
-    }
+  SUBSCRIBE_EVENT(WaveSpawnEvent, {
+    this->_event_manager.get().emit<LoadEntityTemplate>(
+        event.wave_template, LoadEntityTemplate::Additional {});
   })
 }
 
@@ -156,7 +129,8 @@ void WaveManager::init_wave(Registry::Entity const& entity,
       auto name_str = get_value_copy<std::string>(
           this->_registry.get(), on_end_obj, "event_name");
       if (!name_str) {
-        std::cerr << "Error loading Wave component: missing on_end event_name\n";
+        std::cerr
+            << "Error loading Wave component: missing on_end event_name\n";
         return;
       }
       on_end.event_name = name_str.value();

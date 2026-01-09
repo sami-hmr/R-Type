@@ -28,6 +28,7 @@ private:
 
   void wave_formation_system(Registry& r);
   void wave_spawn_system(Registry& r);
+  void wave_death_system(Registry& r);
 
   std::optional<Registry::Entity> find_wave_by_id(std::size_t id);
   std::size_t generate_wave_id();

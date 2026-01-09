@@ -7,6 +7,7 @@ add_library(${LIB_NAME} SHARED
     src/WaveFormation.cpp
     src/WavePattern.cpp
     src/WaveSpawner.cpp
+    src/WaveDeath.cpp
 )
 
 target_compile_features(${LIB_NAME} PRIVATE cxx_std_23)

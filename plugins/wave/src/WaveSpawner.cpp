@@ -94,7 +94,7 @@ void WaveManager::spawn_wave_entities(Registry::Entity wave_entity)
 
 void WaveManager::wave_spawn_system(Registry& r)
 {
-  for (auto&& [entity, wave, scene] : ZipperIndex<Wave, Scene>(r)) {
+  for (auto&& [entity, wave] : ZipperIndex<Wave>(r)) {
     if (r.is_entity_dying(entity)) {
       continue;
     }
