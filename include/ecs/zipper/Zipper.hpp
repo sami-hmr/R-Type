@@ -115,7 +115,7 @@ public:
    */
   ZipperIterator(IteratorTuple const& it_tuple,
                  SparseArray<Scene>& scene_array,
-                 std::vector<std::string> const& active_scenes,
+                 std::unordered_set<std::string> const& active_scenes,
                  std::size_t max,
                  std::size_t index = 0)
       : _current(it_tuple)
@@ -227,10 +227,7 @@ private:
   bool all_set(std::index_sequence<Is...> /*unused*/) const
   {
     if (this->_idx < this->_scene_size && this->_scene->has_value()
-        && std::find(this->_active_scenes.begin(),
-                     this->_active_scenes.end(),
-                     this->_scene->value().scene_name)
-            == this->_active_scenes.end())
+        && !this->_active_scenes.contains(this->_scene->value().scene_name))
     {
       return false;
     }
@@ -254,7 +251,7 @@ private:
   std::size_t _max;  ///< Maximum iteration count (size of smallest Comp).
   Iterator<Scene> _scene;
   std::size_t _scene_size;
-  std::vector<std::string> const& _active_scenes;
+  std::unordered_set<std::string> const& _active_scenes;
 
 protected:
   std::size_t _idx;  ///< Current index position in the iteration.
@@ -309,7 +306,7 @@ public:
       , _begin(std::make_tuple(r.get_components<Comps>().begin()...))
       , _end(compute_end(r))
       , _scenes(r.get_components<Scene>())
-      , _active_scenes(r.get_current_scene())
+      , _active_scenes(r.get_active_scenes_set())
   {
   }
 
@@ -363,5 +360,5 @@ private:
   IteratorTuple _begin;  ///< Tuple of begin iterators for all Comps.
   IteratorTuple _end;  ///< Tuple of end iterators for all Comps.
   SparseArray<Scene>& _scenes;
-  std::vector<std::string> _active_scenes;
+  std::unordered_set<std::string> const& _active_scenes;
 };

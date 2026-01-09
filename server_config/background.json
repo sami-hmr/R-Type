@@ -79,7 +79,7 @@
     },
     {
       "name": "game",
-      "state": "disabled",
+      "state": "inactive",
       "plugins": [],
       "entities": [
         {

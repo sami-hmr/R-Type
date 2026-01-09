@@ -102,6 +102,9 @@ void Registry::clear_bindings()
 void Registry::add_scene(std::string const& scene_name, SceneState state)
 {
   _scenes.insert_or_assign(scene_name, state);
+  if (state == SceneState::ACTIVE) {
+    activate_scene(scene_name);
+  }
 }
 
 void Registry::init_scene_management()
@@ -111,32 +114,96 @@ void Registry::init_scene_management()
 
 void Registry::setup_scene_systems()
 {
+  // Activate all scenes that were registered as ACTIVE
   for (const auto& [name, state] : _scenes) {
-    if (state == SceneState::MAIN) {
-      _current_scene.push_back(name);
-      break;
-    }
     if (state == SceneState::ACTIVE) {
-      _current_scene.push_back(name);
+      activate_scene(name);
     }
   }
 }
 
-void Registry::set_current_scene(std::string const& scene_name)
+void Registry::activate_scene(std::string const& scene_name)
 {
+  if (!_scenes.contains(scene_name)) {
+    _scenes.insert({scene_name, SceneState::INACTIVE});
+  }
+
+  _scenes[scene_name] = SceneState::ACTIVE;
+
+  if (_active_scenes_set.contains(scene_name)) {
+    return;
+  }
+
   _current_scene.push_back(scene_name);
+  _active_scenes_set.insert(scene_name);
 }
 
-void Registry::remove_current_scene(std::string const& scene_name)
+void Registry::deactivate_scene(std::string const& scene_name)
 {
+  if (_scenes.contains(scene_name)) {
+    _scenes[scene_name] = SceneState::INACTIVE;
+  }
+
+  _active_scenes_set.erase(scene_name);
   _current_scene.erase(
       std::remove(_current_scene.begin(), _current_scene.end(), scene_name),
       _current_scene.end());
 }
 
+void Registry::deactivate_all_scenes()
+{
+  for (auto& [name, state] : _scenes) {
+    state = SceneState::INACTIVE;
+  }
+  _current_scene.clear();
+  _active_scenes_set.clear();
+}
+
+void Registry::push_scene(std::string const& scene_name)
+{
+  activate_scene(scene_name);
+}
+
+void Registry::pop_scene(std::string const& scene_name)
+{
+  deactivate_scene(scene_name);
+}
+
+bool Registry::is_scene_active(std::string const& scene_name) const
+{
+  return _active_scenes_set.contains(scene_name);
+}
+
+SceneState Registry::get_scene_state(std::string const& scene_name) const
+{
+  auto it = _scenes.find(scene_name);
+  return (it != _scenes.end()) ? it->second : SceneState::INACTIVE;
+}
+
+std::unordered_set<std::string> const& Registry::get_active_scenes_set() const
+{
+  return _active_scenes_set;
+}
+
+std::vector<std::string> const& Registry::get_active_scenes() const
+{
+  return _current_scene;
+}
+
+// Deprecated methods for backward compatibility
+void Registry::set_current_scene(std::string const& scene_name)
+{
+  activate_scene(scene_name);
+}
+
+void Registry::remove_current_scene(std::string const& scene_name)
+{
+  deactivate_scene(scene_name);
+}
+
 void Registry::remove_all_scenes()
 {
-  this->_current_scene.clear();
+  deactivate_all_scenes();
 }
 
 std::vector<std::string> const& Registry::get_current_scene() const
@@ -169,10 +236,11 @@ JsonObject Registry::get_template(std::string const& name)
 
 bool Registry::is_in_current_cene(Entity e)
 {
-  return std::find(this->_current_scene.begin(),
-                   this->_current_scene.end(),
-                   this->get_components<Scene>()[e].value().scene_name)
-      != this->_current_scene.end();
+  if (!this->has_component<Scene>(e)) {
+    return false;
+  }
+  return _active_scenes_set.contains(
+      this->get_components<Scene>()[e].value().scene_name);
 }
 
 ByteArray Registry::convert_comp_entity(

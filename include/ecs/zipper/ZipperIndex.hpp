@@ -180,7 +180,7 @@ public:
       , _begin(std::make_tuple(r.get_components<Comps>().begin()...))
       , _end(compute_end(r))
       , _scenes(r.get_components<Scene>())
-      , _active_scenes(r.get_current_scene())
+      , _active_scenes(r.get_active_scenes_set())
   {
   }
 
@@ -236,5 +236,5 @@ private:
   IteratorTuple _begin;  ///< Tuple of begin iterators for all Comps.
   IteratorTuple _end;  ///< Tuple of end iterators for all Comps.
   SparseArray<Scene>& _scenes;
-  std::vector<std::string> _active_scenes;
+  std::unordered_set<std::string> const& _active_scenes;
 };

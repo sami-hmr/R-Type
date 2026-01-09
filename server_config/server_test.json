@@ -120,7 +120,7 @@
     },
     {
       "name": "ready",
-      "state": "disabled",
+      "state": "inactive",
       "plugins": [],
       "entities": [
         {

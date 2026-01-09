@@ -36,9 +36,9 @@ static int true_main(Registry& r,
                           [&r](const SceneChangeEvent& event)
                           {
                             if (event.force) {
-                              r.remove_all_scenes();
+                              r.deactivate_all_scenes();
                             }
-                            r.set_current_scene(event.target_scene);
+                            r.activate_scene(event.target_scene);
                           });
 
   em.on<SpawnEntityRequestEvent>("SpawnEntity",

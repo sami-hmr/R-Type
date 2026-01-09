@@ -2,7 +2,7 @@
   "scenes": [
     {
       "name": "death",
-      "state": "disabled",
+      "state": "inactive",
       "plugins": [],
       "entities": [
         {

@@ -20,15 +20,13 @@
  *
  * Scenes can be in different states controlling their visibility and update
  * behavior:
- * - ACTIVE: Scene is active but not the main scene (overlay, UI layer, etc.)
- * - MAIN: Primary active scene (typically the gameplay scene)
- * - DISABLED: Scene exists but is not processed or rendered
+ * - ACTIVE: Scene is active and entities are processed by systems
+ * - INACTIVE: Scene exists but is not processed or rendered
  */
 enum class SceneState : std::uint8_t
 {
-  ACTIVE,  ///< Scene is active but not primary
-  MAIN,  ///< Primary active scene
-  DISABLED  ///< Scene is disabled
+  ACTIVE,  ///< Scene is active, entities are processed
+  INACTIVE  ///< Scene is inactive, entities are not processed
 };
 
 /**
@@ -41,8 +39,7 @@ enum class SceneState : std::uint8_t
  */
 static const TwoWayMap<SceneState, std::string> SCENE_STATE_STR = {
     {SceneState::ACTIVE, "active"},
-    {SceneState::MAIN, "main"},
-    {SceneState::DISABLED, "disabled"},
+    {SceneState::INACTIVE, "inactive"},
 };
 
 /**
@@ -54,13 +51,18 @@ static const TwoWayMap<SceneState, std::string> SCENE_STATE_STR = {
  * (via Zipper filtering). This enables multi-scene support for menus, HUDs,
  * gameplay layers, etc.
  *
+ * Scene state is managed by the Registry, not the component itself. Each entity
+ * is tagged with a scene name, and the Registry determines which scenes are
+ * currently active.
+ *
  * @note This component is automatically added to entities during
  * EntityLoader::load_entity()
  * @note Systems iterate only over entities in active scenes through the Zipper
  * pattern
+ * @note Scene state lives in Registry::_scenes, not in this component
  *
  * @see Registry::add_scene()
- * @see Registry::set_current_scene()
+ * @see Registry::activate_scene()
  * @see Zipper (filters entities by active scenes)
  */
 struct Scene
@@ -70,27 +72,22 @@ struct Scene
   /**
    * @brief Constructs a Scene component
    * @param scene_name Name identifier for the scene
-   * @param state Activation state of the scene
    */
-  Scene(std::string scene_name, SceneState state)
+  explicit Scene(std::string scene_name)
       : scene_name(std::move(scene_name))
-      , state(state)
   {
   }
 
   DEFAULT_BYTE_CONSTRUCTOR(
       Scene,
-      ([](std::vector<char> name, SceneState state)
-       { return Scene(std::string(name.begin(), name.end()), state); }),
-      parseByteArray(parseAnyChar()),
-      parseByte<SceneState>())
-  DEFAULT_SERIALIZE(string_to_byte(this->scene_name),
-                    type_to_byte((std::uint8_t)this->state))
+      ([](std::vector<char> name)
+       { return Scene(std::string(name.begin(), name.end())); }),
+      parseByteArray(parseAnyChar()))
+  DEFAULT_SERIALIZE(string_to_byte(this->scene_name))
 
   CHANGE_ENTITY_DEFAULT
 
-  HOOKABLE(Scene, HOOK(scene_name), HOOK(state))
+  HOOKABLE(Scene, HOOK(scene_name))
 
   std::string scene_name;  ///< Identifier for this scene
-  SceneState state;  ///< Current activation state
 };
