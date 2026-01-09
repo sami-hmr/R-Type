@@ -53,9 +53,9 @@ std::vector<ByteArray> AcknowledgeManager::get_packages_to_send(
         package.send_delta = now + AcknowledgeManager::sent_delta;
       }
     } catch (std::out_of_range const&) {
-      NETWORK_LOGGER(
+      LOGGER_EVTLESS(
+          LogLevel::WARNING,
           "acknowledge",
-          "WARING",
           std::format("Package {} does not exist or has been approuved already",
                       it));
     }
@@ -119,15 +119,15 @@ void AcknowledgeManager::reset()
 {
   if (!this->_awaiting_packages.empty()) {
     this->_last_extracted = this->_awaiting_packages.crbegin()->first;
-    //std::cout << "LAST EXTRACTED " << this->_last_extracted << std::endl;
+    // std::cout << "LAST EXTRACTED " << this->_last_extracted << std::endl;
   }
-  //this->_waiting_for_aprouval.clear();
+  // this->_waiting_for_aprouval.clear();
 }
 
 void AcknowledgeManager::reset(std::size_t sequence)
 {
   this->_last_extracted = sequence;
-  //this->_waiting_for_aprouval.clear();
+  // this->_waiting_for_aprouval.clear();
 }
 
 std::size_t AcknowledgeManager::get_last_received() const {

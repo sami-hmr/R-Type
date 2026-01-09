@@ -25,17 +25,20 @@
 
 class BaseServer : public APlugin
 {
-  public:
-    BaseServer(std::string const &name, Registry& r, EventManager &em, EntityLoader& l);
-    ~BaseServer() override;
+public:
+  BaseServer(std::string const& name,
+             Registry& r,
+             EventManager& em,
+             EntityLoader& l);
+  ~BaseServer() override;
 
-  private:
-    void launch_server();
+private:
+  void launch_server();
 
-    std::optional<Server> _server_class;
-    std::thread _actual_server;
-    SharedQueue<ComponentBuilderId> _components_to_update;
-    std::atomic<bool> _running = false;
-    SharedQueue<EventBuilder> _event_queue;
-    SharedQueue<EventBuilderId> _event_queue_to_client;
+  std::optional<Server> _server_class;
+  std::thread _actual_server;
+  SharedQueue<ComponentBuilderId> _components_to_update;
+  std::atomic<bool> _running = false;
+  SharedQueue<EventBuilder> _event_queue;
+  SharedQueue<EventBuilderId> _event_queue_to_client;
 };

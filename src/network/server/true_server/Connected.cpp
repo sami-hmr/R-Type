@@ -11,10 +11,8 @@
 const std::unordered_map<std::uint8_t,
                          void (Server::*)(ByteArray const&,
                                           const asio::ip::udp::endpoint&)>
-    Server::connected_table = {
-        {SENDEVENT, &Server::handle_event_receive},
-        {SENDHEARTHBEAT, &Server::handle_hearthbeat}
-};
+    Server::connected_table = {{SENDEVENT, &Server::handle_event_receive},
+                               {SENDHEARTHBEAT, &Server::handle_hearthbeat}};
 
 void Server::handle_connected_packet(ConnectedPackage const& command,
                                      const asio::ip::udp::endpoint& sender)
@@ -30,9 +28,10 @@ void Server::handle_connected_packet(ConnectedPackage const& command,
   for (auto const& pkg : packages) {
     client.frag_buffer += pkg.real_package;
     if (!pkg.end_of_content) {
-        continue;
+      continue;
     }
-    auto const& parsed = parse_connected_command(PacketCompresser::uncompress_packet(client.frag_buffer));
+    auto const& parsed = parse_connected_command(
+        PacketCompresser::uncompress_packet(client.frag_buffer));
     client.frag_buffer.clear();
     if (!parsed) {
       continue;
@@ -54,8 +53,8 @@ void Server::handle_connected_command(ConnectedCommand const& command,
   try {
     (this->*(connected_table.at(command.opcode)))(command.real_package, sender);
   } catch (std::out_of_range const&) {
-    NETWORK_LOGGER("server",
-                   LogLevel::Waring,
+    LOGGER_EVTLESS(LogLevel::WARNING,
+                   "server",
                    std::format("Unknow opcode: '{}'", command.opcode));
   }
 }
@@ -71,8 +70,10 @@ void Server::handle_event_receive(ByteArray const& package,
   this->transmit_event_to_server(parsed.value());
 }
 
-void Server::handle_hearthbeat(ByteArray const &package, const asio::ip::udp::endpoint& endpoint) {
-    auto parsed = parse_hearthbeat_cmd(package);
+void Server::handle_hearthbeat(ByteArray const& package,
+                               const asio::ip::udp::endpoint& endpoint)
+{
+  auto parsed = parse_hearthbeat_cmd(package);
 
     if (!parsed) {
         return;
