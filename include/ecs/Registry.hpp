@@ -1067,7 +1067,7 @@ public:
     {
       try {
         std::string comp = source_hook.substr(0, source_hook.find(':')) + "{"
-        + std::to_string(entity) + "}";
+            + std::to_string(entity) + "}";
         std::string value = source_hook.substr(source_hook.find(':') + 1);
         auto ref = this->get_hooked_value<T>(comp, value);
 
