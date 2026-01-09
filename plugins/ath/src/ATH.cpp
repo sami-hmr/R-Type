@@ -15,7 +15,8 @@
 #include "plugin/components/Collidable.hpp"
 #include "plugin/events/IoEvents.hpp"
 
-static void on_click(Registry& r,
+static void 
+on_click(Registry& r,
                      EventManager& em,
                      const MousePressedEvent& event)
 {
@@ -27,8 +28,8 @@ static void on_click(Registry& r,
     }
     Rect entity_rect = {.x = pos.pos.x,
                         .y = pos.pos.y,
-                        .width = collision.width,
-                        .height = collision.height};
+                        .width = collision.width * 2,
+                        .height = collision.height * 2};
     if (entity_rect.contains(event.position.x, event.position.y)) {
       for (const auto& [name, obj] : clickable.to_emit) {
         emit_event(em, r, name, obj);

@@ -244,8 +244,8 @@
                   "y": 0.0
                 },
                 "sprite_size": {
-                  "width": "30.0%",
-                  "height": "30.0%"
+                  "width": "28.0%",
+                  "height": "28.0%"
                 },
                 "direction": {
                   "x": 0.0,
@@ -309,8 +309,8 @@
             }
           },
           "collision:Collidable": {
-            "width": 0.2,
-            "height": 0.2,
+            "width": 0.3,
+            "height": 0.15,
             "collision_type": "solid"
           },
           "ath:Button": {

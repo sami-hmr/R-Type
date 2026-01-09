@@ -530,7 +530,7 @@ void SFMLRenderer::button_system(Registry& r)
     AnimationData hover_anim_data = anim.animations.at("hover");
     Rect entity_rect = {.x = pos.pos.x,
                         .y = pos.pos.y,
-                        .width = collision.width,
+                        .width = collision.width * 2,
                         .height = collision.height};
     if (entity_rect.contains(mouse_pos.x, mouse_pos.y)) {
       if (!button.hovered) {
