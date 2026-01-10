@@ -98,7 +98,7 @@ void Inventory::init_item_vector(Registry::Entity const& entity,
         get_value_copy<std::size_t>(this->_registry.get(), item, "quantity");
     auto config =
         get_value_copy<JsonObject>(this->_registry.get(), item, "config");
-    if (!name || !quantity || !consumable || !throwable || !config) {
+    if (!name || !quantity || !consumable || !throwable) {
       LOGGER("Inventory",
              LogLevel::WARNING,
              std::format("Missing a field in item, skipping"));
@@ -146,4 +146,12 @@ void Inventory::use_item(std::uint8_t slot, std::size_t nb)
   } else {
     _inventory.erase(_inventory.begin() + slot);
   }
+}
+
+extern "C"
+{
+void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
+{
+  return new Inventory(r, em, e);
+}
 }

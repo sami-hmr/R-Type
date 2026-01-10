@@ -245,6 +245,31 @@
                   }
                 }
               ]
+            },
+            "inventory:Item": {
+              "max_items": 5,
+              "items": [
+                {
+                  "name": "apple",
+                  "quantity": 1,
+                  "consumable": true,
+                  "throwable": true,
+                  "config": {
+                    "consume": {
+                      "animation": "Consumed",
+                      "event": {
+                        "name": "HealEvent",
+                        "params": {
+                          "amount": 1
+                        }
+                      }
+                    },
+                    "throw": {
+                      "animation": "Thrown"
+                    }
+                  }
+                }
+              ]
             }
           },
           {
