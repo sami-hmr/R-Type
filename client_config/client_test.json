@@ -175,7 +175,14 @@
             },
             "outline_thickness": 30.0,
             "outline": true,
-            "text": "appuis sur ce bouton pour te connecter au server"
+            "text": "#global:server_address_:buffer"
+          },
+
+          "ui:input": {
+            "hook": "server_address_",
+            "global_hook": true,
+            "buffer": "hook",
+            "enabled": true
           }
         },
         {

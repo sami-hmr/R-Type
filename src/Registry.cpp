@@ -79,14 +79,14 @@ void Registry::run_systems(EventManager& em)
 void Registry::update_bindings(EventManager& em)
 {
   for (auto& binding : _bindings) {
-    binding.updater();
-    ByteArray component_data = binding.serializer();
-
-    if (!component_data.empty()) {
-      em.emit<ComponentBuilder>(
-          binding.target_entity,
-          this->_index_getter.at_first(binding.target_component),
-          component_data);
+    // Only emit network event if value actually changed
+    if (binding.update_and_check_dirty()) {
+      if (!binding.last_serialized_value.empty()) {
+        em.emit<ComponentBuilder>(
+            binding.target_entity,
+            this->_index_getter.at_first(binding.target_component),
+            binding.last_serialized_value);
+      }
     }
   }
 }

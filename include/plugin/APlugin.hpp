@@ -12,30 +12,43 @@
 #include "plugin/IPlugin.hpp"
 
 #define COMP_INIT(comp_name, comp_type, method_name) \
-  { \
-    #comp_name, [this](size_t entity, const JsonVariant& config) \
-    { \
-      try { \
-        JsonObject obj = std::get<JsonObject>(config); \
-        this->method_name(entity, obj); \
-        if (obj.contains("hook")) { \
-          try { \
-            std::string hook_name = \
-                std::get<std::string>(obj.at("hook").value); \
-            this->_registry.get().register_hook<comp_type>(hook_name, entity); \
-          } catch (std::bad_variant_access const&) { \
-            /* Hook value is not a string */ \
-          } catch (std::out_of_range const&) { \
-            /* Hook key not found (shouldn't happen due to contains check) */ \
-          } \
-        } \
-      } catch (std::bad_variant_access const&) { \
-        std::cout << "Error initializing component \"" << #comp_name \
-                  << "\": only JsonObjects are supported\n"; \
-        return; \
-      } \
-    } \
-  }
+  {#comp_name, \
+   [this](size_t entity, const JsonVariant& config) \
+   { \
+     try { \
+       JsonObject obj = std::get<JsonObject>(config); \
+       this->method_name(entity, obj); \
+       if (obj.contains("hook")) { \
+         try { \
+           std::string hook_name = \
+               std::get<std::string>(obj.at("hook").value); \
+           bool is_global = false; \
+           if (obj.contains("global_hook")) { \
+             try { \
+               is_global = std::get<bool>(obj.at("global_hook").value); \
+             } catch (std::bad_variant_access const&) { \
+               /* global_hook value is not a bool, default to false */ \
+             } \
+           } \
+           if (is_global) { \
+             this->_registry.get().register_global_hook<comp_type>(hook_name, \
+                                                                   entity); \
+           } else { \
+             this->_registry.get().register_hook<comp_type>(hook_name, \
+                                                            entity); \
+           } \
+         } catch (std::bad_variant_access const&) { \
+           /* Hook value is not a string */ \
+         } catch (std::out_of_range const&) { \
+           /* Hook key not found (shouldn't happen due to contains check) */ \
+         } \
+       } \
+     } catch (std::bad_variant_access const&) { \
+       std::cout << "Error initializing component \"" << #comp_name \
+                 << "\": only JsonObjects are supported\n"; \
+       return; \
+     } \
+   }}
 
 #define REGISTER_COMPONENT(comp) \
   this->_registry.get().register_component<comp>( \
