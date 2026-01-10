@@ -1,10 +1,6 @@
 #pragma once
 
-#include <semaphore>
-#include <set>
 #include <thread>
-#include <unordered_map>
-#include <vector>
 
 #include <asio/io_context.hpp>
 #include <asio/ip/udp.hpp>
@@ -13,13 +9,17 @@
 #include "NetworkShared.hpp"
 #include "TwoWayMap.hpp"
 #include "ecs/Registry.hpp"
-#include "network/client/Client.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
+#include "network/Httplib.hpp"
 
 class BaseClient : public APlugin
 {
 public:
+  BaseClient(const BaseClient&) = delete;
+  BaseClient(BaseClient&&) = delete;
+  BaseClient& operator=(const BaseClient&) = delete;
+  BaseClient& operator=(BaseClient&&) = delete;
   BaseClient(std::string const& name,
              Registry& r,
              EventManager& em,

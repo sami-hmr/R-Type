@@ -56,6 +56,24 @@ target_link_libraries(${CORE_LIB} PRIVATE parser)
 find_package(asio CONFIG REQUIRED)
 find_package(ZLIB REQUIRED)
 
+set(NETWORK_COMMON_LIB r-type_network_common)
+
+add_library(${NETWORK_COMMON_LIB} STATIC
+    src/network/AcknowledgeManager.cpp
+    src/network/PacketCompresser.cpp
+    src/network/HttpClient.cpp
+)
+
+target_include_directories(${NETWORK_COMMON_LIB}
+    PUBLIC
+        include
+        ${parser_SOURCE_DIR}/include
+)
+
+target_link_libraries(${NETWORK_COMMON_LIB} PUBLIC
+    ZLIB::ZLIB
+)
+
 set(SERVER_LIB r-type_server_lib)
 
 add_library(${SERVER_LIB} STATIC
@@ -66,8 +84,6 @@ add_library(${SERVER_LIB} STATIC
     src/network/server/true_server/DataTransfer.cpp
     src/network/server/true_server/Server.cpp
     src/network/server/plugin_base/BaseServer.cpp
-    src/network/AcknowledgeManager.cpp
-    src/network/PacketCompresser.cpp
 )
 
 target_include_directories(${SERVER_LIB}
@@ -80,7 +96,7 @@ target_link_libraries(${SERVER_LIB} PUBLIC
     parser
     ${CORE_LIB}
     asio::asio
-    ZLIB::ZLIB
+    ${NETWORK_COMMON_LIB}
 )
 
 set(CLIENT_LIB r-type_client_lib)
@@ -92,8 +108,6 @@ add_library(${CLIENT_LIB} STATIC
     src/network/client/true_client/DataTransfer.cpp
     src/network/client/true_client/Client.cpp
     src/network/client/plugin_base/BaseClient.cpp
-    src/network/AcknowledgeManager.cpp
-    src/network/PacketCompresser.cpp
 )
 
 target_include_directories(${CLIENT_LIB}
@@ -106,7 +120,7 @@ target_link_libraries(${CLIENT_LIB} PUBLIC
     parser
     ${CORE_LIB}
     asio::asio
-    ZLIB::ZLIB
+    ${NETWORK_COMMON_LIB}
 )
 
 
