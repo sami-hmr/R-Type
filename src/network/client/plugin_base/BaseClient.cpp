@@ -1,4 +1,3 @@
-#include <chrono>
 #include <format>
 #include <thread>
 
@@ -128,6 +127,11 @@ BaseClient::BaseClient(std::string const& name,
     // for now, disconnection will close the game, it will be cool a "return to
     // loby"
     this->_event_manager.get().emit<ShutdownEvent>("Disconnection", 0);
+  })
+
+  SUBSCRIBE_EVENT(NetworkStatus, {
+    std::cout << "ping: " << event.ping_in_millisecond
+              << ", loss: " << event.packet_loss << std::endl;
   })
 }
 
