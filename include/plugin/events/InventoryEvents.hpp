@@ -24,6 +24,7 @@ Parser<Item> parseByteItem()
                parseByte<bool>(),
                parseByte<bool>());
 }
+
 struct PickUp
 {
   Item item;
@@ -32,9 +33,9 @@ struct PickUp
   Registry::Entity consumer;
 
   PickUp(Item item,
-            bool usable,
-            std::size_t nb_to_use,
-            Registry::Entity consumer)
+         bool usable,
+         std::size_t nb_to_use,
+         Registry::Entity consumer)
       : item(std::move(item))
       , usable(usable)
       , nb_to_use(nb_to_use)

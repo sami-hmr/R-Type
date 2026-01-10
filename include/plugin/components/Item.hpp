@@ -20,7 +20,7 @@ struct Item
   bool consumable;
   bool throwable;
 
-  Item() = default;  
+  Item() = default;
 
   Item(std::pair<std::string, JsonObject> object,
        bool consumable,
@@ -55,15 +55,18 @@ struct Item
       parseByte<bool>(),
       parseByte<bool>())
 
-  DEFAULT_SERIALIZE(SERIALIZE_FUNCTION<Object>(
-                        pair_to_byte<std::string, JsonObject>,
-                        SERIALIZE_FUNCTION<std::string>(string_to_byte),
-                        SERIALIZE_FUNCTION<JsonObject>(json_object_to_byte))(this->object),
-                    type_to_byte(this->consumable),
-                    type_to_byte(this->throwable))
+  DEFAULT_SERIALIZE(
+      SERIALIZE_FUNCTION<Object>(
+          pair_to_byte<std::string, JsonObject>,
+          SERIALIZE_FUNCTION<std::string>(string_to_byte),
+          SERIALIZE_FUNCTION<JsonObject>(json_object_to_byte))(this->object),
+      type_to_byte(this->consumable),
+      type_to_byte(this->throwable))
 
   Item(Registry& r, JsonObject const& e)
-      : object(std::make_pair(get_value_copy<std::string>(r, e, "name").value(), get_value_copy<JsonObject>(r, e, "config").value()))
+      : object(
+            std::make_pair(get_value_copy<std::string>(r, e, "name").value(),
+                           get_value_copy<JsonObject>(r, e, "config").value()))
       , consumable(get_value_copy<bool>(r, e, "consumable").value())
       , throwable(get_value_copy<bool>(r, e, "throwable").value())
   {

@@ -32,9 +32,7 @@ struct Parasite
   {
   }
 
-    Parasite(std::string behaviour,
-           std::string effect,
-           Vector2D dflt_speed)
+  Parasite(std::string behaviour, std::string effect, Vector2D dflt_speed)
       : player_linked(std::nullopt)
       , behaviour(std::move(behaviour))
       , effect(std::move(effect))

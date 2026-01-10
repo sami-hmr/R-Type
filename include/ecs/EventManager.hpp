@@ -53,7 +53,7 @@
 #include "plugin/Byte.hpp"
 #include "plugin/events/EventConcept.hpp"
 
-#define  PREVENT_DEFAULT true
+#define PREVENT_DEFAULT true
 
 template<typename T>
 concept event = bytable<T> && entity_convertible<T> && json_buildable<T>;
