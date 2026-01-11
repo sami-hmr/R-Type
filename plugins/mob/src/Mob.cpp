@@ -1,14 +1,17 @@
 #include <iostream>
+#include <optional>
 
 #include "Mob.hpp"
-
+#include "libs/Vector2D.hpp"
+#include "plugin/Hooks.hpp"
 #include "NetworkShared.hpp"
 #include "ecs/EventManager.hpp"
-#include "ecs/zipper/ZipperIndex.hpp"
-#include "libs/Vector2D.hpp"
 #include "plugin/EntityLoader.hpp"
-#include "plugin/Hooks.hpp"
+#include "ecs/zipper/ZipperIndex.hpp"
+#include "plugin/components/Spawner.hpp"
 #include "plugin/components/Position.hpp"
+#include "plugin/components/Parasite.hpp"
+#include "plugin/components/Speed.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
 
 Mob::Mob(Registry& r, EventManager& em, EntityLoader& l)
@@ -43,6 +46,40 @@ void Mob::init_spawner(Registry::Entity const& entity, JsonObject const& obj)
                                                    entity_template.value(),
                                                    spawn_interval.value(),
                                                    max_spawns.value());
+}
+
+void Mob::init_parasite(Registry::Entity const& entity, JsonObject const& obj)
+{
+  auto const& behaviour = get_value<Parasite, std::string>(
+      this->_registry.get(), obj, entity, "behaviour");
+  auto const& effect = get_value<Parasite, std::string>(
+      this->_registry.get(), obj, entity, "effect");
+  auto const& dflt_speed =
+      get_value<Parasite, Vector2D>(this->_registry.get(), obj, entity, "default_speed");
+
+  if (!behaviour || !effect || !dflt_speed) {
+    std::cerr << "Error loading Parasite component: unexpected value type or "
+                 "missing value in JsonObject\n";
+    return;
+  }
+  this->_registry.get().emplace_component<Parasite>(entity,
+                                                   behaviour.value(),
+                                                   effect.value(),
+                                                   dflt_speed.value());
+}
+
+void Mob::parasite_system(Registry& r)
+{
+  for (auto&& [i, parasite, pos, speed, scene] :
+       ZipperIndex<Parasite, Position, Speed, Scene>(r))
+  {
+    if (r.is_entity_dying(i)) {
+      continue;
+    }
+    if (parasite.player_linked == std::nullopt) {
+      speed.speed = parasite.dflt_speed;
+    }
+  }
 }
 
 void Mob::spawner_system(Registry& r)

@@ -1,31 +1,22 @@
 #include <cmath>
-#include <iostream>
 
 #include "plugin/components/Background.hpp"
 
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Vector2.hpp>
 
-#include "Json/JsonParser.hpp"
 #include "SFMLRenderer.hpp"
 #include "ecs/Registry.hpp"
-#include "ecs/Scenes.hpp"
 #include "ecs/zipper/Zipper.hpp"
-#include "ecs/zipper/ZipperIndex.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/components/Drawable.hpp"
-#include "plugin/components/Facing.hpp"
 
 void SFMLRenderer::background_system(Registry& r)
 {
-  for (const auto&& [index, draw, background] : ZipperIndex<Drawable, Background>(r)) {
+  for (const auto&& [draw, background] : Zipper<Drawable, Background>(r)) {
     if (!draw.enabled) {
       continue;
     }
-    std::cout <<  "BACKGROUND" << index << std::endl;
-    auto facing = this->_registry.get().get_components<Facing>();
-    bool has = facing.size() > index && facing[index].has_value();
-    std::cout << "has facing : " << (has ? "yes" : "no") << "\n";
     if (background.parallax.active) {
       double dt = r.clock().delta_seconds();
       background.parallax.pos.x += background.parallax.speed.x * dt;

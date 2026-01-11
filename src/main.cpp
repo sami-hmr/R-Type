@@ -23,17 +23,18 @@ static int true_main(Registry& r,
   bool should_exit = false;
   int exit_code = 0;
 
-  em.on<ShutdownEvent>("ShutdownEvent",
-                       [&should_exit, &exit_code](const ShutdownEvent& event)
-                       {
-                         should_exit = true;
-                         exit_code = event.exit_code;
-                         std::cout << "Shutdown requested: " << event.reason
-                                   << "\n";
-                       });
+  em.on<ShutdownEvent>(
+      "ShutdownEvent",
+      [&should_exit, &exit_code](const ShutdownEvent& event) -> bool
+      {
+        should_exit = true;
+        exit_code = event.exit_code;
+        std::cout << "Shutdown requested: " << event.reason << "\n";
+        return false;
+      });
 
   em.on<SceneChangeEvent>("SceneChangeEvent",
-                          [&r](const SceneChangeEvent& event)
+                          [&r](const SceneChangeEvent& event) -> bool
                           {
                             if (event.force) {
                               r.deactivate_all_scenes();
@@ -41,15 +42,16 @@ static int true_main(Registry& r,
                             r.activate_scene(event.target_scene);
                           });
 
-  em.on<SpawnEntityRequestEvent>("SpawnEntity",
-                                 [&r, &e](const SpawnEntityRequestEvent& event)
-                                 {
-                                   Registry::Entity entity = r.spawn_entity();
-                                   JsonObject base =
-                                       r.get_template(event.entity_template);
-                                   e.load_components(entity, base);
-                                   e.load_components(entity, event.params);
-                                 });
+  em.on<SpawnEntityRequestEvent>(
+      "SpawnEntity",
+      [&r, &e](const SpawnEntityRequestEvent& event) -> bool
+      {
+        Registry::Entity entity = r.spawn_entity();
+        JsonObject base = r.get_template(event.entity_template);
+        e.load_components(entity, base);
+        e.load_components(entity, event.params);
+        return false;
+      });
 
   r.init_scene_management();
 
