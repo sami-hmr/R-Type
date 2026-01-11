@@ -26,10 +26,8 @@ void WaveManager::wave_death_system(Registry& r)
       }
     }
     if (remaining == 0) {
-      std::cout << "START EVENT" << std::endl;
       this->_event_manager.get().emit(
           this->_registry, wave.on_end.event_name, wave.on_end.params);
-      std::cout << "DEATH EVENT" << std::endl;
       this->_event_manager.get().emit<DeleteEntity>(wave_entity);
     }
   }

@@ -47,8 +47,10 @@ WaveManager::WaveManager(Registry& r, EventManager& em, EntityLoader& l)
                                    { wave_death_system(r); });
 
   SUBSCRIBE_EVENT(WaveSpawnEvent, {
-    this->_event_manager.get().emit<LoadEntityTemplate>(
-        event.wave_template, LoadEntityTemplate::Additional {});
+    for (auto &&entity: event.wave_templates) {
+      this->_event_manager.get().emit<LoadEntityTemplate>(
+          entity, LoadEntityTemplate::Additional {});
+    }
   })
 }
 
