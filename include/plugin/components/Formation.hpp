@@ -28,16 +28,13 @@ struct Formation
 
   CHANGE_ENTITY_DEFAULT
 
-  DEFAULT_BYTE_CONSTRUCTOR(
-      Formation,
-      ([](double str, bool act)
-       { return Formation {str, act}; }),
-      parseByte<double>(),
-      parseByte<bool>())
+  DEFAULT_BYTE_CONSTRUCTOR(Formation,
+                           ([](double str, bool act)
+                            { return Formation {str, act}; }),
+                           parseByte<double>(),
+                           parseByte<bool>())
 
-  DEFAULT_SERIALIZE(
-      type_to_byte(strength),
-      type_to_byte(active))
+  DEFAULT_SERIALIZE(type_to_byte(strength), type_to_byte(active))
 
   double strength;
   bool active;

@@ -1,14 +1,15 @@
 #pragma once
 
+#include <string>
+#include <utility>
+
 #include "ByteParser/ByteParser.hpp"
 #include "Json/JsonParser.hpp"
+#include "ParserUtils.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/events/EventMacros.hpp"
-#include "ParserUtils.hpp"
-#include <string>
-#include <utility>
 
 struct WaveSpawnEvent
 {
@@ -22,7 +23,8 @@ struct WaveSpawnEvent
   CHANGE_ENTITY_DEFAULT
 
   DEFAULT_BYTE_CONSTRUCTOR(WaveSpawnEvent,
-                           ([](std::string const& wave_temp) { return WaveSpawnEvent(wave_temp); }),
+                           ([](std::string const& wave_temp)
+                            { return WaveSpawnEvent(wave_temp); }),
                            parseByteString())
 
   DEFAULT_SERIALIZE(string_to_byte(wave_template))

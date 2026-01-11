@@ -7,8 +7,8 @@
 #include "BaseTypes.hpp"
 #include "ByteParser/ByteParser.hpp"
 #include "Json/JsonParser.hpp"
-#include "libs/Vector2D.hpp"
 #include "ecs/Registry.hpp"
+#include "libs/Vector2D.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/HookMacros.hpp"
 #include "plugin/events/EventMacros.hpp"
@@ -24,15 +24,14 @@ enum class WavePatternType : std::uint8_t
   ARC
 };
 
-inline const std::unordered_map<std::string, WavePatternType> WAVE_PATTERN_TYPE_MAP {
-    {"point", WavePatternType::POINT},
-    {"line", WavePatternType::LINE},
-    {"circle", WavePatternType::CIRCLE},
-    {"spiral", WavePatternType::SPIRAL},
-    {"grid", WavePatternType::GRID},
-    {"formation_v", WavePatternType::FORMATION_V},
-    {"arc", WavePatternType::ARC}
-};
+inline const std::unordered_map<std::string, WavePatternType>
+    WAVE_PATTERN_TYPE_MAP {{"point", WavePatternType::POINT},
+                           {"line", WavePatternType::LINE},
+                           {"circle", WavePatternType::CIRCLE},
+                           {"spiral", WavePatternType::SPIRAL},
+                           {"grid", WavePatternType::GRID},
+                           {"formation_v", WavePatternType::FORMATION_V},
+                           {"arc", WavePatternType::ARC}};
 
 inline WavePatternType parse_wave_pattern_type(const std::string& str)
 {
@@ -58,13 +57,12 @@ struct WavePattern
 
   CHANGE_ENTITY_DEFAULT
 
-  DEFAULT_BYTE_CONSTRUCTOR(
-      WavePattern,
-      ([](WavePatternType t, Vector2D orig, JsonObject p)
-       { return WavePattern {t, orig, std::move(p)}; }),
-      parseByte<WavePatternType>(),
-      parseVector2D(),
-      parseByteJsonObject())
+  DEFAULT_BYTE_CONSTRUCTOR(WavePattern,
+                           ([](WavePatternType t, Vector2D orig, JsonObject p)
+                            { return WavePattern {t, orig, std::move(p)}; }),
+                           parseByte<WavePatternType>(),
+                           parseVector2D(),
+                           parseByteJsonObject())
 
   DEFAULT_SERIALIZE(type_to_byte(type),
                     vector2DToByte(origin),
@@ -77,14 +75,12 @@ struct WavePattern
 
 inline Parser<WavePattern> parseWavePattern()
 {
-  return apply(
-      [](WavePatternType t, Vector2D orig, JsonObject p)
-      { return WavePattern {t, orig, std::move(p)}; },
-      parseByte<WavePatternType>(),
-      parseVector2D(),
-      parseByteJsonObject());
+  return apply([](WavePatternType t, Vector2D orig, JsonObject p)
+               { return WavePattern {t, orig, std::move(p)}; },
+               parseByte<WavePatternType>(),
+               parseVector2D(),
+               parseByteJsonObject());
 }
-
 
 struct OnEndEvent
 {
@@ -107,8 +103,7 @@ struct OnEndEvent
       parseByteString(),
       parseByteJsonObject())
 
-  DEFAULT_SERIALIZE(string_to_byte(event_name),
-                    json_object_to_byte(params))
+  DEFAULT_SERIALIZE(string_to_byte(event_name), json_object_to_byte(params))
 
   std::string event_name;
   JsonObject params;
@@ -116,18 +111,24 @@ struct OnEndEvent
 
 inline Parser<OnEndEvent> parseOnEndEvent()
 {
-  return apply(
-      [](std::string event_name, JsonObject p)
-      { return OnEndEvent {std::move(event_name), std::move(p)}; },
-      parseByteString(),
-      parseByteJsonObject());
+  return apply([](std::string event_name, JsonObject p)
+               { return OnEndEvent {std::move(event_name), std::move(p)}; },
+               parseByteString(),
+               parseByteJsonObject());
 }
 
 struct Wave
 {
   Wave() = default;
 
-  Wave(std::size_t wave_id, std::string tmpl, int cnt, WavePattern pat, OnEndEvent end, bool trk = true, bool has_spawned = false, std::vector<std::string> inherit = {})
+  Wave(std::size_t wave_id,
+       std::string tmpl,
+       int cnt,
+       WavePattern pat,
+       OnEndEvent end,
+       bool trk = true,
+       bool has_spawned = false,
+       std::vector<std::string> inherit = {})
       : id(wave_id)
       , entity_template(std::move(tmpl))
       , count(cnt)
@@ -147,42 +148,38 @@ struct Wave
            HOOK(on_end),
            HOOK(tracked),
            HOOK(spawned),
-           HOOK(components_inheritance)
-          )
+           HOOK(components_inheritance))
 
   CHANGE_ENTITY_DEFAULT
 
-  DEFAULT_BYTE_CONSTRUCTOR(
-      Wave,
-      ([](std::size_t wave_id,
-          std::string tmpl,
-          int cnt,
-          WavePattern pat,
-          OnEndEvent end,
-          bool trk,
-          bool has_spawned,
-          std::vector<std::string> inherit
-        )
-       {
-         return Wave {wave_id,
-                      std::move(tmpl),
-                      cnt,
-                      std::move(pat),
-                      std::move(end),
-                      trk,
-                      has_spawned,
-                      std::move(inherit)
-                    };
-       }),
-      parseByte<std::size_t>(),
-      parseByteString(),
-      parseByte<int>(),
-      parseWavePattern(),
-      parseOnEndEvent(),
-      parseByte<bool>(),
-      parseByte<bool>(),
-      parseByteArray(parseByteString())
-    )
+  DEFAULT_BYTE_CONSTRUCTOR(Wave,
+                           (
+                               [](std::size_t wave_id,
+                                  std::string tmpl,
+                                  int cnt,
+                                  WavePattern pat,
+                                  OnEndEvent end,
+                                  bool trk,
+                                  bool has_spawned,
+                                  std::vector<std::string> inherit)
+                               {
+                                 return Wave {wave_id,
+                                              std::move(tmpl),
+                                              cnt,
+                                              std::move(pat),
+                                              std::move(end),
+                                              trk,
+                                              has_spawned,
+                                              std::move(inherit)};
+                               }),
+                           parseByte<std::size_t>(),
+                           parseByteString(),
+                           parseByte<int>(),
+                           parseWavePattern(),
+                           parseOnEndEvent(),
+                           parseByte<bool>(),
+                           parseByte<bool>(),
+                           parseByteArray(parseByteString()))
 
   DEFAULT_SERIALIZE(type_to_byte(id),
                     string_to_byte(entity_template),
@@ -192,8 +189,7 @@ struct Wave
                     type_to_byte(tracked),
                     type_to_byte(spawned),
                     vector_to_byte<std::string>(components_inheritance,
-                                                string_to_byte)
-                  )
+                                                string_to_byte))
 
   std::size_t id = 0;
   std::string entity_template;
