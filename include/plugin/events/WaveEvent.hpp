@@ -2,9 +2,11 @@
 
 #include <string>
 #include <vector>
+#include <utility>
 
 #include "ByteParser/ByteParser.hpp"
 #include "Json/JsonParser.hpp"
+#include "ParserUtils.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
@@ -31,7 +33,7 @@ struct WaveSpawnEvent
       std::function<ByteArray(const std::string&)>(
           [](const std::string& s) { return string_to_byte(s); })))
 
-  WaveSpawnEvent(Registry& r, JsonObject const& conf)
+  WaveSpawnEvent(Registry&  /*r*/, JsonObject const& conf)
   {
     if (conf.contains("wave_templates")) {
       auto const& wave_array = std::get<JsonArray>(conf.at("wave_templates").value);

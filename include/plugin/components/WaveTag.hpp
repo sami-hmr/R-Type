@@ -31,12 +31,11 @@ struct WaveTag
 
   CHANGE_ENTITY_DEFAULT
 
-  DEFAULT_BYTE_CONSTRUCTOR(
-      WaveTag,
-      ([](std::size_t id, Vector2D offset)
-       { return WaveTag(id, offset); }),
-      parseByte<std::size_t>(),
-      parseVector2D())
+  DEFAULT_BYTE_CONSTRUCTOR(WaveTag,
+                           ([](std::size_t id, Vector2D offset)
+                            { return WaveTag(id, offset); }),
+                           parseByte<std::size_t>(),
+                           parseVector2D())
 
   DEFAULT_SERIALIZE(type_to_byte(wave_id), vector2DToByte(formation_offset))
 

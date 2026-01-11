@@ -1904,7 +1904,6 @@ public:
     return this->_index_getter.at_first(typeid(Component));
   }
 
-
   std::optional<ByteArray> get_component_bytes(Entity entity,
                                                std::string const& component_key)
   {
