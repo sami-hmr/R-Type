@@ -21,7 +21,7 @@
 #include "plugin/events/ShutdownEvent.hpp"
 
 RtypeServer::RtypeServer(Registry& r, EventManager& em, EntityLoader& l)
-    : BaseServer("rtype_server", r, em, l)
+    : BaseServer("rtype_server", "r-type", r, em, l)
 {
   SUBSCRIBE_EVENT(NewConnection, {
     std::size_t entity = this->_registry.get().spawn_entity();

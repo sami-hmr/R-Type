@@ -1,9 +1,11 @@
 #include <iostream>
+#include <string>
 #include <vector>
 
 #include "network/server/BaseServer.hpp"
 
 #include "NetworkShared.hpp"
+#include "ServerLaunch.hpp"
 #include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "network/server/Server.hpp"
@@ -15,10 +17,13 @@
 #include "plugin/events/ShutdownEvent.hpp"
 
 BaseServer::BaseServer(std::string const& name,
+                       std::string const& game_name,
                        Registry& r,
                        EventManager& em,
                        EntityLoader& l)
     : APlugin(name, r, em, l, {}, {})
+    , game_name(game_name)
+    , _http_client("0.0.0.0", 8080)
 {
   SUBSCRIBE_EVENT(ServerLaunching, {
     _running = true;
@@ -32,7 +37,7 @@ BaseServer::BaseServer(std::string const& name,
            LogLevel::INFO,
            std::format("Server started on port {}", event.port));
 
-    this->_actual_server = std::thread(&BaseServer::launch_server, this);
+    this->_actual_server = std::thread(&BaseServer::launch_server, this, event);
   })
 
   SUBSCRIBE_EVENT(ShutdownEvent, {
@@ -84,8 +89,8 @@ BaseServer::BaseServer(std::string const& name,
           return;
         }
 
-        for (auto const& it : this->_server_class->watch_disconected_clients())
-        {
+        for (auto const& it :
+             this->_server_class->watch_disconected_clients()) {
           this->_event_manager.get().emit<DisconnectClient>(it);
         }
       });
@@ -132,6 +137,8 @@ BaseServer::BaseServer(std::string const& name,
         "DeleteClientEntity",
         DeleteClientEntity(event.entity).to_bytes());
   })
+
+  this->setup_http_requests();
 }
 
 BaseServer::~BaseServer()
@@ -145,9 +152,10 @@ BaseServer::~BaseServer()
   }
 }
 
-void BaseServer::launch_server()
+void BaseServer::launch_server(ServerLaunching const& infos)
 {
   try {
+    this->_port = static_cast<int>(infos.port);
     this->_server_class->receive_loop();
   } catch (std::exception& e) {
     LOGGER("server",

@@ -14,10 +14,10 @@
           "name": "rtype_client",
           "config": {}
         },
-        // {
-        //   "name": "cli",
-        //   "config": {}
-        // },
+        {
+          "name": "cli",
+          "config": {}
+        },
         {
           "name": "controller",
           "config": {}

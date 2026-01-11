@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS "save" (
+    "game_id" INTEGER NOT NULL,
+   	"save" BYTEA NOT NULL,
+	PRIMARY KEY("id")
+);
+
+ALTER TABLE "save"
+ADD FOREIGN KEY("game_id") REFERENCES "game"("id")
+ON UPDATE CASCADE ON DELETE CASCADE;

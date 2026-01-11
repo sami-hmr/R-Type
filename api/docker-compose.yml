@@ -1,0 +1,48 @@
+services:
+  api:
+    env_file: "./api/.env"
+    ports:
+      - "8080:8080"
+    build:
+      context: "./api"
+      additional_contexts:
+        root: .
+
+    volumes:
+      - ./api:/app
+    restart: always
+    develop:
+      watch:
+        - path: ./api/src
+          action: sync
+          target: /app
+        - path: ./api
+          action: rebuild
+          ignore:
+            - ./api/src
+    networks:
+      - backend
+    depends_on:
+      - db
+
+  db:
+    image: postgres:17.6
+    restart: always
+
+    env_file:
+      - ./database/.env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./database/scripts:/docker-entrypoint-initdb.d
+      - ./database/update_db:/home/
+    ports:
+      - 5432:5432
+    networks:
+      - backend
+
+volumes:
+  pgdata:
+
+networks:
+  backend:
+    driver: bridge

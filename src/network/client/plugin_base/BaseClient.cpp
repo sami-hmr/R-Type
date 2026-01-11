@@ -6,6 +6,7 @@
 #include "ClientConnection.hpp"
 #include "NetworkShared.hpp"
 #include "ecs/Registry.hpp"
+#include "network/HttpClient.hpp"
 #include "network/client/Client.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/Byte.hpp"
@@ -17,10 +18,13 @@
 #include "plugin/events/ShutdownEvent.hpp"
 
 BaseClient::BaseClient(std::string const& name,
+                       std::string const& game_name,
                        Registry& r,
                        EventManager& em,
                        EntityLoader& l)
     : APlugin(name, r, em, l, {}, {})
+    , game_name(game_name)
+    , _http_client("0.0.0.0", 8080)
 {
   SUBSCRIBE_EVENT(ClientConnection, {
     if (!this->_running) {
@@ -133,6 +137,8 @@ BaseClient::BaseClient(std::string const& name,
     std::cout << "ping: " << event.ping_in_millisecond
               << ", loss: " << event.packet_loss << std::endl;
   })
+
+  this->setup_http_requests();
 }
 
 BaseClient::~BaseClient()

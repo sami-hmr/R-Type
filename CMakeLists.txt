@@ -10,10 +10,13 @@ project(
     LANGUAGES CXX
 )
 
+set(CMAKE_CXX_COMPILER /bin/clang++)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -fPIC -O3")
 set(CMAKE_SHARED_LIBRARY_PREFIX "")
+
+# add_compile_options(-fno-consteval)
 
 # Use vcpkg toolchain if available
 if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
@@ -84,6 +87,7 @@ add_library(${SERVER_LIB} STATIC
     src/network/server/true_server/DataTransfer.cpp
     src/network/server/true_server/Server.cpp
     src/network/server/plugin_base/BaseServer.cpp
+    src/network/server/plugin_base/HttpRequests.cpp
 )
 
 target_include_directories(${SERVER_LIB}
@@ -108,6 +112,7 @@ add_library(${CLIENT_LIB} STATIC
     src/network/client/true_client/DataTransfer.cpp
     src/network/client/true_client/Client.cpp
     src/network/client/plugin_base/BaseClient.cpp
+    src/network/client/plugin_base/HttpRequests.cpp
 )
 
 target_include_directories(${CLIENT_LIB}

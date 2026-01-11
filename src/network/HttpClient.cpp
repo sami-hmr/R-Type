@@ -5,50 +5,52 @@
 
 #include "network/HttpClient.hpp"
 
+#include <resolv.h>
+
 #include "network/Httplib.hpp"
 
 HttpClient::HttpClient(std::string const& api_uri)
     : _client(api_uri) {};
 
-httplib::Result HttpClient::send_request(std::string const& endpoint,
-                                         httplib::Params const& params,
-                                         httplib::Headers const& header)
-{
-  return this->_client.Get(endpoint, params, header);
-}
+HttpClient::HttpClient(std::string const& host, int port)
+    : _client(host, port) {};
 
-void HttpClient::register_request(
-    std::function<void(httplib::Result)>&& handler,
-    std::string const& endpoint,
-    httplib::Params const& params,
-    httplib::Headers const& header)
-{
-  this->_handlers.emplace_back(std::async(std::launch::async,
-                                          &HttpClient::send_request,
-                                          this,
-                                          endpoint,
-                                          params,
-                                          header),
-                               std::move(handler));
-  ;
-}
-
-void HttpClient::handle_responses()
+void HttpClient::handle_responses(void* context)
 {
   std::vector<std::size_t> handeled_responses;
 
   for (std::size_t i = 0; i < this->_handlers.size(); i++) {
-    auto &it = this->_handlers[i];
-    auto status = it.call.wait_for(std::chrono::seconds(0));
+    auto status = _handlers[i].call.wait_for(std::chrono::seconds(0));
     if (status != std::future_status::ready) {
       continue;
     }
-    it.handler(it.call.get());
     handeled_responses.push_back(i);
+    auto result = _handlers[i].call.get();
+
+    if (result.error() != httplib::Error::Success) {
+        std::cout << "error with http request, code: " << result.error() << "\n";
+        continue;
+    }
+    _handlers[i].handler(context, result);
   }
 
   std::reverse(handeled_responses.begin(), handeled_responses.end());
   for (auto i : handeled_responses) {
-      this->_handlers.erase(this->_handlers.begin() + i);
+    // this->_calls.erase(this->_calls.begin() + i);
+    this->_handlers.erase(this->_handlers.begin() + i);
   }
+}
+
+httplib::Result HttpClient::send_get(const std::string& endpoint,
+                                     httplib::Params const& params,
+                                     httplib::Headers const& header)
+{
+  return this->_client.Get(endpoint, params, header);
+}
+
+httplib::Result HttpClient::send_post(const std::string& endpoint,
+                                      std::string const& body,
+                                      std::string const& content_type)
+{
+  return this->_client.Post(endpoint, body, content_type);
 }

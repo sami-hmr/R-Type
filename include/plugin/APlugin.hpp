@@ -44,7 +44,7 @@
 #define SUBSCRIBE_EVENT_PRIORITY(event_name, function, priority) \
   this->_event_manager.get().on<event_name>( \
       #event_name, \
-      [this]([[maybe_unused]] event_name const& event) function, \
+      [this]([[maybe_unused]] event_name const& event) mutable function, \
       priority);
 
 #define SUBSCRIBE_EVENT(event_name, function) \

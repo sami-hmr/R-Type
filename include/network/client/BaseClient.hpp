@@ -1,6 +1,7 @@
 #pragma once
 
 #include <thread>
+#include <vector>
 
 #include <asio/io_context.hpp>
 #include <asio/ip/udp.hpp>
@@ -9,9 +10,9 @@
 #include "NetworkShared.hpp"
 #include "TwoWayMap.hpp"
 #include "ecs/Registry.hpp"
+#include "network/HttpClient.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
-#include "network/Httplib.hpp"
 
 class BaseClient : public APlugin
 {
@@ -21,12 +22,17 @@ public:
   BaseClient& operator=(const BaseClient&) = delete;
   BaseClient& operator=(BaseClient&&) = delete;
   BaseClient(std::string const& name,
-             Registry& r,
+             std::string const& game_name ,Registry& r,
              EventManager& em,
              EntityLoader& l);
   ~BaseClient() override;
 
+  std::string const game_name;
+
+
 private:
+  friend void handle_fetch_servers(void*, httplib::Result const&);
+  void setup_http_requests();
   void connection_thread(ClientConnection const& c);
   SharedQueue<ComponentBuilder> _component_queue;
   SharedQueue<EventBuilder> _event_from_server;
@@ -43,6 +49,19 @@ protected:
 
   std::size_t _id_in_server = 0;
 
+  HttpClient _http_client;
+
+  struct AvailableServer
+  {
+    std::size_t id;
+    std::string address;
+    std::size_t port;
+  };
+
+  std::vector<AvailableServer> _available_servers;
+
 private:
+  void handle_server_fetch();
+
   std::unordered_set<Registry::Entity> _server_created;
 };

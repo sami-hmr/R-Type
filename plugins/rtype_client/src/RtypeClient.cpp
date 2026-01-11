@@ -17,7 +17,7 @@
 #include "plugin/events/NetworkEvents.hpp"
 
 RtypeClient::RtypeClient(Registry& r, EventManager& em, EntityLoader& l)
-    : BaseClient("rtype_client", r, em, l)
+    : BaseClient("rtype_client", "r-type", r, em, l)
 {
   SUBSCRIBE_EVENT(PlayerCreation, {
     auto zipper = ZipperIndex<Controllable>(this->_registry.get());
