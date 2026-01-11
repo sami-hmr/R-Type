@@ -87,7 +87,7 @@
           "collision_type": "solid"
         },
         "projectile:Temporal": {
-          "lifetime": 1.0
+          "lifetime": 2.0
         },
         "projectile:Fragile": {
           "hits": 0
@@ -173,7 +173,7 @@
           "name": "test1"
         },
         "life:Damage": {
-          "amount": 2
+          "amount": 200
         },
         "collision:Collidable": {
           "width": 0.2,
@@ -187,13 +187,6 @@
           "hits": 4
         }
       }
-    }
-  ],
-  "scenes": [
-    {
-      "name": "game",
-      "state": "disabled",
-      "entities": [{}]
     }
   ]
 }

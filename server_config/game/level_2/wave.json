@@ -1,0 +1,35 @@
+{
+  "scenes": [
+    {
+      "name": "level_2",
+      "state": "disabled",
+      "plugins": [],
+      "entities": [
+        {
+          "wave:Wave": {
+            "entity_template": "enemy_follow_1",
+            "count": 8,
+            "tracked": true,
+            "components_inheritance": [],
+            "pattern": {
+              "type": "circle",
+              "origin": { "x": 1.6, "y": 0.0 },
+              "params": {
+                "radius": 0.5
+              }
+            },
+            "on_end": {
+              "event_name": "WaveSpawnEvent",
+              "params": {
+                "wave_templates": ["wave_1_level_2", "wave_2_level_2", "wave_3_level_2"]
+              }
+            }
+          },
+          "wave:Formation": {
+            "strength": 0.1
+          }
+        }
+      ]
+    }
+  ]
+}
