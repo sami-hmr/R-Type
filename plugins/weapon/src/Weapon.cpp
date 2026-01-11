@@ -37,7 +37,7 @@ Weapon::Weapon(Registry& r, EventManager& em, EntityLoader& l)
 void Weapon::on_fire(Registry& r, const FireBullet& e)
 {
   auto now = r.clock().now();
-  if (!this->_registry.get().has_component<BasicWeapon, Position, Scene>(
+  if (!this->_registry.get().has_component<BasicWeapon, Position>(
           e.entity))
   {
     return;
@@ -45,7 +45,6 @@ void Weapon::on_fire(Registry& r, const FireBullet& e)
 
   auto& weapon = *this->_registry.get().get_components<BasicWeapon>()[e.entity];
   auto const& pos = *this->_registry.get().get_components<Position>()[e.entity];
-  auto const& scene = *this->_registry.get().get_components<Scene>()[e.entity];
 
   auto const& vel_direction =
       (this->_registry.get().has_component<Direction>(e.entity))
@@ -66,14 +65,23 @@ void Weapon::on_fire(Registry& r, const FireBullet& e)
   if (!weapon.update_basic_weapon(now)) {
     return;
   }
+
+  LoadEntityTemplate::Additional additional = {
+    {this->_registry.get().get_component_key<Position>(), pos.to_bytes()},
+    {this->_registry.get().get_component_key<Direction>(),
+     direction.to_bytes()},
+    {this->_registry.get().get_component_key<Team>(), team.to_bytes()}};
+
+  if (this->_registry.get().has_component<Scene>(e.entity)) {
+    additional.push_back(
+        {this->_registry.get().get_component_key<Scene>(),
+         this->_registry.get()
+             .get_components<Scene>()[e.entity]
+             .value()
+             .to_bytes()});
+  }
   this->_event_manager.get().emit<LoadEntityTemplate>(
-      weapon.bullet_type,
-      LoadEntityTemplate::Additional {
-          {this->_registry.get().get_component_key<Position>(), pos.to_bytes()},
-          {this->_registry.get().get_component_key<Scene>(), scene.to_bytes()},
-          {this->_registry.get().get_component_key<Direction>(),
-           direction.to_bytes()},
-          {this->_registry.get().get_component_key<Team>(), team.to_bytes()}});
+      weapon.bullet_type, additional);
 }
 
 void Weapon::basic_weapon_system(

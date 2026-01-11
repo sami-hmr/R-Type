@@ -49,9 +49,7 @@ void Mob::spawner_system(Registry& r)
 {
   std::vector<std::function<void()>> event_to_emit;
 
-  for (auto&& [i, spawner, pos, scene] :
-       ZipperIndex<Spawner, Position, Scene>(r))
-  {
+  for (auto&& [i, spawner, pos] : ZipperIndex<Spawner, Position>(r)) {
     if (r.is_entity_dying(i)) {
       continue;
     }
@@ -74,22 +72,26 @@ void Mob::spawner_system(Registry& r)
            i = i,
            spawner_bytes = spawner.to_bytes(),
            entity_template = spawner.entity_template,
-           pos_bytes = pos.to_bytes(),
-           scene_bytes = scene.to_bytes()]()
+           pos_bytes = pos.to_bytes()]()
           {
             this->_event_manager.get().emit<ComponentBuilder>(
                 i,
                 this->_registry.get().get_component_key<Spawner>(),
                 spawner_bytes);
-            this->_event_manager.get().emit<LoadEntityTemplate>(
-                entity_template,
-                LoadEntityTemplate::Additional {
-                    {
-                        this->_registry.get().get_component_key<Position>(),
-                        pos_bytes,
-                    },
-                    {this->_registry.get().get_component_key<Scene>(),
-                     scene_bytes}});
+            LoadEntityTemplate::Additional additional = {
+                {this->_registry.get().get_component_key<Position>(),
+                 pos_bytes}};
+
+            if (this->_registry.get().has_component<Scene>(i)) {
+              additional.push_back(
+                  {this->_registry.get().get_component_key<Scene>(),
+                   this->_registry.get()
+                       .get_components<Scene>()[i]
+                       .value()
+                       .to_bytes()});
+            }
+            this->_event_manager.get().emit<LoadEntityTemplate>(entity_template,
+                                                                additional);
           });
     }
   }

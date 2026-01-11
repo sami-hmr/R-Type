@@ -410,8 +410,8 @@ void SFMLRenderer::unified_render_system(Registry& r)
                                pos.z);
   }
 
-  for (auto&& [scene, drawable, position, bar] :
-       Zipper<Scene, Drawable, Position, Bar>(r))
+  for (auto&& [drawable, position, bar] :
+       Zipper<Drawable, Position, Bar>(r))
   {
     if (!drawable.enabled) {
       continue;
@@ -456,8 +456,8 @@ void SFMLRenderer::unified_render_system(Registry& r)
                                position.z);
   }
 
-  for (auto&& [entity, pos, draw, anim, scene] :
-       ZipperIndex<Position, Drawable, AnimatedSprite, Scene>(r))
+  for (auto&& [entity, pos, draw, anim] :
+       ZipperIndex<Position, Drawable, AnimatedSprite>(r))
   {
     if (!draw.enabled) {
       continue;
