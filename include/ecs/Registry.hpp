@@ -1096,7 +1096,10 @@ public:
             }
           }
         }
-      } catch (...) {  // NOLINT  TODO: catch correctly
+      } catch (std::bad_any_cast const& e) {
+        // Type mismatch in hook binding - field type doesn't match hooked value
+      } catch (std::out_of_range const& e) {
+        // Hook field not found or invalid hook string format
       }
     };
 
@@ -1967,7 +1970,7 @@ public:
    */
   std::vector<ComponentState> get_state();
 
-  private:
+private:
   struct Binding
   {
     Entity target_entity;  ///< Entity containing the target component

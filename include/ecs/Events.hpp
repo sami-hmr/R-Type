@@ -57,7 +57,7 @@ public:
    * @param fn The event function to execute
    * @param priority Execution priority (higher values run first, default: 0)
    */
-  explicit Event(std::function<void(EventType const &)> fn, std::size_t priority)
+  explicit Event(std::function<void(EventType const&)> fn, std::size_t priority)
       : _priority(priority)
       , _fn(std::move(fn))
   {
@@ -67,10 +67,7 @@ public:
    * @brief Executes the event function with provided arguments
    * @param args Arguments to forward to the event function
    */
-  void operator()(EventType const &event) const
-  {
-    this->_fn(event);
-  }
+  void operator()(EventType const& event) const { this->_fn(event); }
 
   /**
    * @brief Compares events by priority for sorting
@@ -87,5 +84,5 @@ public:
 
 private:
   size_t _priority;  ///< Execution priority (public for sorting access)
-  std::function<void(EventType const &)> _fn;  ///< The wrapped event function
+  std::function<void(EventType const&)> _fn;  ///< The wrapped event function
 };

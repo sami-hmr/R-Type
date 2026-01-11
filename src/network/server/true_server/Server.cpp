@@ -6,6 +6,7 @@
 */
 #include <atomic>
 #include <chrono>
+#include <cstdio>
 #include <vector>
 
 #include "network/server/Server.hpp"
@@ -14,9 +15,11 @@
 #include <asio/socket_base.hpp>
 #include <asio/system_error.hpp>
 
+#include "CustomException.hpp"
 #include "NetworkCommun.hpp"
 #include "NetworkShared.hpp"
 #include "ServerCommands.hpp"
+#include "network/PacketCompresser.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/CircularBuffer.hpp"
 
@@ -72,23 +75,23 @@ void Server::receive_loop()
       std::size_t len =
           recv_buf.read_socket(this->_socket, sender_endpoint, ec);
       if (len > 0) {
-        // NETWORK_LOGGER("server",
+        // LOGGER_EVTLESSGER("server",
         //                std::uint8_t(LogLevel::DEBUG),
         //                std::format("received buffer, size : {}", len));
       }
 
       if (ec) {
         if (_running) {
-          NETWORK_LOGGER(
+          LOGGER_EVTLESS(
+              LogLevel::ERROR,
               "server",
-              std::uint8_t(LogLevel::ERROR),
               std::format("Receive error: {}. reseting client", ec.message()));
           this->_client_mutex.lock();
           try {
             this->reset_client_by_endpoint(sender_endpoint);
           } catch (ClientNotFound const&) {
-            NETWORK_LOGGER("server",
-                           "WARING",
+            LOGGER_EVTLESS("server",
+                           LogLevel::WARNING,
                            "A strange unknow client tried something, surely "
                            "not /dev/urandom :)");
           }
@@ -101,18 +104,26 @@ void Server::receive_loop()
       while (std::optional<ByteArray> p = recv_buf.extract(PROTOCOL_EOF)) {
         this->handle_package(*p, sender_endpoint);
       }
+    } catch (CustomException& e) {
+      if (_running) {
+        LOGGER_EVTLESS(
+            LogLevel::ERROR,
+            "server",
+            std::format(
+                "Error in receive loop: {}: ", e.what(), e.format_context()));
+      }
+      break;
     } catch (std::exception& e) {
       if (_running) {
-        NETWORK_LOGGER("server",
-                       std::uint8_t(LogLevel::ERROR),
+        LOGGER_EVTLESS(LogLevel::ERROR,
+                       "server",
                        std::format("Error in receive loop: {}", e.what()));
       }
       break;
     }
   }
 
-  NETWORK_LOGGER(
-      "server", std::uint8_t(LogLevel::INFO), "Server receive loop ended");
+  LOGGER_EVTLESS(LogLevel::INFO, "server", "Server receive loop ended");
 }
 
 void Server::handle_package(ByteArray const& package,
@@ -124,9 +135,8 @@ void Server::handle_package(ByteArray const& package,
     return;
   }
   if (pkg->magic != MAGIC_SEQUENCE) {
-    NETWORK_LOGGER("server",
-                   std::uint8_t(LogLevel::DEBUG),
-                   "Invalid magic sequence, ignoring.");
+    LOGGER_EVTLESS(
+        LogLevel::DEBUG, "server", "Invalid magic sequence, ignoring.");
     return;
   }
   ClientState state = ClientState::CHALLENGING;
@@ -136,7 +146,8 @@ void Server::handle_package(ByteArray const& package,
     client.last_ping =
         std::chrono::steady_clock::now().time_since_epoch().count();
     state = client.state;
-  } catch (ClientNotFound const&) {
+  } catch (ClientNotFound const&) {  // NOLINT Client not yet registered - will
+                                     // be handled as connectionless
   }
   this->_client_mutex.unlock();
   try {
@@ -158,8 +169,13 @@ void Server::handle_package(ByteArray const& package,
       }
       this->handle_connectionless_packet(parsed.value(), sender);
     }
-  } catch (ClientNotFound const&) {
-    std::cerr << "Client not found, skipping\n";
+  } catch (ClientNotFound const& e) {
+    LOGGER_EVTLESS(
+        LogLevel::WARNING,
+        "server",
+        std::format("Client not found while handling packet: {} (context: {})",
+                    e.what(),
+                    e.format_context()));
   }
 }
 
@@ -167,12 +183,16 @@ void Server::send(ByteArray const& response,
                   const asio::ip::udp::endpoint& endpoint,
                   bool hearthbeat)
 {
-  ByteArray pkg =
-      MAGIC_SEQUENCE + type_to_byte(hearthbeat) + response + PROTOCOL_EOF;
+  ByteArray pkg = MAGIC_SEQUENCE + type_to_byte(hearthbeat) + response;
 
+  PacketCompresser::encrypt(pkg);
   try {
-    _socket.send_to(asio::buffer(pkg), endpoint);
-  } catch (asio::system_error const&) {
+    _socket.send_to(asio::buffer(pkg + PROTOCOL_EOF), endpoint);
+  } catch (asio::system_error const& e) {
+    LOGGER_EVTLESS(
+        LogLevel::WARNING,
+        "server",
+        std::format("Failed to send to client, removing: {}", e.what()));
     this->remove_client_by_endpoint(endpoint);
   }
 }
@@ -181,16 +201,17 @@ void Server::send_connected(ByteArray const& response,
                             ClientInfo& client,
                             bool prioritary)
 {
-  std::vector<ByteArray> const &packages = response / get_package_division(response.size());
+  ByteArray compressed = PacketCompresser::compress_packet(response);
+  std::vector<ByteArray> const& packages =
+      compressed / get_package_division(compressed.size());
   for (std::size_t i = 0; i < packages.size(); i++) {
-      ConnectedPackage pkg(client.next_send_sequence,
-        client.acknowledge_manager.get_acknowledge(),
-        (i + 1) == packages.size(),
-        prioritary,
-        packages[i]
-      );
-      client.acknowledge_manager.register_sent_package(pkg);
-      client.next_send_sequence += 1;
-      this->send(pkg.to_bytes(), client.endpoint);
+    ConnectedPackage pkg(client.next_send_sequence,
+                         client.acknowledge_manager.get_acknowledge(),
+                         (i + 1) == packages.size(),
+                         prioritary,
+                         packages[i]);
+    client.acknowledge_manager.register_sent_package(pkg);
+    client.next_send_sequence += 1;
+    this->send(pkg.to_bytes(), client.endpoint);
   }
 }
