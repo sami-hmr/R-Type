@@ -42,7 +42,7 @@ inline void emit_event(EventManager& em,
     em.emit<EventBuilder>(
         EventBuilder(id, em.get_event_with_id(r, id, params)));
   } catch (std::out_of_range const&) {
-    em.emit<LogEvent>("init", LogLevel::ERROR, "unknow event");
+    em.emit<LogEvent>("Emit event", LogLevel::ERROR, "unknown event");
   }
   em.emit(r, id, params);
 }
