@@ -1,8 +1,8 @@
 #pragma once
 
 #include <string>
-#include <vector>
 #include <utility>
+#include <vector>
 
 #include "ByteParser/ByteParser.hpp"
 #include "Json/JsonParser.hpp"
@@ -28,15 +28,16 @@ struct WaveSpawnEvent
                             { return WaveSpawnEvent(wave_temps); }),
                            parseByteArray(parseByteString()))
 
-  DEFAULT_SERIALIZE(vector_to_byte(
-      wave_templates,
-      std::function<ByteArray(const std::string&)>(
-          [](const std::string& s) { return string_to_byte(s); })))
+  DEFAULT_SERIALIZE(vector_to_byte(wave_templates,
+                                   std::function<ByteArray(const std::string&)>(
+                                       [](const std::string& s)
+                                       { return string_to_byte(s); })))
 
-  WaveSpawnEvent(Registry&  /*r*/, JsonObject const& conf)
+  WaveSpawnEvent(Registry& /*r*/, JsonObject const& conf)
   {
     if (conf.contains("wave_templates")) {
-      auto const& wave_array = std::get<JsonArray>(conf.at("wave_templates").value);
+      auto const& wave_array =
+          std::get<JsonArray>(conf.at("wave_templates").value);
       for (auto const& item : wave_array) {
         wave_templates.push_back(std::get<std::string>(item.value));
       }
