@@ -20,13 +20,20 @@
  *
  * Scenes can be in different states controlling their visibility and update
  * behavior:
+ * - DISABLED: Scene exists but is not processed or rendered
  * - ACTIVE: Scene is active and entities are processed by systems
- * - INACTIVE: Scene exists but is not processed or rendered
+ * - MAIN: Primary active scene (highest priority, always processed)
+ *
+ * The hierarchy is: DISABLED < ACTIVE < MAIN
+ * When filtering scenes, you can specify a minimum level. For example:
+ * - Minimum ACTIVE: includes ACTIVE and MAIN scenes (excludes DISABLED)
+ * - Minimum MAIN: includes only MAIN scenes
  */
 enum class SceneState : std::uint8_t
 {
-  ACTIVE,  ///< Scene is active, entities are processed
-  INACTIVE  ///< Scene is inactive, entities are not processed
+  DISABLED = 0,  ///< Scene is disabled, entities are not processed
+  ACTIVE = 1,  ///< Scene is active, entities are processed
+  MAIN = 2  ///< Primary active scene, entities always processed
 };
 
 /**
@@ -38,8 +45,9 @@ enum class SceneState : std::uint8_t
  * representations.
  */
 static const TwoWayMap<SceneState, std::string> SCENE_STATE_STR = {
+    {SceneState::DISABLED, "disabled"},
     {SceneState::ACTIVE, "active"},
-    {SceneState::INACTIVE, "inactive"},
+    {SceneState::MAIN, "main"},
 };
 
 /**

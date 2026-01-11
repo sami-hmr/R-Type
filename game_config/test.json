@@ -3,7 +3,7 @@
     "scenes": [
       {
         "name": "game",
-        "state": "inactive",
+        "state": "disabled",
         "plugins": [
           {
             "name": "actions",

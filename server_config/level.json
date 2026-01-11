@@ -2,7 +2,7 @@
   "scenes": [
     {
       "name": "game",
-      "state": "inactive",
+      "state": "disabled",
       "plugins": [],
       "entities": [
         {

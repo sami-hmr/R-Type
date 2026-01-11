@@ -102,7 +102,7 @@ void Registry::clear_bindings()
 void Registry::add_scene(std::string const& scene_name, SceneState state)
 {
   _scenes.insert_or_assign(scene_name, state);
-  if (state == SceneState::ACTIVE) {
+  if (state == SceneState::ACTIVE || state == SceneState::MAIN) {
     activate_scene(scene_name);
   }
 }
@@ -114,9 +114,9 @@ void Registry::init_scene_management()
 
 void Registry::setup_scene_systems()
 {
-  // Activate all scenes that were registered as ACTIVE
+  // Activate all scenes that were registered as ACTIVE or MAIN
   for (const auto& [name, state] : _scenes) {
-    if (state == SceneState::ACTIVE) {
+    if (state == SceneState::ACTIVE || state == SceneState::MAIN) {
       activate_scene(name);
     }
   }
@@ -125,10 +125,13 @@ void Registry::setup_scene_systems()
 void Registry::activate_scene(std::string const& scene_name)
 {
   if (!_scenes.contains(scene_name)) {
-    _scenes.insert({scene_name, SceneState::INACTIVE});
+    _scenes.insert({scene_name, SceneState::DISABLED});
   }
 
-  _scenes[scene_name] = SceneState::ACTIVE;
+  // If the scene is not already MAIN, set it to ACTIVE
+  if (_scenes[scene_name] != SceneState::MAIN) {
+    _scenes[scene_name] = SceneState::ACTIVE;
+  }
 
   if (_active_scenes_set.contains(scene_name)) {
     return;
@@ -141,7 +144,7 @@ void Registry::activate_scene(std::string const& scene_name)
 void Registry::deactivate_scene(std::string const& scene_name)
 {
   if (_scenes.contains(scene_name)) {
-    _scenes[scene_name] = SceneState::INACTIVE;
+    _scenes[scene_name] = SceneState::DISABLED;
   }
 
   _active_scenes_set.erase(scene_name);
@@ -153,7 +156,7 @@ void Registry::deactivate_scene(std::string const& scene_name)
 void Registry::deactivate_all_scenes()
 {
   for (auto& [name, state] : _scenes) {
-    state = SceneState::INACTIVE;
+    state = SceneState::DISABLED;
   }
   _current_scene.clear();
   _active_scenes_set.clear();
@@ -177,12 +180,18 @@ bool Registry::is_scene_active(std::string const& scene_name) const
 SceneState Registry::get_scene_state(std::string const& scene_name) const
 {
   auto it = _scenes.find(scene_name);
-  return (it != _scenes.end()) ? it->second : SceneState::INACTIVE;
+  return (it != _scenes.end()) ? it->second : SceneState::DISABLED;
 }
 
 std::unordered_set<std::string> const& Registry::get_active_scenes_set() const
 {
   return _active_scenes_set;
+}
+
+std::unordered_map<std::string, SceneState> const& Registry::get_scene_states()
+    const
+{
+  return _scenes;
 }
 
 std::vector<std::string> const& Registry::get_active_scenes() const
@@ -194,6 +203,22 @@ std::vector<std::string> const& Registry::get_active_scenes() const
 void Registry::set_current_scene(std::string const& scene_name)
 {
   activate_scene(scene_name);
+}
+
+void Registry::set_main_scene(std::string const& scene_name)
+{
+  if (!_scenes.contains(scene_name)) {
+    _scenes.insert({scene_name, SceneState::MAIN});
+  } else {
+    _scenes[scene_name] = SceneState::MAIN;
+  }
+
+  if (_active_scenes_set.contains(scene_name)) {
+    return;
+  }
+
+  _current_scene.push_back(scene_name);
+  _active_scenes_set.insert(scene_name);
 }
 
 void Registry::remove_current_scene(std::string const& scene_name)

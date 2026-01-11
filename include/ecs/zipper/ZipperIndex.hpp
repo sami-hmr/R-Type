@@ -169,18 +169,27 @@ public:
 
   /**
    * @brief Constructs an indexed zipper from multiple container references.
-   * @param cs Variadic pack of container references to zip together.
+   * @param r Registry reference containing all components and scene data
+   * @param min_scene_level Minimum scene state level to include (default:
+   * ACTIVE)
    *
    * Computes the minimum size among all Comps and creates begin/end
    * iterator tuples. The zipper will iterate up to the size of the smallest
    * container, yielding tuples that include the iteration index.
+   *
+   * The min_scene_level parameter controls which scenes are included:
+   * - SceneState::DISABLED: Include all scenes (no filtering)
+   * - SceneState::ACTIVE: Include ACTIVE and MAIN scenes (default)
+   * - SceneState::MAIN: Include only MAIN scenes
    */
-  ZipperIndex(Registry& r)
+  ZipperIndex(Registry& r, SceneState min_scene_level = SceneState::ACTIVE)
       : _size(compute_size(r))
       , _begin(std::make_tuple(r.get_components<Comps>().begin()...))
       , _end(compute_end(r))
       , _scenes(r.get_components<Scene>())
       , _active_scenes(r.get_active_scenes_set())
+      , _scene_states(r.get_scene_states())
+      , _min_scene_level(min_scene_level)
   {
   }
 
@@ -193,8 +202,13 @@ public:
    */
   Iterator begin()
   {
-    return ZipperIndexIterator<Comps...>(
-        this->_begin, this->_scenes, this->_active_scenes, this->_size);
+    return ZipperIndexIterator<Comps...>(this->_begin,
+                                         this->_scenes,
+                                         this->_active_scenes,
+                                         this->_scene_states,
+                                         this->_size,
+                                         0,
+                                         this->_min_scene_level);
   }
 
   /**
@@ -206,8 +220,10 @@ public:
     return ZipperIndexIterator<Comps...>(this->_end,
                                          this->_scenes,
                                          this->_active_scenes,
+                                         this->_scene_states,
                                          this->_size,
-                                         this->_size);
+                                         this->_size,
+                                         this->_min_scene_level);
   }
 
 private:
@@ -237,4 +253,6 @@ private:
   IteratorTuple _end;  ///< Tuple of end iterators for all Comps.
   SparseArray<Scene>& _scenes;
   std::unordered_set<std::string> const& _active_scenes;
+  std::unordered_map<std::string, SceneState> const& _scene_states;
+  SceneState _min_scene_level;  ///< Minimum scene state level to include
 };

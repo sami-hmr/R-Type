@@ -675,7 +675,7 @@
   "scenes": [
     {
       "name": "game",
-      "state": "inactive",
+      "state": "disabled",
       "entities": []
     }
   ]

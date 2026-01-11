@@ -295,7 +295,7 @@
     },
     {
       "name": "connecting",
-      "state": "inactive",
+      "state": "disabled",
       "plugins": [],
       "entities": [
         {
