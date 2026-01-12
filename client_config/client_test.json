@@ -274,7 +274,6 @@
               {
                 "SceneChangeEvent": {
                   "target_scene": "connecting",
-                  "state": "main",
                   "reason": "User clicked connect button",
                   "force": false
                 }

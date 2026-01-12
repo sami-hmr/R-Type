@@ -386,7 +386,6 @@
                   "name": "SceneChangeEvent",
                   "params": {
                     "target_scene": "menu",
-                    "state": "main",
                     "reason": "User pressed R"
                   }
                 },
@@ -394,7 +393,6 @@
                   "name": "SceneChangeEvent",
                   "params": {
                     "target_scene": "menu",
-                    "state": "main",
                     "reason": "User pressed R"
                   }
                 }

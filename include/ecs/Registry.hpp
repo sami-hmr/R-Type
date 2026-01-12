@@ -132,7 +132,7 @@
  *
  * @code
  * // Define scenes
- * registry.add_scene("Menu", SceneState::MAIN);
+ * registry.add_scene("Menu", SceneState::ACTIVE);
  * registry.add_scene("Game", SceneState::DISABLED);
  * registry.add_scene("HUD", SceneState::ACTIVE);
  *
@@ -1199,42 +1199,46 @@ public:
   // Multi-scene system for organizing entities into logical layers.
   //
   // Scenes allow you to organize entities into separate contexts (menu,
-  // gameplay, HUD, pause screen, etc.). Each scene has a state (MAIN, ACTIVE,
+  // gameplay, HUD, pause screen, etc.). Each scene has a state (ACTIVE,
   // DISABLED) that controls whether its entities are processed by systems.
   //
   // Scene States:
-  // - MAIN: Primary active scene (only one allowed, typically gameplay)
-  // - ACTIVE: Active but not primary (overlays, HUD, UI layers)
+  // - ACTIVE: Scene is active, entities are processed by systems
   // - DISABLED: Scene exists but entities are not processed
+  // - ACTIVE: Scene is active and entities are processed
+  // - MAIN: Primary active scene, always processed (highest priority)
   //
   // System Iteration:
   // The Zipper class automatically filters entities - systems only iterate over
-  // entities in MAIN and ACTIVE scenes. DISABLED scenes are skipped entirely.
+  // entities in ACTIVE and MAIN scenes by default. DISABLED scenes are skipped
+  // entirely.
   //
   // Common Patterns:
-  // - Gameplay + HUD: Set gameplay as MAIN, HUD as ACTIVE
-  // - Menu switching: Disable old MAIN, enable new scene as MAIN
-  // - Pause overlay: Set pause menu as ACTIVE over gameplay MAIN
+  // - Gameplay + HUD: Both scenes ACTIVE
+  // - Menu switching: Deactivate old scene, activate new scene
+  // - Pause overlay: Push pause scene on top of gameplay (both ACTIVE)
+  // - Scene stacking: Multiple ACTIVE scenes processed together
   //
   // Scene Lifecycle:
-  // 1. add_scene() - Register scene with initial state
-  // 2. set_current_scene() - Activate scene (sets to MAIN or ACTIVE)
-  // 3. remove_current_scene() - Deactivate specific scene
-  // 4. remove_all_scenes() - Clear all active scenes
+  // 1. add_scene() - Register scene with initial state (default DISABLED)
+  // 2. activate_scene() - Make scene active
+  // 3. deactivate_scene() - Make scene inactive
+  // 4. push_scene()/pop_scene() - Stack-based scene management
+  // 5. deactivate_all_scenes() - Clear all active scenes
 
   /**
    * @brief Register a scene with the given name and initial state.
    *
    * Creates a scene entry in the Registry's scene management system. The scene
-   * can later be activated/deactivated with set_current_scene() and
-   * remove_current_scene().
+   * can later be activated/deactivated with activate_scene() and
+   * deactivate_scene().
    *
    * This does NOT create entities - it only registers the scene metadata.
    * Entities are associated with scenes via the Scene component, typically
    * added during EntityLoader::load_entity().
    *
    * @param scene_name Unique identifier for the scene
-   * @param state Initial activation state (MAIN, ACTIVE, or DISABLED)
+   * @param state Initial activation state (default: DISABLED)
    *
    * @note If scene already exists, this updates its state
    * @note Scene names must be unique
@@ -1242,30 +1246,17 @@ public:
    *
    * @code
    * registry.init_scene_management();
-   * registry.add_scene("menu", SceneState::MAIN);
+   * registry.add_scene("menu", SceneState::ACTIVE);
    * registry.add_scene("hud", SceneState::ACTIVE);
-   * registry.add_scene("gameplay", SceneState::DISABLED);
-   * @endcode
-   *
-   * @code
-   * void load_level(Registry& r, const std::string& level_name) {
-   *   // Register level scene as disabled initially
-   *   r.add_scene(level_name, SceneState::DISABLED);
-   *
-   *   // Load level entities (they get Scene component automatically)
-   *   EntityLoader loader(r);
-   *   loader.load_entity("level_config.json");
-   *
-   *   // Activate when ready
-   *   r.set_current_scene(level_name);
-   * }
+   * registry.add_scene("gameplay");  // Defaults to DISABLED
    * @endcode
    *
    * @see init_scene_management() must be called first
-   * @see set_current_scene() to activate the scene
+   * @see activate_scene() to activate the scene
    * @see SceneState enum for state meanings
    */
-  void add_scene(std::string const& scene_name, SceneState state);
+  void add_scene(std::string const& scene_name,
+                 SceneState state = SceneState::DISABLED);
 
   /**
    * @brief Initialize the scene management system.
@@ -1279,7 +1270,7 @@ public:
    * @code
    * Registry registry;
    * registry.init_scene_management();  // Enable scenes
-   * registry.add_scene("menu", SceneState::MAIN);
+   * registry.add_scene("menu", SceneState::ACTIVE);
    * @endcode
    *
    * @see add_scene() to register scenes
@@ -1300,7 +1291,7 @@ public:
    * @code
    * registry.init_scene_management();
    * registry.setup_scene_systems();  // Enable automatic scene handling
-   * registry.add_scene("gameplay", SceneState::MAIN);
+   * registry.add_scene("gameplay", SceneState::ACTIVE);
    * @endcode
    *
    * @see init_scene_management() must be called first
@@ -1353,6 +1344,27 @@ public:
    * @see get_current_scene() to query active scenes
    */
   void set_current_scene(std::string const& scene_name);
+
+  /**
+   * @brief Set a scene as the MAIN scene.
+   *
+   * Sets the scene to MAIN state (highest priority). Entities in this scene
+   * will always be processed by systems.
+   *
+   * @param scene_name Name of the scene to set as MAIN
+   *
+   * @note Multiple scenes can be MAIN simultaneously
+   * @note Scene must be registered with add_scene() first
+   *
+   * @code
+   * registry.set_main_scene("gameplay");
+   * registry.set_current_scene("hud");  // ACTIVE overlay over MAIN gameplay
+   * @endcode
+   *
+   * @see set_current_scene() to set scene as ACTIVE
+   * @see add_scene() to register scenes
+   */
+  void set_main_scene(std::string const& scene_name);
 
   /**
    * @brief Deactivate a specific scene.
@@ -1448,6 +1460,110 @@ public:
    * @see is_in_current_scene() to check specific entity
    */
   std::vector<std::string> const& get_current_scene() const;
+
+  /**
+   * @brief Activate a scene.
+   *
+   * Sets the scene to ACTIVE state. Entities with this scene's Scene component
+   * will be processed by systems.
+   *
+   * @param scene_name Name of the scene to activate
+   *
+   * @note If scene doesn't exist, it will be auto-created as DISABLED then
+   * activated
+   * @note This supports dynamic scene creation from server/network
+   * @note If scene is already active, this is a no-op
+   * @note Multiple scenes can be active simultaneously
+   *
+   * @code
+   * registry.activate_scene("gameplay");
+   * registry.activate_scene("hud");  // Both active now
+   *
+   * // Auto-creates "lobby" scene if it doesn't exist
+   * registry.activate_scene("lobby");  // Server-sent scene
+   * @endcode
+   */
+  void activate_scene(std::string const& scene_name);
+
+  /**
+   * @brief Deactivate a scene.
+   *
+   * Sets the scene to DISABLED state. Entities in this scene will no longer
+   * be processed by systems until the scene is reactivated.
+   *
+   * @param scene_name Name of the scene to deactivate
+   *
+   * @note Safe to call with non-existent scene names (no-op)
+   * @note Scene can be reactivated later with activate_scene()
+   */
+  void deactivate_scene(std::string const& scene_name);
+
+  /**
+   * @brief Deactivate all scenes.
+   *
+   * Sets all scenes to DISABLED state. No entities will be processed by
+   * systems until scenes are reactivated.
+   */
+  void deactivate_all_scenes();
+
+  /**
+   * @brief Push a scene onto the active scene stack.
+   *
+   * Activates a scene and adds it to the top of the scene stack. This is
+   * useful for overlay scenes like pause menus or popups.
+   *
+   * @param scene_name Name of the scene to push
+   */
+  void push_scene(std::string const& scene_name);
+
+  /**
+   * @brief Pop a scene from the active scene stack.
+   *
+   * Deactivates a scene and removes it from the scene stack.
+   *
+   * @param scene_name Name of the scene to pop
+   */
+  void pop_scene(std::string const& scene_name);
+
+  /**
+   * @brief Check if a scene is currently active.
+   *
+   * @param scene_name Name of the scene to check
+   * @return true if the scene is active, false otherwise
+   */
+  bool is_scene_active(std::string const& scene_name) const;
+
+  /**
+   * @brief Get the state of a scene.
+   *
+   * @param scene_name Name of the scene
+   * @return The scene's state, or DISABLED if scene doesn't exist
+   */
+  SceneState get_scene_state(std::string const& scene_name) const;
+
+  /**
+   * @brief Get the set of active scene names for O(1) lookups.
+   *
+   * @return Unordered set of active scene names
+   * @note Used internally by Zipper for efficient filtering
+   */
+  std::unordered_set<std::string> const& get_active_scenes_set() const;
+
+  /**
+   * @brief Get the scene states map.
+   *
+   * @return Unordered map of scene names to their states
+   * @note Used internally by Zipper for scene level filtering
+   */
+  std::unordered_map<std::string, SceneState> const& get_scene_states() const;
+
+  /**
+   * @brief Get list of currently active scene names (ordered).
+   *
+   * @return Vector of active scene names in stack order
+   * @deprecated Use get_active_scenes_set() for most use cases
+   */
+  std::vector<std::string> const& get_active_scenes() const;
 
   Clock& clock();
 
@@ -2114,6 +2230,7 @@ private:
 
   std::unordered_map<std::string, SceneState> _scenes;
   std::vector<std::string> _current_scene;
+  std::unordered_set<std::string> _active_scenes_set;  // O(1) lookup for Zipper
 
   std::unordered_map<std::string,
                      std::function<std::optional<std::any>(std::string const&)>>
