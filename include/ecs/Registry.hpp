@@ -980,7 +980,10 @@ public:
    * @tparam T Type of the field being bound
    * @param entity Entity owning the target component
    * @param field_name Name of the target field (must be hookable)
-   * @param source_hook Source identifier in format "ComponentName:fieldName"
+   * @param source_hook Source identifier in format
+   * "scope:ComponentName:fieldName"
+   *                    - "self:ComponentName:fieldName" - same entity binding
+   *                    - "global:Name:fieldName" - global singleton binding
    *
    * @details
    * Creates a Binding struct containing:
@@ -999,56 +1002,39 @@ public:
    *   Vector2D target_pos;
    *
    *   Follower(Registry& r, JsonObject const& obj, Entity self) {
-   *     // JSON: {"target_pos": "#Leader:pos"}
+   *     // JSON: {"target_pos": "#self:Position:pos"}
    *     target_pos = get_value<Follower, Vector2D>(
    *       r, obj, self, "target_pos"
    *     ).value_or(Vector2D{0, 0});
    *
    *     // register_binding called internally by get_value
-   *     // Creates: Follower.target_pos <- Leader.pos binding
+   *     // Creates: Follower.target_pos <- self.Position.pos binding
    *   }
    *
    *   HOOKABLE(Follower, HOOK(target_pos))
    * };
    *
    * // Every frame:
-   * // 1. Leader moves to new position
+   * // 1. Entity Position moves to new location
    * // 2. update_bindings() executes
-   * // 3. Follower.target_pos = Leader.pos (automatic!)
-   * @endcode
-   *
-   * @code
-   * struct Turret {
-   *   Vector2D aim_target;
-   *   float rotation;
-   *
-   *   HOOKABLE(Turret, HOOK(aim_target), HOOK(rotation))
-   * };
-   *
-   * // Bind turret aim to player position
-   * registry.register_binding<Turret, Vector2D>(
-   *   turret_entity,
-   *   "aim_target",
-   *   "Player:pos"
-   * );
-   *
-   * // Turret automatically aims at player position every frame
+   * // 3. Follower.target_pos = Position.pos (automatic!)
    * @endcode
    *
    * @code
    * struct HealthBar {
-   *   int current_value;
-   *   HOOKABLE(HealthBar, HOOK(current_value))
+   *   int max_value;
+   *
+   *   HOOKABLE(HealthBar, HOOK(max_value))
    * };
    *
-   * // Bind UI to player health
+   * // Bind UI to global game config
    * registry.register_binding<HealthBar, int>(
    *   health_bar_entity,
-   *   "current_value",
-   *   "Player:health.current"
+   *   "max_value",
+   *   "global:GameConfig:maxHealth"
    * );
    *
-   * // Health bar automatically reflects player damage
+   * // Health bar automatically reflects global config changes
    * @endcode
    *
    * @see update_bindings() which executes bindings
@@ -1063,13 +1049,52 @@ public:
   {
     std::type_index ti(typeid(ComponentType));
 
-    std::function<void()> updater = [this, entity, field_name, source_hook]()
+    // Parse hook reference: "scope:component:field"
+    std::string scope;
+    std::string comp_name;
+    std::string value_name;
+
+    size_t first_colon = source_hook.find(':');
+    size_t second_colon = source_hook.find(':', first_colon + 1);
+
+    if (first_colon != std::string::npos && second_colon != std::string::npos) {
+      scope = source_hook.substr(0, first_colon);
+      comp_name =
+          source_hook.substr(first_colon + 1, second_colon - first_colon - 1);
+      value_name = source_hook.substr(second_colon + 1);
+    } else {
+      scope = "self";
+      size_t colon_pos = source_hook.find(':');
+      if (colon_pos != std::string::npos) {
+        comp_name = source_hook.substr(0, colon_pos);
+        value_name = source_hook.substr(colon_pos + 1);
+      } else {
+        std::cerr << "Invalid hook format: " << source_hook << "\n";
+        return;
+      }
+    }
+
+    std::function<void()> updater =
+        [this, entity, field_name, scope, comp_name, value_name]()
     {
       try {
-        std::string comp = source_hook.substr(0, source_hook.find(':')) + "{"
-            + std::to_string(entity) + "}";
-        std::string value = source_hook.substr(source_hook.find(':') + 1);
-        auto ref = this->get_hooked_value<T>(comp, value);
+        std::optional<std::reference_wrapper<T>> ref;
+
+        if (scope == "self") {
+          std::string hook_key = comp_name + "{" + std::to_string(entity) + "}";
+          ref = this->get_hooked_value<T>(hook_key, value_name);
+        } else if (scope == "global") {
+          auto it = this->_global_hooks.find(comp_name);
+          if (it != this->_global_hooks.end()) {
+            auto any_val = it->second(value_name);
+            if (any_val.has_value()) {
+              ref = std::any_cast<std::reference_wrapper<T>>(any_val.value());
+            }
+          }
+        } else {
+          std::cerr << "Unknown scope: " << scope << "\n";
+          return;
+        }
 
         if (ref.has_value()) {
           auto& components = this->get_components<ComponentType>();
@@ -1077,7 +1102,7 @@ public:
             auto& target_comp = components[entity].value();
 
             auto& hook_map = ComponentType::hook_map();
-            if (hook_map.contains(field_name)) {  // TODO: PROPER ERROR HANDLING
+            if (hook_map.contains(field_name)) {
               std::any field_any = hook_map.at(field_name)(target_comp);
               auto field_ref_wrapper =
                   std::any_cast<std::reference_wrapper<T>>(field_any);
@@ -1101,11 +1126,12 @@ public:
       return ByteArray {};
     };
 
-    std::function<void()> deleter = [this, entity, source_hook]()
+    std::function<void()> deleter = [this, entity, scope, comp_name]()
     {
-      std::string hook_name = source_hook.substr(0, source_hook.find(':')) + "{"
-          + std::to_string(entity) + "}";
-      this->_hooked_components.erase(hook_name);
+      if (scope == "self") {
+        std::string hook_name = comp_name + "{" + std::to_string(entity) + "}";
+        this->_hooked_components.erase(hook_name);
+      }
     };
 
     _bindings.emplace_back(entity,
@@ -1574,6 +1600,45 @@ public:
   }
 
   /**
+   * @brief Register a global hook for singleton components
+   *
+   * Registers a component hook accessible via the "global" scope in the new
+   * hook syntax. Global hooks are used for singleton components like
+   * GameConfig, LevelSettings, etc. that should be accessible from any entity.
+   *
+   * @tparam T Component type (must satisfy hookable concept)
+   * @param name Global hook identifier (e.g., "GameConfig")
+   * @param e Entity containing the singleton component
+   *
+   * @note Use this for singletons/global configuration components
+   * @note Accessible via #global:Name:field syntax
+   *
+   * @code
+   * // Register global game config
+   * Entity config = registry.spawn_entity();
+   * registry.add_component<GameConfig>(config);
+   * registry.register_global_hook<GameConfig>("GameConfig", config);
+   *
+   * // Now accessible from any entity:
+   * // {"speed": "#global:GameConfig:maxSpeed"}
+   * @endcode
+   */
+  template<hookable T>
+  void register_global_hook(std::string const& name, Entity const& e)
+  {
+    this->_global_hooks.insert_or_assign(
+        name,
+        [this, e](std::string const& key) -> std::optional<std::any>
+        {
+          auto& array = this->get_components<T>();
+          if (e >= array.size() || !array[e].has_value()) {
+            return std::nullopt;
+          }
+          return T::hook_map().at(key)(array[e].value());
+        });
+  }
+
+  /**
    * @brief Retrieve a reference to a hooked component field.
    *
    * Returns a reference to a specific field of a hooked component. The
@@ -1688,6 +1753,33 @@ public:
   {
     auto const& tmp = std::any_cast<std::optional<std::any>>(
         this->_hooked_components.at(comp)(value));
+    if (!tmp.has_value()) {
+      return std::nullopt;
+    }
+    return std::any_cast<std::reference_wrapper<T>>(tmp.value());
+  }
+
+  /**
+   * @brief Retrieve a reference to a global hooked component field
+   *
+   * Similar to get_hooked_value() but for global (singleton) components.
+   * Returns a reference to a field from a globally registered component.
+   *
+   * @tparam T Field type
+   * @param name Global hook name (from register_global_hook())
+   * @param value Field name
+   * @return Optional reference to the field, or std::nullopt if not found
+   */
+  template<typename T>
+  std::optional<std::reference_wrapper<T>> get_global_hooked_value(
+      std::string const& name, std::string const& value)
+  {
+    auto it = this->_global_hooks.find(name);
+    if (it == this->_global_hooks.end()) {
+      return std::nullopt;
+    }
+
+    auto const& tmp = std::any_cast<std::optional<std::any>>(it->second(value));
     if (!tmp.has_value()) {
       return std::nullopt;
     }
@@ -1954,11 +2046,14 @@ private:
     Entity target_entity;  ///< Entity containing the target component
     std::type_index target_component;  ///< Type of the target component
     std::string target_field;  ///< Field name to update
-    std::string source_hook;  ///< Hook string (e.g., "player:position")
+    std::string source_hook;  ///< Hook string (e.g., "self:Position:x")
     std::function<void()> updater;  ///< Copies value from hook to field
     std::function<void()> deleter;  ///< Cleans up binding
     std::function<ByteArray()>
         serializer;  ///< Serializes component for network sync
+    ByteArray
+        last_serialized_value;  ///< Last serialized value for dirty tracking
+    bool is_dirty = true;  ///< Force first update
 
     Binding(Entity e,
             std::type_index ti,
@@ -1975,6 +2070,23 @@ private:
         , deleter(std::move(d))
         , serializer(std::move(s))
     {
+    }
+
+    /**
+     * @brief Updates the binding and checks if the value changed
+     * @return true if value changed, false otherwise
+     */
+    bool update_and_check_dirty()
+    {
+      updater();
+      ByteArray new_value = serializer();
+
+      if (new_value != last_serialized_value || is_dirty) {
+        last_serialized_value = std::move(new_value);
+        is_dirty = false;
+        return true;
+      }
+      return false;
     }
   };
 
@@ -2006,6 +2118,9 @@ private:
   std::unordered_map<std::string,
                      std::function<std::optional<std::any>(std::string const&)>>
       _hooked_components;
+  std::unordered_map<std::string,
+                     std::function<std::optional<std::any>(std::string const&)>>
+      _global_hooks;
   std::vector<Binding> _bindings;
 
   std::unordered_map<std::string, JsonObject> _entities_templates;
