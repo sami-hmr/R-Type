@@ -12,7 +12,7 @@
 
 enum KeyEventType : bool
 {
-  KEY_REALEASED = false,
+  KEY_RELEASED = false,
   KEY_PRESSED = true,
 };
 
