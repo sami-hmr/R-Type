@@ -39,8 +39,7 @@ void handle_get_player_save(void* raw_context, httplib::Result const& result)
     init_component<Scene>(context->_registry.get(),
                           context->_event_manager.get(),
                           context->_users_entities[user],
-                          "game",
-                          SceneState::ACTIVE);
+                          "game");
   } else {
     auto parsed = parseByteArray(
         parseBytePair(parseByteString(), parseByteArray(parseByte<Byte>())))(
@@ -55,8 +54,7 @@ void handle_get_player_save(void* raw_context, httplib::Result const& result)
       init_component<Scene>(context->_registry.get(),
                             context->_event_manager.get(),
                             context->_users_entities[user],
-                            "game",
-                            SceneState::ACTIVE);
+                            "game");
     } else {
       for (auto const& comp : std::get<SUCCESS>(parsed).value) {
         init_component(context->_registry.get(),

@@ -29,7 +29,7 @@ BaseClient::BaseClient(std::string const& name,
   SUBSCRIBE_EVENT(ClientConnection, {
     if (this->_user_id == -1) {
         LOGGER("client", LogLevel::ERROR, "client not logged in");
-        return;
+        return false;
     }
     if (!this->_running) {
       _running = true;
@@ -62,7 +62,7 @@ BaseClient::BaseClient(std::string const& name,
 
   SUBSCRIBE_EVENT(EventBuilder, {
     if (!this->_running) {
-      return;
+      return false;
     }
     this->_event_to_server.push(EventBuilder(
         event.event_id,

@@ -48,7 +48,7 @@ RtypeServer::RtypeServer(Registry& r, EventManager& em, EntityLoader& l)
 
   SUBSCRIBE_EVENT(PlayerReady, {
     if (!this->_player_ready.contains(event.client_id)) {
-      return;
+      return false;
     }
     this->_player_ready[event.client_id] = true;
 

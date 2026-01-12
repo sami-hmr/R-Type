@@ -76,7 +76,7 @@ BaseServer::BaseServer(std::string const& name,
       DisconnectClient,
       {
         if (!this->_server_class) {
-          return;
+          return false;
         }
         this->_server_class->disconnect_client(event.client);
       },

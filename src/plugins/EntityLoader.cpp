@@ -90,8 +90,7 @@ void EntityLoader::load_scene(JsonObject& json_scene)
       std::optional<Registry::Entity> new_e =
           this->load_entity(std::get<JsonObject>(it.value));
       if (new_e.has_value()) {
-        this->_registry.get().add_component(new_e.value(),
-                                            Scene(scene, scene_state));
+        this->_registry.get().add_component(new_e.value(), Scene(scene));
       }
     }
   }

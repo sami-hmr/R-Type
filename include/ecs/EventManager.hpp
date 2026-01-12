@@ -53,6 +53,8 @@
 #include "plugin/Byte.hpp"
 #include "plugin/events/EventConcept.hpp"
 
+#define PREVENT_DEFAULT true
+
 template<typename T>
 concept event = bytable<T> && entity_convertible<T> && json_buildable<T>;
 
@@ -180,7 +182,7 @@ public:
    */
   template<event EventType>
   void on(std::string const& name,
-          std::function<void(const EventType&)> handler,
+          std::function<bool(const EventType&)> handler,
           std::size_t priority = 1)
   {
     std::type_index type_id(typeid(EventType));
@@ -501,7 +503,7 @@ private:
   }
 
   template<event EventType>
-  void on(std::function<void(const EventType&)> handler, size_t precision = 1)
+  void on(std::function<bool(const EventType&)> handler, size_t precision = 1)
   {
     std::type_index type_id(typeid(EventType));
 

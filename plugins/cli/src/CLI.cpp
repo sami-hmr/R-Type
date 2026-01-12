@@ -223,7 +223,7 @@ void CLI::process_command(const std::string& cmd)
           Drawable draw;
           Sprite sprite("assets/planet.png", {1, 1});
           Position pos(0, 0);
-          Scene scene("game", SceneState::ACTIVE);
+          Scene scene("game");
           this->_event_manager.get().emit<ComponentBuilder>(
               42, "ui:Drawable", draw.to_bytes());
           this->_event_manager.get().emit<ComponentBuilder>(

@@ -107,8 +107,8 @@
             "x": "10.0%",
             "y": "1.0%"
           },
-          "max_value": "#player_health:max",
-          "current_value": "#player_health:current",
+          "max_value": "#self:player_health:max",
+          "current_value": "#self:player_health:current",
           "offset": {
             "x": 0.0,
             "y": -0.1
