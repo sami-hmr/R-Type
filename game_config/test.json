@@ -243,6 +243,17 @@
                     "name": "FireBullet",
                     "params": {}
                   }
+                },
+                {
+                  "description": "rebind",
+                  "key": "M",
+                  "pressed": {
+                    "name": "Rebind",
+                    "params": {
+                      "key_to_replace": "S",
+                      "replacement_key": "X"
+                    }
+                  }
                 }
               ]
             },

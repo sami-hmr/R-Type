@@ -1,8 +1,6 @@
 #include <cstdint>
 #include <format>
 #include <functional>
-#include <iostream>
-#include <iterator>
 #include <vector>
 
 #include "Controller.hpp"
@@ -10,16 +8,13 @@
 #include "Json/JsonParser.hpp"
 #include "ecs/EmitEvent.hpp"
 #include "ecs/EventManager.hpp"
-#include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
-#include "ecs/zipper/ZipperIndex.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Controllable.hpp"
-#include "plugin/events/CollisionEvent.hpp"
 #include "plugin/events/IoEvents.hpp"
-#include "plugin/events/LoggerEvent.hpp"
+#include "plugin/events/LogMacros.hpp"
 #include "plugin/events/RebindingEvent.hpp"
 
 Controller::Controller(Registry& r, EventManager& em, EntityLoader& l)
@@ -50,18 +45,30 @@ Controller::Controller(Registry& r, EventManager& em, EntityLoader& l)
 
   SUBSCRIBE_EVENT(Rebind, {
     for (auto&& [c] : Zipper<Controllable>(this->_registry.get())) {
-      c.event_map.insert_or_assign(event.replacement_key, c.event_map.at(event.key_to_replace));
-      c.event_map.erase(event.key_to_replace);
+      rebinding(c, event, KEY_PRESSED);
+      rebinding(c, event, KEY_RELEASED);
     }
   })
+}
+
+void Controller::rebinding(Controllable& c, Rebind event, KeyEventType event_type)
+{
+  if (!c.event_map.contains(event.key_to_replace + event_type)) {
+    return;
+  }
+  auto binding = c.event_map.extract(event.key_to_replace + event_type);
+  binding.key() = event.replacement_key + event_type;
+  c.event_map.insert_or_assign(binding.key(), std::move(binding.mapped()));
 }
 
 bool Controller::handling_press_release_binding(Registry::Entity const& entity,
                                                 Controllable& result,
                                                 JsonObject& event,
                                                 const std::string& key_string,
+                                                const std::string& description,
                                                 KeyEventType event_type)
 {
+  const std::uint8_t byte = 8;
   auto event_id =
       get_value_copy<std::string>(this->_registry.get(), event, "name");
   auto params =
@@ -81,9 +88,9 @@ bool Controller::handling_press_release_binding(Registry::Entity const& entity,
   }
   params->insert_or_assign("entity", JsonValue(static_cast<int>(entity)));
   result.event_map.insert_or_assign(
-      (static_cast<std::uint32_t>(KEY_MAPPING.at_first(key_string)) << 8)
+      (static_cast<std::uint32_t>(KEY_MAPPING.at_first(key_string)) << byte)
           + static_cast<int>(event_type),
-      Controllable::Trigger {*event_id, *params});
+      Controllable::Trigger {{*event_id, description}, *params});
   return true;
 }
 
@@ -94,9 +101,7 @@ void Controller::init_event_map(Registry::Entity const& entity,
   for (auto& it : events) {
     auto& event = std::get<JsonObject>(it.value);
     auto description = get_value_copy<std::string>(
-        this->_registry.get(),
-        event,
-        "description");  // insert description into the bindings
+        this->_registry.get(), event, "description");
     auto key_string =
         get_value_copy<std::string>(this->_registry.get(), event, "key");
     auto press =
@@ -123,14 +128,18 @@ void Controller::init_event_map(Registry::Entity const& entity,
     }
     if (press) {
       if (!handling_press_release_binding(
-              entity, result, *press, *key_string, KEY_PRESSED))
+              entity, result, *press, *key_string, *description, KEY_PRESSED))
       {
         continue;
       }
     }
     if (release) {
-      if (!handling_press_release_binding(
-              entity, result, *release, *key_string, KEY_RELEASED))
+      if (!handling_press_release_binding(entity,
+                                          result,
+                                          *release,
+                                          *key_string,
+                                          *description,
+                                          KEY_RELEASED))
       {
         continue;
       }
@@ -169,7 +178,7 @@ void Controller::handle_key_change(Key key, bool is_pressed)
         {
           emit_event(this->_event_manager.get(),
                      this->_registry.get(),
-                     event.first,
+                     event.first.first,
                      event.second);
         });
   }

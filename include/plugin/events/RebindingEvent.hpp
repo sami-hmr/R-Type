@@ -6,6 +6,7 @@
 #include "Json/JsonParser.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/Hooks.hpp"
+#include "plugin/events/IoEvents.hpp"
 
 struct Rebind
 {
@@ -20,9 +21,9 @@ struct Rebind
 
   Rebind(Registry& r, JsonObject const& e)
       : key_to_replace(
-            get_value_copy<std::uint16_t>(r, e, "key_to_replace").value())
+            static_cast<std::uint32_t>(KEY_MAPPING.at_first(get_value_copy<std::string>(r, e, "key_to_replace").value())) << 8)
       , replacement_key(
-            get_value_copy<std::uint16_t>(r, e, "replacement_key").value())
+            static_cast<std::uint32_t>(KEY_MAPPING.at_first(get_value_copy<std::string>(r, e, "replacement_key").value())) << 8)
   {
   }
 
