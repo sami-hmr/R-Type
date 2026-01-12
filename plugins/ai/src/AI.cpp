@@ -2,9 +2,15 @@
 
 #include "AI.hpp"
 
-#include "attack/AttackPatterns.hpp"
+#include "Json/JsonParser.hpp"
+#include "attack/ContinuousFirePattern.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
-#include "movement/MovementPatterns.hpp"
+#include "movement/CirclePattern.hpp"
+#include "movement/FollowTargetPattern.hpp"
+#include "movement/StraightPattern.hpp"
+#include "movement/TurretPattern.hpp"
+#include "movement/WavePattern.hpp"
+#include "movement/ZigzagPattern.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/AttackBehavior.hpp"
 #include "plugin/components/Direction.hpp"
@@ -52,8 +58,13 @@ void AI::init_movement_behavior(Registry::Entity const& entity,
     return;
   }
 
+  JsonObject params;
+  if (obj.contains("params")) {
+    params = std::get<JsonObject>(obj.at("params").value);
+  }
+
   this->_registry.get().emplace_component<MovementBehavior>(
-      entity, movement_type.value());
+      entity, movement_type.value(), params);
 }
 
 void AI::init_attack_behavior(Registry::Entity const& entity,
@@ -70,8 +81,13 @@ void AI::init_attack_behavior(Registry::Entity const& entity,
     return;
   }
 
+  JsonObject params;
+  if (obj.contains("params")) {
+    params = std::get<JsonObject>(obj.at("params").value);
+  }
+
   this->_registry.get().emplace_component<AttackBehavior>(
-      entity, attack_type.value(), attack_interval.value());
+      entity, attack_type.value(), attack_interval.value(), true, params);
 }
 
 void AI::movement_behavior_system(Registry& r)

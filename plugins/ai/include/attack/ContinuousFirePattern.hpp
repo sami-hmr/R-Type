@@ -14,6 +14,8 @@
 class ContinuousFirePattern : public AttackPattern
 {
 public:
+  static constexpr double DEFAULT_INTERVAL = 2.0;
+
   void execute(Registry::Entity entity,
                Registry& registry,
                EventManager& em,
@@ -29,7 +31,11 @@ public:
                               registry.get_component_key<AttackBehavior>(),
                               behavior.to_bytes());
 
-    if (behavior.attack_delta >= behavior.attack_interval) {
+    double attack_interval =
+        get_value_copy<double>(registry, behavior.params, "attack_interval")
+            .value_or(DEFAULT_INTERVAL);
+
+    if (behavior.attack_delta >= attack_interval) {
       behavior.attack_delta = 0.0;
 
       em.emit<ComponentBuilder>(entity,

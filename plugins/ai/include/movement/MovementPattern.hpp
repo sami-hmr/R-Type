@@ -13,6 +13,8 @@ class MovementPattern
 public:
   virtual ~MovementPattern() = default;
 
+  static constexpr double DIRECTION_TOLERANCE = 0.1;
+
   virtual void update(Registry::Entity entity,
                      Registry& registry,
                      EventManager &em,
