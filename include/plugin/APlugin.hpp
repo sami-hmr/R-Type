@@ -22,7 +22,21 @@
           try { \
             std::string hook_name = \
                 std::get<std::string>(obj.at("hook").value); \
-            this->_registry.get().register_hook<comp_type>(hook_name, entity); \
+            bool is_global = false; \
+            if (obj.contains("global_hook")) { \
+              try { \
+                is_global = std::get<bool>(obj.at("global_hook").value); \
+              } catch (std::bad_variant_access const&) { \
+                /* global_hook value is not a bool, default to false */ \
+              } \
+            } \
+            if (is_global) { \
+              this->_registry.get().register_global_hook<comp_type>(hook_name, \
+                                                                    entity); \
+            } else { \
+              this->_registry.get().register_hook<comp_type>(hook_name, \
+                                                             entity); \
+            } \
           } catch (std::bad_variant_access const&) { \
             /* Hook value is not a string */ \
           } catch (std::out_of_range const&) { \
@@ -44,7 +58,8 @@
 #define SUBSCRIBE_EVENT_PRIORITY(event_name, function, priority) \
   this->_event_manager.get().on<event_name>( \
       #event_name, \
-      [this]([[maybe_unused]] event_name const& event) function, \
+      [this]([[maybe_unused]] event_name const& event) -> bool \
+      { function return false; }, \
       priority);
 
 #define SUBSCRIBE_EVENT(event_name, function) \
