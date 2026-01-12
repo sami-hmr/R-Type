@@ -1,9 +1,13 @@
-CREATE TABLE IF NOT EXISTS "save" (
+CREATE TABLE IF NOT EXISTS "saves" (
+    "user_id" INTEGER NOT NULL,
     "game_id" INTEGER NOT NULL,
    	"save" BYTEA NOT NULL,
-	PRIMARY KEY("id")
+    UNIQUE(user_id, game_id)
 );
 
-ALTER TABLE "save"
+ALTER TABLE "saves"
+ADD FOREIGN KEY("user_id") REFERENCES "users"("id")
+ON UPDATE CASCADE ON DELETE CASCADE;
+ALTER TABLE "saves"
 ADD FOREIGN KEY("game_id") REFERENCES "game"("id")
 ON UPDATE CASCADE ON DELETE CASCADE;

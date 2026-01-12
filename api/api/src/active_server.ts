@@ -8,7 +8,6 @@ interface active_server {
   address: string;
   port: number;
 }
-
 app.get("/active_server/:name", async (_req, res) => {
   const request: active_server[] = await db.manyOrNone(
     `
@@ -45,7 +44,6 @@ app.post("/active_server", async (_req, res) => {
 });
 
 app.delete("/active_server", async (_req, res) => {
-  _req.body;
   await db.query(
     `
       DELETE FROM active_server

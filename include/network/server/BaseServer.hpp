@@ -54,6 +54,10 @@ private:
 protected:
   friend void handle_register_response(void*, httplib::Result const&);
   void register_server(std::string const &host);
+  void unregister_server();
 
   HttpClient _http_client;
+
+  int get_user_by_client(std::size_t client_id);
+  int get_client_by_user(int user);
 };

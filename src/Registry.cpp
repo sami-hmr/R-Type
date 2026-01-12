@@ -1,6 +1,8 @@
 
 
+#include <functional>
 #include <optional>
+#include <utility>
 #include <vector>
 
 #include "ecs/Registry.hpp"
@@ -8,6 +10,7 @@
 #include "NetworkShared.hpp"
 #include "ecs/EventManager.hpp"
 #include "ecs/Systems.hpp"
+#include "plugin/Byte.hpp"
 
 Registry::Entity Registry::spawn_entity()
 {
@@ -190,4 +193,30 @@ std::vector<ComponentState> Registry::get_state()
     r.emplace_back(this->_state_getters.at(it.first)());
   }
   return r;
+}
+
+ByteArray Registry::get_byte_entity(Entity entity)
+{
+  std::vector<std::pair<std::string, ByteArray>> entity_vector;
+  for (auto const& it : this->_component_getter) {
+    auto comp = it.second(entity);
+
+    if (!comp) {
+      continue;
+    }
+    entity_vector.emplace_back(this->_index_getter.at_first(it.first), *comp);
+  }
+
+  return vector_to_byte(
+      entity_vector,
+      std::function<ByteArray(std::pair<std::string, ByteArray> const&)>(
+          [](std::pair<std::string, ByteArray> const& v)
+          {
+            return pair_to_byte(
+                v,
+                std::function(string_to_byte),
+                std::function<ByteArray(ByteArray const&)>(
+                    [](ByteArray const& v)
+                    { return vector_to_byte(v, TTB_FUNCTION<Byte>()); }));
+          }));
 }

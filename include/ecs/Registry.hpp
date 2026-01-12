@@ -358,6 +358,15 @@ public:
           }
           return r;
         });
+    this->_component_getter.insert_or_assign(
+        ti,
+        [&comp](Entity entity) -> std::optional<ByteArray>
+        {
+          if (comp.size() <= entity || !comp[entity]) {
+            return std::nullopt;
+          }
+          return comp[entity]->to_bytes();
+        });
     this->_index_getter.insert(ti, string_id);
     return comp;
   }
@@ -1948,6 +1957,8 @@ public:
    */
   std::vector<ComponentState> get_state();
 
+  ByteArray get_byte_entity(Entity entity);
+
 private:
   struct Binding
   {
@@ -1986,6 +1997,9 @@ private:
       _emplace_functions;
   std::unordered_map<std::type_index, std::function<ComponentState()>>
       _state_getters;
+  std::unordered_map<std::type_index,
+                     std::function<std::optional<ByteArray>(Entity)>>
+      _component_getter;
   TwoWayMap<std::type_index, std::string> _index_getter;
 
   std::unordered_map<

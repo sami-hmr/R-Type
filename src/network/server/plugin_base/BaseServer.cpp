@@ -143,6 +143,7 @@ BaseServer::BaseServer(std::string const& name,
 
 BaseServer::~BaseServer()
 {
+  this->unregister_server();
   _running = false;
   if (_server_class) {
     this->_server_class->close();
@@ -162,4 +163,18 @@ void BaseServer::launch_server(ServerLaunching const& infos)
            LogLevel::ERROR,
            std::format("Failed to start server: {}", e.what()));
   }
+}
+
+int BaseServer::get_user_by_client(std::size_t client_id) {
+    if (!this->_server_class) {
+        return -1;
+    }
+    return this->_server_class->get_user_by_client(client_id);
+}
+
+int BaseServer::get_client_by_user(int user) {
+    if (!this->_server_class) {
+        return -1;
+    }
+    return this->_server_class->get_client_by_user(user);
 }

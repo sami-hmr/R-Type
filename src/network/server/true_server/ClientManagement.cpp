@@ -40,6 +40,17 @@ ClientInfo& Server::find_client_by_id(std::size_t id)
       .with_context("client_id", std::to_string(id));
 }
 
+ClientInfo& Server::find_client_by_user(int id)
+{
+  for (auto& client : _clients) {
+    if (client.state != ClientState::DISCONNECTED && client.user_id == id) {
+      return client;
+    }
+  }
+  throw ClientNotFound("client not found")
+      .with_context("client_id", std::to_string(id));
+}
+
 void Server::remove_client_by_endpoint(const asio::ip::udp::endpoint& endpoint)
 {
   auto it = std::find_if(this->_clients.begin(),
@@ -121,4 +132,30 @@ void Server::reset_client_by_endpoint(asio::ip::udp::endpoint const& client)
     this->transmit_event_to_server(
         EventBuilder("StateTransfer", StateTransfer(c.client_id).to_bytes()));
   }
+}
+
+int Server::get_user_by_client(std::size_t id) {
+    this->_client_mutex.lock();
+    int user = -1;
+    try {
+        auto &client = this->find_client_by_id(id);
+        this->_client_mutex.unlock();
+        user = client.user_id;
+    } catch (ClientNotFound const &) { // NOLINT
+    }
+    this->_client_mutex.unlock();
+    return user;
+}
+
+int Server::get_client_by_user(int id) {
+    this->_client_mutex.lock();
+    int client_id = -1;
+    try {
+        auto &client = this->find_client_by_user(id);
+        this->_client_mutex.unlock();
+        client_id = client.client_id;
+    } catch (ClientNotFound const &) { // NOLINT
+    }
+    this->_client_mutex.unlock();
+    return client_id;
 }

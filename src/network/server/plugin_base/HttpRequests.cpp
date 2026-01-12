@@ -6,15 +6,15 @@
 #include "network/Httplib.hpp"
 #include "network/server/BaseServer.hpp"
 #include "plugin/APlugin.hpp"
-#include "plugin/events/LogMacros.hpp"
 #include "plugin/events/HttpEvents.hpp"
+#include "plugin/events/LogMacros.hpp"
 
 void BaseServer::setup_http_requests()
 {
   this->_registry.get().add_system(
-      [this](Registry&) { this->_http_client.handle_responses(this); });
+      [this](Registry&) { this->_http_client.handle_responses(); });
 
-  SUBSCRIBE_EVENT(ExposeServer, {this->register_server(event.host);})
+  SUBSCRIBE_EVENT(ExposeServer, { this->register_server(event.host); })
 }
 
 void handle_register_response(void* raw_context, httplib::Result const& result)
@@ -55,10 +55,28 @@ void handle_register_response(void* raw_context, httplib::Result const& result)
 void BaseServer::register_server(std::string const& host)
 {
   if (this->_port == -1) {
-      LOGGER("http", LogLevel::WARNING, "server not launched yet, skipping")
+    LOGGER("http", LogLevel::WARNING, "server not launched yet, skipping")
   }
   this->_http_client.register_post(
       &handle_register_response,
+      this,
       "/active_server",
-      std::format(R"({}"ip":"{}","port":{},"game_name":"{}"{})", '{', host, this->_port, this->game_name, '}'));
+      std::format(R"({}"ip":"{}","port":{},"game_name":"{}"{})",
+                  '{',
+                  host,
+                  this->_port,
+                  this->game_name,
+                  '}'));
+}
+
+void BaseServer::unregister_server()
+{
+  if (this->_server_id == -1) {
+    return;
+  }
+  this->_http_client.register_delete(
+      nullptr,
+      nullptr,
+      "/active_server",
+      std::format(R"({}"id":{}{})", '{', this->_server_id, '}'));
 }

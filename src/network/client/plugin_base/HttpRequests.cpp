@@ -15,11 +15,12 @@
 
 void BaseClient::setup_http_requests()
 {
-  this->_registry.get().add_system(
-      [this](Registry& /* */)
-      { this->_http_client.handle_responses(static_cast<void*>(this)); });
+  this->_registry.get().add_system([this](Registry& /* */)
+                                   { this->_http_client.handle_responses(); });
 
   SUBSCRIBE_EVENT(FetchAvailableServers, { this->handle_server_fetch(); })
+  SUBSCRIBE_EVENT(Register, { this->handle_register(event); })
+  SUBSCRIBE_EVENT(Login, { this->handle_login(event); })
 }
 
 void handle_fetch_servers(void* raw_context, httplib::Result const& result)
@@ -32,7 +33,7 @@ void handle_fetch_servers(void* raw_context, httplib::Result const& result)
         context,
         "http",
         LogLevel::ERROR,
-        "failed to parse http response: " + std::get<ERROR>(parsed).message);
+        ("failed to parse http response: " + std::get<ERROR>(parsed).message));
     return;
   }
   context->_available_servers.clear();
@@ -56,15 +57,68 @@ void handle_fetch_servers(void* raw_context, httplib::Result const& result)
                      "wrong json type in resonse object, skipping");
     }
   }
-  std::cout << "[";
-  for (auto const& it : context->_available_servers) {
-    std::cout << std::format(
-        "[id: {}, host: {}, port {}]", it.id, it.address, it.port);
-  }
-  std::cout << "]\n";
 }
 
 void BaseClient::handle_server_fetch()
 {
-  this->_http_client.register_get(&handle_fetch_servers, "/active_server/" + this->game_name);
+  this->_http_client.register_get(
+      &handle_fetch_servers, this, "/active_server/" + this->game_name);
+}
+
+void handle_login_response(void* raw_context, httplib::Result const& result)
+{
+  auto* context = static_cast<BaseClient*>(raw_context);
+
+  auto parsed = parseJsonObject()(result->body);
+
+  if (parsed.index() == ERROR) {
+    CONTEXT_LOGGER(
+        context,
+        "http",
+        LogLevel::ERROR,
+        "failed to parse http response: " + std::get<ERROR>(parsed).message);
+    return;
+  }
+
+  auto const& obj = std::get<SUCCESS>(parsed).value;
+  try {
+    auto const& id = std::get<int>(obj.at("id").value);
+    context->_user_id = id;
+  } catch (std::bad_variant_access const&) {
+    CONTEXT_LOGGER(context,
+                   "http",
+                   LogLevel::WARNING,
+                   "wrong json type in resonse, skipping");
+  } catch (std::out_of_range const&) {
+    CONTEXT_LOGGER(context,
+                   "http",
+                   LogLevel::WARNING,
+                   "wrong json type in resonse object, skipping");
+  }
+}
+
+void BaseClient::handle_register(Register const& r)
+{
+  this->_http_client.register_post(
+      &handle_login_response,
+      this,
+      "/register",
+      std::format(R"({}"identifier":"{}","password":"{}"{})",
+                  '{',
+                  r.identifier,
+                  r.password,
+                  '}'));
+}
+
+void BaseClient::handle_login(Login const& r)
+{
+  this->_http_client.register_post(
+      &handle_login_response,
+      this,
+      "/login",
+      std::format(R"({}"identifier":"{}","password":"{}"{})",
+                  '{',
+                  r.identifier,
+                  r.password,
+                  '}'));
 }

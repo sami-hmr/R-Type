@@ -41,6 +41,9 @@ public:
   void disconnect_client(std::size_t client_id);
   std::vector<std::size_t> watch_disconected_clients();
 
+  int get_user_by_client(std::size_t id);
+  int get_client_by_user(int id);
+
 private:
   void handle_connectionless_packet(ConnectionlessCommand const& command,
                                     const asio::ip::udp::endpoint& sender);
@@ -84,6 +87,7 @@ private:
       ByteArray const& package);
   ClientInfo& find_client_by_endpoint(const asio::ip::udp::endpoint& endpoint);
   ClientInfo& find_client_by_id(std::size_t id);
+  ClientInfo& find_client_by_user(int id);
   void remove_client_by_endpoint(const asio::ip::udp::endpoint& endpoint);
   void remove_client_by_id(std::size_t client_id);
 

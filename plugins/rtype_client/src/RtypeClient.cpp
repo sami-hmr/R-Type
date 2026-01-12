@@ -1,9 +1,4 @@
 #include <cstring>
-#include <format>
-#include <stdexcept>
-#include <string_view>
-#include <thread>
-
 #include "../plugins/rtype_client/include/RtypeClient.hpp"
 
 #include "NetworkShared.hpp"
@@ -13,6 +8,7 @@
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Controllable.hpp"
+#include "plugin/events/HttpEvents.hpp"
 #include "plugin/events/LoggerEvent.hpp"
 #include "plugin/events/NetworkEvents.hpp"
 
@@ -60,6 +56,11 @@ RtypeClient::RtypeClient(Registry& r, EventManager& em, EntityLoader& l)
   SUBSCRIBE_EVENT(WantReady, {
     this->_event_manager.get().emit<EventBuilder>(
         "PlayerReady", PlayerReady(this->_id_in_server).to_bytes());
+  })
+
+  SUBSCRIBE_EVENT(Save, {
+    this->_event_manager.get().emit<EventBuilder>(
+        "SavePlayer", SavePlayer(this->_user_id).to_bytes());
   })
 }
 

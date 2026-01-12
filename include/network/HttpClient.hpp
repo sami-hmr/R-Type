@@ -15,8 +15,11 @@ public:
   HttpClient(std::string const& api_uri);
   HttpClient(std::string const& host, int port);
 
+  ~HttpClient();
+
   template<typename F>
   void register_get(F&& handler,
+                    void* context,
                     std::string const& endpoint,
                     httplib::Params const& params = {},
                     httplib::Headers const& header = {})
@@ -27,25 +30,47 @@ public:
                                             endpoint,
                                             params,
                                             header),
+                                 context,
                                  std::forward<F>(handler));
   }
 
   template<typename F>
   void register_post(F&& handler,
+                     void* context,
                      std::string const& endpoint,
                      std::string const& body = "",
-                     std::string const& content_type = "application/json")
+                     std::string const& content_type = "application/json",
+                     httplib::Headers const& headers = {})
   {
     this->_handlers.emplace_back(std::async(std::launch::async,
                                             &HttpClient::send_post,
                                             this,
                                             endpoint,
                                             body,
-                                            content_type),
+                                            content_type,
+                                            headers),
+                                 context,
                                  std::forward<F>(handler));
   }
 
-  void handle_responses(void*);
+  template<typename F>
+  void register_delete(F&& handler,
+                       void* context,
+                       std::string const& endpoint,
+                       std::string const& body = "",
+                       std::string const& content_type = "application/json")
+  {
+    this->_handlers.emplace_back(std::async(std::launch::async,
+                                            &HttpClient::send_delete,
+                                            this,
+                                            endpoint,
+                                            body,
+                                            content_type),
+                                 context,
+                                 std::forward<F>(handler));
+  }
+
+  void handle_responses(bool skipping = false);
 
 private:
   httplib::Result send_get(const std::string& endpoint,
@@ -54,13 +79,19 @@ private:
 
   httplib::Result send_post(const std::string& endpoint,
                             std::string const& body,
-                            std::string const& content_type);
+                            std::string const& content_type,
+                            httplib::Headers const&);
+
+  httplib::Result send_delete(const std::string& endpoint,
+                              std::string const& body,
+                              std::string const& content_type);
 
   httplib::Client _client;
 
   struct Handler
   {
     std::future<httplib::Result> call;
+    void* context;
     std::function<void(void*, httplib::Result const&)> handler;
   };
 

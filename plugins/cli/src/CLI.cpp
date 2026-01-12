@@ -64,7 +64,6 @@ void CLI::run_cli()
     }
 
     if (!_running) {
-      _event_manager.get().emit<ShutdownEvent>("Error in cli", 0);
       break;
     }
 
@@ -244,6 +243,15 @@ void CLI::process_command(const std::string& cmd)
           std::cout << "Stopping CLI...\n";
           _event_manager.get().emit<CliStop>();
         }}},
+      {"save",
+       {.usage = "save",
+        .description = "save player",
+        .handler =
+            [this](std::istringstream&)
+        {
+          std::cout << "saving...\n";
+          _event_manager.get().emit<Save>();
+        }}},
       {"fetch_available",
        {.usage = "fetch_available",
         .description = "fetcing available",
@@ -252,6 +260,32 @@ void CLI::process_command(const std::string& cmd)
         {
           std::cout << "fetching...\n";
           _event_manager.get().emit<FetchAvailableServers>();
+        }}},
+      {"register",
+       {.usage = "register <identifier> <password>",
+        .description = "register",
+        .handler =
+            [this](std::istringstream&iss)
+        {
+          std::cout << "register\n";
+          std::string id;
+          std::string pass;
+
+          iss >> id >> pass;
+          _event_manager.get().emit<Register>(id, pass);
+        }}},
+      {"login",
+       {.usage = "login <identifier> <password>",
+        .description = "login",
+        .handler =
+            [this](std::istringstream&iss)
+        {
+          std::cout << "login\n";
+          std::string id;
+          std::string pass;
+
+          iss >> id >> pass;
+          _event_manager.get().emit<Login>(id, pass);
         }}},
       {"quit",
        {.usage = "quit [reason]",
