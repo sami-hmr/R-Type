@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+
 #include "ByteParser/ByteParser.hpp"
 #include "EventMacros.hpp"
 #include "Json/JsonParser.hpp"
@@ -21,9 +22,13 @@ struct Rebind
 
   Rebind(Registry& r, JsonObject const& e)
       : key_to_replace(
-            static_cast<std::uint32_t>(KEY_MAPPING.at_first(get_value_copy<std::string>(r, e, "key_to_replace").value())) << 8)
+            static_cast<std::uint32_t>(KEY_MAPPING.at_first(
+                get_value_copy<std::string>(r, e, "key_to_replace").value()))
+            << 8)
       , replacement_key(
-            static_cast<std::uint32_t>(KEY_MAPPING.at_first(get_value_copy<std::string>(r, e, "replacement_key").value())) << 8)
+            static_cast<std::uint32_t>(KEY_MAPPING.at_first(
+                get_value_copy<std::string>(r, e, "replacement_key").value()))
+            << 8)
   {
   }
 
