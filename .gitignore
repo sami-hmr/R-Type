@@ -39,4 +39,5 @@ a.out
 aliases.fish
 Testing
 
-*.loggmon.out
+*.log
+gmon.out
