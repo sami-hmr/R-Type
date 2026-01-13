@@ -10,9 +10,9 @@
 
 
 struct RaycastingCamera {
-    double angle;  // Camera angle in radians (0 = looking right, PI/2 = looking down)
-    double fov;    // Field of view in degrees
-    int nb_rays;   // Number of rays to cast
+    double angle; 
+    double fov;
+    int nb_rays;
 
     RaycastingCamera(double angle, double fov, int nb_rays)
         : angle(angle), fov(fov), nb_rays(nb_rays)
@@ -26,7 +26,7 @@ struct RaycastingCamera {
 
     void rotate(double delta)
     {
-        angle += delta * M_PI / 180.0;
+        angle = std::fmod(angle +(delta * M_PI / 180.0), 2 * M_PI);
     }
 
     CHANGE_ENTITY_DEFAULT

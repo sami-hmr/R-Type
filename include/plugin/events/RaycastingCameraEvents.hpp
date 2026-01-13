@@ -2,8 +2,12 @@
 
 #include "EventMacros.hpp"
 
+/**
+ * @brief Event to rotate the raycasting camera
+ * @note angle is in DEGREES (converted to radians internally by rotate())
+ */
 struct RaycastingCameraRotateEvent {
-    double angle;
+    double angle;  ///< Rotation delta in degrees
 
     RaycastingCameraRotateEvent(double angle)
         : angle(angle)

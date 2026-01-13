@@ -25,7 +25,7 @@ void SFMLRenderer::basic_map_system(Registry& r) const
 }
 
 /**
- * @brief cast rays. Camera angle in degrees, fov in degrees
+ * @brief cast rays. Camera angle in radians, fov in degrees
  *
  * @param r
  * @param raycasting_data
@@ -37,8 +37,8 @@ void SFMLRenderer::cast_rays(Registry& /*r*/,
                              std::vector<std::vector<int>> const& map_data,
                              const sf::Vector2u& window_size)
 {
-  Vector2D dir = {std::cos(TO_RAD(raycasting_data.cam_angle)),
-                  std::sin(TO_RAD(raycasting_data.cam_angle))};
+  Vector2D dir = {std::cos(raycasting_data.cam_angle),
+                  std::sin(raycasting_data.cam_angle)};
   double plane_len = std::tan(TO_RAD(raycasting_data.fov / 2));
   Vector2D plane = {-dir.y * plane_len, dir.x * plane_len};
 
@@ -95,7 +95,7 @@ void SFMLRenderer::cast_rays(Registry& /*r*/,
       }
     }
 
-    double perp_wall_dist;
+    double perp_wall_dist = 0.0;
     if (side == 0) {
       perp_wall_dist = side_dist.x - delta_dist.x;
     } else {
@@ -131,7 +131,6 @@ void SFMLRenderer::cast_rays(Registry& /*r*/,
     }
     float screen_x = static_cast<float>(ray_idx) * window_size.x / raycasting_data.nb_rays;
     float next_screen_x = static_cast<float>(ray_idx + 1) * window_size.x / raycasting_data.nb_rays;
-    float line_width = next_screen_x - screen_x;
 
     sf::Color col(color.r, color.g, color.b, color.a);
     float y_start = static_cast<float>(draw_start);
@@ -180,39 +179,6 @@ void SFMLRenderer::render_basic_map(Registry& r,
     if (!draw.enabled) {
       continue;
     }
-    // this->_window.draw(_circle);
-    // for (size_t y = 0; y < basic_map.data.size(); y++) {
-    //   for (size_t x = 0; x < basic_map.data[y].size(); x++) {
-    //     int tile = basic_map.data[y][x];
-    //     if (tile == 0) {
-    //       continue;
-    //     }
-    //     this->_triangle_vertices.append(
-    //         sf::Vertex(sf::Vector2f(static_cast<float>(x * tile_size),
-    //                                 static_cast<float>(y * tile_size)),
-    //                    sf::Color::White));
-    //     this->_triangle_vertices.append(
-    //         sf::Vertex(sf::Vector2f(static_cast<float>((x + 1) * tile_size),
-    //                                 static_cast<float>(y * tile_size)),
-    //                    sf::Color::White));
-    //     this->_triangle_vertices.append(
-    //         sf::Vertex(sf::Vector2f(static_cast<float>(x * tile_size),
-    //                                 static_cast<float>((y + 1) * tile_size)),
-    //                    sf::Color::White));
-    //     this->_triangle_vertices.append(
-    //         sf::Vertex(sf::Vector2f(static_cast<float>((x + 1) * tile_size),
-    //                                 static_cast<float>(y * tile_size)),
-    //                    sf::Color::White));
-    //     this->_triangle_vertices.append(
-    //         sf::Vertex(sf::Vector2f(static_cast<float>((x + 1) * tile_size),
-    //                                 static_cast<float>((y + 1) * tile_size)),
-    //                    sf::Color::White));
-    //     this->_triangle_vertices.append(
-    //         sf::Vertex(sf::Vector2f(static_cast<float>(x * tile_size),
-    //                                 static_cast<float>((y + 1) * tile_size)),
-    //                    sf::Color::White));
-    //   }
-    // }
     RaycastingData raycasting_data {
         .cam_pos = cam_pos,
         .map_size = {static_cast<double>(basic_map.data[0].size()),
@@ -223,6 +189,4 @@ void SFMLRenderer::render_basic_map(Registry& r,
         .nb_rays = nb_rays};
     this->cast_rays(r, raycasting_data, basic_map.data, window_size);
   }
-  // this->_window.draw(this->_triangle_vertices);
-  // this->_triangle_vertices.clear();
 }

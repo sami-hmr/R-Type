@@ -16,6 +16,7 @@
 #include "plugin/components/Direction.hpp"
 #include "plugin/components/Facing.hpp"
 #include "plugin/components/Position.hpp"
+#include "plugin/components/RaycastingCamera.hpp"
 #include "plugin/components/Speed.hpp"
 #include "plugin/events/CollisionEvent.hpp"
 
@@ -55,10 +56,19 @@ void Moving::moving_system(Registry& reg)
 {
   double dt = reg.clock().delta_seconds();
 
+  auto& raycasting_cameras = reg.get_components<RaycastingCamera>();
+
   for (auto&& [index, position, direction, speed] :
        ZipperIndex<Position, Direction, Speed>(reg))
   {
-    Vector2D movement = (direction.direction).normalize() * speed.speed * dt;
+    Vector2D real_direction = direction.direction;
+
+    if (index < raycasting_cameras.size() && raycasting_cameras[index].has_value()) {
+      double cam_angle = raycasting_cameras[index]->angle;
+      real_direction.rotate_radians(cam_angle);
+    }
+
+    Vector2D movement = real_direction.normalize() * speed.speed * dt;
     position.pos += movement;
     if (movement.length() != 0) {
       this->_event_manager.get().emit<ComponentBuilder>(

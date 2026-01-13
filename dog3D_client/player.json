@@ -24,85 +24,97 @@
       "entities": [
         {
           "controller:Controllable": {
-            "pressed": [
+            "bindings": [
               {
-                "name": "UpdateDirection",
+                "description": "Move forward",
                 "key": "Z",
-                "params": {
-                  "x": 0.0,
-                  "y": -1.0
+                "pressed": {
+                  "name": "UpdateDirection",
+                  "params": {
+                    "x": 1.0,
+                    "y": 0.0
+                  }
+                },
+                "released": {
+                  "name": "UpdateDirection",
+                  "params": {
+                    "x": -1.0,
+                    "y": 0.0
+                  }
                 }
               },
               {
-                "name": "UpdateDirection",
+                "description": "Move left",
                 "key": "Q",
-                "params": {
-                  "x": -1.0,
-                  "y": 0.0
+                "pressed": {
+                  "name": "UpdateDirection",
+                  "params": {
+                    "x": 0.0,
+                    "y": -1.0
+                  }
+                },
+                "released": {
+                  "name": "UpdateDirection",
+                  "params": {
+                    "x": 0.0,
+                    "y": 1.0
+                  }
                 }
               },
               {
-                "name": "UpdateDirection",
+                "description": "Move backward",
                 "key": "S",
-                "params": {
-                  "x": 0.0,
-                  "y": 1.0
+                "pressed": {
+                  "name": "UpdateDirection",
+                  "params": {
+                    "x": -1.0,
+                    "y": 0.0
+                  }
+                },
+                "released": {
+                  "name": "UpdateDirection",
+                  "params": {
+                    "x": 1.0,
+                    "y": 0.0
+                  }
                 }
               },
               {
-                "name": "UpdateDirection",
+                "description": "Move right",
                 "key": "D",
-                "params": {
-                  "x": 1.0,
-                  "y": 0.0
+                "pressed": {
+                  "name": "UpdateDirection",
+                  "params": {
+                    "x": 0.0,
+                    "y": 1.0
+                  }
+                },
+                "released": {
+                  "name": "UpdateDirection",
+                  "params": {
+                    "x": 0.0,
+                    "y": -1.0
+                  }
                 }
               },
               {
-                "name": "RaycastingCameraRotateEvent",
+                "description": "Rotate camera left",
                 "key": "A",
-                "params": {
-                  "angle": -30.0
+                "pressed": {
+                  "name": "RaycastingCameraRotateEvent",
+                  "params": {
+                    "angle": -3.0
+                  }
                 }
               },
               {
-                "name": "RaycastingCameraRotateEvent",
+                "description": "Rotate camera right",
                 "key": "E",
-                "params": {
-                  "angle": 30.0
-                }
-              }
-            ],
-            "released": [
-              {
-                "name": "UpdateDirection",
-                "key": "Z",
-                "params": {
-                  "x": 0.0,
-                  "y": 1.0
-                }
-              },
-              {
-                "name": "UpdateDirection",
-                "key": "Q",
-                "params": {
-                  "x": 1.0,
-                  "y": 0.0
-                }
-              },
-              {
-                "name": "UpdateDirection",
-                "key": "S",
-                "params": {
-                  "x": 0.0,
-                  "y": -1.0
-                }
-              },
-              {
-                "name": "UpdateDirection",
-                "key": "D",
-                "params": {
-                  "x": -1.0,
-                  "y": 0.0
+                "pressed": {
+                  "name": "RaycastingCameraRotateEvent",
+                  "params": {
+                    "angle": 3.0
+                  }
                 }
               }
             ]

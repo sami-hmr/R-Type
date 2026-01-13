@@ -198,6 +198,32 @@ public:
   }
 
   /**
+   * @brief Rotates the vector by angle in degrees
+   * 
+   * @param angle 
+   */
+  void rotate_degrees(double angle)
+  {
+    double rad = angle * M_PI / 180.0;
+    double cos_angle = std::cos(rad);
+    double sin_angle = std::sin(rad);
+    double new_x = (this->x * cos_angle) - (this->y * sin_angle);
+    double new_y = (this->x * sin_angle) + (this->y * cos_angle);
+    this->x = new_x;
+    this->y = new_y;
+  }
+
+  void rotate_radians(double angle)
+  {
+    double cos_angle = std::cos(angle);
+    double sin_angle = std::sin(angle);
+    double new_x = (this->x * cos_angle) - (this->y * sin_angle);
+    double new_y = (this->x * sin_angle) + (this->y * cos_angle);
+    this->x = new_x;
+    this->y = new_y;
+  }
+  
+  /**
    * @brief Calculates dot product with another vector
    * @param other Second vector
    * @return Dot product (this.x * other.x + this.y * other.y)
