@@ -12,7 +12,7 @@ on:
 jobs:
   ci:
     uses: ./.github/workflows/reusable-ci.yml
-    secrets:
     with:
       auto-format: false
       run-windows: true
+    secrets: inherit
