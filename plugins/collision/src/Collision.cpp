@@ -18,6 +18,7 @@
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Collidable.hpp"
 #include "plugin/components/Direction.hpp"
+#include "plugin/components/InteractionBorders.hpp"
 #include "plugin/components/InteractionZone.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Speed.hpp"
@@ -34,7 +35,10 @@ Collision::Collision(Registry& r, EventManager& em, EntityLoader& l)
           l,
           {"moving"},
           {COMP_INIT(Collidable, Collidable, init_collision),
-           COMP_INIT(InteractionZone, InteractionZone, init_interaction_zone)})
+           COMP_INIT(InteractionZone, InteractionZone, init_interaction_zone),
+           COMP_INIT(InteractionBorders,
+                     InteractionBorders,
+                     init_interaction_borders)})
 {
   REGISTER_COMPONENT(Collidable)
   REGISTER_COMPONENT(InteractionZone)
@@ -97,6 +101,23 @@ void Collision::init_collision(Registry::Entity const& entity,
                              height.value(),
                              type,
                              true);
+}
+
+void Collision::init_interaction_borders(Registry::Entity const& entity,
+                                         JsonObject const& obj)
+{
+  auto const& radius = get_value<Collidable, double>(
+      this->_registry.get(), obj, entity, "radius");
+
+  if (!radius) {
+    std::cerr << "Error loading InteractionBorders: missing radius\n";
+    return;
+  }
+
+  init_component<InteractionZone>(this->_registry.get(),
+                                  this->_event_manager.get(),
+                                  entity,
+                                  radius.value());
 }
 
 void Collision::init_interaction_zone(Registry::Entity const& entity,
