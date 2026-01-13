@@ -49,13 +49,12 @@ RtypeServer::RtypeServer(Registry& r, EventManager& em, EntityLoader& l)
     init_component<Scene>(this->_registry.get(),
                           this->_event_manager.get(),
                           event.server_index,
-                          "game",
-                          SceneState::ACTIVE);
+                          "game");
   })
 
   SUBSCRIBE_EVENT(PlayerReady, {
     if (!this->_player_ready.contains(event.client_id)) {
-      return;
+      return false;
     }
     this->_player_ready[event.client_id] = true;
 

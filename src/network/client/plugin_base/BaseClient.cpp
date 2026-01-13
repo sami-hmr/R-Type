@@ -54,7 +54,7 @@ BaseClient::BaseClient(std::string const& name,
 
   SUBSCRIBE_EVENT(EventBuilder, {
     if (!this->_running) {
-      return;
+      return false;
     }
     this->_event_to_server.push(EventBuilder(
         event.event_id,
