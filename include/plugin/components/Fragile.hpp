@@ -33,7 +33,7 @@ struct Fragile
   DEFAULT_BYTE_CONSTRUCTOR(
       Fragile,
       ([](int hits, int counter, double fragile_delta)
-       { return (Fragile) {hits, counter, fragile_delta}; }),
+       { return Fragile{hits, counter, fragile_delta}; }),
       parseByte<int>(),
       parseByte<int>(),
       parseByte<double>())

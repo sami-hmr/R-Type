@@ -28,7 +28,8 @@ private:
 
   void init_event_map(Registry::Entity const& entity,
                       JsonArray& events,
-                      Controllable& result);
+                      Controllable& result,
+                      KeyEventType pressed);
   void handle_key_change(Key key, bool is_pressed);
   double compute_axis(Key negative, Key positive) const;
   bool is_key_active(Key key) const;

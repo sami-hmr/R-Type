@@ -1,3 +1,4 @@
+#include <chrono>
 #include <format>
 #include <thread>
 
@@ -54,7 +55,7 @@ BaseClient::BaseClient(std::string const& name,
 
   SUBSCRIBE_EVENT(EventBuilder, {
     if (!this->_running) {
-      return false;
+      return true;
     }
     this->_event_to_server.push(EventBuilder(
         event.event_id,
@@ -83,7 +84,7 @@ BaseClient::BaseClient(std::string const& name,
             this->_loader.get().load_byte_component(
                 true_entity, server_comp, this->_server_indexes);
           } catch (InvalidPackage const& e) {
-            LOGGER("client", LogLevel::ERROR, e.what());
+            LOGGER("client", LogLevel::ERR, e.what());
           }
         }
       });
@@ -128,11 +129,6 @@ BaseClient::BaseClient(std::string const& name,
     // loby"
     this->_event_manager.get().emit<ShutdownEvent>("Disconnection", 0);
   })
-
-  SUBSCRIBE_EVENT(NetworkStatus, {
-    std::cout << "ping: " << event.ping_in_millisecond
-              << ", loss: " << event.packet_loss << std::endl;
-  })
 }
 
 BaseClient::~BaseClient()
@@ -151,7 +147,7 @@ void BaseClient::connection_thread(ClientConnection const& c)
     client.connect();
   } catch (std::exception& e) {
     LOGGER("client",
-           LogLevel::ERROR,
+           LogLevel::ERR,
            std::format("Connection failed: {}", e.what()));
     _running = false;
   }

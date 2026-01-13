@@ -12,8 +12,23 @@ project(
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -fPIC -O3")
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+# Compiler-specific flags
+if(MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4 /O2")
+else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -fPIC -O3")
+endif()
+
 set(CMAKE_SHARED_LIBRARY_PREFIX "")
+
+# Set executable output directory to build/ for all configurations
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+foreach(CONFIG ${CMAKE_CONFIGURATION_TYPES})
+  string(TOUPPER ${CONFIG} CONFIG_UPPER)
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CONFIG_UPPER} ${CMAKE_BINARY_DIR})
+endforeach()
 
 # Use vcpkg toolchain if available
 if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
@@ -23,15 +38,9 @@ endif()
 
 # ---- Developer mode variable ----
 
-include(FetchContent)
-
-FetchContent_Declare(
-    parser
-  GIT_REPOSITORY https://github.com/abeldaverio/cpp-parsing-library
-  GIT_TAG        main
-)
-
-FetchContent_MakeAvailable(parser)
+# Use local parser library (Windows-compatible version)
+add_subdirectory(parser)
+set(parser_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/parser)
 
 # ---- Declare executable ----
 

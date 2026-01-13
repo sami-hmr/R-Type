@@ -1,7 +1,7 @@
 # ---- In-source guard ----
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-if(CMAKE_EXPORT_COMPILE_COMMANDS)
+if(CMAKE_EXPORT_COMPILE_COMMANDS AND NOT WIN32)
     add_custom_target(
         copy-compile-commands ALL
         ${CMAKE_COMMAND} -E copy_if_different

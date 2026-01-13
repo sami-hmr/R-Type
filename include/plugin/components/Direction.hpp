@@ -22,7 +22,7 @@ struct Direction
 
   DEFAULT_BYTE_CONSTRUCTOR(Direction,
                            ([](double dir_x, double dir_y)
-                            { return (Direction) {dir_x, dir_y}; }),
+                            { return Direction{dir_x, dir_y}; }),
                            parseByte<double>(),
                            parseByte<double>())
   DEFAULT_SERIALIZE(type_to_byte(this->direction.x),

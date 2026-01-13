@@ -4,6 +4,7 @@
 #include <bit>
 #include <concepts>
 #include <cstdint>
+#include <cstring>
 #include <functional>
 #include <iostream>
 #include <string>
@@ -79,9 +80,9 @@ concept bytable = serializable<T> && unserializable<T>;
 #define EMPTY_BYTE_CONSTRUCTOR(classname) \
   classname(ByteArray const& array) \
   { \
-    Result<classname> r = apply(([]() { return (classname) {}; }))( \
+    Result<classname> r = apply(([]() { return classname {}; }))( \
         Rest(std::string(array.begin(), array.end()))); \
-    if (r.index() == ERROR) { \
+    if (r.index() == ERR) { \
       throw InvalidPackage(#classname); \
     } \
     *this = std::get<SUCCESS>(r).value; \
@@ -114,8 +115,8 @@ concept bytable = serializable<T> && unserializable<T>;
   classname(ByteArray const& array) \
   { \
     Result<classname> r = apply((construct), __VA_ARGS__)(Rest(array)); \
-    if (r.index() == ERROR) { \
-      auto const& err = std::get<ERROR>(r); \
+    if (r.index() == ERR) { \
+      auto const& err = std::get<ERR>(r); \
       throw InvalidPackage(std::format("{}: {}, {}, line {} col {}", \
                                        #classname, \
                                        err.context, \
@@ -194,8 +195,9 @@ template<typename T>
 ByteArray type_to_byte(T v, std::endian endian = std::endian::big)
 {
   ByteArray tmp(sizeof(T));
-  auto raw = std::bit_cast<std::array<unsigned char, sizeof(T)>>(v);
-  std::copy(raw.begin(), raw.end(), tmp.begin());
+  
+  // MSVC workaround: use memcpy instead of std::bit_cast for better compatibility
+  std::memcpy(tmp.data(), &v, sizeof(T));
 
   if (endian != std::endian::native) {
     std::reverse(tmp.begin(), tmp.end());

@@ -2,12 +2,10 @@
 
 #include "ATH.hpp"
 
-#include "Json/JsonParser.hpp"
 #include "ecs/EmitEvent.hpp"
 #include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/zipper/Zipper.hpp"
-#include "ecs/zipper/ZipperIndex.hpp"
 #include "libs/Rect.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
@@ -15,40 +13,26 @@
 #include "plugin/components/Button.hpp"
 #include "plugin/components/Clickable.hpp"
 #include "plugin/components/Collidable.hpp"
-#include "plugin/components/Input.hpp"
 #include "plugin/events/IoEvents.hpp"
 
 static void on_click(Registry& r,
                      EventManager& em,
                      const MousePressedEvent& event)
 {
-  for (const auto& [e, draw, clickable, pos, collision] :
-       ZipperIndex<Drawable, Clickable, Position, Collidable>(r))
+  for (const auto& [draw, clickable, pos, collision] :
+       Zipper<Drawable, Clickable, Position, Collidable>(r))
   {
     if (!draw.enabled) {
       continue;
     }
     Rect entity_rect = {.x = pos.pos.x,
                         .y = pos.pos.y,
-                        .width = collision.width * 2,
-                        .height = collision.height * 2};
+                        .width = collision.width,
+                        .height = collision.height};
     if (entity_rect.contains(event.position.x, event.position.y)) {
-      for (auto&& [name, obj] : clickable.to_emit) {
-        std::cout << "Clickable: entity " << e << " clicked, emitting '" << name
-                  << "'\n";
-        obj.insert_or_assign("entity", JsonVariant(static_cast<int>(e)));
+      for (const auto& [name, obj] : clickable.to_emit) {
         emit_event(em, r, name, obj);
-        std::cout << "Clickable: emitted event '" << name << "'\n";
       }
-    }
-  }
-}
-
-void on_input_focus(Registry& r, const InputFocusEvent& event)
-{
-  for (const auto& [e, input] : ZipperIndex<Input>(r)) {
-    if (e == event.entity) {
-      input.enabled = !input.enabled;
     }
   }
 }
@@ -74,12 +58,11 @@ ATH::ATH(Registry& r,
   SUBSCRIBE_EVENT(MousePressedEvent, {
     on_click(this->_registry.get(), this->_event_manager.get(), event);
   });
-  SUBSCRIBE_EVENT(InputFocusEvent, {on_input_focus(this->_registry.get(), event);});
 }
 
 extern "C"
 {
-void* entry_point(Registry& r,
+PLUGIN_EXPORT void* entry_point(Registry& r,
                   EventManager& em,
                   EntityLoader& e,
                   std::optional<JsonObject> const& config)

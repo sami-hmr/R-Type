@@ -13,6 +13,11 @@
 
 class Registry;
 
+#ifdef _MSC_VER
+// MSVC workaround: namespace prevents incorrect ADL treating concepts as Scene members
+namespace rtype_concepts {
+#endif
+
 template<typename T>
 concept json_buildable = requires(Registry& r, JsonObject const& j) {
   {
@@ -43,3 +48,9 @@ concept entity_convertible = requires(
     event.change_entity(map)
   } -> std::same_as<T>;
 };
+
+#ifdef _MSC_VER
+}  // namespace rtype_concepts
+using rtype_concepts::json_buildable;
+using rtype_concepts::entity_convertible;
+#endif

@@ -2,6 +2,11 @@
 
 #include <cmath>
 
+// Define M_PI if not available (MSVC requires _USE_MATH_DEFINES before cmath include)
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
 #include "MovementPattern.hpp"
 #include "NetworkShared.hpp"
 #include "ecs/EventManager.hpp"

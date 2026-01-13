@@ -4,7 +4,9 @@
 
 #include "RtypeServer.hpp"
 
+#ifdef __unix__
 #include <unistd.h>
+#endif
 
 #include "NetworkShared.hpp"
 #include "ecs/EmitEvent.hpp"
@@ -49,12 +51,13 @@ RtypeServer::RtypeServer(Registry& r, EventManager& em, EntityLoader& l)
     init_component<Scene>(this->_registry.get(),
                           this->_event_manager.get(),
                           event.server_index,
-                          "game");
+                          "game",
+                          SceneState::ACTIVE);
   })
 
   SUBSCRIBE_EVENT(PlayerReady, {
     if (!this->_player_ready.contains(event.client_id)) {
-      return false;
+      return true;
     }
     this->_player_ready[event.client_id] = true;
 
@@ -112,7 +115,7 @@ RtypeServer::RtypeServer(Registry& r, EventManager& em, EntityLoader& l)
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
+PLUGIN_EXPORT void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
   return new RtypeServer(r, em, e);
 }

@@ -94,7 +94,7 @@ void Weapon::basic_weapon_system(
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager& em, EntityLoader& l)
+PLUGIN_EXPORT void* entry_point(Registry& r, EventManager& em, EntityLoader& l)
 {
   return new Weapon(r, em, l);
 }

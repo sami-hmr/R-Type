@@ -71,7 +71,7 @@ BaseServer::BaseServer(std::string const& name,
       DisconnectClient,
       {
         if (!this->_server_class) {
-          return false;
+          return true;
         }
         this->_server_class->disconnect_client(event.client);
       },
@@ -116,7 +116,7 @@ BaseServer::BaseServer(std::string const& name,
 
     if (!entity) {
       LOGGER("load entity template",
-             LogLevel::ERROR,
+             LogLevel::ERR,
              "failed to load entity template " + event.template_name);
     }
     for (auto const& [id, comp] : event.aditionals) {
@@ -151,7 +151,7 @@ void BaseServer::launch_server()
     this->_server_class->receive_loop();
   } catch (std::exception& e) {
     LOGGER("server",
-           LogLevel::ERROR,
+           LogLevel::ERR,
            std::format("Failed to start server: {}", e.what()));
   }
 }

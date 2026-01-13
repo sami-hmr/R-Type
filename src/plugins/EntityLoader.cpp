@@ -16,7 +16,12 @@
 #include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/Scenes.hpp"
+
+#ifdef _WIN32
+#include "plugin/libLoaders/WindowsLoader.hpp"
+#else
 #include "plugin/libLoaders/LDLoader.hpp"
+#endif
 
 EntityLoader::EntityLoader(Registry& registry, EventManager& em)
     : _registry(std::ref(registry))
@@ -31,10 +36,14 @@ bool EntityLoader::is_plugin_loaded(std::string const& plugin)
 
 void EntityLoader::load(std::string const& directory)
 {
+  std::cerr << "DEBUG EntityLoader::load: " << directory << "\n" << std::flush;
   try {
     for (const auto& entry : std::filesystem::directory_iterator(directory)) {
+      std::cerr << "DEBUG: found entry: " << entry.path() << "\n" << std::flush;
       if (entry.is_regular_file() && entry.path().extension() == ".json") {
+        std::cerr << "DEBUG: loading json file: " << entry.path().string() << "\n" << std::flush;
         this->load_file(entry.path().string());
+        std::cerr << "DEBUG: done loading: " << entry.path().string() << "\n" << std::flush;
       } else if (entry.is_directory()) {
         this->load(entry.path().string());
       }
@@ -90,7 +99,8 @@ void EntityLoader::load_scene(JsonObject& json_scene)
       std::optional<Registry::Entity> new_e =
           this->load_entity(std::get<JsonObject>(it.value));
       if (new_e.has_value()) {
-        this->_registry.get().add_component(new_e.value(), Scene(scene));
+        this->_registry.get().add_component(new_e.value(),
+                                            Scene(scene, scene_state));
       }
     }
   }
@@ -98,23 +108,29 @@ void EntityLoader::load_scene(JsonObject& json_scene)
 
 void EntityLoader::load_file(std::string const& filepath)
 {
+  std::cerr << "DEBUG: load_file: " << filepath << "\n" << std::flush;
   std::ifstream infi(filepath);
   if (infi.fail()) {
     std::cerr << "failed to open file \"" << filepath << "\": " << errno
               << '\n';
     return;
   }
+  std::cerr << "DEBUG: reading file content...\n" << std::flush;
   std::string str((std::istreambuf_iterator<char>(infi)),
                   std::istreambuf_iterator<char>());
+  std::cerr << "DEBUG: parsing JSON...\n" << std::flush;
 
   Result<JsonObject> result = parseJsonObject()(Rest(str));
+  std::cerr << "DEBUG: JSON parsed\n" << std::flush;
 
-  if (result.index() == ERROR) {
-    printError(std::get<ERROR>(result), str, filepath);
+  if (result.index() == ERR) {
+    printError(std::get<Error>(result), str, filepath);
   } else {
+    std::cerr << "DEBUG: processing JSON object...\n" << std::flush;
     JsonObject r = std::get<SUCCESS>(result).value;
     try {
       if (r.contains("entities_template")) {
+        std::cerr << "DEBUG: loading entities_template...\n" << std::flush;
         JsonArray const& templates_array =
             std::get<JsonArray>(r.at("entities_template").value);
         for (auto const& template_it : templates_array) {
@@ -156,6 +172,7 @@ void EntityLoader::load_plugin(std::string const& plugin,
                                                   this->_event_manager.get(),
                                                   *this,
                                                   config));
+      std::cerr << "DEBUG: plugin loaded: " << plugin << "\n" << std::flush;
     } catch (LoaderException const& e) {
       std::cerr << e.what() << '\n';
     }
@@ -212,13 +229,14 @@ void EntityLoader::get_loader(std::string const& plugin)
 {
   try {
     if (!this->_loaders.contains(plugin)) {
-      this->_loaders[plugin];
-      this->_loaders.insert_or_assign(plugin,
-                                      std::make_unique<
-#if __linux__
-                                          DlLoader
+      std::string path = "plugins/" + plugin;
+      std::cerr << "DEBUG: loading plugin: " << path << "\n" << std::flush;
+#ifdef _WIN32
+      this->_loaders[plugin] = std::make_unique<WindowsLoader<IPlugin>>(path);
+#else
+      this->_loaders[plugin] = std::make_unique<DlLoader<IPlugin>>(path);
 #endif
-                                          <IPlugin>>("plugins/" + plugin));
+      std::cerr << "DEBUG: plugin loaded successfully: " << path << "\n" << std::flush;
     }
   } catch (NotExistingLib const& e) {
     std::cerr << e.what() << '\n';

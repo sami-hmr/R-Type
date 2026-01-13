@@ -22,7 +22,7 @@
 #include "plugin/events/LoggerEvent.hpp"
 
 Controller::Controller(Registry& r, EventManager& em, EntityLoader& l)
-    : APlugin("Controller",
+    : APlugin("controller",
               r,
               em,
               l,
@@ -48,81 +48,45 @@ Controller::Controller(Registry& r, EventManager& em, EntityLoader& l)
   })
 }
 
-bool Controller::handling_press_release_binding(Registry::Entity const& entity,
-                                                Controllable& result,
-                                                JsonObject& event,
-                                                const std::string& key_string,
-                                                KeyEventType event_type)
-{
-  auto event_id =
-      get_value_copy<std::string>(this->_registry.get(), event, "name");
-  auto params =
-      get_value_copy<JsonObject>(this->_registry.get(), event, "params");
-  if (!event_id) {
-    LOGGER("Controller",
-           LogLevel::WARNING,
-           "Missing name field in event, skipping");
-    return false;
-  }
-  if (!params) {
-    LOGGER("Controller",
-           LogLevel::WARNING,
-           std::format("Missing params field in event \"{}\", skipping",
-                       *event_id));
-    return false;
-  }
-  params->insert_or_assign("entity", JsonValue(static_cast<int>(entity)));
-  result.event_map.insert_or_assign(
-      (static_cast<std::uint32_t>(KEY_MAPPING.at_first(key_string)) << 8)
-          + static_cast<int>(event_type),
-      Controllable::Trigger {*event_id, *params});
-  return true;
-}
-
 void Controller::init_event_map(Registry::Entity const& entity,
                                 JsonArray& events,
-                                Controllable& result)
+                                Controllable& result,
+                                KeyEventType pressed)
 {
   for (auto& it : events) {
     auto& event = std::get<JsonObject>(it.value);
-    auto description = get_value_copy<std::string>(
-        this->_registry.get(), event, "description"); // insert description into the bindings
+    auto event_id =
+        get_value_copy<std::string>(this->_registry.get(), event, "name");
+    auto params =
+        get_value_copy<JsonObject>(this->_registry.get(), event, "params");
     auto key_string =
         get_value_copy<std::string>(this->_registry.get(), event, "key");
-    auto press =
-        get_value_copy<JsonObject>(this->_registry.get(), event, "pressed");
-    auto release =
-        get_value_copy<JsonObject>(this->_registry.get(), event, "released");
-    if (!description) {
-      LOGGER("Controller",
+
+    if (!event_id) {
+      LOGGER("controller",
              LogLevel::WARNING,
-             std::format("Missing description field in event, skipping"));
+             "Missing name field in event, skiping");
       continue;
     }
     if (!key_string) {
-      LOGGER("Controller",
-             LogLevel::WARNING,
-             std::format("Missing key field in event, skipping"));
+      LOGGER(
+          "controller",
+          LogLevel::WARNING,
+          std::format("Missing key field in event \"{}\", skiping", *event_id));
       continue;
     }
-    if (!release && !press) {
-      LOGGER("Controller",
+    if (!params) {
+      LOGGER("controller",
              LogLevel::WARNING,
-             std::format("No action linked to command \"{}\".", *key_string))
+             std::format("Missing params field in event \"{}\", skiping",
+                         *event_id));
       continue;
     }
-    if (press) {
-      if (!handling_press_release_binding(
-        entity, result, *press, *key_string, KEY_PRESSED)) {
-        continue;
-      }
-    }
-    if (release) {
-      if (!handling_press_release_binding(
-        entity, result, *release, *key_string, KEY_RELEASED)) {
-        continue;
-      }
-    }
+    params->insert_or_assign("entity", JsonValue(static_cast<int>(entity)));
+    result.event_map.insert_or_assign(
+        (static_cast<std::uint32_t>(KEY_MAPPING.at_first(*key_string)) << 8)
+            + static_cast<int>(pressed),
+        Controllable::Trigger {*event_id, *params});
   }
 }
 
@@ -131,9 +95,11 @@ void Controller::init_controller(Registry::Entity const& entity,
 {
   Controllable result(
       (std::unordered_map<std::uint16_t, Controllable::Trigger>()));
-  auto bindings = std::get<JsonArray>(obj.at("bindings").value);
+  auto pressed = std::get<JsonArray>(obj.at("pressed").value);
+  auto released = std::get<JsonArray>(obj.at("released").value);
 
-  this->init_event_map(entity, bindings, result);
+  this->init_event_map(entity, pressed, result, KEY_PRESSED);
+  this->init_event_map(entity, released, result, KEY_RELEASED);
 
   this->_registry.get().add_component<Controllable>(entity, std::move(result));
 }
@@ -141,7 +107,6 @@ void Controller::init_controller(Registry::Entity const& entity,
 void Controller::handle_key_change(Key key, bool is_pressed)
 {
   this->_key_states[key] = is_pressed;
-
   std::uint16_t key_map =
       (static_cast<std::uint32_t>(key) << 8) + static_cast<int>(is_pressed);
 
@@ -187,7 +152,7 @@ double Controller::compute_axis(Key negative, Key positive) const
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
+PLUGIN_EXPORT void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
   return new Controller(r, em, e);
 }

@@ -31,7 +31,7 @@ struct HealEvent
   DEFAULT_BYTE_CONSTRUCTOR(HealEvent,
                            ([](Registry::Entity const& t,
                                Registry::Entity const& s,
-                               int a) { return (HealEvent) {t, s, a}; }),
+                               int a) { return HealEvent{t, s, a}; }),
                            parseByte<Registry::Entity>(),
                            parseByte<Registry::Entity>(),
                            parseByte<int>())

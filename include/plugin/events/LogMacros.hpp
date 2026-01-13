@@ -17,14 +17,14 @@ enum class LogLevel : std::uint8_t
   DEBUG,
   INFO,
   WARNING,
-  ERROR
+  ERR
 };
 
 static const TwoWayMap<std::string, LogLevel> LOG_LEVEL_STR = {
     {"DEBUG", LogLevel::DEBUG},
     {"INFO", LogLevel::INFO},
     {"WARNING", LogLevel::WARNING},
-    {"ERROR", LogLevel::ERROR},
+    {"ERROR", LogLevel::ERR},
 };
 
 inline std::ostream& operator<<(std::ostream& os, LogLevel level)

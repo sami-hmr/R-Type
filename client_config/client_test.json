@@ -30,85 +30,76 @@
       "entities": [
         {
           "controller:Controllable": {
-            "bindings": [
+            "pressed": [
               {
-                "description": "go up",
+                "name": "UpdateDirection",
                 "key": "Z",
-                "pressed": {
-                  "name": "UpdateDirection",
-                  "params": {
-                      "x": 0.0,
-                      "y": -1.0
-                  }
-                },
-                "released": {
-                  "name": "UpdateDirection",
-                  "params": {
-                      "x": 0.0,
-                      "y": 1.0
-                  }
+                "params": {
+                  "x": 0.0,
+                  "y": -1.0
                 }
               },
               {
-                "description": "go left",
+                "name": "UpdateDirection",
                 "key": "Q",
-                "pressed": {
-                  "name": "UpdateDirection",
-                  "params": {
-                      "x": -1.0,
-                      "y": 0.0
-                  }
-                },
-                "released": {
-                  "name": "UpdateDirection",
-                  "params": {
-                      "x": 1.0,
-                      "y": 0.0
-                  }
+                "params": {
+                  "x": -1.0,
+                  "y": 0.0
                 }
               },
               {
-                "description": "go right",
-                "key": "D",
-                "pressed": {
-                  "name": "UpdateDirection",
-                  "params": {
-                      "x": 1.0,
-                      "y": 0.0
-                  }
-                },
-                "released": {
-                  "name": "UpdateDirection",
-                  "params": {
-                      "x": -1.0,
-                      "y": 0.0
-                  }
-                }
-              },
-              {
-                "description": "go down",
+                "name": "UpdateDirection",
                 "key": "S",
-                "pressed": {
-                  "name": "UpdateDirection",
-                  "params": {
-                      "x": 0.0,
-                      "y": 1.0
-                  }
-                },
-                "released": {
-                  "name": "UpdateDirection",
-                  "params": {
-                      "x": 0.0,
-                      "y": -1.0
-                  }
+                "params": {
+                  "x": 0.0,
+                  "y": 1.0
                 }
               },
               {
-                "description": "shoot",
+                "name": "UpdateDirection",
+                "key": "D",
+                "params": {
+                  "x": 1.0,
+                  "y": 0.0
+                }
+              },
+              {
+                "name": "FireBullet",
                 "key": "SPACE",
-                "pressed": {
-                  "name": "FireBullet",
-                  "params": {}
+                "params": {}
+              }
+            ],
+            "released": [
+              {
+                "name": "UpdateDirection",
+                "key": "Z",
+                "params": {
+                  "x": 0.0,
+                  "y": 1.0
+                }
+              },
+              {
+                "name": "UpdateDirection",
+                "key": "Q",
+                "params": {
+                  "x": 1.0,
+                  "y": 0.0
+                }
+              },
+              {
+                "name": "UpdateDirection",
+                "key": "S",
+                "params": {
+                  "x": 0.0,
+                  "y": -1.0
+                }
+              },
+              {
+                "name": "UpdateDirection",
+                "key": "D",
+                "params": {
+                  "x": -1.0,
+                  "y": 0.0
                 }
               }
             ]
@@ -121,54 +112,6 @@
       "state": "active",
       "plugins": [],
       "entities": [
-        {
-          "ui:Drawable": {},
-          "moving:Position": {
-            "pos": {
-              "x": -0.0,
-              "y": -0.0
-            }
-          },
-          "ui:input": {
-            "hook": "my_input_buffer",
-            "buffer": "server address:",
-            "enabled": false
-          },
-          "collision:Collidable": {
-            "collision_type": "Trigger",
-            "height": 0.1,
-            "width": 0.3
-          },
-          "ui:Text": {
-            "font": "assets/fonts/roboto.ttf",
-            "size": {
-              "width": "60.0%",
-              "height": "30.0%"
-            },
-            "fill_color": {
-              "r": 255,
-              "g": 255,
-              "b": 255,
-              "a": 255
-            },
-            "outline_color": {
-              "r": 0,
-              "g": 0,
-              "b": 0,
-              "a": 255
-            },
-            "outline_thickness": 30.0,
-            "outline": true,
-            "text": "#my_input_buffer:buffer"
-          },
-          "ath:Clickable": {
-            "to_emit": [
-              {
-                "InputFocusEvent": {}
-              }
-            ]
-          }
-        },
         {
           "moving:Position": {
             "pos": {
@@ -211,8 +154,8 @@
           "ui:Text": {
             "font": "assets/fonts/roboto.ttf",
             "size": {
-              "width": "0.0%",
-              "height": "0.0%"
+              "width": "80.0%",
+              "height": "30.0%"
             },
             "fill_color": {
               "r": 255,
@@ -228,14 +171,7 @@
             },
             "outline_thickness": 30.0,
             "outline": true,
-            "text": "#global:server_address_:buffer"
-          },
-
-          "ui:input": {
-            "hook": "server_address_",
-            "global_hook": true,
-            "buffer": "hook",
-            "enabled": true
+            "text": "appuis sur ce bouton pour te connecter au server"
           }
         },
         {
@@ -277,8 +213,8 @@
                   "y": 0.0
                 },
                 "sprite_size": {
-                  "width": "28.0%",
-                  "height": "28.0%"
+                  "width": "30.0%",
+                  "height": "30.0%"
                 },
                 "direction": {
                   "x": 0.0,
@@ -322,13 +258,14 @@
               {
                 "SceneChangeEvent": {
                   "target_scene": "connecting",
+                  "state": "main",
                   "reason": "User clicked connect button",
                   "force": false
                 }
               },
               {
                 "ClientConnection": {
-                  "host": "0.0.0.0",
+                  "host": "127.0.0.1",
                   "port": 4242
                 }
               }
@@ -341,8 +278,8 @@
             }
           },
           "collision:Collidable": {
-            "width": 0.3,
-            "height": 0.15,
+            "width": 0.2,
+            "height": 0.2,
             "collision_type": "solid"
           },
           "ath:Button": {

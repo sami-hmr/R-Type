@@ -12,10 +12,8 @@
 #include "plugin/components/Camera.hpp"
 #include "plugin/components/Drawable.hpp"
 #include "plugin/components/Input.hpp"
-#include "plugin/components/Slider.hpp"
 #include "plugin/components/Sprite.hpp"
 #include "plugin/components/Text.hpp"
-#include "plugin/events/IoEvents.hpp"
 
 UI::UI(Registry& r,
        EventManager& em,
@@ -32,8 +30,7 @@ UI::UI(Registry& r,
                COMP_INIT(Text, Text, init_text),
                COMP_INIT(Camera, Camera, init_cam),
                COMP_INIT(Background, Background, init_background),
-               COMP_INIT(AnimatedSprite, AnimatedSprite, init_animated_sprite),
-               COMP_INIT(Slider, Slider, init_slider)},
+               COMP_INIT(AnimatedSprite, AnimatedSprite, init_animated_sprite)},
               config)
 {
   SUBSCRIBE_EVENT(KeyPressedEvent, { this->handle_key_pressed(event); })
@@ -45,7 +42,6 @@ UI::UI(Registry& r,
   REGISTER_COMPONENT(Camera)
   REGISTER_COMPONENT(Background)
   REGISTER_COMPONENT(AnimatedSprite)
-  REGISTER_COMPONENT(Slider)
 
   this->_registry.get().add_system(
       [this](Registry& r) { this->update_anim_system(r); }, 1000);
@@ -67,10 +63,6 @@ UI::UI(Registry& r,
     AnimatedSprite::on_death(
         this->_registry.get(), this->_event_manager.get(), event);
   })
-  SUBSCRIBE_EVENT(MousePressedEvent,
-                  { on_click_slider(this->_registry.get(), event); });
-  SUBSCRIBE_EVENT(MouseReleasedEvent,
-                  { on_release_slider(this->_registry.get(), event); });
 }
 
 void UI::init_drawable(Registry::Entity const& entity, JsonObject const&)
@@ -465,7 +457,7 @@ void UI::init_cam(Registry::Entity const& entity, JsonObject const& obj)
 
 extern "C"
 {
-void* entry_point(Registry& r,
+PLUGIN_EXPORT void* entry_point(Registry& r,
                   EventManager& em,
                   EntityLoader& l,
                   std::optional<JsonObject> const& config)

@@ -1,60 +1,73 @@
-// /*
-// ** EPITECH PROJECT, 2025
-// ** raytraycer
-// ** File description:
-// ** lib loaders
-// */
+#pragma once
 
-// #ifndef WINDOWS_LOADER_HPP
-// #define WINDOWS_LOADER_HPP
+#ifdef _WIN32
 
-// #include <unistd.h>
-// #include <windows.h>
+#include <windows.h>
+#include <memory>
+#include <optional>
+#include <string>
 
-// #include <libconfig.h++>
-// #include <memory>
-// #include <string>
+#include "ILibLoader.hpp"
+#include "Json/JsonParser.hpp"
+#include "ecs/EventManager.hpp"
+#include "ecs/Registry.hpp"
+#include "plugin/IPlugin.hpp"
 
-// #include "libLoaders/ILibLoader.hpp"
-// #include "plugins/IPlugin.hpp"
+template<lib Module>
+class WindowsLoader : public LibLoader<Module>
+{
+public:
+  WindowsLoader& operator=(const WindowsLoader&) = delete;
+  WindowsLoader& operator=(WindowsLoader&&) = delete;
 
-// template <lib Module>
-// class WindowsLoader : public LibLoader<Module> {
-//    public:
-//     WindowsLoader(std::string fileName) : lib_(LoadLibrary(fileName)) {
-//         if (!this->lib_) {
-//             throw NotExistingLib("error loading library" + fileName);
-//         }
-//     }
+  explicit WindowsLoader(const std::string& file_name)
+      : _lib(LoadLibraryA((file_name + ".dll").c_str()))
+  {
+    if (this->_lib == nullptr) {
+      DWORD err = GetLastError();
+      throw NotExistingLib("Error loading library: " + file_name + " (error code: " + std::to_string(err) + ")");
+    }
+  }
 
-//     WindowsLoader(WindowsLoader<Module> &&other) : lib_(other.lib_) {
-//         other.lib_ = nullptr;
-//     }
+  WindowsLoader(WindowsLoader<Module>&& other) noexcept
+      : _lib(other._lib)
+  {
+    other._lib = nullptr;
+  }
 
-//     WindowsLoader(WindowsLoader<Module> &other) = delete;
-//     ~WindowsLoader() override {
-//     }
+  WindowsLoader(WindowsLoader<Module>& other) = delete;
 
-//     std::unique_ptr<Module> get_instance(
-//         const std::string entryPoint,
-//         const libconfig::Setting &settings) override {
-//         IPlugin *(*function)(const libconfig::Setting &) =
-//             (IPlugin * (*)(const libconfig::Setting &))(
-//                 GetProcAddress(this->lib_, entryPoint));
+  ~WindowsLoader() override
+  {
+    if (this->_lib != nullptr) {
+      FreeLibrary(this->_lib);
+    }
+  }
 
-//         if (!function) {
-//             throw LoaderException("not a raytracerPlugin lib");
-//         }
-//         Module *instance = dynamic_cast<Module *>(function(settings));
-//         if (!instance) {
-//             throw LoaderException("wrong plugin type");
-//         }
-//         std::unique_ptr<Module> tmp(instance);
-//         return std::move(tmp);
-//     }
+  std::unique_ptr<Module> get_instance(
+      const std::string& entry_point,
+      Registry& r,
+      EventManager& em,
+      EntityLoader& e,
+      std::optional<JsonObject> const& config) override
+  {
+    auto* function =
+        (IPlugin* (*)(Registry&, EventManager&, EntityLoader&, std::optional<JsonObject> const&))(
+            GetProcAddress(this->_lib, entry_point.c_str()));
 
-//    private:
-//     HINSTANCE lib_ = nullptr;
-// };
+    if (function == nullptr) {
+      throw LoaderException("not a rtype Plugin lib");
+    }
+    auto* instance = dynamic_cast<Module*>(function(r, em, e, config));
+    if (instance == nullptr) {
+      throw LoaderException("wrong plugin type");
+    }
+    std::unique_ptr<Module> tmp(instance);
+    return std::move(tmp);
+  }
 
-// #endif
+private:
+  HINSTANCE _lib = nullptr;
+};
+
+#endif // _WIN32

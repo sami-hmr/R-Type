@@ -1,5 +1,6 @@
 #include <cstring>
 #include <format>
+#include <iostream>
 #include <stdexcept>
 #include <string_view>
 #include <thread>
@@ -65,8 +66,9 @@ RtypeClient::RtypeClient(Registry& r, EventManager& em, EntityLoader& l)
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
+PLUGIN_EXPORT void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
+  std::cerr << "DEBUG: rtype_client entry_point called\n" << std::flush;
   return new RtypeClient(r, em, e);
 }
 }

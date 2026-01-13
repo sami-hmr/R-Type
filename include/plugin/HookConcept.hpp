@@ -276,6 +276,12 @@
  * print_hooks<int>();       // Error - int is not hookable
  * @endcode
  */
+
+#ifdef _MSC_VER
+// MSVC workaround: namespace prevents incorrect ADL treating this as Scene member
+namespace rtype_concepts {
+#endif
+
 template<typename T>
 concept hookable = requires() {
   {
@@ -283,3 +289,9 @@ concept hookable = requires() {
   } -> std::same_as<const std ::unordered_map<std ::string,
                                               std ::function<std ::any(T&)>>&>;
 };
+
+#ifdef _MSC_VER
+}  // namespace rtype_concepts
+using rtype_concepts::hookable;
+#endif
+

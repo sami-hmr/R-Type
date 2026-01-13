@@ -31,7 +31,7 @@ struct DeathEvent
 
   DEFAULT_BYTE_CONSTRUCTOR(DeathEvent,
                            ([](Registry::Entity const& e)
-                            { return (DeathEvent) {e}; }),
+                            { return DeathEvent{e}; }),
                            parseByte<Registry::Entity>())
 
   DEFAULT_SERIALIZE(type_to_byte(this->entity))

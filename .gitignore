@@ -41,3 +41,9 @@ Testing
 
 *.log
 gmon.out
+
+*dll
+*exp
+*pdb
+*.lib
+parser

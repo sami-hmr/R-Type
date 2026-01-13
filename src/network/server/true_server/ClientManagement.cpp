@@ -104,7 +104,7 @@ void Server::reset_client_by_endpoint(asio::ip::udp::endpoint const& client)
   c.reset_count++;
   if (c.reset_count >= reset_max_count) {
     LOGGER_EVTLESS(
-        LogLevel::ERROR,
+        LogLevel::ERR,
         "server",
         std::format("Reset count too hight for client {}. Disconnecting",
                     c.client_id));

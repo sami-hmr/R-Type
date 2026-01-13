@@ -152,9 +152,10 @@
  */
 #define HOOK_CUSTOM(key, var) \
   { \
-    #key, [](Component& self) -> std::any \
+    #key, [](auto& self) -> std::any \
     { return std::reference_wrapper(self.var); } \
   }
+
 /**
  * @def HOOK(var)
  * @brief Registers a component field using its variable name as the hook key
@@ -231,7 +232,6 @@
  * @see hookable concept in HookConcept.hpp
  */
 #define HOOKABLE(type, ...) \
-  using Component = type; \
   static const auto& hook_map() \
   { \
     static const std::unordered_map<std::string, \

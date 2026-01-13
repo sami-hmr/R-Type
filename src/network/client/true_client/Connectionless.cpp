@@ -23,7 +23,7 @@ void Client::send(ByteArray const& command, bool hearthbeat)
   try {
     _socket.send_to(asio::buffer(pkg + PROTOCOL_EOF), _server_endpoint);
   } catch (std::system_error const& e) {
-    LOGGER_EVTLESS(LogLevel::ERROR,
+    LOGGER_EVTLESS(LogLevel::ERR,
                    "client",
                    std::format("Failed to send packet: {}", e.what()));
   }

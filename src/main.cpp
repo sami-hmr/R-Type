@@ -20,47 +20,55 @@ static int true_main(Registry& r,
                      EntityLoader& e,
                      const std::vector<std::string>& argv)
 {
+  std::cerr << "DEBUG: true_main started\n" << std::flush;
   bool should_exit = false;
   int exit_code = 0;
 
-  em.on<ShutdownEvent>(
-      "ShutdownEvent",
-      [&should_exit, &exit_code](const ShutdownEvent& event) -> bool
-      {
-        should_exit = true;
-        exit_code = event.exit_code;
-        std::cout << "Shutdown requested: " << event.reason << "\n";
-        return false;
-      });
+  std::cerr << "DEBUG: Registering ShutdownEvent...\n" << std::flush;
+  em.on<ShutdownEvent>("ShutdownEvent",
+                       [&should_exit, &exit_code](const ShutdownEvent& event)
+                       {
+                         should_exit = true;
+                         exit_code = event.exit_code;
+                         std::cout << "Shutdown requested: " << event.reason
+                                   << "\n";
+                         return true;
+                       });
 
   em.on<SceneChangeEvent>("SceneChangeEvent",
-                          [&r](const SceneChangeEvent& event) -> bool
+                          [&r](const SceneChangeEvent& event)
                           {
                             if (event.force) {
-                              r.deactivate_all_scenes();
+                              r.remove_all_scenes();
                             }
-                            r.activate_scene(event.target_scene);
+                            r.set_current_scene(event.target_scene);
+                            return true;
                           });
 
-  em.on<SpawnEntityRequestEvent>(
-      "SpawnEntity",
-      [&r, &e](const SpawnEntityRequestEvent& event) -> bool
-      {
-        Registry::Entity entity = r.spawn_entity();
-        JsonObject base = r.get_template(event.entity_template);
-        e.load_components(entity, base);
-        e.load_components(entity, event.params);
-        return false;
-      });
+  em.on<SpawnEntityRequestEvent>("SpawnEntity",
+                                 [&r, &e](const SpawnEntityRequestEvent& event)
+                                 {
+                                   Registry::Entity entity = r.spawn_entity();
+                                   JsonObject base =
+                                       r.get_template(event.entity_template);
+                                   e.load_components(entity, base);
+                                   e.load_components(entity, event.params);
+                                   return true;
+                                 });
 
+  std::cerr << "DEBUG: init_scene_management...\n" << std::flush;
   r.init_scene_management();
 
+  std::cerr << "DEBUG: Loading configs from argv...\n" << std::flush;
   for (auto const& i : argv) {
+    std::cerr << "DEBUG: Loading: " << i << "\n" << std::flush;
     e.load(i);
   }
 
+  std::cerr << "DEBUG: setup_scene_systems...\n" << std::flush;
   r.setup_scene_systems();
 
+  std::cerr << "DEBUG: Starting main loop...\n" << std::flush;
   auto frame_duration =
       std::chrono::microseconds(1000000 / 60);  // ~33333 microseconds
   if (argv[0].contains("server")) {
@@ -95,13 +103,18 @@ static int true_main(Registry& r,
 
 int main(int argc, char* argv[])
 {
+  std::cerr << "DEBUG: Starting main...\n" << std::flush;
   std::optional<Registry> r;
   std::optional<EventManager> em;
   std::optional<EntityLoader> e;
 
+  std::cerr << "DEBUG: Creating Registry...\n" << std::flush;
   r.emplace();
+  std::cerr << "DEBUG: Creating EventManager...\n" << std::flush;
   em.emplace();
+  std::cerr << "DEBUG: Creating EntityLoader...\n" << std::flush;
   e.emplace(*r, *em);
+  std::cerr << "DEBUG: Starting true_main...\n" << std::flush;
 
 #ifdef RTYPE_EPITECH_CLIENT
   int result = true_main(*r, *em, *e, {"client_config"});

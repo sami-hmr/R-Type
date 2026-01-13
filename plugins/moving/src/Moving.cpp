@@ -40,7 +40,7 @@ Moving::Moving(Registry& r, EventManager& em, EntityLoader& l)
 
   SUBSCRIBE_EVENT(UpdateDirection, {
     if (!this->_registry.get().has_component<Direction>(event.entity)) {
-      return false;
+      return true;
     }
     auto& comp =
         this->_registry.get().get_components<Direction>()[event.entity];
@@ -48,6 +48,7 @@ Moving::Moving(Registry& r, EventManager& em, EntityLoader& l)
         std::max(-1.0, std::min(comp->direction.x + event.x_axis, 1.0));
     comp->direction.y =
         std::max(-1.0, std::min(comp->direction.y + event.y_axis, 1.0));
+    return true;
   })
 }
 
@@ -160,7 +161,7 @@ void Moving::init_facing(Registry::Entity const& entity, JsonObject& obj)
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
+PLUGIN_EXPORT void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
   return new Moving(r, em, e);
 }

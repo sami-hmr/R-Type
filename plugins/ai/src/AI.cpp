@@ -142,7 +142,7 @@ void AI::attack_behavior_system(Registry& r)
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
+PLUGIN_EXPORT void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
   return new AI(r, em, e);
 }

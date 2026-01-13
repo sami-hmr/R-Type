@@ -29,7 +29,7 @@ struct Follower
 
   DEFAULT_BYTE_CONSTRUCTOR(Follower,
                            ([](std::size_t target, bool lost_target)
-                            { return (Follower) {target, lost_target}; }),
+                            { return Follower{target, lost_target}; }),
                            parseByte<std::size_t>(),
                            parseByte<bool>())
   DEFAULT_SERIALIZE(type_to_byte(this->target), type_to_byte(this->lost_target))

@@ -25,7 +25,7 @@ ByteArray& operator+=(ByteArray& first, ByteArray const& second)
 
 ByteArray string_to_byte(std::string const& str)
 {
-  return type_to_byte<u_int32_t>(str.size())
+  return type_to_byte<uint32_t>(str.size())
       + ByteArray(str.begin(), str.end());
 }
 

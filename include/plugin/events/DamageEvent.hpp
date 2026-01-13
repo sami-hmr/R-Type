@@ -34,7 +34,7 @@ struct DamageEvent
   DEFAULT_BYTE_CONSTRUCTOR(DamageEvent,
                            ([](Registry::Entity const& t,
                                Registry::Entity const& s,
-                               int a) { return (DamageEvent) {t, s, a}; }),
+                               int a) { return DamageEvent{t, s, a}; }),
                            parseByte<Registry::Entity>(),
                            parseByte<Registry::Entity>(),
                            parseByte<int>())
