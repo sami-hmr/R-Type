@@ -25,22 +25,26 @@ app.get("/active_server/:name", async (_req, res) => {
 });
 
 app.post("/active_server", async (_req, res) => {
-  const id: number = (
-    await db.query(
-      `
-      INSERT INTO active_server (game_id, ip_address, port)
-      SELECT
-        g.id,
-        $1,
-        $2
-      FROM game g
-      WHERE g.name = $3
-      RETURNING id;
-    `,
-      [_req.body.ip, _req.body.port, _req.body.game_name],
-    )
-  )[0].id;
-  res.json({ id });
+  try {
+    const id: number = (
+      await db.query(
+        `
+        INSERT INTO active_server (game_id, ip_address, port)
+        SELECT
+          g.id,
+          $1,
+          $2
+        FROM game g
+        WHERE g.name = $3
+        RETURNING id;
+      `,
+        [_req.body.ip, _req.body.port, _req.body.game_name],
+      )
+    )[0].id;
+    res.json({ id });
+  } catch (e) {
+    res.sendStatus(401);
+  }
 });
 
 app.delete("/active_server", async (_req, res) => {

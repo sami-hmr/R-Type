@@ -258,3 +258,25 @@ struct MouseReleasedEvent
                            parseByte<MouseButton>())
   DEFAULT_SERIALIZE(vector2DToByte(this->position), type_to_byte(this->button))
 };
+
+struct InputFocusEvent
+{
+  Registry::Entity entity;
+
+  InputFocusEvent(Registry::Entity entity)
+      : entity(entity)
+  {
+  }
+
+  InputFocusEvent(Registry& r, JsonObject const& obj)
+      : entity(static_cast<Registry::Entity>(
+            get_value_copy<int>(r, obj, "entity").value())) {};
+
+  CHANGE_ENTITY(result.entity = map.at(entity);)
+
+  DEFAULT_BYTE_CONSTRUCTOR(InputFocusEvent,
+                           ([](Registry::Entity entity)
+                            { return InputFocusEvent(entity); }),
+                           parseByte<int>())
+  DEFAULT_SERIALIZE(type_to_byte(static_cast<int>(this->entity)))
+};

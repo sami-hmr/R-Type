@@ -22,31 +22,39 @@ app.post("/register", async (_req, res) => {
 
   const hashed_passowrd = hash_password(_req.body.password);
 
-  const id = (
-    await db.query(
-      `
+  try {
+    const id = (
+      await db.query(
+        `
     INSERT INTO users (identifier, password)
     VALUES ($1, $2)
     RETURNING id;
     `,
-      [_req.body.identifier, hashed_passowrd],
-    )
-  )[0].id;
-  return res.json({ id });
+        [_req.body.identifier, hashed_passowrd],
+      )
+    )[0].id;
+    return res.json({ id });
+  } catch (e) {
+    res.sendStatus(401);
+  }
 });
 
 app.post("/login", async (_req, res) => {
-  const hashed_passowrd = hash_password(_req.body.password);
-  const id = (
-    await db.oneOrNone(
-      `
+  try {
+    const hashed_passowrd = hash_password(_req.body.password);
+    const id = (
+      await db.oneOrNone(
+        `
     SELECT id FROM users WHERE identifier = $1 AND password = $2;
   `,
-      [_req.body.identifier, hashed_passowrd],
-    )
-  ).id;
-  console.log(id);
-  return res.json({ id });
+        [_req.body.identifier, hashed_passowrd],
+      )
+    ).id;
+    console.log(id);
+    return res.json({ id });
+  } catch (e) {
+    res.sendStatus(401);
+  }
 });
 
 export default app;

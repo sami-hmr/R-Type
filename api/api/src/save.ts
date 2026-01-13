@@ -6,7 +6,6 @@ const app = express.Router();
 app.post("/get_save", async (_req, res) => {
   res.set("id", _req.body.id);
 
-  console.log(_req.body)
   const r: any[] = await db.query(`
     SELECT
       saves.save as save
@@ -26,7 +25,6 @@ app.post("/get_save", async (_req, res) => {
 app.use("/save", express.raw({ type: "application/octet-stream" }));
 
 app.post("/save", async (_req, res) => {
-  console.log(_req.body)
   try {
     const r: any[] = await db.query(`
     INSERT INTO saves (user_id, game_id, save)

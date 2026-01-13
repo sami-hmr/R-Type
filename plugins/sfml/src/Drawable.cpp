@@ -10,7 +10,7 @@
 
 static const double deux = 2.0;
 
-void update(AnimatedSpriteDrawable& drawable)
+static void update(AnimatedSpriteDrawable& drawable)
 {
   drawable.sprite.get().setTexture(drawable.texture.get(), true);
   drawable.sprite.get().setOrigin(
@@ -26,7 +26,7 @@ void update(AnimatedSpriteDrawable& drawable)
   drawable.sprite.get().setPosition(drawable.pos);
 }
 
-void update(SpriteDrawable& drawable)
+static void update(SpriteDrawable& drawable)
 {
   sf::Vector2u texture_size = drawable.texture.get().getSize();
 
@@ -39,7 +39,7 @@ void update(SpriteDrawable& drawable)
   drawable.sprite.get().setPosition(drawable.pos);
 }
 
-void update(TextDrawable& drawable)
+static void update(TextDrawable& drawable)
 {
   drawable.text.get().setString(drawable.text_str);
   drawable.text.get().setFont(drawable.font.get());
@@ -65,7 +65,7 @@ void update(TextDrawable& drawable)
   drawable.text.get().setPosition(drawable.pos);
 }
 
-void update(BarDrawable& drawable, sf::RenderWindow& window)
+static void update(BarDrawable& drawable, sf::RenderWindow& window)
 {
   drawable.rectangle.get().setFillColor(sf::Color::Transparent);
   drawable.rectangle.get().setOutlineColor(sf::Color::Transparent);
@@ -104,6 +104,26 @@ void update(BarDrawable& drawable, sf::RenderWindow& window)
   window.draw(drawable.rectangle.get());
 }
 
+static void update(SliderDrawable& drawable)
+{
+  drawable.rectangle.get().setFillColor(sf::Color(drawable.bar_color.r,
+                                                  drawable.bar_color.g,
+                                                  drawable.bar_color.b,
+                                                  drawable.bar_color.a));
+  drawable.rectangle.get().setSize(drawable.size);
+  drawable.rectangle.get().setOrigin(
+      {drawable.size.x / 2, drawable.size.y / 2});
+  drawable.rectangle.get().setPosition(drawable.pos);
+
+  drawable.circle.get().setFillColor(sf::Color(drawable.circle_color.r,
+                                               drawable.circle_color.g,
+                                               drawable.circle_color.b,
+                                               drawable.circle_color.a));
+  drawable.circle.get().setRadius(drawable.radius);
+  drawable.circle.get().setOrigin({drawable.radius, drawable.radius});
+  drawable.circle.get().setPosition(drawable.circle_pos);
+}
+
 void DrawableItem::draw(sf::RenderWindow& window)
 {
   std::visit(
@@ -121,6 +141,10 @@ void DrawableItem::draw(sf::RenderWindow& window)
           window.draw(d.text.get());
         } else if constexpr (std::is_same_v<T, BarDrawable>) {
           update(d, window);
+        } else if constexpr (std::is_same_v<T, SliderDrawable>) {
+          update(d);
+          window.draw(d.rectangle.get());
+          window.draw(d.circle.get());
         }
       },
       drawable);
