@@ -23,12 +23,12 @@ void handle_register_response(void* raw_context, httplib::Result const& result)
 
   auto parsed = parseJsonObject()(result->body);
 
-  if (parsed.index() == ERROR) {
+  if (parsed.index() == ERR) {
     CONTEXT_LOGGER(
         context,
         "http",
         LogLevel::ERROR,
-        "failed to parse http response: " + std::get<ERROR>(parsed).message);
+        "failed to parse http response: " + std::get<ERR>(parsed).message);
     return;
   }
   try {

@@ -22,7 +22,7 @@ void handle_get_player_save(void* raw_context, httplib::Result const& result)
   }
   auto parsed = parseInt()(id_it->second);
 
-  if (parsed.index() == ERROR) {
+  if (parsed.index() == ERR) {
     CONTEXT_LOGGER(context,
                    "http",
                    LogLevel::ERROR,
@@ -45,7 +45,7 @@ void handle_get_player_save(void* raw_context, httplib::Result const& result)
         parseBytePair(parseByteString(), parseByteArray(parseByte<Byte>())))(
         ByteArray(result->body.begin(), result->body.end()));
 
-    if (parsed.index() == ERROR) {
+    if (parsed.index() == ERR) {
       CONTEXT_LOGGER(
           context, "http", LogLevel::ERROR, "error parsing save in body");
       context->_loader.get().load_components(

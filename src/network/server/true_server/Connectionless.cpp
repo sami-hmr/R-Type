@@ -39,7 +39,7 @@ void Server::handle_getchallenge(ByteArray const& cmd,
                                  const asio::ip::udp::endpoint& sender)
 {
   auto parsed = parseByte<int>()(cmd);
-  if (parsed.index() == ERROR) {
+  if (parsed.index() == ERR) {
     LOGGER_EVTLESS(LogLevel::WARNING,
                    "server",
                    "Invalid getchallenge command: invalid user id");

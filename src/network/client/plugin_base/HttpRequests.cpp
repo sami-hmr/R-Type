@@ -28,12 +28,12 @@ void handle_fetch_servers(void* raw_context, httplib::Result const& result)
   auto* context = static_cast<BaseClient*>(raw_context);
   auto parsed = parseJsonArray()(result->body);
 
-  if (parsed.index() == ERROR) {
+  if (parsed.index() == ERR) {
     CONTEXT_LOGGER(
         context,
         "http",
         LogLevel::ERROR,
-        ("failed to parse http response: " + std::get<ERROR>(parsed).message));
+        ("failed to parse http response: " + std::get<ERR>(parsed).message));
     return;
   }
   context->_available_servers.clear();
@@ -71,12 +71,12 @@ void handle_login_response(void* raw_context, httplib::Result const& result)
 
   auto parsed = parseJsonObject()(result->body);
 
-  if (parsed.index() == ERROR) {
+  if (parsed.index() == ERR) {
     CONTEXT_LOGGER(
         context,
         "http",
         LogLevel::ERROR,
-        "failed to parse http response: " + std::get<ERROR>(parsed).message);
+        "failed to parse http response: " + std::get<ERR>(parsed).message);
     return;
   }
 

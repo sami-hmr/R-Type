@@ -11,7 +11,7 @@ std::optional<Package> Client::parse_package(ByteArray const& package)
 {
   Result<Package> r = parse_pkg()(Rest(package));
 
-  if (r.index() == ERROR) {
+  if (r.index() == ERR) {
     LOGGER_EVTLESS(
         LogLevel::ERROR,
         "client",
@@ -26,7 +26,7 @@ std::optional<ConnectionlessCommand> Client::parse_connectionless_package(
 {
   Result<ConnectionlessCommand> r = parse_connectionless()(Rest(package));
 
-  if (r.index() == ERROR) {
+  if (r.index() == ERR) {
     LOGGER_EVTLESS(LogLevel::ERROR,
                    "client",
                    std::format("Failed to read connectionless package : {}",
@@ -41,7 +41,7 @@ std::optional<ConnectResponse> Client::parse_connect_response(
 {
   Result<ConnectResponse> r = parse_connect_rsp()(package);
 
-  if (r.index() == ERROR) {
+  if (r.index() == ERR) {
     LOGGER_EVTLESS(LogLevel::ERROR,
                    "client",
                    std::format("Failed to read connect response package : {}",
@@ -56,7 +56,7 @@ std::optional<ChallengeResponse> Client::parse_challenge_response(
 {
   Result<ChallengeResponse> r = parse_challenge_rsp()(package);
 
-  if (r.index() == ERROR) {
+  if (r.index() == ERR) {
     LOGGER_EVTLESS(LogLevel::ERROR,
                    "client",
                    std::format("Failed to read challenge response package : {}",
@@ -71,7 +71,7 @@ std::optional<ConnectedPackage> Client::parse_connected_package(
 {
   Result<ConnectedPackage> r = parse_connected()(Rest(package));
 
-  if (r.index() == ERROR) {
+  if (r.index() == ERR) {
     LOGGER_EVTLESS(LogLevel::ERROR,
                    "client",
                    std::format("Failed to read connected package : {}",
@@ -86,7 +86,7 @@ std::optional<ConnectedCommand> Client::parse_connected_command(
 {
   Result<ConnectedCommand> r = parse_connected_cmd()(package);
 
-  if (r.index() == ERROR) {
+  if (r.index() == ERR) {
     LOGGER_EVTLESS(LogLevel::ERROR,
                    "client",
                    std::format("Failed to read connected command : {}",
@@ -101,7 +101,7 @@ std::optional<EventBuilder> Client::parse_event_build_cmd(
 {
   Result<EventBuilder> r = parse_event_builder()(package);
 
-  if (r.index() == ERROR) {
+  if (r.index() == ERR) {
     LOGGER_EVTLESS(LogLevel::ERROR,
                    "client",
                    std::format("Failed to read event command : {}",
@@ -116,7 +116,7 @@ std::optional<ComponentBuilder> Client::parse_component_build_cmd(
 {
   Result<ComponentBuilder> r = parse_component_builder()(package);
 
-  if (r.index() == ERROR) {
+  if (r.index() == ERR) {
     LOGGER_EVTLESS(LogLevel::ERROR,
                    "client",
                    std::format("Failed to read component command : {}",

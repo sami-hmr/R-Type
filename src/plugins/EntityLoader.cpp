@@ -109,8 +109,8 @@ void EntityLoader::load_file(std::string const& filepath)
 
   Result<JsonObject> result = parseJsonObject()(Rest(str));
 
-  if (result.index() == ERROR) {
-    printError(std::get<ERROR>(result), str, filepath);
+  if (result.index() == ERR) {
+    printError(std::get<ERR>(result), str, filepath);
   } else {
     JsonObject r = std::get<SUCCESS>(result).value;
     try {

@@ -10,19 +10,12 @@ project(
     LANGUAGES CXX
 )
 
-set(CMAKE_CXX_COMPILER /bin/clang++)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -fPIC -O3")
 set(CMAKE_SHARED_LIBRARY_PREFIX "")
 
 # add_compile_options(-fno-consteval)
-
-# Use vcpkg toolchain if available
-if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-    set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
-        CACHE STRING "Vcpkg toolchain file")
-endif()
 
 # ---- Developer mode variable ----
 
@@ -56,7 +49,7 @@ target_include_directories(${CORE_LIB}
 
 target_link_libraries(${CORE_LIB} PRIVATE parser)
 
-find_package(asio CONFIG REQUIRED)
+find_package(asio REQUIRED)
 find_package(ZLIB REQUIRED)
 
 set(NETWORK_COMMON_LIB r-type_network_common)
