@@ -4,13 +4,14 @@
 #include <optional>
 #include <utility>
 
+#include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Vertex.hpp>
 #include <SFML/System/Vector2.hpp>
 
 #include "libs/Color.hpp"
@@ -152,10 +153,53 @@ struct SliderDrawable
   Color circle_color;
   float radius;
   int z_index;
+
+  SliderDrawable(std::reference_wrapper<sf::RectangleShape> rectangle,
+                 std::reference_wrapper<sf::CircleShape> circle,
+                 sf::Vector2f pos,
+                 sf::Vector2f circle_pos,
+                 sf::Vector2f size,
+                 Color bar_color,
+                 Color circle_color,
+                 float radius,
+                 int z_index)
+      : rectangle(rectangle)
+      , circle(circle)
+      , pos(pos)
+      , circle_pos(circle_pos)
+      , size(size)
+      , bar_color(bar_color)
+      , circle_color(circle_color)
+      , radius(radius)
+      , z_index(z_index)
+  {
+  }
 };
 
-using DrawableVariant = std::
-    variant<AnimatedSpriteDrawable, SpriteDrawable, TextDrawable, BarDrawable, SliderDrawable>;
+struct TriangleVerticesDrawable
+{
+  sf::Vertex p1;
+  sf::Vertex p2;
+  sf::Vertex p3;
+  int z_index = -1;
+
+  TriangleVerticesDrawable(sf::Vertex vertex1,
+                           sf::Vertex vertex2,
+                           sf::Vertex vertex3,
+                           int z)
+      : p1(vertex1)
+      , p2(vertex2)
+      , p3(vertex3)
+      , z_index(z)
+  {
+  }
+};
+
+using DrawableVariant = std::variant<AnimatedSpriteDrawable,
+                                     SpriteDrawable,
+                                     TextDrawable,
+                                     BarDrawable,
+                                     SliderDrawable>;
 
 struct DrawableItem
 {

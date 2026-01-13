@@ -10,6 +10,7 @@ add_library(${LIB_NAME} SHARED
     src/Background.cpp
     src/Drawable.cpp
     src/SliderDrawing.cpp
+    src/BasicMap.cpp
 )
 
 target_compile_features(${LIB_NAME} PRIVATE cxx_std_23)

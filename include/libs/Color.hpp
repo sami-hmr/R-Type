@@ -132,4 +132,5 @@ static const Color BLACK = Color(0, 0, 0, 255);
 static const Color RED = Color(255, 0, 0, 255);
 static const Color GREEN = Color(0, 255, 0, 255);
 static const Color BLUE = Color(0, 0, 255, 255);
+static const Color YELLOW = Color(255, 255, 0, 255);
 static const Color TRANSPARENT = Color(0, 0, 0, 0);

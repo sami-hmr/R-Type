@@ -15,6 +15,7 @@
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/Graphics/VertexBuffer.hpp>
 #include <SFML/Graphics/View.hpp>
 #include <SFML/System/Clock.hpp>
@@ -35,6 +36,7 @@
 #include "plugin/components/Camera.hpp"
 #include "plugin/components/Drawable.hpp"
 #include "plugin/components/Position.hpp"
+#include "plugin/components/RaycastingCamera.hpp"
 #include "plugin/components/Sprite.hpp"
 #include "plugin/components/Text.hpp"
 #include "plugin/events/CameraEvents.hpp"
@@ -63,7 +65,8 @@ private:
   void background_system(Registry& r);
   void camera_system(Registry& r);
   void button_system(Registry& r);
-  void slider_system(Registry& r) const; 
+  void slider_system(Registry& r) const;
+  void basic_map_system(Registry& r) const;
   void display();
 
   void render_sprites(Registry& r,
@@ -90,7 +93,16 @@ private:
                       std::vector<DrawableItem>& all_drawables,
                       float min_dimension,
                       const sf::Vector2u& window_size);
+  void render_basic_map(Registry& r,
+                        std::vector<DrawableItem>& all_drawables,
+                        float min_dimension,
+                        const sf::Vector2u& window_size);
 
+
+    void cast_rays(Registry& r,
+                   RaycastingData const& raycasting_data,
+                   std::vector<std::vector<int>> const& map_data,
+                   const sf::Vector2u& window_size);
   std::optional<Key> sfml_key_to_key(sf::Keyboard::Key sfml_key);
 
   sf::RenderWindow _window;
@@ -104,8 +116,8 @@ private:
   std::optional<sf::Text> _text;
   sf::RectangleShape _rectangle;
   sf::CircleShape _circle;
-  sf::VertexBuffer _vertex_buffer;
-  int _current_vertex = 0;
+  sf::VertexArray _triangle_vertices;
+  sf::VertexArray _line_vertices;
 
   sf::View _view;
   bool _camera_initialized = false;

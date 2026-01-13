@@ -11,6 +11,7 @@
 
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Image.hpp>
+#include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Sprite.hpp>
@@ -86,7 +87,8 @@ SFMLRenderer::SFMLRenderer(Registry& r, EventManager& em, EntityLoader& l)
   _registry.get().add_system([this](Registry&) { this->display(); });
   _textures.insert_or_assign(SFMLRenderer::placeholder_texture,
                              gen_placeholder());
-    this->_vertex_buffer.setUsage(sf::VertexBuffer::Usage::Stream);
+  this->_triangle_vertices.setPrimitiveType(sf::PrimitiveType::Triangles);
+  this->_line_vertices.setPrimitiveType(sf::PrimitiveType::Lines);
 }
 
 SFMLRenderer::~SFMLRenderer()
@@ -509,6 +511,7 @@ void SFMLRenderer::unified_render_system(Registry& r)
     drawable.draw(_window);
   }
   this->_sprite->setRotation(sf::degrees(0));
+  render_basic_map(r, all_drawables, min_dimension, window_size);
 }
 
 void SFMLRenderer::button_system(Registry& r)
