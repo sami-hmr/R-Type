@@ -103,11 +103,7 @@ private:
     void cast_rays(Registry& r,
                    RaycastingData const& raycasting_data,
                    std::vector<std::vector<int>> const& map_data,
-                   std::vector<double>& z_buffer,
                    const sf::Vector2u& window_size);
-  void draw_floor_ceiling(RaycastingData const& data,
-                          std::vector<double> const& z_buffer,
-                          const sf::Vector2u& window_size);
   void draw_textured_walls(
       std::unordered_map<std::string, std::vector<sf::Vertex>>& textured_vertices);
   void draw_colored_walls(std::vector<sf::Vertex>& colored_vertices);

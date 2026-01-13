@@ -15,6 +15,10 @@
           "config": {}
         },
         {
+          "name": "cli",
+          "config": {}
+        },
+        {
           "name": "controller",
           "config": {}
         },

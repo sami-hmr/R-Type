@@ -19,7 +19,8 @@
 
 #define TO_RAD(degrees) ((degrees) * M_PI / 180.0)
 
-namespace {
+namespace
+{
 
 struct RayHit
 {
@@ -68,16 +69,17 @@ RayHit cast_single_ray(Vector2D const& cam_pos,
       mapy += step_y;
       side = 1;
     }
-    if (mapy < 0 || mapy >= static_cast<int>(map_data.size()) ||
-        mapx < 0 || mapx >= static_cast<int>(map_data[0].size())) {
+    if (mapy < 0 || mapy >= static_cast<int>(map_data.size()) || mapx < 0
+        || mapx >= static_cast<int>(map_data[0].size()))
+    {
       hit = true;
     } else if (map_data[mapy][mapx] > 0) {
       hit = true;
     }
   }
 
-  double perp_wall_dist = (side == 0) ? side_dist.x - delta_dist.x
-                                      : side_dist.y - delta_dist.y;
+  double perp_wall_dist =
+      (side == 0) ? side_dist.x - delta_dist.x : side_dist.y - delta_dist.y;
   perp_wall_dist = std::max(perp_wall_dist, 0.001);
 
   return {mapx, mapy, side, perp_wall_dist, ray_dir};
@@ -103,11 +105,21 @@ sf::Color get_fallback_color(int wall_value, int side)
 {
   Color color;
   switch (wall_value) {
-    case 1: color = RED; break;
-    case 2: color = GREEN; break;
-    case 3: color = BLUE; break;
-    case 4: color = WHITE; break;
-    default: color = YELLOW; break;
+    case 1:
+      color = RED;
+      break;
+    case 2:
+      color = GREEN;
+      break;
+    case 3:
+      color = BLUE;
+      break;
+    case 4:
+      color = WHITE;
+      break;
+    default:
+      color = YELLOW;
+      break;
   }
   if (side == 1) {
     color.r /= 2;
@@ -118,11 +130,15 @@ sf::Color get_fallback_color(int wall_value, int side)
 }
 
 void add_textured_quad(std::vector<sf::Vertex>& vertices,
-                       float screen_x, float next_screen_x,
-                       float y_start, float y_end,
+                       float screen_x,
+                       float next_screen_x,
+                       float y_start,
+                       float y_end,
                        TileData const& tile,
-                       double wall_x, int side,
-                       int line_height, int window_height)
+                       double wall_x,
+                       int side,
+                       int line_height,
+                       int window_height)
 {
   float tex_x = static_cast<float>(wall_x * tile.size.x);
   sf::Color color = (side == 1) ? sf::Color(180, 180, 180) : sf::Color::White;
@@ -133,22 +149,34 @@ void add_textured_quad(std::vector<sf::Vertex>& vertices,
   int wall_top = (window_height - line_height) / 2;
   int wall_bottom = (window_height + line_height) / 2;
 
-  float tex_y_start = static_cast<float>(tile.pos.y) +
-      (y_start - wall_top) * static_cast<float>(tile.size.y) / line_height;
-  float tex_y_end = static_cast<float>(tile.pos.y) +
-      (y_end - wall_top) * static_cast<float>(tile.size.y) / line_height;
+  float tex_y_start = static_cast<float>(tile.pos.y)
+      + (y_start - wall_top) * static_cast<float>(tile.size.y) / line_height;
+  float tex_y_end = static_cast<float>(tile.pos.y)
+      + (y_end - wall_top) * static_cast<float>(tile.size.y) / line_height;
 
-  vertices.emplace_back(sf::Vector2f(screen_x, y_start), color, sf::Vector2f(tex_left, tex_y_start));
-  vertices.emplace_back(sf::Vector2f(next_screen_x, y_start), color, sf::Vector2f(tex_right, tex_y_start));
-  vertices.emplace_back(sf::Vector2f(screen_x, y_end), color, sf::Vector2f(tex_left, tex_y_end));
-  vertices.emplace_back(sf::Vector2f(next_screen_x, y_start), color, sf::Vector2f(tex_right, tex_y_start));
-  vertices.emplace_back(sf::Vector2f(next_screen_x, y_end), color, sf::Vector2f(tex_right, tex_y_end));
-  vertices.emplace_back(sf::Vector2f(screen_x, y_end), color, sf::Vector2f(tex_left, tex_y_end));
+  vertices.emplace_back(sf::Vector2f(screen_x, y_start),
+                        color,
+                        sf::Vector2f(tex_left, tex_y_start));
+  vertices.emplace_back(sf::Vector2f(next_screen_x, y_start),
+                        color,
+                        sf::Vector2f(tex_right, tex_y_start));
+  vertices.emplace_back(
+      sf::Vector2f(screen_x, y_end), color, sf::Vector2f(tex_left, tex_y_end));
+  vertices.emplace_back(sf::Vector2f(next_screen_x, y_start),
+                        color,
+                        sf::Vector2f(tex_right, tex_y_start));
+  vertices.emplace_back(sf::Vector2f(next_screen_x, y_end),
+                        color,
+                        sf::Vector2f(tex_right, tex_y_end));
+  vertices.emplace_back(
+      sf::Vector2f(screen_x, y_end), color, sf::Vector2f(tex_left, tex_y_end));
 }
 
 void add_colored_quad(std::vector<sf::Vertex>& vertices,
-                      float screen_x, float next_screen_x,
-                      float y_start, float y_end,
+                      float screen_x,
+                      float next_screen_x,
+                      float y_start,
+                      float y_end,
                       sf::Color const& color)
 {
   vertices.emplace_back(sf::Vector2f(screen_x, y_start), color);
@@ -182,36 +210,47 @@ void SFMLRenderer::cast_rays(Registry& /*r*/,
     RayHit hit = cast_single_ray(data.cam_pos, ray_dir, map_data);
 
     int line_height = static_cast<int>(window_size.y / hit.perp_wall_dist);
-    int draw_start = std::max((-line_height / 2) + static_cast<int>(window_size.y / 2), 0);
-    int draw_end = std::min((line_height / 2) + static_cast<int>(window_size.y / 2),
-                            static_cast<int>(window_size.y) - 1);
+    int draw_start =
+        std::max((-line_height / 2) + static_cast<int>(window_size.y / 2), 0);
+    int draw_end =
+        std::min((line_height / 2) + static_cast<int>(window_size.y / 2),
+                 static_cast<int>(window_size.y) - 1);
 
     int wall_value = 0;
-    if (hit.mapy >= 0 && hit.mapy < static_cast<int>(map_data.size()) &&
-        hit.mapx >= 0 && hit.mapx < static_cast<int>(map_data[0].size())) {
+    if (hit.mapy >= 0 && hit.mapy < static_cast<int>(map_data.size())
+        && hit.mapx >= 0 && hit.mapx < static_cast<int>(map_data[0].size()))
+    {
       wall_value = map_data[hit.mapy][hit.mapx];
     }
 
     float screen_x = static_cast<float>(ray_idx) * window_size.x / data.nb_rays;
-    float next_screen_x = static_cast<float>(ray_idx + 1) * window_size.x / data.nb_rays;
+    float next_screen_x =
+        static_cast<float>(ray_idx + 1) * window_size.x / data.nb_rays;
     float y_start = static_cast<float>(draw_start);
     float y_end = static_cast<float>(draw_end);
 
     double wall_x = compute_wall_x(data.cam_pos, hit);
     std::string wall_dir = get_wall_direction(hit);
 
-    bool has_texture = data.tiles_data.contains(wall_value) &&
-                       data.tiles_data.at(wall_value).contains(wall_dir);
+    bool has_texture = data.tiles_data.contains(wall_value)
+        && data.tiles_data.at(wall_value).contains(wall_dir);
 
     if (has_texture) {
       const TileData& tile = data.tiles_data.at(wall_value).at(wall_dir);
       add_textured_quad(textured_vertices[tile.texture_path],
-                        screen_x, next_screen_x, y_start, y_end,
-                        tile, wall_x, hit.side,
-                        line_height, static_cast<int>(window_size.y));
+                        screen_x,
+                        next_screen_x,
+                        y_start,
+                        y_end,
+                        tile,
+                        wall_x,
+                        hit.side,
+                        line_height,
+                        static_cast<int>(window_size.y));
     } else {
       sf::Color color = get_fallback_color(wall_value, hit.side);
-      add_colored_quad(colored_vertices, screen_x, next_screen_x, y_start, y_end, color);
+      add_colored_quad(
+          colored_vertices, screen_x, next_screen_x, y_start, y_end, color);
     }
   }
 
@@ -245,10 +284,11 @@ void SFMLRenderer::draw_colored_walls(std::vector<sf::Vertex>& colored_vertices)
   this->_window.draw(va);
 }
 
-void SFMLRenderer::render_basic_map(Registry& r,
-                                    std::vector<DrawableItem>& /*all_drawables*/,
-                                    float /*min_dimension*/,
-                                    const sf::Vector2u& window_size)
+void SFMLRenderer::render_basic_map(
+    Registry& r,
+    std::vector<DrawableItem>& /*all_drawables*/,
+    float /*min_dimension*/,
+    const sf::Vector2u& window_size)
 {
   Vector2D cam_pos;
   double cam_angle = 0;

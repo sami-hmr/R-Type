@@ -24,7 +24,6 @@ void Server::handle_connected_packet(ConnectedPackage const& command,
       client.acknowledge_manager.extract_available_packages();
   this->_client_mutex.unlock();
 
-  std::cout << packages.size() << std::endl;
   for (auto const& pkg : packages) {
     client.frag_buffer += pkg.real_package;
     if (!pkg.end_of_content) {
