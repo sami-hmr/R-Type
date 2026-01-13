@@ -1,0 +1,18 @@
+name: CI - Development
+
+on:
+  push:
+    branches:
+    - windows*
+
+  pull_request:
+    branches:
+    - windows*
+
+jobs:
+  ci:
+    uses: ./.github/workflows/reusable-ci.yml
+    secrets:
+    with:
+      auto-format: false
+      run-windows: true
