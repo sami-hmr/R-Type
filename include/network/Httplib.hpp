@@ -3767,7 +3767,8 @@ private:
         if (result.status() == 204 ||  // No Content - server wants us to stop
             result.status() == 404 ||  // Not Found
             result.status() == 401 ||  // Unauthorized
-            result.status() == 403) {  // Forbidden
+            result.status() == 403)
+        {  // Forbidden
           if (on_error_) {
             on_error_(Error::Connection);
           }
@@ -4946,8 +4947,7 @@ inline Error wait_until_socket_is_ready(socket_t sock, time_t sec, time_t usec)
   tv.tv_usec = static_cast<decltype(tv.tv_usec)>(usec);
 
   auto ret = handle_EINTR(
-      [&]()
-      {
+      [&]() {
         return select(static_cast<int>(sock + 1), &fdsr, &fdsw, nullptr, &tv);
       });
 
@@ -6848,11 +6848,11 @@ bool prepare_content_receiver(T& x,
         ContentReceiverWithProgress out =
             [&](const char* buf, size_t n, size_t off, size_t len)
         {
-          return decompressor->decompress(
-              buf,
-              n,
-              [&](const char* buf2, size_t n2)
-              { return receiver(buf2, n2, off, len); });
+          return decompressor->decompress(buf,
+                                          n,
+                                          [&](const char* buf2, size_t n2) {
+                                            return receiver(buf2, n2, off, len);
+                                          });
         };
         return callback(std::move(out));
       } else {
@@ -10576,7 +10576,8 @@ inline bool Server::write_response_core(Stream& strm,
 
   // Prepare additional headers
   if (close_connection || req.get_header_value("Connection") == "close"
-      || 400 <= res.status) {  // Don't leave connections open after errors
+      || 400 <= res.status)
+  {  // Don't leave connections open after errors
     res.set_header("Connection", "close");
   } else {
     std::string s = "timeout=";
@@ -15095,7 +15096,8 @@ inline ssize_t SSLSocketStream::read(char* ptr, size_t size)
     return ret;
   }
 
-  else {
+  else
+  {
     error_ = Error::Timeout;
     return -1;
   }
@@ -16049,7 +16051,8 @@ inline Client::Client(const std::string& scheme_host_port,
     }
   }
 
-  else {
+  else
+  {
     // NOTE: Update TEST(UniversalClientImplTest, Ipv6LiteralAddress)
     // if port param below changes.
     cli_ = detail::make_unique<ClientImpl>(
