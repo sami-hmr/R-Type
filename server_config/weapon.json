@@ -187,6 +187,74 @@
           "hits": 4
         }
       }
+    },
+    {
+      "name": "bounce_bullet_charge",
+      "components": {
+        "ui:Drawable": {},
+        "ui:AnimatedSprite": {
+          "animations": [
+            {
+              "name": "idle",
+              "texture": "assets/fire_bullet.png",
+              "frame_size": {
+                "x": 16.0,
+                "y": 16.0
+              },
+              "frame_pos": {
+                "x": 304.0,
+                "y": 144.0
+              },
+              "direction": {
+                "x": 1.0,
+                "y": 0.0
+              },
+              "sprite_size": {
+                "width": "5.0%",
+                "height": "5.0%"
+              },
+              "framerate": 10.0,
+              "nb_frames": 4,
+              "loop": true,
+              "rollback": true
+            },
+            {
+              "name": "death",
+              "texture": "assets/fire_bullet.png",
+              "frame_size": {
+                "x": 16.0,
+                "y": 16.0
+              },
+              "frame_pos": {
+                "x": 160.0,
+                "y": 80.0
+              },
+              "direction": {
+                "x": 1.0,
+                "y": 0.0
+              },
+              "sprite_size": {
+                "width": "5.0%",
+                "height": "5.0%"
+              },
+              "framerate": 10.0,
+              "nb_frames": 3,
+              "loop": true,
+              "rollback": true
+            }
+          ],
+          "default_animation": "idle"
+        },
+        "moving:Position": {
+          "pos": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        },
+        "mob:parasite": {
+          "entity_id": "#gobal:player_id:id"
+        }
+      }
     }
   ],
   "scenes": [

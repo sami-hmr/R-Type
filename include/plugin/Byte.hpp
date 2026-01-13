@@ -49,9 +49,7 @@ concept serializable = std::constructible_from<T, ByteArray>;
  */
 template<typename T>
 concept unserializable = requires(T t) {
-  {
-    t.to_bytes()
-  } -> std::same_as<ByteArray>;
+  { t.to_bytes() } -> std::same_as<ByteArray>;
 };
 
 /**

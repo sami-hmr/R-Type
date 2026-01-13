@@ -5,9 +5,11 @@
 #include <thread>
 #include <vector>
 
+#include "EntityExpose.hpp"
 #include "Json/JsonParser.hpp"
 #include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
+#include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/events/ActionEvents.hpp"
 #include "plugin/events/SceneChangeEvent.hpp"

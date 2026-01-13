@@ -23,12 +23,23 @@
             "y": 0.0
           }
         },
-        "weapon:BasicWeapon": {
+        "weapon:ChargeWeapon": {
           "bullet_type": "bounce_bullet",
-          "magazine_size": 60000,
-          "magazine_nb": 30000,
-          "reload_time": 0.0,
-          "cooldown": 0.11
+          "magazine_size": 10,
+          "magazine_nb": 3,
+          "reload_time": 2.0,
+          "cooldown": 0.5,
+          "charge_time": 2.0,
+          "max_scale": 3.0,
+          "min_charge_threshold": 0.3,
+          "scale_damage": true,
+          "attack_animation": "attack",
+          "charge_indicator": "bounce_bullet_charge"
+        },
+        "moving:IdStorage": {
+          "id": "@self",
+          "hook": "player_id",
+          "global_hook": true
         },
         "ui:AnimatedSprite": {
           "animations": [
@@ -54,6 +65,30 @@
               "framerate": 10.0,
               "nb_frames": 7,
               "loop": true,
+              "rollback": true
+            },
+            {
+              "name": "attack",
+              "texture": "assets/attack.png",
+              "frame_size": {
+                "x": 350.0,
+                "y": 150.0
+              },
+              "frame_pos": {
+                "x": 0.0,
+                "y": 0.0
+              },
+              "direction": {
+                "x": 1.0,
+                "y": 0.0
+              },
+              "sprite_size": {
+                "width": "20.0%",
+                "height": "20.0%"
+              },
+              "framerate": 10.0,
+              "nb_frames": 4,
+              "loop": false,
               "rollback": true
             },
             {

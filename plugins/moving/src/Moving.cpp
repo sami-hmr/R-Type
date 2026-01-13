@@ -3,6 +3,7 @@
 
 #include "Moving.hpp"
 
+#include "EntityExpose.hpp"
 #include "Json/JsonParser.hpp"
 #include "NetworkShared.hpp"
 #include "ecs/EventManager.hpp"
@@ -34,7 +35,7 @@ Moving::Moving(Registry& r, EventManager& em, EntityLoader& l)
   REGISTER_COMPONENT(Direction)
   REGISTER_COMPONENT(Speed)
   REGISTER_COMPONENT(Facing)
-
+  REGISTER_COMPONENT(IdStorage)
   this->_registry.get().add_system(
       [this](Registry& r) { this->moving_system(r); }, 4);
 

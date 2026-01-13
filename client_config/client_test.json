@@ -41,15 +41,15 @@
                 "pressed": {
                   "name": "UpdateDirection",
                   "params": {
-                      "x": 0.0,
-                      "y": -1.0
+                    "x": 0.0,
+                    "y": -1.0
                   }
                 },
                 "released": {
                   "name": "UpdateDirection",
                   "params": {
-                      "x": 0.0,
-                      "y": 1.0
+                    "x": 0.0,
+                    "y": 1.0
                   }
                 }
               },
@@ -59,15 +59,15 @@
                 "pressed": {
                   "name": "UpdateDirection",
                   "params": {
-                      "x": -1.0,
-                      "y": 0.0
+                    "x": -1.0,
+                    "y": 0.0
                   }
                 },
                 "released": {
                   "name": "UpdateDirection",
                   "params": {
-                      "x": 1.0,
-                      "y": 0.0
+                    "x": 1.0,
+                    "y": 0.0
                   }
                 }
               },
@@ -77,15 +77,15 @@
                 "pressed": {
                   "name": "UpdateDirection",
                   "params": {
-                      "x": 1.0,
-                      "y": 0.0
+                    "x": 1.0,
+                    "y": 0.0
                   }
                 },
                 "released": {
                   "name": "UpdateDirection",
                   "params": {
-                      "x": -1.0,
-                      "y": 0.0
+                    "x": -1.0,
+                    "y": 0.0
                   }
                 }
               },
@@ -95,15 +95,15 @@
                 "pressed": {
                   "name": "UpdateDirection",
                   "params": {
-                      "x": 0.0,
-                      "y": 1.0
+                    "x": 0.0,
+                    "y": 1.0
                   }
                 },
                 "released": {
                   "name": "UpdateDirection",
                   "params": {
-                      "x": 0.0,
-                      "y": -1.0
+                    "x": 0.0,
+                    "y": -1.0
                   }
                 }
               },
@@ -112,6 +112,18 @@
                 "key": "SPACE",
                 "pressed": {
                   "name": "FireBullet",
+                  "params": {}
+                }
+              },
+              {
+                "description": "shoot",
+                "key": "P",
+                "pressed": {
+                  "name": "StartChargeWeapon",
+                  "params": {}
+                },
+                "released": {
+                  "name": "ReleaseChargeWeapon",
                   "params": {}
                 }
               }
