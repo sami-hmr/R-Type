@@ -1,4 +1,4 @@
-name: CI - Development
+name: CI - Windows Development
 
 on:
   push:
