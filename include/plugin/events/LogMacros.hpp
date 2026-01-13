@@ -32,13 +32,15 @@ inline std::ostream& operator<<(std::ostream& os, LogLevel level)
   return os << LOG_LEVEL_STR.at_second(level);
 }
 
-#define LOGGER(category, level, message) \
-  if (this->_loader.get().is_plugin_loaded("logger")) { \
-    this->_event_manager.get().emit<LogEvent>(category, level, message); \
+#define CONTEXT_LOGGER(context, category, level, message) \
+  if ((context)->_loader.get().is_plugin_loaded("logger")) { \
+    (context)->_event_manager.get().emit<LogEvent>(category, level, message); \
   } else { \
     std::cerr << "[" << (level) << "] " << (category) << ": " << (message) \
               << "\n"; \
   }
 
+#define LOGGER(category, level, message) \
+  CONTEXT_LOGGER(this, category, level, message)
 #define LOGGER_EVTLESS(level, category, message) \
   std::cerr << "[" << (level) << "] " << (category) << ": " << (message) << "\n"

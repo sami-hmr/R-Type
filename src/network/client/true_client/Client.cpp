@@ -65,9 +65,9 @@ Client::~Client()
   }
 }
 
-void Client::connect()
+void Client::connect(int id)
 {
-  send_getchallenge();
+  send_getchallenge(id);
   _state = ConnectionState::CHALLENGING;
   receive_loop();
 }

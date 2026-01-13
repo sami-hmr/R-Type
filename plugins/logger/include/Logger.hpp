@@ -41,7 +41,10 @@ struct LogComponent
 class Logger : public APlugin
 {
 public:
-  Logger(Registry& r, EventManager &em, EntityLoader& l, std::optional<JsonObject> const& config);
+  Logger(Registry& r,
+         EventManager& em,
+         EntityLoader& l,
+         std::optional<JsonObject> const& config);
 
 private:
   void on_log_event(const LogEvent& event);

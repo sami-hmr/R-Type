@@ -20,7 +20,8 @@ void UI::init_slider(const Registry::Entity& e, const JsonObject& obj)
                  "(size: Vector2D)\n";
     return;
   }
-  size = get_value<Slider, Vector2D>(this->_registry.get(), obj, e, "size", "width", "height")
+  size = get_value<Slider, Vector2D>(
+             this->_registry.get(), obj, e, "size", "width", "height")
              .value();
   Color bar_color = WHITE;
   if (obj.contains("bar_color")) {
@@ -32,7 +33,8 @@ void UI::init_slider(const Registry::Entity& e, const JsonObject& obj)
   }
   Color circle_color = RED;
   if (obj.contains("circle_color")) {
-    auto color_opt = get_value<Slider, Color>(this->_registry.get(), obj, e, "circle_color");
+    auto color_opt =
+        get_value<Slider, Color>(this->_registry.get(), obj, e, "circle_color");
     if (color_opt) {
       circle_color = color_opt.value();
     }
