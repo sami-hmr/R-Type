@@ -10,12 +10,13 @@
 #include "plugin/components/Follower.hpp"
 #include "plugin/components/InteractionZone.hpp"
 #include "plugin/components/MovementBehavior.hpp"
+#include "plugin/components/Position.hpp"
 #include "plugin/components/Speed.hpp"
 
 class CirclePattern : public MovementPattern
 {
 public:
-  static constexpr double DEFAULT_RADIUS = 100.0;
+  static constexpr double DEFAULT_RADIUS = 0.5;
   static constexpr double DEFAULT_ANGULAR_SPEED = 1.5;
 
   void update(Registry::Entity entity,
@@ -26,7 +27,6 @@ public:
               Direction& direction,
               Speed& /*speed*/,
               double dt) override
-
   {
     behavior.movement_delta += dt;
     em.emit<ComponentBuilder>(entity,
@@ -39,13 +39,18 @@ public:
         get_value_copy<double>(registry, behavior.params, "angular_speed")
             .value_or(DEFAULT_ANGULAR_SPEED);
 
+    Vector2D origin = MovementPattern::get_origin(registry, behavior);
     double angle = behavior.movement_delta * angular_speed;
 
     Vector2D target_pos;
-    target_pos.x = std::cos(angle) * radius;
-    target_pos.y = std::sin(angle) * radius;
+    target_pos.x = origin.x + std::cos(angle) * radius;
+    target_pos.y = origin.y + std::sin(angle) * radius;
 
     Vector2D to_target = target_pos - pos.pos;
+    pos.pos = target_pos;
+    em.emit<ComponentBuilder>(
+        entity, registry.get_component_key<Position>(), pos.to_bytes());
+
     if (to_target.length() > 0.1) {
       Vector2D new_direction = to_target.normalize();
       Vector2D direction_diff = new_direction - direction.direction;

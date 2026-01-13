@@ -7,6 +7,7 @@
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "movement/CirclePattern.hpp"
 #include "movement/FollowTargetPattern.hpp"
+#include "movement/GluePattern.hpp"
 #include "movement/StraightPattern.hpp"
 #include "movement/TurretPattern.hpp"
 #include "movement/WavePattern.hpp"
@@ -23,7 +24,7 @@ AI::AI(Registry& r, EventManager& em, EntityLoader& l)
               r,
               em,
               l,
-              {"moving", "collision", "target"},
+              {"moving", "collision", "target", "mob"},
               {COMP_INIT(
                    MovementBehavior, MovementBehavior, init_movement_behavior),
                COMP_INIT(AttackBehavior, AttackBehavior, init_attack_behavior)})
@@ -37,6 +38,7 @@ AI::AI(Registry& r, EventManager& em, EntityLoader& l)
   _movement_patterns["circle"] = std::make_unique<CirclePattern>();
   _movement_patterns["turret"] = std::make_unique<TurretPattern>();
   _movement_patterns["follow_target"] = std::make_unique<FollowTargetPattern>();
+  _movement_patterns["glue"] = std::make_unique<GluePattern>();
 
   _attack_patterns["continuous"] = std::make_unique<ContinuousFirePattern>();
   // _attack_patterns["aimed"] = std::make_unique<AimedFirePattern>();
@@ -122,7 +124,7 @@ void AI::attack_behavior_system(Registry& r)
        ZipperIndex<AttackBehavior, Position, Direction, Speed>(r))
   {
     std::size_t entity = std::get<0>(index);
-    AttackBehavior const &behavior = std::get<1>(index);
+    AttackBehavior const& behavior = std::get<1>(index);
     if (!behavior.active) {
       continue;
     }
