@@ -78,8 +78,13 @@ struct BasicMap
              tiles_data,
          TileData floor_data,
          TileData ceiling_data)
-      { return BasicMap(size, std::move(data), std::move(tiles_data),
-                        std::move(floor_data), std::move(ceiling_data)); },
+      {
+        return BasicMap(size,
+                        std::move(data),
+                        std::move(tiles_data),
+                        std::move(floor_data),
+                        std::move(ceiling_data));
+      },
       parseVector2D(),
       parseByteArray(parseByteArray(parseByte<int>())),
       parseByteMap(parseByte<int>(),
@@ -104,5 +109,6 @@ struct BasicMap
 
   CHANGE_ENTITY_DEFAULT
 
-  HOOKABLE(BasicMap, HOOK(size), HOOK(data), HOOK(floor_data), HOOK(ceiling_data))
+  HOOKABLE(
+      BasicMap, HOOK(size), HOOK(data), HOOK(floor_data), HOOK(ceiling_data))
 };

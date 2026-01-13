@@ -199,8 +199,8 @@ public:
 
   /**
    * @brief Rotates the vector by angle in degrees
-   * 
-   * @param angle 
+   *
+   * @param angle
    */
   void rotate_degrees(double angle)
   {
@@ -222,7 +222,7 @@ public:
     this->x = new_x;
     this->y = new_y;
   }
-  
+
   /**
    * @brief Calculates dot product with another vector
    * @param other Second vector
