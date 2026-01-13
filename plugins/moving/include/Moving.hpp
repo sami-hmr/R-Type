@@ -11,7 +11,7 @@
 class Moving : public APlugin
 {
 public:
-  Moving(Registry& r, EventManager &em, EntityLoader& l);
+  Moving(Registry& r, EventManager& em, EntityLoader& l);
 
 private:
   void init_pos(Registry::Entity const& entity, JsonObject& obj);

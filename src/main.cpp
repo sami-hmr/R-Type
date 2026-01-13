@@ -40,6 +40,7 @@ static int true_main(Registry& r,
                               r.deactivate_all_scenes();
                             }
                             r.activate_scene(event.target_scene);
+                            return false;
                           });
 
   em.on<SpawnEntityRequestEvent>(

@@ -20,6 +20,7 @@
 #include "plugin/components/Sprite.hpp"
 #include "plugin/events/CleanupEvent.hpp"
 #include "plugin/events/CliEvents.hpp"
+#include "plugin/events/HttpEvents.hpp"
 #include "plugin/events/LoggerEvent.hpp"
 #include "plugin/events/NetworkEvents.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
@@ -58,12 +59,11 @@ void CLI::run_cli()
     std::cout << "> " << std::flush;
 
     if (!std::getline(std::cin, line)) {
-      // _registry.get().emit<ShutdownEvent>("Cli end", 0);
+      _event_manager.get().emit<ShutdownEvent>("Cli end", 0);
       break;
     }
 
     if (!_running) {
-      // _registry.get().emit<ShutdownEvent>("Error in cli", 0);
       break;
     }
 
@@ -167,6 +167,27 @@ void CLI::process_command(const std::string& cmd)
                     << "0.0.0.0"
                     << ":" << port << "\n";
         }}},
+      {"expose",
+       {.usage = "expose <host>",
+        .description = "expose server host",
+        .handler =
+            [this](std::istringstream& iss)
+        {
+          std::string host;
+
+          iss >> host;
+          _event_manager.get().emit<ExposeServer>(host);
+          std::cout << "exposing server on " << host << "\n";
+        }}},
+      {"e",
+       {.usage = "e",
+        .description = "commande de goat pour expose le server",
+        .handler =
+            [this](std::istringstream&)
+        {
+          _event_manager.get().emit<ExposeServer>("0.0.0.0");
+          std::cout << "exposing server on " << "0.0.0.0\n";
+        }}},
       {"c",
        {.usage = "c",
         .description = "autre commande de goat pour connect le client",
@@ -221,6 +242,50 @@ void CLI::process_command(const std::string& cmd)
         {
           std::cout << "Stopping CLI...\n";
           _event_manager.get().emit<CliStop>();
+        }}},
+      {"save",
+       {.usage = "save",
+        .description = "save player",
+        .handler =
+            [this](std::istringstream&)
+        {
+          std::cout << "saving...\n";
+          _event_manager.get().emit<Save>();
+        }}},
+      {"fetch_available",
+       {.usage = "fetch_available",
+        .description = "fetcing available",
+        .handler =
+            [this](std::istringstream&)
+        {
+          std::cout << "fetching...\n";
+          _event_manager.get().emit<FetchAvailableServers>();
+        }}},
+      {"register",
+       {.usage = "register <identifier> <password>",
+        .description = "register",
+        .handler =
+            [this](std::istringstream& iss)
+        {
+          std::cout << "register\n";
+          std::string id;
+          std::string pass;
+
+          iss >> id >> pass;
+          _event_manager.get().emit<Register>(id, pass);
+        }}},
+      {"login",
+       {.usage = "login <identifier> <password>",
+        .description = "login",
+        .handler =
+            [this](std::istringstream& iss)
+        {
+          std::cout << "login\n";
+          std::string id;
+          std::string pass;
+
+          iss >> id >> pass;
+          _event_manager.get().emit<Login>(id, pass);
         }}},
       {"quit",
        {.usage = "quit [reason]",

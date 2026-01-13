@@ -14,7 +14,7 @@ public:
 
   virtual void execute(Registry::Entity entity,
                        Registry& registry,
-                       EventManager &em,
+                       EventManager& em,
                        AttackBehavior& behavior,
                        Position& pos,
                        Direction& dir,

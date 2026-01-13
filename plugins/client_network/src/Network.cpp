@@ -25,7 +25,7 @@
 #include "plugin/events/NetworkEvents.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
 
-NetworkClient::NetworkClient(Registry& r, EventManager &em, EntityLoader& l)
+NetworkClient::NetworkClient(Registry& r, EventManager& em, EntityLoader& l)
     : APlugin("network_client", r, em, l, {}, {})
     , _sem(0)
 {
@@ -118,7 +118,6 @@ NetworkClient::NetworkClient(Registry& r, EventManager &em, EntityLoader& l)
     this->_registry.get().kill_entity(event.entity);
   })
 
-
   this->_registry.get().add_system<>(
       [this](Registry& r)
       {
@@ -139,7 +138,7 @@ NetworkClient::NetworkClient(Registry& r, EventManager &em, EntityLoader& l)
             this->_loader.get().load_byte_component(
                 true_entity, server_comp, this->_server_indexes);
             this->_component_queue.queue.pop();
-          } catch (InvalidPackage const &e) {
+          } catch (InvalidPackage const& e) {
             LOGGER("client", LogLevel::ERROR, e.what());
           }
         }
@@ -152,11 +151,12 @@ NetworkClient::NetworkClient(Registry& r, EventManager &em, EntityLoader& l)
         this->_event_from_server.lock.lock();
         while (!this->_event_from_server.queue.empty()) {
           auto& e = this->_event_from_server.queue.front();
-          this->_event_manager.get().emit(e.event_id,
-                 this->_event_manager.get().convert_event_entity(
-                     e.event_id,
-                     e.data,
-                     this->_server_indexes.get_first()));  // SERVER -> CLIENT
+          this->_event_manager.get().emit(
+              e.event_id,
+              this->_event_manager.get().convert_event_entity(
+                  e.event_id,
+                  e.data,
+                  this->_server_indexes.get_first()));  // SERVER -> CLIENT
           this->_event_from_server.queue.pop();
         }
         this->_event_from_server.lock.unlock();
@@ -191,7 +191,7 @@ void NetworkClient::connection_thread(ClientConnection const& c)
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager &em, EntityLoader& e)
+void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
   return new NetworkClient(r, em, e);
 }

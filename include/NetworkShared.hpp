@@ -197,24 +197,29 @@ struct EventBuilderId
 struct NewConnection
 {
   std::size_t client = 0;
+  int user_id = 0;
 
   NewConnection() = default;
 
-  NewConnection(std::size_t c)
+  NewConnection(std::size_t c, int u)
       : client(c)
+      , user_id(u)
   {
   }
 
   DEFAULT_BYTE_CONSTRUCTOR(NewConnection,
-                           ([](std::size_t c) { return NewConnection(c); }),
-                           parseByte<std::size_t>())
+                           ([](std::size_t c, int u)
+                            { return NewConnection(c, u); }),
+                           parseByte<std::size_t>(),
+                           parseByte<int>())
 
-  DEFAULT_SERIALIZE(type_to_byte(client))
+  DEFAULT_SERIALIZE(type_to_byte(client), type_to_byte(user_id))
 
   CHANGE_ENTITY_DEFAULT
 
   NewConnection(Registry& r, JsonObject const& e)
       : client(get_value_copy<std::size_t>(r, e, "client").value())
+      , user_id(get_value_copy<int>(r, e, "user_id").value())
   {
   }
 };

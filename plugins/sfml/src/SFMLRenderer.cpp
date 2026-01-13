@@ -51,65 +51,6 @@
 #include "plugin/events/LoggerEvent.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
 
-static const std::map<sf::Keyboard::Key, Key> key_association = {
-    {sf::Keyboard::Key::Enter, Key::ENTER},
-    {sf::Keyboard::Key::Left, Key::LEFT},
-    {sf::Keyboard::Key::Right, Key::RIGHT},
-    {sf::Keyboard::Key::Down, Key::DOWN},
-    {sf::Keyboard::Key::Up, Key::UP},
-    {sf::Keyboard::Key::Escape, Key::ECHAP},
-    {sf::Keyboard::Key::Backspace, Key::DELETE},
-    {sf::Keyboard::Key::Space, Key::SPACE},
-    {sf::Keyboard::Key::LShift, Key::SHIFT},
-    {sf::Keyboard::Key::RShift, Key::SHIFT},
-    {sf::Keyboard::Key::LControl, Key::CTRL},
-    {sf::Keyboard::Key::RControl, Key::CTRL},
-    {sf::Keyboard::Key::LAlt, Key::ALT},
-    {sf::Keyboard::Key::RAlt, Key::ALT},
-    {sf::Keyboard::Key::A, Key::A},
-    {sf::Keyboard::Key::B, Key::B},
-    {sf::Keyboard::Key::D, Key::D},
-    {sf::Keyboard::Key::C, Key::C},
-    {sf::Keyboard::Key::E, Key::E},
-    {sf::Keyboard::Key::F, Key::F},
-    {sf::Keyboard::Key::G, Key::G},
-    {sf::Keyboard::Key::H, Key::H},
-    {sf::Keyboard::Key::I, Key::I},
-    {sf::Keyboard::Key::J, Key::J},
-    {sf::Keyboard::Key::K, Key::K},
-    {sf::Keyboard::Key::L, Key::L},
-    {sf::Keyboard::Key::M, Key::M},
-    {sf::Keyboard::Key::N, Key::N},
-    {sf::Keyboard::Key::O, Key::O},
-    {sf::Keyboard::Key::P, Key::P},
-    {sf::Keyboard::Key::Q, Key::Q},
-    {sf::Keyboard::Key::R, Key::R},
-    {sf::Keyboard::Key::S, Key::S},
-    {sf::Keyboard::Key::T, Key::T},
-    {sf::Keyboard::Key::U, Key::U},
-    {sf::Keyboard::Key::V, Key::V},
-    {sf::Keyboard::Key::W, Key::W},
-    {sf::Keyboard::Key::X, Key::X},
-    {sf::Keyboard::Key::Y, Key::Y},
-    {sf::Keyboard::Key::Z, Key::Z},
-    {sf::Keyboard::Key::Slash, Key::SLASH},
-    {sf::Keyboard::Key::Num1, Key::ONE},
-    {sf::Keyboard::Key::Num2, Key::TWO},
-    {sf::Keyboard::Key::Num3, Key::THREE},
-    {sf::Keyboard::Key::Num4, Key::FOUR},
-    {sf::Keyboard::Key::Num5, Key::FIVE},
-    {sf::Keyboard::Key::Num6, Key::SIX},
-    {sf::Keyboard::Key::Num7, Key::SEVEN},
-    {sf::Keyboard::Key::Num8, Key::EIGHT},
-    {sf::Keyboard::Key::Num9, Key::NINE},
-    {sf::Keyboard::Key::Num0, Key::ZERO}};
-
-static const std::map<sf::Mouse::Button, MouseButton> MOUSEBUTTONMAP = {
-    {sf::Mouse::Button::Left, MouseButton::MOUSELEFT},
-    {sf::Mouse::Button::Right, MouseButton::MOUSERIGHT},
-    {sf::Mouse::Button::Middle, MouseButton::MOUSEMIDDLE},
-};
-
 static sf::Texture gen_placeholder()
 {
   sf::Image image(SFMLRenderer::placeholder_size, sf::Color::Black);
@@ -139,11 +80,13 @@ SFMLRenderer::SFMLRenderer(Registry& r, EventManager& em, EntityLoader& l)
                              { this->background_system(r); });
 
   _registry.get().add_system([this](Registry& r) { this->button_system(r); });
+  _registry.get().add_system([this](Registry& r) { this->slider_system(r); });
   _registry.get().add_system([this](Registry& r)
                              { this->unified_render_system(r); });
   _registry.get().add_system([this](Registry&) { this->display(); });
   _textures.insert_or_assign(SFMLRenderer::placeholder_texture,
                              gen_placeholder());
+  this->_vertex_buffer.setUsage(sf::VertexBuffer::Usage::Stream);
 }
 
 SFMLRenderer::~SFMLRenderer()
@@ -223,19 +166,18 @@ void SFMLRenderer::mouse_events(const sf::Event& events)
   const auto* mouse_pressed = events.getIf<sf::Event::MouseButtonPressed>();
   const auto* mouse_released = events.getIf<sf::Event::MouseButtonReleased>();
 
+  this->_mouse_pos = screen_to_world(mouse_pos);
   if (mouse_pressed != nullptr) {
     if (MOUSEBUTTONMAP.contains(mouse_pressed->button)) {
       MouseButton button = MOUSEBUTTONMAP.at(mouse_pressed->button);
-      Vector2D position = screen_to_world(mouse_pos);
-      MousePressedEvent mouse_event(position, button);
+      MousePressedEvent mouse_event(this->_mouse_pos, button);
       this->_event_manager.get().emit<MousePressedEvent>(mouse_event);
     }
   }
   if (mouse_released != nullptr) {
     if (MOUSEBUTTONMAP.contains(mouse_released->button)) {
       MouseButton button = MOUSEBUTTONMAP.at(mouse_released->button);
-      Vector2D position = screen_to_world(mouse_pos);
-      MouseReleasedEvent mouse_event(position, button);
+      MouseReleasedEvent mouse_event(this->_mouse_pos, button);
       this->_event_manager.get().emit<MouseReleasedEvent>(mouse_event);
     }
   }
@@ -305,15 +247,13 @@ void SFMLRenderer::display()
   _window.display();
 }
 
-void SFMLRenderer::unified_render_system(Registry& r)
+void SFMLRenderer::render_sprites(Registry& r,
+                                  std::vector<DrawableItem>& all_drawables,
+                                  float min_dimension,
+                                  const sf::Vector2u& window_size,
+                                  const sf::Vector2f& view_size,
+                                  const sf::Vector2f& view_pos)
 {
-  std::vector<DrawableItem> all_drawables;
-  sf::Vector2u window_size = _window.getSize();
-  sf::Vector2f view_size = this->_view.getSize();
-  sf::Vector2f view_pos = this->_view.getCenter();
-  float min_dimension =
-      static_cast<float>(std::min(window_size.x, window_size.y));
-
   for (auto&& [pos, draw, spr] : Zipper<Position, Drawable, Sprite>(r)) {
     if (!draw.enabled) {
       continue;
@@ -359,7 +299,13 @@ void SFMLRenderer::unified_render_system(Registry& r)
     all_drawables.emplace_back(DrawableVariant {std::move(sprite_drawable)},
                                pos.z);
   }
+}
 
+void SFMLRenderer::render_texts(Registry& r,
+                                std::vector<DrawableItem>& all_drawables,
+                                float min_dimension,
+                                const sf::Vector2u& window_size)
+{
   for (auto&& [i, pos, draw, txt] : ZipperIndex<Position, Drawable, Text>(r)) {
     if (!draw.enabled) {
       continue;
@@ -409,7 +355,13 @@ void SFMLRenderer::unified_render_system(Registry& r)
     all_drawables.emplace_back(DrawableVariant {std::move(text_drawable)},
                                pos.z);
   }
+}
 
+void SFMLRenderer::render_bars(Registry& r,
+                               std::vector<DrawableItem>& all_drawables,
+                               float min_dimension,
+                               const sf::Vector2u& window_size)
+{
   for (auto&& [scene, drawable, position, bar] :
        Zipper<Scene, Drawable, Position, Bar>(r))
   {
@@ -438,7 +390,6 @@ void SFMLRenderer::unified_render_system(Registry& r)
     }
 
     std::optional<sf::Texture> texture_ptr = std::nullopt;
-    sf::IntRect tex_rect;
     if (bar.texture_path != "") {
       texture_ptr = load_texture(bar.texture_path);
     }
@@ -455,7 +406,16 @@ void SFMLRenderer::unified_render_system(Registry& r)
     all_drawables.emplace_back(DrawableVariant {std::move(bar_drawable)},
                                position.z);
   }
+}
 
+void SFMLRenderer::render_animated_sprites(
+    Registry& r,
+    std::vector<DrawableItem>& all_drawables,
+    float min_dimension,
+    const sf::Vector2u& window_size,
+    const sf::Vector2f& view_size,
+    const sf::Vector2f& view_pos)
+{
   for (auto&& [entity, pos, draw, anim, scene] :
        ZipperIndex<Position, Drawable, AnimatedSprite, Scene>(r))
   {
@@ -508,7 +468,6 @@ void SFMLRenderer::unified_render_system(Registry& r)
       rotation = static_cast<float>(std::atan2(norm.y, norm.x));
     }
 
-
     if (!this->_sprite.has_value()) {
       this->_sprite = sf::Sprite(texture);
     }
@@ -525,6 +484,24 @@ void SFMLRenderer::unified_render_system(Registry& r)
     all_drawables.emplace_back(DrawableVariant {std::move(anim_drawable)},
                                pos.z);
   }
+}
+
+void SFMLRenderer::unified_render_system(Registry& r)
+{
+  std::vector<DrawableItem> all_drawables;
+  sf::Vector2u window_size = _window.getSize();
+  sf::Vector2f view_size = this->_view.getSize();
+  sf::Vector2f view_pos = this->_view.getCenter();
+  float min_dimension =
+      static_cast<float>(std::min(window_size.x, window_size.y));
+
+  render_sprites(
+      r, all_drawables, min_dimension, window_size, view_size, view_pos);
+  render_texts(r, all_drawables, min_dimension, window_size);
+  render_bars(r, all_drawables, min_dimension, window_size);
+  render_animated_sprites(
+      r, all_drawables, min_dimension, window_size, view_size, view_pos);
+  render_sliders(r, all_drawables, min_dimension, window_size);
 
   std::sort(all_drawables.begin(), all_drawables.end());
 
@@ -554,7 +531,7 @@ void SFMLRenderer::button_system(Registry& r)
     AnimationData hover_anim_data = anim.animations.at("hover");
     Rect entity_rect = {.x = pos.pos.x,
                         .y = pos.pos.y,
-                        .width = collision.width,
+                        .width = collision.width * 2,
                         .height = collision.height};
     if (entity_rect.contains(mouse_pos.x, mouse_pos.y)) {
       if (!button.hovered) {

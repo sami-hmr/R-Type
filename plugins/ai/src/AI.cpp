@@ -106,7 +106,7 @@ void AI::attack_behavior_system(Registry& r)
        ZipperIndex<AttackBehavior, Position, Direction, Speed>(r))
   {
     std::size_t entity = std::get<0>(index);
-    AttackBehavior const &behavior = std::get<1>(index);
+    AttackBehavior const& behavior = std::get<1>(index);
     if (!behavior.active) {
       continue;
     }

@@ -6,6 +6,7 @@
 #include "ClientConnection.hpp"
 #include "NetworkShared.hpp"
 #include "ecs/Registry.hpp"
+#include "network/HttpClient.hpp"
 #include "network/client/Client.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/Byte.hpp"
@@ -17,12 +18,19 @@
 #include "plugin/events/ShutdownEvent.hpp"
 
 BaseClient::BaseClient(std::string const& name,
+                       std::string const& game_name,
                        Registry& r,
                        EventManager& em,
                        EntityLoader& l)
     : APlugin(name, r, em, l, {}, {})
+    , game_name(game_name)
+    , _http_client("0.0.0.0", 8080)
 {
   SUBSCRIBE_EVENT(ClientConnection, {
+    if (this->_user_id == -1) {
+      LOGGER("client", LogLevel::ERROR, "client not logged in");
+      return false;
+    }
     if (!this->_running) {
       _running = true;
 
@@ -115,8 +123,6 @@ BaseClient::BaseClient(std::string const& name,
       this->_registry.get().kill_entity(entity);
       this->_server_indexes.remove_second(entity);
     }
-    std::cout << "SERVER_ENTITY SIZE "
-              << this->_server_indexes.get_second().size() << std::endl;
     this->_server_created.clear();
   })
 
@@ -129,10 +135,9 @@ BaseClient::BaseClient(std::string const& name,
     this->_event_manager.get().emit<ShutdownEvent>("Disconnection", 0);
   })
 
-  SUBSCRIBE_EVENT(NetworkStatus, {
-    std::cout << "ping: " << event.ping_in_millisecond
-              << ", loss: " << event.packet_loss << std::endl;
-  })
+  SUBSCRIBE_EVENT(NetworkStatus, { (void)this; })
+
+  this->setup_http_requests();
 }
 
 BaseClient::~BaseClient()
@@ -148,7 +153,7 @@ void BaseClient::connection_thread(ClientConnection const& c)
   try {
     Client client(
         c, _component_queue, _event_to_server, _event_from_server, _running);
-    client.connect();
+    client.connect(this->_user_id);
   } catch (std::exception& e) {
     LOGGER("client",
            LogLevel::ERROR,
