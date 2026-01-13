@@ -42,9 +42,7 @@ RtypeServer::RtypeServer(Registry& r, EventManager& em, EntityLoader& l)
     this->ask_player_save(user_id);
   })
 
-  SUBSCRIBE_EVENT(SavePlayer, {
-    this->save_player(event.user);
-  })
+  SUBSCRIBE_EVENT(SavePlayer, { this->save_player(event.user); })
 
   SUBSCRIBE_EVENT(PlayerReady, {
     if (!this->_player_ready.contains(event.client_id)) {

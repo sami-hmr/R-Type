@@ -28,8 +28,8 @@ BaseClient::BaseClient(std::string const& name,
 {
   SUBSCRIBE_EVENT(ClientConnection, {
     if (this->_user_id == -1) {
-        LOGGER("client", LogLevel::ERROR, "client not logged in");
-        return false;
+      LOGGER("client", LogLevel::ERROR, "client not logged in");
+      return false;
     }
     if (!this->_running) {
       _running = true;
@@ -135,9 +135,7 @@ BaseClient::BaseClient(std::string const& name,
     this->_event_manager.get().emit<ShutdownEvent>("Disconnection", 0);
   })
 
-  SUBSCRIBE_EVENT(NetworkStatus, {
-    (void)this;
-  })
+  SUBSCRIBE_EVENT(NetworkStatus, { (void)this; })
 
   this->setup_http_requests();
 }

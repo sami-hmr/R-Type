@@ -19,7 +19,7 @@ public:
 
   void update(Registry::Entity entity,
               Registry& registry,
-              EventManager &em,
+              EventManager& em,
               MovementBehavior& /*behavior*/,
               Position& /*pos*/,
               Direction& direction,
@@ -34,8 +34,8 @@ public:
     if (direction_change > DIRECTION_TOLERANCE) {
       direction.direction = new_direction;
       em.emit<ComponentBuilder>(entity,
-                                      registry.get_component_key<Direction>(),
-                                      direction.to_bytes());
+                                registry.get_component_key<Direction>(),
+                                direction.to_bytes());
     }
   }
 };
@@ -47,7 +47,7 @@ public:
 
   void update(Registry::Entity entity,
               Registry& registry,
-              EventManager &em,
+              EventManager& em,
               MovementBehavior& behavior,
               Position& /*pos*/,
               Direction& direction,
@@ -55,10 +55,9 @@ public:
               double dt) override
   {
     behavior.movement_delta += dt;
-    em.emit<ComponentBuilder>(
-        entity,
-        registry.get_component_key<MovementBehavior>(),
-        behavior.to_bytes());
+    em.emit<ComponentBuilder>(entity,
+                              registry.get_component_key<MovementBehavior>(),
+                              behavior.to_bytes());
 
     double amplitude = 0.7;
     double frequency = 2.0;
@@ -73,8 +72,8 @@ public:
     if (direction_change > DIRECTION_TOLERANCE) {
       direction.direction = new_direction;
       em.emit<ComponentBuilder>(entity,
-                                      registry.get_component_key<Direction>(),
-                                      direction.to_bytes());
+                                registry.get_component_key<Direction>(),
+                                direction.to_bytes());
     }
   }
 };
@@ -86,7 +85,7 @@ public:
 
   void update(Registry::Entity entity,
               Registry& registry,
-              EventManager &em,
+              EventManager& em,
               MovementBehavior& behavior,
               Position& /*pos*/,
               Direction& direction,
@@ -94,10 +93,9 @@ public:
               double dt) override
   {
     behavior.movement_delta += dt;
-    em.emit<ComponentBuilder>(
-        entity,
-        registry.get_component_key<MovementBehavior>(),
-        behavior.to_bytes());
+    em.emit<ComponentBuilder>(entity,
+                              registry.get_component_key<MovementBehavior>(),
+                              behavior.to_bytes());
 
     double switch_interval = 1.0;
     double angle = 45.0;
@@ -115,8 +113,8 @@ public:
     if (direction_change > DIRECTION_TOLERANCE) {
       direction.direction = new_direction;
       em.emit<ComponentBuilder>(entity,
-                                      registry.get_component_key<Direction>(),
-                                      direction.to_bytes());
+                                registry.get_component_key<Direction>(),
+                                direction.to_bytes());
     }
   }
 };
@@ -128,7 +126,7 @@ public:
 
   void update(Registry::Entity entity,
               Registry& registry,
-              EventManager &em,
+              EventManager& em,
               MovementBehavior& behavior,
               Position& pos,
               Direction& direction,
@@ -137,10 +135,9 @@ public:
 
   {
     behavior.movement_delta += dt;
-    em.emit<ComponentBuilder>(
-        entity,
-        registry.get_component_key<MovementBehavior>(),
-        behavior.to_bytes());
+    em.emit<ComponentBuilder>(entity,
+                              registry.get_component_key<MovementBehavior>(),
+                              behavior.to_bytes());
 
     double radius = 100.0;
     double angular_speed = 1.5;
@@ -160,8 +157,8 @@ public:
       if (direction_change > DIRECTION_TOLERANCE) {
         direction.direction = new_direction;
         em.emit<ComponentBuilder>(entity,
-                                        registry.get_component_key<Direction>(),
-                                        direction.to_bytes());
+                                  registry.get_component_key<Direction>(),
+                                  direction.to_bytes());
       }
     }
   }
@@ -172,7 +169,7 @@ class TurretPattern : public MovementPattern
 public:
   void update(Registry::Entity entity,
               Registry& registry,
-              EventManager &em,
+              EventManager& em,
               MovementBehavior& /*behavior*/,
               Position& /*pos*/,
               Direction& direction,
@@ -192,8 +189,8 @@ public:
       direction.direction.x = 0.0;
       direction.direction.y = 0.0;
       em.emit<ComponentBuilder>(entity,
-                                      registry.get_component_key<Direction>(),
-                                      direction.to_bytes());
+                                registry.get_component_key<Direction>(),
+                                direction.to_bytes());
     }
   }
 };
@@ -203,7 +200,7 @@ class FollowTargetPattern : public MovementPattern
 public:
   void update(Registry::Entity entity,
               Registry& registry,
-              EventManager &em,
+              EventManager& em,
               MovementBehavior& /*behavior*/,
               Position& /*pos*/,
               Direction& direction,
@@ -215,16 +212,16 @@ public:
       direction.direction.x = -1.0;
       direction.direction.y = 0.0;
       em.emit<ComponentBuilder>(entity,
-                                      registry.get_component_key<Direction>(),
-                                      direction.to_bytes());
+                                registry.get_component_key<Direction>(),
+                                direction.to_bytes());
     }
     if (!registry.has_component<InteractionZone>(entity)) {
       registry.add_component(entity, InteractionZone(1.5));
       direction.direction.x = -1.0;
       direction.direction.y = 0.0;
       em.emit<ComponentBuilder>(entity,
-                                      registry.get_component_key<Direction>(),
-                                      direction.to_bytes());
+                                registry.get_component_key<Direction>(),
+                                direction.to_bytes());
     }
   }
 };

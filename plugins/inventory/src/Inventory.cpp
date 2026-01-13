@@ -1,14 +1,14 @@
 #include "Inventory.hpp"
 
-#include "ecs/Registry.hpp"
-#include "ecs/EmitEvent.hpp"
-#include "plugin/APlugin.hpp"
 #include "Json/JsonParser.hpp"
+#include "ecs/EmitEvent.hpp"
 #include "ecs/EventManager.hpp"
+#include "ecs/Registry.hpp"
+#include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Item.hpp"
-#include "plugin/events/LoggerEvent.hpp"
 #include "plugin/events/InventoryEvents.hpp"
+#include "plugin/events/LoggerEvent.hpp"
 
 template<typename T>
 bool Inventory::usage_emit(const ItemEvent<T>& event, std::string area)
@@ -23,10 +23,11 @@ bool Inventory::usage_emit(const ItemEvent<T>& event, std::string area)
                           _inventory[event.slot_item].first.object.second,
                           "entity");
   if (!use_item || !entity) {
-    LOGGER("Inventory",
-           LogLevel::ERROR,
-           std::format(
-               "Missing {} field in item. No animation nor event played", area));
+    LOGGER(
+        "Inventory",
+        LogLevel::ERROR,
+        std::format("Missing {} field in item. No animation nor event played",
+                    area));
     return false;
   }
   auto evt_use =
@@ -37,17 +38,16 @@ bool Inventory::usage_emit(const ItemEvent<T>& event, std::string area)
     auto params =
         get_value_copy<JsonObject>(this->_registry.get(), *evt_use, "params");
     if (!name || !params) {
-      LOGGER(
-          "Inventory",
-          LogLevel::ERROR,
-          std::format(
-              "Invalid event field in item's {} configuration. No animation nor even't played", area));
+      LOGGER("Inventory",
+             LogLevel::ERROR,
+             std::format("Invalid event field in item's {} configuration. No "
+                         "animation nor even't played",
+                         area));
       return false;
     }
     params->insert_or_assign("entity", JsonValue(*entity));
     emit_event(
-        this->_event_manager.get(), this->_registry.get(), *name,
-        *params);
+        this->_event_manager.get(), this->_registry.get(), *name, *params);
   }
   return false;
 }

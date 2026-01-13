@@ -58,7 +58,8 @@ httplib::Result HttpClient::send_get(const std::string& endpoint,
 
 httplib::Result HttpClient::send_post(const std::string& endpoint,
                                       std::string const& body,
-                                      std::string const& content_type, httplib::Headers const &headers)
+                                      std::string const& content_type,
+                                      httplib::Headers const& headers)
 {
   return this->_client.Post(endpoint, headers, body, content_type);
 }

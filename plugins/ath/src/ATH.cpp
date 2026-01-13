@@ -74,7 +74,8 @@ ATH::ATH(Registry& r,
   SUBSCRIBE_EVENT(MousePressedEvent, {
     on_click(this->_registry.get(), this->_event_manager.get(), event);
   });
-  SUBSCRIBE_EVENT(InputFocusEvent, {on_input_focus(this->_registry.get(), event);});
+  SUBSCRIBE_EVENT(InputFocusEvent,
+                  { on_input_focus(this->_registry.get(), event); });
 }
 
 extern "C"

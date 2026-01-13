@@ -24,13 +24,13 @@ public:
   BaseClient& operator=(const BaseClient&) = delete;
   BaseClient& operator=(BaseClient&&) = delete;
   BaseClient(std::string const& name,
-             std::string const& game_name ,Registry& r,
+             std::string const& game_name,
+             Registry& r,
              EventManager& em,
              EntityLoader& l);
   ~BaseClient() override;
 
   std::string const game_name;
-
 
 private:
   void setup_http_requests();
@@ -66,9 +66,9 @@ protected:
 private:
   friend void handle_fetch_servers(void*, httplib::Result const&);
   void handle_server_fetch();
-  friend void handle_login_response(void *, httplib::Result const &);
-  void handle_register(Register const &);
-  void handle_login(Login const &);
+  friend void handle_login_response(void*, httplib::Result const&);
+  void handle_register(Register const&);
+  void handle_login(Login const&);
 
   std::unordered_set<Registry::Entity> _server_created;
 };

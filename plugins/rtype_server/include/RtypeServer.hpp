@@ -16,16 +16,17 @@
 
 class RtypeServer : public BaseServer
 {
-  public:
-    RtypeServer(Registry& r, EventManager &em, EntityLoader& l);
-    ~RtypeServer() override = default;
+public:
+  RtypeServer(Registry& r, EventManager& em, EntityLoader& l);
+  ~RtypeServer() override = default;
 
-  private:
-    std::map<int, std::size_t> _users_entities;
+private:
+  std::map<int, std::size_t> _users_entities;
 
-    friend void handle_get_player_save(void *raw_context, httplib::Result const &result);
-    void ask_player_save(int user_id);
-    void save_player(int user_id);
-    std::unordered_map<std::size_t, bool> _player_ready;
-    std::unordered_map<Registry::Entity, size_t> _player_entities;
+  friend void handle_get_player_save(void* raw_context,
+                                     httplib::Result const& result);
+  void ask_player_save(int user_id);
+  void save_player(int user_id);
+  std::unordered_map<std::size_t, bool> _player_ready;
+  std::unordered_map<Registry::Entity, size_t> _player_entities;
 };

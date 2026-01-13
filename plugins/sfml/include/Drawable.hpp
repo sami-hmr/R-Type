@@ -4,9 +4,9 @@
 #include <optional>
 #include <utility>
 
+#include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
-#include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Text.hpp>
@@ -154,8 +154,11 @@ struct SliderDrawable
   int z_index;
 };
 
-using DrawableVariant = std::
-    variant<AnimatedSpriteDrawable, SpriteDrawable, TextDrawable, BarDrawable, SliderDrawable>;
+using DrawableVariant = std::variant<AnimatedSpriteDrawable,
+                                     SpriteDrawable,
+                                     TextDrawable,
+                                     BarDrawable,
+                                     SliderDrawable>;
 
 struct DrawableItem
 {

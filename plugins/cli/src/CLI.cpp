@@ -265,7 +265,7 @@ void CLI::process_command(const std::string& cmd)
        {.usage = "register <identifier> <password>",
         .description = "register",
         .handler =
-            [this](std::istringstream&iss)
+            [this](std::istringstream& iss)
         {
           std::cout << "register\n";
           std::string id;
@@ -278,7 +278,7 @@ void CLI::process_command(const std::string& cmd)
        {.usage = "login <identifier> <password>",
         .description = "login",
         .handler =
-            [this](std::istringstream&iss)
+            [this](std::istringstream& iss)
         {
           std::cout << "login\n";
           std::string id;

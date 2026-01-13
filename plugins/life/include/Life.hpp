@@ -3,21 +3,20 @@
 #include <string>
 #include <vector>
 
+#include "Json/JsonParser.hpp"
 #include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/APlugin.hpp"
-#include "Json/JsonParser.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Health.hpp"
-#include "plugin/events/HealEvent.hpp"
-#include "plugin/events/DamageEvent.hpp"
 #include "plugin/events/CollisionEvent.hpp"
-#include "plugin/components/Health.hpp"
+#include "plugin/events/DamageEvent.hpp"
+#include "plugin/events/HealEvent.hpp"
 
 class Life : public APlugin
 {
 public:
-  Life(Registry& r, EventManager &em, EntityLoader& l);
+  Life(Registry& r, EventManager& em, EntityLoader& l);
   static constexpr double heal_cooldown = 0.5;
   static constexpr double damage_cooldown = 0.5;
 

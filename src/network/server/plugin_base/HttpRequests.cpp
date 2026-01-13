@@ -11,8 +11,8 @@
 
 void BaseServer::setup_http_requests()
 {
-  this->_registry.get().add_system(
-      [this](Registry&) { this->_http_client.handle_responses(); });
+  this->_registry.get().add_system([this](Registry&)
+                                   { this->_http_client.handle_responses(); });
 
   SUBSCRIBE_EVENT(ExposeServer, { this->register_server(event.host); })
 }

@@ -53,7 +53,7 @@ private:
 
 protected:
   friend void handle_register_response(void*, httplib::Result const&);
-  void register_server(std::string const &host);
+  void register_server(std::string const& host);
   void unregister_server();
 
   HttpClient _http_client;

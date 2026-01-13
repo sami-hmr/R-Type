@@ -86,7 +86,7 @@ SFMLRenderer::SFMLRenderer(Registry& r, EventManager& em, EntityLoader& l)
   _registry.get().add_system([this](Registry&) { this->display(); });
   _textures.insert_or_assign(SFMLRenderer::placeholder_texture,
                              gen_placeholder());
-    this->_vertex_buffer.setUsage(sf::VertexBuffer::Usage::Stream);
+  this->_vertex_buffer.setUsage(sf::VertexBuffer::Usage::Stream);
 }
 
 SFMLRenderer::~SFMLRenderer()

@@ -1,4 +1,5 @@
 #include <cstring>
+
 #include "../plugins/rtype_client/include/RtypeClient.hpp"
 
 #include "NetworkShared.hpp"

@@ -165,16 +165,18 @@ void BaseServer::launch_server(ServerLaunching const& infos)
   }
 }
 
-int BaseServer::get_user_by_client(std::size_t client_id) {
-    if (!this->_server_class) {
-        return -1;
-    }
-    return this->_server_class->get_user_by_client(client_id);
+int BaseServer::get_user_by_client(std::size_t client_id)
+{
+  if (!this->_server_class) {
+    return -1;
+  }
+  return this->_server_class->get_user_by_client(client_id);
 }
 
-int BaseServer::get_client_by_user(int user) {
-    if (!this->_server_class) {
-        return -1;
-    }
-    return this->_server_class->get_client_by_user(user);
+int BaseServer::get_client_by_user(int user)
+{
+  if (!this->_server_class) {
+    return -1;
+  }
+  return this->_server_class->get_client_by_user(user);
 }

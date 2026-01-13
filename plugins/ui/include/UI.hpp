@@ -45,5 +45,5 @@ private:
   void handle_input_focus(const InputFocusEvent& event);
 };
 
-void on_click_slider(Registry &r, const MousePressedEvent &event);
-void on_release_slider(Registry &r, const MouseReleasedEvent &event);
+void on_click_slider(Registry& r, const MousePressedEvent& event);
+void on_release_slider(Registry& r, const MouseReleasedEvent& event);

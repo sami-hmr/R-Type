@@ -63,7 +63,7 @@ private:
   void background_system(Registry& r);
   void camera_system(Registry& r);
   void button_system(Registry& r);
-  void slider_system(Registry& r) const; 
+  void slider_system(Registry& r) const;
   void display();
 
   void render_sprites(Registry& r,

@@ -40,10 +40,10 @@ void Server::handle_getchallenge(ByteArray const& cmd,
 {
   auto parsed = parseByte<int>()(cmd);
   if (parsed.index() == ERROR) {
-      LOGGER_EVTLESS(LogLevel::WARNING,
-                     "server",
-                     "Invalid getchallenge command: invalid user id");
-      return;
+    LOGGER_EVTLESS(LogLevel::WARNING,
+                   "server",
+                   "Invalid getchallenge command: invalid user id");
+    return;
   }
 
   auto user_id = std::get<SUCCESS>(parsed).value;
@@ -106,8 +106,8 @@ void Server::handle_connect(ByteArray const& cmd,
         + type_to_byte<std::uint32_t>(_server_id);
 
     send(pkg, sender);
-    this->transmit_event_to_server(
-        EventBuilder("NewConnection", NewConnection(client_id, user_id).to_bytes()));
+    this->transmit_event_to_server(EventBuilder(
+        "NewConnection", NewConnection(client_id, user_id).to_bytes()));
   } catch (ClientNotFound const& e) {
     LOGGER_EVTLESS(
         LogLevel::WARNING,
