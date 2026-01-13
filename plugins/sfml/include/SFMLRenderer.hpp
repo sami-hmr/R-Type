@@ -33,6 +33,7 @@
 #include "plugin/components/AnimatedSprite.hpp"
 #include "plugin/components/Background.hpp"
 #include "plugin/components/Bar.hpp"
+#include "plugin/components/BasicMap.hpp"
 #include "plugin/components/Camera.hpp"
 #include "plugin/components/Drawable.hpp"
 #include "plugin/components/Position.hpp"
@@ -103,6 +104,9 @@ private:
                    RaycastingData const& raycasting_data,
                    std::vector<std::vector<int>> const& map_data,
                    const sf::Vector2u& window_size);
+  void draw_textured_walls(
+      std::unordered_map<std::string, std::vector<sf::Vertex>>& textured_vertices);
+  void draw_colored_walls(std::vector<sf::Vertex>& colored_vertices);
   std::optional<Key> sfml_key_to_key(sf::Keyboard::Key sfml_key);
 
   sf::RenderWindow _window;
@@ -125,6 +129,13 @@ private:
   void draw_nothing_background(Background& background);
   void draw_repeat_background(Background& background);
   void draw_stretch_background(Background& background);
+
+  void fill_vertices(const std::unordered_map<int, std::unordered_map<std::string, TileData>> &tiles_data,
+                          int wall_value,
+                          Vector2D screen,
+                          Vector2D next_screen,
+                          Vector2D start,
+                          Vector2D end);
 
   std::map<Background::RenderType, std::function<void(Background&)>>
       _draw_functions {

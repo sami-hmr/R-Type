@@ -5,6 +5,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/VertexArray.hpp>
 #include <SFML/System/Angle.hpp>
 #include <SFML/System/Vector2.hpp>
 
@@ -123,6 +124,7 @@ static void update(SliderDrawable& drawable)
   drawable.circle.get().setOrigin({drawable.radius, drawable.radius});
   drawable.circle.get().setPosition(drawable.circle_pos);
 }
+
 
 void DrawableItem::draw(sf::RenderWindow& window)
 {

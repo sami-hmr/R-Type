@@ -21,17 +21,117 @@
               "width": 10.0,
               "height": 10.0
             },
-            "data": [[2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-                     [1, 0, 0, 1, 0, 0, 0, 0, 0, 3],
-                     [1, 0, 0, 1, 0, 0, 0, 0, 0, 3],
-                     [1, 0, 0, 1, 0, 0, 0, 0, 0, 3],
-                     [1, 0, 1, 1, 0, 0, 0, 0, 0, 3],
-                     [1, 0, 0, 0, 0, 0, 0, 0, 0, 3],
-                     [1, 0, 0, 0, 0, 0, 0, 0, 0, 3],
-                     [1, 0, 0, 0, 0, 0, 0, 0, 0, 3],
-                     [1, 0, 0, 0, 0, 0, 0, 0, 0, 3],
-                     [4, 4, 4, 4, 4, 4, 4, 4, 4, 3]]
+            "tiles_data": {
+              "1": {
+                "textures": {
+                  "south": {
+                    "size": {
+                      "width": 64.0,
+                      "height": 64.0
+                    },
+                    "pos": {
+                      "x": 64.0,
+                      "y": 0.0
+                    },
+                    "texture_path": "assets/backrooms.png"
+                  },
+                "north": {
+                    "size": {
+                      "width": 64.0,
+                      "height": 64.0
+                    },
+                    "pos": {
+                      "x": 64.0,
+                      "y": 0.0
+                    },
+                    "texture_path": "assets/backrooms.png"
+                  },
+                  "east": {
+                    "size": {
+                      "width": 64.0,
+                      "height": 64.0
+                    },
+                    "pos": {
+                      "x": 64.0,
+                      "y": 0.0
+                    },
+                    "texture_path": "assets/backrooms.png"
+                  },
+                  "west": {
+                    "size": {
+                      "width": 64.0,
+                      "height": 64.0
+                    },
+                    "pos": {
+                      "x": 64.0,
+                      "y": 0.0
+                    },
+                    "texture_path": "assets/backrooms.png"
+                  }
+                }
+              }
+            },
+            "data":     [[1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                        [1, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+                        [1, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+                        [1, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+                        [1, 0, 1, 1, 0, 0, 0, 0, 0, 1],
+                        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                        [1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+                        [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]],
+            "floor_data": {
+              "size": {
+                "width": 64.0,
+                "height": 64.0
+              },
+              "pos": {
+                "x": 128.0,
+                "y": 0.0
+              },
+              "texture_path": "assets/backrooms.png"
+            },
+            "ceiling_data": {
+              "size": {
+                "width": 64.0,
+                "height": 64.0
+              },
+              "pos": {
+                "x": 0.0,
+                "y": 0.0
+              },
+              "texture_path": "assets/backrooms.png"
+            }
           }
+        },
+        {
+          "moving:Position": {
+            "pos": {
+              "x": 1.0,
+              "y": 0.0
+            }
+          },
+          "collision:Collidable": {
+            "collision_type": "Solid",
+            "height": 1.0,
+            "width": 1.0
+          },
+          "moving:Speed": {
+            "speed": {
+              "x": 0.0,
+              "y": 0.0
+            }
+          },
+          "moving:Direction": {
+            "direction": {
+              "x": 0.0,
+              "y": 0.0
+            }
+          },
+          "life:Team": {
+          "name": "wall"
+        }
         }
       ]
     }

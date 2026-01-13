@@ -199,7 +199,8 @@ using DrawableVariant = std::variant<AnimatedSpriteDrawable,
                                      SpriteDrawable,
                                      TextDrawable,
                                      BarDrawable,
-                                     SliderDrawable>;
+                                     SliderDrawable,
+                                     TriangleVerticesDrawable>;
 
 struct DrawableItem
 {

@@ -9,6 +9,7 @@
 
 #include "SFMLRenderer.hpp"
 
+#include <SFML/Audio.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/PrimitiveType.hpp>
@@ -506,6 +507,7 @@ void SFMLRenderer::unified_render_system(Registry& r)
   render_sliders(r, all_drawables, min_dimension, window_size);
 
   std::sort(all_drawables.begin(), all_drawables.end());
+
 
   for (auto& drawable : all_drawables) {
     drawable.draw(_window);

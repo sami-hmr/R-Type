@@ -99,7 +99,7 @@
               },
               {
                 "description": "Rotate camera left",
-                "key": "A",
+                "key": "LEFT",
                 "pressed": {
                   "name": "RaycastingCameraRotateEvent",
                   "params": {
@@ -109,7 +109,7 @@
               },
               {
                 "description": "Rotate camera right",
-                "key": "E",
+                "key": "RIGHT",
                 "pressed": {
                   "name": "RaycastingCameraRotateEvent",
                   "params": {
@@ -141,6 +141,14 @@
               "x": 0.0,
               "y": 0.0
             }
+          },
+          "collision:Collidable": {
+            "collision_type": "Solid",
+            "height": 1.0,
+            "width": 1.0
+          },
+          "life:Team": {
+            "name": "player"
           }
         }
       ]
