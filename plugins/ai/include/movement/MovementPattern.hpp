@@ -24,21 +24,24 @@ public:
                       Speed& speed,
                       double dt) = 0;
 
-  static Vector2D get_origin(Registry& registry,
-                             MovementBehavior& behavior)
+  static Vector2D get_origin(Registry& registry, MovementBehavior& behavior)
   {
     if (behavior.params.contains("origin")) {
-      auto origin_opt = get_value_copy<Vector2D>(
-          registry, behavior.params, "origin");
+      auto origin_opt =
+          get_value_copy<Vector2D>(registry, behavior.params, "origin");
       if (origin_opt) {
         return origin_opt.value();
       }
     }
     if (behavior.params.contains("target_id")) {
-      auto target_id = get_value_copy<int>(
-          registry, behavior.params, "target_id");
-      if (target_id.has_value() && registry.has_component<Position>(target_id.value())) {
-        return registry.get_components<Position>()[target_id.value()].value().pos;
+      auto target_id =
+          get_value_copy<int>(registry, behavior.params, "target_id");
+      if (target_id.has_value()
+          && registry.has_component<Position>(target_id.value()))
+      {
+        return registry.get_components<Position>()[target_id.value()]
+            .value()
+            .pos;
       }
     }
     return Vector2D(0.0, 0.0);

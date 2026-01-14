@@ -126,6 +126,7 @@ struct ClientInfo
   AcknowledgeManager acknowledge_manager;
   std::uint32_t challenge = 0;
   std::uint8_t client_id = 0;
+  int user_id;
   std::size_t last_ping;
   std::size_t last_reset;
   std::uint8_t reset_count;

@@ -39,7 +39,7 @@ public:
 
   bool should_disconnect() const;
   void close();
-  void connect();
+  void connect(int id);
 
 private:
   void receive_loop();
@@ -56,7 +56,7 @@ private:
   void handle_event_creation(ByteArray const& package);
   void reset_acknowledge(ByteArray const&);
 
-  void send_getchallenge();
+  void send_getchallenge(int id);
   void send_connect(std::uint32_t challenge);
 
   void handle_challenge_response(ByteArray const& package);

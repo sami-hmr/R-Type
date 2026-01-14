@@ -17,6 +17,7 @@ public:
 
   std::vector<CollisionEntity> detect_range_collisions(
       Rect const& range) override;
+
   std::string get_name() const override { return "QuadTree"; }
 
 private:

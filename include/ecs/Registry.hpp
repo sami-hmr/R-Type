@@ -132,7 +132,7 @@
  *
  * @code
  * // Define scenes
- * registry.add_scene("Menu", SceneState::MAIN);
+ * registry.add_scene("Menu", SceneState::ACTIVE);
  * registry.add_scene("Game", SceneState::DISABLED);
  * registry.add_scene("HUD", SceneState::ACTIVE);
  *
@@ -368,6 +368,15 @@ public:
             data.emplace(comp[e]->to_bytes());
           }
           return data;
+        });
+    this->_component_getter.insert_or_assign(
+        ti,
+        [&comp](Entity entity) -> std::optional<ByteArray>
+        {
+          if (comp.size() <= entity || !comp[entity]) {
+            return std::nullopt;
+          }
+          return comp[entity]->to_bytes();
         });
     this->_index_getter.insert(ti, string_id);
     return comp;
@@ -991,7 +1000,10 @@ public:
    * @tparam T Type of the field being bound
    * @param entity Entity owning the target component
    * @param field_name Name of the target field (must be hookable)
-   * @param source_hook Source identifier in format "ComponentName:fieldName"
+   * @param source_hook Source identifier in format
+   * "scope:ComponentName:fieldName"
+   *                    - "self:ComponentName:fieldName" - same entity binding
+   *                    - "global:Name:fieldName" - global singleton binding
    *
    * @details
    * Creates a Binding struct containing:
@@ -1010,56 +1022,39 @@ public:
    *   Vector2D target_pos;
    *
    *   Follower(Registry& r, JsonObject const& obj, Entity self) {
-   *     // JSON: {"target_pos": "#Leader:pos"}
+   *     // JSON: {"target_pos": "#self:Position:pos"}
    *     target_pos = get_value<Follower, Vector2D>(
    *       r, obj, self, "target_pos"
    *     ).value_or(Vector2D{0, 0});
    *
    *     // register_binding called internally by get_value
-   *     // Creates: Follower.target_pos <- Leader.pos binding
+   *     // Creates: Follower.target_pos <- self.Position.pos binding
    *   }
    *
    *   HOOKABLE(Follower, HOOK(target_pos))
    * };
    *
    * // Every frame:
-   * // 1. Leader moves to new position
+   * // 1. Entity Position moves to new location
    * // 2. update_bindings() executes
-   * // 3. Follower.target_pos = Leader.pos (automatic!)
-   * @endcode
-   *
-   * @code
-   * struct Turret {
-   *   Vector2D aim_target;
-   *   float rotation;
-   *
-   *   HOOKABLE(Turret, HOOK(aim_target), HOOK(rotation))
-   * };
-   *
-   * // Bind turret aim to player position
-   * registry.register_binding<Turret, Vector2D>(
-   *   turret_entity,
-   *   "aim_target",
-   *   "Player:pos"
-   * );
-   *
-   * // Turret automatically aims at player position every frame
+   * // 3. Follower.target_pos = Position.pos (automatic!)
    * @endcode
    *
    * @code
    * struct HealthBar {
-   *   int current_value;
-   *   HOOKABLE(HealthBar, HOOK(current_value))
+   *   int max_value;
+   *
+   *   HOOKABLE(HealthBar, HOOK(max_value))
    * };
    *
-   * // Bind UI to player health
+   * // Bind UI to global game config
    * registry.register_binding<HealthBar, int>(
    *   health_bar_entity,
-   *   "current_value",
-   *   "Player:health.current"
+   *   "max_value",
+   *   "global:GameConfig:maxHealth"
    * );
    *
-   * // Health bar automatically reflects player damage
+   * // Health bar automatically reflects global config changes
    * @endcode
    *
    * @see update_bindings() which executes bindings
@@ -1074,13 +1069,52 @@ public:
   {
     std::type_index ti(typeid(ComponentType));
 
-    std::function<void()> updater = [this, entity, field_name, source_hook]()
+    // Parse hook reference: "scope:component:field"
+    std::string scope;
+    std::string comp_name;
+    std::string value_name;
+
+    size_t first_colon = source_hook.find(':');
+    size_t second_colon = source_hook.find(':', first_colon + 1);
+
+    if (first_colon != std::string::npos && second_colon != std::string::npos) {
+      scope = source_hook.substr(0, first_colon);
+      comp_name =
+          source_hook.substr(first_colon + 1, second_colon - first_colon - 1);
+      value_name = source_hook.substr(second_colon + 1);
+    } else {
+      scope = "self";
+      size_t colon_pos = source_hook.find(':');
+      if (colon_pos != std::string::npos) {
+        comp_name = source_hook.substr(0, colon_pos);
+        value_name = source_hook.substr(colon_pos + 1);
+      } else {
+        std::cerr << "Invalid hook format: " << source_hook << "\n";
+        return;
+      }
+    }
+
+    std::function<void()> updater =
+        [this, entity, field_name, scope, comp_name, value_name]()
     {
       try {
-        std::string comp = source_hook.substr(0, source_hook.find(':')) + "{"
-            + std::to_string(entity) + "}";
-        std::string value = source_hook.substr(source_hook.find(':') + 1);
-        auto ref = this->get_hooked_value<T>(comp, value);
+        std::optional<std::reference_wrapper<T>> ref;
+
+        if (scope == "self") {
+          std::string hook_key = comp_name + "{" + std::to_string(entity) + "}";
+          ref = this->get_hooked_value<T>(hook_key, value_name);
+        } else if (scope == "global") {
+          auto it = this->_global_hooks.find(comp_name);
+          if (it != this->_global_hooks.end()) {
+            auto any_val = it->second(value_name);
+            if (any_val.has_value()) {
+              ref = std::any_cast<std::reference_wrapper<T>>(any_val.value());
+            }
+          }
+        } else {
+          std::cerr << "Unknown scope: " << scope << "\n";
+          return;
+        }
 
         if (ref.has_value()) {
           auto& components = this->get_components<ComponentType>();
@@ -1088,7 +1122,7 @@ public:
             auto& target_comp = components[entity].value();
 
             auto& hook_map = ComponentType::hook_map();
-            if (hook_map.contains(field_name)) {  // TODO: PROPER ERROR HANDLING
+            if (hook_map.contains(field_name)) {
               std::any field_any = hook_map.at(field_name)(target_comp);
               auto field_ref_wrapper =
                   std::any_cast<std::reference_wrapper<T>>(field_any);
@@ -1112,11 +1146,12 @@ public:
       return ByteArray {};
     };
 
-    std::function<void()> deleter = [this, entity, source_hook]()
+    std::function<void()> deleter = [this, entity, scope, comp_name]()
     {
-      std::string hook_name = source_hook.substr(0, source_hook.find(':')) + "{"
-          + std::to_string(entity) + "}";
-      this->_hooked_components.erase(hook_name);
+      if (scope == "self") {
+        std::string hook_name = comp_name + "{" + std::to_string(entity) + "}";
+        this->_hooked_components.erase(hook_name);
+      }
     };
 
     _bindings.emplace_back(entity,
@@ -1184,42 +1219,46 @@ public:
   // Multi-scene system for organizing entities into logical layers.
   //
   // Scenes allow you to organize entities into separate contexts (menu,
-  // gameplay, HUD, pause screen, etc.). Each scene has a state (MAIN, ACTIVE,
+  // gameplay, HUD, pause screen, etc.). Each scene has a state (ACTIVE,
   // DISABLED) that controls whether its entities are processed by systems.
   //
   // Scene States:
-  // - MAIN: Primary active scene (only one allowed, typically gameplay)
-  // - ACTIVE: Active but not primary (overlays, HUD, UI layers)
+  // - ACTIVE: Scene is active, entities are processed by systems
   // - DISABLED: Scene exists but entities are not processed
+  // - ACTIVE: Scene is active and entities are processed
+  // - MAIN: Primary active scene, always processed (highest priority)
   //
   // System Iteration:
   // The Zipper class automatically filters entities - systems only iterate over
-  // entities in MAIN and ACTIVE scenes. DISABLED scenes are skipped entirely.
+  // entities in ACTIVE and MAIN scenes by default. DISABLED scenes are skipped
+  // entirely.
   //
   // Common Patterns:
-  // - Gameplay + HUD: Set gameplay as MAIN, HUD as ACTIVE
-  // - Menu switching: Disable old MAIN, enable new scene as MAIN
-  // - Pause overlay: Set pause menu as ACTIVE over gameplay MAIN
+  // - Gameplay + HUD: Both scenes ACTIVE
+  // - Menu switching: Deactivate old scene, activate new scene
+  // - Pause overlay: Push pause scene on top of gameplay (both ACTIVE)
+  // - Scene stacking: Multiple ACTIVE scenes processed together
   //
   // Scene Lifecycle:
-  // 1. add_scene() - Register scene with initial state
-  // 2. set_current_scene() - Activate scene (sets to MAIN or ACTIVE)
-  // 3. remove_current_scene() - Deactivate specific scene
-  // 4. remove_all_scenes() - Clear all active scenes
+  // 1. add_scene() - Register scene with initial state (default DISABLED)
+  // 2. activate_scene() - Make scene active
+  // 3. deactivate_scene() - Make scene inactive
+  // 4. push_scene()/pop_scene() - Stack-based scene management
+  // 5. deactivate_all_scenes() - Clear all active scenes
 
   /**
    * @brief Register a scene with the given name and initial state.
    *
    * Creates a scene entry in the Registry's scene management system. The scene
-   * can later be activated/deactivated with set_current_scene() and
-   * remove_current_scene().
+   * can later be activated/deactivated with activate_scene() and
+   * deactivate_scene().
    *
    * This does NOT create entities - it only registers the scene metadata.
    * Entities are associated with scenes via the Scene component, typically
    * added during EntityLoader::load_entity().
    *
    * @param scene_name Unique identifier for the scene
-   * @param state Initial activation state (MAIN, ACTIVE, or DISABLED)
+   * @param state Initial activation state (default: DISABLED)
    *
    * @note If scene already exists, this updates its state
    * @note Scene names must be unique
@@ -1227,30 +1266,17 @@ public:
    *
    * @code
    * registry.init_scene_management();
-   * registry.add_scene("menu", SceneState::MAIN);
+   * registry.add_scene("menu", SceneState::ACTIVE);
    * registry.add_scene("hud", SceneState::ACTIVE);
-   * registry.add_scene("gameplay", SceneState::DISABLED);
-   * @endcode
-   *
-   * @code
-   * void load_level(Registry& r, const std::string& level_name) {
-   *   // Register level scene as disabled initially
-   *   r.add_scene(level_name, SceneState::DISABLED);
-   *
-   *   // Load level entities (they get Scene component automatically)
-   *   EntityLoader loader(r);
-   *   loader.load_entity("level_config.json");
-   *
-   *   // Activate when ready
-   *   r.set_current_scene(level_name);
-   * }
+   * registry.add_scene("gameplay");  // Defaults to DISABLED
    * @endcode
    *
    * @see init_scene_management() must be called first
-   * @see set_current_scene() to activate the scene
+   * @see activate_scene() to activate the scene
    * @see SceneState enum for state meanings
    */
-  void add_scene(std::string const& scene_name, SceneState state);
+  void add_scene(std::string const& scene_name,
+                 SceneState state = SceneState::DISABLED);
 
   /**
    * @brief Initialize the scene management system.
@@ -1264,7 +1290,7 @@ public:
    * @code
    * Registry registry;
    * registry.init_scene_management();  // Enable scenes
-   * registry.add_scene("menu", SceneState::MAIN);
+   * registry.add_scene("menu", SceneState::ACTIVE);
    * @endcode
    *
    * @see add_scene() to register scenes
@@ -1285,7 +1311,7 @@ public:
    * @code
    * registry.init_scene_management();
    * registry.setup_scene_systems();  // Enable automatic scene handling
-   * registry.add_scene("gameplay", SceneState::MAIN);
+   * registry.add_scene("gameplay", SceneState::ACTIVE);
    * @endcode
    *
    * @see init_scene_management() must be called first
@@ -1338,6 +1364,27 @@ public:
    * @see get_current_scene() to query active scenes
    */
   void set_current_scene(std::string const& scene_name);
+
+  /**
+   * @brief Set a scene as the MAIN scene.
+   *
+   * Sets the scene to MAIN state (highest priority). Entities in this scene
+   * will always be processed by systems.
+   *
+   * @param scene_name Name of the scene to set as MAIN
+   *
+   * @note Multiple scenes can be MAIN simultaneously
+   * @note Scene must be registered with add_scene() first
+   *
+   * @code
+   * registry.set_main_scene("gameplay");
+   * registry.set_current_scene("hud");  // ACTIVE overlay over MAIN gameplay
+   * @endcode
+   *
+   * @see set_current_scene() to set scene as ACTIVE
+   * @see add_scene() to register scenes
+   */
+  void set_main_scene(std::string const& scene_name);
 
   /**
    * @brief Deactivate a specific scene.
@@ -1433,6 +1480,110 @@ public:
    * @see is_in_current_scene() to check specific entity
    */
   std::vector<std::string> const& get_current_scene() const;
+
+  /**
+   * @brief Activate a scene.
+   *
+   * Sets the scene to ACTIVE state. Entities with this scene's Scene component
+   * will be processed by systems.
+   *
+   * @param scene_name Name of the scene to activate
+   *
+   * @note If scene doesn't exist, it will be auto-created as DISABLED then
+   * activated
+   * @note This supports dynamic scene creation from server/network
+   * @note If scene is already active, this is a no-op
+   * @note Multiple scenes can be active simultaneously
+   *
+   * @code
+   * registry.activate_scene("gameplay");
+   * registry.activate_scene("hud");  // Both active now
+   *
+   * // Auto-creates "lobby" scene if it doesn't exist
+   * registry.activate_scene("lobby");  // Server-sent scene
+   * @endcode
+   */
+  void activate_scene(std::string const& scene_name);
+
+  /**
+   * @brief Deactivate a scene.
+   *
+   * Sets the scene to DISABLED state. Entities in this scene will no longer
+   * be processed by systems until the scene is reactivated.
+   *
+   * @param scene_name Name of the scene to deactivate
+   *
+   * @note Safe to call with non-existent scene names (no-op)
+   * @note Scene can be reactivated later with activate_scene()
+   */
+  void deactivate_scene(std::string const& scene_name);
+
+  /**
+   * @brief Deactivate all scenes.
+   *
+   * Sets all scenes to DISABLED state. No entities will be processed by
+   * systems until scenes are reactivated.
+   */
+  void deactivate_all_scenes();
+
+  /**
+   * @brief Push a scene onto the active scene stack.
+   *
+   * Activates a scene and adds it to the top of the scene stack. This is
+   * useful for overlay scenes like pause menus or popups.
+   *
+   * @param scene_name Name of the scene to push
+   */
+  void push_scene(std::string const& scene_name);
+
+  /**
+   * @brief Pop a scene from the active scene stack.
+   *
+   * Deactivates a scene and removes it from the scene stack.
+   *
+   * @param scene_name Name of the scene to pop
+   */
+  void pop_scene(std::string const& scene_name);
+
+  /**
+   * @brief Check if a scene is currently active.
+   *
+   * @param scene_name Name of the scene to check
+   * @return true if the scene is active, false otherwise
+   */
+  bool is_scene_active(std::string const& scene_name) const;
+
+  /**
+   * @brief Get the state of a scene.
+   *
+   * @param scene_name Name of the scene
+   * @return The scene's state, or DISABLED if scene doesn't exist
+   */
+  SceneState get_scene_state(std::string const& scene_name) const;
+
+  /**
+   * @brief Get the set of active scene names for O(1) lookups.
+   *
+   * @return Unordered set of active scene names
+   * @note Used internally by Zipper for efficient filtering
+   */
+  std::unordered_set<std::string> const& get_active_scenes_set() const;
+
+  /**
+   * @brief Get the scene states map.
+   *
+   * @return Unordered map of scene names to their states
+   * @note Used internally by Zipper for scene level filtering
+   */
+  std::unordered_map<std::string, SceneState> const& get_scene_states() const;
+
+  /**
+   * @brief Get list of currently active scene names (ordered).
+   *
+   * @return Vector of active scene names in stack order
+   * @deprecated Use get_active_scenes_set() for most use cases
+   */
+  std::vector<std::string> const& get_active_scenes() const;
 
   Clock& clock();
 
@@ -1585,6 +1736,45 @@ public:
   }
 
   /**
+   * @brief Register a global hook for singleton components
+   *
+   * Registers a component hook accessible via the "global" scope in the new
+   * hook syntax. Global hooks are used for singleton components like
+   * GameConfig, LevelSettings, etc. that should be accessible from any entity.
+   *
+   * @tparam T Component type (must satisfy hookable concept)
+   * @param name Global hook identifier (e.g., "GameConfig")
+   * @param e Entity containing the singleton component
+   *
+   * @note Use this for singletons/global configuration components
+   * @note Accessible via #global:Name:field syntax
+   *
+   * @code
+   * // Register global game config
+   * Entity config = registry.spawn_entity();
+   * registry.add_component<GameConfig>(config);
+   * registry.register_global_hook<GameConfig>("GameConfig", config);
+   *
+   * // Now accessible from any entity:
+   * // {"speed": "#global:GameConfig:maxSpeed"}
+   * @endcode
+   */
+  template<hookable T>
+  void register_global_hook(std::string const& name, Entity const& e)
+  {
+    this->_global_hooks.insert_or_assign(
+        name,
+        [this, e](std::string const& key) -> std::optional<std::any>
+        {
+          auto& array = this->get_components<T>();
+          if (e >= array.size() || !array[e].has_value()) {
+            return std::nullopt;
+          }
+          return T::hook_map().at(key)(array[e].value());
+        });
+  }
+
+  /**
    * @brief Retrieve a reference to a hooked component field.
    *
    * Returns a reference to a specific field of a hooked component. The
@@ -1699,6 +1889,33 @@ public:
   {
     auto const& tmp = std::any_cast<std::optional<std::any>>(
         this->_hooked_components.at(comp)(value));
+    if (!tmp.has_value()) {
+      return std::nullopt;
+    }
+    return std::any_cast<std::reference_wrapper<T>>(tmp.value());
+  }
+
+  /**
+   * @brief Retrieve a reference to a global hooked component field
+   *
+   * Similar to get_hooked_value() but for global (singleton) components.
+   * Returns a reference to a field from a globally registered component.
+   *
+   * @tparam T Field type
+   * @param name Global hook name (from register_global_hook())
+   * @param value Field name
+   * @return Optional reference to the field, or std::nullopt if not found
+   */
+  template<typename T>
+  std::optional<std::reference_wrapper<T>> get_global_hooked_value(
+      std::string const& name, std::string const& value)
+  {
+    auto it = this->_global_hooks.find(name);
+    if (it == this->_global_hooks.end()) {
+      return std::nullopt;
+    }
+
+    auto const& tmp = std::any_cast<std::optional<std::any>>(it->second(value));
     if (!tmp.has_value()) {
       return std::nullopt;
     }
@@ -1969,17 +2186,22 @@ public:
    */
   std::vector<ComponentState> get_state();
 
+  ByteArray get_byte_entity(Entity entity);
+
 private:
   struct Binding
   {
     Entity target_entity;  ///< Entity containing the target component
     std::type_index target_component;  ///< Type of the target component
     std::string target_field;  ///< Field name to update
-    std::string source_hook;  ///< Hook string (e.g., "player:position")
+    std::string source_hook;  ///< Hook string (e.g., "self:Position:x")
     std::function<void()> updater;  ///< Copies value from hook to field
     std::function<void()> deleter;  ///< Cleans up binding
     std::function<ByteArray()>
         serializer;  ///< Serializes component for network sync
+    ByteArray
+        last_serialized_value;  ///< Last serialized value for dirty tracking
+    bool is_dirty = true;  ///< Force first update
 
     Binding(Entity e,
             std::type_index ti,
@@ -1997,6 +2219,23 @@ private:
         , serializer(std::move(s))
     {
     }
+
+    /**
+     * @brief Updates the binding and checks if the value changed
+     * @return true if value changed, false otherwise
+     */
+    bool update_and_check_dirty()
+    {
+      updater();
+      ByteArray new_value = serializer();
+
+      if (new_value != last_serialized_value || is_dirty) {
+        last_serialized_value = std::move(new_value);
+        is_dirty = false;
+        return true;
+      }
+      return false;
+    }
   };
 
   std::unordered_map<std::type_index, std::any> _components;
@@ -2010,6 +2249,9 @@ private:
   std::unordered_map<std::string,
                      std::function<std::optional<ByteArray>(Entity const&)>>
       _component_bytes_getters;
+  std::unordered_map<std::type_index,
+                     std::function<std::optional<ByteArray>(Entity)>>
+      _component_getter;
   TwoWayMap<std::type_index, std::string> _index_getter;
 
   std::unordered_map<
@@ -2026,10 +2268,14 @@ private:
 
   std::unordered_map<std::string, SceneState> _scenes;
   std::vector<std::string> _current_scene;
+  std::unordered_set<std::string> _active_scenes_set;  // O(1) lookup for Zipper
 
   std::unordered_map<std::string,
                      std::function<std::optional<std::any>(std::string const&)>>
       _hooked_components;
+  std::unordered_map<std::string,
+                     std::function<std::optional<std::any>(std::string const&)>>
+      _global_hooks;
   std::vector<Binding> _bindings;
 
   std::unordered_map<std::string, JsonObject> _entities_templates;

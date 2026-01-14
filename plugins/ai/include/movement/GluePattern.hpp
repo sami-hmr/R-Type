@@ -29,9 +29,9 @@ public:
   {
     auto target_id =
         get_value_copy<int>(registry, behavior.params, "target_id");
-    double radius = get_value_copy<int>(registry, behavior.params, "radius")
+    double radius = get_value_copy<int>(registry, behavior.params, "zone_radius")
                         .value_or(DEFAULT_RADIUS);
-    std::string parasite_behavior = get_value_copy<std::string>(registry, behavior.params, "behavior")
+    std::string parasite_behavior = get_value_copy<std::string>(registry, behavior.params, "parasite_behavior")
                         .value_or(DEFAULT_BEHAVIOR);
 
     if (!target_id.has_value()) {

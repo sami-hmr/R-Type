@@ -9,23 +9,24 @@
 #include "NetworkShared.hpp"
 #include "ecs/EmitEvent.hpp"
 #include "ecs/EventManager.hpp"
-#include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/Scenes.hpp"
 #include "network/server/BaseServer.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
+#include "plugin/events/HttpEvents.hpp"
 #include "plugin/events/NetworkEvents.hpp"
 #include "plugin/events/SceneChangeEvent.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
 
 RtypeServer::RtypeServer(Registry& r, EventManager& em, EntityLoader& l)
-    : BaseServer("rtype_server", r, em, l)
+    : BaseServer("rtype_server", "r-type", r, em, l)
 {
   SUBSCRIBE_EVENT(NewConnection, {
     std::size_t entity = this->_registry.get().spawn_entity();
 
+    this->_users_entities[event.user_id] = entity;
     std::cout << "PLAYER CREATION\n";
     this->_event_manager.get().emit<EventBuilderId>(
         event.client,
@@ -37,21 +38,11 @@ RtypeServer::RtypeServer(Registry& r, EventManager& em, EntityLoader& l)
   })
 
   SUBSCRIBE_EVENT(PlayerCreated, {
-    this->_event_manager.get().emit<StateTransfer>(event.client_id);
-
-    this->_event_manager.get().emit<EventBuilderId>(
-        event.client_id,
-        "SceneChangeEvent",
-        SceneChangeEvent("loby", "", true).to_bytes());
-
-    this->_loader.get().load_components(
-        event.server_index, JsonObject({{"template", JsonValue("player")}}));
-    init_component<Scene>(this->_registry.get(),
-                          this->_event_manager.get(),
-                          event.server_index,
-                          "game",
-                          SceneState::ACTIVE);
+    auto user_id = this->get_user_by_client(event.client_id);
+    this->ask_player_save(user_id);
   })
+
+  SUBSCRIBE_EVENT(SavePlayer, { this->save_player(event.user); })
 
   SUBSCRIBE_EVENT(PlayerReady, {
     if (!this->_player_ready.contains(event.client_id)) {

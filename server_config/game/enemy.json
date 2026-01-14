@@ -77,8 +77,8 @@
             "x": "10.0%",
             "y": "1.0%"
           },
-          "max_value": "#enemy_wave_health_1:max",
-          "current_value": "#enemy_wave_health_1:current",
+          "max_value": "#self:enemy_wave_health_1:max",
+          "current_value": "#self:enemy_wave_health_1:current",
           "offset": {
             "x": 0.0,
             "y": -0.12
@@ -198,8 +198,8 @@
             "x": "10.0%",
             "y": "1.0%"
           },
-          "max_value": "#enemy_zigzag_health_1:max",
-          "current_value": "#enemy_zigzag_health_1:current",
+          "max_value": "#self:enemy_zigzag_health_1:max",
+          "current_value": "#self:enemy_zigzag_health_1:current",
           "offset": {
             "x": 0.0,
             "y": -0.12
@@ -319,8 +319,8 @@
             "x": "10.0%",
             "y": "1.0%"
           },
-          "max_value": "#enemy_turret_health_1:max",
-          "current_value": "#enemy_turret_health_1:current",
+          "max_value": "#self:enemy_turret_health_1:max",
+          "current_value": "#self:enemy_turret_health_1:current",
           "offset": {
             "x": 0.0,
             "y": -0.12
@@ -453,8 +453,8 @@
             "x": "10.0%",
             "y": "1.0%"
           },
-          "max_value": "#enemy_straight_health_1:max",
-          "current_value": "#enemy_straight_health_1:current",
+          "max_value": "#self:enemy_straight_health_1:max",
+          "current_value": "#self:enemy_straight_health_1:current",
           "offset": {
             "x": 0.0,
             "y": -0.12
@@ -585,8 +585,8 @@
             "x": "10.0%",
             "y": "1.0%"
           },
-          "max_value": "#enemy_circle_health_1:max",
-          "current_value": "#enemy_circle_health_1:current",
+          "max_value": "#self:enemy_circle_health_1:max",
+          "current_value": "#self:enemy_circle_health_1:current",
           "offset": {
             "x": 0.0,
             "y": -0.12
@@ -717,8 +717,8 @@
             "x": "10.0%",
             "y": "1.0%"
           },
-          "max_value": "#enemy_follow_health_1:max",
-          "current_value": "#enemy_follow_health_1:current",
+          "max_value": "#self:enemy_follow_health_1:max",
+          "current_value": "#self:enemy_follow_health_1:current",
           "offset": {
             "x": 0.0,
             "y": -0.12

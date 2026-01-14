@@ -90,8 +90,7 @@ void EntityLoader::load_scene(JsonObject& json_scene)
       std::optional<Registry::Entity> new_e =
           this->load_entity(std::get<JsonObject>(it.value));
       if (new_e.has_value()) {
-        this->_registry.get().add_component(new_e.value(),
-                                            Scene(scene, scene_state));
+        this->_registry.get().add_component(new_e.value(), Scene(scene));
       }
     }
   }
@@ -110,8 +109,8 @@ void EntityLoader::load_file(std::string const& filepath)
 
   Result<JsonObject> result = parseJsonObject()(Rest(str));
 
-  if (result.index() == ERROR) {
-    printError(std::get<ERROR>(result), str, filepath);
+  if (result.index() == ERR) {
+    printError(std::get<ERR>(result), str, filepath);
   } else {
     JsonObject r = std::get<SUCCESS>(result).value;
     try {

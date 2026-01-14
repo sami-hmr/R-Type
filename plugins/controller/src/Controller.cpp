@@ -86,7 +86,9 @@ void Controller::init_event_map(Registry::Entity const& entity,
   for (auto& it : events) {
     auto& event = std::get<JsonObject>(it.value);
     auto description = get_value_copy<std::string>(
-        this->_registry.get(), event, "description"); // insert description into the bindings
+        this->_registry.get(),
+        event,
+        "description");  // insert description into the bindings
     auto key_string =
         get_value_copy<std::string>(this->_registry.get(), event, "key");
     auto press =
@@ -113,13 +115,15 @@ void Controller::init_event_map(Registry::Entity const& entity,
     }
     if (press) {
       if (!handling_press_release_binding(
-        entity, result, *press, *key_string, KEY_PRESSED)) {
+              entity, result, *press, *key_string, KEY_PRESSED))
+      {
         continue;
       }
     }
     if (release) {
       if (!handling_press_release_binding(
-        entity, result, *release, *key_string, KEY_RELEASED)) {
+              entity, result, *release, *key_string, KEY_RELEASED))
+      {
         continue;
       }
     }
@@ -161,8 +165,8 @@ void Controller::handle_key_change(Key key, bool is_pressed)
                      event.second);
         });
   }
-  for (auto const &it : to_emit) {
-      it();
+  for (auto const& it : to_emit) {
+    it();
   }
 };
 

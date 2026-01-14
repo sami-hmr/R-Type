@@ -121,7 +121,7 @@ void Mob::parasite_system(Registry& r)
       continue;
     }
     JsonObject params;
-    params.emplace("target_id", static_cast<int>(parasite.entity_id.value()));
+    params.emplace("target_id", JsonValue(static_cast<int>(parasite.entity_id.value())));
 
     if (this->_registry.get().has_component<MovementBehavior>(i)) {
       auto& behavior =

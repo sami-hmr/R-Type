@@ -15,6 +15,10 @@
           "config": {}
         },
         {
+          "name": "cli",
+          "config": {}
+        },
+        {
           "name": "controller",
           "config": {}
         },
@@ -122,6 +126,54 @@
       "plugins": [],
       "entities": [
         {
+          "ui:Drawable": {},
+          "moving:Position": {
+            "pos": {
+              "x": -0.0,
+              "y": -0.0
+            }
+          },
+          "ui:input": {
+            "hook": "my_input_buffer",
+            "buffer": "server address:",
+            "enabled": false
+          },
+          "collision:Collidable": {
+            "collision_type": "Trigger",
+            "height": 0.1,
+            "width": 0.3
+          },
+          "ui:Text": {
+            "font": "assets/fonts/roboto.ttf",
+            "size": {
+              "width": "60.0%",
+              "height": "30.0%"
+            },
+            "fill_color": {
+              "r": 255,
+              "g": 255,
+              "b": 255,
+              "a": 255
+            },
+            "outline_color": {
+              "r": 0,
+              "g": 0,
+              "b": 0,
+              "a": 255
+            },
+            "outline_thickness": 30.0,
+            "outline": true,
+            "text": "#my_input_buffer:buffer"
+          },
+          "ath:Clickable": {
+            "to_emit": [
+              {
+                "InputFocusEvent": {}
+              }
+            ]
+          }
+        },
+        {
           "moving:Position": {
             "pos": {
               "x": 0.0,
@@ -163,8 +215,8 @@
           "ui:Text": {
             "font": "assets/fonts/roboto.ttf",
             "size": {
-              "width": "80.0%",
-              "height": "30.0%"
+              "width": "0.0%",
+              "height": "0.0%"
             },
             "fill_color": {
               "r": 255,
@@ -180,7 +232,14 @@
             },
             "outline_thickness": 30.0,
             "outline": true,
-            "text": "appuis sur ce bouton pour te connecter au server"
+            "text": "#global:server_address_:buffer"
+          },
+
+          "ui:input": {
+            "hook": "server_address_",
+            "global_hook": true,
+            "buffer": "hook",
+            "enabled": true
           }
         },
         {
@@ -222,8 +281,8 @@
                   "y": 0.0
                 },
                 "sprite_size": {
-                  "width": "30.0%",
-                  "height": "30.0%"
+                  "width": "28.0%",
+                  "height": "28.0%"
                 },
                 "direction": {
                   "x": 0.0,
@@ -267,7 +326,6 @@
               {
                 "SceneChangeEvent": {
                   "target_scene": "connecting",
-                  "state": "main",
                   "reason": "User clicked connect button",
                   "force": false
                 }
@@ -287,8 +345,8 @@
             }
           },
           "collision:Collidable": {
-            "width": 0.2,
-            "height": 0.2,
+            "width": 0.3,
+            "height": 0.15,
             "collision_type": "solid"
           },
           "ath:Button": {

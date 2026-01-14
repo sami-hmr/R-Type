@@ -46,7 +46,6 @@ struct SceneChangeEvent
   SceneChangeEvent(Registry& r, JsonObject const& e)
       : target_scene(
             get_value_copy<std::string>(r, e, "target_scene").value_or(""))
-      , state(get_value_copy<std::string>(r, e, "state").value_or(""))
       , reason(get_value_copy<std::string>(r, e, "reason").value_or(""))
       , force(get_value_copy<bool>(r, e, "force").value_or(false))
   {
@@ -55,7 +54,6 @@ struct SceneChangeEvent
   CHANGE_ENTITY_DEFAULT
 
   std::string target_scene;
-  std::string state;
   std::string reason;
   bool force;
 };
