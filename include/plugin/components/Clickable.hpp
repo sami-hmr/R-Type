@@ -31,7 +31,7 @@ struct Clickable
 
   DEFAULT_SERIALIZE(vector_to_byte(
       to_emit,
-      std::function<ByteArray(const std::pair<std::string, JsonObject> &)>(
+      std::function<ByteArray(const std::pair<std::string, JsonObject>&)>(
           [](const std::pair<std::string, JsonObject>& p)
           {
             return pair_to_byte(
