@@ -218,21 +218,24 @@ std::optional<Registry::Entity> EntityLoader::load_entity(
   return new_entity;
 }
 
-std::optional<Registry::Entity> EntityLoader::load_entity_template(std::string const &template_name, std::vector<std::pair<std::string, ByteArray>> const& aditionals) {
-      auto const& entity = this->load_entity(
-        JsonObject({{"template", JsonValue(template_name)}}));
+std::optional<Registry::Entity> EntityLoader::load_entity_template(
+    std::string const& template_name,
+    std::vector<std::pair<std::string, ByteArray>> const& aditionals)
+{
+  auto const& entity =
+      this->load_entity(JsonObject({{"template", JsonValue(template_name)}}));
 
-    if (!entity) {
-      // LOGGER("load entity template",
-      //        LogLevel::ERROR,
-      //        "failed to load entity template " + event.template_name);
-      return std::nullopt;
-    }
-    for (auto const& [id, comp] : aditionals) {
-      init_component(
-          this->_registry.get(), this->_event_manager.get(), *entity, id, comp);
-    }
-    return entity;
+  if (!entity) {
+    // LOGGER("load entity template",
+    //        LogLevel::ERROR,
+    //        "failed to load entity template " + event.template_name);
+    return std::nullopt;
+  }
+  for (auto const& [id, comp] : aditionals) {
+    init_component(
+        this->_registry.get(), this->_event_manager.get(), *entity, id, comp);
+  }
+  return entity;
 }
 
 void EntityLoader::get_loader(std::string const& plugin)

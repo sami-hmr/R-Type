@@ -105,8 +105,8 @@ BaseServer::BaseServer(std::string const& name,
           return;
         }
 
-        for (auto const& it :
-             this->_server_class->watch_disconected_clients()) {
+        for (auto const& it : this->_server_class->watch_disconected_clients())
+        {
           this->_event_manager.get().emit<DisconnectClient>(it);
         }
       });
