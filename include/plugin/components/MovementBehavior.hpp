@@ -26,7 +26,10 @@ struct MovementBehavior
   {
   }
 
-  MovementBehavior(std::string type, double movement_delta, double last_update, JsonObject p)
+  MovementBehavior(std::string type,
+                   double movement_delta,
+                   double last_update,
+                   JsonObject p)
       : movement_type(std::move(type))
       , movement_delta(movement_delta)
       , last_update(last_update)

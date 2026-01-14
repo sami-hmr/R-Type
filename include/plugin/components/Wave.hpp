@@ -181,15 +181,18 @@ struct Wave
                            parseByte<bool>(),
                            parseByteArray(parseByteString()))
 
-  DEFAULT_SERIALIZE(type_to_byte(id),
-                    string_to_byte(entity_template),
-                    type_to_byte(count),
-                    pattern.to_bytes(),
-                    vector_to_byte<OnEndEvent>(on_end, std::function<ByteArray(OnEndEvent const &)>([](OnEndEvent const &event) {return event.to_bytes();})),
-                    type_to_byte(tracked),
-                    type_to_byte(spawned),
-                    vector_to_byte<std::string>(components_inheritance,
-                                                string_to_byte))
+  DEFAULT_SERIALIZE(
+      type_to_byte(id),
+      string_to_byte(entity_template),
+      type_to_byte(count),
+      pattern.to_bytes(),
+      vector_to_byte<OnEndEvent>(on_end,
+                                 std::function<ByteArray(OnEndEvent const&)>(
+                                     [](OnEndEvent const& event)
+                                     { return event.to_bytes(); })),
+      type_to_byte(tracked),
+      type_to_byte(spawned),
+      vector_to_byte<std::string>(components_inheritance, string_to_byte))
 
   std::size_t id = 0;
   std::string entity_template;
