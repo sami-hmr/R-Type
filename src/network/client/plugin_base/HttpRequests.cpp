@@ -25,12 +25,11 @@ void BaseClient::setup_http_requests()
         }
       });
 
-  SUBSCRIBE_EVENT_PRIORITY(FetchAvailableServers, { this->handle_server_fetch(); }, 10)
+  SUBSCRIBE_EVENT_PRIORITY(
+      FetchAvailableServers, { this->handle_server_fetch(); }, 10)
   SUBSCRIBE_EVENT(Register, { this->handle_register(event); })
   SUBSCRIBE_EVENT(Login, { this->handle_login(event); })
-  SUBSCRIBE_EVENT(Logout, {
-    this->_user_id = -1;
-  })
+  SUBSCRIBE_EVENT(Logout, { this->_user_id = -1; })
 }
 
 void handle_fetch_servers(void* raw_context, httplib::Result const& result)

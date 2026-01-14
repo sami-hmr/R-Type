@@ -58,7 +58,6 @@ struct SceneChangeEvent
   bool force;
 };
 
-
 struct DisableSceneEvent
 {
   DisableSceneEvent() = default;
@@ -68,11 +67,10 @@ struct DisableSceneEvent
   {
   }
 
-  DEFAULT_BYTE_CONSTRUCTOR(
-      DisableSceneEvent,
-      ([](std::string const& t)
-       { return DisableSceneEvent(t); }),
-      parseByteString())
+  DEFAULT_BYTE_CONSTRUCTOR(DisableSceneEvent,
+                           ([](std::string const& t)
+                            { return DisableSceneEvent(t); }),
+                           parseByteString())
 
   DEFAULT_SERIALIZE(string_to_byte(this->target_scene))
 

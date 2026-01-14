@@ -44,13 +44,12 @@ static int true_main(Registry& r,
                             return false;
                           });
 
-      em.on<DisableSceneEvent>("DisableSceneEvent",
-                          [&r](const DisableSceneEvent& event) -> bool
-                          {
-                            r.deactivate_scene(event.target_scene);
-                            return false;
-                          });
-
+  em.on<DisableSceneEvent>("DisableSceneEvent",
+                           [&r](const DisableSceneEvent& event) -> bool
+                           {
+                             r.deactivate_scene(event.target_scene);
+                             return false;
+                           });
 
   em.on<SpawnEntityRequestEvent>(
       "SpawnEntity",

@@ -60,7 +60,6 @@ struct FetchAvailableServersSuccessfull
   HOOKABLE(FetchAvailableServersSuccessfull)
 };
 
-
 struct ExposeServer
 {
   std::string host;
@@ -163,7 +162,6 @@ struct Login
 
   CHANGE_ENTITY_DEFAULT
 };
-
 
 struct Logout
 {
