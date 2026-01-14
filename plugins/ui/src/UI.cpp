@@ -3,6 +3,7 @@
 #include "ecs/EventManager.hpp"
 #include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
+#include "ecs/zipper/Zipper.hpp"
 #include "libs/Color.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
@@ -67,6 +68,9 @@ UI::UI(Registry& r,
     AnimatedSprite::on_death(
         this->_registry.get(), this->_event_manager.get(), event);
   })
+
+  SUBSCRIBE_EVENT(MousePressedEvent, { disable_all_inputs(); })
+
   SUBSCRIBE_EVENT(MousePressedEvent,
                   { on_click_slider(this->_registry.get(), event); });
   SUBSCRIBE_EVENT(MouseReleasedEvent,
@@ -113,7 +117,6 @@ void UI::init_text(Registry::Entity const& entity, JsonObject const& obj)
                  "string)\n";
     return;
   }
-
   Vector2D scale(0.1, 0.1);
   if (obj.contains("size")) {
     scale = get_value<Text, Vector2D>(
@@ -164,12 +167,20 @@ void UI::init_text(Registry::Entity const& entity, JsonObject const& obj)
     return;
   }
 
+  std::string placeholder;
+  if (obj.contains("placeholder")) {
+    placeholder = get_value<Text, std::string>(
+                      this->_registry.get(), obj, entity, "placeholder")
+                      .value();
+  }
+
   init_component(this->_registry.get(),
                  this->_event_manager.get(),
                  entity,
                  Text(font_path.value(),
                       scale,
                       text,
+                      placeholder,
                       outline_color.value(),
                       fill_color.value(),
                       outline.value(),
@@ -461,6 +472,12 @@ void UI::init_cam(Registry::Entity const& entity, JsonObject const& obj)
                  this->_event_manager.get(),
                  entity,
                  Camera(size, target, speed));
+}
+
+void UI::disable_all_inputs() {
+  for (auto &&[input] : Zipper<Input>(this->_registry.get())) {
+    input.enabled = false;
+  }
 }
 
 extern "C"

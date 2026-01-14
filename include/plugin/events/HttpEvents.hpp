@@ -4,6 +4,34 @@
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
 
+struct HttpBadCodeEvent
+{
+  std::size_t code;
+  std::string message;
+
+  HttpBadCodeEvent(std::size_t code, std::string message)
+      : code(code)
+      , message(std::move(message))
+  {
+  }
+
+  HttpBadCodeEvent(Registry& r, JsonObject const& e)
+      : code(get_value_copy<int>(r, e, "code").value())
+      , message(get_value_copy<std::string>(r, e, "message").value())
+  {
+  }
+
+  DEFAULT_BYTE_CONSTRUCTOR(HttpBadCodeEvent,
+                           ([](std::size_t code, std::string const& m)
+                            { return HttpBadCodeEvent(code, m); }),
+                           parseByte<std::size_t>(),
+                           parseByteString())
+
+  DEFAULT_SERIALIZE(type_to_byte(code), string_to_byte(message))
+
+  CHANGE_ENTITY_DEFAULT
+};
+
 struct FetchAvailableServers
 {
   FetchAvailableServers() = default;
@@ -70,6 +98,29 @@ struct Register
   CHANGE_ENTITY_DEFAULT
 };
 
+struct LoginSuccessfull
+{
+  int user;
+
+  LoginSuccessfull(int u)
+      : user(u)
+  {
+  }
+
+  LoginSuccessfull(Registry& r, JsonObject const& e)
+      : user(get_value_copy<int>(r, e, "user").value())
+  {
+  }
+
+  DEFAULT_BYTE_CONSTRUCTOR(LoginSuccessfull,
+                           ([](int u) { return LoginSuccessfull(u); }),
+                           parseByte<int>())
+
+  DEFAULT_SERIALIZE(type_to_byte(user))
+
+  CHANGE_ENTITY_DEFAULT
+};
+
 struct Login
 {
   std::string identifier;
@@ -96,6 +147,20 @@ struct Login
   DEFAULT_SERIALIZE(string_to_byte(identifier), string_to_byte(password))
 
   CHANGE_ENTITY_DEFAULT
+};
+
+struct FailLogin
+{
+  FailLogin() = default;
+
+  EMPTY_BYTE_CONSTRUCTOR(FailLogin)
+  DEFAULT_SERIALIZE(ByteArray {})
+
+  CHANGE_ENTITY_DEFAULT
+
+  FailLogin(Registry& /* */, JsonObject const& /* */) {}
+
+  HOOKABLE(FailLogin)
 };
 
 struct Save

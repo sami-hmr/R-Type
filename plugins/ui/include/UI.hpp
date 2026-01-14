@@ -43,6 +43,8 @@ private:
 
   void handle_key_pressed(const KeyPressedEvent& event);
   void handle_input_focus(const InputFocusEvent& event);
+
+  void disable_all_inputs();
 };
 
 void on_click_slider(Registry& r, const MousePressedEvent& event);

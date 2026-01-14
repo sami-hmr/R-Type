@@ -16,6 +16,7 @@ struct Text
   Text(std::string font_path,
        Vector2D v,
        std::string t,
+       std::string placeholder,
        Color outline_color,
        Color fill_color,
        bool outline,
@@ -23,6 +24,7 @@ struct Text
       : font_path(std::move(font_path))
       , scale(v)
       , text(std::move(t))
+      , placeholder(std::move(placeholder))
       , outline_color(outline_color)
       , fill_color(fill_color)
       , outline(outline)
@@ -35,7 +37,8 @@ struct Text
                                [](std::string font_path,
                                   double x,
                                   double y,
-                                  std::string text,
+                                  std::string const &text,
+                                  std::string const &placeholder,
                                   Color outline_color,
                                   Color fill_color,
                                   bool outline,
@@ -43,7 +46,8 @@ struct Text
                                {
                                  return Text(std::move(font_path),
                                              Vector2D {x, y},
-                                             std::move(text),
+                                             text,
+                                             placeholder,
                                              outline_color,
                                              fill_color,
                                              outline,
@@ -52,6 +56,7 @@ struct Text
                            parseByteString(),
                            parseByte<double>(),
                            parseByte<double>(),
+                           parseByteString(),
                            parseByteString(),
                            parseColor(),
                            parseColor(),
@@ -62,6 +67,7 @@ struct Text
                     type_to_byte(this->scale.x),
                     type_to_byte(this->scale.y),
                     string_to_byte(this->text),
+                    string_to_byte(this->placeholder),
                     colorToByte(this->outline_color),
                     colorToByte(this->fill_color),
                     type_to_byte<bool>(this->outline),
@@ -72,6 +78,7 @@ struct Text
   std::string font_path;
   Vector2D scale;
   std::string text;
+  std::string placeholder;
   Color outline_color = BLACK;
   Color fill_color = WHITE;
   bool outline = false;
@@ -81,6 +88,7 @@ struct Text
            HOOK(font_path),
            HOOK(scale),
            HOOK(text),
+           HOOK(placeholder),
            HOOK(outline_color),
            HOOK(fill_color),
            HOOK(outline),

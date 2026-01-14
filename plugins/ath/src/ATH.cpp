@@ -22,6 +22,7 @@ static void on_click(Registry& r,
                      EventManager& em,
                      const MousePressedEvent& event)
 {
+  std::vector<std::function<void(void)>> to_emit;
   for (const auto& [e, draw, clickable, pos, collision] :
        ZipperIndex<Drawable, Clickable, Position, Collidable>(r))
   {
@@ -37,10 +38,13 @@ static void on_click(Registry& r,
         std::cout << "Clickable: entity " << e << " clicked, emitting '" << name
                   << "'\n";
         obj.insert_or_assign("entity", JsonVariant(static_cast<int>(e)));
-        emit_event(em, r, name, obj);
+        to_emit.emplace_back([&](){emit_event(em, r, name, obj);});
         std::cout << "Clickable: emitted event '" << name << "'\n";
       }
     }
+  }
+  for (auto const &f : to_emit) {
+    f();
   }
 }
 
@@ -49,6 +53,8 @@ void on_input_focus(Registry& r, const InputFocusEvent& event)
   for (const auto& [e, input] : ZipperIndex<Input>(r)) {
     if (e == event.entity) {
       input.enabled = !input.enabled;
+    } else {
+      input.enabled = false;
     }
   }
 }

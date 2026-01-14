@@ -41,6 +41,7 @@ app.post("/register", async (_req, res) => {
 
 app.post("/login", async (_req, res) => {
   try {
+    console.log(_req.body);
     const hashed_passowrd = hash_password(_req.body.password);
     const id = (
       await db.oneOrNone(

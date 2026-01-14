@@ -15,8 +15,15 @@
 
 void BaseClient::setup_http_requests()
 {
-  this->_registry.get().add_system([this](Registry& /* */)
-                                   { this->_http_client.handle_responses(); });
+  this->_registry.get().add_system(
+      [this](Registry& /* */)
+      {
+        try {
+          this->_http_client.handle_responses();
+        } catch (HttpBadCode const& e) {
+          this->_event_manager.get().emit<HttpBadCodeEvent>(e.code, e.what());
+        }
+      });
 
   SUBSCRIBE_EVENT(FetchAvailableServers, { this->handle_server_fetch(); })
   SUBSCRIBE_EVENT(Register, { this->handle_register(event); })
@@ -26,19 +33,14 @@ void BaseClient::setup_http_requests()
 void handle_fetch_servers(void* raw_context, httplib::Result const& result)
 {
   auto* context = static_cast<BaseClient*>(raw_context);
-  auto parsed = parseJsonArray()(result->body);
+  auto parsed =
+      PARSE_HTTP_BODY((result->body), context, parseJsonArray, JsonArray);
 
-  if (parsed.index() == ERR) {
-    CONTEXT_LOGGER(
-        context,
-        "http",
-        LogLevel::ERROR,
-        ("failed to parse http response: " + std::get<ERR>(parsed).message));
+  if (!parsed) {
     return;
   }
   context->_available_servers.clear();
-  JsonArray const& r = std::get<SUCCESS>(parsed).value;
-  for (auto const& it : r) {
+  for (auto const& it : *parsed) {
     try {
       auto const& obj = std::get<JsonObject>(it.value);
       auto const& id = std::get<int>(obj.at("id").value);
@@ -69,21 +71,20 @@ void handle_login_response(void* raw_context, httplib::Result const& result)
 {
   auto* context = static_cast<BaseClient*>(raw_context);
 
-  auto parsed = parseJsonObject()(result->body);
+  auto parsed =
+      PARSE_HTTP_BODY((result->body), context, parseJsonObject, JsonObject);
 
-  if (parsed.index() == ERR) {
-    CONTEXT_LOGGER(
-        context,
-        "http",
-        LogLevel::ERROR,
-        "failed to parse http response: " + std::get<ERR>(parsed).message);
+  if (!parsed) {
+    context->_event_manager.get().emit<FailLogin>();
     return;
   }
 
-  auto const& obj = std::get<SUCCESS>(parsed).value;
+  auto const& obj = *parsed;
   try {
     auto const& id = std::get<int>(obj.at("id").value);
     context->_user_id = id;
+    context->_event_manager.get().emit<LoginSuccessfull>(id);
+    return;
   } catch (std::bad_variant_access const&) {
     CONTEXT_LOGGER(context,
                    "http",
@@ -95,6 +96,7 @@ void handle_login_response(void* raw_context, httplib::Result const& result)
                    LogLevel::WARNING,
                    "wrong json type in resonse object, skipping");
   }
+  context->_event_manager.get().emit<FailLogin>();
 }
 
 void BaseClient::handle_register(Register const& r)
