@@ -120,7 +120,6 @@
               {
                 "SceneChangeEvent": {
                   "target_scene": "game",
-                  "state": "main",
                   "reason": "User clicked enemy sprite",
                   "force": false
                 }
@@ -128,7 +127,6 @@
               {
                 "SceneChangeEvent": {
                   "target_scene": "camera",
-                  "state": "active",
                   "reason": "User clicked enemy sprite",
                   "force": false
                 }

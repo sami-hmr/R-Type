@@ -3,8 +3,10 @@
 #include <cstdint>
 #include <random>
 
+#include "ByteParser/ByteParser.hpp"
 #include "NetworkCommun.hpp"
 #include "NetworkShared.hpp"
+#include "ParserTypes.hpp"
 #include "network/server/Server.hpp"
 
 const std::unordered_map<std::uint8_t,
@@ -36,16 +38,20 @@ void Server::handle_connectionless_packet(ConnectionlessCommand const& command,
 void Server::handle_getchallenge(ByteArray const& cmd,
                                  const asio::ip::udp::endpoint& sender)
 {
-  if (!cmd.empty()) {
+  auto parsed = parseByte<int>()(cmd);
+  if (parsed.index() == ERR) {
     LOGGER_EVTLESS(LogLevel::WARNING,
                    "server",
-                   "Invalid getchallenge command: command not empty");
+                   "Invalid getchallenge command: invalid user id");
     return;
   }
+
+  auto user_id = std::get<SUCCESS>(parsed).value;
   uint32_t challenge = generate_challenge();
 
   ClientInfo client;
 
+  client.user_id = user_id;
   client.endpoint = sender;
   client.challenge = challenge;
   client.state = ClientState::CHALLENGING;
@@ -81,6 +87,7 @@ void Server::handle_connect(ByteArray const& cmd,
       return;
     }
     uint8_t client_id = this->_c_id_incrementator;
+    int user_id = client.user_id;
     this->_c_id_incrementator++;
 
     client.client_id = client_id;
@@ -99,8 +106,8 @@ void Server::handle_connect(ByteArray const& cmd,
         + type_to_byte<std::uint32_t>(_server_id);
 
     send(pkg, sender);
-    this->transmit_event_to_server(
-        EventBuilder("NewConnection", NewConnection(client_id).to_bytes()));
+    this->transmit_event_to_server(EventBuilder(
+        "NewConnection", NewConnection(client_id, user_id).to_bytes()));
   } catch (ClientNotFound const& e) {
     LOGGER_EVTLESS(
         LogLevel::WARNING,

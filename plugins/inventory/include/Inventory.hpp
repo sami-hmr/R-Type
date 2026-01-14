@@ -6,6 +6,7 @@
 #include "plugin/events/InventoryEvents.hpp"
 
 #define DFLT_MAX 64
+
 class Inventory : public APlugin
 {
 public:

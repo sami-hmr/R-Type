@@ -42,9 +42,9 @@ void Client::handle_connectionless_response(
   }
 }
 
-void Client::send_getchallenge()
+void Client::send_getchallenge(int id)
 {
-  send(type_to_byte<Byte>(GETCHALLENGE));
+  send(type_to_byte<Byte>(GETCHALLENGE) + type_to_byte(id));
 }
 
 void Client::send_connect(std::uint32_t challenge)
