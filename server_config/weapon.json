@@ -255,6 +255,122 @@
           "entity_id": "#gobal:player_id:id"
         }
       }
+    },
+    {
+      "name": "beam_segment",
+      "components": {
+        "ui:Drawable": {},
+        "ui:AnimatedSprite": {
+          "animations": [
+            {
+              "name": "idle",
+              "texture": "assets/beam.png",
+              "frame_size": {
+                "x": 142.0,
+                "y": 142.0
+              },
+              "frame_pos": {
+                "x": 0.0,
+                "y": 0.0
+              },
+              "direction": {
+                "x": 1.0,
+                "y": 0.0
+              },
+              "sprite_size": {
+                "width": "150.0%",
+                "height": "8.0%"
+              },
+              "framerate": 15.0,
+              "nb_frames": 3,
+              "loop": true,
+              "rollback": false
+            }
+          ],
+          "default_animation": "idle"
+        },
+        "moving:Position": {
+          "pos": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        },
+        "moving:Velocity": {
+          "speed": {
+            "x": 0.002,
+            "y": 0.0
+          },
+          "direction": {
+            "x": 1.0,
+            "y": 0.0
+          }
+        },
+        "life:Team": {
+          "name": "test1"
+        },
+        "life:Health": {
+          "current": 1.0,
+          "max": 1.0
+        },
+        "life:Damage": {
+          "amount": 5
+        },
+        "projectile:Temporal": {
+          "lifetime": 0.9
+        },
+        "projectile:Fragile": {
+          "hits": 999
+        },
+        "collision:Collidable": {
+          "width": 1.5,
+          "height": 0.08,
+          "collision_type": "trigger"
+        }
+      }
+    },
+    {
+      "name": "beam_start",
+      "components": {
+        "ui:Drawable": {},
+        "ui:AnimatedSprite": {
+          "animations": [
+            {
+              "name": "idle",
+              "texture": "assets/beam_start.png",
+              "frame_size": {
+                "x": 142.0,
+                "y": 142.0
+              },
+              "frame_pos": {
+                "x": 0.0,
+                "y": 0.0
+              },
+              "direction": {
+                "x": 1.0,
+                "y": 0.0
+              },
+              "sprite_size": {
+                "width": "10.0%",
+                "height": "10.0%"
+              },
+              "framerate": 30.0,
+              "nb_frames": 12,
+              "loop": false,
+              "rollback": false
+            }
+          ],
+          "default_animation": "idle"
+        },
+        "moving:Position": {
+          "pos": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        },
+        "life:Temporal": {
+          "lifetime": 0.4
+        }
+      }
     }
   ],
   "scenes": [
