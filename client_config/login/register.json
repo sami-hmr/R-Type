@@ -78,6 +78,83 @@
                         "text": "#global:register_id_input:buffer",
                         "placeholder": "identifier"
                     },
+                     "ui:AnimatedSprite": {
+                        "animations": [
+                            {
+                                "name": "idle",
+                                "texture": "assets/ui/buttons/start.png",
+                                "frame_size": {
+                                    "x": 410.0,
+                                    "y": 121.0
+                                },
+                                "frame_pos": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "sprite_size": {
+                                    "width": "30.0%",
+                                    "height": "30.0%"
+                                },
+                                "direction": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "framerate": 1.0,
+                                "nb_frames": 1,
+                                "loop": true,
+                                "rollback": false
+                            },
+                            {
+                                "name": "input_focus",
+                                "texture": "assets/ui/buttons/start_hover.png",
+                                "frame_size": {
+                                    "x": 410.0,
+                                    "y": 121.0
+                                },
+                                "frame_pos": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "sprite_size": {
+                                    "width": "28.0%",
+                                    "height": "28.0%"
+                                },
+                                "direction": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "framerate": 1.0,
+                                "nb_frames": 1,
+                                "loop": false,
+                                "rollback": false
+                            },
+                            {
+                                "name": "pressed",
+                                "texture": "assets/ui/buttons/start.png",
+                                "frame_size": {
+                                    "x": 410.0,
+                                    "y": 121.0
+                                },
+                                "frame_pos": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "sprite_size": {
+                                    "width": "30.0%",
+                                    "height": "30.0%"
+                                },
+                                "direction": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "framerate": 1.0,
+                                "nb_frames": 1,
+                                "loop": true,
+                                "rollback": false
+                            }
+                        ],
+                        "default_animation": "idle"
+                    },
                     "ath:Clickable": {
                         "to_emit": [
                             {

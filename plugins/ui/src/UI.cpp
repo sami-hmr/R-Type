@@ -50,6 +50,7 @@ UI::UI(Registry& r,
 
   this->_registry.get().add_system(
       [this](Registry& r) { this->update_anim_system(r); }, 1000);
+    this->_registry.get().add_system([this] (Registry& r) { this->input_system(r); }, 1000);
 
   SUBSCRIBE_EVENT(CamAggroEvent, { this->cam_target_event(event); })
   SUBSCRIBE_EVENT(CamZoomEvent, { this->cam_zoom_event(event); })
@@ -75,6 +76,7 @@ UI::UI(Registry& r,
                   { on_click_slider(this->_registry.get(), event); });
   SUBSCRIBE_EVENT(MouseReleasedEvent,
                   { on_release_slider(this->_registry.get(), event); });
+
 }
 
 void UI::init_drawable(Registry::Entity const& entity, JsonObject const&)

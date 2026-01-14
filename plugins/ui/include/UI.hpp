@@ -40,6 +40,7 @@ private:
   void cam_speed_event(const CamSpeedEvent& e);
 
   void update_anim_system(Registry& r);
+  void input_system(Registry& r);
 
   void handle_key_pressed(const KeyPressedEvent& event);
   void handle_input_focus(const InputFocusEvent& event);
