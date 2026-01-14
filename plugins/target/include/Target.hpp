@@ -16,7 +16,7 @@
 class Target : public APlugin
 {
 public:
-  Target(Registry& r, EventManager &em, EntityLoader& l);
+  Target(Registry& r, EventManager& em, EntityLoader& l);
 
   static constexpr double DIRECTION_TOLERANCE = 0.1;
 

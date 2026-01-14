@@ -1,6 +1,8 @@
 
 
+#include <functional>
 #include <optional>
+#include <utility>
 #include <vector>
 
 #include "ecs/Registry.hpp"
@@ -8,6 +10,7 @@
 #include "NetworkShared.hpp"
 #include "ecs/EventManager.hpp"
 #include "ecs/Systems.hpp"
+#include "plugin/Byte.hpp"
 
 Registry::Entity Registry::spawn_entity()
 {
@@ -102,6 +105,9 @@ void Registry::clear_bindings()
 void Registry::add_scene(std::string const& scene_name, SceneState state)
 {
   _scenes.insert_or_assign(scene_name, state);
+  if (state == SceneState::ACTIVE || state == SceneState::MAIN) {
+    activate_scene(scene_name);
+  }
 }
 
 void Registry::init_scene_management()
@@ -111,32 +117,121 @@ void Registry::init_scene_management()
 
 void Registry::setup_scene_systems()
 {
+  // Activate all scenes that were registered as ACTIVE or MAIN
   for (const auto& [name, state] : _scenes) {
-    if (state == SceneState::MAIN) {
-      _current_scene.push_back(name);
-      break;
-    }
-    if (state == SceneState::ACTIVE) {
-      _current_scene.push_back(name);
+    if (state == SceneState::ACTIVE || state == SceneState::MAIN) {
+      activate_scene(name);
     }
   }
 }
 
-void Registry::set_current_scene(std::string const& scene_name)
+void Registry::activate_scene(std::string const& scene_name)
 {
+  if (!_scenes.contains(scene_name)) {
+    _scenes.insert({scene_name, SceneState::DISABLED});
+  }
+
+  // If the scene is not already MAIN, set it to ACTIVE
+  if (_scenes[scene_name] != SceneState::MAIN) {
+    _scenes[scene_name] = SceneState::ACTIVE;
+  }
+
+  if (_active_scenes_set.contains(scene_name)) {
+    return;
+  }
+
   _current_scene.push_back(scene_name);
+  _active_scenes_set.insert(scene_name);
 }
 
-void Registry::remove_current_scene(std::string const& scene_name)
+void Registry::deactivate_scene(std::string const& scene_name)
 {
+  if (_scenes.contains(scene_name)) {
+    _scenes[scene_name] = SceneState::DISABLED;
+  }
+
+  _active_scenes_set.erase(scene_name);
   _current_scene.erase(
       std::remove(_current_scene.begin(), _current_scene.end(), scene_name),
       _current_scene.end());
 }
 
+void Registry::deactivate_all_scenes()
+{
+  for (auto& [name, state] : _scenes) {
+    state = SceneState::DISABLED;
+  }
+  _current_scene.clear();
+  _active_scenes_set.clear();
+}
+
+void Registry::push_scene(std::string const& scene_name)
+{
+  activate_scene(scene_name);
+}
+
+void Registry::pop_scene(std::string const& scene_name)
+{
+  deactivate_scene(scene_name);
+}
+
+bool Registry::is_scene_active(std::string const& scene_name) const
+{
+  return _active_scenes_set.contains(scene_name);
+}
+
+SceneState Registry::get_scene_state(std::string const& scene_name) const
+{
+  auto it = _scenes.find(scene_name);
+  return (it != _scenes.end()) ? it->second : SceneState::DISABLED;
+}
+
+std::unordered_set<std::string> const& Registry::get_active_scenes_set() const
+{
+  return _active_scenes_set;
+}
+
+std::unordered_map<std::string, SceneState> const& Registry::get_scene_states()
+    const
+{
+  return _scenes;
+}
+
+std::vector<std::string> const& Registry::get_active_scenes() const
+{
+  return _current_scene;
+}
+
+// Deprecated methods for backward compatibility
+void Registry::set_current_scene(std::string const& scene_name)
+{
+  activate_scene(scene_name);
+}
+
+void Registry::set_main_scene(std::string const& scene_name)
+{
+  if (!_scenes.contains(scene_name)) {
+    _scenes.insert({scene_name, SceneState::MAIN});
+  } else {
+    _scenes[scene_name] = SceneState::MAIN;
+  }
+
+  if (_active_scenes_set.contains(scene_name)) {
+    return;
+  }
+
+  _current_scene.push_back(scene_name);
+  _active_scenes_set.insert(scene_name);
+}
+
+void Registry::remove_current_scene(std::string const& scene_name)
+{
+  deactivate_scene(scene_name);
+}
+
 void Registry::remove_all_scenes()
 {
-  this->_current_scene.clear();
+  deactivate_all_scenes();
 }
 
 std::vector<std::string> const& Registry::get_current_scene() const
@@ -169,10 +264,11 @@ JsonObject Registry::get_template(std::string const& name)
 
 bool Registry::is_in_current_cene(Entity e)
 {
-  return std::find(this->_current_scene.begin(),
-                   this->_current_scene.end(),
-                   this->get_components<Scene>()[e].value().scene_name)
-      != this->_current_scene.end();
+  if (!this->has_component<Scene>(e)) {
+    return false;
+  }
+  return _active_scenes_set.contains(
+      this->get_components<Scene>()[e].value().scene_name);
 }
 
 ByteArray Registry::convert_comp_entity(
@@ -190,4 +286,30 @@ std::vector<ComponentState> Registry::get_state()
     r.emplace_back(this->_state_getters.at(it.first)());
   }
   return r;
+}
+
+ByteArray Registry::get_byte_entity(Entity entity)
+{
+  std::vector<std::pair<std::string, ByteArray>> entity_vector;
+  for (auto const& it : this->_component_getter) {
+    auto comp = it.second(entity);
+
+    if (!comp) {
+      continue;
+    }
+    entity_vector.emplace_back(this->_index_getter.at_first(it.first), *comp);
+  }
+
+  return vector_to_byte(
+      entity_vector,
+      std::function<ByteArray(std::pair<std::string, ByteArray> const&)>(
+          [](std::pair<std::string, ByteArray> const& v)
+          {
+            return pair_to_byte(
+                v,
+                std::function(string_to_byte),
+                std::function<ByteArray(ByteArray const&)>(
+                    [](ByteArray const& v)
+                    { return vector_to_byte(v, TTB_FUNCTION<Byte>()); }));
+          }));
 }

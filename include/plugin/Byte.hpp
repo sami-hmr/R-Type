@@ -81,7 +81,7 @@ concept bytable = serializable<T> && unserializable<T>;
   { \
     Result<classname> r = apply(([]() { return (classname) {}; }))( \
         Rest(std::string(array.begin(), array.end()))); \
-    if (r.index() == ERROR) { \
+    if (r.index() == ERR) { \
       throw InvalidPackage(#classname); \
     } \
     *this = std::get<SUCCESS>(r).value; \
@@ -114,7 +114,7 @@ concept bytable = serializable<T> && unserializable<T>;
   classname(ByteArray const& array) \
   { \
     Result<classname> r = apply((construct), __VA_ARGS__)(Rest(array)); \
-    if (r.index() == ERROR) { \
+    if (r.index() == ERR) { \
       auto const& err = std::get<ERR>(r); \
       throw InvalidPackage(std::format("{}: {}, {}, line {} col {}", \
                                        #classname, \

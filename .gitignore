@@ -40,3 +40,4 @@ aliases.fish
 Testing
 
 *.log
+gmon.out
