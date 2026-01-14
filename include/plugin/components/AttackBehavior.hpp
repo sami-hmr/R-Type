@@ -64,5 +64,9 @@ struct AttackBehavior
   bool active;
   JsonObject params;
 
-  HOOKABLE(AttackBehavior, HOOK(attack_type), HOOK(attack_delta), HOOK(active), HOOK(params))
+  HOOKABLE(AttackBehavior,
+           HOOK(attack_type),
+           HOOK(attack_delta),
+           HOOK(active),
+           HOOK(params))
 };

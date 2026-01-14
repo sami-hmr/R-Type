@@ -20,8 +20,7 @@ struct Parasite
 
   Parasite() = default;
 
-  Parasite(std::optional<std::size_t> entity_id,
-           std::string behavior)
+  Parasite(std::optional<std::size_t> entity_id, std::string behavior)
       : entity_id(entity_id)
       , behavior(std::move(behavior))
   {

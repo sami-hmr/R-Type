@@ -20,7 +20,7 @@ struct MovementBehavior
   {
   }
 
-    MovementBehavior(std::string type, JsonObject p)
+  MovementBehavior(std::string type, JsonObject p)
       : movement_type(std::move(type))
       , params(std::move(p))
   {
@@ -33,13 +33,20 @@ struct MovementBehavior
   {
   }
 
-  DEFAULT_BYTE_CONSTRUCTOR(
-      MovementBehavior,
-      ([](std::string movement_type, double movement_delta, JsonObject params)
-       { return MovementBehavior(std::move(movement_type), movement_delta, std::move(params)); }),
-      parseByteString(),
-      parseByte<double>(),
-      parseByteJsonObject())
+  DEFAULT_BYTE_CONSTRUCTOR(MovementBehavior,
+                           (
+                               [](std::string movement_type,
+                                  double movement_delta,
+                                  JsonObject params)
+                               {
+                                 return MovementBehavior(
+                                     std::move(movement_type),
+                                     movement_delta,
+                                     std::move(params));
+                               }),
+                           parseByteString(),
+                           parseByte<double>(),
+                           parseByteJsonObject())
   DEFAULT_SERIALIZE(string_to_byte(this->movement_type),
                     type_to_byte(this->movement_delta),
                     json_object_to_byte(this->params))
@@ -50,5 +57,8 @@ struct MovementBehavior
   double movement_delta = 0.0;
   JsonObject params;
 
-  HOOKABLE(MovementBehavior, HOOK(movement_type), HOOK(movement_delta), HOOK(params))
+  HOOKABLE(MovementBehavior,
+           HOOK(movement_type),
+           HOOK(movement_delta),
+           HOOK(params))
 };
