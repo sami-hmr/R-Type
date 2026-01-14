@@ -63,31 +63,30 @@ RtypeClient::RtypeClient(Registry& r, EventManager& em, EntityLoader& l)
         "PlayerReady", PlayerReady(this->_id_in_server).to_bytes());
   })
 
-  SUBSCRIBE_EVENT(HttpBadCodeEvent, {
-    this->_event_manager.get().emit<SceneChangeEvent>(
-        "alert", "connected", false);
-    for (auto [e, text, scene, team] :
-         ZipperIndex<Text, Scene, Team>(this->_registry.get()))
-    {
-      if (scene.scene_name != "alert" || team.name != "message") {
-        continue;
-      }
-      text.text = std::format("error {}: {}", event.code, event.message);
+  SUBSCRIBE_EVENT(Disconnection, {
+    this->_event_manager.get().emit<DisableSceneEvent>("connecting_card");
+    this->alert("Disconected");
+  })
+
+  SUBSCRIBE_EVENT(Logout, {
+    this->_event_manager.get().emit<SceneChangeEvent>("login", "", true);
+    this->_event_manager.get().emit<SceneChangeEvent>("connection_background", "", false);
+  })
+  this->handle_http();
+}
+
+void RtypeClient::alert(std::string const& message)
+{
+  this->_event_manager.get().emit<SceneChangeEvent>(
+      "alert", "connected", false);
+  for (auto [e, text, scene, team] :
+       ZipperIndex<Text, Scene, Team>(this->_registry.get()))
+  {
+    if (scene.scene_name != "alert" || team.name != "message") {
+      continue;
     }
-  });
-
-  SUBSCRIBE_EVENT(Save, {
-    this->_event_manager.get().emit<EventBuilder>(
-        "SavePlayer", SavePlayer(this->_user_id).to_bytes());
-  })
-
-  SUBSCRIBE_EVENT(LoginSuccessfull, {
-    this->_event_manager.get().emit<DisableSceneEvent>("login");
-    this->_event_manager.get().emit<DisableSceneEvent>("register");
-
-    this->_event_manager.get().emit<SceneChangeEvent>(
-        "server_search", "connected", false);
-  })
+    text.text = message;
+  }
 }
 
 extern "C"

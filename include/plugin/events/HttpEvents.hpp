@@ -46,6 +46,21 @@ struct FetchAvailableServers
   HOOKABLE(FetchAvailableServers)
 };
 
+struct FetchAvailableServersSuccessfull
+{
+  FetchAvailableServersSuccessfull() = default;
+
+  EMPTY_BYTE_CONSTRUCTOR(FetchAvailableServersSuccessfull)
+  DEFAULT_SERIALIZE(ByteArray {})
+
+  CHANGE_ENTITY_DEFAULT
+
+  FetchAvailableServersSuccessfull(Registry& /* */, JsonObject const& /* */) {}
+
+  HOOKABLE(FetchAvailableServersSuccessfull)
+};
+
+
 struct ExposeServer
 {
   std::string host;
@@ -147,6 +162,21 @@ struct Login
   DEFAULT_SERIALIZE(string_to_byte(identifier), string_to_byte(password))
 
   CHANGE_ENTITY_DEFAULT
+};
+
+
+struct Logout
+{
+  Logout() = default;
+
+  EMPTY_BYTE_CONSTRUCTOR(Logout)
+  DEFAULT_SERIALIZE(ByteArray {})
+
+  CHANGE_ENTITY_DEFAULT
+
+  Logout(Registry& /* */, JsonObject const& /* */) {}
+
+  HOOKABLE(Logout)
 };
 
 struct FailLogin
