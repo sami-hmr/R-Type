@@ -44,6 +44,7 @@ Collision::Collision(Registry& r, EventManager& em, EntityLoader& l)
 {
   REGISTER_COMPONENT(Collidable)
   REGISTER_COMPONENT(InteractionZone)
+  REGISTER_COMPONENT(InteractionBorders)
 
   _collision_algo = std::make_unique<QuadTreeCollision>(2.0, 2.0);
 
@@ -55,6 +56,8 @@ Collision::Collision(Registry& r, EventManager& em, EntityLoader& l)
                              3);
   _registry.get().add_system(
       [this](Registry& r) { this->interaction_zone_system(r); }, 3);
+  _registry.get().add_system(
+      [this](Registry& r) { this->interaction_borders_system(r); }, 3);
 
   SUBSCRIBE_EVENT(CollisionEvent, { this->on_collision(event); })
 }
