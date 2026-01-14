@@ -305,7 +305,16 @@ void SFMLRenderer::render_basic_map(
   if (fov == 0) {
     return;
   }
-
+  this->_rectangle.setSize(
+      sf::Vector2f(static_cast<float>(window_size.x),
+                   static_cast<float>(window_size.y) / 2.0f));
+  this->_rectangle.setPosition({0.0f, 0.0f});
+  this->_rectangle.setFillColor(sf::Color(100, 100, 100));
+  this->_window.draw(this->_rectangle);
+  this->_rectangle.setPosition(
+      {0.0f, static_cast<float>(window_size.y) / 2.0f});
+  this->_rectangle.setFillColor(sf::Color(50, 50, 50));
+  this->_window.draw(this->_rectangle);
   for (auto&& [draw, basic_map] : Zipper<Drawable, BasicMap>(r)) {
     if (!draw.enabled) {
       continue;
