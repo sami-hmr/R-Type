@@ -1,17 +1,20 @@
 #pragma once
 
+#include <string>
 #include "ecs/Registry.hpp"
 #include "plugin/APlugin.hpp"
+#include "plugin/HookMacros.hpp"
 #include "plugin/components/Item.hpp"
+#include "plugin/events/EventMacros.hpp"
 #include "plugin/events/InventoryEvents.hpp"
 
 #define DFLT_MAX 64
 
-class Inventory : public APlugin
+class InventoryPlugin : public APlugin
 {
 public:
-  Inventory(Registry& r, EventManager& em, EntityLoader& l);
-  ~Inventory() override = default;
+  InventoryPlugin(Registry& r, EventManager& em, EntityLoader& l);
+  ~InventoryPlugin() override = default;
   EntityLoader& entity_loader;
 
 private:

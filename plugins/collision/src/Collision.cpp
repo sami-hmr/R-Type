@@ -1,6 +1,7 @@
 #include <cctype>
 #include <iostream>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 #include "Collision.hpp"
@@ -18,11 +19,13 @@
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Collidable.hpp"
 #include "plugin/components/Direction.hpp"
+#include "plugin/components/InteractionBorders.hpp"
 #include "plugin/components/InteractionZone.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Speed.hpp"
 #include "plugin/components/Team.hpp"
 #include "plugin/events/CollisionEvent.hpp"
+#include "plugin/events/InteractionBordersEvents.hpp"
 #include "plugin/events/InteractionZoneEvent.hpp"
 #include "plugin/events/LoggerEvent.hpp"
 
@@ -34,10 +37,14 @@ Collision::Collision(Registry& r, EventManager& em, EntityLoader& l)
           l,
           {"moving"},
           {COMP_INIT(Collidable, Collidable, init_collision),
-           COMP_INIT(InteractionZone, InteractionZone, init_interaction_zone)})
+           COMP_INIT(InteractionZone, InteractionZone, init_interaction_zone),
+           COMP_INIT(InteractionBorders,
+                     InteractionBorders,
+                     init_interaction_borders)})
 {
   REGISTER_COMPONENT(Collidable)
   REGISTER_COMPONENT(InteractionZone)
+  REGISTER_COMPONENT(InteractionBorders)
 
   _collision_algo = std::make_unique<QuadTreeCollision>(2.0, 2.0);
 
@@ -49,6 +56,8 @@ Collision::Collision(Registry& r, EventManager& em, EntityLoader& l)
                              3);
   _registry.get().add_system(
       [this](Registry& r) { this->interaction_zone_system(r); }, 3);
+  _registry.get().add_system(
+      [this](Registry& r) { this->interaction_borders_system(r); }, 3);
 
   SUBSCRIBE_EVENT(CollisionEvent, { this->on_collision(event); })
 }
@@ -99,6 +108,23 @@ void Collision::init_collision(Registry::Entity const& entity,
                              true);
 }
 
+void Collision::init_interaction_borders(Registry::Entity const& entity,
+                                         JsonObject const& obj)
+{
+  auto const& radius = get_value<Collidable, double>(
+      this->_registry.get(), obj, entity, "radius");
+
+  if (!radius) {
+    std::cerr << "Error loading InteractionBorders: missing radius\n";
+    return;
+  }
+
+  init_component<InteractionZone>(this->_registry.get(),
+                                  this->_event_manager.get(),
+                                  entity,
+                                  radius.value());
+}
+
 void Collision::init_interaction_zone(Registry::Entity const& entity,
                                       JsonObject const& obj)
 {
@@ -146,6 +172,62 @@ void Collision::collision_system(Registry& r)
 
     this->_event_manager.get().emit<CollisionEvent>(entity_a, entity_b);
     this->_event_manager.get().emit<CollisionEvent>(entity_b, entity_a);
+  }
+}
+
+void Collision::interaction_borders_system(Registry& r)
+{
+  if (!_collision_algo) {
+    return;
+  }
+
+  auto const& positions = r.get_components<Position>();
+  for (auto&& [i, position, zone] :
+       ZipperIndex<Position, InteractionBorders>(r))
+  {
+    if (!zone.enabled) {
+      continue;
+    }
+
+    Rect range {.x = position.pos.x,
+                .y = position.pos.y,
+                .width = zone.radius * 2,
+                .height = zone.radius * 2};
+
+    std::vector<ICollisionAlgorithm::CollisionEntity> candidates =
+        _collision_algo->detect_range_collisions(range);
+    std::vector<Registry::Entity> detected_entities;
+    detected_entities.reserve(candidates.size());
+
+    for (const auto& candidate : candidates) {
+      if (candidate.entity_id == i) {
+        continue;
+      }
+      Vector2D distance = positions[candidate.entity_id]->pos - position.pos;
+
+      if (distance.length() <= zone.radius) {
+        detected_entities.push_back(candidate.entity_id);
+      }
+    }
+    std::vector<Registry::Entity> entity_bfr =
+        std::vector(zone.in_zone.begin(), zone.in_zone.end());
+    std::vector<Registry::Entity> entity_now = detected_entities;
+    for (auto eb : entity_bfr) {
+      for (auto en : entity_now) {
+        if (eb == en) {
+          entity_bfr.erase(std::find(entity_now.begin(), entity_now.end(), eb));
+          entity_now.erase(std::find(entity_now.begin(), entity_now.end(), en));
+          break;
+        }
+      }
+    }
+    for (auto entity : entity_bfr) {
+      this->_event_manager.get().emit<LeftZone>(i, entity);
+    }
+    for (auto entity : entity_now) {
+      this->_event_manager.get().emit<EnteredZone>(i, entity);
+    }
+    zone.in_zone = std::unordered_set<Registry::Entity>(detected_entities.begin(), detected_entities.end());
   }
 }
 

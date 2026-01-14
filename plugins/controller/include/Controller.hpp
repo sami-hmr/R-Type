@@ -1,21 +1,14 @@
 #pragma once
 
-#include <format>
 #include <map>
-#include <stdexcept>
 #include <string>
-#include <variant>
-#include <vector>
 
 #include "Json/JsonParser.hpp"
 #include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
-#include "ecs/SparseArray.hpp"
-#include "ecs/zipper/Zipper.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Controllable.hpp"
-#include "plugin/components/Position.hpp"
 #include "plugin/events/IoEvents.hpp"
 #include "plugin/events/RebindingEvent.hpp"
 
