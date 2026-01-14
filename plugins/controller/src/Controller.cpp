@@ -58,6 +58,9 @@ void Controller::rebinding(Controllable& c, Rebind event, KeyEventType event_typ
   }
   auto binding = c.event_map.extract(event.key_to_replace + event_type);
   binding.key() = event.replacement_key + event_type;
+  if (c.event_map.contains(binding.key())) {
+    c.event_map.insert_or_assign(event.key_to_replace + event_type, c.event_map.at(binding.key()));
+  }
   c.event_map.insert_or_assign(binding.key(), std::move(binding.mapped()));
 }
 

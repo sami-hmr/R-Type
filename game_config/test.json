@@ -219,6 +219,24 @@
                   }
                 },
                 {
+                  "description": "go right",
+                  "key": "X",
+                  "pressed": {
+                    "name": "UpdateDirection",
+                    "params": {
+                      "x": 1.0,
+                      "y": 0.0
+                    }
+                  },
+                  "released": {
+                    "name": "UpdateDirection",
+                    "params": {
+                      "x": -1.0,
+                      "y": 0.0
+                    }
+                  }
+                },
+                {
                   "description": "go down",
                   "key": "S",
                   "pressed": {
