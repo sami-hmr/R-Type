@@ -129,10 +129,6 @@ BaseClient::BaseClient(std::string const& name,
   SUBSCRIBE_EVENT(Disconnection, {
     this->_event_manager.get().emit<EventBuilder>(
         "DisconnectClient", DisconnectClient(this->_id_in_server).to_bytes());
-
-    // for now, disconnection will close the game, it will be cool a "return to
-    // loby"
-    this->_event_manager.get().emit<ShutdownEvent>("Disconnection", 0);
   })
 
   SUBSCRIBE_EVENT(NetworkStatus, { (void)this; })

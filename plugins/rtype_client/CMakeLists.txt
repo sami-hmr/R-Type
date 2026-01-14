@@ -4,6 +4,7 @@ set(LIB_NAME rtype_client)
 
 add_library(${LIB_NAME} SHARED
     src/RtypeClient.cpp
+    src/HttpRequests.cpp
 )
 
 target_compile_features(${LIB_NAME} PRIVATE cxx_std_23)

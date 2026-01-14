@@ -1,4 +1,5 @@
 #include <cstring>
+#include <format>
 
 #include "../plugins/rtype_client/include/RtypeClient.hpp"
 
@@ -9,9 +10,12 @@
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Controllable.hpp"
+#include "plugin/components/Team.hpp"
+#include "plugin/components/Text.hpp"
 #include "plugin/events/HttpEvents.hpp"
 #include "plugin/events/LoggerEvent.hpp"
 #include "plugin/events/NetworkEvents.hpp"
+#include "plugin/events/SceneChangeEvent.hpp"
 
 RtypeClient::RtypeClient(Registry& r, EventManager& em, EntityLoader& l)
     : BaseClient("rtype_client", "r-type", r, em, l)
@@ -59,10 +63,30 @@ RtypeClient::RtypeClient(Registry& r, EventManager& em, EntityLoader& l)
         "PlayerReady", PlayerReady(this->_id_in_server).to_bytes());
   })
 
-  SUBSCRIBE_EVENT(Save, {
-    this->_event_manager.get().emit<EventBuilder>(
-        "SavePlayer", SavePlayer(this->_user_id).to_bytes());
+  SUBSCRIBE_EVENT(Disconnection, {
+    this->_event_manager.get().emit<DisableSceneEvent>("connecting_card");
+    this->alert("Disconected");
   })
+
+  SUBSCRIBE_EVENT(Logout, {
+    this->_event_manager.get().emit<SceneChangeEvent>("login", "", true);
+    this->_event_manager.get().emit<SceneChangeEvent>("connection_background", "", false);
+  })
+  this->handle_http();
+}
+
+void RtypeClient::alert(std::string const& message)
+{
+  this->_event_manager.get().emit<SceneChangeEvent>(
+      "alert", "connected", false);
+  for (auto [e, text, scene, team] :
+       ZipperIndex<Text, Scene, Team>(this->_registry.get()))
+  {
+    if (scene.scene_name != "alert" || team.name != "message") {
+      continue;
+    }
+    text.text = message;
+  }
 }
 
 extern "C"

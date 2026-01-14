@@ -2,6 +2,7 @@
 
 #include <functional>
 #include <memory>
+#include <optional>
 #include <string>
 #include <typeindex>
 #include <unordered_map>
@@ -24,6 +25,9 @@ public:
   void load_file(std::string const& filepath);
 
   std::optional<Registry::Entity> load_entity(JsonObject const& config);
+  std::optional<Registry::Entity> load_entity_template(
+      std::string const& name,
+      std::vector<std::pair<std::string, ByteArray>> const& additional);
   void load_components(Registry::Entity e, JsonObject const& config);
 
   void load_plugin(std::string const& plugin,

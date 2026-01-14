@@ -1,0 +1,280 @@
+{
+    "scenes": [
+        {
+            "name": "register",
+            "state": "disabled",
+            "plugins": [],
+            "entities": [
+                {
+                    "ui:Drawable": {},
+                    "moving:Position": {
+                        "pos": {
+                            "x": -0.0,
+                            "y": -0.5
+                        }
+                    },
+                    "ui:Text": {
+                        "font": "assets/fonts/Starjedi.ttf",
+                        "size": {
+                            "width": "100.0%",
+                            "height": "10.0%"
+                        },
+                        "fill_color": {
+                            "r": 255,
+                            "g": 255,
+                            "b": 255,
+                            "a": 255
+                        },
+                        "outline_color": {
+                            "r": 0,
+                            "g": 0,
+                            "b": 0,
+                            "a": 255
+                        },
+                        "outline_thickness": 30.0,
+                        "outline": true,
+                        "text": "register"
+                    }
+                },
+                {
+                    "template": "input",
+                    "config": {
+                        "moving:Position": {
+                            "pos": {
+                                "x": -0.0,
+                                "y": -0.15
+                            }
+                        },
+                        "ui:input": {
+                            "hook": "register_id_input",
+                            "global_hook": true,
+                            "buffer": "",
+                            "enabled": false
+                        },
+                        "ui:Text": {
+                            "font": "assets/fonts/roboto.ttf",
+                            "size": {
+                                "width": "80.0%",
+                                "height": "6.0%"
+                            },
+                            "fill_color": {
+                                "r": 255,
+                                "g": 255,
+                                "b": 255,
+                                "a": 255
+                            },
+                            "outline_color": {
+                                "r": 0,
+                                "g": 0,
+                                "b": 0,
+                                "a": 255
+                            },
+                            "outline_thickness": 30.0,
+                            "outline": true,
+                            "text": "#global:register_id_input:buffer",
+                            "placeholder": "identifier"
+                        }
+                    }
+                },
+                {
+                    "template": "input",
+                    "config": {
+                        "moving:Position": {
+                            "pos": {
+                                "x": -0.0,
+                                "y": 0.15
+                            }
+                        },
+                        "ui:input": {
+                            "hook": "register_pswd_input",
+                            "global_hook": true,
+                            "buffer": "",
+                            "enabled": false
+                        },
+                        "ui:Text": {
+                            "font": "assets/fonts/roboto.ttf",
+                            "size": {
+                                "width": "80.0%",
+                                "height": "6.0%"
+                            },
+                            "fill_color": {
+                                "r": 255,
+                                "g": 255,
+                                "b": 255,
+                                "a": 255
+                            },
+                            "outline_color": {
+                                "r": 0,
+                                "g": 0,
+                                "b": 0,
+                                "a": 255
+                            },
+                            "outline_thickness": 30.0,
+                            "outline": true,
+                            "text": "#global:register_pswd_input:buffer",
+                            "placeholder": "password"
+                        }
+                    }
+                },
+                {
+                    "ui:Drawable": {},
+                    "moving:Position": {
+                        "pos": {
+                            "x": -0.0,
+                            "y": 0.45
+                        }
+                    },
+                    "ui:Text": {
+                        "font": "assets/fonts/roboto.ttf",
+                        "size": {
+                            "width": "80.0%",
+                            "height": "5.0%"
+                        },
+                        "fill_color": {
+                            "r": 255,
+                            "g": 255,
+                            "b": 255,
+                            "a": 255
+                        },
+                        "outline_color": {
+                            "r": 0,
+                            "g": 0,
+                            "b": 0,
+                            "a": 255
+                        },
+                        "outline_thickness": 30.0,
+                        "outline": true,
+                        "text": "already registered ? login here"
+                    },
+                    "collision:Collidable": {
+                        "width": 0.8,
+                        "height": 0.05,
+                        "collision_type": "Trigger"
+                    },
+                    "ath:Clickable": {
+                        "to_emit": [
+                            {
+                                "SceneChangeEvent": {
+                                    "target_scene": "login",
+                                    "reason": "User clicked register",
+                                    "force": false
+                                }
+                            },
+                            {
+                                "DisableSceneEvent": {
+                                    "target_scene": "register"
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "ui:AnimatedSprite": {
+                        "animations": [
+                            {
+                                "name": "idle",
+                                "texture": "assets/ui/buttons/start.png",
+                                "frame_size": {
+                                    "x": 410.0,
+                                    "y": 121.0
+                                },
+                                "frame_pos": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "sprite_size": {
+                                    "width": "30.0%",
+                                    "height": "30.0%"
+                                },
+                                "direction": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "framerate": 1.0,
+                                "nb_frames": 1,
+                                "loop": true,
+                                "rollback": false
+                            },
+                            {
+                                "name": "hover",
+                                "texture": "assets/ui/buttons/start_hover.png",
+                                "frame_size": {
+                                    "x": 410.0,
+                                    "y": 121.0
+                                },
+                                "frame_pos": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "sprite_size": {
+                                    "width": "28.0%",
+                                    "height": "28.0%"
+                                },
+                                "direction": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "framerate": 1.0,
+                                "nb_frames": 1,
+                                "loop": false,
+                                "rollback": false
+                            },
+                            {
+                                "name": "pressed",
+                                "texture": "assets/ui/buttons/start.png",
+                                "frame_size": {
+                                    "x": 410.0,
+                                    "y": 121.0
+                                },
+                                "frame_pos": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "sprite_size": {
+                                    "width": "30.0%",
+                                    "height": "30.0%"
+                                },
+                                "direction": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "framerate": 1.0,
+                                "nb_frames": 1,
+                                "loop": true,
+                                "rollback": false
+                            }
+                        ],
+                        "default_animation": "idle"
+                    },
+                    "ui:Drawable": {},
+                    "ath:Clickable": {
+                        "to_emit": [
+                            {
+                                "Register": {
+                                    "identifier": "%global:register_id_input:buffer",
+                                    "password": "%global:register_pswd_input:buffer"
+                                }
+                            }
+                        ]
+                    },
+                    "moving:Position": {
+                        "pos": {
+                            "x": 0.0,
+                            "y": 0.7
+                        }
+                    },
+                    "collision:Collidable": {
+                        "width": 0.3,
+                        "height": 0.15,
+                        "collision_type": "solid"
+                    },
+                    "ath:Button": {
+                        "hover": false,
+                        "toggle": false,
+                        "pressed": false
+                    }
+                }
+            ]
+        }
+    ]
+}
