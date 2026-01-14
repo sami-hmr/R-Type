@@ -3,11 +3,17 @@
 #include <cstdint>
 #include <functional>
 #include <future>
+#include <optional>
 #include <string>
 #include <utility>
 #include <vector>
 
+#include "CustomException.hpp"
+#include "Parser.hpp"
+#include "ParserTypes.hpp"
 #include "network/Httplib.hpp"
+#include "plugin/events/LogMacros.hpp"
+#include "plugin/events/LoggerEvent.hpp"
 
 class HttpClient
 {
@@ -97,3 +103,40 @@ private:
 
   std::vector<Handler> _handlers;
 };
+
+class HttpBadCode : public CustomException
+{
+public:
+  explicit HttpBadCode(std::size_t code, const std ::string& message)
+      : CustomException(message)
+      , code(code)
+  {
+  }
+
+  HttpBadCode with_context(std ::string const& key, std ::string const& value)
+  {
+    _context.insert_or_assign(key, value);
+    return *this;
+  }
+
+  std::size_t code;
+};
+
+#define PARSE_HTTP_BODY(body, context, parser, type) \
+  ( \
+      [&]() -> std::optional<type> \
+      { \
+        auto parsed = parser()(body); \
+        if (parsed.index() == ERR) { \
+          CONTEXT_LOGGER( \
+              context, \
+              "http", \
+              LogLevel::ERROR, \
+              std::format( \
+                  "failed to parse http response: {}, \nresponse: \"{}\"", \
+                  std::get<ERR>(parsed).message, \
+                  body)); \
+          return std::nullopt; \
+        } \
+        return std::get<SUCCESS>(parsed).value; \
+      })()

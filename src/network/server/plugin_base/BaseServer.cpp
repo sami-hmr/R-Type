@@ -116,18 +116,8 @@ BaseServer::BaseServer(std::string const& name,
   })
 
   SUBSCRIBE_EVENT(LoadEntityTemplate, {
-    auto const& entity = this->_loader.get().load_entity(
-        JsonObject({{"template", JsonValue(event.template_name)}}));
-
-    if (!entity) {
-      LOGGER("load entity template",
-             LogLevel::ERROR,
-             "failed to load entity template " + event.template_name);
-    }
-    for (auto const& [id, comp] : event.aditionals) {
-      init_component(
-          this->_registry.get(), this->_event_manager.get(), *entity, id, comp);
-    }
+    this->_loader.get().load_entity_template(event.template_name,
+                                             event.aditionals);
   })
 
   SUBSCRIBE_EVENT(DeleteEntity, {
