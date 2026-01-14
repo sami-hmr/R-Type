@@ -1,8 +1,10 @@
 #include <cstring>
 #include <format>
+#include <optional>
 
 #include "../plugins/rtype_client/include/RtypeClient.hpp"
 
+#include "Json/JsonParser.hpp"
 #include "NetworkShared.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
@@ -17,8 +19,8 @@
 #include "plugin/events/NetworkEvents.hpp"
 #include "plugin/events/SceneChangeEvent.hpp"
 
-RtypeClient::RtypeClient(Registry& r, EventManager& em, EntityLoader& l)
-    : BaseClient("rtype_client", "r-type", r, em, l)
+RtypeClient::RtypeClient(Registry& r, EventManager& em, EntityLoader& l,  std::optional<JsonObject> const &config)
+    : BaseClient("rtype_client", "r-type", r, em, l, config)
 {
   SUBSCRIBE_EVENT(PlayerCreation, {
     auto zipper = ZipperIndex<Controllable>(this->_registry.get());
@@ -91,8 +93,8 @@ void RtypeClient::alert(std::string const& message)
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
+void* entry_point(Registry& r, EventManager& em, EntityLoader& e, std::optional<JsonObject> const &config)
 {
-  return new RtypeClient(r, em, e);
+  return new RtypeClient(r, em, e, config);
 }
 }
