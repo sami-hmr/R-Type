@@ -115,7 +115,7 @@ concept bytable = serializable<T> && unserializable<T>;
   { \
     Result<classname> r = apply((construct), __VA_ARGS__)(Rest(array)); \
     if (r.index() == ERROR) { \
-      auto const& err = std::get<ERROR>(r); \
+      auto const& err = std::get<ERR>(r); \
       throw InvalidPackage(std::format("{}: {}, {}, line {} col {}", \
                                        #classname, \
                                        err.context, \

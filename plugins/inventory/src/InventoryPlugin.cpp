@@ -1,17 +1,16 @@
-#include "Inventory.hpp"
-
-#include "ecs/Registry.hpp"
-#include "ecs/EmitEvent.hpp"
-#include "plugin/APlugin.hpp"
+#include "InventoryPlugin.hpp"
 #include "Json/JsonParser.hpp"
+#include "ecs/EmitEvent.hpp"
 #include "ecs/EventManager.hpp"
+#include "ecs/Registry.hpp"
+#include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Item.hpp"
-#include "plugin/events/LoggerEvent.hpp"
 #include "plugin/events/InventoryEvents.hpp"
+#include "plugin/events/LoggerEvent.hpp"
 
 template<typename T>
-bool Inventory::usage_emit(const ItemEvent<T>& event, std::string area)
+bool InventoryPlugin::usage_emit(const ItemEvent<T>& event, std::string area)
 {
   use_item(event.slot_item, event.nb_to_use);
   auto use_item = get_value_copy<JsonObject>(
@@ -23,10 +22,11 @@ bool Inventory::usage_emit(const ItemEvent<T>& event, std::string area)
                           _inventory[event.slot_item].first.object.second,
                           "entity");
   if (!use_item || !entity) {
-    LOGGER("Inventory",
-           LogLevel::ERROR,
-           std::format(
-               "Missing {} field in item. No animation nor event played", area));
+    LOGGER(
+        "InventoryPlugin",
+        LogLevel::ERROR,
+        std::format("Missing {} field in item. No animation nor event played",
+                    area));
     return false;
   }
   auto evt_use =
@@ -37,22 +37,21 @@ bool Inventory::usage_emit(const ItemEvent<T>& event, std::string area)
     auto params =
         get_value_copy<JsonObject>(this->_registry.get(), *evt_use, "params");
     if (!name || !params) {
-      LOGGER(
-          "Inventory",
-          LogLevel::ERROR,
-          std::format(
-              "Invalid event field in item's {} configuration. No animation nor even't played", area));
+      LOGGER("InventoryPlugin",
+             LogLevel::ERROR,
+             std::format("Invalid event field in item's {} configuration. No "
+                         "animation nor even't played",
+                         area));
       return false;
     }
     params->insert_or_assign("entity", JsonValue(*entity));
     emit_event(
-        this->_event_manager.get(), this->_registry.get(), *name,
-        *params);
+        this->_event_manager.get(), this->_registry.get(), *name, *params);
   }
   return false;
 }
 
-Inventory::Inventory(Registry& r, EventManager& em, EntityLoader& l)
+InventoryPlugin::InventoryPlugin(Registry& r, EventManager& em, EntityLoader& l)
     : APlugin(
           "inventory", r, em, l, {}, {COMP_INIT(Item, Item, init_inventory)})
     , entity_loader(l)
@@ -83,8 +82,8 @@ Inventory::Inventory(Registry& r, EventManager& em, EntityLoader& l)
   SUBSCRIBE_EVENT(PickUp, { add_item(event.item, event.nb_to_use); })
 }
 
-void Inventory::init_item_vector(Registry::Entity const& entity,
-                                 JsonArray& inventory)
+void InventoryPlugin::init_item_vector(Registry::Entity const& entity,
+                                       JsonArray& inventory)
 {
   for (auto& it : inventory) {
     auto& item = std::get<JsonObject>(it.value);
@@ -99,7 +98,7 @@ void Inventory::init_item_vector(Registry::Entity const& entity,
     auto config =
         get_value_copy<JsonObject>(this->_registry.get(), item, "config");
     if (!name || !quantity || !consumable || !throwable) {
-      LOGGER("Inventory",
+      LOGGER("InventoryPlugin",
              LogLevel::WARNING,
              std::format("Missing a field in item, skipping"));
       continue;
@@ -111,15 +110,15 @@ void Inventory::init_item_vector(Registry::Entity const& entity,
   }
 }
 
-void Inventory::init_inventory(Registry::Entity const& entity,
-                               JsonObject const& obj)
+void InventoryPlugin::init_inventory(Registry::Entity const& entity,
+                                     JsonObject const& obj)
 {
   _max_items = std::get<int>(obj.at("max_items").value);
   auto inventory = std::get<JsonArray>(obj.at("items").value);
   this->init_item_vector(entity, inventory);
 }
 
-void Inventory::add_item(const Item& item, std::size_t nb)
+void InventoryPlugin::add_item(const Item& item, std::size_t nb)
 {
   bool added = false;
 
@@ -139,7 +138,7 @@ void Inventory::add_item(const Item& item, std::size_t nb)
   _inventory.emplace_back(item, nb);
 }
 
-void Inventory::use_item(std::uint8_t slot, std::size_t nb)
+void InventoryPlugin::use_item(std::uint8_t slot, std::size_t nb)
 {
   if (nb < _inventory[slot].second) {
     _inventory[slot].second -= nb;
@@ -152,6 +151,6 @@ extern "C"
 {
 void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
-  return new Inventory(r, em, e);
+  return new InventoryPlugin(r, em, e);
 }
 }

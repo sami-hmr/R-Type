@@ -32,6 +32,7 @@ private:
                                            JsonObject const& obj);
   void collision_system(Registry& r);
   void interaction_zone_system(Registry& r);
+  void interaction_borders_system(Registry& r);
   void on_collision(const CollisionEvent& c);
 
   std::unique_ptr<ICollisionAlgorithm> _collision_algo;

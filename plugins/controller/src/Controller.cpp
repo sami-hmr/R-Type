@@ -9,6 +9,7 @@
 #include "ecs/EmitEvent.hpp"
 #include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
+#include "ecs/zipper/Zipper.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
