@@ -14,6 +14,7 @@ public:
   virtual ~MovementPattern() = default;
 
   static constexpr double DIRECTION_TOLERANCE = 0.1;
+  static constexpr double DELTA_TOLERANCE = 0.5;
 
   virtual void update(Registry::Entity entity,
                       Registry& registry,
@@ -45,5 +46,23 @@ public:
       }
     }
     return Vector2D(0.0, 0.0);
+  }
+
+  static void update_delta(Registry& registry,
+                           EventManager& em,
+                           Registry::Entity const& entity,
+                           MovementBehavior& behavior,
+                           double const& dt)
+  {
+    auto const& time = registry.clock().now().time_since_epoch();
+    auto const& duration = std::chrono::duration<double>(time).count();
+
+    behavior.movement_delta += dt;
+    if ((duration - behavior.last_update) > DELTA_TOLERANCE) {
+      behavior.last_update = duration;
+      em.emit<ComponentBuilder>(entity,
+                                registry.get_component_key<MovementBehavior>(),
+                                behavior.to_bytes());
+    }
   }
 };

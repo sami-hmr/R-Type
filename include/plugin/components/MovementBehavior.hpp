@@ -26,9 +26,10 @@ struct MovementBehavior
   {
   }
 
-  MovementBehavior(std::string type, double movement_delta, JsonObject p)
+  MovementBehavior(std::string type, double movement_delta, double last_update, JsonObject p)
       : movement_type(std::move(type))
       , movement_delta(movement_delta)
+      , last_update(last_update)
       , params(std::move(p))
   {
   }
@@ -37,28 +38,34 @@ struct MovementBehavior
                            (
                                [](std::string movement_type,
                                   double movement_delta,
+                                  double last_update,
                                   JsonObject params)
                                {
                                  return MovementBehavior(
                                      std::move(movement_type),
                                      movement_delta,
+                                     last_update,
                                      std::move(params));
                                }),
                            parseByteString(),
                            parseByte<double>(),
+                           parseByte<double>(),
                            parseByteJsonObject())
   DEFAULT_SERIALIZE(string_to_byte(this->movement_type),
                     type_to_byte(this->movement_delta),
+                    type_to_byte(this->last_update),
                     json_object_to_byte(this->params))
 
   CHANGE_ENTITY_DEFAULT
 
   std::string movement_type;
   double movement_delta = 0.0;
+  double last_update = 0.0;
   JsonObject params;
 
   HOOKABLE(MovementBehavior,
            HOOK(movement_type),
            HOOK(movement_delta),
+           HOOK(last_update),
            HOOK(params))
 };

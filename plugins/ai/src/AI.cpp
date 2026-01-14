@@ -74,12 +74,9 @@ void AI::init_attack_behavior(Registry::Entity const& entity,
 {
   auto const& attack_type = get_value<AttackBehavior, std::string>(
       this->_registry.get(), obj, entity, "attack_type");
-  auto const& attack_interval = get_value<AttackBehavior, double>(
-      this->_registry.get(), obj, entity, "attack_interval");
 
-  if (!attack_type || !attack_interval) {
-    std::cerr << "Error loading AttackBehavior: missing attack_type or "
-                 "attack_interval\n";
+  if (!attack_type) {
+    std::cerr << "Error loading AttackBehavior: missing attack_type\n";
     return;
   }
 
@@ -89,7 +86,7 @@ void AI::init_attack_behavior(Registry::Entity const& entity,
   }
 
   this->_registry.get().emplace_component<AttackBehavior>(
-      entity, attack_type.value(), attack_interval.value(), true, params);
+      entity, attack_type.value(), params);
 }
 
 void AI::movement_behavior_system(Registry& r)

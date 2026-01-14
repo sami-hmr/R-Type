@@ -17,32 +17,14 @@ public:
   static constexpr double DEFAULT_INTERVAL = 2.0;
 
   void execute(Registry::Entity entity,
-               Registry& registry,
+               Registry&  /*registry*/,
                EventManager& em,
-               AttackBehavior& behavior,
+               AttackBehavior&  /*behavior*/,
                Position& /*pos*/,
                Direction& /*dir*/,
                Speed& /*speed*/,
-               double dt) override
+               double  /*dt*/) override
   {
-    behavior.attack_delta += dt;
-
-    em.emit<ComponentBuilder>(entity,
-                              registry.get_component_key<AttackBehavior>(),
-                              behavior.to_bytes());
-
-    double attack_interval =
-        get_value_copy<double>(registry, behavior.params, "attack_interval")
-            .value_or(DEFAULT_INTERVAL);
-
-    if (behavior.attack_delta >= attack_interval) {
-      behavior.attack_delta = 0.0;
-
-      em.emit<ComponentBuilder>(entity,
-                                registry.get_component_key<AttackBehavior>(),
-                                behavior.to_bytes());
-
-      em.emit<FireBullet>(entity);
-    }
+    em.emit<FireBullet>(entity);
   }
 };

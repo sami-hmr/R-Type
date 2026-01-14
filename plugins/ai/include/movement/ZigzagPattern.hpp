@@ -27,10 +27,7 @@ public:
               Speed& /*speed*/,
               double dt) override
   {
-    behavior.movement_delta += dt;
-    em.emit<ComponentBuilder>(entity,
-                              registry.get_component_key<MovementBehavior>(),
-                              behavior.to_bytes());
+    MovementPattern::update_delta(registry, em, entity, behavior, dt);
 
     double switch_interval =
         get_value_copy<double>(registry, behavior.params, "interval")
