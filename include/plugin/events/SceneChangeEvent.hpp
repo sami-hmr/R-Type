@@ -57,3 +57,30 @@ struct SceneChangeEvent
   std::string reason;
   bool force;
 };
+
+struct DisableSceneEvent
+{
+  DisableSceneEvent() = default;
+
+  DisableSceneEvent(std::string t)
+      : target_scene(std::move(t))
+  {
+  }
+
+  DEFAULT_BYTE_CONSTRUCTOR(DisableSceneEvent,
+                           ([](std::string const& t)
+                            { return DisableSceneEvent(t); }),
+                           parseByteString())
+
+  DEFAULT_SERIALIZE(string_to_byte(this->target_scene))
+
+  DisableSceneEvent(Registry& r, JsonObject const& e)
+      : target_scene(
+            get_value_copy<std::string>(r, e, "target_scene").value_or(""))
+  {
+  }
+
+  CHANGE_ENTITY_DEFAULT
+
+  std::string target_scene;
+};

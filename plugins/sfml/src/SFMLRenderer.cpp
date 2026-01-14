@@ -311,6 +311,13 @@ void SFMLRenderer::render_texts(Registry& r,
       continue;
     }
 
+    std::string text_str = txt.text;
+    auto fill_color = txt.fill_color;
+    if (txt.text.empty()) {
+      text_str = txt.placeholder;
+      fill_color.a /= 2;
+    }
+
     sf::Font& font = load_font(txt.font_path);
     if (!_text.has_value()) {
       _text = sf::Text(font);
@@ -318,7 +325,7 @@ void SFMLRenderer::render_texts(Registry& r,
 
     constexpr unsigned int base_size = 100;
     _text.value().setFont(font);
-    _text.value().setString(txt.text);
+    _text.value().setString(text_str);
     _text.value().setCharacterSize(base_size);
     sf::Rect<float> text_rect = _text.value().getLocalBounds();
 
@@ -342,9 +349,9 @@ void SFMLRenderer::render_texts(Registry& r,
     TextDrawable text_drawable(
         std::ref(*this->_text),
         std::ref(font),
-        txt.text,
+        text_str,
         new_pos,
-        txt.fill_color,
+        fill_color,
         txt.outline_color,
         txt.outline ? txt.outline_thickness * 0.1f : 0.0f,
         0.0f,
@@ -497,11 +504,11 @@ void SFMLRenderer::unified_render_system(Registry& r)
 
   render_sprites(
       r, all_drawables, min_dimension, window_size, view_size, view_pos);
-  render_texts(r, all_drawables, min_dimension, window_size);
   render_bars(r, all_drawables, min_dimension, window_size);
   render_animated_sprites(
       r, all_drawables, min_dimension, window_size, view_size, view_pos);
   render_sliders(r, all_drawables, min_dimension, window_size);
+  render_texts(r, all_drawables, min_dimension, window_size);
 
   std::sort(all_drawables.begin(), all_drawables.end());
 

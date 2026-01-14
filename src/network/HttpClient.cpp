@@ -1,6 +1,9 @@
 #include <algorithm>
 #include <chrono>
+#include <cstddef>
+#include <format>
 #include <future>
+#include <optional>
 #include <vector>
 
 #include "network/HttpClient.hpp"
@@ -18,35 +21,42 @@ HttpClient::HttpClient(std::string const& host, int port)
 HttpClient::~HttpClient()
 {
   while (!this->_handlers.empty()) {
-    this->handle_responses(true);
+    try {
+      this->handle_responses(true);
+    } catch (HttpBadCode) {
+    }  // NOLINT
   }
 }
 
 void HttpClient::handle_responses(bool skipping)
 {
-  std::vector<std::size_t> handeled_responses;
+  std::optional<std::size_t> to_handle;
 
   for (std::size_t i = 0; i < this->_handlers.size(); i++) {
     auto status = _handlers[i].call.wait_for(std::chrono::seconds(0));
-    if (status != std::future_status::ready) {
-      continue;
-    }
-    handeled_responses.push_back(i);
-    auto result = _handlers[i].call.get();
-
-    if (result.error() != httplib::Error::Success) {
-      std::cout << "error with http request, code: " << result.error() << "\n";
-      continue;
-    }
-    if (!skipping) {
-      _handlers[i].handler(_handlers[i].context, result);
+    if (status == std::future_status::ready) {
+      to_handle = i;
+      break;
     }
   }
 
-  std::reverse(handeled_responses.begin(), handeled_responses.end());
-  for (auto i : handeled_responses) {
-    this->_handlers.erase(this->_handlers.begin() + i);
+  if (!to_handle) {
+    return;
   }
+
+  auto result = _handlers[*to_handle].call.get();
+  if (result.error() != httplib::Error::Success) {
+    std::cout << "error with http request, code: " << result.error() << "\n";
+    return;
+  }
+  if (result->status < 200 || result->status > 299) {
+    this->_handlers.erase(this->_handlers.begin() + *to_handle);
+    throw HttpBadCode(result->status, result->body);
+  }
+  if (!skipping) {
+    _handlers[*to_handle].handler(_handlers[*to_handle].context, result);
+  }
+  this->_handlers.erase(this->_handlers.begin() + *to_handle);
 }
 
 httplib::Result HttpClient::send_get(const std::string& endpoint,
