@@ -1,8 +1,6 @@
 #pragma once
 
 #include "ByteParser/ByteParser.hpp"
-#include "EventMacros.hpp"
-#include "TwoWayMap.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
@@ -15,26 +13,24 @@ struct ReachBorders
 
   ReachBorders(Registry::Entity zone, Registry::Entity player)
       : zone(zone)
-      , rplayer(player)
+      , player(player)
   {
   }
 
   ReachBorders(Registry& r, JsonObject const& e)
       : zone(static_cast<Registry::Entity>(
             get_value_copy<double>(r, e, "zone").value()))
-      , player(get_value_copy<double>(r, e, "player").value())
+      , player(static_cast<Registry::Entity>(
+            get_value_copy<double>(r, e, "player").value()))
   {
   }
-  DEFAULT_BYTE_CONSTRUCTOR(
-      ReachBorders,
-      ([](Registry::Entity zone, Registry::Entity player)
-       { return ReachBorders(zone, player); }),
-      parseByte<Registry::Entity>(),
-      parseByte<Registry::Entity>())
+  DEFAULT_BYTE_CONSTRUCTOR(ReachBorders,
+                           ([](Registry::Entity zone, Registry::Entity player)
+                            { return ReachBorders(zone, player); }),
+                           parseByte<Registry::Entity>(),
+                           parseByte<Registry::Entity>())
 
-  DEFAULT_SERIALIZE(
-      type_to_byte(zone),
-      type_to_byte(player))
+  DEFAULT_SERIALIZE(type_to_byte(zone), type_to_byte(player))
 };
 
 struct LeftZoneEvt
@@ -42,7 +38,8 @@ struct LeftZoneEvt
 };
 
 struct EnteredZoneEvt
-{};
+{
+};
 
 using LeftZone = ReachBorders<LeftZoneEvt>;
 using EnteredZone = ReachBorders<EnteredZoneEvt>;
