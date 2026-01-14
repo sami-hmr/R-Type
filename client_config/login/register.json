@@ -272,7 +272,7 @@
                             {
                                 "Register": {
                                     "identifier": "%global:register_id_input:buffer",
-                                    "password": "%ĵglobal:register_pswd_input:buffer"
+                                    "password": "%global:register_pswd_input:buffer"
                                 }
                             }
                         ]
