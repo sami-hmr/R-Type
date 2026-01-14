@@ -19,6 +19,10 @@
           "config": {}
         },
         {
+          "name": "debug",
+          "config": {}
+        },
+        {
           "name": "controller",
           "config": {}
         },
@@ -190,3 +194,4 @@
     }
   ]
 }
+

@@ -221,6 +221,7 @@
 #include "plugin/HookConcept.hpp"
 #include "plugin/events/EventConcept.hpp"
 
+class Debug;
 /**
  * @concept component
  * @brief Requires a type to be serializable and entity-convertible for network
@@ -2255,4 +2256,5 @@ private:
   std::vector<Binding> _bindings;
 
   std::unordered_map<std::string, JsonObject> _entities_templates;
+  friend Debug;
 };

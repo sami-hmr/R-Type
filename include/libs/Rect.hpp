@@ -1,5 +1,7 @@
 #pragma once
 
+#include <ostream>
+
 /**
  * @file Rect.hpp
  * @brief Axis-aligned bounding box for collision detection
@@ -66,3 +68,13 @@ struct Rect
     return px >= left && px < right && py >= top && py < bottom;
   }
 };
+
+/**
+ * @brief Outputs rectangle to stream in readable format
+ */
+inline std::ostream& operator<<(std::ostream& os, const Rect& r)
+{
+  os << "Rect(x: " << r.x << ", y: " << r.y << ", w: " << r.width
+     << ", h: " << r.height << ")";
+  return os;
+}

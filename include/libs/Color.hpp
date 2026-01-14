@@ -100,6 +100,16 @@ inline bool operator==(const Color& lhs, const Color& rhs)
 }
 
 /**
+ * @brief Outputs color to stream in readable format
+ */
+inline std::ostream& operator<<(std::ostream& os, const Color& c)
+{
+  os << "Color(" << static_cast<int>(c.r) << ", " << static_cast<int>(c.g)
+     << ", " << static_cast<int>(c.b) << ", " << static_cast<int>(c.a) << ")";
+  return os;
+}
+
+/**
  * @brief Parses a Color from binary data
  * @return Parser that deserializes four bytes (r, g, b, a)
  */
