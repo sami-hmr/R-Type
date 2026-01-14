@@ -13,37 +13,42 @@ struct TileData
   Vector2D size;
   Vector2D pos;
   std::string texture_path;
+  bool collidable = true;
 
   TileData() = default;
 
-  TileData(Vector2D size, Vector2D pos, std::string texture_path)
+  TileData(Vector2D size, Vector2D pos, std::string texture_path, bool collidable = true)
       : size(size)
       , pos(pos)
-      , texture_path(std::move(texture_path)) {};
+      , texture_path(std::move(texture_path))
+      , collidable(collidable) {};
 
   DEFAULT_BYTE_CONSTRUCTOR(
       TileData,
-      [](Vector2D size, Vector2D pos, std::string texture_path)
-      { return TileData(size, pos, std::move(texture_path)); },
+      [](Vector2D size, Vector2D pos, std::string texture_path, bool collidable)
+      { return TileData(size, pos, std::move(texture_path), collidable); },
       parseVector2D(),
       parseVector2D(),
-      parseByteString())
+      parseByteString(),
+      parseByte<bool>())
 
   DEFAULT_SERIALIZE(vector2DToByte(this->size),
                     vector2DToByte(this->pos),
-                    string_to_byte(this->texture_path))
-  HOOKABLE(TileData, HOOK(size), HOOK(pos), HOOK(texture_path))
+                    string_to_byte(this->texture_path),
+                    type_to_byte<bool>(this->collidable))
+  HOOKABLE(TileData, HOOK(size), HOOK(pos), HOOK(texture_path), HOOK(collidable))
 
   CHANGE_ENTITY_DEFAULT
 };
 
 inline Parser<TileData> parse_tile_data()
 {
-  return apply([](Vector2D size, Vector2D pos, std::string texture_path)
-               { return TileData(size, pos, texture_path); },
+  return apply([](Vector2D size, Vector2D pos, std::string texture_path, bool collidable)
+               { return TileData(size, pos, texture_path, collidable); },
                parseVector2D(),
                parseVector2D(),
-               parseByteString());
+               parseByteString(),
+               parseByte<bool>());
 }
 
 struct BasicMap

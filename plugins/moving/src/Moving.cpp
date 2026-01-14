@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cmath>
 #include <iostream>
 
 #include "Moving.hpp"
@@ -13,6 +14,7 @@
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
+#include "plugin/components/BasicMap.hpp"
 #include "plugin/components/Direction.hpp"
 #include "plugin/components/Facing.hpp"
 #include "plugin/components/Position.hpp"
@@ -57,18 +59,62 @@ void Moving::moving_system(Registry& reg)
   double dt = reg.clock().delta_seconds();
 
   auto& raycasting_cameras = reg.get_components<RaycastingCamera>();
+  auto& basic_maps = reg.get_components<BasicMap>();
 
   for (auto&& [index, position, direction, speed] :
        ZipperIndex<Position, Direction, Speed>(reg))
   {
     Vector2D real_direction = direction.direction;
+    bool use_grid_collision = false;
 
-    if (index < raycasting_cameras.size() && raycasting_cameras[index].has_value()) {
+    if (index < raycasting_cameras.size()
+        && raycasting_cameras[index].has_value())
+    {
       double cam_angle = raycasting_cameras[index]->angle;
       real_direction.rotate_radians(cam_angle);
+      use_grid_collision = true;
     }
 
     Vector2D movement = real_direction.normalize() * speed.speed * dt;
+
+    if (use_grid_collision && movement.length() > 0) {
+      constexpr double player_radius = 0.2;
+      Vector2D new_pos = position.pos + movement;
+
+      for (auto const& map_opt : basic_maps) {
+        if (!map_opt.has_value()) {
+          continue;
+        }
+        auto const& map = map_opt.value();
+
+        if (position.pos.x < 0 || position.pos.x >= map.size.x
+            || position.pos.y < 0 || position.pos.y >= map.size.y)
+        {
+          continue;
+        }
+
+        int check_x = static_cast<int>(std::floor(
+            new_pos.x + (movement.x > 0 ? player_radius : -player_radius)));
+        int current_y = static_cast<int>(std::floor(position.pos.y));
+        if (check_x >= 0 && check_x < static_cast<int>(map.size.x)
+            && current_y >= 0 && current_y < static_cast<int>(map.size.y)
+            && map.data[current_y][check_x] != 0)
+        {
+          movement.x = 0;
+        }
+
+        int current_x = static_cast<int>(std::floor(position.pos.x));
+        int check_y = static_cast<int>(std::floor(
+            new_pos.y + (movement.y > 0 ? player_radius : -player_radius)));
+        if (current_x >= 0 && current_x < static_cast<int>(map.size.x)
+            && check_y >= 0 && check_y < static_cast<int>(map.size.y)
+            && map.data[check_y][current_x] != 0)
+        {
+          movement.y = 0;
+        }
+      }
+    }
+
     position.pos += movement;
     if (movement.length() != 0) {
       this->_event_manager.get().emit<ComponentBuilder>(

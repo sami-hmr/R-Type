@@ -103,7 +103,7 @@
                 "pressed": {
                   "name": "RaycastingCameraRotateEvent",
                   "params": {
-                    "angle": -3.0
+                    "angle": -8.0
                   }
                 }
               },
@@ -113,7 +113,7 @@
                 "pressed": {
                   "name": "RaycastingCameraRotateEvent",
                   "params": {
-                    "angle": 3.0
+                    "angle": 8.0
                   }
                 }
               }
@@ -132,8 +132,8 @@
           },
           "moving:Speed": {
             "speed": {
-              "x": 1.5,
-              "y": 1.5
+              "x": 3.0,
+              "y": 3.0
             }
           },
           "moving:Direction": {

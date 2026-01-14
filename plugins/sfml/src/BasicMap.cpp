@@ -118,7 +118,7 @@ sf::Color get_fallback_color(int wall_value, int side)
       color = WHITE;
       break;
     default:
-      color = YELLOW;
+      color = BLACK;
       break;
   }
   if (side == 1) {
@@ -261,14 +261,16 @@ void SFMLRenderer::cast_rays(Registry& /*r*/,
 void SFMLRenderer::draw_textured_walls(
     std::unordered_map<std::string, std::vector<sf::Vertex>>& textured_vertices)
 {
+  this->_triangle_vertices.clear();
+  this->_triangle_vertices.setPrimitiveType(sf::PrimitiveType::Triangles);
   for (auto& [texture_path, vertices] : textured_vertices) {
-    sf::VertexArray va(sf::PrimitiveType::Triangles, vertices.size());
+    this->_triangle_vertices.resize(vertices.size());
     for (size_t i = 0; i < vertices.size(); ++i) {
-      va[i] = vertices[i];
+      this->_triangle_vertices[i] = vertices[i];
     }
     sf::RenderStates states;
     states.texture = &this->load_texture(texture_path);
-    this->_window.draw(va, states);
+    this->_window.draw(this->_triangle_vertices, states);
   }
 }
 
@@ -309,11 +311,10 @@ void SFMLRenderer::render_basic_map(
       sf::Vector2f(static_cast<float>(window_size.x),
                    static_cast<float>(window_size.y) / 2.0f));
   this->_rectangle.setPosition({0.0f, 0.0f});
-  this->_rectangle.setFillColor(sf::Color(100, 100, 100));
+  this->_rectangle.setFillColor(sf::Color(71, 70, 38));
   this->_window.draw(this->_rectangle);
   this->_rectangle.setPosition(
       {0.0f, static_cast<float>(window_size.y) / 2.0f});
-  this->_rectangle.setFillColor(sf::Color(50, 50, 50));
   this->_window.draw(this->_rectangle);
   for (auto&& [draw, basic_map] : Zipper<Drawable, BasicMap>(r)) {
     if (!draw.enabled) {
