@@ -76,7 +76,7 @@
                             },
                             {
                                 "name": "hover",
-                                "texture": "assets/ui/card.png",
+                                "texture": "assets/ui/card_focus.png",
                                 "frame_size": {
                                     "x": 1080.0,
                                     "y": 317.0
@@ -86,8 +86,8 @@
                                     "y": 0.0
                                 },
                                 "sprite_size": {
-                                    "width": "28.0%",
-                                    "height": "28.0%"
+                                    "width": "30.0%",
+                                    "height": "30.0%"
                                 },
                                 "direction": {
                                     "x": 0.0,
@@ -144,7 +144,7 @@
                     },
                     "collision:Collidable": {
                         "width": 0.3,
-                        "height": 0.15,
+                        "height": 0.08,
                         "collision_type": "solid"
                     },
                     "ath:Button": {

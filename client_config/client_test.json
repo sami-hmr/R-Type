@@ -14,7 +14,7 @@
           "name": "rtype_client",
           "config": {
             "http_host": "0.0.0.0",
-            "http_port": 8081
+            "http_port": 8080
           }
         },
         {

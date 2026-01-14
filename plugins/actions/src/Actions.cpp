@@ -44,7 +44,9 @@ Actions::Actions(Registry& r, EventManager& em, EntityLoader& l)
     for (auto&& [entity, action] :
          ZipperIndex<ActionTrigger>(this->_registry.get()))
     {
-      if (action.event_trigger.first != "KeyPressed") {
+      if (!this->_registry.get().is_in_main_scene(entity)
+          || action.event_trigger.first != "KeyPressed")
+      {
         continue;
       }
       std::string key =

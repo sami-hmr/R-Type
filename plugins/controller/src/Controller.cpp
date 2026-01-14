@@ -150,8 +150,10 @@ void Controller::handle_key_change(Key key, bool is_pressed)
       (static_cast<std::uint32_t>(key) << 8) + static_cast<int>(is_pressed);
 
   std::vector<std::function<void()>> to_emit;
-  for (auto&& [c] : Zipper<Controllable>(this->_registry.get())) {
-    if (!c.event_map.contains(key_map)) {
+  for (auto&& [e, c] : ZipperIndex<Controllable>(this->_registry.get())) {
+    if (!this->_registry.get().is_in_main_scene(e)
+        || !c.event_map.contains(key_map))
+    {
       continue;
     }
     auto const& event = c.event_map.at(key_map);

@@ -47,7 +47,7 @@ RtypeClient::RtypeClient(Registry& r, EventManager& em, EntityLoader& l,  std::o
       //               {"entity", JsonValue(static_cast<int>(new_entity))},
       //               {"x", JsonValue(static_cast<double>(0))},
       //               {"y", JsonValue(static_cast<double>(1))}
-      //           }}
+      //           }}"game"
       //       }
       //   }
       // });
@@ -73,6 +73,7 @@ RtypeClient::RtypeClient(Registry& r, EventManager& em, EntityLoader& l,  std::o
   SUBSCRIBE_EVENT(Logout, {
     this->_event_manager.get().emit<SceneChangeEvent>("login", "", true);
     this->_event_manager.get().emit<SceneChangeEvent>("connection_background", "", false);
+    this->_event_manager.get().emit<SceneChangeEvent>("game", "", false);
   })
   this->handle_http();
 }
@@ -80,7 +81,7 @@ RtypeClient::RtypeClient(Registry& r, EventManager& em, EntityLoader& l,  std::o
 void RtypeClient::alert(std::string const& message)
 {
   this->_event_manager.get().emit<SceneChangeEvent>(
-      "alert", "connected", false);
+      "alert", "connected", false, true);
   for (auto [e, text, scene, team] :
        ZipperIndex<Text, Scene, Team>(this->_registry.get()))
   {

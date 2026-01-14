@@ -36,11 +36,13 @@ static int true_main(Registry& r,
   em.on<SceneChangeEvent>("SceneChangeEvent",
                           [&r](const SceneChangeEvent& event) -> bool
                           {
-                            std::cout << event.target_scene << std::endl;
                             if (event.force) {
                               r.deactivate_all_scenes();
                             }
                             r.activate_scene(event.target_scene);
+                            if (event.main) {
+                              r.set_main_scene(event.target_scene);
+                            }
                             return false;
                           });
 
