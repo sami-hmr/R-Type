@@ -1,4 +1,5 @@
 #include <iostream>
+#include <optional>
 #include <vector>
 
 #include "Weapon.hpp"
@@ -175,18 +176,17 @@ void Weapon::on_charge_start(Registry& r, const StartChargeWeapon& e)
   auto& weapon =
       *this->_registry.get().get_components<ChargeWeapon>()[e.entity];
 
-  // Check if weapon can fire (cooldown, ammo, etc.)
   if (!weapon.update_basic_weapon(now)) {
     return;
   }
 
-  // Start charging
   weapon.is_charging = true;
   weapon.charge_start_time = now;
   weapon.current_charge_level = 0.0;
-
-  // Spawn charge indicator if configured
-  if (!weapon.charge_indicator.empty()) {
+  ;
+  if (!weapon.charge_indicator.empty()
+      && !weapon.charge_indicator_entity.has_value())
+  {
     std::cout << "[ChargeWeapon] Spawning charge indicator: "
               << weapon.charge_indicator << " for entity: " << e.entity
               << std::endl;
@@ -197,7 +197,7 @@ void Weapon::on_charge_start(Registry& r, const StartChargeWeapon& e)
     LoadEntityTemplate::Additional additional = {
         {this->_registry.get().get_component_key<Position>(), pos.to_bytes()},
         {this->_registry.get().get_component_key<IdStorage>(),
-         IdStorage(e.entity).to_bytes()}};
+         IdStorage(e.entity, "charge_weapon_indicator").to_bytes()}};
 
     if (this->_registry.get().has_component<Scene>(e.entity)) {
       additional.push_back({this->_registry.get().get_component_key<Scene>(),
@@ -226,12 +226,10 @@ void Weapon::on_charge_release(Registry& r, const ReleaseChargeWeapon& e)
   auto& weapon =
       *this->_registry.get().get_components<ChargeWeapon>()[e.entity];
 
-  // Only fire if we were charging
   if (!weapon.is_charging) {
     return;
   }
 
-  // Check if charge level is above minimum threshold
   if (weapon.current_charge_level < weapon.min_charge_threshold) {
     std::cout << "[ChargeWeapon] Charge below threshold ("
               << weapon.current_charge_level << " < "
@@ -242,35 +240,15 @@ void Weapon::on_charge_release(Registry& r, const ReleaseChargeWeapon& e)
     weapon.current_charge_level = 0.0;
 
     // Destroy charge indicator if it exists
-    if (weapon.charge_indicator_entity != static_cast<Registry::Entity>(-1)) {
-      // Reset sprite size to base scale before destroying to prevent
-      // accumulation
-      if (this->_registry.get().has_component<Sprite>(
-              weapon.charge_indicator_entity))
-      {
-        auto& sprite =
-            *this->_registry.get()
-                 .get_components<Sprite>()[weapon.charge_indicator_entity];
-        sprite.scale = weapon.charge_indicator_base_scale;
-      } else if (this->_registry.get().has_component<AnimatedSprite>(
-                     weapon.charge_indicator_entity))
-      {
-        auto& anim = *this->_registry.get().get_components<AnimatedSprite>()
-                          [weapon.charge_indicator_entity];
-        auto anim_it = anim.animations.find(anim.current_animation);
-        if (anim_it != anim.animations.end()) {
-          anim_it->second.sprite_size = weapon.charge_indicator_base_scale;
-        }
-      }
-
+    if (weapon.charge_indicator_entity.has_value()) {
       std::cout
           << "[ChargeWeapon] Destroying charge indicator (below threshold): "
-          << weapon.charge_indicator_entity
+          << weapon.charge_indicator_entity.value()
           << " (reset to base scale: " << weapon.charge_indicator_base_scale.x
           << ", " << weapon.charge_indicator_base_scale.y << ")" << std::endl;
       this->_event_manager.get().emit<DeleteEntity>(
-          weapon.charge_indicator_entity);
-      weapon.charge_indicator_entity = static_cast<Registry::Entity>(-1);
+          weapon.charge_indicator_entity.value());
+      weapon.charge_indicator_entity = std::nullopt;
     }
 
     return;
@@ -345,33 +323,15 @@ void Weapon::on_charge_release(Registry& r, const ReleaseChargeWeapon& e)
   weapon.current_charge_level = 0.0;
 
   // Destroy charge indicator if it exists
-  if (weapon.charge_indicator_entity != static_cast<Registry::Entity>(-1)) {
-    // Reset sprite size to base scale before destroying to prevent accumulation
-    if (this->_registry.get().has_component<Sprite>(
-            weapon.charge_indicator_entity))
-    {
-      auto& sprite =
-          *this->_registry.get()
-               .get_components<Sprite>()[weapon.charge_indicator_entity];
-      sprite.scale = weapon.charge_indicator_base_scale;
-    } else if (this->_registry.get().has_component<AnimatedSprite>(
-                   weapon.charge_indicator_entity))
-    {
-      auto& anim = *this->_registry.get().get_components<AnimatedSprite>()
-                        [weapon.charge_indicator_entity];
-      auto anim_it = anim.animations.find(anim.current_animation);
-      if (anim_it != anim.animations.end()) {
-        anim_it->second.sprite_size = weapon.charge_indicator_base_scale;
-      }
-    }
-
+  if (weapon.charge_indicator_entity.has_value()) {
     std::cout << "[ChargeWeapon] Destroying charge indicator on release: "
-              << weapon.charge_indicator_entity << " (reset to base scale: "
+              << weapon.charge_indicator_entity.value()
+              << " (reset to base scale: "
               << weapon.charge_indicator_base_scale.x << ", "
               << weapon.charge_indicator_base_scale.y << ")" << std::endl;
     this->_event_manager.get().emit<DeleteEntity>(
-        weapon.charge_indicator_entity);
-    weapon.charge_indicator_entity = static_cast<Registry::Entity>(-1);
+        weapon.charge_indicator_entity.value());
+    weapon.charge_indicator_entity = std::nullopt;
   } else {
     std::cout << "[ChargeWeapon] No charge indicator to destroy" << std::endl;
   }
@@ -419,11 +379,13 @@ void Weapon::charge_weapon_system(
 
     // Find and store the charge indicator entity if we haven't already
     // Keep searching each frame until we find it (LoadEntityTemplate is async)
-    if (weapon.charge_indicator_entity == static_cast<Registry::Entity>(-1)) {
+    if (!weapon.charge_indicator_entity.has_value()) {
       for (auto&& [indicator_entity, marker] :
            ZipperIndex<IdStorage>(this->_registry.get()))
       {
-        if (marker.id_s == entity) {
+        if (marker.id_s == entity
+            && marker.context == "charge_weapon_indicator")
+        {
           weapon.charge_indicator_entity = indicator_entity;
 
           // Store the base scale from the template
@@ -459,7 +421,7 @@ void Weapon::charge_weapon_system(
     weapon.current_charge_level =
         std::min(1.0, elapsed_time / weapon.charge_time);
 
-    if (weapon.charge_indicator_entity != static_cast<Registry::Entity>(-1)) {
+    if (weapon.charge_indicator_entity.has_value()) {
       // Scale grows from 0.1 to max_scale based on charge level
       // Start at 0.1 instead of 0 so the indicator is always visible
       double scale_factor =
@@ -467,21 +429,19 @@ void Weapon::charge_weapon_system(
 
       // Update position to follow the weapon entity
       if (this->_registry.get().has_component<Position>(
-              weapon.charge_indicator_entity))
+              weapon.charge_indicator_entity.value()))
       {
-        auto& indicator_pos =
-            *this->_registry.get()
-                 .get_components<Position>()[weapon.charge_indicator_entity];
+        auto& indicator_pos = *this->_registry.get().get_components<Position>()
+                                   [weapon.charge_indicator_entity.value()];
         indicator_pos.pos = pos.pos;
       }
 
       // Update Sprite if the indicator has one
       if (this->_registry.get().has_component<Sprite>(
-              weapon.charge_indicator_entity))
+              weapon.charge_indicator_entity.value()))
       {
-        auto& sprite =
-            *this->_registry.get()
-                 .get_components<Sprite>()[weapon.charge_indicator_entity];
+        auto& sprite = *this->_registry.get().get_components<Sprite>()
+                            [weapon.charge_indicator_entity.value()];
         // Multiply the base scale by the scale factor
         sprite.scale = weapon.charge_indicator_base_scale * scale_factor;
         std::cout << "[ChargeWeapon] Updated Sprite scale to: ("
@@ -493,11 +453,11 @@ void Weapon::charge_weapon_system(
 
       // Update AnimatedSprite if the indicator has one
       if (this->_registry.get().has_component<AnimatedSprite>(
-              weapon.charge_indicator_entity))
+              weapon.charge_indicator_entity.value()))
       {
         auto& animated_sprite =
             *this->_registry.get().get_components<AnimatedSprite>()
-                 [weapon.charge_indicator_entity];
+                 [weapon.charge_indicator_entity.value()];
         // Update the current animation's sprite_size
         auto anim_it =
             animated_sprite.animations.find(animated_sprite.current_animation);
@@ -513,7 +473,7 @@ void Weapon::charge_weapon_system(
                     << std::endl;
         }
         this->_event_manager.get().emit<ComponentBuilder>(
-            weapon.charge_indicator_entity,
+            weapon.charge_indicator_entity.value(),
             this->_registry.get().get_component_key<AnimatedSprite>(),
             animated_sprite.to_bytes());
       }
