@@ -125,7 +125,7 @@ struct Wave
        std::string tmpl,
        int cnt,
        WavePattern pat,
-       OnEndEvent end,
+       std::vector<OnEndEvent> end,
        bool trk = true,
        bool has_spawned = false,
        std::vector<std::string> inherit = {})
@@ -158,7 +158,7 @@ struct Wave
                                   std::string tmpl,
                                   int cnt,
                                   WavePattern pat,
-                                  OnEndEvent end,
+                                  std::vector<OnEndEvent> end,
                                   bool trk,
                                   bool has_spawned,
                                   std::vector<std::string> inherit)
@@ -176,7 +176,7 @@ struct Wave
                            parseByteString(),
                            parseByte<int>(),
                            parseWavePattern(),
-                           parseOnEndEvent(),
+                           parseByteArray(parseOnEndEvent()),
                            parseByte<bool>(),
                            parseByte<bool>(),
                            parseByteArray(parseByteString()))
@@ -185,7 +185,7 @@ struct Wave
                     string_to_byte(entity_template),
                     type_to_byte(count),
                     pattern.to_bytes(),
-                    on_end.to_bytes(),
+                    vector_to_byte<OnEndEvent>(on_end, std::function<ByteArray(OnEndEvent const &)>([](OnEndEvent const &event) {return event.to_bytes();})),
                     type_to_byte(tracked),
                     type_to_byte(spawned),
                     vector_to_byte<std::string>(components_inheritance,
@@ -195,7 +195,7 @@ struct Wave
   std::string entity_template;
   int count = 1;
   WavePattern pattern;
-  OnEndEvent on_end;
+  std::vector<OnEndEvent> on_end;
   bool tracked = true;
   bool spawned = false;
   std::vector<std::string> components_inheritance;

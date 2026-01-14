@@ -123,29 +123,60 @@ void WaveManager::init_wave(Registry::Entity const& entity,
     return;
   }
 
-  OnEndEvent on_end;
+  std::vector<OnEndEvent> on_end_events;
   if (obj.contains("on_end")) {
-    auto on_end_obj = std::get<JsonObject>(obj.at("on_end").value);
+    auto const& events_array =
+        std::get<JsonArray>(obj.at("on_end").value);
+    for (auto const& item : events_array) {
+      OnEndEvent on_end;
 
-    if (on_end_obj.contains("event_name")) {
-      auto name_str = get_value_copy<std::string>(
-          this->_registry.get(), on_end_obj, "event_name");
-      if (!name_str) {
-        std::cerr
-            << "Error loading Wave component: missing on_end event_name\n";
-        return;
+      auto on_end_obj = std::get<JsonObject>(item.value);
+
+      if (on_end_obj.contains("event_name")) {
+        auto name_str = get_value_copy<std::string>(
+            this->_registry.get(), on_end_obj, "event_name");
+        if (!name_str) {
+          std::cerr
+              << "Error loading Wave component: missing on_end event_name\n";
+          return;
+        }
+        on_end.event_name = name_str.value();
       }
-      on_end.event_name = name_str.value();
-    }
 
-    if (on_end_obj.contains("params")) {
-      auto params_obj = std::get<JsonObject>(on_end_obj.at("params").value);
-      on_end.params = params_obj;
+      if (on_end_obj.contains("params")) {
+        auto params_obj = std::get<JsonObject>(on_end_obj.at("params").value);
+        on_end.params = params_obj;
+      }
+      on_end_events.push_back(on_end);
     }
   } else {
     std::cerr << "Error loading Wave component: missing on_end\n";
     return;
   }
+
+  // OnEndEvent on_end;
+  // if (obj.contains("on_end")) {
+  //   auto on_end_obj = std::get<JsonObject>(obj.at("on_end").value);
+
+  //   if (on_end_obj.contains("event_name")) {
+  //     auto name_str = get_value_copy<std::string>(
+  //         this->_registry.get(), on_end_obj, "event_name");
+  //     if (!name_str) {
+  //       std::cerr
+  //           << "Error loading Wave component: missing on_end event_name\n";
+  //       return;
+  //     }
+  //     on_end.event_name = name_str.value();
+  //   }
+
+  //   if (on_end_obj.contains("params")) {
+  //     auto params_obj = std::get<JsonObject>(on_end_obj.at("params").value);
+  //     on_end.params = params_obj;
+  //   }
+  // } else {
+  //   std::cerr << "Error loading Wave component: missing on_end\n";
+  //   return;
+  // }
 
   std::size_t wave_id = generate_wave_id();
   bool is_tracked = tracked.value_or(true);
@@ -164,7 +195,7 @@ void WaveManager::init_wave(Registry::Entity const& entity,
                                                 entity_template.value(),
                                                 count.value_or(1),
                                                 pattern,
-                                                on_end,
+                                                on_end_events,
                                                 is_tracked,
                                                 false,
                                                 inheritance);
