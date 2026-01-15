@@ -1,0 +1,40 @@
+{
+    "entities_template": [
+        {
+            "name": "login_title",
+            "default_parameters": {},
+            "components": {
+                "ui:Drawable": {},
+                "moving:Position": {
+                    "pos": {
+                        "x": -0.0,
+                        "y": -0.5
+                    }
+                },
+                "ui:Text": {
+                    "font": "assets/fonts/Starjedi.ttf",
+                    "size": {
+                        "width": "100.0%",
+                        "height": "10.0%"
+                    },
+                    "fill_color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255,
+                        "a": 255
+                    },
+                    "outline_color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0,
+                        "a": 255
+                    },
+                    "outline_thickness": 30.0,
+                    "outline": true,
+                    "text": "$text"
+                }
+            }
+        }
+    ],
+    "scenes": []
+}
