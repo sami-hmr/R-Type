@@ -249,7 +249,7 @@ struct PlayerCreated
 
   PlayerCreated(Registry& r, JsonObject const& e)
       : server_index(
-            get_value_copy<Registry::Entity>(r, e, "server_index").value())
+            get_value_copy<Registry::Entity>(r, e, "server_index").value_or(0))
   {
   }
 };

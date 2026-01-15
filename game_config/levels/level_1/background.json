@@ -1,7 +1,7 @@
 {
   "scenes": [
     {
-      "name": "level_1",
+      "name": "game",
       "state": "disabled",
       "plugins": [],
       "entities": [
