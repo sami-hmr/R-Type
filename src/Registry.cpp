@@ -260,7 +260,8 @@ void Registry::add_template(std::string const& name, JsonObject const& config)
   _entities_templates.insert_or_assign(name, config);
 }
 
-JsonObject Registry::get_template(std::string const& name, JsonObject const &params)
+JsonObject Registry::get_template(std::string const& name,
+                                  JsonObject const& params)
 {
   if (!_entities_templates.contains(name)) {
     std::cerr << "Template: " << name << " not found !\n";
