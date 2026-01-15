@@ -1923,7 +1923,7 @@ public:
     }
 
     auto const& tmp =
-        std::any_cast<std::optional<std::any>>(this->_global_hooks.at(value));
+        std::any_cast<std::optional<std::any>>(this->_global_hooks.at(name)(value));
     if (!tmp.has_value()) {
       return std::nullopt;
     }
