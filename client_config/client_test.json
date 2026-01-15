@@ -11,13 +11,6 @@
           }
         },
         {
-          "name": "rtype_client",
-          "config": {
-            "http_host": "0.0.0.0",
-            "http_port": 8080
-          }
-        },
-        {
           "name": "cli",
           "config": {}
         },
@@ -36,6 +29,11 @@
       ],
       "entities": [
         {
+          "moving:IdStorage": {
+            "id": "@self",
+            "hook": "player_id_client",
+            "global_hook": true
+          },
           "controller:Controllable": {
             "bindings": [
               {
