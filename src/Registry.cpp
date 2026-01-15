@@ -255,21 +255,26 @@ const Clock& Registry::clock() const
   return _clock;
 }
 
-void Registry::add_template(std::string const& name, JsonObject const& config)
+void Registry::add_template(std::string const& name,
+                            JsonObject const& config,
+                            JsonObject const& default_parameters)
 {
-  _entities_templates.insert_or_assign(name, config);
+  _entities_templates.insert_or_assign(
+      name, TemplateDefinition(config, default_parameters));
 }
 
-JsonObject Registry::get_template(std::string const& name, JsonObject const &params)
+JsonObject Registry::get_template(std::string const& name,
+                                  JsonObject const& params)
 {
   if (!_entities_templates.contains(name)) {
     std::cerr << "Template: " << name << " not found !\n";
   }
-  JsonObject new_object = _entities_templates.find(name)->second;
+  auto const &definition = _entities_templates.find(name)->second; 
+  JsonObject new_object = definition.obj;
   if (params.empty()) {
     return new_object;
   }
-  replace_json_object(new_object, params);
+  replace_json_object(new_object, params, definition.default_parameters);
   return new_object;
 }
 

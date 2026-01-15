@@ -2,6 +2,9 @@
     "entities_template": [
         {
             "name": "switch_text",
+            "default_parameters": {
+                "width": 0.8
+            },
             "components": {
                 "ui:Drawable": {},
                 "moving:Position": {
