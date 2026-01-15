@@ -61,8 +61,8 @@ void Collision::set_algorithm(std::unique_ptr<ICollisionAlgorithm> algo)
 void Collision::init_collision(Registry::Entity const& entity,
                                JsonObject const& obj)
 {
-  auto const& size =
-      get_value<Collidable, Vector2D>(this->_registry.get(), obj, entity, "size");
+  auto const& size = get_value<Collidable, Vector2D>(
+      this->_registry.get(), obj, entity, "size");
   auto const& type_str = get_value<Collidable, std::string>(
       this->_registry.get(), obj, entity, "collision_type");
 
@@ -121,11 +121,13 @@ void Collision::collision_system(Registry& r)
 
   std::vector<ICollisionAlgorithm::CollisionEntity> entities;
 
+  std::cout << "-------\n";
   for (auto&& [i, position, collidable] : ZipperIndex<Position, Collidable>(r))
   {
     if (!collidable.is_active) {
       continue;
     }
+    std::cout << collidable.size << std::endl;
     entities.push_back(ICollisionAlgorithm::CollisionEntity {
         .entity_id = i,
         .bounds = Rect {.x = position.pos.x,
@@ -144,6 +146,7 @@ void Collision::collision_system(Registry& r)
     this->_event_manager.get().emit<CollisionEvent>(entity_a, entity_b);
     this->_event_manager.get().emit<CollisionEvent>(entity_b, entity_a);
   }
+  std::cout << "-------\n";
 }
 
 void Collision::interaction_zone_system(Registry& r)

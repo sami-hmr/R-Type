@@ -313,11 +313,11 @@ void SFMLRenderer::render_sprites(Registry& r,
       this->_sprite = sf::Sprite(texture);
     }
 
-    draw.true_size =
-        Vector2D {static_cast<double>(texture.getSize().x * uniform_scale)
-                      / min_dimension,
-                  static_cast<double>(texture.getSize().y * uniform_scale)
-                      / min_dimension};
+    // draw.true_size =
+    //     Vector2D {static_cast<double>(texture.getSize().x * uniform_scale)
+    //                   / min_dimension,
+    //               static_cast<double>(texture.getSize().y * uniform_scale)
+    //                   / min_dimension};
 
     SpriteDrawable sprite_drawable(std::ref(*this->_sprite),
                                    spr.texture_path,
@@ -385,9 +385,9 @@ void SFMLRenderer::render_texts(Registry& r,
     _text.value().setCharacterSize(final_size);
     sf::FloatRect final_text_rect = _text.value().getLocalBounds();
 
-    draw.true_size =
-        Vector2D {static_cast<double>(final_text_rect.size.x) / min_dimension,
-                  static_cast<double>(final_text_rect.size.y) / min_dimension};
+    // draw.true_size =
+    //     Vector2D {static_cast<double>(final_text_rect.size.x) / min_dimension,
+    //               static_cast<double>(final_text_rect.size.y) / min_dimension};
 
     TextDrawable text_drawable(
         std::ref(this->_text.value()),
@@ -442,8 +442,8 @@ void SFMLRenderer::render_bars(Registry& r,
       texture_ptr = load_texture(bar.texture_path);
     }
 
-    drawable.true_size = Vector2D {static_cast<double>(size.x) / min_dimension,
-                                   static_cast<double>(size.y) / min_dimension};
+    // drawable.true_size = Vector2D {static_cast<double>(size.x) / min_dimension,
+    //                                static_cast<double>(size.y) / min_dimension};
 
     BarDrawable bar_drawable(std::ref(this->_rectangle),
                              new_pos + offset,
@@ -524,11 +524,12 @@ void SFMLRenderer::render_animated_sprites(
     }
 
     draw.true_size =
-        Vector2D {static_cast<double>(anim_data.sprite_size.x * uniform_scale)
+        Vector2D {static_cast<double>(anim_data.frame_size.x * uniform_scale)
                       / min_dimension,
-                  static_cast<double>(anim_data.sprite_size.y * uniform_scale)
+                  static_cast<double>(anim_data.frame_size.y * uniform_scale)
                       / min_dimension};
 
+   // std::cout << draw.true_size << "\n";
     AnimatedSpriteDrawable anim_drawable(
         std::ref(*this->_sprite),
         anim_data.texture_path,
