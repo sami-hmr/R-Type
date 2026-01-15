@@ -10,31 +10,22 @@
           "ui:Background": {
             "layers": [
               {
-                "path": "assets/backgrounds/skies/Sky_sky.png"
+                "path": "assets/backgrounds/assetpack/parallax/desert/desert_sky.png"
               },
               {
-                "path": "assets/backgrounds/skies/sky_moon.png"
+                "path": "assets/backgrounds/assetpack/parallax/desert/desert_moon.png"
               },
               {
-                "path": "assets/backgrounds/skies/Sky_back_mountain.png"
+                "path": "assets/backgrounds/assetpack/parallax/desert/desert_cloud.png"
               },
               {
-                "path": "assets/backgrounds/skies/sky_front_mountain.png"
+                "path": "assets/backgrounds/assetpack/parallax/desert/desert_mountain.png"
               },
               {
-                "path": "assets/backgrounds/skies/sky_clouds.png"
+                "path": "assets/backgrounds/assetpack/parallax/desert/desert_dunemid.png"
               },
               {
-                "path": "assets/backgrounds/skies/Sky_cloud_single.png"
-              },
-              {
-                "path": "assets/backgrounds/skies/Sky_front_cloud.png"
-              },
-              {
-                "path": "assets/backgrounds/skies/sky_cloud_floor.png"
-              },
-              {
-                "path": "assets/backgrounds/skies/sky_cloud_floor_2.png"
+                "path": "assets/backgrounds/assetpack/parallax/desert/desert_dunefrontt.png"
               }
             ],
             "render_type": "STRETCH",

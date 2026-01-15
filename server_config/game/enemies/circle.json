@@ -123,7 +123,8 @@
           "magazine_size": 6,
           "magazine_nb": 3,
           "reload_time": 2.0,
-          "cooldown": 2.0
+          "cooldown": 2.0,
+          "attack_animation": "attack"
         },
         "ai:MovementBehavior": { "movement_type": "circle" },
         "ai:AttackBehavior": {
