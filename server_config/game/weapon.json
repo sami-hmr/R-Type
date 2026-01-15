@@ -295,11 +295,13 @@
             "y": 0.0
           }
         },
-        "moving:Velocity": {
+        "moving:Speed": {
           "speed": {
             "x": 0.002,
             "y": 0.0
-          },
+          }
+        },
+        "moving:Direction": {
           "direction": {
             "x": 1.0,
             "y": 0.0
