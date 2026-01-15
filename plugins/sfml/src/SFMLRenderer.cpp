@@ -136,9 +136,7 @@ SFMLRenderer::SFMLRenderer(Registry& r, EventManager& em, EntityLoader& l)
   for (auto& sound : this->_sounds) {
     sound = sf::Sound(buffer);
   }
-  std::cout << "ici\n";
   this->_musics.insert_or_assign(SFMLRenderer::placeholder, sf::Music());
-  std::cout << "la\n";
   this->_cursors.insert_or_assign("arrow", sf::Cursor(sf::Cursor::Type::Arrow));
   this->_cursors.insert_or_assign("hand", sf::Cursor(sf::Cursor::Type::Hand));
   this->_cursors.insert_or_assign("wait", sf::Cursor(sf::Cursor::Type::Wait));
