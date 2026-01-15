@@ -1,0 +1,62 @@
+{
+  "entities_template": [
+    {
+      "name": "wave_1_level_2",
+      "components": {
+        "wave:Wave": {
+          "entity_template": "enemy_wave_1",
+          "count": 8,
+          "tracked": true,
+          "components_inheritance": ["scene"],
+          "pattern": {
+            "type": "circle",
+            "origin": { "x": 2.0, "y": -0.2 },
+            "params": {
+              "radius": 0.5
+            }
+          },
+          "on_end": [{
+            "event_name": "WaveSpawnEvent",
+            "params": {
+              "wave_templates": ["wave_2_level_2"]
+            }
+          }]
+        },
+        "wave:Formation": {
+          "strength": 0.1
+        }
+      }
+    },
+    {
+      "name": "wave_2_level_2",
+      "components": {
+        "wave:Wave": {
+          "entity_template": "enemy_straight_1",
+          "count": 7,
+          "tracked": true,
+          "components_inheritance": ["scene"],
+          "pattern": {
+            "type": "formation_v",
+            "origin": { "x": 2.5, "y": 0.0 },
+            "params": {
+              "spacing_x": 0.2,
+              "spacing_y": 0.2
+            }
+          },
+          "on_end": [{
+            "event_name": "SceneChangeEvent",
+            "params": {
+              "target_scene": "level_3",
+              "state": "active",
+              "reason": "User completed wave",
+              "force": false
+            }
+          }]
+        },
+        "wave:Formation": {
+          "strength": 0.1
+        }
+      }
+    }
+  ]
+}

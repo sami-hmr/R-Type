@@ -19,5 +19,6 @@ private:
   void init_speed(Registry::Entity const& entity, JsonObject& obj);
   void init_facing(Registry::Entity const& entity, JsonObject& obj);
 
+  void init_id(Registry::Entity const& entity, JsonObject& obj);
   void moving_system(Registry&);
 };

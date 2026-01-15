@@ -47,6 +47,11 @@ void AnimatedSprite::update_anim(
         animation.current_frame = animation.nb_frames - 1;
         animation.frame_pos -= animation.direction * animation.frame_size;
         this->last_update = now;
+        if (this->animations.contains("idle")) {
+          this->current_animation = "idle";
+          animation.current_frame = 0;
+          animation.frame_pos = animation.initial_frame_pos;
+        }
         return;
       }
       if (animation.rollback) {

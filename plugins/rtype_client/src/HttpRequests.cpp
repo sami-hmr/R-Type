@@ -69,57 +69,36 @@ void RtypeClient::handle_server_fetched()
     auto const& it = scenes[i];
     this->_registry.get().add_scene(it.first);
 
-    std::size_t index_indicator = *this->_loader.get().load_entity_template(
-        "page_index_indicator",
-        {
-            {this->_registry.get().get_component_key<Scene>(),
-             Scene(it.first).to_bytes()},
-        });
-    if (this->_registry.get().has_component<Text>(index_indicator)) {
-      this->_registry.get().get_components<Text>()[index_indicator]->text =
-          std::format("{}/{}", i + 1, scenes.size());
-    }
-    this->_server_fetch_entities.emplace_back(index_indicator);
+    this->_server_fetch_entities.emplace_back(
+        *this->_loader.get().load_entity_template(
+            "page_index_indicator",
+            {
+                {this->_registry.get().get_component_key<Scene>(),
+                 Scene(it.first).to_bytes()},
+            },
+            {{"text", std::format("{}/{}", i + 1, scenes.size())}}));
 
     if (i != 0) {
       this->_server_fetch_entities.emplace_back(
           *this->_loader.get().load_entity_template(
-              "go_back_search_button",
-              {
-                  {this->_registry.get().get_component_key<Scene>(),
-                   Scene(it.first).to_bytes()},
-                  {this->_registry.get().get_component_key<Clickable>(),
-                   Clickable(std::vector<std::pair<std::string, JsonObject>>(
-                                 {{"SceneChangeEvent",
-                                   {{"target_scene", scenes[i - 1].first},
-                                    {"reason", "click"},
-                                    {"force", false}}},
-                                  {"DisableSceneEvent",
-                                   {
-                                       {"target_scene", it.first},
-                                   }}}))
-                       .to_bytes()},
-              }));
+              "switch_pages_search_button",
+              {{this->_registry.get().get_component_key<Scene>(),
+                Scene(it.first).to_bytes()}},
+              {{"x", -0.3},
+               {"text", "<"},
+               {"target_scene", scenes[i - 1].first},
+               {"current_scene", it.first}}));
     }
     if (i < (scenes.size() - 1)) {
       this->_server_fetch_entities.emplace_back(
           *this->_loader.get().load_entity_template(
-              "go_forward_search_button",
-              {
-                  {this->_registry.get().get_component_key<Scene>(),
-                   Scene(it.first).to_bytes()},
-                  {this->_registry.get().get_component_key<Clickable>(),
-                   Clickable(std::vector<std::pair<std::string, JsonObject>>(
-                                 {{"SceneChangeEvent",
-                                   {{"target_scene", scenes[i + 1].first},
-                                    {"reason", "click"},
-                                    {"force", false}}},
-                                  {"DisableSceneEvent",
-                                   {
-                                       {"target_scene", it.first},
-                                   }}}))
-                       .to_bytes()},
-              }));
+              "switch_pages_search_button",
+              {{this->_registry.get().get_component_key<Scene>(),
+                Scene(it.first).to_bytes()}},
+              {{"x", 0.3},
+               {"text", ">"},
+               {"target_scene", scenes[i + 1].first},
+               {"current_scene", it.first}}));
     }
     for (std::size_t index = 0; index < it.second.size(); index++) {
       auto const& server = it.second[index];

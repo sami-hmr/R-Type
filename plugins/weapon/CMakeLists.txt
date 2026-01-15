@@ -5,6 +5,8 @@ set(LIB_NAME weapon)
 add_library(${LIB_NAME} SHARED
   src/Weapon.cpp
   src/BasicWeapon.cpp
+  src/ChargeWeapon.cpp
+  src/DelayedWeapon.cpp
 )
 
 target_compile_features(${LIB_NAME} PRIVATE cxx_std_23)

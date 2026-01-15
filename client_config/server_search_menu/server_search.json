@@ -34,31 +34,7 @@
                             },
                             {
                                 "name": "hover",
-                                "texture": "assets/ui/card.png",
-                                "frame_size": {
-                                    "x": 1080.0,
-                                    "y": 317.0
-                                },
-                                "frame_pos": {
-                                    "x": 0.0,
-                                    "y": 0.0
-                                },
-                                "sprite_size": {
-                                    "width": "28.0%",
-                                    "height": "28.0%"
-                                },
-                                "direction": {
-                                    "x": 0.0,
-                                    "y": 0.0
-                                },
-                                "framerate": 1.0,
-                                "nb_frames": 1,
-                                "loop": false,
-                                "rollback": false
-                            },
-                            {
-                                "name": "pressed",
-                                "texture": "assets/ui/card.png",
+                                "texture": "assets/ui/card_focus.png",
                                 "frame_size": {
                                     "x": 1080.0,
                                     "y": 317.0
@@ -70,6 +46,30 @@
                                 "sprite_size": {
                                     "width": "30.0%",
                                     "height": "30.0%"
+                                },
+                                "direction": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "framerate": 1.0,
+                                "nb_frames": 1,
+                                "loop": true,
+                                "rollback": false
+                            },
+                            {
+                                "name": "pressed",
+                                "texture": "assets/ui/card_focus.png",
+                                "frame_size": {
+                                    "x": 1080.0,
+                                    "y": 317.0
+                                },
+                                "frame_pos": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "sprite_size": {
+                                    "width": "28.0%",
+                                    "height": "28.0%"
                                 },
                                 "direction": {
                                     "x": 0.0,
@@ -99,8 +99,10 @@
                         "z": 2
                     },
                     "collision:Collidable": {
-                        "width": 0.3,
-                        "height": 0.15,
+                        "size": {
+                            "x": 0.3,
+                            "y": 0.15
+                        },
                         "collision_type": "solid"
                     },
                     "ath:Button": {
@@ -160,31 +162,7 @@
                             },
                             {
                                 "name": "hover",
-                                "texture": "assets/ui/card.png",
-                                "frame_size": {
-                                    "x": 1080.0,
-                                    "y": 317.0
-                                },
-                                "frame_pos": {
-                                    "x": 0.0,
-                                    "y": 0.0
-                                },
-                                "sprite_size": {
-                                    "width": "28.0%",
-                                    "height": "28.0%"
-                                },
-                                "direction": {
-                                    "x": 0.0,
-                                    "y": 0.0
-                                },
-                                "framerate": 1.0,
-                                "nb_frames": 1,
-                                "loop": false,
-                                "rollback": false
-                            },
-                            {
-                                "name": "pressed",
-                                "texture": "assets/ui/card.png",
+                                "texture": "assets/ui/card_focus.png",
                                 "frame_size": {
                                     "x": 1080.0,
                                     "y": 317.0
@@ -196,6 +174,30 @@
                                 "sprite_size": {
                                     "width": "30.0%",
                                     "height": "30.0%"
+                                },
+                                "direction": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "framerate": 1.0,
+                                "nb_frames": 1,
+                                "loop": true,
+                                "rollback": false
+                            },
+                            {
+                                "name": "pressed",
+                                "texture": "assets/ui/card_focus.png",
+                                "frame_size": {
+                                    "x": 1080.0,
+                                    "y": 317.0
+                                },
+                                "frame_pos": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "sprite_size": {
+                                    "width": "28.0%",
+                                    "height": "28.0%"
                                 },
                                 "direction": {
                                     "x": 0.0,
@@ -225,8 +227,10 @@
                         "z": 2
                     },
                     "collision:Collidable": {
-                        "width": 0.3,
-                        "height": 0.15,
+                        "size": {
+                            "x": 0.3,
+                            "y": 0.15
+                        },
                         "collision_type": "solid"
                     },
                     "ath:Button": {

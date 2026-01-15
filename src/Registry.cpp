@@ -7,8 +7,11 @@
 
 #include "ecs/Registry.hpp"
 
+#include "Json/JsonParser.hpp"
 #include "NetworkShared.hpp"
 #include "ecs/EventManager.hpp"
+#include "ecs/JsonTemplateUtils.hpp"
+#include "ecs/Scenes.hpp"
 #include "ecs/Systems.hpp"
 #include "plugin/Byte.hpp"
 
@@ -108,6 +111,9 @@ void Registry::add_scene(std::string const& scene_name, SceneState state)
   if (state == SceneState::ACTIVE || state == SceneState::MAIN) {
     activate_scene(scene_name);
   }
+  if (state == SceneState::MAIN) {
+    set_main_scene(scene_name);
+  }
 }
 
 void Registry::init_scene_management()
@@ -154,6 +160,7 @@ void Registry::deactivate_scene(std::string const& scene_name)
   _current_scene.erase(
       std::remove(_current_scene.begin(), _current_scene.end(), scene_name),
       _current_scene.end());
+  this->_main_scene.remove(scene_name);
 }
 
 void Registry::deactivate_all_scenes()
@@ -210,18 +217,7 @@ void Registry::set_current_scene(std::string const& scene_name)
 
 void Registry::set_main_scene(std::string const& scene_name)
 {
-  if (!_scenes.contains(scene_name)) {
-    _scenes.insert({scene_name, SceneState::MAIN});
-  } else {
-    _scenes[scene_name] = SceneState::MAIN;
-  }
-
-  if (_active_scenes_set.contains(scene_name)) {
-    return;
-  }
-
-  _current_scene.push_back(scene_name);
-  _active_scenes_set.insert(scene_name);
+  this->_main_scene.push_front(scene_name);
 }
 
 void Registry::remove_current_scene(std::string const& scene_name)
@@ -239,6 +235,16 @@ std::vector<std::string> const& Registry::get_current_scene() const
   return _current_scene;
 }
 
+bool Registry::is_in_main_scene(Entity e)
+{
+  if (!this->has_component<Scene>(e)) {
+    return true;
+  }
+  return this->_main_scene.empty()
+      || this->get_components<Scene>()[e]->scene_name
+      == this->_main_scene.front();
+}
+
 Clock& Registry::clock()
 {
   return _clock;
@@ -249,17 +255,27 @@ const Clock& Registry::clock() const
   return _clock;
 }
 
-void Registry::add_template(std::string const& name, JsonObject const& config)
+void Registry::add_template(std::string const& name,
+                            JsonObject const& config,
+                            JsonObject const& default_parameters)
 {
-  _entities_templates.insert_or_assign(name, config);
+  _entities_templates.insert_or_assign(
+      name, TemplateDefinition(config, default_parameters));
 }
 
-JsonObject Registry::get_template(std::string const& name)
+JsonObject Registry::get_template(std::string const& name,
+                                  JsonObject const& params)
 {
   if (!_entities_templates.contains(name)) {
     std::cerr << "Template: " << name << " not found !\n";
   }
-  return _entities_templates.find(name)->second;
+  auto const& definition = _entities_templates.find(name)->second;
+  JsonObject new_object = definition.obj;
+  if (params.empty()) {
+    return new_object;
+  }
+  replace_json_object(new_object, params, definition.default_parameters);
+  return new_object;
 }
 
 bool Registry::is_in_current_cene(Entity e)

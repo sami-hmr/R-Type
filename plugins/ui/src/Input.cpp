@@ -1,7 +1,6 @@
 #include "plugin/components/Input.hpp"
 
 #include "UI.hpp"
-#include "ecs/zipper/Zipper.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "plugin/components/AnimatedSprite.hpp"
 #include "plugin/components/Drawable.hpp"
@@ -12,7 +11,7 @@ void UI::input_system(Registry& r)
   for (const auto&& [e, draw, input, anim] :
        ZipperIndex<Drawable, Input, AnimatedSprite>(r))
   {
-    if (!draw.enabled) {
+    if (!r.is_in_main_scene(e) || !draw.enabled) {
       continue;
     }
     if (input.enabled && anim.animations.contains("input_focus")) {

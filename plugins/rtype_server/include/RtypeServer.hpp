@@ -17,7 +17,10 @@
 class RtypeServer : public BaseServer
 {
 public:
-  RtypeServer(Registry& r, EventManager& em, EntityLoader& l);
+  RtypeServer(Registry& r,
+              EventManager& em,
+              EntityLoader& l,
+              std::optional<JsonObject> const& config);
   ~RtypeServer() override = default;
 
 private:

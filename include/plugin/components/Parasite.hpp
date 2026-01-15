@@ -7,6 +7,7 @@
 
 #include "BaseTypes.hpp"
 #include "ByteParser/ByteParser.hpp"
+#include "ecs/Registry.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/HookMacros.hpp"
@@ -14,58 +15,40 @@
 
 struct Parasite
 {
-  std::optional<std::size_t> player_linked;
-  std::string behaviour;  // attached / follow
-  std::string effect;  // drain / attack / load
-  Vector2D dflt_speed;
+  std::optional<std::size_t> entity_id;
+  std::string behavior;
 
   Parasite() = default;
 
-  Parasite(std::optional<std::size_t> player_linked,
-           std::string behaviour,
-           std::string effect,
-           Vector2D dflt_speed)
-      : player_linked(player_linked)
-      , behaviour(std::move(behaviour))
-      , effect(std::move(effect))
-      , dflt_speed(dflt_speed)
+  Parasite(std::optional<std::size_t> entity_id, std::string behavior)
+      : entity_id(entity_id)
+      , behavior(std::move(behavior))
   {
   }
 
-  Parasite(std::string behaviour, std::string effect, Vector2D dflt_speed)
-      : player_linked(std::nullopt)
-      , behaviour(std::move(behaviour))
-      , effect(std::move(effect))
-      , dflt_speed(dflt_speed)
+  Parasite(std::string behavior)
+      : entity_id(std::nullopt)
+      , behavior(std::move(behavior))
   {
   }
 
-  HOOKABLE(Parasite,
-           HOOK(player_linked),
-           HOOK(behaviour),
-           HOOK(effect),
-           HOOK(dflt_speed))
+  HOOKABLE(Parasite, HOOK(entity_id), HOOK(behavior))
 
-  CHANGE_ENTITY_DEFAULT
+  CHANGE_ENTITY(if (entity_id.has_value()) {
+    result.entity_id.emplace(map.at(entity_id.value()));
+  })
 
-  DEFAULT_BYTE_CONSTRUCTOR(
-      Parasite,
-      ([](std::optional<std::size_t> player_linked,
-          std::string behaviour,
-          std::string effect,
-          Vector2D dflt_speed)
-       { return Parasite(player_linked, behaviour, effect, dflt_speed); }),
-      parseByteOptional(parseByte<std::size_t>()),
-      parseByteString(),
-      parseByteString(),
-      parseVector2D())
+  DEFAULT_BYTE_CONSTRUCTOR(Parasite,
+                           ([](std::optional<std::size_t> entity_id,
+                               std::string const& behavior)
+                            { return Parasite(entity_id, behavior); }),
+                           parseByteOptional(parseByte<std::size_t>()),
+                           parseByteString())
 
   DEFAULT_SERIALIZE(optional_to_byte<std::size_t>(
-                        this->player_linked,
+                        this->entity_id,
                         std::function<ByteArray(std::size_t const&)>(
                             [](std::size_t const& b)
                             { return type_to_byte(b); })),
-                    string_to_byte(this->behaviour),
-                    string_to_byte(this->effect),
-                    vector2DToByte(this->dflt_speed))
+                    string_to_byte(this->behavior))
 };
