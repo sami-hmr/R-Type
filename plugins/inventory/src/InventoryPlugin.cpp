@@ -96,19 +96,37 @@ std::vector<std::pair<Item, std::size_t>> InventoryPlugin::init_item_vector(Regi
     auto throwable =
         get_value_copy<bool>(this->_registry.get(), item, "throwable");
     auto quantity =
-        get_value_copy<std::size_t>(this->_registry.get(), item, "quantity");
+        get_value_copy<int>(this->_registry.get(), item, "quantity");
     auto config =
         get_value_copy<JsonObject>(this->_registry.get(), item, "config");
-    if (!name || !quantity || !consumable || !throwable) {
+    if (!name) {
       LOGGER("InventoryPlugin",
              LogLevel::WARNING,
-             std::format("Missing a field in item, skipping"));
+             std::format("Missing field name in item, skipping"));
+      continue;
+    }
+    if (!quantity) {
+      LOGGER("InventoryPlugin",
+             LogLevel::WARNING,
+             std::format("Missing field quantity in item, skipping"));
+      continue;
+    }
+    if (!consumable) {
+      LOGGER("InventoryPlugin",
+             LogLevel::WARNING,
+             std::format("Missing field consumable in item, skipping"));
+      continue;
+    }
+    if (!throwable) {
+      LOGGER("InventoryPlugin",
+             LogLevel::WARNING,
+             std::format("Missing field throwable in item, skipping"));
       continue;
     }
     config->insert_or_assign("entity", JsonValue(static_cast<int>(entity)));
     slots.emplace_back(
         Item(std::make_pair(*name, *config), *consumable, *throwable),
-        *quantity);
+        static_cast<std::size_t>(*quantity));
   }
   return slots;
 }
