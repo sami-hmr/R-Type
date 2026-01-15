@@ -126,7 +126,6 @@ void Collision::collision_system(Registry& r)
     if (!collidable.is_active) {
       continue;
     }
-    std::cout << collidable.size << std::endl;
     entities.push_back(ICollisionAlgorithm::CollisionEntity {
         .entity_id = i,
         .bounds = Rect {.x = position.pos.x,
