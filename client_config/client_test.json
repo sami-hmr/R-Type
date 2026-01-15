@@ -72,6 +72,20 @@
                 }
               },
               {
+                "description" : "play sound",
+                "key": "P",
+                "pressed": {
+                  "name": "PlaySoundEvent",
+                  "params": {
+                    "name": "fah",
+                    "entity": "#self",
+                    "volume": 100.0,
+                    "pitch": 1.0,
+                    "loop": false
+                  }
+                }
+              },
+              {
                 "description": "go right",
                 "key": "D",
                 "pressed": {
@@ -116,7 +130,18 @@
                 }
               }
             ]
-          }
+          },
+          "sound:SoundManager": {
+            "sound_effects": [
+              {
+                "name": "fah",
+                "filepath": "assets/sounds/fah.mp3",
+                "volume": 50.0,
+                "pitch": 1.0,
+                "loop": false
+              }
+            ]
+          } 
         }
       ]
     },

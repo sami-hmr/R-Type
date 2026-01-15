@@ -1,10 +1,15 @@
 #pragma once
 
+#include <array>
 #include <memory>
 #include <string>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
+#include <SFML/Audio/Music.hpp>
+#include <SFML/Audio/Sound.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Font.hpp>
@@ -46,14 +51,17 @@ public:
   SFMLRenderer(Registry& r, EventManager& em, EntityLoader& l);
   ~SFMLRenderer() override;
 
+  static const int MAX_NB_SOUNDS = 16;
   static constexpr sf::Vector2u window_size = {1080, 1080};
   static const std::size_t window_rate = 60;
   static constexpr sf::Vector2u placeholder_size = {50, 50};
-  static constexpr std::string placeholder_texture = "placeholder ";
+  static constexpr std::string placeholder = "placeholder ";
 
 private:
   sf::Texture& load_texture(std::string const& path);
   sf::Font& load_font(std::string const& path);
+  sf::SoundBuffer& load_sound(std::string const& path);
+  std::optional<std::reference_wrapper<sf::Sound>> get_available_sound(sf::SoundBuffer& buffer);
 
   void handle_events();
   void mouse_events(const sf::Event& events);
@@ -64,6 +72,7 @@ private:
   void camera_system(Registry& r);
   void button_system(Registry& r);
   void slider_system(Registry& r) const;
+  void sounds_system(Registry& r);
   void display();
 
   void render_sprites(Registry& r,
@@ -104,8 +113,10 @@ private:
   std::optional<sf::Text> _text;
   sf::RectangleShape _rectangle;
   sf::CircleShape _circle;
-  sf::VertexBuffer _vertex_buffer;
-  int _current_vertex = 0;
+
+  std::unordered_map<std::string, sf::SoundBuffer> _sound_buffers;
+  std::array<std::optional<sf::Sound>, MAX_NB_SOUNDS> _sounds;
+  sf::Music _music;
 
   sf::View _view;
   bool _camera_initialized = false;
