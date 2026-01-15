@@ -117,6 +117,18 @@
                   "name": "FireBullet",
                   "params": {}
                 }
+              },
+              {
+                "description": "shoot",
+                "key": "P",
+                "pressed": {
+                  "name": "StartChargeWeapon",
+                  "params": {}
+                },
+                "released": {
+                  "name": "ReleaseChargeWeapon",
+                  "params": {}
+                }
               }
             ]
           }

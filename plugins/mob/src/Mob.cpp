@@ -55,6 +55,13 @@ void Mob::init_parasite(Registry::Entity const& entity, JsonObject const& obj)
       this->_registry.get(), obj, entity, "behaviour");
   auto const& effect = get_value<Parasite, std::string>(
       this->_registry.get(), obj, entity, "effect");
+
+  std::optional<std::size_t> id = std::nullopt;
+  if (obj.contains("entity_id")) {
+    id = get_value<Parasite, std::size_t>(
+        this->_registry.get(), obj, entity, "entity_id");
+  }
+
   auto const& dflt_speed = get_value<Parasite, Vector2D>(
       this->_registry.get(), obj, entity, "default_speed");
 
@@ -64,7 +71,7 @@ void Mob::init_parasite(Registry::Entity const& entity, JsonObject const& obj)
     return;
   }
   this->_registry.get().emplace_component<Parasite>(
-      entity, behaviour.value(), effect.value(), dflt_speed.value());
+      entity, id, behaviour.value(), effect.value(), dflt_speed.value());
 }
 
 void Mob::parasite_system(Registry& r)
