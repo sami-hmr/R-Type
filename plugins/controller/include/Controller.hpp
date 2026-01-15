@@ -1,22 +1,16 @@
 #pragma once
 
-#include <format>
 #include <map>
-#include <stdexcept>
 #include <string>
-#include <variant>
-#include <vector>
 
 #include "Json/JsonParser.hpp"
 #include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
-#include "ecs/SparseArray.hpp"
-#include "ecs/zipper/Zipper.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Controllable.hpp"
-#include "plugin/components/Position.hpp"
 #include "plugin/events/IoEvents.hpp"
+#include "plugin/events/RebindingEvent.hpp"
 
 class Controller : public APlugin
 {
@@ -36,7 +30,9 @@ private:
                                       Controllable& result,
                                       JsonObject& event,
                                       const std::string& key_string,
+                                      const std::string& description,
                                       KeyEventType event_type);
+  static void rebinding(Controllable& c, Rebind event, KeyEventType event_type);
 
   std::map<Key, bool> _key_states;
 };

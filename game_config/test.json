@@ -243,17 +243,28 @@
                     "name": "FireBullet",
                     "params": {}
                   }
+                },
+                {
+                  "description": "rebind",
+                  "key": "M",
+                  "pressed": {
+                    "name": "Rebind",
+                    "params": {
+                      "key_to_replace": "S",
+                      "replacement_key": "D"
+                    }
+                  }
                 }
               ]
             },
-            "inventory:Item": {
+            "inventory:Inventory": {
               "max_items": 5,
               "items": [
                 {
                   "name": "apple",
-                  "quantity": 1,
                   "consumable": true,
                   "throwable": true,
+                  "quantity": 1,
                   "config": {
                     "consume": {
                       "animation": "Consumed",
@@ -386,6 +397,7 @@
                   "name": "SceneChangeEvent",
                   "params": {
                     "target_scene": "menu",
+                    "state": "main",
                     "reason": "User pressed R"
                   }
                 },
@@ -393,6 +405,7 @@
                   "name": "SceneChangeEvent",
                   "params": {
                     "target_scene": "menu",
+                    "state": "main",
                     "reason": "User pressed R"
                   }
                 }

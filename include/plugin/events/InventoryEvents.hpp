@@ -9,22 +9,6 @@
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Item.hpp"
 
-ByteArray item_to_byte(Item i)
-{
-  return pair_to_byte<std::string, JsonObject>(
-             i.object, string_to_byte, json_object_to_byte)
-      + type_to_byte(i.consumable) + type_to_byte(i.throwable);
-}
-
-Parser<Item> parseByteItem()
-{
-  return apply([](const std::pair<std::string, JsonObject>& p, bool c, bool t)
-               { return Item(p, c, t); },
-               parseBytePair(parseByteString(), parseByteJsonObject()),
-               parseByte<bool>(),
-               parseByte<bool>());
-}
-
 struct PickUp
 {
   Item item;

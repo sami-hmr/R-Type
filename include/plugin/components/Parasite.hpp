@@ -16,7 +16,7 @@ struct Parasite
 {
   std::optional<std::size_t> player_linked;
   std::string behaviour;  // attached / follow
-  std::string effect;  // drain / attack
+  std::string effect;  // drain / attack / load
   Vector2D dflt_speed;
 
   Parasite() = default;

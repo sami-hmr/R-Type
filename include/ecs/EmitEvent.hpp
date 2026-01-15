@@ -1,4 +1,6 @@
 
+#include <cstdlib>
+
 #include "Json/JsonParser.hpp"
 #include "NetworkShared.hpp"
 #include "ecs/EventManager.hpp"
