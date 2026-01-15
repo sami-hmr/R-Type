@@ -1891,7 +1891,7 @@ public:
   std::optional<std::reference_wrapper<T>> get_hooked_value(
       std::string const& comp, std::string const& value)
   {
-    if (!this->_global_hooks.contains(comp)) {
+    if (!this->_hooked_components.contains(comp)) {
       return std::nullopt;
     }
 

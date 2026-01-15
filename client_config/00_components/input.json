@@ -7,7 +7,7 @@
                 "y": 0.0,
                 "width": 0.9,
                 "height": 0.1,
-                "text_width": 0.7,
+                "text_width": 0.65,
                 "text_height": 0.06,
                 "text": "",
                 "background": "assets/ui/thin_card.png",

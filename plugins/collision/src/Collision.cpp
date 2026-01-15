@@ -121,7 +121,6 @@ void Collision::collision_system(Registry& r)
 
   std::vector<ICollisionAlgorithm::CollisionEntity> entities;
 
-  std::cout << "-------\n";
   for (auto&& [i, position, collidable] : ZipperIndex<Position, Collidable>(r))
   {
     if (!collidable.is_active) {
@@ -146,7 +145,6 @@ void Collision::collision_system(Registry& r)
     this->_event_manager.get().emit<CollisionEvent>(entity_a, entity_b);
     this->_event_manager.get().emit<CollisionEvent>(entity_b, entity_a);
   }
-  std::cout << "-------\n";
 }
 
 void Collision::interaction_zone_system(Registry& r)
