@@ -2,45 +2,15 @@
     "entities_template": [
         {
             "name": "switch_text",
-            "default_parameters": {
-                "width": 0.8
-            },
+            "default_parameters": {},
             "components": {
-                "ui:Drawable": {},
-                "moving:Position": {
-                    "pos": {
-                        "x": -0.0,
-                        "y": 0.45
-                    }
-                },
-                "ui:Text": {
-                    "font": "assets/fonts/roboto.ttf",
-                    "size": {
-                        "width": "80.0%",
-                        "height": "5.0%"
-                    },
-                    "fill_color": {
-                        "r": 255,
-                        "g": 255,
-                        "b": 255,
-                        "a": 255
-                    },
-                    "outline_color": {
-                        "r": 0,
-                        "g": 0,
-                        "b": 0,
-                        "a": 255
-                    },
-                    "outline_thickness": 30.0,
-                    "outline": true,
-                    "text": "$text"
-                },
-                "collision:Collidable": {
-                    "width": "$width",
+                "template": "link",
+                "parameters": {
+                    "x": 0.0,
+                    "y": 0.45,
+                    "width": 0.8,
                     "height": 0.05,
-                    "collision_type": "Trigger"
-                },
-                "ath:Clickable": {
+                    "text": "$text",
                     "to_emit": [
                         {
                             "SceneChangeEvent": {
