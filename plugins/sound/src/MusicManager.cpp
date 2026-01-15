@@ -1,7 +1,4 @@
 
-
-#include <stdexcept>
-
 #include "plugin/components/MusicManager.hpp"
 
 #include "Json/JsonParser.hpp"

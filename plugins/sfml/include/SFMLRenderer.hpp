@@ -57,14 +57,17 @@ public:
   static constexpr sf::Vector2u window_size = {1080, 1080};
   static const std::size_t window_rate = 60;
   static constexpr sf::Vector2u placeholder_size = {50, 50};
-  static constexpr std::string placeholder = "placeholder ";
+  static constexpr std::string placeholder =
+      "placeholder ";  // placeholder name ends with a space so it cant be a
+                       // valid file path
 
 private:
   sf::Texture& load_texture(std::string const& path);
   sf::Font& load_font(std::string const& path);
   sf::SoundBuffer& load_sound(std::string const& path);
   sf::Music& load_music(std::string const& path);
-  std::optional<std::reference_wrapper<sf::Sound>> get_available_sound(sf::SoundBuffer& buffer);
+  std::optional<std::reference_wrapper<sf::Sound>> get_available_sound(
+      sf::SoundBuffer& buffer);
 
   void handle_events();
   void mouse_events(const sf::Event& events);
@@ -77,11 +80,11 @@ private:
   void slider_system(Registry& r) const;
   void sounds_system(Registry& r);
   void musics_system(Registry& r);
-  void hover_system(Registry &r);
+  void hover_system(Registry& r);
   void display();
-  
-  void on_input_focus(const InputFocusEvent &/*unused*/);
-  void on_click(const MousePressedEvent &/*unused*/);
+
+  void on_input_focus(const InputFocusEvent& /*unused*/);
+  void on_click(const MousePressedEvent& /*unused*/);
 
   void render_sprites(Registry& r,
                       std::vector<DrawableItem>& all_drawables,
@@ -129,7 +132,6 @@ private:
   sf::View _view;
   bool _camera_initialized = false;
   std::map<std::string, sf::Cursor> _cursors;
-
 
   void draw_nothing_background(Background& background);
   void draw_repeat_background(Background& background);
