@@ -30,88 +30,35 @@
                     },
                     "outline_thickness": 30.0,
                     "outline": true,
-                    "text": "",
+                    "text": "$text",
                     "placeholder": ""
                 }
             }
         },
         {
-            "name": "go_back_search_button",
+            "name": "switch_pages_search_button",
             "components": {
-                "ui:Drawable": {},
-                "moving:Position": {
-                    "pos": {
-                        "x": -0.3,
-                        "y": 0.9
-                    }
-                },
-                "ui:Text": {
-                    "font": "assets/fonts/roboto.ttf",
-                    "size": {
-                        "width": "20.0%",
-                        "height": "5.0%"
-                    },
-                    "fill_color": {
-                        "r": 255,
-                        "g": 255,
-                        "b": 255,
-                        "a": 255
-                    },
-                    "outline_color": {
-                        "r": 0,
-                        "g": 0,
-                        "b": 0,
-                        "a": 255
-                    },
-                    "outline_thickness": 30.0,
-                    "outline": true,
-                    "text": "<",
-                    "placeholder": ""
-                },
-                "collision:Collidable": {
-                    "collision_type": "Trigger",
+                "template": "link",
+                "parameters": {
+                    "x": "$x",
+                    "y": 0.9,
+                    "width": 0.1,
                     "height": 0.05,
-                    "width": 0.2
-                }
-            }
-        },
-        {
-            "name": "go_forward_search_button",
-            "components": {
-                "ui:Drawable": {},
-                "moving:Position": {
-                    "pos": {
-                        "x": 0.3,
-                        "y": 0.9
-                    }
-                },
-                "ui:Text": {
-                    "font": "assets/fonts/roboto.ttf",
-                    "size": {
-                        "width": "20.0%",
-                        "height": "5.0%"
-                    },
-                    "fill_color": {
-                        "r": 255,
-                        "g": 255,
-                        "b": 255,
-                        "a": 255
-                    },
-                    "outline_color": {
-                        "r": 0,
-                        "g": 0,
-                        "b": 0,
-                        "a": 255
-                    },
-                    "outline_thickness": 30.0,
-                    "outline": true,
-                    "text": ">",
-                    "placeholder": ""
-                },
-                "collision:Collidable": {
-                    "collision_type": "Trigger",
-                    "height": 0.05,
-                    "width": 0.2
+                    "text": "$text",
+                    "to_emit": [
+                        {
+                            "SceneChangeEvent": {
+                                "target_scene": "$target_scene",
+                                "reason": "",
+                                "force": false
+                            }
+                        },
+                        {
+                            "DisableSceneEvent": {
+                                "target_scene": "$current_scene"
+                            }
+                        }
+                    ]
                 }
             }
         }

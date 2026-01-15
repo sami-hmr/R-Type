@@ -27,7 +27,8 @@ public:
   std::optional<Registry::Entity> load_entity(JsonObject const& config);
   std::optional<Registry::Entity> load_entity_template(
       std::string const& name,
-      std::vector<std::pair<std::string, ByteArray>> const& additional);
+      std::vector<std::pair<std::string, ByteArray>> const& additional,
+      JsonObject const& parameters = {});
   void load_components(Registry::Entity e, JsonObject const& config);
 
   void load_plugin(std::string const& plugin,

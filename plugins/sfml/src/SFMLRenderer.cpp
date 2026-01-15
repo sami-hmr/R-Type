@@ -320,7 +320,7 @@ void SFMLRenderer::render_sprites(Registry& r,
               / min_dimension};
 
     SpriteDrawable sprite_drawable(std::ref(*this->_sprite),
-                                   std::ref(texture),
+                                   spr.texture_path,
                                    new_pos,
                                    sf::Vector2f(uniform_scale, uniform_scale),
                                    0.0f,
@@ -390,8 +390,8 @@ void SFMLRenderer::render_texts(Registry& r,
             static_cast<double>(final_text_rect.size.y) / min_dimension};
 
     TextDrawable text_drawable(
-        std::ref(*this->_text),
-        std::ref(font),
+        std::ref(this->_text.value()),
+        txt.font_path,
         text_str,
         new_pos,
         fill_color,
@@ -412,9 +412,7 @@ void SFMLRenderer::render_bars(Registry& r,
                                float min_dimension,
                                const sf::Vector2u& window_size)
 {
-  for (auto&& [scene, drawable, position, bar] :
-       Zipper<Scene, Drawable, Position, Bar>(r))
-  {
+  for (auto&& [drawable, position, bar] : Zipper<Drawable, Position, Bar>(r)) {
     if (!drawable.enabled) {
       continue;
     }
@@ -452,7 +450,7 @@ void SFMLRenderer::render_bars(Registry& r,
                              sf::Vector2f(size.x, size.y),
                              bar.color,
                              fill_percentage,
-                             texture_ptr,
+                             bar.texture_path,
                              position.z,
                              true);
 
@@ -469,8 +467,8 @@ void SFMLRenderer::render_animated_sprites(
     const sf::Vector2f& view_size,
     const sf::Vector2f& view_pos)
 {
-  for (auto&& [entity, pos, draw, anim, scene] :
-       ZipperIndex<Position, Drawable, AnimatedSprite, Scene>(r))
+  for (auto&& [entity, pos, draw, anim] :
+       ZipperIndex<Position, Drawable, AnimatedSprite>(r))
   {
     if (!draw.enabled) {
       continue;
@@ -533,7 +531,7 @@ void SFMLRenderer::render_animated_sprites(
 
     AnimatedSpriteDrawable anim_drawable(
         std::ref(*this->_sprite),
-        std::ref(texture),
+        anim_data.texture_path,
         new_pos,
         sf::Vector2f(uniform_scale, uniform_scale),
         anim_data,
@@ -565,7 +563,7 @@ void SFMLRenderer::unified_render_system(Registry& r)
   std::sort(all_drawables.begin(), all_drawables.end());
 
   for (auto& drawable : all_drawables) {
-    drawable.draw(_window);
+    drawable.draw(_window, this->_textures, this->_fonts);
   }
   this->_sprite->setRotation(sf::degrees(0));
 }

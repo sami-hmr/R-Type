@@ -1,0 +1,138 @@
+{
+  "entities_template": [
+    {
+      "name": "boss_1",
+      "components": {
+        "moving:Position": {
+          "hook": "boss_pos_1",
+          "pos": {
+            "x": -0.1,
+            "y": 0.0
+          }
+        },
+        "ui:Drawable": {},
+        "ui:AnimatedSprite": {
+          "animations": [
+            {
+              "name": "idle",
+              "texture": "assets/r-type/Arcade - R-Type - Enemies - Dobkeratops.png",
+              "frame_size": {
+                "x": 180.0,
+                "y": 213.8
+              },
+              "frame_pos": {
+                "x": 5.0,
+                "y": 0.0
+              },
+              "direction": {
+                "x": 0.0,
+                "y": 1.0
+              },
+              "sprite_size": {
+                "width": "40.0%",
+                "height": "40.0%"
+              },
+              "framerate": 10.0,
+              "nb_frames": 9,
+              "loop": true,
+              "rollback": true
+            },
+            {
+              "name": "death",
+              "texture": "assets/explosion.png",
+              "frame_size": {
+                "x": 128.0,
+                "y": 128.0
+              },
+              "frame_pos": {
+                "x": 0.0,
+                "y": 0.0
+              },
+              "direction": {
+                "x": 1.0,
+                "y": 0.0
+              },
+              "sprite_size": {
+                "width": "20.0%",
+                "height": "20.0%"
+              },
+              "framerate": 10.0,
+              "nb_frames": 12,
+              "loop": false,
+              "rollback": false
+            }
+          ],
+          "default_animation": "idle"
+        },
+        "life:Health": {
+          "hook": "boss_health_1",
+          "current": 50.0,
+          "max": 50.0
+        },
+        "life:Damage": {
+          "amount": 10
+        },
+        "ath:Bar": {
+          "size": {
+            "x": "10.0%",
+            "y": "1.0%"
+          },
+          "max_value": "#self:boss_health_1:max",
+          "current_value": "#self:boss_health_1:current",
+          "offset": {
+            "x": 0.0,
+            "y": -0.1
+          },
+          "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255,
+            "a": 255
+          },
+          "outline": false,
+          "texture_path": "assets/backgrounds/background.png"
+        },
+        "collision:Collidable": {
+          "width": 0.1,
+          "height": 0.3,
+          "collision_type": "solid"
+        },
+        "life:Team": {
+          "name": "enemy"
+        },
+        "moving:Speed": {
+          "speed": {
+            "x": 0.5,
+            "y": 0.5
+          }
+        },
+        "moving:Direction": {
+          "direction": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        },
+        "moving:Facing": {
+          "direction": {
+            "x": 1.0,
+            "y": 0.0
+          }
+        },
+        "weapon:BasicWeapon": {
+          "bullet_type": "basic_bullet",
+          "magazine_size": 6,
+          "magazine_nb": 3,
+          "reload_time": 2.0,
+          "cooldown": 2.0,
+          "attack_animation": "attack"
+        },
+        "ai:MovementBehavior": { "movement_type": "turret"},
+        "ai:AttackBehavior": {
+          "attack_type": "continuous"
+        },
+        "target:Follower": {},
+        "collision:InteractionZone": { "radius": 1.5 }
+      }
+    }
+  ]
+}

@@ -187,9 +187,9 @@ void Weapon::on_charge_start(Registry& r, const StartChargeWeapon& e)
   if (!weapon.charge_indicator.empty()
       && !weapon.charge_indicator_entity.has_value())
   {
-    std::cout << "[ChargeWeapon] Spawning charge indicator: "
-              << weapon.charge_indicator << " for entity: " << e.entity
-              << std::endl;
+    // std::cout << "[ChargeWeapon] Spawning charge indicator: "
+    //           << weapon.charge_indicator << " for entity: " << e.entity
+    //           << std::endl;
 
     auto const& pos =
         *this->_registry.get().get_components<Position>()[e.entity];
@@ -210,8 +210,8 @@ void Weapon::on_charge_start(Registry& r, const StartChargeWeapon& e)
     this->_event_manager.get().emit<LoadEntityTemplate>(weapon.charge_indicator,
                                                         additional);
   } else {
-    std::cout << "[ChargeWeapon] No charge indicator configured for entity: "
-              << e.entity << std::endl;
+    // std::cout << "[ChargeWeapon] No charge indicator configured for entity: "
+    //           << e.entity << std::endl;
   }
 }
 
@@ -231,9 +231,9 @@ void Weapon::on_charge_release(Registry& r, const ReleaseChargeWeapon& e)
   }
 
   if (weapon.current_charge_level < weapon.min_charge_threshold) {
-    std::cout << "[ChargeWeapon] Charge below threshold ("
-              << weapon.current_charge_level << " < "
-              << weapon.min_charge_threshold << "), not firing" << std::endl;
+    // std::cout << "[ChargeWeapon] Charge below threshold ("
+    //           << weapon.current_charge_level << " < "
+    //           << weapon.min_charge_threshold << "), not firing" << std::endl;
 
     // Below threshold - reset charging but don't fire (ammo already consumed)
     weapon.is_charging = false;
@@ -241,11 +241,11 @@ void Weapon::on_charge_release(Registry& r, const ReleaseChargeWeapon& e)
 
     // Destroy charge indicator if it exists
     if (weapon.charge_indicator_entity.has_value()) {
-      std::cout
-          << "[ChargeWeapon] Destroying charge indicator (below threshold): "
-          << weapon.charge_indicator_entity.value()
-          << " (reset to base scale: " << weapon.charge_indicator_base_scale.x
-          << ", " << weapon.charge_indicator_base_scale.y << ")" << std::endl;
+      // std::cout
+      //     << "[ChargeWeapon] Destroying charge indicator (below threshold): "
+      //     << weapon.charge_indicator_entity.value()
+      //     << " (reset to base scale: " << weapon.charge_indicator_base_scale.x
+      //     << ", " << weapon.charge_indicator_base_scale.y << ")" << std::endl;
       this->_event_manager.get().emit<DeleteEntity>(
           weapon.charge_indicator_entity.value());
       weapon.charge_indicator_entity = std::nullopt;
@@ -324,16 +324,16 @@ void Weapon::on_charge_release(Registry& r, const ReleaseChargeWeapon& e)
 
   // Destroy charge indicator if it exists
   if (weapon.charge_indicator_entity.has_value()) {
-    std::cout << "[ChargeWeapon] Destroying charge indicator on release: "
-              << weapon.charge_indicator_entity.value()
-              << " (reset to base scale: "
-              << weapon.charge_indicator_base_scale.x << ", "
-              << weapon.charge_indicator_base_scale.y << ")" << std::endl;
+    // std::cout << "[ChargeWeapon] Destroying charge indicator on release: "
+    //           << weapon.charge_indicator_entity.value()
+    //           << " (reset to base scale: "
+    //           << weapon.charge_indicator_base_scale.x << ", "
+    //           << weapon.charge_indicator_base_scale.y << ")" << std::endl;
     this->_event_manager.get().emit<DeleteEntity>(
         weapon.charge_indicator_entity.value());
     weapon.charge_indicator_entity = std::nullopt;
   } else {
-    std::cout << "[ChargeWeapon] No charge indicator to destroy" << std::endl;
+    // std::cout << "[ChargeWeapon] No charge indicator to destroy" << std::endl;
   }
 }
 
@@ -405,11 +405,11 @@ void Weapon::charge_weapon_system(
             }
           }
 
-          std::cout << "[ChargeWeapon] Found charge indicator entity: "
-                    << indicator_entity << " for weapon entity: " << entity
-                    << " with base scale: ("
-                    << weapon.charge_indicator_base_scale.x << ", "
-                    << weapon.charge_indicator_base_scale.y << ")" << std::endl;
+          // std::cout << "[ChargeWeapon] Found charge indicator entity: "
+          //           << indicator_entity << " for weapon entity: " << entity
+          //           << " with base scale: ("
+          //           << weapon.charge_indicator_base_scale.x << ", "
+          //           << weapon.charge_indicator_base_scale.y << ")" << std::endl;
           break;
         }
       }
@@ -444,11 +444,11 @@ void Weapon::charge_weapon_system(
                             [weapon.charge_indicator_entity.value()];
         // Multiply the base scale by the scale factor
         sprite.scale = weapon.charge_indicator_base_scale * scale_factor;
-        std::cout << "[ChargeWeapon] Updated Sprite scale to: ("
-                  << sprite.scale.x << ", " << sprite.scale.y << ")"
-                  << " factor: " << scale_factor
-                  << " (charge: " << weapon.current_charge_level << ")"
-                  << std::endl;
+        // std::cout << "[ChargeWeapon] Updated Sprite scale to: ("
+        //           << sprite.scale.x << ", " << sprite.scale.y << ")"
+        //           << " factor: " << scale_factor
+        //           << " (charge: " << weapon.current_charge_level << ")"
+        //           << std::endl;
       }
 
       // Update AnimatedSprite if the indicator has one
@@ -465,12 +465,12 @@ void Weapon::charge_weapon_system(
           // Multiply the base scale by the scale factor
           anim_it->second.sprite_size =
               weapon.charge_indicator_base_scale * scale_factor;
-          std::cout << "[ChargeWeapon] Updated AnimatedSprite scale to: ("
-                    << anim_it->second.sprite_size.x << ", "
-                    << anim_it->second.sprite_size.y << ")"
-                    << " factor: " << scale_factor
-                    << " (charge: " << weapon.current_charge_level << ")"
-                    << std::endl;
+          // std::cout << "[ChargeWeapon] Updated AnimatedSprite scale to: ("
+          //           << anim_it->second.sprite_size.x << ", "
+          //           << anim_it->second.sprite_size.y << ")"
+          //           << " factor: " << scale_factor
+          //           << " (charge: " << weapon.current_charge_level << ")"
+          //           << std::endl;
         }
         this->_event_manager.get().emit<ComponentBuilder>(
             weapon.charge_indicator_entity.value(),
