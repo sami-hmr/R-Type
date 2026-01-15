@@ -77,8 +77,7 @@ struct Inventory
       vector_to_byte(
           this->slots,
           std::function<ByteArray(const std::pair<Item, std::size_t>&)>(
-              [](const std::pair<Item, std::size_t>& p)
-              {
+              [](const std::pair<Item, std::size_t>& p) {
                 return byte_array_join(item_to_byte(p.first),
                                        type_to_byte(p.second));
               })),
