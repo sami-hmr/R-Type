@@ -1,0 +1,153 @@
+{
+    "scenes": [
+        {
+            "name": "login",
+            "state": "active",
+            "plugins": [],
+            "entities": [
+                {
+                   "template": "login_title",
+                    "parameters": {
+                        "text": "login"
+                    }
+                },
+                {
+                    "template": "input",
+                    "parameters": {
+                        "x": 0.0,
+                        "y": -0.15,
+                        "input_hook": "id_input",
+                        "text": "#global:id_input:buffer",
+                        "placeholder": "identifier"
+                    }
+                },
+                {
+                    "template": "input",
+                    "parameters": {
+                        "x": 0.0,
+                        "y": 0.15,
+                        "input_hook": "pswd_input",
+                        "text": "#global:pswd_input:buffer",
+                        "placeholder": "password"
+                    }
+                },
+                {
+                    "template": "switch_text",
+                    "parameters": {
+                        "text": "not register yet ? click here to register",
+                        "target_scene": "register",
+                        "current_scene": "login"
+                    }
+                },
+                {
+                    "ui:AnimatedSprite": {
+                        "animations": [
+                            {
+                                "name": "idle",
+                                "texture": "assets/ui/buttons/start.png",
+                                "frame_size": {
+                                    "x": 410.0,
+                                    "y": 121.0
+                                },
+                                "frame_pos": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "sprite_size": {
+                                    "width": "30.0%",
+                                    "height": "30.0%"
+                                },
+                                "direction": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "framerate": 1.0,
+                                "nb_frames": 1,
+                                "loop": true,
+                                "rollback": false
+                            },
+                            {
+                                "name": "hover",
+                                "texture": "assets/ui/buttons/start_hover.png",
+                                "frame_size": {
+                                    "x": 410.0,
+                                    "y": 121.0
+                                },
+                                "frame_pos": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "sprite_size": {
+                                    "width": "28.0%",
+                                    "height": "28.0%"
+                                },
+                                "direction": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "framerate": 1.0,
+                                "nb_frames": 1,
+                                "loop": false,
+                                "rollback": false
+                            },
+                            {
+                                "name": "pressed",
+                                "texture": "assets/ui/buttons/start.png",
+                                "frame_size": {
+                                    "x": 410.0,
+                                    "y": 121.0
+                                },
+                                "frame_pos": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "sprite_size": {
+                                    "width": "30.0%",
+                                    "height": "30.0%"
+                                },
+                                "direction": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "framerate": 1.0,
+                                "nb_frames": 1,
+                                "loop": true,
+                                "rollback": false
+                            }
+                        ],
+                        "default_animation": "idle"
+                    },
+                    "ui:Drawable": {},
+                    "ath:Clickable": {
+                        "to_emit": [
+                            {
+                                "Login": {
+                                    "identifier": "%global:id_input:buffer",
+                                    "password": "%global:pswd_input:buffer"
+                                }
+                            }
+                        ]
+                    },
+                    "moving:Position": {
+                        "pos": {
+                            "x": 0.0,
+                            "y": 0.7
+                        }
+                    },
+                    "collision:Collidable": {
+                        "size": {
+                            "x": 0.3,
+                            "y": 0.15
+                        },
+                        "collision_type": "solid"
+                    },
+                    "ath:Button": {
+                        "hover": false,
+                        "toggle": false,
+                        "pressed": false
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -22,7 +22,7 @@ struct Drawable
   CHANGE_ENTITY_DEFAULT
 
   bool enabled = true;
-  Vector2D true_size;
+  Vector2D true_size {0, 0};
 
   HOOKABLE(Drawable, HOOK(enabled), HOOK(true_size))
 };

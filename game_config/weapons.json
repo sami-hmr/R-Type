@@ -84,8 +84,10 @@
                     "amount": 3
                 },
                 "collision:Collidable": {
-                    "width": 0.2,
-                    "height": 0.2,
+                    "size": {
+                        "x": 0.2,
+                        "y": 0.2
+                    },
                     "collision_type": "solid"
                 }
             }
@@ -174,9 +176,129 @@
                     "amount": 3
                 },
                 "collision:Collidable": {
-                    "width": 0.2,
-                    "height": 0.2,
+                    "size": {
+                        "x": 0.2,
+                        "y": 0.2
+                    },
                     "collision_type": "bounce"
+                }
+            }
+        },
+        {
+            "name": "beam_segment",
+            "components": {
+                "ui:Drawable": {},
+                "ui:AnimatedSprite": {
+                    "animations": [
+                        {
+                            "name": "idle",
+                            "texture": "assets/beam.png",
+                            "frame_size": {
+                                "x": 142.0,
+                                "y": 142.0
+                            },
+                            "frame_pos": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "direction": {
+                                "x": 1.0,
+                                "y": 0.0
+                            },
+                            "sprite_size": {
+                                "width": "150.0%",
+                                "height": "8.0%"
+                            },
+                            "framerate": 15.0,
+                            "nb_frames": 3,
+                            "loop": true,
+                            "rollback": false
+                        }
+                    ],
+                    "default_animation": "idle"
+                },
+                "moving:Position": {
+                    "pos": {
+                        "x": 0.0,
+                        "y": 0.0
+                    }
+                },
+                "moving:Velocity": {
+                    "speed": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "direction": {
+                        "x": 1.0,
+                        "y": 0.0
+                    }
+                },
+                "life:Team": {
+                    "name": "test1"
+                },
+                "life:Health": {
+                    "current": 1.0,
+                    "max": 1.0
+                },
+                "life:Damage": {
+                    "amount": 15
+                },
+                "projectile:Temporal": {
+                    "lifetime": 0.3
+                },
+                "projectile:Fragile": {
+                    "hits": 999
+                },
+                "collision:Collidable": {
+                    "size": {
+                        "x": 1.5,
+                        "y": 0.08
+                    },
+                    "collision_type": "trigger"
+                }
+            }
+        },
+        {
+            "name": "beam_start",
+            "components": {
+                "ui:Drawable": {},
+                "ui:AnimatedSprite": {
+                    "animations": [
+                        {
+                            "name": "idle",
+                            "texture": "assets/beam_start.png",
+                            "frame_size": {
+                                "x": 142.0,
+                                "y": 142.0
+                            },
+                            "frame_pos": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "direction": {
+                                "x": 1.0,
+                                "y": 0.0
+                            },
+                            "sprite_size": {
+                                "width": "10.0%",
+                                "height": "10.0%"
+                            },
+                            "framerate": 30.0,
+                            "nb_frames": 12,
+                            "loop": false,
+                            "rollback": false
+                        }
+                    ],
+                    "default_animation": "idle"
+                },
+                "moving:Position": {
+                    "pos": {
+                        "x": 0.0,
+                        "y": 0.0
+                    }
+                },
+                "projectile:Temporal": {
+                    "lifetime": 0.4
                 }
             }
         }

@@ -1,0 +1,183 @@
+{
+    "scenes": [
+        {
+            "name": "alert",
+            "state": "disabled",
+            "plugins": [],
+            "entities": [
+                {
+                    "ui:Sprite": {
+                        "texture": "assets/ui/card.png",
+                        "size": {
+                            "height": 1.2,
+                            "width": 0.8
+                        }
+                    },
+                    "ui:Drawable": {},
+                    "moving:Position": {
+                        "pos": {
+                            "x": 0.0,
+                            "y": -0.1
+                        },
+                        "z": 10
+                    },
+                    "ui:Text": {
+                        "font": "assets/fonts/roboto.ttf",
+                        "size": {
+                            "width": "60.0%",
+                            "height": "30.0%"
+                        },
+                        "fill_color": {
+                            "r": 255,
+                            "g": 255,
+                            "b": 255,
+                            "a": 255
+                        },
+                        "outline_color": {
+                            "r": 0,
+                            "g": 0,
+                            "b": 0,
+                            "a": 255
+                        },
+                        "outline_thickness": 30.0,
+                        "outline": true,
+                        "text": ""
+                    },
+                    "life:Team": {
+                        "name": "message"
+                    }
+                },
+                {
+                    "ui:AnimatedSprite": {
+                        "animations": [
+                            {
+                                "name": "idle",
+                                "texture": "assets/ui/card.png",
+                                "frame_size": {
+                                    "x": 1080.0,
+                                    "y": 317.0
+                                },
+                                "frame_pos": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "sprite_size": {
+                                    "width": "30.0%",
+                                    "height": "30.0%"
+                                },
+                                "direction": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "framerate": 1.0,
+                                "nb_frames": 1,
+                                "loop": true,
+                                "rollback": false
+                            },
+                            {
+                                "name": "hover",
+                                "texture": "assets/ui/card_focus.png",
+                                "frame_size": {
+                                    "x": 1080.0,
+                                    "y": 317.0
+                                },
+                                "frame_pos": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "sprite_size": {
+                                    "width": "30.0%",
+                                    "height": "30.0%"
+                                },
+                                "direction": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "framerate": 1.0,
+                                "nb_frames": 1,
+                                "loop": false,
+                                "rollback": false
+                            },
+                            {
+                                "name": "pressed",
+                                "texture": "assets/ui/card.png",
+                                "frame_size": {
+                                    "x": 1080.0,
+                                    "y": 317.0
+                                },
+                                "frame_pos": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "sprite_size": {
+                                    "width": "30.0%",
+                                    "height": "30.0%"
+                                },
+                                "direction": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "framerate": 1.0,
+                                "nb_frames": 1,
+                                "loop": true,
+                                "rollback": false
+                            }
+                        ],
+                        "default_animation": "idle"
+                    },
+                    "ui:Drawable": {},
+                    "ath:Clickable": {
+                        "to_emit": [
+                            {
+                                "DisableSceneEvent": {
+                                    "target_scene": "alert"
+                                }
+                            }
+                        ]
+                    },
+                    "moving:Position": {
+                        "pos": {
+                            "x": 0.0,
+                            "y": 0.3
+                        },
+                        "z": 10
+                    },
+                    "collision:Collidable": {
+                        "size": {
+                            "x": 0.3,
+                            "y": 0.08
+                        },
+                        "collision_type": "solid"
+                    },
+                    "ath:Button": {
+                        "hover": false,
+                        "toggle": false,
+                        "pressed": false
+                    },
+                    "ui:Text": {
+                        "font": "assets/fonts/roboto.ttf",
+                        "size": {
+                            "width": "20.0%",
+                            "height": "2.0%"
+                        },
+                        "fill_color": {
+                            "r": 255,
+                            "g": 255,
+                            "b": 255,
+                            "a": 255
+                        },
+                        "outline_color": {
+                            "r": 0,
+                            "g": 0,
+                            "b": 0,
+                            "a": 255
+                        },
+                        "outline_thickness": 30.0,
+                        "outline": true,
+                        "text": "Ok"
+                    }
+                }
+            ]
+        }
+    ]
+}

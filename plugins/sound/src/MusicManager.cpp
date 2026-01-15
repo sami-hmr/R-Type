@@ -76,8 +76,6 @@ void Sound::init_music_manager(Registry::Entity& e, const JsonObject& obj)
                  "contains invalid value"
               << '\n';
     return;
-  } catch (std::out_of_range const &e) {
-    std::cerr << "Error parsing wewewe music manager\n";
   }
   init_component<MusicManager>(this->_registry.get(),
                                this->_event_manager.get(),

@@ -371,7 +371,10 @@ public:
         std::any_cast<std::vector<Event<EventType>>>(_handlers.at(type_id));
 
     for (auto const& handler : handlers_copy) {
-      handler(event);
+      bool prevent_default = handler(event);
+      if (prevent_default) {
+        break;
+      }
     }
   }
 
@@ -493,7 +496,10 @@ private:
               std::any_cast<const std::vector<Event<T>>&>(handlers_any);
           auto& event = std::any_cast<const T&>(event_any);
           for (auto const& handler : handlers) {
-            handler(event);
+            bool prevent_default = handler(event);
+            if (prevent_default) {
+              break;
+            }
           }
         });
 

@@ -1,43 +1,24 @@
 {
   "entities_template": [
     {
-      "name": "player",
+      "name": "enemy_follow_1",
       "components": {
         "moving:Position": {
+          "hook": "enemy_follow_pos_1",
           "pos": {
-            "x": 0.0,
-            "y": 0.0
-          },
-          "z": 2
+            "x": 1.5,
+            "y": -1.0
+          }
         },
         "ui:Drawable": {},
-        "moving:Speed": {
-          "speed": {
-            "x": 1.0,
-            "y": 1.0
-          }
-        },
-        "moving:Direction": {
-          "direction": {
-            "x": 0.0,
-            "y": 0.0
-          }
-        },
-        "weapon:BasicWeapon": {
-          "bullet_type": "bounce_bullet",
-          "magazine_size": 60000,
-          "magazine_nb": 30000,
-          "reload_time": 0.0,
-          "cooldown": 0.11
-        },
         "ui:AnimatedSprite": {
           "animations": [
             {
               "name": "idle",
-              "texture": "assets/player.png",
+              "texture": "assets/backgrounds/assetpack/Bonus (enemies)/kamikaze-sheet.png",
               "frame_size": {
-                "x": 350.0,
-                "y": 150.0
+                "x": 226.0,
+                "y": 103.0
               },
               "frame_pos": {
                 "x": 0.0,
@@ -52,7 +33,7 @@
                 "height": "20.0%"
               },
               "framerate": 10.0,
-              "nb_frames": 7,
+              "nb_frames": 4,
               "loop": true,
               "rollback": true
             },
@@ -83,44 +64,63 @@
           ],
           "default_animation": "idle"
         },
-        "moving:Facing": {
-          "direction": {
-            "x": 1.0,
-            "y": 0.0
-          }
-        },
-        "collision:Collidable": {
-          "width": 0.2,
-          "height": 0.2,
-          "collision_type": "solid"
-        },
         "life:Health": {
-          "hook": "player_health",
-          "current": 100.0,
-          "max": 100.0
+          "hook": "enemy_follow_health_1",
+          "current": 10.0,
+          "max": 10.0
         },
-        "life:Team": {
-          "name": "player"
+        "life:Damage": {
+          "amount": 1
         },
         "ath:Bar": {
           "size": {
             "x": "10.0%",
             "y": "1.0%"
           },
-          "max_value": "#self:player_health:max",
-          "current_value": "#self:player_health:current",
+          "max_value": "#self:enemy_follow_health_1:max",
+          "current_value": "#self:enemy_follow_health_1:current",
           "offset": {
             "x": 0.0,
-            "y": -0.1
+            "y": -0.12
           },
           "color": {
-            "r": 100,
+            "r": 255,
             "g": 255,
-            "b": 100,
+            "b": 255,
             "a": 255
           },
-          "outline": true
-        }
+          "outline": false,
+          "texture_path": "assets/backgrounds/background.png"
+        },
+        "collision:Collidable": {
+          "size": {
+            "x": 0.1,
+            "y": 0.1
+          },
+          "collision_type": "push"
+        },
+        "life:Team": {
+          "name": "enemy"
+        },
+        "moving:Speed": {
+          "speed": {
+            "x": 0.2,
+            "y": 0.2
+          }
+        },
+        "moving:Direction": {
+          "direction": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        },
+        "moving:Facing": {
+          "direction": {
+            "x": -1.0,
+            "y": 0.0
+          }
+        },
+        "ai:MovementBehavior": { "movement_type": "follow_target" }
       }
     }
   ]

@@ -2,7 +2,6 @@
 
 #include "SoundManager.hpp"
 
-
 class MusicManager
 {
 public:

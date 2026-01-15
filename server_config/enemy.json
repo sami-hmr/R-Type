@@ -93,8 +93,10 @@
           "texture_path": "assets/backgrounds/background.png"
         },
         "collision:Collidable": {
-          "width": 0.1,
-          "height": 0.1,
+          "size": {
+            "x": 0.1,
+            "y": 0.1
+          },
           "collision_type": "solid"
         },
         "life:Team": {
@@ -118,7 +120,9 @@
             "y": 0.0
           }
         },
-        "ai:MovementBehavior": { "movement_type": "wave" }
+        "ai:MovementBehavior": {
+          "movement_type": "wave"
+        }
       }
     },
     {
@@ -214,8 +218,10 @@
           "texture_path": "assets/backgrounds/background.png"
         },
         "collision:Collidable": {
-          "width": 0.1,
-          "height": 0.1,
+          "size": {
+            "x": 0.1,
+            "y": 0.1
+          },
           "collision_type": "solid"
         },
         "life:Team": {
@@ -239,7 +245,9 @@
             "y": 0.0
           }
         },
-        "ai:MovementBehavior": { "movement_type": "wave" }
+        "ai:MovementBehavior": {
+          "movement_type": "wave"
+        }
       }
     },
     {
@@ -289,8 +297,10 @@
           "texture_path": "assets/backgrounds/background.png"
         },
         "collision:Collidable": {
-          "width": 0.1,
-          "height": 0.1,
+           "size": {
+            "x": 0.1,
+            "y": 0.1
+          },
           "collision_type": "solid"
         },
         "life:Team": {
@@ -321,13 +331,17 @@
           "reload_time": 2.0,
           "cooldown": 0.3
         },
-        "ai:MovementBehavior": { "movement_type": "turret" },
+        "ai:MovementBehavior": {
+          "movement_type": "turret"
+        },
         "ai:AttackBehavior": {
           "attack_type": "continuous",
           "attack_interval": 2.0
         },
         "target:Follower": {},
-        "collision:InteractionZone": { "radius": 1.5 }
+        "collision:InteractionZone": {
+          "radius": 1.5
+        }
       }
     },
     {
@@ -377,8 +391,10 @@
           "texture_path": "assets/backgrounds/background.png"
         },
         "collision:Collidable": {
-          "width": 0.1,
-          "height": 0.1,
+          "size": {
+            "x": 0.1,
+            "y": 0.1
+          },
           "collision_type": "solid"
         },
         "life:Team": {
@@ -409,13 +425,17 @@
           "reload_time": 2.0,
           "cooldown": 0.3
         },
-        "ai:MovementBehavior": { "movement_type": "turret" },
+        "ai:MovementBehavior": {
+          "movement_type": "turret"
+        },
         "ai:AttackBehavior": {
           "attack_type": "continuous",
           "attack_interval": 2.0
         },
         "target:Follower": {},
-        "collision:InteractionZone": { "radius": 1.5 }
+        "collision:InteractionZone": {
+          "radius": 1.5
+        }
       }
     },
     {
@@ -511,8 +531,10 @@
           "texture_path": "assets/backgrounds/background.png"
         },
         "collision:Collidable": {
-          "width": 0.1,
-          "height": 0.1,
+          "size": {
+            "x": 0.1,
+            "y": 0.1
+          },
           "collision_type": "solid"
         },
         "life:Team": {
@@ -543,7 +565,9 @@
           "reload_time": 2.0,
           "cooldown": 0.3
         },
-        "ai:MovementBehavior": { "movement_type": "circle" },
+        "ai:MovementBehavior": {
+          "movement_type": "circle"
+        },
         "ai:AttackBehavior": {
           "attack_type": "continuous",
           "attack_interval": 2.0
@@ -643,8 +667,10 @@
           "texture_path": "assets/backgrounds/background.png"
         },
         "collision:Collidable": {
-          "width": 0.1,
-          "height": 0.1,
+           "size": {
+            "x": 0.1,
+            "y": 0.1
+          },
           "collision_type": "solid"
         },
         "life:Team": {
@@ -668,7 +694,9 @@
             "y": 0.0
           }
         },
-        "ai:MovementBehavior": { "movement_type": "follow_target" }
+        "ai:MovementBehavior": {
+          "movement_type": "follow_target"
+        }
       }
     }
   ],
