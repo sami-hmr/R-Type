@@ -61,14 +61,12 @@ void Collision::set_algorithm(std::unique_ptr<ICollisionAlgorithm> algo)
 void Collision::init_collision(Registry::Entity const& entity,
                                JsonObject const& obj)
 {
-  auto const& width = get_value<Collidable, double>(
-      this->_registry.get(), obj, entity, "width");
-  auto const& height = get_value<Collidable, double>(
-      this->_registry.get(), obj, entity, "height");
+  auto const& size =
+      get_value<Position, Vector2D>(this->_registry.get(), obj, entity, "size");
   auto const& type_str = get_value<Collidable, std::string>(
       this->_registry.get(), obj, entity, "collision_type");
 
-  if (!width || !height || !type_str) {
+  if (!size || !type_str) {
     std::cerr
         << "Error loading collision component: unexpected value type (expected "
            "width: double and height: double) or missing value in JsonObject\n";
@@ -93,8 +91,7 @@ void Collision::init_collision(Registry::Entity const& entity,
   init_component<Collidable>(this->_registry.get(),
                              this->_event_manager.get(),
                              entity,
-                             width.value(),
-                             height.value(),
+                             *size,
                              type,
                              true);
 }
@@ -133,8 +130,8 @@ void Collision::collision_system(Registry& r)
         .entity_id = i,
         .bounds = Rect {.x = position.pos.x,
                         .y = position.pos.y,
-                        .width = collidable.width,
-                        .height = collidable.height}});
+                        .width = collidable.size.x,
+                        .height = collidable.size.y}});
   }
 
   _collision_algo->update(entities);

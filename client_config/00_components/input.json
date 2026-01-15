@@ -30,8 +30,10 @@
                 },
                 "collision:Collidable": {
                     "collision_type": "Trigger",
-                    "height": "$height",
-                    "width": "$width"
+                    "size": {
+                            "x": "$width",
+                            "y": "$height"
+                        }
                 },
                 "ui:Text": {
                     "font": "assets/fonts/roboto.ttf",

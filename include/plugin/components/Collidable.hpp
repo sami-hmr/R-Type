@@ -1,13 +1,11 @@
 #pragma once
 
-#include <any>
-#include <concepts>
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 #include "BaseTypes.hpp"
 #include "ByteParser/ByteParser.hpp"
+#include "libs/Vector2D.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/events/EventMacros.hpp"
@@ -24,24 +22,20 @@ struct Collidable
 {
   Collidable() = default;
 
-  Collidable(double w,
-             double h,
+  Collidable(Vector2D const& size,
              CollisionType type = CollisionType::Solid,
              bool active = true)
-      : width(w)
-      , height(h)
+      : size(size)
       , collision_type(type)
       , is_active(active)
   {
   }
 
-  Collidable(double w,
-             double h,
+  Collidable(Vector2D const& size,
              CollisionType type,
              bool active,
              const std::vector<std::string>& exclude)
-      : width(w)
-      , height(h)
+      : size(size)
       , collision_type(type)
       , is_active(active)
       , exclude_entities(exclude)
@@ -51,8 +45,7 @@ struct Collidable
   DEFAULT_BYTE_CONSTRUCTOR(
       Collidable,
       (
-          [](double x,
-             double y,
+          [](Vector2D const& vector,
              CollisionType collision_type,
              bool active,
              std::vector<std::vector<char>> const& excludes)
@@ -62,15 +55,14 @@ struct Collidable
             for (auto const& it : excludes) {
               r.emplace_back(it.begin(), it.end());
             }
-            return Collidable(x, y, collision_type, active, r);
+            return Collidable(vector, collision_type, active, r);
           }),
-      parseByte<double>(),
-      parseByte<double>(),
+      parseVector2D(),
       parseByte<CollisionType>(),
       parseByte<bool>(),
       parseByteArray(parseByteArray(parseAnyChar())))
-  DEFAULT_SERIALIZE(type_to_byte(this->width),
-                    type_to_byte(this->height),
+      
+  DEFAULT_SERIALIZE(vector2DToByte(this->size),
                     type_to_byte(this->collision_type),
                     type_to_byte(this->is_active),
                     vector_to_byte<std::string>(this->exclude_entities,
@@ -78,15 +70,13 @@ struct Collidable
 
   CHANGE_ENTITY_DEFAULT
 
-  double width = 0.0;
-  double height = 0.0;
+  Vector2D size;
   CollisionType collision_type = CollisionType::Solid;
   bool is_active = true;
   std::vector<std::string> exclude_entities;
 
   HOOKABLE(Collidable,
-           HOOK(width),
-           HOOK(height),
+           HOOK(size),
            HOOK(collision_type),
            HOOK(is_active),
            HOOK(exclude_entities))

@@ -40,8 +40,10 @@
                     "text": "$text"
                 },
                 "collision:Collidable": {
-                    "width": "$width",
-                    "height":"$height",
+                    "size": {
+                            "x": "$width",
+                            "y": "$height"
+                        },
                     "collision_type": "Trigger"
                 },
                 "ath:Clickable": {
