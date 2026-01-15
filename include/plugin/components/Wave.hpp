@@ -13,7 +13,7 @@
 #include "plugin/HookMacros.hpp"
 #include "plugin/events/EventMacros.hpp"
 
-enum class WavePatternType : std::uint8_t
+enum WavePatternType : std::uint8_t
 {
   POINT,
   LINE,
@@ -58,13 +58,13 @@ struct WavePattern
   CHANGE_ENTITY_DEFAULT
 
   DEFAULT_BYTE_CONSTRUCTOR(WavePattern,
-                           ([](WavePatternType t, Vector2D orig, JsonObject p)
-                            { return WavePattern {t, orig, std::move(p)}; }),
-                           parseByte<WavePatternType>(),
+                           ([](std::uint8_t t, Vector2D orig, JsonObject p)
+                            { return WavePattern {WavePatternType(t), orig, std::move(p)}; }),
+                           parseByte<std::uint8_t>(),
                            parseVector2D(),
                            parseByteJsonObject())
 
-  DEFAULT_SERIALIZE(type_to_byte(type),
+  DEFAULT_SERIALIZE(type_to_byte<std::uint8_t>(type),
                     vector2DToByte(origin),
                     json_object_to_byte(params))
 

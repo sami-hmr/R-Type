@@ -38,11 +38,20 @@ void WaveManager::wave_death_system(Registry& r)
               "SceneChangeEvent",
               SceneChangeEvent("game", "", /*f=*/true).to_bytes());
 
-          this->_event_manager.get().emit<SceneChangeEvent>(event.event_name, "", false);
-          this->_event_manager.get().emit<EventBuilderId>(
-              std::nullopt,
-              "SceneChangeEvent",
-              SceneChangeEvent(event.event_name, "", /*f=*/false).to_bytes());
+          if (event.params.contains("target_scene")) {
+            auto target_scene = get_value_copy<std::string>(
+                this->_registry.get(), event.params, "target_scene");
+            if (!target_scene) {
+              std::cerr << "WAVE: No target scene given in on_end SceneChangeEvent\n";
+            }
+
+            std::cout << "WAVE: CHANGE SCENE " << target_scene.value() << std::endl;
+            this->_event_manager.get().emit<SceneChangeEvent>(target_scene.value(), "", false);
+            this->_event_manager.get().emit<EventBuilderId>(
+                std::nullopt,
+                "SceneChangeEvent",
+                SceneChangeEvent(target_scene.value(), "", /*f=*/false).to_bytes());
+          }
         } else {
           this->_event_manager.get().emit(
             this->_registry, event.event_name, event.params);

@@ -79,6 +79,43 @@ void Mob::init_parasite(Registry::Entity const& entity, JsonObject const& obj)
       entity, id, behaviour.value());
 }
 
+void Mob::on_interaction_zone(const InteractionZoneEvent& event)
+{
+  const auto& positions = this->_registry.get().get_components<Position>();
+  auto& parasite = this->_registry.get().get_components<Parasite>();
+
+  if (!this->_registry.get().has_component<Parasite>(event.source)
+      || parasite[event.source]->entity_id.has_value())
+  {
+    return;
+  }
+
+  std::optional<Registry::Entity> closest_entity = std::nullopt;
+  double closest_distance_sq = event.radius * event.radius;
+
+  for (const Registry::Entity& candidate : event.candidates) {
+    if (!this->_registry.get().has_component<Health>(candidate)) {
+      continue;
+    }
+    Vector2D distance =
+        positions[candidate]->pos - positions[event.source]->pos;
+    double distance_sq = distance.length();
+
+    if (distance_sq < closest_distance_sq) {
+      closest_distance_sq = distance_sq;
+      closest_entity = candidate;
+    }
+  }
+  if (closest_entity.has_value()) {
+    parasite[event.source]->entity_id.emplace(closest_entity.value());
+
+    this->_event_manager.get().emit<ComponentBuilder>(
+        event.source,
+        this->_registry.get().get_component_key<Parasite>(),
+        parasite[event.source]->to_bytes());
+  }
+}
+
 void Mob::parasite_system(Registry& r)
 {
   for (auto&& [i, parasite, pos, speed, direction] :
@@ -91,7 +128,8 @@ void Mob::parasite_system(Registry& r)
       continue;
     }
     JsonObject params;
-    params.emplace("target_id", JsonValue(static_cast<int>(parasite.entity_id.value())));
+    params.emplace("target_id",
+                   JsonValue(static_cast<int>(parasite.entity_id.value())));
 
     if (this->_registry.get().has_component<MovementBehavior>(i)) {
       auto& behavior =

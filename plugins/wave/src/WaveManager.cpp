@@ -40,11 +40,11 @@ WaveManager::WaveManager(Registry& r, EventManager& em, EntityLoader& l)
       std::make_unique<FormationVPattern>();
 
   this->_registry.get().add_system([this](Registry& r)
-                                   { wave_formation_system(r); });
+                                   { wave_formation_system(r); }, 1);
   this->_registry.get().add_system([this](Registry& r)
-                                   { wave_spawn_system(r); });
+                                   { wave_spawn_system(r); }, 1);
   this->_registry.get().add_system([this](Registry& r)
-                                   { wave_death_system(r); });
+                                   { wave_death_system(r); }, 2);
 
   SUBSCRIBE_EVENT(WaveSpawnEvent, {
     for (auto &&entity: event.wave_templates) {
@@ -153,30 +153,6 @@ void WaveManager::init_wave(Registry::Entity const& entity,
     std::cerr << "Error loading Wave component: missing on_end\n";
     return;
   }
-
-  // OnEndEvent on_end;
-  // if (obj.contains("on_end")) {
-  //   auto on_end_obj = std::get<JsonObject>(obj.at("on_end").value);
-
-  //   if (on_end_obj.contains("event_name")) {
-  //     auto name_str = get_value_copy<std::string>(
-  //         this->_registry.get(), on_end_obj, "event_name");
-  //     if (!name_str) {
-  //       std::cerr
-  //           << "Error loading Wave component: missing on_end event_name\n";
-  //       return;
-  //     }
-  //     on_end.event_name = name_str.value();
-  //   }
-
-  //   if (on_end_obj.contains("params")) {
-  //     auto params_obj = std::get<JsonObject>(on_end_obj.at("params").value);
-  //     on_end.params = params_obj;
-  //   }
-  // } else {
-  //   std::cerr << "Error loading Wave component: missing on_end\n";
-  //   return;
-  // }
 
   std::size_t wave_id = generate_wave_id();
   bool is_tracked = tracked.value_or(true);
