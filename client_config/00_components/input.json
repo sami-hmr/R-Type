@@ -2,6 +2,18 @@
     "entities_template": [
         {
             "name": "input",
+            "default_parameters": {
+                "x": 0.0,
+                "y": 0.0,
+                "width": 0.9,
+                "height": 0.1,
+                "text_width": 0.7,
+                "text_height": 0.06,
+                "text": "",
+                "background": "assets/ui/thin_card.png",
+                "background_focus": "assets/ui/thin_card_focus.png",
+                "placeholder": "-"
+            },
             "components": {
                 "ui:Drawable": {},
                 "moving:Position": {
@@ -18,14 +30,14 @@
                 },
                 "collision:Collidable": {
                     "collision_type": "Trigger",
-                    "height": 0.1,
-                    "width": 0.9
+                    "height": "$height",
+                    "width": "$width"
                 },
                 "ui:Text": {
                     "font": "assets/fonts/roboto.ttf",
                     "size": {
-                        "width": "80.0%",
-                        "height": "8.0%"
+                        "width": "$text_width",
+                        "height": "$text_height"
                     },
                     "fill_color": {
                         "r": 255,
@@ -55,7 +67,7 @@
                     "animations": [
                         {
                             "name": "idle",
-                            "texture": "assets/ui/thin_card.png",
+                            "texture": "$background",
                             "frame_size": {
                                 "x": 1080.0,
                                 "y": 143.0
@@ -65,8 +77,8 @@
                                 "y": 0.0
                             },
                             "sprite_size": {
-                                "width": "90.0%",
-                                "height": "15.0%"
+                                "width": "$width",
+                                "height": "$height"
                             },
                             "direction": {
                                 "x": 0.0,
@@ -79,7 +91,7 @@
                         },
                         {
                             "name": "input_focus",
-                            "texture": "assets/ui/thin_card_focus.png",
+                            "texture": "$background_focus",
                             "frame_size": {
                                 "x": 1080.0,
                                 "y": 143.0
@@ -89,8 +101,8 @@
                                 "y": 0.0
                             },
                             "sprite_size": {
-                                "width": "90.0%",
-                                "height": "15.0%"
+                                "width": "$width",
+                                "height": "$height"
                             },
                             "direction": {
                                 "x": 0.0,
