@@ -93,7 +93,7 @@
           "texture_path": "assets/backgrounds/background.png"
         },
         "collision:Collidable": {
-          "size" : {
+          "size": {
             "x": 0.1,
             "y": 0.1
           },

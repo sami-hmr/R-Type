@@ -10,7 +10,9 @@
                 "to_emit": []
             },
             "components": {
-                "ui:Drawable": {},
+                "ui:Drawable": {
+                    "hook": "drawable_link"
+                },
                 "moving:Position": {
                     "pos": {
                         "x": "$x",
@@ -40,10 +42,7 @@
                     "text": "$text"
                 },
                 "collision:Collidable": {
-                    "size": {
-                            "x": "$width",
-                            "y": "$height"
-                        },
+                    "size": "#self:drawable_link:true_size",
                     "collision_type": "Trigger"
                 },
                 "ath:Clickable": {
