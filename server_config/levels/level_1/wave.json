@@ -39,7 +39,7 @@
             "components_inheritance": ["scene"],
             "pattern": {
               "type": "line",
-              "origin": { "x": 1.0, "y": 0.0 },
+              "origin": { "x": 10.0, "y": 0.0 },
               "params": {
                 "spacing": 0.7
               }

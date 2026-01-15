@@ -369,7 +369,7 @@
             "y": 0.0
           }
         },
-        "life:Temporal": {
+        "projectile:Temporal": {
           "lifetime": 0.4
         }
       }
