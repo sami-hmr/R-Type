@@ -307,7 +307,7 @@ void Weapon::on_charge_release(Registry& r, const ReleaseChargeWeapon& e)
         weapon.charge_indicator_entity.value());
     weapon.charge_indicator_entity = std::nullopt;
   } else {
-    std::cout << "[ChargeWeapon] No charge indicator to destroy" << std::endl;
+    // std::cout << "[ChargeWeapon] No charge indicator to destroy" << std::endl;
   }
 }
 

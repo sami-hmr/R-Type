@@ -242,10 +242,12 @@ std::optional<Registry::Entity> EntityLoader::load_entity(
 
 std::optional<Registry::Entity> EntityLoader::load_entity_template(
     std::string const& template_name,
-    std::vector<std::pair<std::string, ByteArray>> const& aditionals)
+    std::vector<std::pair<std::string, ByteArray>> const& aditionals,
+    JsonObject const& parameters)
 {
   auto const& entity =
-      this->load_entity(JsonObject({{"template", JsonValue(template_name)}}));
+      this->load_entity(JsonObject({{"template", JsonValue(template_name)},
+                                    {"parameters", JsonValue(parameters)}}));
 
   if (!entity) {
     // LOGGER("load entity template",

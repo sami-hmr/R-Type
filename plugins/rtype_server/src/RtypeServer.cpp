@@ -67,6 +67,12 @@ RtypeServer::RtypeServer(Registry& r,
           std::nullopt,
           "SceneChangeEvent",
           SceneChangeEvent("game", "", true).to_bytes());
+
+      this->_event_manager.get().emit<SceneChangeEvent>("level_1", "", false);
+      this->_event_manager.get().emit<EventBuilderId>(
+          std::nullopt,
+          "SceneChangeEvent",
+          SceneChangeEvent("level_1", "", false).to_bytes());
     }
   })
 
