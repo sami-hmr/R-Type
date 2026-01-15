@@ -15,18 +15,19 @@ public:
       : bounds(bounds)
       , _level(level) {};
   ~QuadTreeNode() = default;
-  
-  QuadTreeNode(const QuadTreeNode &) = default;
-  QuadTreeNode &operator=(const QuadTreeNode &) = default;
-  QuadTreeNode(QuadTreeNode &&) noexcept = default;
-  QuadTreeNode &operator=(QuadTreeNode &&) noexcept = default;
+
+  QuadTreeNode(const QuadTreeNode&) = default;
+  QuadTreeNode& operator=(const QuadTreeNode&) = default;
+  QuadTreeNode(QuadTreeNode&&) noexcept = default;
+  QuadTreeNode& operator=(QuadTreeNode&&) noexcept = default;
 
   void clear();
   void split();
   int get_index(Rect const& bounds) const;
   void insert(ICollisionAlgorithm::CollisionEntity const& entity);
   std::vector<ICollisionAlgorithm::CollisionEntity> retrieve(
-      std::vector<ICollisionAlgorithm::CollisionEntity>& return_entities, Rect const& rect) const;
+      std::vector<ICollisionAlgorithm::CollisionEntity>& return_entities,
+      Rect const& rect) const;
 
   Rect bounds;
 

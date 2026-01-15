@@ -36,12 +36,20 @@ static int true_main(Registry& r,
   em.on<SceneChangeEvent>("SceneChangeEvent",
                           [&r](const SceneChangeEvent& event) -> bool
                           {
+                            std::cout << event.target_scene << std::endl;
                             if (event.force) {
-                              r.remove_all_scenes();
+                              r.deactivate_all_scenes();
                             }
-                            r.set_current_scene(event.target_scene);
+                            r.activate_scene(event.target_scene);
                             return false;
                           });
+
+  em.on<DisableSceneEvent>("DisableSceneEvent",
+                           [&r](const DisableSceneEvent& event) -> bool
+                           {
+                             r.deactivate_scene(event.target_scene);
+                             return false;
+                           });
 
   em.on<SpawnEntityRequestEvent>(
       "SpawnEntity",

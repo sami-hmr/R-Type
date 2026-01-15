@@ -9,9 +9,9 @@
 class Mob : public APlugin
 {
 public:
-  Mob(Registry& r, EventManager &em, EntityLoader& l);
+  Mob(Registry& r, EventManager& em, EntityLoader& l);
   ~Mob() override = default;
-  EntityLoader &entity_loader;
+  EntityLoader& entity_loader;
 
 private:
   void init_enemy(Registry::Entity const& entity, JsonObject const& obj);

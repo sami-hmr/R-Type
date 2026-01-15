@@ -5,8 +5,9 @@ set(LIB_NAME ui)
 add_library(${LIB_NAME} SHARED
   src/UI.cpp
   src/CameraEvents.cpp
-    src/AnimatedSprite.cpp
-
+  src/AnimatedSprite.cpp
+  src/Slider.cpp
+  src/Input.cpp
 )
 
 target_compile_features(${LIB_NAME} PRIVATE cxx_std_23)
