@@ -178,6 +178,7 @@ public:
   std::string current_animation;
   std::string default_animation = "";
 
+  Vector2D true_size;
   std::chrono::high_resolution_clock::time_point last_update;
 
   void update_anim(Registry& r,
@@ -221,7 +222,8 @@ public:
   HOOKABLE(AnimatedSprite,
            HOOK(animations),
            HOOK(current_animation),
-           HOOK(default_animation))
+           HOOK(default_animation),
+           HOOK(true_size))
 };
 
 #endif /* !ANIMATED_SPRITE_HPP_ */

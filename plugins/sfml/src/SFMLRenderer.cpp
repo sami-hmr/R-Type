@@ -291,6 +291,10 @@ void SFMLRenderer::render_sprites(Registry& r,
       this->_sprite = sf::Sprite(texture);
     }
 
+    spr.true_size = Vector2D{
+        static_cast<double>(texture.getSize().x * uniform_scale) / min_dimension,
+        static_cast<double>(texture.getSize().y * uniform_scale) / min_dimension};
+
     SpriteDrawable sprite_drawable(std::ref(*this->_sprite),
                                    std::ref(texture),
                                    new_pos,
@@ -298,6 +302,8 @@ void SFMLRenderer::render_sprites(Registry& r,
                                    0.0f,
                                    pos.z);
 
+
+    
     all_drawables.emplace_back(DrawableVariant {std::move(sprite_drawable)},
                                pos.z);
   }
@@ -353,6 +359,14 @@ void SFMLRenderer::render_texts(Registry& r,
         static_cast<float>((pos.pos.y + 1.0) * min_dimension / deux)
             + offset_y);
 
+    _text.value().setString(text_str);
+    _text.value().setCharacterSize(final_size);
+    sf::FloatRect final_text_rect = _text.value().getLocalBounds();
+    
+    txt.true_size = Vector2D{
+        static_cast<double>(final_text_rect.size.x) / min_dimension,
+        static_cast<double>(final_text_rect.size.y) / min_dimension};
+
     TextDrawable text_drawable(
         std::ref(*this->_text),
         std::ref(font),
@@ -407,6 +421,10 @@ void SFMLRenderer::render_bars(Registry& r,
     if (bar.texture_path != "") {
       texture_ptr = load_texture(bar.texture_path);
     }
+
+    bar.true_size = Vector2D{
+        static_cast<double>(size.x) / min_dimension,
+        static_cast<double>(size.y) / min_dimension};
 
     BarDrawable bar_drawable(std::ref(this->_rectangle),
                              new_pos + offset,
@@ -486,6 +504,10 @@ void SFMLRenderer::render_animated_sprites(
       this->_sprite = sf::Sprite(texture);
     }
 
+    anim.true_size = Vector2D{
+        static_cast<double>(anim_data.sprite_size.x * uniform_scale) / min_dimension,
+        static_cast<double>(anim_data.sprite_size.y * uniform_scale) / min_dimension};
+    
     AnimatedSpriteDrawable anim_drawable(
         std::ref(*this->_sprite),
         std::ref(texture),

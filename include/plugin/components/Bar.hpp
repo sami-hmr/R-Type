@@ -18,6 +18,7 @@ struct Bar
   Color color = WHITE;
   std::string texture_path = "";
   bool outline = false;
+  Vector2D true_size;
 
   Bar(Vector2D size,
       double max_value,
@@ -79,5 +80,6 @@ struct Bar
            HOOK(offset),
            HOOK(color),
            HOOK(texture_path),
-           HOOK(outline))
+           HOOK(outline),
+           HOOK(true_size))
 };
