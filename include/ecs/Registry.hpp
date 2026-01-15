@@ -1065,7 +1065,7 @@ public:
    * @see Hooks.hpp for hook syntax details
    */
   template<component ComponentType, typename T>
-  void register_binding(Entity entity,
+  void register_binding(Entity entity, //NOLINT
                         std::string const& field_name,
                         std::string const& source_hook)
   {

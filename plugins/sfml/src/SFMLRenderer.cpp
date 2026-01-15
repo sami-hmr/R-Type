@@ -314,10 +314,10 @@ void SFMLRenderer::render_sprites(Registry& r,
     }
 
     draw.true_size =
-      Vector2D {static_cast<double>(texture.getSize().x * uniform_scale)
-              / min_dimension,
-            static_cast<double>(texture.getSize().y * uniform_scale)
-              / min_dimension};
+        Vector2D {static_cast<double>(texture.getSize().x * uniform_scale)
+                      / min_dimension,
+                  static_cast<double>(texture.getSize().y * uniform_scale)
+                      / min_dimension};
 
     SpriteDrawable sprite_drawable(std::ref(*this->_sprite),
                                    spr.texture_path,
@@ -386,8 +386,8 @@ void SFMLRenderer::render_texts(Registry& r,
     sf::FloatRect final_text_rect = _text.value().getLocalBounds();
 
     draw.true_size =
-      Vector2D {static_cast<double>(final_text_rect.size.x) / min_dimension,
-            static_cast<double>(final_text_rect.size.y) / min_dimension};
+        Vector2D {static_cast<double>(final_text_rect.size.x) / min_dimension,
+                  static_cast<double>(final_text_rect.size.y) / min_dimension};
 
     TextDrawable text_drawable(
         std::ref(this->_text.value()),
@@ -443,7 +443,7 @@ void SFMLRenderer::render_bars(Registry& r,
     }
 
     drawable.true_size = Vector2D {static_cast<double>(size.x) / min_dimension,
-                     static_cast<double>(size.y) / min_dimension};
+                                   static_cast<double>(size.y) / min_dimension};
 
     BarDrawable bar_drawable(std::ref(this->_rectangle),
                              new_pos + offset,
@@ -524,10 +524,10 @@ void SFMLRenderer::render_animated_sprites(
     }
 
     draw.true_size =
-      Vector2D {static_cast<double>(anim_data.sprite_size.x * uniform_scale)
-              / min_dimension,
-            static_cast<double>(anim_data.sprite_size.y * uniform_scale)
-              / min_dimension};
+        Vector2D {static_cast<double>(anim_data.sprite_size.x * uniform_scale)
+                      / min_dimension,
+                  static_cast<double>(anim_data.sprite_size.y * uniform_scale)
+                      / min_dimension};
 
     AnimatedSpriteDrawable anim_drawable(
         std::ref(*this->_sprite),
@@ -581,8 +581,8 @@ void SFMLRenderer::hover_system(Registry& r)
     }
     Rect entity_rect = {.x = pos.pos.x,
                         .y = pos.pos.y,
-                        .width = collision.width * 2,
-                        .height = collision.height};
+                        .width = collision.size.x * 2,
+                        .height = collision.size.y};
     if (entity_rect.contains(mouse_pos.x, mouse_pos.y)) {
       if (r.has_component<Input>(e)) {
         this->_window.setMouseCursor(this->_cursors.at("text"));

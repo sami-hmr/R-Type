@@ -99,8 +99,10 @@
           "texture_path": "assets/backgrounds/background.png"
         },
         "collision:Collidable": {
-          "width": 0.1,
-          "height": 0.1,
+          "size": {
+            "x": 0.1,
+            "y": 0.1
+          },
           "collision_type": "solid"
         },
         "life:Team": {

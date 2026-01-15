@@ -31,9 +31,8 @@
                     "enabled": false
                 },
                 "collision:Collidable": {
-                    "collision_type": "Trigger",
-                    "height": "$height",
-                    "width": "$width"
+                    "collision_type": "trigger",
+                    "size": "#self:drawable:true_size"
                 },
                 "ui:Text": {
                     "font": "assets/fonts/roboto.ttf",
