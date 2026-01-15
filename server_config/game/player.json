@@ -125,8 +125,10 @@
           }
         },
         "collision:Collidable": {
-          "width": 0.2,
-          "height": 0.2,
+          "size": {
+            "x": 0.2,
+            "y": 0.2
+          },
           "collision_type": "solid"
         },
         "life:Health": {
@@ -278,8 +280,10 @@
           }
         },
         "collision:Collidable": {
-          "width": 0.2,
-          "height": 0.2,
+          "size": {
+            "x": 0.2,
+            "y": 0.2
+          },
           "collision_type": "solid"
         },
         "life:Health": {
@@ -436,8 +440,10 @@
           }
         },
         "collision:Collidable": {
-          "width": 0.2,
-          "height": 0.2,
+          "size": {
+            "x": 0.2,
+            "y": 0.2
+          },
           "collision_type": "solid"
         },
         "life:Health": {

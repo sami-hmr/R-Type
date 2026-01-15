@@ -15,7 +15,9 @@
                 "placeholder": "-"
             },
             "components": {
-                "ui:Drawable": {},
+                "ui:Drawable": {
+                    "hook": "drawable"
+                },
                 "moving:Position": {
                     "pos": {
                         "x": "$x",
