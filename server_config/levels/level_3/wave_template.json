@@ -1,7 +1,7 @@
 {
   "entities_template": [
     {
-      "name": "wave_1_level_2",
+      "name": "wave_1_level_3",
       "components": {
         "wave:Wave": {
           "entity_template": "enemy_follow_1",
@@ -15,12 +15,7 @@
               "spacing": 0.5
             }
           },
-          "on_end": {
-            "event_name": "WaveSpawnEvent",
-            "params": {
-              "wave_templates": []
-            }
-          }
+          "on_end": []
         },
         "wave:Formation": {
           "strength": 0.1
@@ -28,7 +23,7 @@
       }
     },
     {
-      "name": "wave_2_level_2",
+      "name": "wave_2_level_3",
       "components": {
         "wave:Wave": {
           "entity_template": "enemy_follow_1",
@@ -42,12 +37,7 @@
               "spacing": 0.5
             }
           },
-          "on_end": {
-            "event_name": "WaveSpawnEvent",
-            "params": {
-              "wave_templates": []
-            }
-          }
+          "on_end": []
         },
         "wave:Formation": {
           "strength": 0.1
@@ -55,7 +45,7 @@
       }
     },
     {
-      "name": "wave_3_level_2",
+      "name": "wave_3_level_3",
       "components": {
         "wave:Wave": {
           "entity_template": "enemy_turret_1",
@@ -66,17 +56,17 @@
             "type": "line",
             "origin": { "x": 0.8, "y": 0.0 }
           },
-          "on_end": {
+          "on_end": [{
             "event_name": "WaveSpawnEvent",
             "params": {
-              "wave_templates": ["wave_4_level_2"]
+              "wave_templates": ["wave_4_level_3"]
             }
-          }
+          }]
         }
       }
     },
     {
-      "name": "wave_4_level_2",
+      "name": "wave_4_level_3",
       "components": {
         "wave:Wave": {
           "entity_template": "enemy_wave_1",
@@ -92,14 +82,14 @@
               "spacing_y": 0.3
             }
           },
-          "on_end": {
+          "on_end": [{
             "event_name": "LogEvent",
             "params": {
               "name": "logEvent",
               "level": "INFO",
               "message": "Wave completed"
             }
-          }
+          }]
         }
       }
     }

@@ -1,0 +1,125 @@
+{
+  "entities_template": [
+    {
+      "name": "enemy_follow_1",
+      "components": {
+        "moving:Position": {
+          "hook": "enemy_follow_pos_1",
+          "pos": {
+            "x": 1.5,
+            "y": -1.0
+          }
+        },
+        "ui:Drawable": {},
+        "ui:AnimatedSprite": {
+          "animations": [
+            {
+              "name": "idle",
+              "texture": "assets/backgrounds/assetpack/Bonus (enemies)/kamikaze-sheet.png",
+              "frame_size": {
+                "x": 226.0,
+                "y": 103.0
+              },
+              "frame_pos": {
+                "x": 0.0,
+                "y": 0.0
+              },
+              "direction": {
+                "x": 1.0,
+                "y": 0.0
+              },
+              "sprite_size": {
+                "width": "20.0%",
+                "height": "20.0%"
+              },
+              "framerate": 10.0,
+              "nb_frames": 4,
+              "loop": true,
+              "rollback": true
+            },
+            {
+              "name": "death",
+              "texture": "assets/explosion.png",
+              "frame_size": {
+                "x": 128.0,
+                "y": 128.0
+              },
+              "frame_pos": {
+                "x": 0.0,
+                "y": 0.0
+              },
+              "direction": {
+                "x": 1.0,
+                "y": 0.0
+              },
+              "sprite_size": {
+                "width": "20.0%",
+                "height": "20.0%"
+              },
+              "framerate": 10.0,
+              "nb_frames": 12,
+              "loop": false,
+              "rollback": false
+            }
+          ],
+          "default_animation": "idle"
+        },
+        "life:Health": {
+          "hook": "enemy_follow_health_1",
+          "current": 10.0,
+          "max": 10.0
+        },
+        "life:Damage": {
+          "amount": 1
+        },
+        "ath:Bar": {
+          "size": {
+            "x": "10.0%",
+            "y": "1.0%"
+          },
+          "max_value": "#self:enemy_follow_health_1:max",
+          "current_value": "#self:enemy_follow_health_1:current",
+          "offset": {
+            "x": 0.0,
+            "y": -0.12
+          },
+          "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255,
+            "a": 255
+          },
+          "outline": false,
+          "texture_path": "assets/backgrounds/background.png"
+        },
+        "collision:Collidable": {
+          "width": 0.1,
+          "height": 0.1,
+          "collision_type": "push"
+        },
+        "life:Team": {
+          "name": "enemy"
+        },
+        "moving:Speed": {
+          "speed": {
+            "x": 0.2,
+            "y": 0.2
+          }
+        },
+        "moving:Direction": {
+          "direction": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        },
+        "moving:Facing": {
+          "direction": {
+            "x": -1.0,
+            "y": 0.0
+          }
+        },
+        "ai:MovementBehavior": { "movement_type": "follow_target" }
+      }
+    }
+  ]
+}

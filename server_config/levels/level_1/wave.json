@@ -39,20 +39,20 @@
             "components_inheritance": [],
             "pattern": {
               "type": "line",
-              "origin": { "x": 10.0, "y": 0.0 },
+              "origin": { "x": 1.0, "y": 0.0 },
               "params": {
                 "spacing": 0.7
               }
             },
-            "on_end": {
+            "on_end": [{
               "event_name": "SceneChangeEvent",
               "params": {
-                "target_scene": "level_1",
+                "target_scene": "level_2",
                 "state": "active",
                 "reason": "User completed wave",
                 "force": false
               }
-            }
+            }]
           },
           "wave:Formation": {
             "strength": 0.1

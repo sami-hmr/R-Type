@@ -19,9 +19,7 @@
               "angle": 45.0
             }
           },
-          "on_end": {
-            "event_name": ""
-          }
+          "on_end": []
         }
       }
     },
@@ -44,9 +42,7 @@
               "radius": 0.1
             }
           },
-          "on_end": {
-            "event_name": ""
-          }
+          "on_end": []
         }
       }
     },
@@ -66,9 +62,7 @@
           "pattern": {
             "type": "point"
           },
-          "on_end": {
-            "event_name": ""
-          }
+          "on_end": []
         }
       }
     },
@@ -88,9 +82,7 @@
           "pattern": {
             "type": "point"
           },
-          "on_end": {
-            "event_name": ""
-          }
+          "on_end": []
         }
       }
     }

@@ -1,7 +1,7 @@
 {
   "entities_template": [
     {
-      "name": "wave_1_level_1",
+      "name": "wave_1_level_2",
       "components": {
         "wave:Wave": {
           "entity_template": "enemy_wave_1",
@@ -15,12 +15,12 @@
               "radius": 0.5
             }
           },
-          "on_end": {
+          "on_end": [{
             "event_name": "WaveSpawnEvent",
             "params": {
-              "wave_templates": ["wave_2_level_1"]
+              "wave_templates": ["wave_2_level_2"]
             }
-          }
+          }]
         },
         "wave:Formation": {
           "strength": 0.1
@@ -28,7 +28,7 @@
       }
     },
     {
-      "name": "wave_2_level_1",
+      "name": "wave_2_level_2",
       "components": {
         "wave:Wave": {
           "entity_template": "enemy_straight_1",
@@ -43,15 +43,15 @@
               "spacing_y": 0.2
             }
           },
-          "on_end": {
+          "on_end": [{
             "event_name": "SceneChangeEvent",
             "params": {
-              "target_scene": "level_2",
+              "target_scene": "level_3",
               "state": "active",
               "reason": "User completed wave",
               "force": false
             }
-          }
+          }]
         },
         "wave:Formation": {
           "strength": 0.1
