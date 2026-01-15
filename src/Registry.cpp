@@ -7,8 +7,10 @@
 
 #include "ecs/Registry.hpp"
 
+#include "Json/JsonParser.hpp"
 #include "NetworkShared.hpp"
 #include "ecs/EventManager.hpp"
+#include "ecs/JsonTemplateUtils.hpp"
 #include "ecs/Scenes.hpp"
 #include "ecs/Systems.hpp"
 #include "plugin/Byte.hpp"
@@ -258,12 +260,17 @@ void Registry::add_template(std::string const& name, JsonObject const& config)
   _entities_templates.insert_or_assign(name, config);
 }
 
-JsonObject Registry::get_template(std::string const& name)
+JsonObject Registry::get_template(std::string const& name, JsonObject const &params)
 {
   if (!_entities_templates.contains(name)) {
     std::cerr << "Template: " << name << " not found !\n";
   }
-  return _entities_templates.find(name)->second;
+  JsonObject new_object = _entities_templates.find(name)->second;
+  if (params.empty()) {
+    return new_object;
+  }
+  replace_json_object(new_object, params);
+  return new_object;
 }
 
 bool Registry::is_in_current_cene(Entity e)

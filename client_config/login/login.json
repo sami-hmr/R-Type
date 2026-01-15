@@ -38,134 +38,31 @@
                 },
                 {
                     "template": "input",
-                    "config": {
-                        "moving:Position": {
-                            "pos": {
-                                "x": -0.0,
-                                "y": -0.15
-                            }
-                        },
-                        "ui:input": {
-                            "hook": "id_input",
-                            "global_hook": true,
-                            "buffer": "",
-                            "enabled": false
-                        },
-                        "ui:Text": {
-                            "font": "assets/fonts/roboto.ttf",
-                            "size": {
-                                "width": "80.0%",
-                                "height": "6.0%"
-                            },
-                            "fill_color": {
-                                "r": 255,
-                                "g": 255,
-                                "b": 255,
-                                "a": 255
-                            },
-                            "outline_color": {
-                                "r": 0,
-                                "g": 0,
-                                "b": 0,
-                                "a": 255
-                            },
-                            "outline_thickness": 30.0,
-                            "outline": true,
-                            "text": "#global:id_input:buffer",
-                            "placeholder": "identifier"
-                        }
+                    "parameters": {
+                        "x": 0.0,
+                        "y": -0.15,
+                        "input_hook": "id_input",
+                        "text": "#global:id_input:buffer",
+                        "placeholder": "identifier"
                     }
                 },
                 {
                     "template": "input",
-                    "config": {
-                        "moving:Position": {
-                            "pos": {
-                                "x": -0.0,
-                                "y": 0.15
-                            }
-                        },
-                        "ui:input": {
-                            "hook": "pswd_input",
-                            "global_hook": true,
-                            "buffer": "",
-                            "enabled": false
-                        },
-                        "ui:Text": {
-                            "font": "assets/fonts/roboto.ttf",
-                            "size": {
-                                "width": "80.0%",
-                                "height": "6.0%"
-                            },
-                            "fill_color": {
-                                "r": 255,
-                                "g": 255,
-                                "b": 255,
-                                "a": 255
-                            },
-                            "outline_color": {
-                                "r": 0,
-                                "g": 0,
-                                "b": 0,
-                                "a": 255
-                            },
-                            "outline_thickness": 30.0,
-                            "outline": true,
-                            "text": "#global:pswd_input:buffer",
-                            "placeholder": "password"
-                        }
+                    "parameters": {
+                        "x": 0.0,
+                        "y": 0.15,
+                        "input_hook": "pswd_input",
+                        "text": "#global:pswd_input:buffer",
+                        "placeholder": "password"
                     }
                 },
                 {
-                    "ui:Drawable": {},
-                    "moving:Position": {
-                        "pos": {
-                            "x": -0.0,
-                            "y": 0.45
-                        }
-                    },
-                    "ui:Text": {
-                        "font": "assets/fonts/roboto.ttf",
-                        "size": {
-                            "width": "80.0%",
-                            "height": "5.0%"
-                        },
-                        "fill_color": {
-                            "r": 255,
-                            "g": 255,
-                            "b": 255,
-                            "a": 255
-                        },
-                        "outline_color": {
-                            "r": 0,
-                            "g": 0,
-                            "b": 0,
-                            "a": 255
-                        },
-                        "outline_thickness": 30.0,
-                        "outline": true,
-                        "text": "not register yet ? click here to register"
-                    },
-                    "collision:Collidable": {
+                    "template": "switch_text",
+                    "parameters": {
+                        "text": "not register yet ? click here to register",
                         "width": 0.8,
-                        "height": 0.05,
-                        "collision_type": "Trigger"
-                    },
-                    "ath:Clickable": {
-                        "to_emit": [
-                            {
-                                "SceneChangeEvent": {
-                                    "target_scene": "register",
-                                    "reason": "User clicked register",
-                                    "force": false
-                                }
-                            },
-                            {
-                                "DisableSceneEvent": {
-                                    "target_scene": "login"
-                                }
-                            }
-                        ]
+                        "target_scene": "register",
+                        "current_scene": "login"
                     }
                 },
                 {

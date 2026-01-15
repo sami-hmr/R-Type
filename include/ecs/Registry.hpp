@@ -2025,7 +2025,8 @@ public:
    * @see add_template() to register templates
    * @see EntityLoader::load_entity() to instantiate entities
    */
-  JsonObject get_template(std::string const& name);
+  JsonObject get_template(std::string const& name,
+                          JsonObject const& params = {});
 
   bool is_in_current_cene(Entity e);
 

@@ -39,6 +39,7 @@ add_library(${CORE_LIB} STATIC
     src/plugins/Byte.cpp
     src/Registry.cpp
     src/EventManager.cpp
+    src/JsonTemplateUtils.cpp
 )
 
 target_include_directories(${CORE_LIB}

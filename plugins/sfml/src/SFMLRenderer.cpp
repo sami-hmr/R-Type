@@ -1,9 +1,11 @@
 
 #include <algorithm>
+#include <cctype>
 #include <cmath>
 #include <cstdio>
 #include <functional>
 #include <iostream>
+#include <locale>
 #include <stdexcept>
 #include <tuple>
 
@@ -218,7 +220,7 @@ void SFMLRenderer::handle_events()
       }
     }
     if (const auto* text_entered = event->getIf<sf::Event::TextEntered>()) {
-      if (text_entered->unicode >= 'A' && text_entered->unicode < 'z') {
+      if (std::isalpha(text_entered->unicode) || text_entered->unicode == ' ') {
         if (!_key_pressed.key_unicode.has_value()) {
           _key_pressed.key_unicode = "";
         }

@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <string>
 #include <variant>
+#include <vector>
 
 #include "plugin/EntityLoader.hpp"
 
@@ -176,7 +177,11 @@ void EntityLoader::load_components(Registry::Entity e, JsonObject const& config)
 {
   if (config.contains("template")) {
     std::string name = std::get<std::string>(config.at("template").value);
-    this->load_components(e, this->_registry.get().get_template(name));
+    JsonObject params = {};
+    if (config.contains("parameters")) {
+      params = std::get<JsonObject>(config.at("parameters").value);
+    }
+    this->load_components(e, this->_registry.get().get_template(name, params));
     if (config.contains("config")) {
       this->load_components(e, std::get<JsonObject>(config.at("config").value));
     }
