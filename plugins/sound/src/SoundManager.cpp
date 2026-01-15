@@ -86,6 +86,7 @@ void Sound::init_sound_manager(Registry::Entity& e, const JsonObject& obj)
 
 bool Sound::on_play_sound(Registry& r, const PlaySoundEvent& event)
 {
+  std::cout << "Playing sound " << event.name << " for entity " << event.entity << "\n";
   for (const auto&& [e, sound] : ZipperIndex<SoundManager>(r)) {
     if (e == event.entity) {
       if (!sound._sound_effects.contains(event.name)) {

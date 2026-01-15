@@ -326,6 +326,10 @@ void SFMLRenderer::render_sprites(Registry& r,
       this->_sprite = sf::Sprite(texture);
     }
 
+    draw.true_size = Vector2D{
+        static_cast<double>(texture.getSize().x * uniform_scale) / min_dimension,
+        static_cast<double>(texture.getSize().y * uniform_scale) / min_dimension};
+
     SpriteDrawable sprite_drawable(std::ref(*this->_sprite),
                                    std::ref(texture),
                                    new_pos,
@@ -375,6 +379,14 @@ void SFMLRenderer::render_texts(Registry& r,
         static_cast<float>((pos.pos.x + 1.0) * min_dimension / deux) + offset_x,
         static_cast<float>((pos.pos.y + 1.0) * min_dimension / deux)
             + offset_y);
+
+    _text.value().setString(txt.text);
+    _text.value().setCharacterSize(final_size);
+    sf::FloatRect final_text_rect = _text.value().getLocalBounds();
+    
+    draw.true_size = Vector2D{
+        static_cast<double>(final_text_rect.size.x) / min_dimension,
+        static_cast<double>(final_text_rect.size.y) / min_dimension};
 
     TextDrawable text_drawable(
         std::ref(*this->_text),
@@ -430,6 +442,10 @@ void SFMLRenderer::render_bars(Registry& r,
     if (bar.texture_path != "") {
       texture_ptr = load_texture(bar.texture_path);
     }
+
+    drawable.true_size = Vector2D{
+        static_cast<double>(size.x) / min_dimension,
+        static_cast<double>(size.y) / min_dimension};
 
     BarDrawable bar_drawable(std::ref(this->_rectangle),
                              new_pos + offset,
@@ -508,6 +524,10 @@ void SFMLRenderer::render_animated_sprites(
     if (!this->_sprite.has_value()) {
       this->_sprite = sf::Sprite(texture);
     }
+
+    draw.true_size = Vector2D{
+        static_cast<double>(anim_data.sprite_size.x * uniform_scale) / min_dimension,
+        static_cast<double>(anim_data.sprite_size.y * uniform_scale) / min_dimension};
 
     AnimatedSpriteDrawable anim_drawable(
         std::ref(*this->_sprite),

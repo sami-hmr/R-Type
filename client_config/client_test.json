@@ -41,15 +41,15 @@
                 "pressed": {
                   "name": "UpdateDirection",
                   "params": {
-                      "x": 0.0,
-                      "y": -1.0
+                    "x": 0.0,
+                    "y": -1.0
                   }
                 },
                 "released": {
                   "name": "UpdateDirection",
                   "params": {
-                      "x": 0.0,
-                      "y": 1.0
+                    "x": 0.0,
+                    "y": 1.0
                   }
                 }
               },
@@ -59,29 +59,15 @@
                 "pressed": {
                   "name": "UpdateDirection",
                   "params": {
-                      "x": -1.0,
-                      "y": 0.0
+                    "x": -1.0,
+                    "y": 0.0
                   }
                 },
                 "released": {
                   "name": "UpdateDirection",
                   "params": {
-                      "x": 1.0,
-                      "y": 0.0
-                  }
-                }
-              },
-              {
-                "description" : "play sound",
-                "key": "P",
-                "pressed": {
-                  "name": "PlaySoundEvent",
-                  "params": {
-                    "name": "fah",
-                    "entity": "#self",
-                    "volume": 100.0,
-                    "pitch": 1.0,
-                    "loop": false
+                    "x": 1.0,
+                    "y": 0.0
                   }
                 }
               },
@@ -91,15 +77,15 @@
                 "pressed": {
                   "name": "UpdateDirection",
                   "params": {
-                      "x": 1.0,
-                      "y": 0.0
+                    "x": 1.0,
+                    "y": 0.0
                   }
                 },
                 "released": {
                   "name": "UpdateDirection",
                   "params": {
-                      "x": -1.0,
-                      "y": 0.0
+                    "x": -1.0,
+                    "y": 0.0
                   }
                 }
               },
@@ -109,15 +95,15 @@
                 "pressed": {
                   "name": "UpdateDirection",
                   "params": {
-                      "x": 0.0,
-                      "y": 1.0
+                    "x": 0.0,
+                    "y": 1.0
                   }
                 },
                 "released": {
                   "name": "UpdateDirection",
                   "params": {
-                      "x": 0.0,
-                      "y": -1.0
+                    "x": 0.0,
+                    "y": -1.0
                   }
                 }
               },
@@ -127,6 +113,26 @@
                 "pressed": {
                   "name": "FireBullet",
                   "params": {}
+                }
+              }
+            ]
+          }
+        },
+        {
+          "controller:Controllable": {
+            "bindings": [
+              {
+                "description": "play sound",
+                "key": "P",
+                "pressed": {
+                  "name": "PlaySoundEvent",
+                  "params": {
+                    "name": "fah",
+                    "entity": "@self",
+                    "volume": 100.0,
+                    "pitch": 1.0,
+                    "loop": false
+                  }
                 }
               }
             ]
@@ -141,7 +147,7 @@
                 "loop": false
               }
             ]
-          } 
+          }
         }
       ]
     },
@@ -259,7 +265,6 @@
             "outline": true,
             "text": "#global:server_address_:buffer"
           },
-
           "ui:input": {
             "hook": "server_address_",
             "global_hook": true,
