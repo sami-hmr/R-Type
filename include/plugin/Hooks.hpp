@@ -699,7 +699,7 @@ std::optional<T> get_value_copy(Registry& r,
         return result;
       }
     }
-  } catch (std::bad_variant_access const&e) {
+  } catch (std::bad_variant_access const& e) {
     // Not a string, fall through to other methods
   } catch (std::out_of_range const& e) {
     // Key not found, fall through
