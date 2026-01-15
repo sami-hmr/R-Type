@@ -199,9 +199,11 @@
 #include <cstddef>
 #include <functional>
 #include <iostream>
+#include <list>
 #include <optional>
 #include <queue>
 #include <random>
+#include <stack>
 #include <stdexcept>
 #include <string>
 #include <typeindex>
@@ -1574,6 +1576,8 @@ public:
    */
   std::vector<std::string> const& get_active_scenes() const;
 
+  bool is_in_main_scene(Entity);
+
   Clock& clock();
 
   const Clock& clock() const;
@@ -2245,6 +2249,7 @@ private:
   std::unordered_map<std::string, SceneState> _scenes;
   std::vector<std::string> _current_scene;
   std::unordered_set<std::string> _active_scenes_set;  // O(1) lookup for Zipper
+  std::list<std::string> _main_scene;
 
   std::unordered_map<std::string,
                      std::function<std::optional<std::any>(std::string const&)>>

@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cstdint>
 #include <functional>
 #include <future>
 #include <optional>
@@ -18,10 +17,17 @@
 class HttpClient
 {
 public:
+  HttpClient() = default;
+  HttpClient(const HttpClient&) = delete;
+  HttpClient(HttpClient&&) = delete;
+  HttpClient& operator=(const HttpClient&) = delete;
+  HttpClient& operator=(HttpClient&&) = delete;
   HttpClient(std::string const& api_uri);
   HttpClient(std::string const& host, int port);
 
   ~HttpClient();
+
+  void init(std::string const& host, int port);
 
   template<typename F>
   void register_get(F&& handler,
@@ -92,7 +98,7 @@ private:
                               std::string const& body,
                               std::string const& content_type);
 
-  httplib::Client _client;
+  std::optional<httplib::Client> _client;
 
   struct Handler
   {
@@ -122,7 +128,9 @@ public:
   std::size_t code;
 };
 
-#define PARSE_HTTP_BODY(body, context, parser, type) \
+CUSTOM_EXCEPTION(ClientNotInitialized);
+
+#define PARSE_HTTP_BODY(body, context, parser, type) /* NOLINT */ \
   ( \
       [&]() -> std::optional<type> \
       { \

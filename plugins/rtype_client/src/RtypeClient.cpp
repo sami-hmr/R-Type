@@ -1,8 +1,10 @@
 #include <cstring>
 #include <format>
+#include <optional>
 
 #include "../plugins/rtype_client/include/RtypeClient.hpp"
 
+#include "Json/JsonParser.hpp"
 #include "NetworkShared.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
@@ -17,8 +19,8 @@
 #include "plugin/events/NetworkEvents.hpp"
 #include "plugin/events/SceneChangeEvent.hpp"
 
-RtypeClient::RtypeClient(Registry& r, EventManager& em, EntityLoader& l)
-    : BaseClient("rtype_client", "r-type", r, em, l)
+RtypeClient::RtypeClient(Registry& r, EventManager& em, EntityLoader& l,  std::optional<JsonObject> const &config)
+    : BaseClient("rtype_client", "r-type", r, em, l, config)
 {
   SUBSCRIBE_EVENT(PlayerCreation, {
     auto zipper = ZipperIndex<Controllable>(this->_registry.get());
@@ -45,7 +47,7 @@ RtypeClient::RtypeClient(Registry& r, EventManager& em, EntityLoader& l)
       //               {"entity", JsonValue(static_cast<int>(new_entity))},
       //               {"x", JsonValue(static_cast<double>(0))},
       //               {"y", JsonValue(static_cast<double>(1))}
-      //           }}
+      //           }}"game"
       //       }
       //   }
       // });
@@ -71,6 +73,7 @@ RtypeClient::RtypeClient(Registry& r, EventManager& em, EntityLoader& l)
   SUBSCRIBE_EVENT(Logout, {
     this->_event_manager.get().emit<SceneChangeEvent>("login", "", true);
     this->_event_manager.get().emit<SceneChangeEvent>("connection_background", "", false);
+    this->_event_manager.get().emit<SceneChangeEvent>("game", "", false);
   })
   this->handle_http();
 }
@@ -78,7 +81,7 @@ RtypeClient::RtypeClient(Registry& r, EventManager& em, EntityLoader& l)
 void RtypeClient::alert(std::string const& message)
 {
   this->_event_manager.get().emit<SceneChangeEvent>(
-      "alert", "connected", false);
+      "alert", "connected", false, true);
   for (auto [e, text, scene, team] :
        ZipperIndex<Text, Scene, Team>(this->_registry.get()))
   {
@@ -91,8 +94,8 @@ void RtypeClient::alert(std::string const& message)
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
+void* entry_point(Registry& r, EventManager& em, EntityLoader& e, std::optional<JsonObject> const &config)
 {
-  return new RtypeClient(r, em, e);
+  return new RtypeClient(r, em, e, config);
 }
 }

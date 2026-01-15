@@ -12,7 +12,10 @@
         },
         {
           "name": "rtype_client",
-          "config": {}
+          "config": {
+            "http_host": "0.0.0.0",
+            "http_port": 8080
+          }
         },
         {
           "name": "cli",

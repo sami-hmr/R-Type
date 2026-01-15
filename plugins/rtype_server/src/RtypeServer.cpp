@@ -10,7 +10,6 @@
 #include "ecs/EmitEvent.hpp"
 #include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
-#include "ecs/Scenes.hpp"
 #include "network/server/BaseServer.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
@@ -20,8 +19,11 @@
 #include "plugin/events/SceneChangeEvent.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
 
-RtypeServer::RtypeServer(Registry& r, EventManager& em, EntityLoader& l)
-    : BaseServer("rtype_server", "r-type", r, em, l)
+RtypeServer::RtypeServer(Registry& r,
+                         EventManager& em,
+                         EntityLoader& l,
+                         std::optional<JsonObject> const& config)
+    : BaseServer("rtype_server", "r-type", r, em, l, config)
 {
   SUBSCRIBE_EVENT(NewConnection, {
     std::size_t entity = this->_registry.get().spawn_entity();
@@ -104,8 +106,11 @@ RtypeServer::RtypeServer(Registry& r, EventManager& em, EntityLoader& l)
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
+void* entry_point(Registry& r,
+                  EventManager& em,
+                  EntityLoader& e,
+                  std::optional<JsonObject> const& config)
 {
-  return new RtypeServer(r, em, e);
+  return new RtypeServer(r, em, e, config);
 }
 }
