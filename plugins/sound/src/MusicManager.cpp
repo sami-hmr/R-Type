@@ -1,6 +1,7 @@
 
 
 #include <stdexcept>
+
 #include "plugin/components/MusicManager.hpp"
 
 #include "Json/JsonParser.hpp"
@@ -23,15 +24,15 @@ void Sound::init_music_manager(Registry::Entity& e, const JsonObject& obj)
     for (const auto& music_value : musics_array) {
       JsonObject music_obj = std::get<JsonObject>(music_value.value);
       if (!music_obj.contains("name")) {
-        std::cerr << "Error loading SoundEffect component: missing name in "
-                     "JsonObject\n";
+        std::cerr
+            << "Error loading music component: missing name in " "JsonObject\n";
         return;
       }
       std::string name = get_value<SoundEffect, std::string>(
                              this->_registry.get(), music_obj, e, "name")
                              .value_or("");
       if (!music_obj.contains("filepath")) {
-        std::cerr << "Error loading SoundEffect component: missing filepath in "
+        std::cerr << "Error loading music component: missing filepath in "
                      "JsonObject\n";
         return;
       }
@@ -41,7 +42,7 @@ void Sound::init_music_manager(Registry::Entity& e, const JsonObject& obj)
               .value_or("");
 
       if (!music_obj.contains("volume")) {
-        std::cerr << "Error loading SoundEffect component: missing volume in "
+        std::cerr << "Error loading music component: missing volume in "
                      "JsonObject\n";
         return;
       }
@@ -72,7 +73,7 @@ void Sound::init_music_manager(Registry::Entity& e, const JsonObject& obj)
                                           /*playing=*/false));
     }
   } catch (std::bad_variant_access const&) {
-    std::cerr << "Error parsing SoundManager component: music_datas array "
+    std::cerr << "Error parsing MusicManager component: music_datas array "
                  "contains invalid value"
               << '\n';
     return;
