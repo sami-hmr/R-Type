@@ -1979,7 +1979,9 @@ public:
    * @see get_template() to retrieve template
    * @see EntityLoader::load_entity() to instantiate template
    */
-  void add_template(std::string const& name, JsonObject const& config);
+  void add_template(std::string const& name,
+                    JsonObject const& config,
+                    JsonObject const& default_parameters = {});
 
   /**
    * @brief Retrieve a registered entity template.
@@ -2260,5 +2262,11 @@ private:
       _global_hooks;
   std::vector<Binding> _bindings;
 
-  std::unordered_map<std::string, JsonObject> _entities_templates;
+  struct TemplateDefinition
+  {
+    JsonObject obj;
+    JsonObject default_parameters;
+  };
+
+  std::unordered_map<std::string, TemplateDefinition> _entities_templates;
 };

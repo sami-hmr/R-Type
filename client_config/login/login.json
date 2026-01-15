@@ -60,7 +60,6 @@
                     "template": "switch_text",
                     "parameters": {
                         "text": "not register yet ? click here to register",
-                        "width": 0.8,
                         "target_scene": "register",
                         "current_scene": "login"
                     }

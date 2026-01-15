@@ -5,40 +5,51 @@
 
 #include "Json/JsonParser.hpp"
 
-static void replace_json_value(JsonValue& value, JsonObject const& params)
+static void replace_json_value(JsonValue& value,
+                               JsonObject const& params,
+                               JsonObject const& default_parameters)
 {
   const auto visitor = Overloads {
       [](int) {},
       [](double) {},
-      [params, &value](std::string const& str)
+      [params, default_parameters, &value](std::string const& str)
       {
         if (!str.starts_with('$')) {
           return;
         }
         std::string const& arg = str.substr(1);
         if (!params.contains(arg)) {
+          if (default_parameters.contains(arg)) {
+            value = default_parameters.at(arg);
+          }
           return;
         }
         value = params.at(arg);
       },
       [](bool) {},
-      [params](JsonObject& obj) { replace_json_object(obj, params); },
-      [params](JsonArray& array) { replace_json_array(array, params); },
+      [params, default_parameters](JsonObject& obj)
+      { replace_json_object(obj, params, default_parameters); },
+      [params, default_parameters](JsonArray& array)
+      { replace_json_array(array, params, default_parameters); },
   };
 
   std::visit(visitor, value.value);
 }
 
-void replace_json_array(JsonArray& arr, JsonObject const& params)
+void replace_json_array(JsonArray& arr,
+                        JsonObject const& params,
+                        JsonObject const& default_parameters)
 {
   for (auto& value : arr) {
-    replace_json_value(value, params);
+    replace_json_value(value, params, default_parameters);
   }
 }
 
-void replace_json_object(JsonObject& obj, JsonObject const& params)
+void replace_json_object(JsonObject& obj,
+                         JsonObject const& params,
+                         JsonObject const& default_parameters)
 {
   for (auto& [_, value] : obj) {
-    replace_json_value(value, params);
+    replace_json_value(value, params, default_parameters);
   }
 }
