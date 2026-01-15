@@ -61,7 +61,7 @@ struct Collidable
       parseByte<CollisionType>(),
       parseByte<bool>(),
       parseByteArray(parseByteArray(parseAnyChar())))
-      
+
   DEFAULT_SERIALIZE(vector2DToByte(this->size),
                     type_to_byte(this->collision_type),
                     type_to_byte(this->is_active),
