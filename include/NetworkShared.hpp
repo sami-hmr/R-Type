@@ -248,7 +248,8 @@ struct PlayerCreated
   CHANGE_ENTITY_DEFAULT
 
   PlayerCreated(Registry& r, JsonObject const& e)
-      : server_index(get_value_copy<int>(r, e, "server_index").value())
+      : server_index(
+            get_value_copy<Registry::Entity>(r, e, "server_index").value_or(0))
   {
   }
 };

@@ -1,7 +1,8 @@
 {
+  // player charge bounce
   "entities_template": [
     {
-      "name": "player_tmp",
+      "name": "player_cb",
       "components": {
         "moving:Position": {
           "pos": {
@@ -35,11 +36,6 @@
           "scale_damage": true,
           "attack_animation": "attack",
           "charge_indicator": "bounce_bullet_charge"
-        },
-        "moving:IdStorage": {
-          "id": "@self",
-          "hook": "player_id",
-          "global_hook": true
         },
         "ui:AnimatedSprite": {
           "animations": [
@@ -161,7 +157,8 @@
       }
     },
     {
-      "name": "player_b",
+      // player beam
+      "name": "player_beam",
       "components": {
         "moving:Position": {
           "pos": {
@@ -190,11 +187,6 @@
           "reload_time": 2.0,
           "cooldown": 0.8,
           "attack_animation": "beam_start"
-        },
-        "moving:IdStorage": {
-          "id": "@self",
-          "hook": "player_id",
-          "global_hook": true
         },
         "ui:AnimatedSprite": {
           "animations": [
@@ -351,11 +343,6 @@
           "attack_animation": "attack",
           "charge_indicator": "beam_start"
         },
-        "moving:IdStorage": {
-          "id": "@self",
-          "hook": "player_id",
-          "global_hook": true
-        },
         "ui:AnimatedSprite": {
           "animations": [
             {
@@ -472,7 +459,6 @@
             "a": 255
           },
           "outline": true
-          
         }
       }
     }
