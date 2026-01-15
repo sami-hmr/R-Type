@@ -2,6 +2,7 @@
     "entities_template": [
         {
             "name": "server_card",
+            "parameters": {},
             "components": {
                 "ui:Drawable": {},
                 "moving:Position": {
@@ -119,6 +120,22 @@
                     "hover": false,
                     "toggle": false,
                     "pressed": false
+                },
+                "ath:Clickable": {
+                    "to_emit": [
+                        {
+                            "SceneChangeEvent": {
+                                "target_scene": "$target_scene",
+                                "reason": "",
+                                "force": false
+                            }
+                        },
+                        {
+                            "DisableSceneEvent": {
+                                "target_scene": "$current_scene"
+                            }
+                        }
+                    ]
                 }
             }
         }
