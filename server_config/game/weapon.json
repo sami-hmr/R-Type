@@ -86,7 +86,7 @@
             "x": 0.2,
             "y": 0.2
           },
-          "collision_type": "solid"
+          "collision_type": "trigger"
         },
         "projectile:Temporal": {
           "lifetime": 2.0

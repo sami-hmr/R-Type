@@ -1,16 +1,10 @@
 {
   "entities_template": [
     {
-      "name": "ally_force_1",
+      "name": "boss_1",
       "components": {
-        // "mob:Parasite": {
-        //   "behavior": "circle"
-        // },
-        "collision:InteractionZone": {
-          "radius": 0.5
-        },
         "moving:Position": {
-          "hook": "ally_force_pos_1",
+          "hook": "boss_pos_1",
           "pos": {
             "x": -0.1,
             "y": 0.0
@@ -21,25 +15,25 @@
           "animations": [
             {
               "name": "idle",
-              "texture": "assets/r-type/SNES - Super R-Type - Player - Force _ Pit _ Beam.png",
+              "texture": "assets/r-type/Arcade - R-Type - Enemies - Dobkeratops.png",
               "frame_size": {
-                "x": 33.0,
-                "y": 33.0
+                "x": 180.0,
+                "y": 213.8
               },
               "frame_pos": {
-                "x": 7.0,
-                "y": 7.0
-              },
-              "direction": {
-                "x": 1.0,
+                "x": 5.0,
                 "y": 0.0
               },
+              "direction": {
+                "x": 0.0,
+                "y": 1.0
+              },
               "sprite_size": {
-                "width": "7.0%",
-                "height": "7.0%"
+                "width": "40.0%",
+                "height": "40.0%"
               },
               "framerate": 10.0,
-              "nb_frames": 6,
+              "nb_frames": 9,
               "loop": true,
               "rollback": true
             },
@@ -71,7 +65,7 @@
           "default_animation": "idle"
         },
         "life:Health": {
-          "hook": "ally_force_health_1",
+          "hook": "boss_health_1",
           "current": 50.0,
           "max": 50.0
         },
@@ -83,8 +77,8 @@
             "x": "10.0%",
             "y": "1.0%"
           },
-          "max_value": "#self:ally_force_health_1:max",
-          "current_value": "#self:ally_force_health_1:current",
+          "max_value": "#self:boss_health_1:max",
+          "current_value": "#self:boss_health_1:current",
           "offset": {
             "x": 0.0,
             "y": -0.1
@@ -99,14 +93,12 @@
           "texture_path": "assets/backgrounds/background.png"
         },
         "collision:Collidable": {
-          "size": {
-            "x": 0.1,
-            "y": 0.1
-          },
+          "width": 0.3,
+          "height": 1.0,
           "collision_type": "solid"
         },
         "life:Team": {
-          "name": "player"
+          "name": "enemy"
         },
         "moving:Speed": {
           "speed": {
@@ -127,17 +119,19 @@
           }
         },
         "weapon:BasicWeapon": {
-          "bullet_type": "basic_bullet",
+          "bullet_type": "fire_bullet_spread_3",
           "magazine_size": 6,
           "magazine_nb": 3,
           "reload_time": 2.0,
           "cooldown": 2.0,
           "attack_animation": "attack"
         },
-        "ai:MovementBehavior": { "movement_type": "glue", "params": {"parasite_behavior": "circle", "zone_radius": 0.3, "radius": 0.4, "angular_speed": 2.5} },
+        "ai:MovementBehavior": { "movement_type": "turret"},
         "ai:AttackBehavior": {
           "attack_type": "continuous"
-        }
+        },
+        "target:Follower": {},
+        "collision:InteractionZone": { "radius": 1.5 }
       }
     }
   ]
