@@ -131,8 +131,8 @@ void EntityLoader::load_file(std::string const& filepath)
           JsonObject template_obj = std::get<JsonObject>(template_it.value);
           JsonObject default_parameters;
           if (template_obj.contains("default_parameters")) {
-            default_parameters =
-                std::get<JsonObject>(template_obj.at("default_parameters").value);
+            default_parameters = std::get<JsonObject>(
+                template_obj.at("default_parameters").value);
           }
           this->_registry.get().add_template(
               std::get<std::string>(template_obj.at("name").value),
