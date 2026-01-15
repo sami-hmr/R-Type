@@ -20,6 +20,7 @@
 #include <SFML/Graphics/View.hpp>
 #include <SFML/System/Angle.hpp>
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Window/Cursor.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Mouse.hpp>
@@ -86,9 +87,16 @@ SFMLRenderer::SFMLRenderer(Registry& r, EventManager& em, EntityLoader& l)
   _registry.get().add_system([this](Registry& r)
                              { this->unified_render_system(r); });
   _registry.get().add_system([this](Registry&) { this->display(); });
+
+  SUBSCRIBE_EVENT_PRIORITY(MousePressedEvent, { this->on_click(event); }, 10000);
+  SUBSCRIBE_EVENT(InputFocusEvent, { this->on_input_focus(event); });
   _textures.insert_or_assign(SFMLRenderer::placeholder_texture,
                              gen_placeholder());
   this->_vertex_buffer.setUsage(sf::VertexBuffer::Usage::Stream);
+  this->_cursors.insert_or_assign("arrow", sf::Cursor(sf::Cursor::Type::Arrow));
+  this->_cursors.insert_or_assign("hand", sf::Cursor(sf::Cursor::Type::Hand));
+  this->_cursors.insert_or_assign("wait", sf::Cursor(sf::Cursor::Type::Wait));
+  this->_cursors.insert_or_assign("text", sf::Cursor(sf::Cursor::Type::Text));
 }
 
 SFMLRenderer::~SFMLRenderer()
@@ -133,6 +141,16 @@ std::optional<Key> SFMLRenderer::sfml_key_to_key(sf::Keyboard::Key sfml_key)
     return it->second;
   }
   return std::nullopt;
+}
+
+void SFMLRenderer::on_input_focus(const InputFocusEvent &/*unused*/)
+{
+  this->_window.setMouseCursor(this->_cursors.at("text"));
+}
+
+void SFMLRenderer::on_click(const MousePressedEvent &/*unused*/)
+{
+  this->_window.setMouseCursor(this->_cursors.at("arrow"));
 }
 
 void SFMLRenderer::handle_resize()
@@ -291,9 +309,11 @@ void SFMLRenderer::render_sprites(Registry& r,
       this->_sprite = sf::Sprite(texture);
     }
 
-    spr.true_size = Vector2D{
-        static_cast<double>(texture.getSize().x * uniform_scale) / min_dimension,
-        static_cast<double>(texture.getSize().y * uniform_scale) / min_dimension};
+    spr.true_size =
+        Vector2D {static_cast<double>(texture.getSize().x * uniform_scale)
+                      / min_dimension,
+                  static_cast<double>(texture.getSize().y * uniform_scale)
+                      / min_dimension};
 
     SpriteDrawable sprite_drawable(std::ref(*this->_sprite),
                                    std::ref(texture),
@@ -302,8 +322,6 @@ void SFMLRenderer::render_sprites(Registry& r,
                                    0.0f,
                                    pos.z);
 
-
-    
     all_drawables.emplace_back(DrawableVariant {std::move(sprite_drawable)},
                                pos.z);
   }
@@ -337,7 +355,7 @@ void SFMLRenderer::render_texts(Registry& r,
     sf::Rect<float> text_rect;
 
     _text.value().setString(
-        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"); // caluculate height with all possible letters
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");  // caluculate height with all possible letters
     text_rect = _text.value().getLocalBounds();
     double min_dim = std::min(window_size.x, window_size.y);
     double desired_height = min_dim * txt.scale.y;
@@ -362,10 +380,10 @@ void SFMLRenderer::render_texts(Registry& r,
     _text.value().setString(text_str);
     _text.value().setCharacterSize(final_size);
     sf::FloatRect final_text_rect = _text.value().getLocalBounds();
-    
-    txt.true_size = Vector2D{
-        static_cast<double>(final_text_rect.size.x) / min_dimension,
-        static_cast<double>(final_text_rect.size.y) / min_dimension};
+
+    txt.true_size =
+        Vector2D {static_cast<double>(final_text_rect.size.x) / min_dimension,
+                  static_cast<double>(final_text_rect.size.y) / min_dimension};
 
     TextDrawable text_drawable(
         std::ref(*this->_text),
@@ -422,9 +440,8 @@ void SFMLRenderer::render_bars(Registry& r,
       texture_ptr = load_texture(bar.texture_path);
     }
 
-    bar.true_size = Vector2D{
-        static_cast<double>(size.x) / min_dimension,
-        static_cast<double>(size.y) / min_dimension};
+    bar.true_size = Vector2D {static_cast<double>(size.x) / min_dimension,
+                              static_cast<double>(size.y) / min_dimension};
 
     BarDrawable bar_drawable(std::ref(this->_rectangle),
                              new_pos + offset,
@@ -504,10 +521,12 @@ void SFMLRenderer::render_animated_sprites(
       this->_sprite = sf::Sprite(texture);
     }
 
-    anim.true_size = Vector2D{
-        static_cast<double>(anim_data.sprite_size.x * uniform_scale) / min_dimension,
-        static_cast<double>(anim_data.sprite_size.y * uniform_scale) / min_dimension};
-    
+    anim.true_size =
+        Vector2D {static_cast<double>(anim_data.sprite_size.x * uniform_scale)
+                      / min_dimension,
+                  static_cast<double>(anim_data.sprite_size.y * uniform_scale)
+                      / min_dimension};
+
     AnimatedSpriteDrawable anim_drawable(
         std::ref(*this->_sprite),
         std::ref(texture),
@@ -573,10 +592,12 @@ void SFMLRenderer::button_system(Registry& r)
       if (!button.hovered) {
         button.hovered = true;
         this->_event_manager.get().emit<PlayAnimationEvent>(
-            "hover", e, hover_anim_data.framerate, false, false);
+            "hover", e, hover_anim_data.framerate, true, false);
+        this->_window.setMouseCursor(this->_cursors.at("hand"));
       }
     } else {
       if (button.hovered) {
+        this->_window.setMouseCursor(this->_cursors.at("arrow"));
         button.hovered = false;
         this->_event_manager.get().emit<PlayAnimationEvent>(
             "idle", e, hover_anim_data.framerate, true, false);
