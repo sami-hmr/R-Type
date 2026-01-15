@@ -83,8 +83,7 @@ struct Text
   Color fill_color = WHITE;
   bool outline = false;
   double outline_thickness = 1.0f;
-  Vector2D true_size;
-
+  
   HOOKABLE(Text,
            HOOK(font_path),
            HOOK(scale),
@@ -93,6 +92,5 @@ struct Text
            HOOK(outline_color),
            HOOK(fill_color),
            HOOK(outline),
-           HOOK(outline_thickness),
-           HOOK(true_size))
+           HOOK(outline_thickness))
 };

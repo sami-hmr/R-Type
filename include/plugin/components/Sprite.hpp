@@ -35,7 +35,6 @@ struct Sprite
 
   std::string texture_path;
   Vector2D scale;
-  Vector2D true_size;
-
-  HOOKABLE(Sprite, HOOK(texture_path), HOOK(scale), HOOK(true_size))
+  
+  HOOKABLE(Sprite, HOOK(texture_path), HOOK(scale))
 };
