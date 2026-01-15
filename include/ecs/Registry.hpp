@@ -1065,7 +1065,7 @@ public:
    * @see Hooks.hpp for hook syntax details
    */
   template<component ComponentType, typename T>
-  void register_binding(Entity entity, //NOLINT
+  void register_binding(Entity entity,  // NOLINT
                         std::string const& field_name,
                         std::string const& source_hook)
   {
@@ -1891,6 +1891,10 @@ public:
   std::optional<std::reference_wrapper<T>> get_hooked_value(
       std::string const& comp, std::string const& value)
   {
+    if (!this->_global_hooks.contains(comp)) {
+      return std::nullopt;
+    }
+
     auto const& tmp = std::any_cast<std::optional<std::any>>(
         this->_hooked_components.at(comp)(value));
     if (!tmp.has_value()) {
@@ -1914,12 +1918,12 @@ public:
   std::optional<std::reference_wrapper<T>> get_global_hooked_value(
       std::string const& name, std::string const& value)
   {
-    auto it = this->_global_hooks.find(name);
-    if (it == this->_global_hooks.end()) {
+    if (!this->_global_hooks.contains(name)) {
       return std::nullopt;
     }
 
-    auto const& tmp = std::any_cast<std::optional<std::any>>(it->second(value));
+    auto const& tmp =
+        std::any_cast<std::optional<std::any>>(this->_global_hooks.at(value));
     if (!tmp.has_value()) {
       return std::nullopt;
     }
