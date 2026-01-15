@@ -11,6 +11,7 @@
 
 #include "SFMLRenderer.hpp"
 
+#include <SFML/Audio/Music.hpp>
 #include <SFML/Audio/Sound.hpp>
 #include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/Graphics/Font.hpp>
@@ -117,6 +118,7 @@ SFMLRenderer::SFMLRenderer(Registry& r, EventManager& em, EntityLoader& l)
                              { this->unified_render_system(r); });
   _registry.get().add_system([this](Registry&) { this->display(); });
   _registry.get().add_system([this](Registry& r) { this->sounds_system(r); });
+  _registry.get().add_system([this](Registry& r) { this->musics_system(r); });
   _textures.insert_or_assign(SFMLRenderer::placeholder, gen_placeholder());
   _sound_buffers.insert_or_assign(SFMLRenderer::placeholder,
                                   gen_sound_placeholder());
@@ -124,6 +126,7 @@ SFMLRenderer::SFMLRenderer(Registry& r, EventManager& em, EntityLoader& l)
   for (auto& sound : this->_sounds) {
     sound = sf::Sound(buffer);
   }
+  this->_musics.insert_or_assign(SFMLRenderer::placeholder, sf::Music());
 }
 
 SFMLRenderer::~SFMLRenderer()

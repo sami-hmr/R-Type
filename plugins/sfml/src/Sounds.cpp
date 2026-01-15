@@ -1,6 +1,7 @@
 #include <optional>
 
-#include "plugin/components/Sound.hpp"
+#include "plugin/components/SoundManager.hpp"
+#include "plugin/components/MusicManager.hpp"
 
 #include <SFML/Audio/Sound.hpp>
 #include <SFML/Audio/SoundBuffer.hpp>
@@ -8,6 +9,19 @@
 #include "SFMLRenderer.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
+
+sf::Music& SFMLRenderer::load_music(const std::string& path)
+{
+  if (_musics.contains(path)) {
+    return _musics.at(path);
+  }
+  sf::Music music;
+  if (!music.openFromFile(path)) {
+    return this->_musics.at(placeholder);
+  }
+  _musics.insert_or_assign(path, std::move(music));
+  return _musics.at(path);
+}
 
 sf::SoundBuffer& SFMLRenderer::load_sound(const std::string& sound)
 {
@@ -32,6 +46,8 @@ SFMLRenderer::get_available_sound(sf::SoundBuffer& buffer)
   }
   return std::nullopt;
 }
+
+
 
 void SFMLRenderer::sounds_system(Registry& r)
 {
@@ -59,6 +75,32 @@ void SFMLRenderer::sounds_system(Registry& r)
         sound_opt->get().stop();
         sound.playing = false;
         sound.stop = false;
+      }
+    }
+  }
+}
+
+void SFMLRenderer::musics_system(Registry& r)
+{
+  for (auto&& [e, musicmanager] : ZipperIndex<MusicManager>(r)) {
+    for (auto& [name, music] : musicmanager.musics) {
+      sf::Music &buffer = load_music(music.filepath);
+
+      buffer.setVolume(static_cast<float>(music.volume));
+      buffer.setPitch(static_cast<float>(music.pitch));
+      buffer.setLooping(music.loop);
+      if (music.play && !music.playing) {
+        music.playing = true;
+        music.play = false;
+        buffer.play();
+        std::cout << "playing music sfml\n";
+      }
+      if ((music.stop && music.playing)
+          || buffer.getStatus() == sf::Music::Status::Stopped)
+      {
+        buffer.stop();
+        music.playing = false;
+        music.stop = false;
       }
     }
   }

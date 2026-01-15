@@ -122,10 +122,10 @@
           "controller:Controllable": {
             "bindings": [
               {
-                "description": "play sound",
+                "description": "play music",
                 "key": "P",
                 "pressed": {
-                  "name": "PlaySoundEvent",
+                  "name": "PlayMusicEvent",
                   "params": {
                     "name": "fah",
                     "entity": "@self",
@@ -137,8 +137,8 @@
               }
             ]
           },
-          "sound:SoundManager": {
-            "sound_effects": [
+          "sound:MusicManager": {
+            "musics": [
               {
                 "name": "fah",
                 "filepath": "assets/sounds/fah.mp3",
@@ -165,7 +165,7 @@
             }
           },
           "ui:input": {
-            "hook": "my_input_buffer",
+            "hook": "test",
             "buffer": "server address:",
             "enabled": false
           },
@@ -194,7 +194,7 @@
             },
             "outline_thickness": 30.0,
             "outline": true,
-            "text": "#my_input_buffer:buffer"
+            "text": "test"
           },
           "ath:Clickable": {
             "to_emit": [

@@ -1,6 +1,6 @@
 
 
-#include "plugin/components/Sound.hpp"
+#include "plugin/components/SoundManager.hpp"
 
 #include "Json/JsonParser.hpp"
 #include "Sound.hpp"
