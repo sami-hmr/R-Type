@@ -269,7 +269,7 @@ JsonObject Registry::get_template(std::string const& name,
   if (!_entities_templates.contains(name)) {
     std::cerr << "Template: " << name << " not found !\n";
   }
-  auto const &definition = _entities_templates.find(name)->second; 
+  auto const& definition = _entities_templates.find(name)->second;
   JsonObject new_object = definition.obj;
   if (params.empty()) {
     return new_object;
