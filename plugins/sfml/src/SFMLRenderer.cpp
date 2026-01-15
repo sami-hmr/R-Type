@@ -1,7 +1,9 @@
 
 #include <algorithm>
+#include <array>
 #include <cctype>
 #include <cmath>
+#include <cstdint>
 #include <cstdio>
 #include <functional>
 #include <iostream>
@@ -11,6 +13,9 @@
 
 #include "SFMLRenderer.hpp"
 
+#include <SFML/Audio/Music.hpp>
+#include <SFML/Audio/Sound.hpp>
+#include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/Rect.hpp>
@@ -69,8 +74,36 @@ static sf::Texture gen_placeholder()
   return sf::Texture(image);
 }
 
+static sf::SoundBuffer gen_sound_placeholder()
+{
+  const unsigned int SAMPLE_RATE = 44100;
+  const unsigned int DURATION = 1;
+  const unsigned int SAMPLE_COUNT = SAMPLE_RATE * DURATION;
+
+  std::vector<std::int16_t> samples(SAMPLE_COUNT);
+
+  const double FREQUENCY = 440.0;
+  const double amplitude = 10000.0;
+
+  for (unsigned int i = 0; i < SAMPLE_COUNT; ++i) {
+    double time = static_cast<double>(i) / SAMPLE_RATE;
+    samples[i] = static_cast<std::int16_t>(
+        amplitude * std::sin(2.0 * M_PI * FREQUENCY * time));
+  }
+  sf::SoundBuffer sound_buffer;
+  if (!sound_buffer.loadFromSamples(samples.data(),
+                                    SAMPLE_COUNT,
+                                    1,
+                                    SAMPLE_RATE,
+                                    {sf::SoundChannel::Mono}))
+  {
+    return {};
+  }
+  return sound_buffer;
+}
+
 SFMLRenderer::SFMLRenderer(Registry& r, EventManager& em, EntityLoader& l)
-    : APlugin("sfml", r, em, l, {"moving", "ath", "ui", "collision"}, {})
+    : APlugin("sfml", r, em, l, {"moving", "ath", "ui", "collision", "sound"}, {})
 {
   _window =
       sf::RenderWindow(sf::VideoMode(window_size), "R-Type - SFML Renderer");
@@ -88,15 +121,22 @@ SFMLRenderer::SFMLRenderer(Registry& r, EventManager& em, EntityLoader& l)
   _registry.get().add_system([this](Registry& r)
                              { this->unified_render_system(r); });
   _registry.get().add_system([this](Registry&) { this->display(); });
-  this->_registry.get().add_system([this](Registry& r)
-                                   { this->hover_system(r); });
+  _registry.get().add_system([this](Registry& r) { this->sounds_system(r); });
+  _registry.get().add_system([this](Registry& r) { this->musics_system(r); });
+  _registry.get().add_system([this](Registry& r) { this->hover_system(r); });
+
+  _textures.insert_or_assign(SFMLRenderer::placeholder, gen_placeholder());
+  _sound_buffers.insert_or_assign(SFMLRenderer::placeholder,
+                                  gen_sound_placeholder());
 
   SUBSCRIBE_EVENT_PRIORITY(
       MousePressedEvent, { this->on_click(event); }, 10000);
   SUBSCRIBE_EVENT(InputFocusEvent, { this->on_input_focus(event); });
-  _textures.insert_or_assign(SFMLRenderer::placeholder_texture,
-                             gen_placeholder());
-  this->_vertex_buffer.setUsage(sf::VertexBuffer::Usage::Stream);
+  sf::SoundBuffer& buffer = _sound_buffers.at(SFMLRenderer::placeholder);
+  for (auto& sound : this->_sounds) {
+    sound = sf::Sound(buffer);
+  }
+  this->_musics.insert_or_assign(SFMLRenderer::placeholder, sf::Music());
   this->_cursors.insert_or_assign("arrow", sf::Cursor(sf::Cursor::Type::Arrow));
   this->_cursors.insert_or_assign("hand", sf::Cursor(sf::Cursor::Type::Hand));
   this->_cursors.insert_or_assign("wait", sf::Cursor(sf::Cursor::Type::Wait));
@@ -118,7 +158,7 @@ sf::Texture& SFMLRenderer::load_texture(std::string const& path)
   sf::Texture texture;
   if (!texture.loadFromFile(path)) {
     LOGGER("SFML", LogLevel::ERROR, "Failed to load texture: " + path)
-    return _textures.at(placeholder_texture);
+    return _textures.at(placeholder);
   }
   _textures.insert_or_assign(path, std::move(texture));
   return _textures.at(path);

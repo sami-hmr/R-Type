@@ -359,6 +359,7 @@
 
 #include <any>
 #include <cstddef>
+#include <format>
 #include <functional>
 #include <optional>
 #include <stdexcept>
@@ -719,7 +720,9 @@ std::optional<T> get_value_copy(Registry& r,
                      "hooked value construction via jsonobject failed");
     } catch (std::out_of_range const&) {
       LOGGER_EVTLESS(
-          LogLevel::ERROR, "Hooks", "hooked value lookup in object failed");
+          LogLevel::ERROR,
+          "Hooks",
+          std::format("hooked value lookup in object \"{}\" failed", key));
     }
   }
 
