@@ -44,6 +44,7 @@
 #include "plugin/components/Collidable.hpp"
 #include "plugin/components/Drawable.hpp"
 #include "plugin/components/Facing.hpp"
+#include "plugin/components/Input.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Sprite.hpp"
 #include "plugin/components/Text.hpp"
@@ -585,7 +586,11 @@ void SFMLRenderer::hover_system(Registry& r)
                         .width = collision.width * 2,
                         .height = collision.height};
     if (entity_rect.contains(mouse_pos.x, mouse_pos.y)) {
-      this->_window.setMouseCursor(this->_cursors.at("hand"));
+      if (r.has_component<Input>(e)) {
+        this->_window.setMouseCursor(this->_cursors.at("text"));
+      } else {
+        this->_window.setMouseCursor(this->_cursors.at("hand"));
+      }
       return;
     }
   }
