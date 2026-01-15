@@ -87,8 +87,11 @@ SFMLRenderer::SFMLRenderer(Registry& r, EventManager& em, EntityLoader& l)
   _registry.get().add_system([this](Registry& r)
                              { this->unified_render_system(r); });
   _registry.get().add_system([this](Registry&) { this->display(); });
+  this->_registry.get().add_system([this](Registry& r)
+                                   { this->hover_system(r); });
 
-  SUBSCRIBE_EVENT_PRIORITY(MousePressedEvent, { this->on_click(event); }, 10000);
+  SUBSCRIBE_EVENT_PRIORITY(
+      MousePressedEvent, { this->on_click(event); }, 10000);
   SUBSCRIBE_EVENT(InputFocusEvent, { this->on_input_focus(event); });
   _textures.insert_or_assign(SFMLRenderer::placeholder_texture,
                              gen_placeholder());
@@ -143,12 +146,12 @@ std::optional<Key> SFMLRenderer::sfml_key_to_key(sf::Keyboard::Key sfml_key)
   return std::nullopt;
 }
 
-void SFMLRenderer::on_input_focus(const InputFocusEvent &/*unused*/)
+void SFMLRenderer::on_input_focus(const InputFocusEvent& /*unused*/)
 {
   this->_window.setMouseCursor(this->_cursors.at("text"));
 }
 
-void SFMLRenderer::on_click(const MousePressedEvent &/*unused*/)
+void SFMLRenderer::on_click(const MousePressedEvent& /*unused*/)
 {
   this->_window.setMouseCursor(this->_cursors.at("arrow"));
 }
@@ -566,6 +569,29 @@ void SFMLRenderer::unified_render_system(Registry& r)
   this->_sprite->setRotation(sf::degrees(0));
 }
 
+void SFMLRenderer::hover_system(Registry& r)
+{
+  sf::Vector2i tmp = sf::Mouse::getPosition(_window);
+  Vector2D mouse_pos = screen_to_world(tmp);
+
+  for (const auto&& [e, clickable, pos, collision] :
+       ZipperIndex<Clickable, Position, Collidable>(r))
+  {
+    if (!r.is_in_main_scene(e)) {
+      continue;
+    }
+    Rect entity_rect = {.x = pos.pos.x,
+                        .y = pos.pos.y,
+                        .width = collision.width * 2,
+                        .height = collision.height};
+    if (entity_rect.contains(mouse_pos.x, mouse_pos.y)) {
+      this->_window.setMouseCursor(this->_cursors.at("hand"));
+      return;
+    }
+  }
+  this->_window.setMouseCursor(this->_cursors.at("arrow"));
+}
+
 void SFMLRenderer::button_system(Registry& r)
 {
   sf::Vector2i tmp = sf::Mouse::getPosition(_window);
@@ -574,9 +600,10 @@ void SFMLRenderer::button_system(Registry& r)
   for (auto&& [e, draw, anim, button, pos, collision] :
        ZipperIndex<Drawable, AnimatedSprite, Button, Position, Collidable>(r))
   {
-    if (!draw.enabled) {
+    if (!draw.enabled || !r.is_in_main_scene(e)) {
       continue;
     }
+
     if (!anim.animations.contains("hover")
         || !anim.animations.contains("pressed")
         || !anim.animations.contains("idle"))
@@ -593,11 +620,9 @@ void SFMLRenderer::button_system(Registry& r)
         button.hovered = true;
         this->_event_manager.get().emit<PlayAnimationEvent>(
             "hover", e, hover_anim_data.framerate, true, false);
-        this->_window.setMouseCursor(this->_cursors.at("hand"));
       }
     } else {
       if (button.hovered) {
-        this->_window.setMouseCursor(this->_cursors.at("arrow"));
         button.hovered = false;
         this->_event_manager.get().emit<PlayAnimationEvent>(
             "idle", e, hover_anim_data.framerate, true, false);

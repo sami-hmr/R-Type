@@ -65,9 +65,11 @@ private:
   void camera_system(Registry& r);
   void button_system(Registry& r);
   void slider_system(Registry& r) const;
+  void hover_system(Registry &r);
+  void display();
+  
   void on_input_focus(const InputFocusEvent &/*unused*/);
   void on_click(const MousePressedEvent &/*unused*/);
-  void display();
 
   void render_sprites(Registry& r,
                       std::vector<DrawableItem>& all_drawables,
