@@ -61,52 +61,22 @@ void Mob::init_spawner(Registry::Entity const& entity, JsonObject const& obj)
 
 void Mob::init_parasite(Registry::Entity const& entity, JsonObject const& obj)
 {
-  auto const& behavior = get_value<Parasite, std::string>(
-      this->_registry.get(), obj, entity, "behavior");
-  if (!behavior) {
+  auto const& behaviour = get_value<Parasite, std::string>(
+      this->_registry.get(), obj, entity, "behaviour");
+
+  std::optional<std::size_t> id = std::nullopt;
+  if (obj.contains("entity_id")) {
+    id = get_value<Parasite, std::size_t>(
+        this->_registry.get(), obj, entity, "entity_id");
+  }
+
+  if (!behaviour) {
     std::cerr << "Error loading Parasite component: unexpected value type or "
                  "missing value in JsonObject\n";
     return;
   }
   this->_registry.get().emplace_component<Parasite>(
-      entity, behavior.value());
-}
-
-void Mob::on_interaction_zone(const InteractionZoneEvent& event)
-{
-  const auto& positions = this->_registry.get().get_components<Position>();
-  auto& parasite = this->_registry.get().get_components<Parasite>();
-
-  if (!this->_registry.get().has_component<Parasite>(event.source)
-      || parasite[event.source]->entity_id.has_value())
-  {
-    return;
-  }
-
-  std::optional<Registry::Entity> closest_entity = std::nullopt;
-  double closest_distance_sq = event.radius * event.radius;
-
-  for (const Registry::Entity& candidate : event.candidates) {
-    if (!this->_registry.get().has_component<Health>(candidate)) {
-      continue;
-    }
-    Vector2D distance =
-        positions[candidate]->pos - positions[event.source]->pos;
-    double distance_sq = distance.length();
-
-    if (distance_sq < closest_distance_sq) {
-      closest_distance_sq = distance_sq;
-      closest_entity = candidate;
-    }
-  }
-  if (closest_entity.has_value()) {
-    parasite[event.source]->entity_id.emplace(closest_entity.value());
-
-    this->_event_manager.get().emit<ComponentBuilder>(
-        event.source,
-        this->_registry.get().get_component_key<Parasite>(),
-        parasite[event.source]->to_bytes());
-  }
+      entity, id, behaviour.value());
 }
 
 void Mob::parasite_system(Registry& r)

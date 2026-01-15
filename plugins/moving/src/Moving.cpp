@@ -1,8 +1,11 @@
 #include <algorithm>
+#include <cstddef>
 #include <iostream>
+#include <string>
 
 #include "Moving.hpp"
 
+#include "EntityExpose.hpp"
 #include "Json/JsonParser.hpp"
 #include "NetworkShared.hpp"
 #include "ecs/EventManager.hpp"
@@ -28,13 +31,14 @@ Moving::Moving(Registry& r, EventManager& em, EntityLoader& l)
               {COMP_INIT(Position, Position, init_pos),
                COMP_INIT(Direction, Direction, init_direction),
                COMP_INIT(Speed, Speed, init_speed),
-               COMP_INIT(Facing, Facing, init_facing)})
+               COMP_INIT(Facing, Facing, init_facing),
+               COMP_INIT(IdStorage, IdStorage, init_id)})
 {
   REGISTER_COMPONENT(Position)
   REGISTER_COMPONENT(Direction)
   REGISTER_COMPONENT(Speed)
   REGISTER_COMPONENT(Facing)
-
+  REGISTER_COMPONENT(IdStorage)
   this->_registry.get().add_system(
       [this](Registry& r) { this->moving_system(r); }, 4);
 
@@ -64,6 +68,27 @@ void Moving::moving_system(Registry& reg)
       this->_event_manager.get().emit<ComponentBuilder>(
           index, reg.get_component_key<Position>(), position.to_bytes());
     }
+  }
+}
+
+void Moving::init_id(Registry::Entity const& entity, JsonObject& obj)
+{
+  std::string ctx;
+  auto id = get_value<IdStorage, std::size_t>(
+      this->_registry.get(), obj, entity, "id");
+  if (obj.contains("context")) {
+    ctx = get_value<IdStorage, std::string>(
+              this->_registry.get(), obj, entity, "context")
+              .value();
+  }
+  auto& pos_opt = init_component<IdStorage>(this->_registry.get(),
+                                            this->_event_manager.get(),
+                                            entity,
+                                            id.value(),
+                                            ctx);
+  if (!pos_opt.has_value()) {
+    std::cerr << "Error creating IdStorage component\n";
+    return;
   }
 }
 

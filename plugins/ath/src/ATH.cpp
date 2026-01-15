@@ -26,7 +26,7 @@ static void on_click(Registry& r,
   for (const auto& [e, draw, clickable, pos, collision] :
        ZipperIndex<Drawable, Clickable, Position, Collidable>(r))
   {
-    if (!draw.enabled) {
+    if (!draw.enabled || !r.is_in_main_scene(e)) {
       continue;
     }
     Rect entity_rect = {.x = pos.pos.x,

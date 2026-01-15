@@ -5,9 +5,11 @@
 #include <thread>
 #include <vector>
 
+#include "EntityExpose.hpp"
 #include "Json/JsonParser.hpp"
 #include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
+#include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/events/ActionEvents.hpp"
 #include "plugin/events/SceneChangeEvent.hpp"
@@ -36,11 +38,13 @@ static int true_main(Registry& r,
   em.on<SceneChangeEvent>("SceneChangeEvent",
                           [&r](const SceneChangeEvent& event) -> bool
                           {
-                            std::cout << event.target_scene << std::endl;
                             if (event.force) {
                               r.deactivate_all_scenes();
                             }
                             r.activate_scene(event.target_scene);
+                            if (event.main) {
+                              r.set_main_scene(event.target_scene);
+                            }
                             return false;
                           });
 

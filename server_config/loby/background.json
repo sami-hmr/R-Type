@@ -3,50 +3,7 @@
     {
       "name": "loby",
       "state": "active",
-      "plugins": [
-        {
-          "name": "logger",
-          "config": {
-            "level": "DEBUG"
-          }
-        },
-        {
-          "name": "cli",
-          "config": {}
-        },
-        {
-          "name": "rtype_server",
-          "config": {}
-        },
-        {
-          "name": "collision",
-          "config": {}
-        },
-        {
-          "name": "life",
-          "config": {}
-        },
-        {
-          "name": "moving",
-          "config": {}
-        },
-        {
-          "name": "ui",
-          "config": {}
-        },
-        {
-          "name": "weapon",
-          "config": {}
-        },
-        {
-          "name": "mob",
-          "config": {}
-        },
-        {
-          "name": "wave",
-          "config": {}
-        }
-      ],
+      "plugins": [],
       "entities": [
         {
           "ui:Drawable": {},

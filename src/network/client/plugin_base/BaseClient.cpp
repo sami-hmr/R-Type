@@ -1,4 +1,6 @@
+#include <exception>
 #include <format>
+#include <optional>
 #include <thread>
 
 #include "network/client/BaseClient.hpp"
@@ -13,19 +15,33 @@
 #include "plugin/EntityLoader.hpp"
 #include "plugin/events/CleanupEvent.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
+#include "plugin/events/LogMacros.hpp"
 #include "plugin/events/LoggerEvent.hpp"
 #include "plugin/events/NetworkEvents.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
 
 BaseClient::BaseClient(std::string const& name,
-                       std::string const& game_name,
+                       std::string game_name,
                        Registry& r,
                        EventManager& em,
-                       EntityLoader& l)
+                       EntityLoader& l,
+                       std::optional<JsonObject> const& config)
     : APlugin(name, r, em, l, {}, {})
-    , game_name(game_name)
-    , _http_client("0.0.0.0", 8080)
+    , game_name(std::move(game_name))
 {
+  try {
+    if (!config) {
+      throw std::exception();
+    }
+    this->_http_client.init(
+        std::get<std::string>(config->at("http_host").value),
+        std::get<int>(config->at("http_port").value));
+  } catch (std::exception const&) {
+    LOGGER("client",
+           LogLevel::WARNING,
+           "failed to init http client, using default 0.0.0.0:8080")
+    this->_http_client.init("0.0.0.0", 8080);  // NOLINT
+  }
   SUBSCRIBE_EVENT(ClientConnection, {
     if (this->_user_id == -1) {
       LOGGER("client", LogLevel::ERROR, "client not logged in");
@@ -119,7 +135,6 @@ BaseClient::BaseClient(std::string const& name,
   SUBSCRIBE_EVENT(ResetClient, {
     std::cout << "RESET EVENT\n";
     for (auto const& entity : this->_server_created) {
-      std::cout << entity << std::endl;
       this->_registry.get().kill_entity(entity);
       this->_server_indexes.remove_second(entity);
     }
@@ -127,8 +142,12 @@ BaseClient::BaseClient(std::string const& name,
   })
 
   SUBSCRIBE_EVENT(Disconnection, {
+    this->_running = false;
     this->_event_manager.get().emit<EventBuilder>(
         "DisconnectClient", DisconnectClient(this->_id_in_server).to_bytes());
+    if (this->_thread.joinable()) {
+      this->_thread.join();
+    }
   })
 
   SUBSCRIBE_EVENT(NetworkStatus, { (void)this; })

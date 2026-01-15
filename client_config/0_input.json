@@ -6,12 +6,12 @@
                 "ui:Drawable": {},
                 "moving:Position": {
                     "pos": {
-                        "x": 0.0,
-                        "y": 0.0
+                        "x": "$x",
+                        "y": "$y"
                     }
                 },
                 "ui:input": {
-                    "hook": "input",
+                    "hook": "$input_hook",
                     "global_hook": true,
                     "buffer": "",
                     "enabled": false
@@ -41,8 +41,8 @@
                     },
                     "outline_thickness": 30.0,
                     "outline": true,
-                    "text": "#global:input:buffer",
-                    "placeholder": "identifier"
+                    "text": "$text",
+                    "placeholder": "$placeholder"
                 },
                 "ath:Clickable": {
                     "to_emit": [

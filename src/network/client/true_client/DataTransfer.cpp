@@ -82,6 +82,7 @@ void Client::send_hearthbeat()
     this->_acknowledge_mutex.unlock();
     auto now = std::chrono::steady_clock::now().time_since_epoch().count();
     this->send(HearthBeat(now, lost_packages).to_bytes(), true);
+    std::cout << this->should_disconnect() << std::endl;
     if (this->_running.get() && this->should_disconnect()) {
       this->transmit_event(
           EventBuilder("Disconnection", Disconnection().to_bytes()));

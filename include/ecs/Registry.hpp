@@ -199,9 +199,11 @@
 #include <cstddef>
 #include <functional>
 #include <iostream>
+#include <list>
 #include <optional>
 #include <queue>
 #include <random>
+#include <stack>
 #include <stdexcept>
 #include <string>
 #include <typeindex>
@@ -1585,6 +1587,8 @@ public:
    */
   std::vector<std::string> const& get_active_scenes() const;
 
+  bool is_in_main_scene(Entity);
+
   Clock& clock();
 
   const Clock& clock() const;
@@ -1986,7 +1990,9 @@ public:
    * @see get_template() to retrieve template
    * @see EntityLoader::load_entity() to instantiate template
    */
-  void add_template(std::string const& name, JsonObject const& config);
+  void add_template(std::string const& name,
+                    JsonObject const& config,
+                    JsonObject const& default_parameters = {});
 
   /**
    * @brief Retrieve a registered entity template.
@@ -2032,7 +2038,8 @@ public:
    * @see add_template() to register templates
    * @see EntityLoader::load_entity() to instantiate entities
    */
-  JsonObject get_template(std::string const& name);
+  JsonObject get_template(std::string const& name,
+                          JsonObject const& params = {});
 
   bool is_in_current_cene(Entity e);
 
@@ -2269,6 +2276,7 @@ private:
   std::unordered_map<std::string, SceneState> _scenes;
   std::vector<std::string> _current_scene;
   std::unordered_set<std::string> _active_scenes_set;  // O(1) lookup for Zipper
+  std::list<std::string> _main_scene;
 
   std::unordered_map<std::string,
                      std::function<std::optional<std::any>(std::string const&)>>
@@ -2278,5 +2286,11 @@ private:
       _global_hooks;
   std::vector<Binding> _bindings;
 
-  std::unordered_map<std::string, JsonObject> _entities_templates;
+  struct TemplateDefinition
+  {
+    JsonObject obj;
+    JsonObject default_parameters;
+  };
+
+  std::unordered_map<std::string, TemplateDefinition> _entities_templates;
 };

@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <string>
 #include <variant>
+#include <vector>
 
 #include "plugin/EntityLoader.hpp"
 
@@ -41,7 +42,6 @@ void EntityLoader::load(std::string const& directory)
     std::sort(entries.begin(), entries.end());
 
     for (const auto& path : entries) {
-      std::cout << path << std::endl;
       if (std::filesystem::is_regular_file(path) && path.extension() == ".json")
       {
         this->load_file(path.string());
@@ -129,9 +129,15 @@ void EntityLoader::load_file(std::string const& filepath)
             std::get<JsonArray>(r.at("entities_template").value);
         for (auto const& template_it : templates_array) {
           JsonObject template_obj = std::get<JsonObject>(template_it.value);
+          JsonObject default_parameters;
+          if (template_obj.contains("default_parameters")) {
+            default_parameters = std::get<JsonObject>(
+                template_obj.at("default_parameters").value);
+          }
           this->_registry.get().add_template(
               std::get<std::string>(template_obj.at("name").value),
-              std::get<JsonObject>(template_obj.at("components").value));
+              std::get<JsonObject>(template_obj.at("components").value),
+              default_parameters);
         }
       }
       if (r.contains("scenes")) {
@@ -176,7 +182,11 @@ void EntityLoader::load_components(Registry::Entity e, JsonObject const& config)
 {
   if (config.contains("template")) {
     std::string name = std::get<std::string>(config.at("template").value);
-    this->load_components(e, this->_registry.get().get_template(name));
+    JsonObject params = {};
+    if (config.contains("parameters")) {
+      params = std::get<JsonObject>(config.at("parameters").value);
+    }
+    this->load_components(e, this->_registry.get().get_template(name, params));
     if (config.contains("config")) {
       this->load_components(e, std::get<JsonObject>(config.at("config").value));
     }

@@ -358,6 +358,7 @@
 #pragma once
 
 #include <any>
+#include <cstddef>
 #include <functional>
 #include <iostream>
 #include <optional>
@@ -824,6 +825,15 @@ std::optional<T> get_value(Registry& r,
   try {
     std::string value_str = std::get<std::string>(object.at(field_name).value);
 
+    // self hook: @self
+    if (value_str.starts_with('@')) {
+      if constexpr (std::is_same_v<T, std::size_t>) {
+        if (value_str.substr(1) == "self") {
+          return entity;
+        }
+      }
+    }
+    // Dynamic hook: #scope:component:field
     if (value_str.starts_with('#')) {
       std::string stripped = value_str.substr(1);
 

@@ -12,7 +12,7 @@ app.get("/active_server/:name", async (_req, res) => {
   const request: active_server[] = await db.manyOrNone(
     `
     SELECT
-      a_s.game_id as id,
+      a_s.id as id,
       a_s.ip_address as address,
       a_s.port as port
     FROM active_server a_s
@@ -36,7 +36,8 @@ app.post("/active_server", async (_req, res) => {
           $2
         FROM game g
         WHERE g.name = $3
-        RETURNING id;
+        ON CONFLICT (ip_address, port) DO UPDATE SET game_id = EXCLUDED.game_id
+        RETURNING active_server.id AS id;
       `,
         [_req.body.ip, _req.body.port, _req.body.game_name],
       )
