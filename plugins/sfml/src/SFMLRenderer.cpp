@@ -220,7 +220,7 @@ void SFMLRenderer::handle_events()
       }
     }
     if (const auto* text_entered = event->getIf<sf::Event::TextEntered>()) {
-      if (std::isalpha(text_entered->unicode) || text_entered->unicode == ' ') {
+      if (std::isalnum(text_entered->unicode) || text_entered->unicode == ' ') {
         if (!_key_pressed.key_unicode.has_value()) {
           _key_pressed.key_unicode = "";
         }
@@ -327,15 +327,20 @@ void SFMLRenderer::render_texts(Registry& r,
 
     constexpr unsigned int base_size = 100;
     _text.value().setFont(font);
-    _text.value().setString(text_str);
     _text.value().setCharacterSize(base_size);
-    sf::Rect<float> text_rect = _text.value().getLocalBounds();
+    sf::Rect<float> text_rect;
 
+    _text.value().setString(
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"); // caluculate height with all possible letters
+    text_rect = _text.value().getLocalBounds();
     double min_dim = std::min(window_size.x, window_size.y);
-    double desired_width = min_dim * txt.scale.x;
     double desired_height = min_dim * txt.scale.y;
-    double scale_x = desired_width / text_rect.size.x;
     double scale_y = desired_height / text_rect.size.y;
+
+    _text.value().setString(text_str);
+    text_rect = _text.value().getLocalBounds();
+    double desired_width = min_dim * txt.scale.x;
+    double scale_x = desired_width / text_rect.size.x;
     double text_scale = std::min(scale_x, scale_y);
 
     auto final_size = static_cast<unsigned int>(base_size * text_scale);
