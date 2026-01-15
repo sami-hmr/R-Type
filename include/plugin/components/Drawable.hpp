@@ -2,6 +2,7 @@
 
 #include "ByteParser/ByteParser.hpp"
 #include "ParserUtils.hpp"
+#include "libs/Vector2D.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
 
@@ -21,6 +22,7 @@ struct Drawable
   CHANGE_ENTITY_DEFAULT
 
   bool enabled = true;
+  Vector2D true_size {0, 0};
 
-  HOOKABLE(Drawable, HOOK(enabled))
+  HOOKABLE(Drawable, HOOK(enabled), HOOK(true_size))
 };
