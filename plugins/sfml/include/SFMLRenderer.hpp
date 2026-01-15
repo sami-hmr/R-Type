@@ -20,6 +20,7 @@
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window.hpp>
+#include <SFML/Window/Cursor.hpp>
 
 #include "Drawable.hpp"
 #include "Json/JsonParser.hpp"
@@ -64,7 +65,11 @@ private:
   void camera_system(Registry& r);
   void button_system(Registry& r);
   void slider_system(Registry& r) const;
+  void hover_system(Registry &r);
   void display();
+  
+  void on_input_focus(const InputFocusEvent &/*unused*/);
+  void on_click(const MousePressedEvent &/*unused*/);
 
   void render_sprites(Registry& r,
                       std::vector<DrawableItem>& all_drawables,
@@ -109,6 +114,8 @@ private:
 
   sf::View _view;
   bool _camera_initialized = false;
+  std::map<std::string, sf::Cursor> _cursors;
+
 
   void draw_nothing_background(Background& background);
   void draw_repeat_background(Background& background);

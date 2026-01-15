@@ -92,8 +92,10 @@
           "z": 10
         },
         "collision:Collidable": {
-          "width": 0.3,
-          "height": 0.08,
+          "size": {
+            "x": 0.3,
+            "y": 0.08
+          },
           "collision_type": "solid"
         },
         "ath:Button": {

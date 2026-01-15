@@ -7,8 +7,10 @@
       "entities": [
         {
           "collision:Collidable": {
-            "width": 1.0,
-            "height": 100.0,
+            "size": {
+              "x": 1.0,
+              "y": 100.0
+            },
             "collision_type": "solid"
           },
           "moving:Position": {

@@ -1,7 +1,8 @@
 {
+  "entities_template": [],
   "scenes": [
     {
-      "name": "loby",
+      "name": "camera",
       "state": "active",
       "plugins": [],
       "entities": [
@@ -9,33 +10,32 @@
           "moving:Position": {
             "pos": {
               "x": 0.0,
-              "y": -0.7
+              "y": -2.0
             }
           },
-          "ui:Drawable": {},
-          "ui:Text": {
-            "font": "assets/fonts/Starjedi.ttf",
+          "ui:Camera": {
             "size": {
-              "width": "80.0%",
-              "height": "80.0%"
+              "width": "100.0%",
+              "height": "100.0%"
             },
-            "fill_color": {
-              "r": 0,
-              "g": 0,
-              "b": 0,
-              "a": 255
+            "target": {
+              "x": 0.0,
+              "y": -2.0
             },
-            "outline_color": {
-              "r": 255,
-              "g": 254,
-              "b": 0,
-              "a": 255
+            "speed": {
+              "x": 0.01,
+              "y": 0.03
             },
-            "outline_thickness": 30.0,
-            "outline": true,
-            "text": "R-Type"
+            "moving": true
           }
-        },
+        }
+      ]
+    },
+    {
+      "name": "menu",
+      "state": "active",
+      "plugins": [],
+      "entities": [
         {
           "ui:AnimatedSprite": {
             "animations": [
@@ -118,14 +118,39 @@
           "ath:Clickable": {
             "to_emit": [
               {
-                "WantReady": {}
+                "SceneChangeEvent": {
+                  "target_scene": "game",
+                  "reason": "User clicked enemy sprite",
+                  "force": false
+                }
+              },
+              {
+                "SceneChangeEvent": {
+                  "target_scene": "camera",
+                  "reason": "User clicked enemy sprite",
+                  "force": false
+                }
+              },
+              {
+                "CamRotateEvent": {
+                  "rotation": 720.0,
+                  "speed": 10.0
+                }
+              },
+              {
+                "CamMoveEvent": {
+                  "target": {
+                    "x": 0.0,
+                    "y": 0.0
+                  }
+                }
               }
             ]
           },
           "moving:Position": {
             "pos": {
               "x": 0.0,
-              "y": 0.0
+              "y": -2.0
             }
           },
           "collision:Collidable": {

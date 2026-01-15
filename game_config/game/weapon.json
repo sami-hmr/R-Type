@@ -82,8 +82,10 @@
           "amount": 5
         },
         "collision:Collidable": {
-          "width": 0.2,
-          "height": 0.2,
+          "size": {
+            "x": 0.2,
+            "y": 0.2
+          },
           "collision_type": "solid"
         },
         "projectile:Temporal": {
@@ -176,8 +178,10 @@
           "amount": 200
         },
         "collision:Collidable": {
-          "width": 0.2,
-          "height": 0.2,
+          "size": {
+            "x": 0.2,
+            "y": 0.2
+          },
           "collision_type": "bounce"
         },
         "projectile:Temporal": {
@@ -321,8 +325,10 @@
           "lifetime": 0.9
         },
         "collision:Collidable": {
-          "width": 1.5,
-          "height": 0.08,
+          "size": {
+            "x": 1.5,
+            "y": 0.08
+          },
           "collision_type": "trigger"
         }
       }
