@@ -83,7 +83,7 @@ struct Text
   Color fill_color = WHITE;
   bool outline = false;
   double outline_thickness = 1.0f;
-  
+
   HOOKABLE(Text,
            HOOK(font_path),
            HOOK(scale),

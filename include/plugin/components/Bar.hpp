@@ -71,7 +71,7 @@ struct Bar
                     colorToByte(this->color),
                     string_to_byte(this->texture_path),
                     type_to_byte<bool>(this->outline))
-  
+
   HOOKABLE(Bar,
            HOOK(size),
            HOOK(max_value),
