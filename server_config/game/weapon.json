@@ -89,7 +89,7 @@
           "collision_type": "solid"
         },
         "projectile:Temporal": {
-          "lifetime": 1.0
+          "lifetime": 2.0
         },
         "projectile:Fragile": {
           "hits": 0
@@ -175,7 +175,7 @@
           "name": "test1"
         },
         "life:Damage": {
-          "amount": 2
+          "amount": 200
         },
         "collision:Collidable": {
           "size": {
@@ -299,11 +299,13 @@
             "y": 0.0
           }
         },
-        "moving:Velocity": {
+        "moving:Speed": {
           "speed": {
             "x": 0.002,
             "y": 0.0
-          },
+          }
+        },
+        "moving:Direction": {
           "direction": {
             "x": 1.0,
             "y": 0.0
@@ -373,19 +375,10 @@
             "y": 0.0
           }
         },
-        "life:Temporal": {
+        "projectile:Temporal": {
           "lifetime": 0.4
         }
       }
-    }
-  ],
-  "scenes": [
-    {
-      "name": "game",
-      "state": "disabled",
-      "entities": [
-        {}
-      ]
     }
   ]
 }

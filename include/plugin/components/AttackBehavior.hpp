@@ -12,57 +12,65 @@ struct AttackBehavior
 {
   AttackBehavior()
       : attack_type("continuous")
-      , attack_delta(0.0)
-      , attack_interval(2.0)
-      , active(true)
   {
   }
 
-  AttackBehavior(std::string type, double interval)
+  AttackBehavior(std::string type, JsonObject params)
       : attack_type(std::move(type))
-      , attack_delta(0.0)
-      , attack_interval(interval)
-      , active(true)
+      , params(std::move(params))
   {
   }
 
   AttackBehavior(std::string type,
                  double attack_delta,
-                 double interval,
-                 bool active)
+                 double last_update,
+                 bool active,
+                 JsonObject params)
       : attack_type(std::move(type))
       , attack_delta(attack_delta)
-      , attack_interval(interval)
+      , last_update(last_update)
       , active(active)
+      , params(std::move(params))
   {
   }
 
   DEFAULT_BYTE_CONSTRUCTOR(AttackBehavior,
                            (
-                               [](std::string attack_type, double interval)
+                               [](std::string attack_type,
+                                  double attack_delta,
+                                  double last_update,
+                                  bool active,
+                                  JsonObject params)
                                {
-                                 return AttackBehavior(
-                                     std::string(attack_type.begin(),
-                                                 attack_type.end()),
-                                     interval);
+                                 return AttackBehavior(std::move(attack_type),
+                                                       attack_delta,
+                                                       last_update,
+                                                       active,
+                                                       std::move(params));
                                }),
                            parseByteString(),
-                           parseByte<double>())
+                           parseByte<double>(),
+                           parseByte<double>(),
+                           parseByte<bool>(),
+                           parseByteJsonObject())
   DEFAULT_SERIALIZE(string_to_byte(this->attack_type),
                     type_to_byte(this->attack_delta),
-                    type_to_byte(this->attack_interval),
-                    type_to_byte(this->active))
+                    type_to_byte(this->last_update),
+                    type_to_byte(this->active),
+                    json_object_to_byte(this->params))
 
   CHANGE_ENTITY_DEFAULT
 
   std::string attack_type;
-  double attack_delta;
-  double attack_interval;
-  bool active;
+  double attack_delta = 0.0;
+  double last_update = 0.0;
+  bool active = true;
+  JsonObject params;
 
   HOOKABLE(AttackBehavior,
            HOOK(attack_type),
            HOOK(attack_delta),
-           HOOK(attack_interval),
-           HOOK(active))
+           HOOK(last_update),
+           HOOK(active),
+           HOOK(params))
 };

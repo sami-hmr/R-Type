@@ -239,11 +239,32 @@ void Collision::on_collision(const CollisionEvent& c)
           this->_registry.get().get_component_key<Position>(),
           positions[c.b]->to_bytes());
     } else if (type_a == CollisionType::Solid) {
-      double dot_product = movement.dot(collision_normal);
+      double overlapX =
+          (collidables[c.a]->width + collidables[c.b]->width) / 2.0
+          - std::abs(positions[c.a]->pos.x - positions[c.b]->pos.x);
+      double overlapY =
+          (collidables[c.a]->height + collidables[c.b]->height) / 2.0
+          - std::abs(positions[c.a]->pos.y - positions[c.b]->pos.y);
 
-      if (dot_product < 0) {
-        Vector2D perpendicular_vector = collision_normal * dot_product;
-        positions[c.a]->pos -= perpendicular_vector;
+      if (overlapX > 0 && overlapY > 0) {
+        Vector2D clean_normal(0, 0);
+        double minOverlap = 0;
+        if (overlapX < overlapY) {
+          clean_normal = {
+              (positions[c.a]->pos.x > positions[c.b]->pos.x) ? 1.0 : -1.0, 0};
+          minOverlap = overlapX;
+        } else {
+          clean_normal = {
+              0, (positions[c.a]->pos.y > positions[c.b]->pos.y) ? 1.0 : -1.0};
+          minOverlap = overlapY;
+        }
+        double dot = movement.dot(clean_normal);
+        if (dot < -0.0001) {
+          Vector2D slide = movement - clean_normal * dot;
+          positions[c.a]->pos = (positions[c.a]->pos - movement) + slide;
+        }
+        double correctionAmount = std::max(minOverlap - 0.1, 0.0);
+        positions[c.a]->pos += clean_normal * correctionAmount;
       }
     } else if (type_a == CollisionType::Bounce) {
       double dot_product = directions[c.a]->direction.dot(collision_normal);

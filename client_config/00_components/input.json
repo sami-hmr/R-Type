@@ -15,7 +15,9 @@
                 "placeholder": "-"
             },
             "components": {
-                "ui:Drawable": {},
+                "ui:Drawable": {
+                    "hook": "drawable"
+                },
                 "moving:Position": {
                     "pos": {
                         "x": "$x",
@@ -30,10 +32,8 @@
                 },
                 "collision:Collidable": {
                     "collision_type": "Trigger",
-                    "size": {
-                            "x": "$width",
-                            "y": "$height"
-                        }
+                    "height": "$height",
+                    "width": "$width"
                 },
                 "ui:Text": {
                     "font": "assets/fonts/roboto.ttf",
