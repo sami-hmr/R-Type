@@ -156,7 +156,7 @@
     },
     {
       // player beam
-      "name": "player",
+      "name": "player_beam",
       "components": {
         "moving:Position": {
           "pos": {
@@ -304,7 +304,7 @@
       }
     },
     {
-      "name": "player_charge",
+      "name": "player",
       "components": {
         "moving:Position": {
           "pos": {
@@ -453,7 +453,6 @@
             "a": 255
           },
           "outline": true
-          
         }
       }
     }

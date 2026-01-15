@@ -113,8 +113,8 @@
                 }
               },
               {
-                "description": "shoot",
-                "key": "P",
+                "description": "charge shoot",
+                "key": "SPACE",
                 "pressed": {
                   "name": "StartChargeWeapon",
                   "params": {}
