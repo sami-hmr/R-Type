@@ -18,10 +18,23 @@
 #include "plugin/components/Text.hpp"
 #include "plugin/events/IoEvents.hpp"
 
-void UI::init_drawable(Registry::Entity const& entity, JsonObject const&)
+void UI::init_drawable(Registry::Entity const& entity, JsonObject const& obj)
 {
-  init_component<Drawable>(
-      this->_registry.get(), this->_event_manager.get(), entity);
+  bool enabled = true;
+  if (obj.contains("enabled")) {
+    enabled =
+        get_value<Drawable, bool>(this->_registry.get(), obj, entity, "enabled")
+            .value();
+  }
+  bool stretch = false;
+  if (obj.contains("stretch")) {
+    stretch =
+        get_value<Drawable, bool>(this->_registry.get(), obj, entity, "stretch")
+            .value();
+  }
+    init_component<Drawable>(
+      this->_registry.get(), this->_event_manager.get(), entity,
+      enabled, stretch);
 }
 
 void UI::init_sprite(Registry::Entity const& entity, JsonObject const& obj)

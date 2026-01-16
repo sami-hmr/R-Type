@@ -16,6 +16,7 @@
 #include "plugin/components/Slider.hpp"
 #include "plugin/components/Sprite.hpp"
 #include "plugin/components/Text.hpp"
+#include "plugin/events/CameraEvents.hpp"
 #include "plugin/events/IoEvents.hpp"
 
 UI::UI(Registry& r,
@@ -57,6 +58,7 @@ UI::UI(Registry& r,
   SUBSCRIBE_EVENT(CamRotateEvent, { this->cam_rotate_event(event); })
   SUBSCRIBE_EVENT(CamSpeedEvent, { this->cam_speed_event(event); })
   SUBSCRIBE_EVENT(CamMoveEvent, { this->cam_move_event(event); })
+  SUBSCRIBE_EVENT(CameraShakeEvent, { this->cam_shake_event(event); })
   SUBSCRIBE_EVENT(PlayAnimationEvent, {
     AnimatedSprite::on_play_animation(
         this->_registry.get(), this->_event_manager.get(), event);
@@ -78,7 +80,6 @@ UI::UI(Registry& r,
                   { on_release_slider(this->_registry.get(), event); });
 
 }
-
 
 void UI::disable_all_inputs() {
   for (auto &&[input] : Zipper<Input>(this->_registry.get())) {

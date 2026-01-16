@@ -174,13 +174,19 @@ void Moving::init_facing(Registry::Entity const& entity, JsonObject& obj)
                  "in JsonObject\n";
     return;
   }
-  auto& facing_opt =
-      this->_registry.get().emplace_component<Facing>(entity, dir.value());
-
-  if (!facing_opt.has_value()) {
-    std::cerr << "Error creating Facing component\n";
-    return;
+  bool plane = false;
+  if (obj.contains("plane")) {
+    auto const& plane_value =
+        get_value<Facing, bool>(this->_registry.get(), obj, entity, "plane");
+    if (plane_value) {
+      plane = plane_value.value();
+    } else {
+      std::cerr << "Error loading Facing component: unexpected value type "
+                   "(expected plane: bool)\n";
+    }
   }
+  init_component<Facing>(
+      this->_registry.get(), this->_event_manager.get(), entity, dir.value(), plane);
 }
 
 extern "C"

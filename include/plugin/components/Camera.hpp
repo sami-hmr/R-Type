@@ -27,8 +27,9 @@ public:
          double next_rotation = 0,
          double rotation_speed = 0,
          double moving_offset = 0,
+         double shaking_trauma = 0,
+         double shaking_angle = 0,
          double shaking_offset = 0,
-         double shaking_amplitude = 0,
          double shake_duration = 0,
          bool moving = false,
          bool zooming = false,
@@ -42,8 +43,9 @@ public:
       , next_rotation(next_rotation)
       , rotation_speed(rotation_speed)
       , moving_offset(moving_offset)
+      , shaking_trauma(shaking_trauma)
+      , shaking_angle(shaking_angle)
       , shaking_offset(shaking_offset)
-      , shaking_amplitude(shaking_amplitude)
       , shake_duration(shake_duration)
       , moving(moving)
       , zooming(zooming)
@@ -62,14 +64,16 @@ public:
   double next_rotation = 0;
   double rotation_speed = 0;
   double moving_offset = 0;
+  double shaking_trauma = 0;
+  double shaking_angle = 0;
   double shaking_offset = 0;
-  double shaking_amplitude = 0;
   double shake_duration = 0;
   bool moving = false; /**Moving -> following the target. */
   bool zooming = false;
   bool shaking = false;
   bool rotating = false;
   std::reference_wrapper<Vector2D> target_ref = std::ref(target);
+  std::chrono::time_point<std::chrono::high_resolution_clock> shake_start_time;
 
   DEFAULT_BYTE_CONSTRUCTOR(Camera,
                            (
@@ -81,34 +85,37 @@ public:
                                   double next_rotation,
                                   double rotation_speed,
                                   double moving_offset,
+                                  double shaking_trauma,
+                                  double shaking_angle,
                                   double shaking_offset,
-                                  double shaking_amplitude,
                                   double shake_duration,
                                   bool moving,
                                   bool zooming,
                                   bool shaking,
                                   bool rotating)
                                {
-                                 return Camera {size,
-                                                target,
-                                                speed,
-                                                next_size,
-                                                rotation,
-                                                next_rotation,
-                                                rotation_speed,
-                                                moving_offset,
-                                                shaking_offset,
-                                                shaking_amplitude,
-                                                shake_duration,
-                                                moving,
-                                                zooming,
-                                                shaking,
-                                                rotating};
+                                 return (Camera) {size,
+                                                  target,
+                                                  speed,
+                                                  next_size,
+                                                  rotation,
+                                                  next_rotation,
+                                                  rotation_speed,
+                                                  moving_offset,
+                                                  shaking_trauma,
+                                                  shaking_angle,
+                                                  shaking_offset,
+                                                  shake_duration,
+                                                  moving,
+                                                  zooming,
+                                                  shaking,
+                                                  rotating};
                                }),
                            parseVector2D(),
                            parseVector2D(),
                            parseVector2D(),
                            parseVector2D(),
+                           parseByte<double>(),
                            parseByte<double>(),
                            parseByte<double>(),
                            parseByte<double>(),
@@ -131,8 +138,9 @@ public:
                     type_to_byte(this->next_rotation),
                     type_to_byte(this->rotation_speed),
                     type_to_byte(this->moving_offset),
+                    type_to_byte(this->shaking_trauma),
+                    type_to_byte(this->shaking_angle),
                     type_to_byte(this->shaking_offset),
-                    type_to_byte(this->shaking_amplitude),
                     type_to_byte(this->shake_duration),
                     type_to_byte(this->moving),
                     type_to_byte(this->zooming),
@@ -148,8 +156,9 @@ public:
            HOOK(next_rotation),
            HOOK(rotation_speed),
            HOOK(moving_offset),
+           HOOK(shaking_trauma),
+           HOOK(shaking_angle),
            HOOK(shaking_offset),
-           HOOK(shaking_amplitude),
            HOOK(shake_duration),
            HOOK(moving),
            HOOK(zooming),

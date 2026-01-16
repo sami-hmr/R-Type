@@ -54,6 +54,17 @@ void UI::cam_rotate_event(const CamRotateEvent& e)
   }
 }
 
+void UI::cam_shake_event(const CameraShakeEvent& e)
+{
+  for (auto&& [cam] : Zipper<Camera>(this->_registry.get())) {
+    cam.shaking_trauma = e.trauma;
+    cam.shaking_angle = e.angle;
+    cam.shaking_offset = e.offset;
+    cam.shake_duration = e.duration;
+    cam.shake_start_time = this->_registry.get().clock().now();
+    cam.shaking = true;
+  }
+}
 
 void UI::init_cam(Registry::Entity const& entity, JsonObject const& obj)
 {
