@@ -242,7 +242,8 @@ private:
     // Check if entity is in a scene with sufficient level
     // Only check scene if we're within the scene array bounds
     if (this->_idx < this->_scene_size) {
-      // Ensure the scene iterator points to a valid optional before dereferencing
+      // Ensure the scene iterator points to a valid optional before
+      // dereferencing
       if (this->_scene->has_value()) {
         const auto& scene_name = this->_scene->value().scene_name;
 
