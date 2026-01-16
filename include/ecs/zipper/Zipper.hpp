@@ -240,26 +240,30 @@ private:
   bool all_set(std::index_sequence<Is...> /*unused*/) const
   {
     // Check if entity is in a scene with sufficient level
-    if (this->_idx < this->_scene_size && this->_scene->has_value()) {
-      const auto& scene_name = this->_scene->value().scene_name;
+    // Only check scene if we're within the scene array bounds
+    if (this->_idx < this->_scene_size) {
+      // Ensure the scene iterator points to a valid optional before dereferencing
+      if (this->_scene->has_value()) {
+        const auto& scene_name = this->_scene->value().scene_name;
 
-      // Look up the scene state
-      auto it = this->_scene_states.find(scene_name);
-      if (it != this->_scene_states.end()) {
-        // Check if scene state meets minimum level requirement
-        // Using the numeric values: DISABLED=0, ACTIVE=1, MAIN=2
-        if (static_cast<std::uint8_t>(it->second)
-            >= static_cast<std::uint8_t>(this->_min_scene_level))
-        {
-          // Scene meets minimum level, check if all components are set
-          return ((*(std::get<Is>(this->_current))).has_value() && ...);
+        // Look up the scene state
+        auto it = this->_scene_states.find(scene_name);
+        if (it != this->_scene_states.end()) {
+          // Check if scene state meets minimum level requirement
+          // Using the numeric values: DISABLED=0, ACTIVE=1, MAIN=2
+          if (static_cast<std::uint8_t>(it->second)
+              >= static_cast<std::uint8_t>(this->_min_scene_level))
+          {
+            // Scene meets minimum level, check if all components are set
+            return ((*(std::get<Is>(this->_current))).has_value() && ...);
+          }
+          // Scene level is too low, skip this entity
+          return false;
         }
-        // Scene level is too low, skip this entity
+
+        // Scene not found in states map, skip this entity
         return false;
       }
-
-      // Scene not found in states map, skip this entity
-      return false;
     }
 
     // Entity has no scene component, include it by default
