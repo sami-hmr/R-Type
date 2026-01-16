@@ -278,7 +278,7 @@ void EntityLoader::get_loader(std::string const& plugin)
 #elif __linux__
               DlLoader
 #endif
-              <IPlugin>>("build/plugins/" + plugin));
+              <IPlugin>>(PLUGIN_DIR + plugin));
     }
   } catch (NotExistingLib const& e) {
     std::cerr << e.what() << '\n';

@@ -82,6 +82,10 @@ target_include_directories(${CORE_LIB}
         ${parser_SOURCE_DIR}/include
 )
 
+target_compile_definitions(${CORE_LIB} PRIVATE
+    PLUGIN_DIR="${CMAKE_BINARY_DIR}/plugins/"
+)
+
 target_link_libraries(${CORE_LIB} PRIVATE parser)
 
 find_package(asio CONFIG REQUIRED)
