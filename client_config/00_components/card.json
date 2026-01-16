@@ -1,0 +1,79 @@
+{
+    "entities_template": [
+        {
+            "name": "card",
+            "default_parameters": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 10,
+                "width": 0.5,
+                "height": 0.5,
+                "text_size": {
+                    "x": 0.35,
+                    "y": 0.35
+                },
+                "font": "assets/fonts/roboto.ttf",
+                "sprite": "assets/ui/card.png"
+            },
+            "components": {
+                "ui:AnimatedSprite": {
+                    "animations": [
+                        {
+                            "name": "idle",
+                            "texture": "$sprite",
+                            "frame_size": {
+                                "x": -1.0,
+                                "y": -1.0
+                            },
+                            "frame_pos": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "sprite_size": {
+                                "width": "$width",
+                                "height": "$height"
+                            },
+                            "direction": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "framerate": 1.0,
+                            "nb_frames": 1,
+                            "loop": true,
+                            "rollback": false
+                        }
+                    ],
+                    "default_animation": "idle"
+                },
+                "ui:Drawable": {},
+                "moving:Position": {
+                    "pos": {
+                        "x": "$x",
+                        "y": "$y"
+                    },
+                    "z": "$z"
+                },
+                "ui:Text": {
+                    "font": "$font",
+                    "size": "$text_size",
+                    "fill_color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255,
+                        "a": 255
+                    },
+                    "outline_color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0,
+                        "a": 255
+                    },
+                    "outline_thickness": 30.0,
+                    "outline": true,
+                    "text": "$text"
+                }
+            }
+        }
+    ],
+    "scenes": []
+}

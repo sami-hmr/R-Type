@@ -1,0 +1,21 @@
+{
+    "entities_template": [
+        {
+            "name": "login_title",
+            "default_parameters": {},
+            "components": {
+                "template": "text",
+                "parameters": {
+                    "text_size": {},
+                    "width": 0.5,
+                    "height": 0.1,
+                    "x": 0.0,
+                    "y": -0.5,
+                    "font": "assets/fonts/Starjedi.ttf",
+                    "text": "$text"
+                }
+            }
+        }
+    ],
+    "scenes": []
+}

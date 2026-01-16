@@ -20,4 +20,5 @@ public:
                        Direction& dir,
                        Speed& speed,
                        double dt) = 0;
+
 };

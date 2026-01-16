@@ -6,6 +6,7 @@
 #include <stdexcept>
 #include <string>
 #include <variant>
+#include <vector>
 
 #include "plugin/EntityLoader.hpp"
 
@@ -32,11 +33,20 @@ bool EntityLoader::is_plugin_loaded(std::string const& plugin)
 void EntityLoader::load(std::string const& directory)
 {
   try {
+    std::vector<std::filesystem::path> entries;
+
     for (const auto& entry : std::filesystem::directory_iterator(directory)) {
-      if (entry.is_regular_file() && entry.path().extension() == ".json") {
-        this->load_file(entry.path().string());
-      } else if (entry.is_directory()) {
-        this->load(entry.path().string());
+      entries.push_back(entry.path());
+    }
+
+    std::sort(entries.begin(), entries.end());
+
+    for (const auto& path : entries) {
+      if (std::filesystem::is_regular_file(path) && path.extension() == ".json")
+      {
+        this->load_file(path.string());
+      } else if (std::filesystem::is_directory(path)) {
+        this->load(path.string());
       }
     }
   } catch (std::filesystem::filesystem_error const& e) {
@@ -114,15 +124,23 @@ void EntityLoader::load_file(std::string const& filepath)
   } else {
     JsonObject r = std::get<SUCCESS>(result).value;
     try {
+      bool old_format = true;
       if (r.contains("entities_template")) {
         JsonArray const& templates_array =
             std::get<JsonArray>(r.at("entities_template").value);
         for (auto const& template_it : templates_array) {
           JsonObject template_obj = std::get<JsonObject>(template_it.value);
+          JsonObject default_parameters;
+          if (template_obj.contains("default_parameters")) {
+            default_parameters = std::get<JsonObject>(
+                template_obj.at("default_parameters").value);
+          }
           this->_registry.get().add_template(
               std::get<std::string>(template_obj.at("name").value),
-              std::get<JsonObject>(template_obj.at("components").value));
+              std::get<JsonObject>(template_obj.at("components").value),
+              default_parameters);
         }
+        old_format = false;
       }
       if (r.contains("scenes")) {
         JsonArray const& scenes_array =
@@ -131,7 +149,17 @@ void EntityLoader::load_file(std::string const& filepath)
           JsonObject scene_obj = std::get<JsonObject>(scene_it.value);
           this->load_scene(scene_obj);
         }
-      } else {
+        old_format = false;
+      }
+      if (r.contains("configs")) {
+        JsonArray const& configs_array =
+            std::get<JsonArray>(r.at("configs").value);
+        for (auto const& configs_it : configs_array) {
+          this->load(std::get<std::string>(configs_it.value));
+        }
+        old_format = false;
+      }
+      if (old_format) {
         this->load_scene(r);
       }
     } catch (std::out_of_range&) {
@@ -166,7 +194,11 @@ void EntityLoader::load_components(Registry::Entity e, JsonObject const& config)
 {
   if (config.contains("template")) {
     std::string name = std::get<std::string>(config.at("template").value);
-    this->load_components(e, this->_registry.get().get_template(name));
+    JsonObject params = {};
+    if (config.contains("parameters")) {
+      params = std::get<JsonObject>(config.at("parameters").value);
+    }
+    this->load_components(e, this->_registry.get().get_template(name, params));
     if (config.contains("config")) {
       this->load_components(e, std::get<JsonObject>(config.at("config").value));
     }
@@ -206,6 +238,28 @@ std::optional<Registry::Entity> EntityLoader::load_entity(
   Registry::Entity new_entity = this->_registry.get().spawn_entity();
   this->load_components(new_entity, config);
   return new_entity;
+}
+
+std::optional<Registry::Entity> EntityLoader::load_entity_template(
+    std::string const& template_name,
+    std::vector<std::pair<std::string, ByteArray>> const& aditionals,
+    JsonObject const& parameters)
+{
+  auto const& entity =
+      this->load_entity(JsonObject({{"template", JsonValue(template_name)},
+                                    {"parameters", JsonValue(parameters)}}));
+
+  if (!entity) {
+    // LOGGER("load entity template",
+    //        LogLevel::ERROR,
+    //        "failed to load entity template " + event.template_name);
+    return std::nullopt;
+  }
+  for (auto const& [id, comp] : aditionals) {
+    init_component(
+        this->_registry.get(), this->_event_manager.get(), *entity, id, comp);
+  }
+  return entity;
 }
 
 void EntityLoader::get_loader(std::string const& plugin)

@@ -123,7 +123,7 @@ private:
   static const std::size_t rapport_cooldown = 1000000000;
 
   std::atomic<std::size_t> _last_ping;
-  static const std::size_t disconnection_timeout = 15000000000;  // 15 seconds
+  static const std::size_t disconnection_timeout = 1500000000;  // 15 seconds
 
   std::size_t _index_sequence = 1;
   std::mutex _acknowledge_mutex;

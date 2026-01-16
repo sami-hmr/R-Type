@@ -1,0 +1,42 @@
+{
+  "scenes": [
+    {
+      "name": "connection_background",
+      "state": "active",
+      "plugins": [],
+      "entities": [
+        {
+          "ui:Drawable": {},
+          "ui:Background": {
+            "layers": [
+              {
+                "path": "assets/backgrounds/moon/moon_sky.png"
+              },
+              {
+                "path": "assets/backgrounds/moon/moon_back.png"
+              },
+              {
+                "path": "assets/backgrounds/moon/moon_mid.png"
+              },
+              {
+                "path": "assets/backgrounds/moon/moon_front.png"
+              },
+              {
+                "path": "assets/backgrounds/moon/moon_floor.png"
+              }
+            ],
+            "render_type": "STRETCH",
+            "parallax": {
+              "active": true,
+              "speed": {
+                "x": -300.0,
+                "y": 0.0
+              },
+              "framerate": 60.0
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

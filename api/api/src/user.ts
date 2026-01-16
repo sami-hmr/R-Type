@@ -9,6 +9,7 @@ async function hash_password(clear: string) {
 }
 
 app.post("/register", async (_req, res) => {
+  console.log(_req);
   const check: any[] = await db.query(
     `
     SELECT * FROM users WHERE identifier = $1;
@@ -17,7 +18,8 @@ app.post("/register", async (_req, res) => {
   );
 
   if (check.length != 0) {
-    return res.sendStatus(401);
+    res.statusCode = 401;
+    return res.send(`${_req.body.identifier}: user already register`)
   }
 
   const hashed_passowrd = hash_password(_req.body.password);
@@ -35,7 +37,7 @@ app.post("/register", async (_req, res) => {
     )[0].id;
     return res.json({ id });
   } catch (e) {
-    res.sendStatus(401);
+    res.sendStatus(500);
   }
 });
 
@@ -53,7 +55,8 @@ app.post("/login", async (_req, res) => {
     console.log(id);
     return res.json({ id });
   } catch (e) {
-    res.sendStatus(401);
+    res.statusCode = 401;
+    res.send(`invalid user or password`)
   }
 });
 

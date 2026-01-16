@@ -59,6 +59,9 @@ void Controller::rebinding(Controllable& c, Rebind event, KeyEventType event_typ
   }
   auto binding = c.event_map.extract(event.key_to_replace + event_type);
   binding.key() = event.replacement_key + event_type;
+  if (c.event_map.contains(binding.key())) {
+    c.event_map.insert_or_assign(event.key_to_replace + event_type, c.event_map.at(binding.key()));
+  }
   c.event_map.insert_or_assign(binding.key(), std::move(binding.mapped()));
 }
 
@@ -158,6 +161,8 @@ void Controller::init_controller(Registry::Entity const& entity,
   this->init_event_map(entity, bindings, result);
 
   this->_registry.get().add_component<Controllable>(entity, std::move(result));
+  std::cout << "CREATED COMPOENTENT Controllable for Entity: " << entity
+            << "\n";
 }
 
 void Controller::handle_key_change(Key key, bool is_pressed)
@@ -168,8 +173,10 @@ void Controller::handle_key_change(Key key, bool is_pressed)
       (static_cast<std::uint32_t>(key) << 8) + static_cast<int>(is_pressed);
 
   std::vector<std::function<void()>> to_emit;
-  for (auto&& [c] : Zipper<Controllable>(this->_registry.get())) {
-    if (!c.event_map.contains(key_map)) {
+  for (auto&& [e, c] : ZipperIndex<Controllable>(this->_registry.get())) {
+    if (!this->_registry.get().is_in_main_scene(e)
+        || !c.event_map.contains(key_map))
+    {
       continue;
     }
     auto const& event = c.event_map.at(key_map);

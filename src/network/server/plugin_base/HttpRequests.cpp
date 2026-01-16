@@ -3,6 +3,7 @@
 #include "Json/JsonParser.hpp"
 #include "ParserTypes.hpp"
 #include "ServerLaunch.hpp"
+#include "network/HttpClient.hpp"
 #include "network/Httplib.hpp"
 #include "network/server/BaseServer.hpp"
 #include "plugin/APlugin.hpp"
@@ -11,8 +12,21 @@
 
 void BaseServer::setup_http_requests()
 {
-  this->_registry.get().add_system([this](Registry&)
-                                   { this->_http_client.handle_responses(); });
+  this->_registry.get().add_system(
+      [this](Registry&)
+      {
+        try {
+          this->_http_client.handle_responses();
+        } catch (HttpBadCode const& e) {
+          this->_event_manager.get().emit<HttpBadCodeEvent>(e.code, e.what());
+        }
+      });
+
+  SUBSCRIBE_EVENT(HttpBadCodeEvent, {
+    LOGGER("http",
+           LogLevel::ERROR,
+           std::format("error {}: {}", event.code, event.message));
+  });
 
   SUBSCRIBE_EVENT(ExposeServer, { this->register_server(event.host); })
 }
