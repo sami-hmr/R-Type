@@ -32,5 +32,5 @@ struct Drawable
   bool stretch = false;
   Vector2D true_size;
 
-  HOOKABLE(Drawable, HOOK(enabled),  HOOK(stretch), HOOK(true_size))
+  HOOKABLE(Drawable, HOOK(enabled), HOOK(stretch), HOOK(true_size))
 };
