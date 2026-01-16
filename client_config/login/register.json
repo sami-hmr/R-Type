@@ -40,112 +40,26 @@
                         "current_scene": "register"
                     }
                 },
-                {
-                    "ui:AnimatedSprite": {
-                        "animations": [
-                            {
-                                "name": "idle",
-                                "texture": "assets/ui/buttons/start.png",
-                                "frame_size": {
-                                    "x": 410.0,
-                                    "y": 121.0
-                                },
-                                "frame_pos": {
-                                    "x": 0.0,
-                                    "y": 0.0
-                                },
-                                "sprite_size": {
-                                    "width": "30.0%",
-                                    "height": "30.0%"
-                                },
-                                "direction": {
-                                    "x": 0.0,
-                                    "y": 0.0
-                                },
-                                "framerate": 1.0,
-                                "nb_frames": 1,
-                                "loop": true,
-                                "rollback": false
-                            },
-                            {
-                                "name": "hover",
-                                "texture": "assets/ui/buttons/start_hover.png",
-                                "frame_size": {
-                                    "x": 410.0,
-                                    "y": 121.0
-                                },
-                                "frame_pos": {
-                                    "x": 0.0,
-                                    "y": 0.0
-                                },
-                                "sprite_size": {
-                                    "width": "28.0%",
-                                    "height": "28.0%"
-                                },
-                                "direction": {
-                                    "x": 0.0,
-                                    "y": 0.0
-                                },
-                                "framerate": 1.0,
-                                "nb_frames": 1,
-                                "loop": false,
-                                "rollback": false
-                            },
-                            {
-                                "name": "pressed",
-                                "texture": "assets/ui/buttons/start.png",
-                                "frame_size": {
-                                    "x": 410.0,
-                                    "y": 121.0
-                                },
-                                "frame_pos": {
-                                    "x": 0.0,
-                                    "y": 0.0
-                                },
-                                "sprite_size": {
-                                    "width": "30.0%",
-                                    "height": "30.0%"
-                                },
-                                "direction": {
-                                    "x": 0.0,
-                                    "y": 0.0
-                                },
-                                "framerate": 1.0,
-                                "nb_frames": 1,
-                                "loop": true,
-                                "rollback": false
-                            }
-                        ],
-                        "default_animation": "idle"
-                    },
-                    "ui:Drawable": {},
-                    "ath:Clickable": {
-                        "to_emit": [
+                 {
+                    "template": "button",
+                    "parameters": {
+                        "y": 0.7,
+                        "width": 0.3,
+                        "height": 0.3,
+                        "on_click": [
                             {
                                 "Register": {
                                     "identifier": "%global:register_id_input:buffer",
                                     "password": "%global:register_pswd_input:buffer"
                                 }
                             }
-                        ]
-                    },
-                    "moving:Position": {
-                        "pos": {
-                            "x": 0.0,
-                            "y": 0.7
-                        }
-                    },
-                    "collision:Collidable": {
-                        "size": {
-                            "x": 0.3,
-                            "y": 0.15
+                        ],
+                        "text_size": {
+                            "width": 0.2,
+                            "height": 0.06
                         },
-                        "collision_type": "solid"
-                    },
-                    "ath:Button": {
-                        "hover": false,
-                        "toggle": false,
-                        "pressed": false
+                        "text": "submit",
+                        "font": "assets/fonts/Starjedi.ttf"
                     }
                 }
             ]

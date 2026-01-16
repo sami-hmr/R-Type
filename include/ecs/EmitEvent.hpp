@@ -1,4 +1,6 @@
 
+#include <cstdlib>
+
 #include "Json/JsonParser.hpp"
 #include "NetworkShared.hpp"
 #include "ecs/EventManager.hpp"
@@ -42,7 +44,7 @@ inline void emit_event(EventManager& em,
     em.emit<EventBuilder>(
         EventBuilder(id, em.get_event_with_id(r, id, params)));
   } catch (std::out_of_range const&) {
-    em.emit<LogEvent>("Emit event", LogLevel::ERROR, "unknown event");
+    em.emit<LogEvent>("Emit event", LogLevel::ERR, "unknown event");
   }
   em.emit(r, id, params);
 }
@@ -73,7 +75,7 @@ void emit_event(EventManager& em, std::string const& id, Event event)
   try {
     em.emit<EventBuilder>(EventBuilder(id, event.to_bytes()));
   } catch (std::out_of_range const&) {
-    em.emit<LogEvent>("init", LogLevel::ERROR, "unknown event");
+    em.emit<LogEvent>("init", LogLevel::ERR, "unknown event");
   }
   em.emit(id, event.to_bytes());
 }

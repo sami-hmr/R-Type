@@ -147,7 +147,7 @@ void Projectile::on_collision(const CollisionEvent& event)
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
+PLUGIN_EXPORT void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
   return new Projectile(r, em, e);
 }

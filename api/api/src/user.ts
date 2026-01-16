@@ -9,6 +9,7 @@ async function hash_password(clear: string) {
 }
 
 app.post("/register", async (_req, res) => {
+  console.log(_req);
   const check: any[] = await db.query(
     `
     SELECT * FROM users WHERE identifier = $1;

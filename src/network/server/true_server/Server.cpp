@@ -83,7 +83,7 @@ void Server::receive_loop()
       if (ec) {
         if (_running) {
           LOGGER_EVTLESS(
-              LogLevel::ERROR,
+              LogLevel::ERR,
               "server",
               std::format("Receive error: {}. reseting client", ec.message()));
           this->_client_mutex.lock();
@@ -107,7 +107,7 @@ void Server::receive_loop()
     } catch (CustomException& e) {
       if (_running) {
         LOGGER_EVTLESS(
-            LogLevel::ERROR,
+            LogLevel::ERR,
             "server",
             std::format(
                 "Error in receive loop: {}: ", e.what(), e.format_context()));
@@ -115,7 +115,7 @@ void Server::receive_loop()
       break;
     } catch (std::exception& e) {
       if (_running) {
-        LOGGER_EVTLESS(LogLevel::ERROR,
+        LOGGER_EVTLESS(LogLevel::ERR,
                        "server",
                        std::format("Error in receive loop: {}", e.what()));
       }

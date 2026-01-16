@@ -3,6 +3,7 @@
 #include <array>
 #include <cctype>
 #include <cmath>
+#include <numbers>
 #include <cstdint>
 #include <cstdio>
 #include <functional>
@@ -88,7 +89,7 @@ static sf::SoundBuffer gen_sound_placeholder()
   for (unsigned int i = 0; i < SAMPLE_COUNT; ++i) {
     double time = static_cast<double>(i) / SAMPLE_RATE;
     samples[i] = static_cast<std::int16_t>(
-        amplitude * std::sin(2.0 * M_PI * FREQUENCY * time));
+        amplitude * std::sin(2.0 * std::numbers::pi * FREQUENCY * time));
   }
   sf::SoundBuffer sound_buffer;
   if (!sound_buffer.loadFromSamples(samples.data(),
@@ -157,7 +158,7 @@ sf::Texture& SFMLRenderer::load_texture(std::string const& path)
   }
   sf::Texture texture;
   if (!texture.loadFromFile(path)) {
-    LOGGER("SFML", LogLevel::ERROR, "Failed to load texture: " + path)
+    LOGGER("SFML", LogLevel::ERR, "Failed to load texture: " + path)
     return _textures.at(placeholder);
   }
   _textures.insert_or_assign(path, std::move(texture));
@@ -171,7 +172,7 @@ sf::Font& SFMLRenderer::load_font(std::string const& path)
   }
   sf::Font font;
   if (!font.openFromFile(path)) {
-    LOGGER("SFML", LogLevel::ERROR, "Failed to load font: " + path)
+    LOGGER("SFML", LogLevel::ERR, "Failed to load font: " + path)
     throw std::runtime_error("Failed to load font: " + path);
   }
   _fonts.insert_or_assign(path, std::move(font));
@@ -433,9 +434,11 @@ void SFMLRenderer::render_texts(Registry& r,
     _text.value().setCharacterSize(final_size);
     sf::FloatRect final_text_rect = _text.value().getLocalBounds();
 
-    draw.true_size =
-        Vector2D {std::max(static_cast<double>(final_text_rect.size.x) / min_dimension, draw.true_size.x),
-                  std::max(static_cast<double>(final_text_rect.size.y) / min_dimension, draw.true_size.y)};
+    draw.true_size = Vector2D {
+        std::max(static_cast<double>(final_text_rect.size.x) / min_dimension,
+                 draw.true_size.x),
+        std::max(static_cast<double>(final_text_rect.size.y) / min_dimension,
+                 draw.true_size.y)};
 
     TextDrawable text_drawable(
         std::ref(this->_text.value()),
@@ -548,6 +551,15 @@ void SFMLRenderer::render_animated_sprites(
     }
 
     sf::Texture& texture = load_texture(anim_data.texture_path);
+
+    // this is to make the animated sprite take all the sheet if frame size is
+    // like equal to -1
+    if (anim_data.frame_size.x < 0) {
+      anim_data.frame_size.x = texture.getSize().x;
+    }
+    if (anim_data.frame_size.y < 0) {
+      anim_data.frame_size.y = texture.getSize().y;
+    }
 
     float scale_x = static_cast<float>(min_dimension * anim_data.sprite_size.x)
         / anim_data.frame_size.x;
@@ -669,7 +681,7 @@ void SFMLRenderer::button_system(Registry& r)
     Rect entity_rect = {.x = pos.pos.x,
                         .y = pos.pos.y,
                         .width = collision.size.x * 2,
-                        .height = collision.size.y};
+                        .height = collision.size.y * 2};
     if (entity_rect.contains(mouse_pos.x, mouse_pos.y)) {
       if (!button.hovered) {
         button.hovered = true;
@@ -688,7 +700,7 @@ void SFMLRenderer::button_system(Registry& r)
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
+PLUGIN_EXPORT void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
   return new SFMLRenderer(r, em, e);
 }

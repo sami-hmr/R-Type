@@ -28,7 +28,7 @@ public:
 
   DEFAULT_BYTE_CONSTRUCTOR(IdStorage,
                            ([](std::size_t id, std::string ctx)
-                            { return (IdStorage) {id, std::move(ctx)}; }),
+                            { return IdStorage {id, std::move(ctx)}; }),
                            parseByte<std::size_t>(),
                            parseByteString())
 

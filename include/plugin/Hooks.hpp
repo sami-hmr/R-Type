@@ -494,14 +494,14 @@ std::optional<std::reference_wrapper<const T>> get_ref(Registry& r,
       }
     } catch (std::bad_any_cast const&) {
       LOGGER_EVTLESS(
-          LogLevel::ERROR,
+          LogLevel::ERR,
           "Hooks",
           std::format(R"(Error geting hooked value "{}": Invalid type\n)",
                       *hook));
       return std::nullopt;
     } catch (std::out_of_range const&) {
       LOGGER_EVTLESS(
-          LogLevel::ERROR,
+          LogLevel::ERR,
           "Hooks",
           std::format(R"(Error geting hooked value "{}": Invalid hook\n)",
                       *hook));
@@ -542,7 +542,7 @@ std::optional<T> resolve_scoped_hook(Registry& r,
 
   if (first_colon == std::string::npos || second_colon == std::string::npos) {
     LOGGER_EVTLESS(
-        LogLevel::ERROR,
+        LogLevel::ERR,
         "Hooks",
         std::format(
             R"(Error parsing hook: Expected format "scope:component:field", got "{}")",
@@ -564,7 +564,7 @@ std::optional<T> resolve_scoped_hook(Registry& r,
     hooked_val = r.template get_global_hooked_value<T>(comp, value);
   } else {
     LOGGER_EVTLESS(
-        LogLevel::ERROR,
+        LogLevel::ERR,
         "Hooks",
         std::format(R"(Unknown scope "{}": Expected "self" or "global")",
                     scope));
@@ -586,7 +586,7 @@ std::optional<T> resolve_scoped_hook(Registry& r, std::string const& value_str)
 
   if (first_colon == std::string::npos || second_colon == std::string::npos) {
     LOGGER_EVTLESS(
-        LogLevel::ERROR,
+        LogLevel::ERR,
         "Hooks",
         std::format(
             R"(Error parsing hook: Expected format "scope:component:field", got "{}")",
@@ -605,7 +605,7 @@ std::optional<T> resolve_scoped_hook(Registry& r, std::string const& value_str)
     hooked_val = r.template get_global_hooked_value<T>(comp, value);
   } else {
     LOGGER_EVTLESS(
-        LogLevel::ERROR,
+        LogLevel::ERR,
         "Hooks",
         std::format(R"(Unknown scope "{}": Expected "self" or "global")",
                     scope));
