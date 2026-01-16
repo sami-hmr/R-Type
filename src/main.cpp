@@ -5,11 +5,14 @@
 #include <thread>
 #include <vector>
 
+#include "EntityExpose.hpp"
 #include "Json/JsonParser.hpp"
 #include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
+#include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/events/ActionEvents.hpp"
+#include "plugin/events/LoadPluginEvent.hpp"
 #include "plugin/events/SceneChangeEvent.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
 #include "plugin/libLoaders/ILibLoader.hpp"
@@ -40,8 +43,32 @@ static int true_main(Registry& r,
                               r.deactivate_all_scenes();
                             }
                             r.activate_scene(event.target_scene);
+                            if (event.main) {
+                              r.set_main_scene(event.target_scene);
+                            }
                             return false;
                           });
+
+  em.on<DisableSceneEvent>("DisableSceneEvent",
+                           [&r](const DisableSceneEvent& event) -> bool
+                           {
+                             r.deactivate_scene(event.target_scene);
+                             return false;
+                           });
+
+  em.on<LoadPluginEvent>("LoadPluginEvent",
+                         [&e](const LoadPluginEvent& event) -> bool
+                         {
+                           e.load_plugin(event.path, event.params);
+                           return false;
+                         });
+
+  em.on<LoadConfigEvent>("LoadConfigEvent",
+                         [&e](const LoadConfigEvent& event) -> bool
+                         {
+                           e.load(event.path);
+                           return false;
+                         });
 
   em.on<SpawnEntityRequestEvent>(
       "SpawnEntity",

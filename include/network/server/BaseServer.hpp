@@ -29,10 +29,11 @@ class BaseServer : public APlugin
 {
 public:
   BaseServer(std::string const& name,
-             std::string const& game_name,
+             std::string game_name,
              Registry& r,
              EventManager& em,
-             EntityLoader& l);
+             EntityLoader& l,
+             std::optional<JsonObject> const& config);
   ~BaseServer() override;
 
   std::string const game_name;

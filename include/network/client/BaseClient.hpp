@@ -24,10 +24,11 @@ public:
   BaseClient& operator=(const BaseClient&) = delete;
   BaseClient& operator=(BaseClient&&) = delete;
   BaseClient(std::string const& name,
-             std::string const& game_name,
+             std::string game_name,
              Registry& r,
              EventManager& em,
-             EntityLoader& l);
+             EntityLoader& l,
+             std::optional<JsonObject> const& config);
   ~BaseClient() override;
 
   std::string const game_name;

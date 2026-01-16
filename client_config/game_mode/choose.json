@@ -1,0 +1,126 @@
+{
+  "scenes": [
+    {
+      "name": "choose_game",
+      "state": "active",
+      "plugins": [],
+      "entities": [
+        {
+          "ui:Drawable": {},
+          "moving:Position": {
+            "pos": {
+              "x": -0.0,
+              "y": -0.5
+            }
+          },
+          "ui:Text": {
+            "font": "assets/fonts/Starjedi.ttf",
+            "size": {
+              "width": "100.0%",
+              "height": "10.0%"
+            },
+            "fill_color": {
+              "r": 255,
+              "g": 255,
+              "b": 255,
+              "a": 255
+            },
+            "outline_color": {
+              "r": 0,
+              "g": 0,
+              "b": 0,
+              "a": 255
+            },
+            "outline_thickness": 30.0,
+            "outline": true,
+            "text": "Game Mode"
+          }
+        },
+        {
+          "template": "button",
+          "parameters": {
+            "x": -0.5,
+            "y": 0.1,
+            "width": 0.4,
+            "height": 0.2,
+            "text_size": {
+              "height": 0.200,
+              "width": 0.15
+            },
+            "text": "SinglePlayer",
+            "on_click": [
+              {
+                "LoadConfigEvent": {
+                  "path": "game_config"
+                }
+              },
+              {
+                "LoadPluginEvent": {
+                  "path": "rtype_single",
+                  "params": {}
+                }
+              },
+              {
+                "DisableSceneEvent": {
+                  "target_scene": "choose_game"
+                }
+              },
+              {
+                "DisableSceneEvent": {
+                  "target_scene": "loby"
+                }
+              },
+              {
+                "DisableSceneEvent": {
+                  "target_scene": "menu"
+                }
+              },
+              {
+                "PlayerCreated": {
+                  "server_index": "%global:player_id_client:id"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "template": "button",
+          "parameters": {
+            "x": 0.5,
+            "y": 0.1,
+            "width": 0.4,
+            "height": 0.2,
+            "text_size": {
+              "height": 0.200,
+              "width": 0.15
+            },
+            "text": "Multiplayer",
+            "on_click": [
+              {
+                "LoadPluginEvent": {
+                  "path": "rtype_client",
+                  "params": {
+                    "http_host": "0.0.0.0",
+                    "http_port": 8080
+                  }
+                }
+              },
+              {
+                "SceneChangeEvent": {
+                  "target_scene": "login",
+                  "reason": "",
+                  "force": false
+                }
+              },
+              {
+                "DisableSceneEvent": {
+                  "target_scene": "choose_game"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+    "entities_template": [
+        {
+            "name": "switch_text",
+            "default_parameters": {},
+            "components": {
+                "template": "link",
+                "parameters": {
+                    "x": 0.0,
+                    "y": 0.45,
+                    "width": 0.8,
+                    "height": 0.05,
+                    "text": "$text",
+                    "to_emit": [
+                        {
+                            "SceneChangeEvent": {
+                                "target_scene": "$target_scene",
+                                "reason": "",
+                                "force": false
+                            }
+                        },
+                        {
+                            "DisableSceneEvent": {
+                                "target_scene": "$current_scene"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "scenes": []
+}

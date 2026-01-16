@@ -1,9 +1,11 @@
 #include <iostream>
+#include <optional>
 #include <string>
 #include <vector>
 
 #include "network/server/BaseServer.hpp"
 
+#include "Json/JsonParser.hpp"
 #include "NetworkShared.hpp"
 #include "ServerLaunch.hpp"
 #include "ecs/InitComponent.hpp"
@@ -17,14 +19,28 @@
 #include "plugin/events/ShutdownEvent.hpp"
 
 BaseServer::BaseServer(std::string const& name,
-                       std::string const& game_name,
+                       std::string game_name,
                        Registry& r,
                        EventManager& em,
-                       EntityLoader& l)
+                       EntityLoader& l,
+                       std::optional<JsonObject> const& config)
     : APlugin(name, r, em, l, {}, {})
-    , game_name(game_name)
-    , _http_client("0.0.0.0", 8080)
+    , game_name(std::move(game_name))
 {
+  try {
+    if (!config) {
+      throw std::exception();
+    }
+    this->_http_client.init(
+        std::get<std::string>(config->at("http_host").value),
+        std::get<int>(config->at("http_port").value));
+  } catch (std::exception const&) {
+    LOGGER("client",
+           LogLevel::WARNING,
+           "failed to init http client, using default 0.0.0.0:8080")
+    this->_http_client.init("0.0.0.0", 8080);  // NOLINT
+  }
+
   SUBSCRIBE_EVENT(ServerLaunching, {
     _running = true;
 
@@ -116,18 +132,8 @@ BaseServer::BaseServer(std::string const& name,
   })
 
   SUBSCRIBE_EVENT(LoadEntityTemplate, {
-    auto const& entity = this->_loader.get().load_entity(
-        JsonObject({{"template", JsonValue(event.template_name)}}));
-
-    if (!entity) {
-      LOGGER("load entity template",
-             LogLevel::ERROR,
-             "failed to load entity template " + event.template_name);
-    }
-    for (auto const& [id, comp] : event.aditionals) {
-      init_component(
-          this->_registry.get(), this->_event_manager.get(), *entity, id, comp);
-    }
+    this->_loader.get().load_entity_template(event.template_name,
+                                             event.aditionals);
   })
 
   SUBSCRIBE_EVENT(DeleteEntity, {
