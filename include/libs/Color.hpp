@@ -152,18 +152,18 @@ inline ByteArray colorToByte(const Color& c)  // NOLINT
 
 namespace ColorConstants
 {
-constexpr Color cWHITE {255, 255, 255, 255};
-constexpr Color cBLACK {0, 0, 0, 255};
-constexpr Color cRED {255, 0, 0, 255};
-constexpr Color cGREEN {0, 255, 0, 255};
-constexpr Color cBLUE {0, 0, 255, 255};
-constexpr Color cTRANSPARENT {0, 0, 0, 0};
+inline constexpr Color cWHITE {255, 255, 255, 255};
+inline constexpr Color cBLACK {0, 0, 0, 255};
+inline constexpr Color cRED {255, 0, 0, 255};
+inline constexpr Color cGREEN {0, 255, 0, 255};
+inline constexpr Color cBLUE {0, 0, 255, 255};
+inline constexpr Color cTRANSPARENT {0, 0, 0, 0};
 }  // namespace ColorConstants
 
 // Backward compatibility aliases (avoiding potential macro conflicts)
-constexpr Color const& WHITE = ColorConstants::cWHITE;
-constexpr Color const& BLACK = ColorConstants::cBLACK;
-constexpr Color const& RED = ColorConstants::cRED;
-constexpr Color const& GREEN = ColorConstants::cGREEN;
-constexpr Color const& BLUE = ColorConstants::cBLUE;
-constexpr Color const& TRANSPARENT = ColorConstants::cTRANSPARENT;
+inline constexpr Color const& WHITE = ColorConstants::cWHITE;
+inline constexpr Color const& BLACK = ColorConstants::cBLACK;
+inline constexpr Color const& RED = ColorConstants::cRED;
+inline constexpr Color const& GREEN = ColorConstants::cGREEN;
+inline constexpr Color const& BLUE = ColorConstants::cBLUE;
+inline constexpr Color const& TRANSPARENT = ColorConstants::cTRANSPARENT;
