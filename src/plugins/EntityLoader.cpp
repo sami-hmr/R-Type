@@ -270,15 +270,14 @@ void EntityLoader::get_loader(std::string const& plugin)
   try {
     if (!this->_loaders.contains(plugin)) {
       this->_loaders[plugin];
-      this->_loaders.insert_or_assign(
-          plugin,
-          std::make_unique<
+      this->_loaders.insert_or_assign(plugin,
+                                      std::make_unique<
 #ifdef _WIN32
-              WindowsLoader
+                                          WindowsLoader
 #elif __linux__
-              DlLoader
+                                          DlLoader
 #endif
-              <IPlugin>>(PLUGIN_DIR + plugin));
+                                          <IPlugin>>(PLUGIN_DIR + plugin));
     }
   } catch (NotExistingLib const& e) {
     std::cerr << e.what() << '\n';
