@@ -27,9 +27,11 @@ Start-Process msiexec.exe -ArgumentList "/i",$cmakeInstaller,"/quiet","/norestar
 Write-Host "[2/4] CMake installed!" -ForegroundColor Green
 Write-Host ""
 
+
 # Step 3: Setup vcpkg
 Write-Host "[3/4] Setting up vcpkg..." -ForegroundColor Cyan
-Set-Location C:\Users\fromt\R-Type
+$workspacePath = Split-Path -Parent $MyInvocation.MyCommand.Definition
+Set-Location $workspacePath
 
 if (Test-Path "vcpkg") {
     Write-Host "       Removing old vcpkg installation..." -ForegroundColor Yellow
@@ -41,15 +43,15 @@ git clone https://github.com/microsoft/vcpkg.git
 Set-Location vcpkg
 
 Write-Host "       Bootstrapping vcpkg..." -ForegroundColor Cyan
-.\bootstrap-vcpkg.bat
+./bootstrap-vcpkg.bat
 
 Write-Host "[3/4] vcpkg installed!" -ForegroundColor Green
 Write-Host ""
 
 # Step 4: Set environment variables
 Write-Host "[4/4] Setting VCPKG_ROOT environment variable..." -ForegroundColor Cyan
-[System.Environment]::SetEnvironmentVariable('VCPKG_ROOT','C:\Users\fromt\R-Type\vcpkg','User')
-$env:VCPKG_ROOT = 'C:\Users\fromt\R-Type\vcpkg'
+[System.Environment]::SetEnvironmentVariable('VCPKG_ROOT',"$workspacePath\vcpkg",'User')
+$env:VCPKG_ROOT = "$workspacePath\vcpkg"
 Write-Host "[4/4] Environment variable set!" -ForegroundColor Green
 Write-Host ""
 
