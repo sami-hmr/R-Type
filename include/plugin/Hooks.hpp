@@ -889,5 +889,5 @@ inline bool is_hook(JsonObject const& object, std::string const& key)
   if (value == nullptr) {
     return false;
   }
-    return value->starts_with('#');
+  return value->starts_with('#');
 }
