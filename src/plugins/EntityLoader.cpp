@@ -18,6 +18,9 @@
 #include "ecs/Registry.hpp"
 #include "ecs/Scenes.hpp"
 #include "plugin/libLoaders/LDLoader.hpp"
+#ifdef _WIN32
+#  include "plugin/libLoaders/WindowsLoader.hpp"
+#endif
 
 EntityLoader::EntityLoader(Registry& registry, EventManager& em)
     : _registry(std::ref(registry))
@@ -267,12 +270,15 @@ void EntityLoader::get_loader(std::string const& plugin)
   try {
     if (!this->_loaders.contains(plugin)) {
       this->_loaders[plugin];
-      this->_loaders.insert_or_assign(plugin,
-                                      std::make_unique<
-#if __linux__
-                                          DlLoader
+      this->_loaders.insert_or_assign(
+          plugin,
+          std::make_unique<
+#ifdef _WIN32
+              WindowsLoader
+#elif __linux__
+              DlLoader
 #endif
-                                          <IPlugin>>("plugins/" + plugin));
+              <IPlugin>>("build/plugins/" + plugin));
     }
   } catch (NotExistingLib const& e) {
     std::cerr << e.what() << '\n';
