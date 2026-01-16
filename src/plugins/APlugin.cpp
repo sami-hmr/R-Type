@@ -33,8 +33,8 @@ void APlugin::set_component(Registry::Entity entity,
 {
   try {
     this->components.at(key)(entity, config);
-  } catch (std::out_of_range const&) {
-    std::cerr << key << ": unknown component with config: " << '\n';
+  } catch (std::out_of_range const& e) {
+    std::cerr << key << ": unknown component with config: " << e.what() << '\n';
     // for (auto i : std::get<JsonObject>(config)) {
     //   std::cout << i.first << std::endl;
     // }

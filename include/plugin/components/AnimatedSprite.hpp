@@ -213,7 +213,7 @@ public:
       map_to_byte<std::string, AnimationData>(
           this->animations,
           std::function<ByteArray(std::string const&)>(string_to_byte),
-          std::function<ByteArray(AnimationData)>([](AnimationData data)
+          std::function<ByteArray(AnimationData)>([](const AnimationData& data)
                                                   { return data.to_bytes(); })),
       string_to_byte(this->current_animation),
       string_to_byte(this->default_animation))

@@ -1,0 +1,43 @@
+{
+  "scenes": [
+    {
+      "name": "death",
+      "state": "disabled",
+      "plugins": [],
+      "entities": [
+        {
+          "moving:Position": {
+            "pos": {
+              "x": 0.0,
+              "y": 0.0
+            },
+            "z": 2
+          },
+          "ui:Drawable": {},
+          "ui:Text": {
+            "font": "assets/fonts/roboto.ttf",
+            "size": {
+              "width": "100.0%",
+              "height": "100.0%"
+            },
+            "fill_color": {
+              "r": 200,
+              "g": 40,
+              "b": 40,
+              "a": 255
+            },
+            "outline_color": {
+              "r": 0,
+              "g": 0,
+              "b": 0,
+              "a": 255
+            },
+            "outline_thickness": 30.0,
+            "outline": true,
+            "text": "Death (looser)"
+          }
+        }
+      ]
+    }
+  ]
+}

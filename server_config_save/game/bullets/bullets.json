@@ -1,0 +1,60 @@
+{
+  "entities_template": [
+    {
+      "name": "basic_fire_bullet_1",
+      "components": {
+        "template": "basic_bullet_1",
+        "parameters": {
+          "entity_template": "basic_bullet"
+        }
+      }
+    },
+    {
+      "name": "basic_bounce_bullet_1",
+      "components": {
+        "template": "basic_bullet_1",
+        "parameters": {
+          "entity_template": "bounce_bullet"
+        }
+      }
+    },
+
+    {
+      "name": "fire_bullet_circle_8",
+      "components": {
+        "template": "bullet_circle_8",
+        "parameters": {
+          "entity_template": "basic_bullet"
+        }
+      }
+    },
+    {
+      "name": "bounce_bullet_circle_8",
+      "components": {
+        "template": "bullet_circle_8",
+        "parameters": {
+          "entity_template": "bounce_bullet"
+        }
+      }
+    },
+
+    {
+      "name": "fire_bullet_spread_3",
+      "components": {
+        "template": "bullet_spread_3",
+        "parameters": {
+          "entity_template": "basic_bullet"
+        }
+      }
+    },
+    {
+      "name": "bounce_bullet_spread_3",
+      "components": {
+        "template": "bullet_spread_3",
+        "parameters": {
+          "entity_template": "bounce_bullet"
+        }
+      }
+    }
+  ]
+}

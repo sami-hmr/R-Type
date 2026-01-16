@@ -1,0 +1,144 @@
+{
+  "entities_template": [
+    {
+      "name": "enemy_parasite_1",
+      "components": {
+        // "mob:Parasite": {
+        //   "behavior": "circle"
+        // },
+        "collision:InteractionZone": {
+          "radius": 0.5
+        },
+        "moving:Position": {
+          "hook": "enemy_parasite_pos_1",
+          "pos": {
+            "x": -0.1,
+            "y": 0.0
+          }
+        },
+        "ui:Drawable": {},
+        "ui:AnimatedSprite": {
+          "animations": [
+            {
+              "name": "idle",
+              "texture": "assets/r-type/SNES - Super R-Type - Player - Force _ Pit _ Beam.png",
+              "frame_size": {
+                "x": 22.0,
+                "y": 17.0
+              },
+              "frame_pos": {
+                "x": 10.0,
+                "y": 190.0
+              },
+              "direction": {
+                "x": 1.0,
+                "y": 0.0
+              },
+              "sprite_size": {
+                "width": "7.0%",
+                "height": "7.0%"
+              },
+              "framerate": 10.0,
+              "nb_frames": 6,
+              "loop": true,
+              "rollback": true
+            },
+            {
+              "name": "death",
+              "texture": "assets/explosion.png",
+              "frame_size": {
+                "x": 128.0,
+                "y": 128.0
+              },
+              "frame_pos": {
+                "x": 0.0,
+                "y": 0.0
+              },
+              "direction": {
+                "x": 1.0,
+                "y": 0.0
+              },
+              "sprite_size": {
+                "width": "20.0%",
+                "height": "20.0%"
+              },
+              "framerate": 10.0,
+              "nb_frames": 12,
+              "loop": false,
+              "rollback": false
+            }
+          ],
+          "default_animation": "idle"
+        },
+        "life:Health": {
+          "hook": "enemy_parasite_health_1",
+          "current": 50.0,
+          "max": 50.0
+        },
+        "life:Damage": {
+          "amount": 10
+        },
+        "ath:Bar": {
+          "size": {
+            "x": "10.0%",
+            "y": "1.0%"
+          },
+          "max_value": "#self:enemy_parasite_health_1:max",
+          "current_value": "#self:enemy_parasite_health_1:current",
+          "offset": {
+            "x": 0.0,
+            "y": -0.1
+          },
+          "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255,
+            "a": 255
+          },
+          "outline": false,
+          "texture_path": "assets/backgrounds/background.png"
+        },
+        "collision:Collidable": {
+          "size": {
+            "x": 0.1,
+            "y": 0.1
+          },
+          "collision_type": "solid"
+        },
+        "life:Team": {
+          "name": "enemy"
+        },
+        "moving:Speed": {
+          "speed": {
+            "x": 0.5,
+            "y": 0.5
+          }
+        },
+        "moving:Direction": {
+          "direction": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        },
+        "moving:Facing": {
+          "direction": {
+            "x": -1.0,
+            "y": 0.0
+          }
+        },
+        "weapon:BasicWeapon": {
+          "bullet_type": "basic_bullet",
+          "magazine_size": 6,
+          "magazine_nb": 3,
+          "reload_time": 2.0,
+          "cooldown": 2.0,
+          "attack_animation": "attack"
+        },
+        "ai:MovementBehavior": { "movement_type": "glue", "params": {"parasite_behavior": "circle","zone_radius": 0.3, "radius": 1.0, "angular_speed": 1.0}},
+        "ai:AttackBehavior": {
+          "attack_type": "continuous"
+        }
+      }
+    }
+  ]
+}

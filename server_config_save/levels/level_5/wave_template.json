@@ -1,0 +1,53 @@
+{
+  "entities_template": [
+    {
+      "name": "wave_1_level_5",
+      "components": {
+        "wave:Wave": {
+          "entity_template": "boss_1",
+          "count": 3,
+          "tracked": true,
+          "components_inheritance": ["scene"],
+          "pattern": {
+            "type": "circle",
+            "origin": { "x": 0.6, "y": 0.0 },
+            "params": {
+              "radius": 0.5
+            }
+          },
+          "on_end": [{
+            "event_name": "SceneChangeEvent",
+            "params": {
+              "target_scene": "level_6",
+              "state": "active",
+              "reason": "User completed wave",
+              "force": false
+            }
+          }]
+        },
+        "wave:Formation": {
+          "strength": 0.1
+        }
+      }
+    },
+    {
+      "name": "wave_2_level_5",
+      "components": {
+        "wave:Wave": {
+          "entity_template": "ally_force_1",
+          "count": 3,
+          "tracked": false,
+          "components_inheritance": ["scene"],
+          "pattern": {
+            "type": "circle",
+            "origin": { "x": -0.6, "y": 0.0 },
+            "params": {
+              "radius": 0.4
+            }
+          },
+          "on_end": []
+        }
+      }
+    }
+  ]
+}
