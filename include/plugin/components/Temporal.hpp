@@ -24,7 +24,7 @@ struct Temporal
 
   DEFAULT_BYTE_CONSTRUCTOR(Temporal,
                            ([](double lifetime, double elapsed)
-                            { return Temporal{lifetime, elapsed}; }),
+                            { return Temporal {lifetime, elapsed}; }),
                            parseByte<double>(),
                            parseByte<double>())
   DEFAULT_SERIALIZE(type_to_byte(this->lifetime), type_to_byte(this->elapsed))

@@ -30,13 +30,12 @@ struct Fragile
   {
   }
 
-  DEFAULT_BYTE_CONSTRUCTOR(
-      Fragile,
-      ([](int hits, int counter, double fragile_delta)
-       { return Fragile{hits, counter, fragile_delta}; }),
-      parseByte<int>(),
-      parseByte<int>(),
-      parseByte<double>())
+  DEFAULT_BYTE_CONSTRUCTOR(Fragile,
+                           ([](int hits, int counter, double fragile_delta)
+                            { return Fragile {hits, counter, fragile_delta}; }),
+                           parseByte<int>(),
+                           parseByte<int>(),
+                           parseByte<double>())
   DEFAULT_SERIALIZE(type_to_byte(this->hits),
                     type_to_byte(this->counter),
                     type_to_byte(this->fragile_delta))

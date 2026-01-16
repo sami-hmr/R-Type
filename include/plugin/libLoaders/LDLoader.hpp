@@ -5,7 +5,7 @@
 #include <string>
 
 #ifndef _WIN32
-#include <dlfcn.h>
+#  include <dlfcn.h>
 #endif
 
 #include "ILibLoader.hpp"
@@ -87,4 +87,4 @@ private:
   std::string hey;
   void* _lib = nullptr;
 };
-#endif // _WIN32
+#endif  // _WIN32

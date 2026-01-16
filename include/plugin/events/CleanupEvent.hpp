@@ -23,7 +23,7 @@ struct CleanupEvent
 
   DEFAULT_BYTE_CONSTRUCTOR(CleanupEvent,
                            ([](std::string const& t)
-                            { return CleanupEvent{t}; }),
+                            { return CleanupEvent {t}; }),
                            parseByteString())
 
   DEFAULT_SERIALIZE(string_to_byte(this->trigger))

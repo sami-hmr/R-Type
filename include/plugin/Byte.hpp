@@ -79,7 +79,7 @@ concept bytable = serializable<T> && unserializable<T>;
 #define EMPTY_BYTE_CONSTRUCTOR(classname) \
   classname(ByteArray const& array) \
   { \
-    Result<classname> r = apply(([]() { return classname{}; }))( \
+    Result<classname> r = apply(([]() { return classname {}; }))( \
         Rest(std::string(array.begin(), array.end()))); \
     if (r.index() == ERR) { \
       throw InvalidPackage(#classname); \
