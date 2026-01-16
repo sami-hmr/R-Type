@@ -37,12 +37,18 @@
           }
         },
         {
-          "template": "basic_button",
+          "template": "button",
           "parameters": {
             "x": -0.5,
             "y": 0.1,
+            "width": 0.4,
+            "height": 0.2,
+            "text_size": {
+              "height": 0.200,
+              "width": 0.15
+            },
             "text": "SinglePlayer",
-            "events": [
+            "on_click": [
               {
                 "LoadConfigEvent": {
                   "path": "game_config"
@@ -78,12 +84,18 @@
           }
         },
         {
-          "template": "basic_button",
+          "template": "button",
           "parameters": {
             "x": 0.5,
             "y": 0.1,
+            "width": 0.4,
+            "height": 0.2,
+            "text_size": {
+              "height": 0.200,
+              "width": 0.15
+            },
             "text": "Multiplayer",
-            "events": [
+            "on_click": [
               {
                 "LoadPluginEvent": {
                   "path": "rtype_client",

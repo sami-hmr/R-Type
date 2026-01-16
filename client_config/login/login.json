@@ -1,44 +1,68 @@
 {
-  "entities_template": [],
-  "scenes": [
-    {
-      "name": "game",
-      "state": "disabled",
-      "plugins": [
+    "scenes": [
         {
-          "name": "actions",
-          "config": {}
-        },
-        {
-          "name": "moving",
-          "config": {}
-        },
-        {
-          "name": "collision",
-          "config": {}
-        },
-        {
-          "name": "controller",
-          "config": {}
-        },
-        {
-          "name": "life",
-          "config": {}
-        },
-        {
-          "name": "ath",
-          "config": {}
-        },
-        {
-          "name": "weapon",
-          "config": {}
-        },
-        {
-          "name": "ui",
-          "config": {}
+            "name": "login",
+            "state": "disabled",
+            "plugins": [],
+            "entities": [
+                {
+                   "template": "login_title",
+                    "parameters": {
+                        "text": "login"
+                    }
+                },
+                {
+                    "template": "input",
+                    "parameters": {
+                       "x": 0.0,
+                       "y": -0.15,
+                       "input_hook": "id_input",
+                       "text": "#global:id_input:buffer",
+                       "placeholder": "identifier"
+                    }
+                },
+                {
+                    "template": "input",
+                    "parameters": {
+                       "x": 0.0,
+                       "y": 0.15,
+                       "input_hook": "pswd_input",
+                       "text": "#global:pswd_input:buffer",
+                       "placeholder": "password"
+                    }
+                },
+                {
+                    "template": "switch_text",
+                    "parameters": {
+                        "text": "not register yet ? click here to register",
+                        "width": 0.8,
+                        "target_scene": "register",
+                        "current_scene": "login"
+                    }
+                },
+                 {
+                    "template": "button",
+                    "parameters": {
+                        "y": 0.7,
+                        "width": 0.3,
+                        "height": 0.3,
+                        "on_click": [
+                            {
+                                "Login": {
+                                    "identifier": "%global:id_input:buffer",
+                                    "password": "%global:pswd_input:buffer"
+                                }
+                            }
+                        ],
+                        "text_size": {
+                            "width": 0.2,
+                            "height": 0.06
+                        },
+                        "text": "submit",
+                        "font": "assets/fonts/Starjedi.ttf"
+                    }
+                }
+            ]
         }
-      ],
-      "entities": []
-    }
-  ]
+    ]
 }
