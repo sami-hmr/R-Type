@@ -2,11 +2,11 @@
     "scenes": [
         {
             "name": "login",
-            "state": "active",
+            "state": "disabled",
             "plugins": [],
             "entities": [
                 {
-                   "template": "login_title",
+                    "template": "login_title",
                     "parameters": {
                         "text": "login"
                     }

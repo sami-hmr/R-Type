@@ -38,12 +38,14 @@ static void on_click(Registry& r,
         std::cout << "Clickable: entity " << e << " clicked, emitting '" << name
                   << "'\n";
         obj.insert_or_assign("entity", JsonVariant(static_cast<int>(e)));
-        to_emit.emplace_back([&](){emit_event(em, r, name, obj);});
+        // Capture name and obj by value to avoid dangling references
+        to_emit.emplace_back([&em, &r, name, obj]()
+                             { emit_event(em, r, name, obj); });
         std::cout << "Clickable: emitted event '" << name << "'\n";
       }
     }
   }
-  for (auto const &f : to_emit) {
+  for (auto const& f : to_emit) {
     f();
   }
 }

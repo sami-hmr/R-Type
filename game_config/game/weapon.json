@@ -324,9 +324,6 @@
         "projectile:Temporal": {
           "lifetime": 0.9
         },
-        "projectile:Fragile": {
-          "hits": 999
-        },
         "collision:Collidable": {
           "size": {
             "x": 1.5,

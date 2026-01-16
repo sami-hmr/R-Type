@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <<<<<<< Updated upstream
   {
     "entities_template": [],
@@ -466,6 +467,8 @@
     ]
   }
 =======
+>>>>>>>=======
+ 662a637393d9d7a9b0daacf5a89e3d5a2e1ee4dd
 {
   "entities_template": [],
   "scenes": [
@@ -510,4 +513,8 @@
     }
   ]
 }
+<<<<<<< HEAD
 >>>>>>> Stashed changes
+=======
+
+>>>>>>> 662a637393d9d7a9b0daacf5a89e3d5a2e1ee4dd
