@@ -1,3 +1,4 @@
+<<<<<<< Updated upstream
   {
     "entities_template": [],
     "scenes": [
@@ -464,3 +465,49 @@
       }
     ]
   }
+=======
+{
+  "entities_template": [],
+  "scenes": [
+    {
+      "name": "game",
+      "state": "disabled",
+      "plugins": [
+        {
+          "name": "actions",
+          "config": {}
+        },
+        {
+          "name": "moving",
+          "config": {}
+        },
+        {
+          "name": "collision",
+          "config": {}
+        },
+        {
+          "name": "controller",
+          "config": {}
+        },
+        {
+          "name": "life",
+          "config": {}
+        },
+        {
+          "name": "ath",
+          "config": {}
+        },
+        {
+          "name": "weapon",
+          "config": {}
+        },
+        {
+          "name": "ui",
+          "config": {}
+        }
+      ],
+      "entities": []
+    }
+  ]
+}
+>>>>>>> Stashed changes

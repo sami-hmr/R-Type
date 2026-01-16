@@ -393,9 +393,11 @@ void SFMLRenderer::render_texts(Registry& r,
     _text.value().setCharacterSize(final_size);
     sf::FloatRect final_text_rect = _text.value().getLocalBounds();
 
-    draw.true_size =
-        Vector2D {std::max(static_cast<double>(final_text_rect.size.x) / min_dimension, draw.true_size.x),
-                  std::max(static_cast<double>(final_text_rect.size.y) / min_dimension, draw.true_size.y)};
+    draw.true_size = Vector2D {
+        std::max(static_cast<double>(final_text_rect.size.x) / min_dimension,
+                 draw.true_size.x),
+        std::max(static_cast<double>(final_text_rect.size.y) / min_dimension,
+                 draw.true_size.y)};
 
     TextDrawable text_drawable(
         std::ref(this->_text.value()),
@@ -508,6 +510,15 @@ void SFMLRenderer::render_animated_sprites(
     }
 
     sf::Texture& texture = load_texture(anim_data.texture_path);
+
+    // this is to make the animated sprite take all the sheet if frame size is
+    // like equal to -1
+    if (anim_data.frame_size.x < 0) {
+      anim_data.frame_size.x = texture.getSize().x;
+    }
+    if (anim_data.frame_size.y < 0) {
+      anim_data.frame_size.y = texture.getSize().y;
+    }
 
     float scale_x = static_cast<float>(min_dimension * anim_data.sprite_size.x)
         / anim_data.frame_size.x;
@@ -624,7 +635,7 @@ void SFMLRenderer::button_system(Registry& r)
     Rect entity_rect = {.x = pos.pos.x,
                         .y = pos.pos.y,
                         .width = collision.size.x * 2,
-                        .height = collision.size.y};
+                        .height = collision.size.y * 2};
     if (entity_rect.contains(mouse_pos.x, mouse_pos.y)) {
       if (!button.hovered) {
         button.hovered = true;
