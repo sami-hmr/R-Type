@@ -1,4 +1,6 @@
 #include <chrono>
+#include <cstdlib>
+#include <ctime>
 #include <iostream>
 #include <optional>
 #include <string>
@@ -127,6 +129,7 @@ int main(int argc, char* argv[])
   std::optional<EventManager> em;
   std::optional<EntityLoader> e;
 
+  std::srand(std::time(nullptr));
   r.emplace();
   em.emplace();
   e.emplace(*r, *em);

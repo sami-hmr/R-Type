@@ -16,6 +16,7 @@
 #include "plugin/components/Slider.hpp"
 #include "plugin/components/Sprite.hpp"
 #include "plugin/components/Text.hpp"
+#include "plugin/events/CameraEvents.hpp"
 #include "plugin/events/IoEvents.hpp"
 
 UI::UI(Registry& r,
@@ -57,6 +58,7 @@ UI::UI(Registry& r,
   SUBSCRIBE_EVENT(CamRotateEvent, { this->cam_rotate_event(event); })
   SUBSCRIBE_EVENT(CamSpeedEvent, { this->cam_speed_event(event); })
   SUBSCRIBE_EVENT(CamMoveEvent, { this->cam_move_event(event); })
+  SUBSCRIBE_EVENT(CameraShakeEvent, { this->cam_shake_event(event); })
   SUBSCRIBE_EVENT(PlayAnimationEvent, {
     AnimatedSprite::on_play_animation(
         this->_registry.get(), this->_event_manager.get(), event);
@@ -444,22 +446,21 @@ void UI::init_cam(Registry::Entity const& entity, JsonObject const& obj)
   Vector2D speed(0.1, 0.1);
 
   auto sizeopt = get_value<Camera, Vector2D>(
-      this->_registry.get(), obj, entity, "size", "width", "height");
-  if (sizeopt.has_value()) {
-    size = sizeopt.value();
-  } else {
-    std::cerr
-        << "Camera component missing size field, using default (50%, 50%)\n";
-    return;
-  }
-  auto targetopt =
+    this->_registry.get(), obj, entity, "size", "width", "height");
+    if (sizeopt.has_value()) {
+      size = sizeopt.value();
+    } else {
+      std::cerr
+      << "Camera component missing size field, using default (50%, 50%)\n";
+    }
+    std::cout << "Camera size: " << size.x << ", " << size.y << "\n";
+    auto targetopt =
       get_value<Camera, Vector2D>(this->_registry.get(), obj, entity, "target");
   if (targetopt.has_value()) {
     target = targetopt.value();
   } else {
     std::cerr
         << "Camera component missing target field, using default (0, 0)\n";
-    return;
   }
   auto speedopt = get_value<Camera, Vector2D>(
       this->_registry.get(), obj, entity, "speed", "x", "y");
@@ -468,8 +469,8 @@ void UI::init_cam(Registry::Entity const& entity, JsonObject const& obj)
   } else {
     std::cerr
         << "Camera component missing speed field, using default (10%, 15%)\n";
-    return;
   }
+  std::cout << "Camera speed: " << speed.x << ", " << speed.y << "\n";
   init_component(this->_registry.get(),
                  this->_event_manager.get(),
                  entity,

@@ -38,6 +38,8 @@ private:
   void cam_zoom_event(const CamZoomEvent& e);
   void cam_rotate_event(const CamRotateEvent& e);
   void cam_speed_event(const CamSpeedEvent& e);
+  void cam_shake_event(const CameraShakeEvent& e);
+
 
   void update_anim_system(Registry& r);
   void input_system(Registry& r);
