@@ -3,6 +3,7 @@
 #include <array>
 #include <cctype>
 #include <cmath>
+#include <numbers>
 #include <cstdint>
 #include <cstdio>
 #include <functional>
@@ -88,7 +89,7 @@ static sf::SoundBuffer gen_sound_placeholder()
   for (unsigned int i = 0; i < SAMPLE_COUNT; ++i) {
     double time = static_cast<double>(i) / SAMPLE_RATE;
     samples[i] = static_cast<std::int16_t>(
-        amplitude * std::sin(2.0 * M_PI * FREQUENCY * time));
+        amplitude * std::sin(2.0 * std::numbers::pi * FREQUENCY * time));
   }
   sf::SoundBuffer sound_buffer;
   if (!sound_buffer.loadFromSamples(samples.data(),
@@ -157,7 +158,7 @@ sf::Texture& SFMLRenderer::load_texture(std::string const& path)
   }
   sf::Texture texture;
   if (!texture.loadFromFile(path)) {
-    LOGGER("SFML", LogLevel::ERROR, "Failed to load texture: " + path)
+    LOGGER("SFML", LogLevel::ERR, "Failed to load texture: " + path)
     return _textures.at(placeholder);
   }
   _textures.insert_or_assign(path, std::move(texture));
@@ -171,7 +172,7 @@ sf::Font& SFMLRenderer::load_font(std::string const& path)
   }
   sf::Font font;
   if (!font.openFromFile(path)) {
-    LOGGER("SFML", LogLevel::ERROR, "Failed to load font: " + path)
+    LOGGER("SFML", LogLevel::ERR, "Failed to load font: " + path)
     throw std::runtime_error("Failed to load font: " + path);
   }
   _fonts.insert_or_assign(path, std::move(font));
@@ -694,7 +695,7 @@ void SFMLRenderer::button_system(Registry& r)
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
+PLUGIN_EXPORT void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
   return new SFMLRenderer(r, em, e);
 }

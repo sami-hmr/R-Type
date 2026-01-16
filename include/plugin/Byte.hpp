@@ -79,7 +79,7 @@ concept bytable = serializable<T> && unserializable<T>;
 #define EMPTY_BYTE_CONSTRUCTOR(classname) \
   classname(ByteArray const& array) \
   { \
-    Result<classname> r = apply(([]() { return (classname) {}; }))( \
+    Result<classname> r = apply(([]() { return classname{}; }))( \
         Rest(std::string(array.begin(), array.end()))); \
     if (r.index() == ERR) { \
       throw InvalidPackage(#classname); \
@@ -193,9 +193,10 @@ ByteArray byte_array_join(Args... arrays)
 template<typename T>
 ByteArray type_to_byte(T v, std::endian endian = std::endian::big)
 {
+  static_assert(sizeof(T) <= 64, "Type too large for type_to_byte");
   ByteArray tmp(sizeof(T));
-  auto raw = std::bit_cast<std::array<unsigned char, sizeof(T)>>(v);
-  std::copy(raw.begin(), raw.end(), tmp.begin());
+  unsigned char* ptr = reinterpret_cast<unsigned char*>(&v);
+  std::copy(ptr, ptr + sizeof(T), tmp.begin());
 
   if (endian != std::endian::native) {
     std::reverse(tmp.begin(), tmp.end());

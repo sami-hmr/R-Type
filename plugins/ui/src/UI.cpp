@@ -484,7 +484,7 @@ void UI::disable_all_inputs() {
 
 extern "C"
 {
-void* entry_point(Registry& r,
+PLUGIN_EXPORT void* entry_point(Registry& r,
                   EventManager& em,
                   EntityLoader& l,
                   std::optional<JsonObject> const& config)

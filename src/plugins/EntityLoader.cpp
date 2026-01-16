@@ -254,7 +254,7 @@ std::optional<Registry::Entity> EntityLoader::load_entity_template(
 
   if (!entity) {
     // LOGGER("load entity template",
-    //        LogLevel::ERROR,
+    //        LogLevel::ERR,
     //        "failed to load entity template " + event.template_name);
     return std::nullopt;
   }

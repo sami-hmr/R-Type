@@ -139,7 +139,7 @@ NetworkClient::NetworkClient(Registry& r, EventManager& em, EntityLoader& l)
                 true_entity, server_comp, this->_server_indexes);
             this->_component_queue.queue.pop();
           } catch (InvalidPackage const& e) {
-            LOGGER("client", LogLevel::ERROR, e.what());
+            LOGGER("client", LogLevel::ERR, e.what());
           }
         }
         this->_component_queue.lock.unlock();
@@ -183,7 +183,7 @@ void NetworkClient::connection_thread(ClientConnection const& c)
     client.connect();
   } catch (std::exception& e) {
     LOGGER("client",
-           LogLevel::ERROR,
+           LogLevel::ERR,
            std::format("Connection failed: {}", e.what()));
     _running = false;
   }
@@ -191,7 +191,7 @@ void NetworkClient::connection_thread(ClientConnection const& c)
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
+PLUGIN_EXPORT void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
   return new NetworkClient(r, em, e);
 }

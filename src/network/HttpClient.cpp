@@ -6,7 +6,9 @@
 
 #include "network/HttpClient.hpp"
 
+#ifndef _WIN32
 #include <resolv.h>
+#endif
 
 #include "network/Httplib.hpp"
 

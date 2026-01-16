@@ -4,7 +4,9 @@
 #include <optional>
 #include <string>
 
+#ifndef _WIN32
 #include <dlfcn.h>
+#endif
 
 #include "ILibLoader.hpp"
 #include "Json/JsonParser.hpp"
@@ -13,6 +15,7 @@
 #include "plugin/IPlugin.hpp"
 #include "plugin/libLoaders/ILibLoader.hpp"
 
+#ifndef _WIN32
 template<lib Module>
 class DlLoader : public LibLoader<Module>
 {
@@ -84,3 +87,4 @@ private:
   std::string hey;
   void* _lib = nullptr;
 };
+#endif // _WIN32

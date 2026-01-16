@@ -22,7 +22,7 @@ struct Speed
 
   DEFAULT_BYTE_CONSTRUCTOR(Speed,
                            ([](double speed_x, double speed_y)
-                            { return (Speed) {speed_x, speed_y}; }),
+                            { return Speed{speed_x, speed_y}; }),
                            parseByte<double>(),
                            parseByte<double>())
   DEFAULT_SERIALIZE(type_to_byte(this->speed.x), type_to_byte(this->speed.y))

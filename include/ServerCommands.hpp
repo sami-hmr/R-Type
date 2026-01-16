@@ -47,7 +47,7 @@ inline Parser<ConnectCommand> parse_connect_cmd()
 {
   return apply([](std::uint32_t c, std::string name)
                { return ConnectCommand(c, std::move(name)); },
-               parseByte<u_int32_t>(),
+               parseByte<std::uint32_t>(),
                parseByteString());
 }
 
