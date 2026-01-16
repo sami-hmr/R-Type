@@ -1,6 +1,7 @@
+#include <array>
+
 #include "network/PacketCompresser.hpp"
 
-#include <array>
 #include "plugin/Byte.hpp"
 #include "zlib.h"
 

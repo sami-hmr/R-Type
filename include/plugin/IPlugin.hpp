@@ -11,7 +11,6 @@
 #  define PLUGIN_EXPORT
 #endif
 
-
 class IPlugin
 {
 public:

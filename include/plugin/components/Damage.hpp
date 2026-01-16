@@ -13,7 +13,7 @@ struct Damage
   }
 
   DEFAULT_BYTE_CONSTRUCTOR(Damage,
-                           ([](int x) { return Damage{x}; }),
+                           ([](int x) { return Damage {x}; }),
                            parseByte<int>())
   DEFAULT_SERIALIZE(type_to_byte(this->amount))
 

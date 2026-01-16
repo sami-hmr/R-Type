@@ -2,22 +2,22 @@
 
 // Undefine potential Windows GDI macro conflicts
 #ifdef WHITE
-#undef WHITE
+#  undef WHITE
 #endif
 #ifdef BLACK
-#undef BLACK
+#  undef BLACK
 #endif
 #ifdef RED
-#undef RED
+#  undef RED
 #endif
 #ifdef GREEN
-#undef GREEN
+#  undef GREEN
 #endif
 #ifdef BLUE
-#undef BLUE
+#  undef BLUE
 #endif
 #ifdef TRANSPARENT
-#undef TRANSPARENT
+#  undef TRANSPARENT
 #endif
 
 #include "ByteParser/ByteParser.hpp"
@@ -59,7 +59,10 @@ struct Color
   /**
    * @brief Constructs a color with explicit RGBA values
    */
-  constexpr Color(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+  constexpr Color(unsigned char r,
+                  unsigned char g,
+                  unsigned char b,
+                  unsigned char a)
       : r(r)
       , g(g)
       , b(b)
@@ -149,12 +152,12 @@ inline ByteArray colorToByte(const Color& c)  // NOLINT
 
 namespace ColorConstants
 {
-  constexpr Color cWHITE {255, 255, 255, 255};
-  constexpr Color cBLACK {0, 0, 0, 255};
-  constexpr Color cRED {255, 0, 0, 255};
-  constexpr Color cGREEN {0, 255, 0, 255};
-  constexpr Color cBLUE {0, 0, 255, 255};
-  constexpr Color cTRANSPARENT {0, 0, 0, 0};
+constexpr Color cWHITE {255, 255, 255, 255};
+constexpr Color cBLACK {0, 0, 0, 255};
+constexpr Color cRED {255, 0, 0, 255};
+constexpr Color cGREEN {0, 255, 0, 255};
+constexpr Color cBLUE {0, 0, 255, 255};
+constexpr Color cTRANSPARENT {0, 0, 0, 0};
 }  // namespace ColorConstants
 
 // Backward compatibility aliases (avoiding potential macro conflicts)

@@ -25,8 +25,7 @@ ByteArray& operator+=(ByteArray& first, ByteArray const& second)
 
 ByteArray string_to_byte(std::string const& str)
 {
-  return type_to_byte<uint32_t>(str.size())
-      + ByteArray(str.begin(), str.end());
+  return type_to_byte<uint32_t>(str.size()) + ByteArray(str.begin(), str.end());
 }
 
 static const std::array<std::function<ByteArray(JsonValue const&)>, 6>
