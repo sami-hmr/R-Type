@@ -128,43 +128,45 @@ struct CamSpeedEvent
   DEFAULT_SERIALIZE(vector2DToByte(this->speed))
 };
 
-struct CameraShakeEvent {
-    double trauma;
-    double angle;
-    double offset;
-    double duration;
+struct CameraShakeEvent
+{
+  double trauma;
+  double angle;
+  double offset;
+  double duration;
 
-    CameraShakeEvent() = default;
+  CameraShakeEvent() = default;
 
-    CameraShakeEvent(double trauma, double duration, double angle, double offset)
-        : trauma(trauma)
-        , angle(angle)
-        , offset(offset)
-        , duration(duration)
-    {
-    }
+  CameraShakeEvent(double trauma, double duration, double angle, double offset)
+      : trauma(trauma)
+      , angle(angle)
+      , offset(offset)
+      , duration(duration)
+  {
+  }
 
-    CameraShakeEvent(Registry& r, JsonObject const& e)
-        : trauma(get_value_copy<double>(r, e, "trauma").value())
-        , angle(get_value_copy<double>(r, e, "angle").value())
-        , offset(get_value_copy<double>(r, e, "offset").value())
-        , duration(get_value_copy<double>(r, e, "duration").value())
-    {
-    }
+  CameraShakeEvent(Registry& r, JsonObject const& e)
+      : trauma(get_value_copy<double>(r, e, "trauma").value())
+      , angle(get_value_copy<double>(r, e, "angle").value())
+      , offset(get_value_copy<double>(r, e, "offset").value())
+      , duration(get_value_copy<double>(r, e, "duration").value())
+  {
+  }
 
-    CHANGE_ENTITY_DEFAULT
+  CHANGE_ENTITY_DEFAULT
 
-    DEFAULT_BYTE_CONSTRUCTOR(CameraShakeEvent,
-                             ([](double trauma, double angle, double offset, double duration)
-                              { return CameraShakeEvent(trauma, duration, angle, offset); }),
-                             parseByte<double>(),
-                             parseByte<double>(),
-                             parseByte<double>(),
-                             parseByte<double>())
-    DEFAULT_SERIALIZE(type_to_byte(this->trauma),
-                      type_to_byte(this->duration),
-                      type_to_byte(this->angle),
-                      type_to_byte(this->offset))
+  DEFAULT_BYTE_CONSTRUCTOR(
+      CameraShakeEvent,
+      ([](double trauma, double angle, double offset, double duration)
+       { return CameraShakeEvent(trauma, duration, angle, offset); }),
+      parseByte<double>(),
+      parseByte<double>(),
+      parseByte<double>(),
+      parseByte<double>())
+  DEFAULT_SERIALIZE(type_to_byte(this->trauma),
+                    type_to_byte(this->duration),
+                    type_to_byte(this->angle),
+                    type_to_byte(this->offset))
 };
 
 #endif /* !CAMERAEVENTS_HPP_ */
