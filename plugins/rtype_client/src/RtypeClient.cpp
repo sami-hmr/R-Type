@@ -94,7 +94,7 @@ void RtypeClient::alert(std::string const& message)
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager& em, EntityLoader& e, std::optional<JsonObject> const &config)
+PLUGIN_EXPORT void* entry_point(Registry& r, EventManager& em, EntityLoader& e, std::optional<JsonObject> const &config)
 {
   return new RtypeClient(r, em, e, config);
 }

@@ -185,7 +185,7 @@ void Moving::init_facing(Registry::Entity const& entity, JsonObject& obj)
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
+PLUGIN_EXPORT void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
   return new Moving(r, em, e);
 }

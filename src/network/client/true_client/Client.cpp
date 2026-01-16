@@ -90,7 +90,7 @@ void Client::receive_loop()
 
       if (ec) {
         if (_running.get()) {
-          LOGGER_EVTLESS(LogLevel::ERROR,
+          LOGGER_EVTLESS(LogLevel::ERR,
                          "client",
                          std::format("Receive error: {}", ec.message()));
         }
@@ -109,7 +109,7 @@ void Client::receive_loop()
       }
     } catch (CustomException& e) {
       LOGGER_EVTLESS(
-          LogLevel::ERROR,
+          LogLevel::ERR,
           "server",
           std::format(
               "Error in receive loop: {}: ", e.what(), e.format_context()));
@@ -119,7 +119,7 @@ void Client::receive_loop()
     catch (std::exception& e)
     {
       if (_running.get()) {
-        LOGGER_EVTLESS(LogLevel::ERROR,
+        LOGGER_EVTLESS(LogLevel::ERR,
                        "client",
                        std::format("Error in receive loop: {}", e.what()));
       }

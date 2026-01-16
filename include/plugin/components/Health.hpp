@@ -27,7 +27,7 @@ struct Health
 
   DEFAULT_BYTE_CONSTRUCTOR(Health,
                            ([](double c, double max, double h_d, double d_d)
-                            { return (Health) {c, max, h_d, d_d}; }),
+                            { return Health {c, max, h_d, d_d}; }),
                            parseByte<double>(),
                            parseByte<double>(),
                            parseByte<double>(),
