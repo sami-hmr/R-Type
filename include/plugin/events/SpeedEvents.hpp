@@ -3,6 +3,7 @@
 #include "EventMacros.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/Byte.hpp"
+#include "plugin/Hooks.hpp"
 #include "plugin/events/EventMacros.hpp"
 
 struct SpeedModifierEvent
