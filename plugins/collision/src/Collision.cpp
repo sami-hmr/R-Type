@@ -27,7 +27,6 @@
 #include "plugin/events/CollisionEvent.hpp"
 #include "plugin/events/InteractionBordersEvents.hpp"
 #include "plugin/events/InteractionZoneEvent.hpp"
-#include "plugin/events/LoggerEvent.hpp"
 
 Collision::Collision(Registry& r, EventManager& em, EntityLoader& l)
     : APlugin(

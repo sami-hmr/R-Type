@@ -89,7 +89,7 @@ struct ComponentBuilderId
 
   DEFAULT_SERIALIZE(optional_to_byte<std::size_t>(
                         client,
-                        std::function<ByteArray(std::size_t const&)>(
+                        std::function<ByteArray(std::size_t)>(
                             [](std::size_t const& b)
                             { return type_to_byte(b); })),
                     component.to_bytes())

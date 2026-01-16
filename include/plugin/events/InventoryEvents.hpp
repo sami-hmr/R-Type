@@ -12,27 +12,23 @@
 struct PickUp
 {
   Item item;
-  bool usable;
-  std::size_t nb_to_use;
-  Registry::Entity consumer;
+  std::size_t quantity;
+  Registry::Entity possessor;
 
   PickUp(Item item,
-         bool usable,
-         std::size_t nb_to_use,
-         Registry::Entity consumer)
+         std::size_t quantity,
+         Registry::Entity possessor)
       : item(std::move(item))
-      , usable(usable)
-      , nb_to_use(nb_to_use)
-      , consumer(consumer)
+      , quantity(quantity)
+      , possessor(possessor)
   {
   }
 
   PickUp(Registry& r, JsonObject const& e)
       : item(get_value_copy<Item>(r, e, "item").value())
-      , usable(get_value_copy<bool>(r, e, "usable").value())
-      , nb_to_use(get_value_copy<std::size_t>(r, e, "nb_to_use").value())
-      , consumer(static_cast<Registry::Entity>(
-            get_value_copy<Registry::Entity>(r, e, "consumer").value()))
+      , quantity(get_value_copy<std::size_t>(r, e, "quantity").value())
+      , possessor(static_cast<Registry::Entity>(
+            get_value_copy<Registry::Entity>(r, e, "possessor").value()))
   {
   }
 
@@ -41,19 +37,16 @@ struct PickUp
   DEFAULT_BYTE_CONSTRUCTOR(
       PickUp,
       ([](Item item,
-          bool usable,
-          std::size_t nb_to_use,
-          Registry::Entity consumer)
-       { return PickUp(std::move(item), usable, nb_to_use, consumer); }),
+          std::size_t quantity,
+          Registry::Entity possessor)
+       { return PickUp(std::move(item), quantity, possessor); }),
       parseByteItem(),
-      parseByte<bool>(),
       parseByte<std::size_t>(),
       parseByte<Registry::Entity>())
 
   DEFAULT_SERIALIZE(item_to_byte(item),
-                    type_to_byte(usable),
-                    type_to_byte(nb_to_use),
-                    type_to_byte(consumer))
+                    type_to_byte(quantity),
+                    type_to_byte(possessor))
 };
 
 template<typename Type>

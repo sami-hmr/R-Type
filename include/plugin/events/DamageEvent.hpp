@@ -7,15 +7,11 @@
 
 #pragma once
 
-#include <cstdint>
-#include <map>
 #include <optional>
 #include <string>
-#include <utility>
 
 #include "ByteParser/ByteParser.hpp"
 #include "EventMacros.hpp"
-#include "ParserUtils.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
@@ -23,8 +19,8 @@
 struct DamageEvent
 {
   DamageEvent(Registry::Entity t, Registry::Entity s, int a)
-      : target(std::move(t))
-      , source(std::move(s))
+      : target(t)
+      , source(s)
       , amount(a)
   {
   }
@@ -34,7 +30,7 @@ struct DamageEvent
   DEFAULT_BYTE_CONSTRUCTOR(DamageEvent,
                            ([](Registry::Entity const& t,
                                Registry::Entity const& s,
-                               int a) { return (DamageEvent) {t, s, a}; }),
+                               int a) { return DamageEvent(t, s, a); }),
                            parseByte<Registry::Entity>(),
                            parseByte<Registry::Entity>(),
                            parseByte<int>())

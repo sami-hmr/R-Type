@@ -18,7 +18,7 @@ struct Inventory
   Registry::Entity owner;
   std::size_t max_items;
 
-  CHANGE_ENTITY(result.owner, map.at(owner))
+  CHANGE_ENTITY(result.owner = map.at(owner))
 
   HOOKABLE(Inventory,
            {"slot_1",

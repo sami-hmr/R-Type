@@ -75,8 +75,8 @@ InventoryPlugin::InventoryPlugin(Registry& r, EventManager& em, EntityLoader& l)
     for (auto&& [entity, inventory] :
          ZipperIndex<Inventory>(this->_registry.get()))
     {
-      if (entity == event.consumer) {
-        add_item(event.item, event.nb_to_use, inventory);
+      if (entity == event.possessor) {
+        add_item(event.item, event.quantity, inventory);
       }
     }
   })
@@ -157,7 +157,7 @@ bool InventoryPlugin::usage_emit(std::string area,
     LOGGER(
         "InventoryPlugin",
         LogLevel::ERROR,
-        std::format("Missing {} field in item. No animation nor event played",
+        std::format("Missing {} field in item. No event played",
                     area));
     return false;
   }
@@ -173,7 +173,7 @@ bool InventoryPlugin::usage_emit(std::string area,
           "InventoryPlugin",
           LogLevel::ERROR,
           std::format(
-              "Invalid event field in item's {} configuration. No " "animat" "i" "on" " n" "or" " " "even't " "played",
+              "Invalid event field in item's {} configuration. No even't played",
               area));
       return false;
     }
