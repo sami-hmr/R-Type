@@ -20,13 +20,13 @@ struct SpeedModifierEvent
   {
   }
 
-  DEFAULT_BYTE_CONSTRUCTOR(SpeedModifierEvent,
-                           ([](Registry::Entity const& t,
-                               Registry::Entity const& s,
-                               double m) { return SpeedModifierEvent(t, s, m); }),
-                           parseByte<Registry::Entity>(),
-                           parseByte<Registry::Entity>(),
-                           parseByte<double>())
+  DEFAULT_BYTE_CONSTRUCTOR(
+      SpeedModifierEvent,
+      ([](Registry::Entity const& t, Registry::Entity const& s, double m)
+       { return SpeedModifierEvent(t, s, m); }),
+      parseByte<Registry::Entity>(),
+      parseByte<Registry::Entity>(),
+      parseByte<double>())
 
   DEFAULT_SERIALIZE(type_to_byte(this->target),
                     type_to_byte(this->source),
@@ -57,13 +57,13 @@ struct SpeedSwitcherEvent
   {
   }
 
-  DEFAULT_BYTE_CONSTRUCTOR(SpeedSwitcherEvent,
-                           ([](Registry::Entity const& t,
-                               Registry::Entity const& s,
-                               double ns) { return SpeedSwitcherEvent(t, s, ns); }),
-                           parseByte<Registry::Entity>(),
-                           parseByte<Registry::Entity>(),
-                           parseByte<double>())
+  DEFAULT_BYTE_CONSTRUCTOR(
+      SpeedSwitcherEvent,
+      ([](Registry::Entity const& t, Registry::Entity const& s, double ns)
+       { return SpeedSwitcherEvent(t, s, ns); }),
+      parseByte<Registry::Entity>(),
+      parseByte<Registry::Entity>(),
+      parseByte<double>())
 
   DEFAULT_SERIALIZE(type_to_byte(this->target),
                     type_to_byte(this->source),

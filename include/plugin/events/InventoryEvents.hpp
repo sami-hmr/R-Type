@@ -15,9 +15,7 @@ struct PickUp
   std::size_t quantity;
   Registry::Entity possessor;
 
-  PickUp(Item item,
-         std::size_t quantity,
-         Registry::Entity possessor)
+  PickUp(Item item, std::size_t quantity, Registry::Entity possessor)
       : item(std::move(item))
       , quantity(quantity)
       , possessor(possessor)
@@ -36,9 +34,7 @@ struct PickUp
 
   DEFAULT_BYTE_CONSTRUCTOR(
       PickUp,
-      ([](Item item,
-          std::size_t quantity,
-          Registry::Entity possessor)
+      ([](Item item, std::size_t quantity, Registry::Entity possessor)
        { return PickUp(std::move(item), quantity, possessor); }),
       parseByteItem(),
       parseByte<std::size_t>(),
