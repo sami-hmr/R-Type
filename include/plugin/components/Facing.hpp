@@ -10,12 +10,14 @@ struct Facing
   Facing() = default;
 
   Facing(double dir_x, double dir_y, bool plane = false)
-      : direction(dir_x, dir_y), plane(plane)
+      : direction(dir_x, dir_y)
+      , plane(plane)
   {
   }
 
-  Facing(Vector2D direction , bool plane = false)
-      : direction(direction), plane(plane)
+  Facing(Vector2D direction, bool plane = false)
+      : direction(direction)
+      , plane(plane)
   {
   }
 
@@ -33,5 +35,9 @@ struct Facing
   Vector2D direction;
   bool plane;
 
-  HOOKABLE(Facing, HOOK(direction), HOOK(direction.x), HOOK(direction.y), HOOK(plane))
+  HOOKABLE(Facing,
+           HOOK(direction),
+           HOOK(direction.x),
+           HOOK(direction.y),
+           HOOK(plane))
 };
