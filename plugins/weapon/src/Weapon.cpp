@@ -1,4 +1,3 @@
-#include <iostream>
 #include <optional>
 #include <vector>
 
@@ -16,7 +15,9 @@
 #include "plugin/APlugin.hpp"
 #include "plugin/components/AnimatedSprite.hpp"
 #include "plugin/components/BasicWeapon.hpp"
+#include "plugin/components/ChargeWeapon.hpp"
 #include "plugin/components/Damage.hpp"
+#include "plugin/components/DelayedWeapon.hpp"
 #include "plugin/components/Direction.hpp"
 #include "plugin/components/Facing.hpp"
 #include "plugin/components/Position.hpp"
@@ -25,7 +26,6 @@
 #include "plugin/components/Team.hpp"
 #include "plugin/events/AnimationEvents.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
-#include "plugin/events/IoEvents.hpp"
 #include "plugin/events/LogMacros.hpp"
 #include "plugin/events/WeaponEvent.hpp"
 
@@ -307,7 +307,8 @@ void Weapon::on_charge_release(Registry& r, const ReleaseChargeWeapon& e)
         weapon.charge_indicator_entity.value());
     weapon.charge_indicator_entity = std::nullopt;
   } else {
-    // std::cout << "[ChargeWeapon] No charge indicator to destroy" << std::endl;
+    // std::cout << "[ChargeWeapon] No charge indicator to destroy" <<
+    // std::endl;
   }
 }
 

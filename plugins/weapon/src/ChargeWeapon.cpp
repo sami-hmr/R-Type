@@ -1,10 +1,9 @@
+#include "plugin/components/ChargeWeapon.hpp"
+
 #include "Weapon.hpp"
 #include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
-#include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
-#include "plugin/components/BasicWeapon.hpp"
-#include "plugin/events/IoEvents.hpp"
 
 void Weapon::init_charge_weapon(Registry::Entity const& entity,
                                 JsonObject const& obj)
@@ -105,27 +104,4 @@ void Weapon::init_charge_weapon(Registry::Entity const& entity,
                                scale_damage.value(),
                                attack_anim_name,
                                charge_indicator_name);
-}
-
-bool ChargeWeapon::update_basic_weapon(
-    std::chrono::high_resolution_clock::time_point now)
-{
-  if (this->reloading) {
-    return false;
-  }
-  if (this->remaining_ammo <= 0) {
-    return false;
-  }
-  double elapsed_time =
-      std::chrono::duration<double>(now - this->last_shot_time).count();
-  if (elapsed_time < this->cooldown) {
-    return false;
-  }
-  this->last_shot_time = now;
-  this->remaining_ammo -= 1;
-  if (this->remaining_ammo <= 0 && this->remaining_magazine > 0) {
-    this->reloading = true;
-    this->last_reload_time = std::chrono::high_resolution_clock::now();
-  }
-  return true;
 }

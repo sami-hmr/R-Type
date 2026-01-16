@@ -12,44 +12,53 @@
 #include "plugin/components/BaseWeapon.hpp"
 #include "plugin/events/EventMacros.hpp"
 
-struct BasicWeapon : public BaseWeapon
+struct DelayedWeapon : public BaseWeapon
 {
-  BasicWeapon() = default;
+  double delay_time;
+  std::chrono::high_resolution_clock::time_point pending_shot_time;
+  bool has_pending_shot = false;
 
-  BasicWeapon(std::string bullet_type,
-              int magazine_size,
-              int magazine_nb,
-              double reload_time,
-              double cooldown,
-              std::string attack_animation = "")
+  DelayedWeapon() = default;
+
+  DelayedWeapon(std::string bullet_type,
+                int magazine_size,
+                int magazine_nb,
+                double reload_time,
+                double cooldown,
+                double delay_time,
+                std::string attack_animation = "")
       : BaseWeapon(std::move(bullet_type),
                    magazine_size,
                    magazine_nb,
                    reload_time,
                    cooldown,
                    std::move(attack_animation))
+      , delay_time(delay_time)
   {
   }
 
-  DEFAULT_BYTE_CONSTRUCTOR(BasicWeapon,
+  DEFAULT_BYTE_CONSTRUCTOR(DelayedWeapon,
                            (
                                [](std::string bullet_type,
                                   int mag_size,
                                   int mag_nb,
                                   double reload_time,
                                   double cooldown,
+                                  double delay_time,
                                   std::string attack_animation)
                                {
-                                 return BasicWeapon(bullet_type,
-                                                    mag_size,
-                                                    mag_nb,
-                                                    reload_time,
-                                                    cooldown,
-                                                    attack_animation);
+                                 return DelayedWeapon(bullet_type,
+                                                      mag_size,
+                                                      mag_nb,
+                                                      reload_time,
+                                                      cooldown,
+                                                      delay_time,
+                                                      attack_animation);
                                }),
                            parseByteString(),
                            parseByte<int>(),
                            parseByte<int>(),
+                           parseByte<double>(),
                            parseByte<double>(),
                            parseByte<double>(),
                            parseByteString())
@@ -58,10 +67,11 @@ struct BasicWeapon : public BaseWeapon
                     type_to_byte(this->magazine_nb),
                     type_to_byte(this->reload_time),
                     type_to_byte(this->cooldown),
+                    type_to_byte(this->delay_time),
                     string_to_byte(this->attack_animation))
   CHANGE_ENTITY_DEFAULT
 
-  HOOKABLE(BasicWeapon,
+  HOOKABLE(DelayedWeapon,
            HOOK(bullet_type),
            HOOK(magazine_size),
            HOOK(magazine_nb),
@@ -71,6 +81,7 @@ struct BasicWeapon : public BaseWeapon
            HOOK(reloading),
            HOOK(last_reload_time),
            HOOK(cooldown),
+           HOOK(delay_time),
            HOOK(attack_animation))
 
   /**
