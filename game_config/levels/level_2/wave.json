@@ -1,0 +1,32 @@
+{
+  "scenes": [
+    {
+      "name": "level_2",
+      "state": "disabled",
+      "plugins": [],
+      "entities": [
+        {
+          "wave:Wave": {
+            "entity_template": "enemy_circle_1",
+            "count": 8,
+            "tracked": true,
+            "components_inheritance": ["scene"],
+            "pattern": {
+              "type": "circle",
+              "origin": { "x": 1.0, "y": -0.3 },
+              "params": {
+                "radius": 0.5
+              }
+            },
+            "on_end": [{
+              "event_name": "WaveSpawnEvent",
+              "params": {
+                "wave_templates": ["wave_1_level_2", "ally_force_1"]
+              }
+            }]
+          }
+        }
+      ]
+    }
+  ]
+}

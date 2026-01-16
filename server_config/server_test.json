@@ -1,4 +1,5 @@
 {
+  "configs": ["game_config"],
   "scenes": [
     {
       "name": "ready",
@@ -44,6 +45,10 @@
         {
           "name": "mob",
           "config": {}
+        },
+        {
+          "name": "wave",
+          "config": {}
         }
       ],
       "entities": [
@@ -82,3 +87,4 @@
     }
   ]
 }
+

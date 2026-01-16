@@ -7,7 +7,7 @@
                 "y": 0.0,
                 "width": 0.9,
                 "height": 0.1,
-                "text_width": 0.7,
+                "text_width": 0.65,
                 "text_height": 0.06,
                 "text": "",
                 "background": "assets/ui/thin_card.png",
@@ -15,7 +15,9 @@
                 "placeholder": "-"
             },
             "components": {
-                "ui:Drawable": {},
+                "ui:Drawable": {
+                    "hook": "drawable"
+                },
                 "moving:Position": {
                     "pos": {
                         "x": "$x",
@@ -29,9 +31,8 @@
                     "enabled": false
                 },
                 "collision:Collidable": {
-                    "collision_type": "Trigger",
-                    "height": "$height",
-                    "width": "$width"
+                    "collision_type": "trigger",
+                    "size": "#self:drawable:true_size"
                 },
                 "ui:Text": {
                     "font": "assets/fonts/roboto.ttf",

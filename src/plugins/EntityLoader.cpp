@@ -124,6 +124,7 @@ void EntityLoader::load_file(std::string const& filepath)
   } else {
     JsonObject r = std::get<SUCCESS>(result).value;
     try {
+      bool old_format = true;
       if (r.contains("entities_template")) {
         JsonArray const& templates_array =
             std::get<JsonArray>(r.at("entities_template").value);
@@ -139,6 +140,7 @@ void EntityLoader::load_file(std::string const& filepath)
               std::get<JsonObject>(template_obj.at("components").value),
               default_parameters);
         }
+        old_format = false;
       }
       if (r.contains("scenes")) {
         JsonArray const& scenes_array =
@@ -147,7 +149,17 @@ void EntityLoader::load_file(std::string const& filepath)
           JsonObject scene_obj = std::get<JsonObject>(scene_it.value);
           this->load_scene(scene_obj);
         }
-      } else {
+        old_format = false;
+      }
+      if (r.contains("configs")) {
+        JsonArray const& configs_array =
+            std::get<JsonArray>(r.at("configs").value);
+        for (auto const& configs_it : configs_array) {
+          this->load(std::get<std::string>(configs_it.value));
+        }
+        old_format = false;
+      }
+      if (old_format) {
         this->load_scene(r);
       }
     } catch (std::out_of_range&) {
@@ -230,10 +242,12 @@ std::optional<Registry::Entity> EntityLoader::load_entity(
 
 std::optional<Registry::Entity> EntityLoader::load_entity_template(
     std::string const& template_name,
-    std::vector<std::pair<std::string, ByteArray>> const& aditionals)
+    std::vector<std::pair<std::string, ByteArray>> const& aditionals,
+    JsonObject const& parameters)
 {
   auto const& entity =
-      this->load_entity(JsonObject({{"template", JsonValue(template_name)}}));
+      this->load_entity(JsonObject({{"template", JsonValue(template_name)},
+                                    {"parameters", JsonValue(parameters)}}));
 
   if (!entity) {
     // LOGGER("load entity template",

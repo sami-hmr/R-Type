@@ -359,8 +359,8 @@
 
 #include <any>
 #include <cstddef>
+#include <format>
 #include <functional>
-#include <iostream>
 #include <optional>
 #include <stdexcept>
 #include <string>
@@ -699,9 +699,9 @@ std::optional<T> get_value_copy(Registry& r,
         return result;
       }
     }
-  } catch (std::bad_variant_access const&) {
+  } catch (std::bad_variant_access const& e) {
     // Not a string, fall through to other methods
-  } catch (std::out_of_range const&) {
+  } catch (std::out_of_range const& e) {
     // Key not found, fall through
   }
 
@@ -720,7 +720,9 @@ std::optional<T> get_value_copy(Registry& r,
                      "hooked value construction via jsonobject failed");
     } catch (std::out_of_range const&) {
       LOGGER_EVTLESS(
-          LogLevel::ERROR, "Hooks", "hooked value lookup in object failed");
+          LogLevel::ERROR,
+          "Hooks",
+          std::format("hooked value lookup in object \"{}\" failed", key));
     }
   }
 

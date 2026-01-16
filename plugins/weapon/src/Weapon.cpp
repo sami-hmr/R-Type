@@ -26,6 +26,7 @@
 #include "plugin/events/AnimationEvents.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
 #include "plugin/events/IoEvents.hpp"
+#include "plugin/events/LogMacros.hpp"
 #include "plugin/events/WeaponEvent.hpp"
 
 Weapon::Weapon(Registry& r, EventManager& em, EntityLoader& l)
@@ -187,10 +188,6 @@ void Weapon::on_charge_start(Registry& r, const StartChargeWeapon& e)
   if (!weapon.charge_indicator.empty()
       && !weapon.charge_indicator_entity.has_value())
   {
-    std::cout << "[ChargeWeapon] Spawning charge indicator: "
-              << weapon.charge_indicator << " for entity: " << e.entity
-              << std::endl;
-
     auto const& pos =
         *this->_registry.get().get_components<Position>()[e.entity];
 
@@ -210,8 +207,7 @@ void Weapon::on_charge_start(Registry& r, const StartChargeWeapon& e)
     this->_event_manager.get().emit<LoadEntityTemplate>(weapon.charge_indicator,
                                                         additional);
   } else {
-    std::cout << "[ChargeWeapon] No charge indicator configured for entity: "
-              << e.entity << std::endl;
+    LOGGER("ChargeWeapon", LogLevel::ERROR, "No charge indicator configured")
   }
 }
 
@@ -231,21 +227,10 @@ void Weapon::on_charge_release(Registry& r, const ReleaseChargeWeapon& e)
   }
 
   if (weapon.current_charge_level < weapon.min_charge_threshold) {
-    std::cout << "[ChargeWeapon] Charge below threshold ("
-              << weapon.current_charge_level << " < "
-              << weapon.min_charge_threshold << "), not firing" << std::endl;
-
-    // Below threshold - reset charging but don't fire (ammo already consumed)
     weapon.is_charging = false;
     weapon.current_charge_level = 0.0;
 
-    // Destroy charge indicator if it exists
     if (weapon.charge_indicator_entity.has_value()) {
-      std::cout
-          << "[ChargeWeapon] Destroying charge indicator (below threshold): "
-          << weapon.charge_indicator_entity.value()
-          << " (reset to base scale: " << weapon.charge_indicator_base_scale.x
-          << ", " << weapon.charge_indicator_base_scale.y << ")" << std::endl;
       this->_event_manager.get().emit<DeleteEntity>(
           weapon.charge_indicator_entity.value());
       weapon.charge_indicator_entity = std::nullopt;
@@ -254,8 +239,6 @@ void Weapon::on_charge_release(Registry& r, const ReleaseChargeWeapon& e)
     return;
   }
 
-  // Play attack animation if entity has AnimatedSprite and weapon has
-  // attack_animation
   if (!weapon.attack_animation.empty()
       && this->_registry.get().has_component<AnimatedSprite>(e.entity))
   {
@@ -292,7 +275,6 @@ void Weapon::on_charge_release(Registry& r, const ReleaseChargeWeapon& e)
       ? *this->_registry.get().get_components<Team>()[e.entity]
       : std::string("");
 
-  // Calculate scale based on charge level
   double scale_multiplier =
       1.0 + (weapon.current_charge_level * (weapon.max_scale - 1.0));
 
@@ -310,30 +292,22 @@ void Weapon::on_charge_release(Registry& r, const ReleaseChargeWeapon& e)
                               .to_bytes()});
   }
 
-  // Add ScaleModifier to apply the charge scaling to the spawned bullet
-  additional.push_back(
-      {this->_registry.get().get_component_key<ScaleModifier>(),
-       ScaleModifier(scale_multiplier, weapon.scale_damage).to_bytes()});
+  additional.emplace_back(
+      this->_registry.get().get_component_key<ScaleModifier>(),
+      ScaleModifier(scale_multiplier, weapon.scale_damage).to_bytes());
 
   this->_event_manager.get().emit<LoadEntityTemplate>(weapon.bullet_type,
                                                       additional);
 
-  // Reset charging state
   weapon.is_charging = false;
   weapon.current_charge_level = 0.0;
 
-  // Destroy charge indicator if it exists
   if (weapon.charge_indicator_entity.has_value()) {
-    std::cout << "[ChargeWeapon] Destroying charge indicator on release: "
-              << weapon.charge_indicator_entity.value()
-              << " (reset to base scale: "
-              << weapon.charge_indicator_base_scale.x << ", "
-              << weapon.charge_indicator_base_scale.y << ")" << std::endl;
     this->_event_manager.get().emit<DeleteEntity>(
         weapon.charge_indicator_entity.value());
     weapon.charge_indicator_entity = std::nullopt;
   } else {
-    std::cout << "[ChargeWeapon] No charge indicator to destroy" << std::endl;
+    // std::cout << "[ChargeWeapon] No charge indicator to destroy" << std::endl;
   }
 }
 
@@ -388,7 +362,6 @@ void Weapon::charge_weapon_system(
         {
           weapon.charge_indicator_entity = indicator_entity;
 
-          // Store the base scale from the template
           if (this->_registry.get().has_component<Sprite>(indicator_entity)) {
             auto& sprite = *this->_registry.get()
                                 .get_components<Sprite>()[indicator_entity];
@@ -404,30 +377,20 @@ void Weapon::charge_weapon_system(
               weapon.charge_indicator_base_scale = anim_it->second.sprite_size;
             }
           }
-
-          std::cout << "[ChargeWeapon] Found charge indicator entity: "
-                    << indicator_entity << " for weapon entity: " << entity
-                    << " with base scale: ("
-                    << weapon.charge_indicator_base_scale.x << ", "
-                    << weapon.charge_indicator_base_scale.y << ")" << std::endl;
           break;
         }
       }
     }
 
-    // Calculate current charge level based on elapsed time
     double elapsed_time =
         std::chrono::duration<double>(now - weapon.charge_start_time).count();
     weapon.current_charge_level =
         std::min(1.0, elapsed_time / weapon.charge_time);
 
     if (weapon.charge_indicator_entity.has_value()) {
-      // Scale grows from 0.1 to max_scale based on charge level
-      // Start at 0.1 instead of 0 so the indicator is always visible
       double scale_factor =
           0.1 + (weapon.current_charge_level * (weapon.max_scale - 0.1));
 
-      // Update position to follow the weapon entity
       if (this->_registry.get().has_component<Position>(
               weapon.charge_indicator_entity.value()))
       {
@@ -436,41 +399,25 @@ void Weapon::charge_weapon_system(
         indicator_pos.pos = pos.pos;
       }
 
-      // Update Sprite if the indicator has one
       if (this->_registry.get().has_component<Sprite>(
               weapon.charge_indicator_entity.value()))
       {
         auto& sprite = *this->_registry.get().get_components<Sprite>()
                             [weapon.charge_indicator_entity.value()];
-        // Multiply the base scale by the scale factor
         sprite.scale = weapon.charge_indicator_base_scale * scale_factor;
-        std::cout << "[ChargeWeapon] Updated Sprite scale to: ("
-                  << sprite.scale.x << ", " << sprite.scale.y << ")"
-                  << " factor: " << scale_factor
-                  << " (charge: " << weapon.current_charge_level << ")"
-                  << std::endl;
       }
 
-      // Update AnimatedSprite if the indicator has one
       if (this->_registry.get().has_component<AnimatedSprite>(
               weapon.charge_indicator_entity.value()))
       {
         auto& animated_sprite =
             *this->_registry.get().get_components<AnimatedSprite>()
                  [weapon.charge_indicator_entity.value()];
-        // Update the current animation's sprite_size
         auto anim_it =
             animated_sprite.animations.find(animated_sprite.current_animation);
         if (anim_it != animated_sprite.animations.end()) {
-          // Multiply the base scale by the scale factor
           anim_it->second.sprite_size =
               weapon.charge_indicator_base_scale * scale_factor;
-          std::cout << "[ChargeWeapon] Updated AnimatedSprite scale to: ("
-                    << anim_it->second.sprite_size.x << ", "
-                    << anim_it->second.sprite_size.y << ")"
-                    << " factor: " << scale_factor
-                    << " (charge: " << weapon.current_charge_level << ")"
-                    << std::endl;
         }
         this->_event_manager.get().emit<ComponentBuilder>(
             weapon.charge_indicator_entity.value(),
@@ -484,7 +431,6 @@ void Weapon::charge_weapon_system(
 void Weapon::delayed_weapon_system(
     std::chrono::high_resolution_clock::time_point now)
 {
-  // Handle reloading
   for (auto&& [weapon] : Zipper<DelayedWeapon>(_registry.get())) {
     if (weapon.reloading && weapon.remaining_magazine > 0) {
       double elapsed_time =
@@ -497,7 +443,6 @@ void Weapon::delayed_weapon_system(
     }
   }
 
-  // Handle pending delayed shots
   for (auto&& [entity, weapon, pos] :
        ZipperIndex<DelayedWeapon, Position>(_registry.get()))
   {
@@ -505,12 +450,10 @@ void Weapon::delayed_weapon_system(
       continue;
     }
 
-    // Check if delay time has elapsed
     double elapsed_time =
         std::chrono::duration<double>(now - weapon.pending_shot_time).count();
 
     if (elapsed_time >= weapon.delay_time) {
-      // Time to fire the bullet
       auto const& vel_direction =
           (this->_registry.get().has_component<Direction>(entity))
           ? this->_registry.get().get_components<Direction>()[entity]->direction
@@ -544,7 +487,6 @@ void Weapon::delayed_weapon_system(
       this->_event_manager.get().emit<LoadEntityTemplate>(weapon.bullet_type,
                                                           additional);
 
-      // Clear the pending shot
       weapon.has_pending_shot = false;
     }
   }
@@ -552,15 +494,12 @@ void Weapon::delayed_weapon_system(
 
 void Weapon::apply_scale_modifiers()
 {
-  // Apply ScaleModifier to entities with Sprite
   for (auto&& [entity, modifier, sprite] :
        ZipperIndex<ScaleModifier, Sprite>(this->_registry.get()))
   {
     if (!modifier.applied) {
-      // Apply scale to sprite
       sprite.scale = sprite.scale * modifier.scale_multiplier;
 
-      // Apply damage scaling if enabled
       if (modifier.scale_damage
           && this->_registry.get().has_component<Damage>(entity))
       {
@@ -573,12 +512,10 @@ void Weapon::apply_scale_modifiers()
     }
   }
 
-  // Apply ScaleModifier to entities with AnimatedSprite
   for (auto&& [entity, modifier, animated_sprite] :
        ZipperIndex<ScaleModifier, AnimatedSprite>(this->_registry.get()))
   {
     if (!modifier.applied) {
-      // Apply scale to the current animation's sprite_size
       auto anim_it =
           animated_sprite.animations.find(animated_sprite.current_animation);
       if (anim_it != animated_sprite.animations.end()) {
@@ -586,7 +523,6 @@ void Weapon::apply_scale_modifiers()
             anim_it->second.sprite_size * modifier.scale_multiplier;
       }
 
-      // Apply damage scaling if enabled
       if (modifier.scale_damage
           && this->_registry.get().has_component<Damage>(entity))
       {

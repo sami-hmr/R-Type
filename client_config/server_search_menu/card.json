@@ -2,6 +2,7 @@
     "entities_template": [
         {
             "name": "server_card",
+            "parameters": {},
             "components": {
                 "ui:Drawable": {},
                 "moving:Position": {
@@ -12,8 +13,10 @@
                 },
                 "collision:Collidable": {
                     "collision_type": "Trigger",
-                    "height": 0.1,
-                    "width": 0.9
+                    "size": {
+                        "x": 0.9,
+                        "y": 0.1
+                    }
                 },
                 "ui:Text": {
                     "font": "assets/fonts/roboto.ttf",
@@ -119,6 +122,22 @@
                     "hover": false,
                     "toggle": false,
                     "pressed": false
+                },
+                "ath:Clickable": {
+                    "to_emit": [
+                        {
+                            "SceneChangeEvent": {
+                                "target_scene": "$target_scene",
+                                "reason": "",
+                                "force": false
+                            }
+                        },
+                        {
+                            "DisableSceneEvent": {
+                                "target_scene": "$current_scene"
+                            }
+                        }
+                    ]
                 }
             }
         }

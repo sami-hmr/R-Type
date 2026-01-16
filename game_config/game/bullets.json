@@ -1,0 +1,90 @@
+{
+  "entities_template": [
+    {
+      "name": "bullet_spread_3",
+      "components": {
+        "wave:Wave": {
+          "entity_template": "bounce_bullet",
+          "count": 3,
+          "tracked": false,
+          "components_inheritance": [
+            "scene",
+            "moving:Direction",
+            "life:Team",
+            "moving:Position"
+          ],
+          "pattern": {
+            "type": "arc",
+            "params": {
+              "angle": 45.0
+            }
+          },
+          "on_end": []
+        }
+      }
+    },
+    {
+      "name": "bullet_circle_8",
+      "components": {
+        "wave:Wave": {
+          "entity_template": "bounce_bullet",
+          "count": 8,
+          "tracked": false,
+          "components_inheritance": [
+            "scene",
+            "moving:Direction",
+            "life:Team",
+            "moving:Position"
+          ],
+          "pattern": {
+            "type": "circle",
+            "params": {
+              "radius": 0.1
+            }
+          },
+          "on_end": []
+        }
+      }
+    },
+    {
+      "name": "basic_bullet_1",
+      "components": {
+        "wave:Wave": {
+          "entity_template": "basic_bullet",
+          "count": 1,
+          "tracked": false,
+          "components_inheritance": [
+            "scene",
+            "moving:Direction",
+            "life:Team",
+            "moving:Position"
+          ],
+          "pattern": {
+            "type": "point"
+          },
+          "on_end": []
+        }
+      }
+    },
+    {
+      "name": "bounce_bullet_1",
+      "components": {
+        "wave:Wave": {
+          "entity_template": "bounce_bullet",
+          "count": 1,
+          "tracked": false,
+          "components_inheritance": [
+            "scene",
+            "moving:Direction",
+            "life:Team",
+            "moving:Position"
+          ],
+          "pattern": {
+            "type": "point"
+          },
+          "on_end": []
+        }
+      }
+    }
+  ]
+}
