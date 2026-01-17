@@ -16,6 +16,7 @@
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Item.hpp"
 #include "plugin/components/Position.hpp"
+#include "plugin/components/Speed.hpp"
 #include "plugin/events/CreateEntity.hpp"
 #include "plugin/events/DeathEvent.hpp"
 #include "plugin/events/InventoryEvents.hpp"
@@ -51,9 +52,10 @@ InventoryPlugin::InventoryPlugin(Registry& r, EventManager& em, EntityLoader& l)
   })
   SUBSCRIBE_EVENT(DeathEvent, {
     auto inventory = _registry.get().get_components<Inventory>()[event.entity];
-    if (!inventory)
+    if (!inventory) {
       return false;
-    std::size_t i =0;
+    }
+    std::size_t i = 0;
     for (auto item : (*inventory).slots) {
       this->_event_manager.get().emit<Drop>(i, true, 1, event.entity);
       i += 1;
@@ -69,7 +71,7 @@ InventoryPlugin::InventoryPlugin(Registry& r, EventManager& em, EntityLoader& l)
         }
         use_item(event.slot_item, event.nb_to_use, inventory);
         if (inventory.slots[event.slot_item].first.throwable) {
-          create_artefact(inventory.slots[event.slot_item].first, entity);
+          create_artefact(inventory.slots[event.slot_item].first, entity, {});
           return false;
         }
       }
@@ -85,7 +87,17 @@ InventoryPlugin::InventoryPlugin(Registry& r, EventManager& em, EntityLoader& l)
         }
         use_item(event.slot_item, event.nb_to_use, inventory);
         if (inventory.slots[event.slot_item].first.throwable) {
-          create_artefact(inventory.slots[event.slot_item].first, entity);
+          // std::vector<std::pair<std::string, ByteArray>> others;
+          if (this->_registry.get().has_component<Speed>(entity)) {
+            // others.push_back(
+            //     std::make_pair(this->_registry.get().get_component_key<Speed>(),
+            //                    this->_registry.get()
+            //                        .get_components<Position>()[entity]
+            //                        .value()
+            //                        .to_bytes()));
+          }
+          create_artefact(inventory.slots[event.slot_item].first, entity, {});
+          // create_artefact(inventory.slots[event.slot_item].first, entity, others);
           return usage_emit(
               "throw", inventory.slots[event.slot_item].first.object.second);
         }
@@ -126,7 +138,10 @@ PickableTool InventoryPlugin::item_to_artefact(Item const& item)
   return {on_consumption, on_throw, name, item.consumable, item.throwable};
 }
 
-void InventoryPlugin::create_artefact(Item const& item, Registry::Entity entity)
+void InventoryPlugin::create_artefact(
+    Item const& item,
+    Registry::Entity entity,
+    std::vector<std::pair<std::string, ByteArray>> const& other_components)
 {
   PickableTool artefact = item_to_artefact(item);
   ByteArray artefact_bytes = artefact.to_bytes();
@@ -150,6 +165,9 @@ void InventoryPlugin::create_artefact(Item const& item, Registry::Entity entity)
                               .get_components<Scene>()[entity]
                               .value()
                               .to_bytes()});
+  }
+  for (auto& cmp : other_components) {
+    additional.push_back(cmp);
   }
   LOGGER("Inventory Plugin", LogLevel::WARNING, "Creating an entity...")
   this->_event_manager.get().emit<CreateEntity>(additional);

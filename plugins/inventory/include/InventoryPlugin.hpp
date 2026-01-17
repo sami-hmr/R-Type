@@ -20,12 +20,15 @@ private:
   static void add_item(const Item& item, std::size_t nb, Inventory& inventory);
   static void use_item(std::uint8_t slot, std::size_t nb, Inventory& inventory);
 
-  std::vector<std::pair<Item, std::size_t>> init_item_vector(JsonArray& inventory);
+  std::vector<std::pair<Item, std::size_t>> init_item_vector(
+      JsonArray& inventory);
 
   void init_inventory(Registry::Entity const& entity, JsonObject const& obj);
 
-  void create_artefact(Item const& item,
-                       Registry::Entity entity);
+  void create_artefact(
+      Item const& item,
+      Registry::Entity entity,
+      std::vector<std::pair<std::string, ByteArray>> const &other_components);
 
   PickableTool item_to_artefact(Item const& item);
 
