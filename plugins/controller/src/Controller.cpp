@@ -14,6 +14,7 @@
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Controllable.hpp"
+#include "plugin/components/Text.hpp"
 #include "plugin/events/IoEvents.hpp"
 #include "plugin/events/LogMacros.hpp"
 #include "plugin/events/RebindingEvent.hpp"
@@ -30,13 +31,14 @@ Controller::Controller(Registry& r, EventManager& em, EntityLoader& l)
   REGISTER_COMPONENT(Controllable)
 
   SUBSCRIBE_EVENT(KeyPressedEvent, {
-    if (this->_remaped_key) {
+    if (this->_remaped_key && this->_current_binding_scene) {
+      this->_event_manager.get().emit<DisableSceneEvent>("__rebinding_card__");
       for (auto const& [key, active] : event.key_pressed) {
         if (active) {
           this->_event_manager.get().emit<Rebind>(
               this->_remaped_key->entity, this->_remaped_key->key, key << 8);
           this->delete_binding_scene(false);
-          this->create_binding_scene(this->_remaped_key->entity, "bindings");
+          this->create_binding_scene(this->_remaped_key->entity);
           break;
         }
       }
@@ -69,15 +71,57 @@ Controller::Controller(Registry& r, EventManager& em, EntityLoader& l)
   })
 
   SUBSCRIBE_EVENT(GenerateRebindingScene, {
-    if (!this->_registry.get().has_component<Controllable>(event.entity)) {
+    if (!this->_registry.get().has_component<Controllable>(event.entity)
+        && (this->_registry.get().get_components<Controllable>()[event.entity])
+                ->event_map.size()
+            != 0)
+    {
       return false;
     }
-    this->create_binding_scene(event.entity, event.scene_name);
+    this->_rebinding_scenes["__rebinding_card__"].emplace_back(
+        *this->_loader.get().load_entity_template(
+            event.card_template,
+            {{this->_registry.get().get_component_key<Scene>(),
+              Scene("__rebinding_card__").to_bytes()}},
+            JsonObject({{"z", JsonValue(1002)},  // NOLINT
+                        {"text", JsonValue("Press any key")},
+                        {"width", JsonValue(0.8)},
+                        {"height", JsonValue(0.5)},
+                        {"text_size",
+                         JsonValue(JsonObject(
+                             {{"height", JsonValue(0.4)},
+                              {"width",
+                               JsonValue(0.65)}}))}})));  // SCENE ID INDICATOR
+    std::cout
+        << this->_registry.get()
+               .get_components<
+                   Text>()[this->_rebinding_scenes["__rebinding_card__"][0]]
+               ->text
+        << "\n";
+    this->_current_binding_scene.emplace(event);
+    this->create_binding_scene(event.entity);
+    this->_event_manager.get().emit<SceneChangeEvent>(
+        "__bindings_scene__0", "", false, true);
+
+    this->_event_manager.get().emit<DisableSceneEvent>(event.base_scene);
   })
 
-  SUBSCRIBE_EVENT(WatchRebind, { this->_remaped_key.emplace(event); })
+  SUBSCRIBE_EVENT(WatchRebind, {
+    this->_event_manager.get().emit<SceneChangeEvent>(
+        "__rebinding_card__", "", false, true);
+    this->_remaped_key.emplace(event);
+  })
 
-  SUBSCRIBE_EVENT(ExitRebind, { this->delete_binding_scene(); })
+  SUBSCRIBE_EVENT(ExitRebind, {
+    this->_remaped_key.reset();
+    this->delete_binding_scene();
+    this->_event_manager.get().emit<SceneChangeEvent>(
+        this->_current_binding_scene->base_scene,
+        "",
+        false,
+        this->_current_binding_scene->is_base_scene_main);
+    this->_current_binding_scene.reset();
+  })
 }
 
 void Controller::rebinding(Controllable& c,

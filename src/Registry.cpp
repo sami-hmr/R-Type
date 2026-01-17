@@ -170,6 +170,7 @@ void Registry::deactivate_all_scenes()
   }
   _current_scene.clear();
   _active_scenes_set.clear();
+  _main_scene.clear();
 }
 
 void Registry::push_scene(std::string const& scene_name)

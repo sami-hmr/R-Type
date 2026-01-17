@@ -60,30 +60,90 @@ struct GenerateRebindingScene
 {
   GenerateRebindingScene() = default;
 
-  GenerateRebindingScene(std::size_t e, std::string t)
+  GenerateRebindingScene(std::size_t e,
+                         std::string bg,
+                         std::string btn,
+                         std::string txt,
+                         std::string lnk,
+                         std::string back,
+                         std::string base,
+                         bool main)
       : entity(e)
-      , scene_name(std::move(t))
+      , background_template(std::move(bg))
+      , button_template(std::move(btn))
+      , text_template(std::move(txt))
+      , link_template(std::move(lnk))
+      , back_to_base_scene_template(std::move(back))
+      , base_scene(std::move(base))
+      , is_base_scene_main(main)
   {
   }
 
   DEFAULT_BYTE_CONSTRUCTOR(GenerateRebindingScene,
-                           ([](std::size_t e, std::string const& t)
-                            { return GenerateRebindingScene(e, t); }),
+                           (
+                               [](std::size_t e,
+                                  std::string const& bg,
+                                  std::string const& btn,
+                                  std::string const& txt,
+                                  std::string const& lnk,
+                                  std::string const& back,
+                                  std::string const& base,
+                                  bool main)
+                               {
+                                 return GenerateRebindingScene(
+                                     e, bg, btn, txt, lnk, back, base, main);
+                               }),
                            parseByte<std::size_t>(),
-                           parseByteString())
+                           parseByteString(),
+                           parseByteString(),
+                           parseByteString(),
+                           parseByteString(),
+                           parseByteString(),
+                           parseByteString(),
+                           parseByte<bool>())
 
-  DEFAULT_SERIALIZE(type_to_byte(entity), string_to_byte(this->scene_name))
+  DEFAULT_SERIALIZE(type_to_byte(entity),
+                    string_to_byte(this->background_template),
+                    string_to_byte(this->button_template),
+                    string_to_byte(this->text_template),
+                    string_to_byte(this->link_template),
+                    string_to_byte(this->back_to_base_scene_template),
+                    string_to_byte(this->base_scene),
+                    type_to_byte(is_base_scene_main))
 
   GenerateRebindingScene(Registry& r, JsonObject const& e)
       : entity(get_value_copy<Registry::Entity>(r, e, "entity").value_or(0))
-      , scene_name(get_value_copy<std::string>(r, e, "scene_name").value_or(""))
+      , background_template(
+            get_value_copy<std::string>(r, e, "background_template")
+                .value_or(""))
+      , button_template(
+            get_value_copy<std::string>(r, e, "button_template").value_or(""))
+      , text_template(
+            get_value_copy<std::string>(r, e, "text_template").value_or(""))
+      , link_template(
+            get_value_copy<std::string>(r, e, "link_template").value_or(""))
+      , card_template(
+            get_value_copy<std::string>(r, e, "card_template").value_or(""))
+      , back_to_base_scene_template(
+            get_value_copy<std::string>(r, e, "back_to_base_scene_template")
+                .value_or(""))
+      , base_scene(get_value_copy<std::string>(r, e, "base_scene").value_or(""))
+      , is_base_scene_main(
+            get_value_copy<bool>(r, e, "is_base_scene_main").value_or(false))
   {
   }
 
   CHANGE_ENTITY_DEFAULT
 
   std::size_t entity = 0;
-  std::string scene_name;
+  std::string background_template;
+  std::string button_template;
+  std::string text_template;
+  std::string link_template;
+  std::string card_template;
+  std::string back_to_base_scene_template;
+  std::string base_scene;
+  bool is_base_scene_main;
 };
 
 struct WatchRebind

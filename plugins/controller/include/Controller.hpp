@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include <map>
 #include <string>
 #include <unordered_map>
@@ -39,8 +40,17 @@ private:
   std::map<Key, bool> _key_states;
 
   std::unordered_map<std::string, std::vector<std::size_t>> _rebinding_scenes;
-  void create_binding_scene(std::size_t entity, std::string const& scene_name);
+  void create_binding_scene(std::size_t entity);
   void delete_binding_scene(bool disable = true);
+  struct RebindingScene {
+    struct Rebinder {
+      std::string key_str;
+      std::uint16_t key;
+      std::string description;
+    };
+    std::vector<Rebinder> elements;
+  };
+  std::optional<GenerateRebindingScene> _current_binding_scene;
 
   std::optional<WatchRebind> _remaped_key;
 };

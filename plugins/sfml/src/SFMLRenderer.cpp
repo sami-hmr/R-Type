@@ -5,6 +5,7 @@
 #include <cmath>
 #include <cstdint>
 #include <cstdio>
+#include <format>
 #include <functional>
 #include <iostream>
 #include <locale>

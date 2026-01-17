@@ -56,7 +56,7 @@ Actions::Actions(Registry& r, EventManager& em, EntityLoader& l)
       {
         for (auto& i : action.event_to_emit) {
           to_emit.emplace_back(
-              [&]()
+              [this, i]()
               {
                 this->_event_manager.get().emit(
                     this->_registry.get(), i.first, i.second);

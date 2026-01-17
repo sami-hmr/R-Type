@@ -161,6 +161,27 @@
               }
             ]
           }
+        },
+        {
+          "actions:ActionTrigger": {
+            "trigger": {
+              "type": "KeyPressed",
+              "params": {
+                "key": "ECHAP"
+              }
+            },
+            "to_emit": [
+              {
+                "name": "SceneChangeEvent",
+                "params": {
+                  "target_scene": "pause",
+                  "reason": "",
+                  "force": false,
+                  "main": true
+                }
+              }
+            ]
+          }
         }
       ]
     }

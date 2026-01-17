@@ -110,7 +110,8 @@ struct TextDrawable
   }
 };
 
-static const std::string abc = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+static const std::string abc =
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
 struct BarDrawable
 {
@@ -158,9 +159,9 @@ struct SliderDrawable
 
 using DrawableVariant = std::variant<AnimatedSpriteDrawable,
                                      SpriteDrawable,
-                                     TextDrawable,
                                      BarDrawable,
-                                     SliderDrawable>;
+                                     SliderDrawable,
+                                     TextDrawable>;
 
 struct DrawableItem
 {
@@ -175,11 +176,11 @@ struct DrawableItem
 
   bool operator<(const DrawableItem& other) const
   {
-    return z_index < other.z_index;
+    return z_index == other.z_index ? drawable.index() < other.drawable.index()
+                                    : z_index < other.z_index;
   }
 
   void draw(sf::RenderWindow& window,
             std::unordered_map<std::string, sf::Texture>& textures,
             std::unordered_map<std::string, sf::Font>& fonts);
 };
-    

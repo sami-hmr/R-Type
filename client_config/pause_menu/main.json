@@ -2,17 +2,11 @@
     "scenes": [
         {
             "name": "pause",
-            "state": "active",
+            "state": "disabled",
             "plugins": [],
             "entities": [
                 {
-                    "template": "card",
-                    "parameters": {
-                        "z": 20,
-                        "width": 1000.0,
-                        "height": 1000.0,
-                        "sprite": "assets/ui/semi_black_bg.png"
-                    }
+                    "template": "pause_bg"
                 },
                 {
                     "template": "button",
@@ -34,6 +28,24 @@
                         },
                         "text": "resume",
                         "font": "assets/fonts/Starjedi.ttf"
+                    },
+                    "config": {
+                        "actions:ActionTrigger": {
+                            "trigger": {
+                                "type": "KeyPressed",
+                                "params": {
+                                    "key": "ECHAP"
+                                }
+                            },
+                            "to_emit": [
+                                {
+                                    "name": "DisableSceneEvent",
+                                    "params": {
+                                        "target_scene": "pause"
+                                    }
+                                }
+                            ]
+                        }
                     }
                 },
                 {
@@ -77,15 +89,14 @@
                             {
                                 "GenerateRebindingScene": {
                                     "entity": "%global:player_id_client:id",
-                                    "scene_name": "bindings"
-                                }
-                            },
-                            {
-                                "SceneChangeEvent": {
-                                    "target_scene": "bindings",
-                                    "reason": "",
-                                    "force": false,
-                                    "main": true
+                                    "background_template": "pause_bg",
+                                    "button_template": "button",
+                                    "text_template": "text",
+                                    "link_template": "link",
+                                    "card_template": "card",
+                                    "back_to_base_scene_template": "return_to_pause_custom",
+                                    "base_scene": "pause",
+                                    "is_base_scene_main": true
                                 }
                             }
                         ],
