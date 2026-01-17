@@ -17,6 +17,7 @@
 #include "plugin/events/IoEvents.hpp"
 #include "plugin/events/LogMacros.hpp"
 #include "plugin/events/RebindingEvent.hpp"
+#include "plugin/events/SceneChangeEvent.hpp"
 
 Controller::Controller(Registry& r, EventManager& em, EntityLoader& l)
     : APlugin("Controller",
@@ -29,6 +30,19 @@ Controller::Controller(Registry& r, EventManager& em, EntityLoader& l)
   REGISTER_COMPONENT(Controllable)
 
   SUBSCRIBE_EVENT(KeyPressedEvent, {
+    if (this->_remaped_key) {
+      for (auto const& [key, active] : event.key_pressed) {
+        if (active) {
+          this->_event_manager.get().emit<Rebind>(
+              this->_remaped_key->entity, this->_remaped_key->key, key << 8);
+          this->delete_binding_scene(false);
+          this->create_binding_scene(this->_remaped_key->entity, "bindings");
+          break;
+        }
+      }
+      this->_remaped_key.reset();
+      return PREVENT_DEFAULT;
+    }
     for (auto const& [key, active] : event.key_pressed) {
       if (active) {
         this->handle_key_change(key, true);
@@ -45,22 +59,40 @@ Controller::Controller(Registry& r, EventManager& em, EntityLoader& l)
   })
 
   SUBSCRIBE_EVENT(Rebind, {
-    for (auto&& [c] : Zipper<Controllable>(this->_registry.get())) {
-      rebinding(c, event, KEY_PRESSED);
-      rebinding(c, event, KEY_RELEASED);
+    if (!this->_registry.get().has_component<Controllable>(event.entity)) {
+      return false;
     }
+    auto& c =
+        *this->_registry.get().get_components<Controllable>()[event.entity];
+    rebinding(c, event, KEY_PRESSED);
+    rebinding(c, event, KEY_RELEASED);
   })
+
+  SUBSCRIBE_EVENT(GenerateRebindingScene, {
+    if (!this->_registry.get().has_component<Controllable>(event.entity)) {
+      return false;
+    }
+    this->create_binding_scene(event.entity, event.scene_name);
+  })
+
+  SUBSCRIBE_EVENT(WatchRebind, { this->_remaped_key.emplace(event); })
+
+  SUBSCRIBE_EVENT(ExitRebind, { this->delete_binding_scene(); })
 }
 
-void Controller::rebinding(Controllable& c, Rebind event, KeyEventType event_type)
+void Controller::rebinding(Controllable& c,
+                           Rebind const& event,
+                           KeyEventType event_type)
 {
   if (!c.event_map.contains(event.key_to_replace + event_type)) {
+    std::cout << "failed to replace key, not in map\n";
     return;
   }
   auto binding = c.event_map.extract(event.key_to_replace + event_type);
   binding.key() = event.replacement_key + event_type;
   if (c.event_map.contains(binding.key())) {
-    c.event_map.insert_or_assign(event.key_to_replace + event_type, c.event_map.at(binding.key()));
+    c.event_map.insert_or_assign(event.key_to_replace + event_type,
+                                 c.event_map.at(binding.key()));
   }
   c.event_map.insert_or_assign(binding.key(), std::move(binding.mapped()));
 }

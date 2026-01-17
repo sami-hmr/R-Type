@@ -100,8 +100,8 @@
                     },
                     "collision:Collidable": {
                         "size": {
-                            "x": 0.3,
-                            "y": 0.15
+                            "width": 0.3,
+                            "height": 0.15
                         },
                         "collision_type": "solid"
                     },
@@ -228,8 +228,8 @@
                     },
                     "collision:Collidable": {
                         "size": {
-                            "x": 0.3,
-                            "y": 0.15
+                            "width": 0.3,
+                            "height": 0.15
                         },
                         "collision_type": "solid"
                     },

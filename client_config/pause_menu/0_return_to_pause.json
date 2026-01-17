@@ -1,0 +1,47 @@
+{
+    "entities_template": [
+        {
+            "name": "return_to_pause_custom",
+            "components": {
+                "template": "button",
+                "parameters": {
+                    "y": -0.5,
+                    "x": -0.75,
+                    "z": 21,
+                    "width": 0.15,
+                    "height": 0.3,
+                    "on_click": "$to_emit",
+                    "text_size": {
+                        "width": 0.2,
+                        "height": 0.03
+                    },
+                    "text": "<-"
+                }
+            }
+        },
+        {
+            "name": "return_to_pause",
+            "components": {
+                "template": "return_to_pause_custom",
+                "parameters": {
+                    "to_emit": [
+                        {
+                            "DisableSceneEvent": {
+                                "target_scene": "$current_scene"
+                            }
+                        },
+                        {
+                            "SceneChangeEvent": {
+                                "target_scene": "pause",
+                                "reason": "",
+                                "force": false,
+                                "main": true
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "scenes": []
+}

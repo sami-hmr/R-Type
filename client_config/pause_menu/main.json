@@ -1,0 +1,103 @@
+{
+    "scenes": [
+        {
+            "name": "pause",
+            "state": "active",
+            "plugins": [],
+            "entities": [
+                {
+                    "template": "card",
+                    "parameters": {
+                        "z": 20,
+                        "width": 1000.0,
+                        "height": 1000.0,
+                        "sprite": "assets/ui/semi_black_bg.png"
+                    }
+                },
+                {
+                    "template": "button",
+                    "parameters": {
+                        "y": -0.3,
+                        "z": 21,
+                        "width": 0.3,
+                        "height": 0.3,
+                        "on_click": [
+                            {
+                                "DisableSceneEvent": {
+                                    "target_scene": "pause"
+                                }
+                            }
+                        ],
+                        "text_size": {
+                            "width": 0.2,
+                            "height": 0.06
+                        },
+                        "text": "resume",
+                        "font": "assets/fonts/Starjedi.ttf"
+                    }
+                },
+                {
+                    "template": "button",
+                    "parameters": {
+                        "y": 0.0,
+                        "z": 21,
+                        "width": 0.3,
+                        "height": 0.3,
+                        "on_click": [
+                            {
+                                "DisableSceneEvent": {
+                                    "target_scene": "pause"
+                                }
+                            },
+                            {
+                                "SceneChangeEvent": {
+                                    "target_scene": "settings",
+                                    "reason": "",
+                                    "force": false,
+                                    "main": true
+                                }
+                            }
+                        ],
+                        "text_size": {
+                            "width": 0.2,
+                            "height": 0.06
+                        },
+                        "text": "settings",
+                        "font": "assets/fonts/Starjedi.ttf"
+                    }
+                },
+                {
+                    "template": "button",
+                    "parameters": {
+                        "y": 0.3,
+                        "z": 21,
+                        "width": 0.3,
+                        "height": 0.3,
+                        "on_click": [
+                            {
+                                "GenerateRebindingScene": {
+                                    "entity": "%global:player_id_client:id",
+                                    "scene_name": "bindings"
+                                }
+                            },
+                            {
+                                "SceneChangeEvent": {
+                                    "target_scene": "bindings",
+                                    "reason": "",
+                                    "force": false,
+                                    "main": true
+                                }
+                            }
+                        ],
+                        "text_size": {
+                            "width": 0.2,
+                            "height": 0.06
+                        },
+                        "text": "bindings",
+                        "font": "assets/fonts/Starjedi.ttf"
+                    }
+                }
+            ]
+        }
+    ]
+}

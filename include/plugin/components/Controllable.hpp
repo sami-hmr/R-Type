@@ -51,4 +51,5 @@ struct Controllable
   std::unordered_map<std::uint16_t, Trigger> event_map;
 
   HOOKABLE(Controllable)
+
 };

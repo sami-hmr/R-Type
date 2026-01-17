@@ -9,8 +9,8 @@
         "width": 0.5,
         "height": 0.5,
         "text_size": {
-          "x": 0.35,
-          "y": 0.35
+          "height": 0.35,
+          "width": 0.35
         },
         "font": "assets/fonts/roboto.ttf",
         "sprite_idle": "assets/ui/card.png",

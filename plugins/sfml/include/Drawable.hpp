@@ -110,6 +110,8 @@ struct TextDrawable
   }
 };
 
+static const std::string abc = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
 struct BarDrawable
 {
   std::reference_wrapper<sf::RectangleShape> rectangle;

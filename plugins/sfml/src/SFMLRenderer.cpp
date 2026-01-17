@@ -103,7 +103,8 @@ static sf::SoundBuffer gen_sound_placeholder()
 }
 
 SFMLRenderer::SFMLRenderer(Registry& r, EventManager& em, EntityLoader& l)
-    : APlugin("sfml", r, em, l, {"moving", "ath", "ui", "collision", "sound"}, {})
+    : APlugin(
+          "sfml", r, em, l, {"moving", "ath", "ui", "collision", "sound"}, {})
 {
   _window =
       sf::RenderWindow(sf::VideoMode(window_size), "R-Type - SFML Renderer");
@@ -406,8 +407,7 @@ void SFMLRenderer::render_texts(Registry& r,
     _text.value().setCharacterSize(base_size);
     sf::Rect<float> text_rect;
 
-    _text.value().setString(
-        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");  // caluculate height with all possible letters
+    _text.value().setString(abc);  // caluculate height with all letters
     text_rect = _text.value().getLocalBounds();
     double min_dim = std::min(window_size.x, window_size.y);
     double desired_height = min_dim * txt.scale.y;
