@@ -5,6 +5,7 @@
 #include <cmath>
 #include <cstdint>
 #include <cstdio>
+#include <cstdlib>
 #include <functional>
 #include <iostream>
 #include <locale>
@@ -581,6 +582,13 @@ void SFMLRenderer::render_animated_sprites(
       uniform_scale = {min_temp, min_temp};
     }
 
+    if (anim_data.flip_h) {
+      uniform_scale.x = -uniform_scale.x;
+    }
+    if (anim_data.flip_v) {
+      uniform_scale.y = -uniform_scale.y;
+    }
+
     float rotation = 0.0f;
 
     auto facings = this->_registry.get().get_components<Facing>();
@@ -605,10 +613,10 @@ void SFMLRenderer::render_animated_sprites(
       draw.true_size = anim_data.sprite_size;
     } else {
       draw.true_size = Vector2D(
-          std::max(static_cast<double>(anim_data.frame_size.x * uniform_scale.x)
+          std::max(static_cast<double>(anim_data.frame_size.x * std::abs(uniform_scale.x))
                        / min_dimension,
                    draw.true_size.x),
-          std::max(static_cast<double>(anim_data.frame_size.y * uniform_scale.y)
+          std::max(static_cast<double>(anim_data.frame_size.y * std::abs(uniform_scale.y))
                        / min_dimension,
                    draw.true_size.y));
     }

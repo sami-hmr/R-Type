@@ -218,6 +218,29 @@ std::optional<AnimationData> UI::parse_animation_data(JsonObject const& obj,
     return std::nullopt;
   }
   animdata.rollback = rollback.value();
+  if (obj.contains("flip_h")) {
+    auto const& flip_h = get_value<AnimatedSprite, bool>(
+        this->_registry.get(), obj, e, "flip_h");
+    if (!flip_h) {
+      std::cerr << "Error parsing animation data: \"flip_h\" field not found "
+                   "or invalid"
+                << "\n";
+    } else {
+      animdata.flip_h = flip_h.value();
+    }
+  }
+  if (obj.contains("flip_v")) {
+    auto const& flip_v = get_value<AnimatedSprite, bool>(
+        this->_registry.get(), obj, e, "flip_v");
+    if (!flip_v) {
+      std::cerr << "Error parsing animation data: \"flip_v\" field not found "
+                   "or invalid"
+                << "\n";
+    } else {
+      animdata.flip_v = flip_v.value();
+    }
+  }
+  
   return animdata;
 }
 
