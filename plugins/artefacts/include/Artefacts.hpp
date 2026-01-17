@@ -1,10 +1,10 @@
 #pragma once
 
 #include "Json/JsonParser.hpp"
-#include "artefacts/TemporalEffects.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/components/Inventory.hpp"
+#include "plugin/components/PickableTools.hpp"
 #include "plugin/events/CollisionEvent.hpp"
 
 class Artefacts : public APlugin
@@ -15,20 +15,10 @@ public:
   EntityLoader& entity_loader;
 
 private:
-  template<typename T>
-  void init_temporal_artefacts(Registry::Entity const& entity,
+  void init_pickable_artefacts(Registry::Entity const& entity,
                                JsonObject const& obj);
 
-  template<typename T>
-  Item artefact_to_item(TemporalEffect<T> artefact,
-                        std::string evt_name,
-                        JsonObject evt_params);
+  static Item artefact_to_item(PickableTool artefact);
 
-  template<typename T>
-  TemporalEffect<T> item_to_temporal_artefact(Item const& item);
-
-  template<typename T>
-  void on_temporal_effect(CollisionEvent const& event,
-                          const std::string& evt_name,
-                          const std::string& param_field);
+  void on_pickable_interaction(CollisionEvent const& event);
 };

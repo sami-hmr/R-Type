@@ -36,10 +36,13 @@ RtypeSingle::RtypeSingle(Registry& r,
   })
   SUBSCRIBE_EVENT(CreateEntity, {
     Registry::Entity entity = this->_registry.get().spawn_entity();
+  LOGGER("RTypeSingle", LogLevel::WARNING, "entity generated...")
     for (auto const& [id, comp] : event.additionals) {
       init_component(
           this->_registry.get(), this->_event_manager.get(), entity, id, comp);
+  LOGGER("RTypeSingle", LogLevel::WARNING, "a component has been done !")
     }
+  LOGGER("RTypeSingle", LogLevel::WARNING, "entity components done.")
   })
 
   SUBSCRIBE_EVENT(PlayerCreated, {

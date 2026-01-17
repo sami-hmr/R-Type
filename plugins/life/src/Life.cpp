@@ -141,7 +141,7 @@ void Life::heal_entity(const CollisionEvent& event,
   if (healths[event.a]->heal_delta >= heal_cooldown) {
     healths[event.a]->heal_delta = 0.0;
     this->_event_manager.get().emit<HealEvent>(
-        event.a, event.b, healers[event.b]->amount);
+        event.a, healers[event.b]->amount);
 
     this->_event_manager.get().emit<ComponentBuilder>(
         event.a,
