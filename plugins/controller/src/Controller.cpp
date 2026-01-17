@@ -257,6 +257,7 @@ void Controller::handle_key_change(Key key, bool is_pressed)
     }
     auto const& event = c.event_map.at(key_map);
 
+    std::cout << "entity: " << e << "\n";
     to_emit.emplace_back(
         [this, &event]()
         {

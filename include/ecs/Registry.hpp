@@ -1112,9 +1112,13 @@ public:
             if (any_val.has_value()) {
               ref = std::any_cast<std::reference_wrapper<T>>(any_val.value());
             }
+          } else {
+            std::cerr << "Unknown global hook: " << comp_name
+                      << " the syntax is \"global_hook\": true" << "\n";
           }
         } else {
-          std::cerr << "Unknown scope: " << scope << "\n";
+          std::cerr << "Unknown scope: " << scope << " on comp name "
+                    << comp_name << " and value " << value_name << "\n";
           return;
         }
 

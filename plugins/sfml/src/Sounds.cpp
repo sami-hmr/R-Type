@@ -1,14 +1,14 @@
 #include <optional>
 
-#include "plugin/components/SoundManager.hpp"
-#include "plugin/components/MusicManager.hpp"
-
 #include <SFML/Audio/Sound.hpp>
 #include <SFML/Audio/SoundBuffer.hpp>
 
 #include "SFMLRenderer.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
+#include "plugin/components/MusicManager.hpp"
+#include "plugin/components/SoundManager.hpp"
+#include "plugin/components/Volume.hpp"
 
 sf::Music& SFMLRenderer::load_music(const std::string& path)
 {
@@ -47,8 +47,6 @@ SFMLRenderer::get_available_sound(sf::SoundBuffer& buffer)
   return std::nullopt;
 }
 
-
-
 void SFMLRenderer::sounds_system(Registry& r)
 {
   for (auto&& [e, soundmanager] : ZipperIndex<SoundManager>(r)) {
@@ -59,14 +57,16 @@ void SFMLRenderer::sounds_system(Registry& r)
       if (!sound_opt.has_value()) {
         continue;
       }
-      sound_opt->get().setBuffer(buffer);
-      sound_opt->get().setVolume(static_cast<float>(sound.volume));
+      sound_opt->get().setVolume(
+          static_cast<float>((this->_sfx_volume / 100.0 * sound.volume)
+                             * (this->_master_volume / 100.0)));
       sound_opt->get().setPitch(static_cast<float>(sound.pitch));
       sound_opt->get().setLooping(sound.loop);
 
       if (sound.play && !sound.playing) {
         sound.playing = true;
         sound.play = false;
+        sound_opt->get().setBuffer(buffer);
         sound_opt->get().play();
       }
       if ((sound.stop && sound.playing)
@@ -84,9 +84,11 @@ void SFMLRenderer::musics_system(Registry& r)
 {
   for (auto&& [e, musicmanager] : ZipperIndex<MusicManager>(r)) {
     for (auto& [name, music] : musicmanager.musics) {
-      sf::Music &buffer = load_music(music.filepath);
+      sf::Music& buffer = load_music(music.filepath);
 
-      buffer.setVolume(static_cast<float>(music.volume));
+      buffer.setVolume(
+          static_cast<float>((this->_music_volume / 100.0 * music.volume)
+                             * (this->_master_volume / 100.0)));
       buffer.setPitch(static_cast<float>(music.pitch));
       buffer.setLooping(music.loop);
       if (music.play && !music.playing) {
@@ -103,5 +105,18 @@ void SFMLRenderer::musics_system(Registry& r)
         music.stop = false;
       }
     }
+  }
+}
+
+void SFMLRenderer::volumes_system(Registry& r)
+{
+  for (auto&& [s, master_volume] : Zipper<Scene, MasterVolume>(r)) {
+    this->_master_volume = master_volume.value;
+  }
+  for (auto&& [s, sfx_volume] : Zipper<Scene, SFXVolume>(r)) {
+    this->_sfx_volume = sfx_volume.value;
+  }
+  for (auto&& [s, music_volume] : Zipper<Scene, MusicVolume>(r)) {
+    this->_music_volume = music_volume.value;
   }
 }

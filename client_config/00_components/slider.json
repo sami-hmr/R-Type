@@ -21,7 +21,7 @@
                     "a": 255
                 },
                 "value_hook": "undefined_hook",
-                "global": true,
+                "global_hook": true,
                 "min_value": 0.0,
                 "max_value": 100.0,
                 "current_value": 50.0,
@@ -48,13 +48,13 @@
                 },
                 "ui:Slider": {
                     "hook": "$value_hook",
+                    "global_hook": "$global_hook",
                     "size": {
                         "width": "$width",
                         "height": "$height"
                     },
                     "bar_color": "$bar_color",
                     "circle_color": "$circle_color",
-                    "global": "$global",
                     "min_value": "$min_value",
                     "max_value": "$max_value",
                     "current_value": "$current_value",
