@@ -6,6 +6,17 @@
       "plugins": [],
       "entities": [
         {
+          "sound:MasterVolume": {
+            "value": 100.0
+          },
+          "sound:MusicVolume" : {
+            "value": 100.0
+          },
+          "sound:SFXVolume" : {
+            "value" : 50.0
+          }
+        },
+        {
           "ui:Drawable": {},
           "moving:Position": {
             "pos": {
@@ -115,6 +126,37 @@
               {
                 "DisableSceneEvent": {
                   "target_scene": "choose_game"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "sound:SoundManager": {
+            "sound_effects": [
+              {
+                "name": "fah",
+                "filepath": "assets/sounds/fah.mp3",
+                "volume": 100.0,
+                "pitch": 1.0,
+                "loop": false
+              }
+            ]
+          },
+          "controller:Controllable": {
+            "bindings": [
+              {
+                "description": "play sound",
+                "key": "P",
+                "pressed": {
+                  "name": "PlaySoundEvent",
+                  "params": {
+                    "name": "fah",
+                    "entity": "@self",
+                    "volume": 100.0,
+                    "pitch": 0.7,
+                    "loop": false
+                  }
                 }
               }
             ]

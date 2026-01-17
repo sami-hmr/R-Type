@@ -112,6 +112,7 @@ SFMLRenderer::SFMLRenderer(Registry& r, EventManager& em, EntityLoader& l)
   _window.setFramerateLimit(window_rate);
 
   _registry.get().add_system([this](Registry&) { this->handle_events(); }, 1);
+  _registry.get().add_system([this](Registry& r) { this->volumes_system(r); });
   _registry.get().add_system([this](Registry& r) { this->camera_system(r); });
   _registry.get().add_system([this](Registry&)
                              { _window.clear(sf::Color::Black); });

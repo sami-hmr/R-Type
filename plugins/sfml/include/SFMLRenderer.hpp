@@ -80,6 +80,7 @@ private:
   void slider_system(Registry& r) const;
   void sounds_system(Registry& r);
   void musics_system(Registry& r);
+  void volumes_system(Registry& r);
   void hover_system(Registry& r);
   void display();
 
@@ -128,6 +129,9 @@ private:
   std::unordered_map<std::string, sf::SoundBuffer> _sound_buffers;
   std::array<std::optional<sf::Sound>, MAX_NB_SOUNDS> _sounds;
   std::map<std::string, sf::Music> _musics;
+  double _master_volume = 100.0;
+  double _sfx_volume = 100.0;
+  double _music_volume = 100.0;
 
   sf::View _view;
   bool _camera_initialized = false;
