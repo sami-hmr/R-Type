@@ -56,10 +56,10 @@ Actions::Actions(Registry& r, EventManager& em, EntityLoader& l)
       {
         for (auto& i : action.event_to_emit) {
           to_emit.emplace_back(
-              [this, i]()
+              [this, i, entity]()
               {
                 this->_event_manager.get().emit(
-                    this->_registry.get(), i.first, i.second);
+                    this->_registry.get(), i.first, i.second, entity);
               });
         }
       }
@@ -70,8 +70,7 @@ Actions::Actions(Registry& r, EventManager& em, EntityLoader& l)
   })
 }
 
-void Actions::init_action_trigger(Registry::Entity const& entity,
-                                  JsonObject& obj)
+void Actions::init_action_trigger(Ecs::Entity const& entity, JsonObject& obj)
 {
   JsonObject trigger = std::get<JsonObject>(obj.at("trigger").value);
 

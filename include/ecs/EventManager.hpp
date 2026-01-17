@@ -20,7 +20,7 @@
  *
  * @code
  * struct DamageEvent {
- *   Registry::Entity target;
+ *   Ecs::Entity target;
  *   int amount;
  *
  *   // Bytable
@@ -191,7 +191,7 @@ public:
       _entity_converter.insert_or_assign(
           name,
           [](ByteArray const& b,
-             std::unordered_map<Registry::Entity, Registry::Entity> const& map)
+             std::unordered_map<Ecs::Entity, Ecs::Entity> const& map)
           { return EventType(b).change_entity(map).to_bytes(); });
     }
 
@@ -249,7 +249,8 @@ public:
    */
   ByteArray get_event_with_id(Registry& r,
                               std::string const&,
-                              JsonObject const&);
+                              JsonObject const&,
+                              std::optional<Ecs::Entity> entity = std::nullopt);
 
   /**
    * @brief Remove all event handlers for a specific event type.
@@ -300,7 +301,10 @@ public:
    * @see emit(const Event&) for direct type-safe emission
    * @see emit<Event>(const byte*, std::size_t) for binary emission
    */
-  void emit(Registry&, std::string const& name, JsonObject const& args);
+  void emit(Registry&,
+            std::string const& name,
+            JsonObject const& args,
+            std::optional<Ecs::Entity> entity = std::nullopt);
 
   /**
    * @brief Emit an event, invoking all registered handlers.
@@ -418,7 +422,7 @@ public:
   ByteArray convert_event_entity(
       std::string const& id,
       ByteArray const& event,
-      std::unordered_map<Registry::Entity, Registry::Entity> const& map);
+      std::unordered_map<Ecs::Entity, Ecs::Entity> const& map);
 
   void delete_all();
 
@@ -486,7 +490,7 @@ private:
         type_id,
         std::function<std::any(Registry&, JsonObject const&)>(
             [](Registry& r, JsonObject const& e) -> std::any
-            { return T(r, e); }));
+            { return T(r, e, std::nullopt); }));
 
     _invokers.insert_or_assign(
         type_id,
@@ -503,9 +507,12 @@ private:
           }
         });
 
-    _json_builder.insert_or_assign(type_id,
-                                   [](Registry& r, JsonObject const& params)
-                                   { return T(r, params).to_bytes(); });
+    _json_builder.insert_or_assign(
+        type_id,
+        [](Registry& r,
+           JsonObject const& params,
+           std::optional<Ecs::Entity> entity)
+        { return T(r, params, std::nullopt, entity).to_bytes(); });
   }
 
   template<event EventType>
@@ -527,11 +534,10 @@ private:
     handlers.insert(insert_pos, std::move(tmp));
   }
 
-  std::unordered_map<
-      std::string,
-      std::function<ByteArray(
-          ByteArray const&,
-          std::unordered_map<Registry::Entity, Registry::Entity> const&)>>
+  std::unordered_map<std::string,
+                     std::function<ByteArray(
+                         ByteArray const&,
+                         std::unordered_map<Ecs::Entity, Ecs::Entity> const&)>>
       _entity_converter;
 
   std::unordered_map<std::string, std::function<void(ByteArray const&)>>
@@ -541,8 +547,10 @@ private:
   std::unordered_map<std::type_index, std::any> _builders;
 
   std::unordered_map<std::type_index, std::any> _handlers;
-  std::unordered_map<std::type_index,
-                     std::function<ByteArray(Registry&, JsonObject const&)>>
+  std::unordered_map<
+      std::type_index,
+      std::function<ByteArray(
+          Registry&, JsonObject const&, std::optional<Ecs::Entity>)>>
       _json_builder;
 
   std::unordered_map<std::type_index,

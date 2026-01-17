@@ -142,7 +142,7 @@ struct ChargeWeapon
              int remaining_magazine,
              bool reloading,
              bool is_charging,
-             std::optional<Registry::Entity> charge_indicator_entity,
+             std::optional<Ecs::Entity> charge_indicator_entity,
              double current_charge_level,
              Vector2D charge_indicator_base_scale)
           {
@@ -181,7 +181,7 @@ struct ChargeWeapon
       parseByte<int>(),
       parseByte<bool>(),
       parseByte<bool>(),
-      parseByteOptional(parseByte<Registry::Entity>()),
+      parseByteOptional(parseByte<Ecs::Entity>()),
       parseByte<double>(),
       parseByte<Vector2D>())
 
@@ -200,16 +200,16 @@ struct ChargeWeapon
                     type_to_byte(this->remaining_magazine),
                     type_to_byte(this->reloading),
                     type_to_byte(this->is_charging),
-                    optional_to_byte<Registry::Entity>(
+                    optional_to_byte<Ecs::Entity>(
                         this->charge_indicator_entity,
-                        std::function<ByteArray(Registry::Entity const&)>(
-                            [](Registry::Entity const& e)
+                        std::function<ByteArray(Ecs::Entity const&)>(
+                            [](Ecs::Entity const& e)
                             { return type_to_byte(e); })),
                     type_to_byte(this->current_charge_level),
                     type_to_byte(this->charge_indicator_base_scale))
   CHANGE_ENTITY(
       result.charge_indicator_entity = this->charge_indicator_entity.has_value()
-          ? std::make_optional<Registry::Entity>(
+          ? std::make_optional<Ecs::Entity>(
                 map.at(this->charge_indicator_entity.value()))
           : std ::nullopt)
 
@@ -234,7 +234,7 @@ struct ChargeWeapon
   bool is_charging = false;
   double current_charge_level = 0.0;
   std::chrono::high_resolution_clock::time_point charge_start_time;
-  std::optional<Registry::Entity> charge_indicator_entity = std::nullopt;
+  std::optional<Ecs::Entity> charge_indicator_entity = std::nullopt;
   Vector2D charge_indicator_base_scale = Vector2D(1.0, 1.0);
 
   HOOKABLE(ChargeWeapon,

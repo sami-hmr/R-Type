@@ -16,7 +16,7 @@ class ContinuousFirePattern : public AttackPattern
 public:
   static constexpr double DEFAULT_INTERVAL = 2.0;
 
-  void execute(Registry::Entity entity,
+  void execute(Ecs::Entity entity,
                Registry&  /*registry*/,
                EventManager& em,
                AttackBehavior&  /*behavior*/,

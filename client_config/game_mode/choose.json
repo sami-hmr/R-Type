@@ -9,10 +9,10 @@
           "sound:MasterVolume": {
             "value": "#global:master_volume:current_value"
           },
-          "sound:MusicVolume" : {
+          "sound:MusicVolume": {
             "value": "#global:music_volume:current_value"
           },
-          "sound:SFXVolume" : {
+          "sound:SFXVolume": {
             "value": "#global:sfx_volume:current_value"
           }
         },
@@ -152,7 +152,7 @@
                   "name": "PlaySoundEvent",
                   "params": {
                     "name": "fah",
-                    "entity": 10,
+                    "entity": "@self",
                     "volume": 100.0,
                     "pitch": 0.7,
                     "loop": true

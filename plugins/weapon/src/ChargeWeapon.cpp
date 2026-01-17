@@ -6,7 +6,7 @@
 #include "plugin/components/BasicWeapon.hpp"
 #include "plugin/events/IoEvents.hpp"
 
-void Weapon::init_charge_weapon(Registry::Entity const& entity,
+void Weapon::init_charge_weapon(Ecs::Entity const& entity,
                                 JsonObject const& obj)
 {
   auto const& bullet_type = get_value<ChargeWeapon, std::string>(

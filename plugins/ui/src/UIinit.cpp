@@ -18,7 +18,7 @@
 #include "plugin/components/Text.hpp"
 #include "plugin/events/IoEvents.hpp"
 
-void UI::init_drawable(Registry::Entity const& entity, JsonObject const& obj)
+void UI::init_drawable(Ecs::Entity const& entity, JsonObject const& obj)
 {
   bool enabled = true;
   if (obj.contains("enabled")) {
@@ -37,7 +37,7 @@ void UI::init_drawable(Registry::Entity const& entity, JsonObject const& obj)
       enabled, stretch);
 }
 
-void UI::init_sprite(Registry::Entity const& entity, JsonObject const& obj)
+void UI::init_sprite(Ecs::Entity const& entity, JsonObject const& obj)
 {
   auto const& texture_path = get_value<Sprite, std::string>(
       this->_registry.get(), obj, entity, "texture");
@@ -61,7 +61,7 @@ void UI::init_sprite(Registry::Entity const& entity, JsonObject const& obj)
                          scale);
 }
 
-void UI::init_text(Registry::Entity const& entity, JsonObject const& obj)
+void UI::init_text(Ecs::Entity const& entity, JsonObject const& obj)
 {
   auto const& font_path =
       get_value<Text, std::string>(this->_registry.get(), obj, entity, "font");
@@ -141,7 +141,7 @@ void UI::init_text(Registry::Entity const& entity, JsonObject const& obj)
                       outline_thickness.value()));
 }
 
-void UI::init_input(Registry::Entity entity, const JsonVariant& config)
+void UI::init_input(Ecs::Entity entity, const JsonVariant& config)
 {
   bool enabled = false;
   std::string buffer;
@@ -190,7 +190,7 @@ void UI::handle_key_pressed(const KeyPressedEvent& event)
   }
 }
 
-void UI::init_background(Registry::Entity const& entity, JsonObject const& obj)
+void UI::init_background(Ecs::Entity const& entity, JsonObject const& obj)
 {
   auto const& textures_path = get_value<Background, JsonArray>(
       this->_registry.get(), obj, entity, "layers");

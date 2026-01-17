@@ -46,8 +46,7 @@ private:
   bool _connected = false;
 
 protected:
-  TwoWayMap<Registry::Entity /*server */, Registry::Entity /*client */>
-      _server_indexes;
+  TwoWayMap<Ecs::Entity /*server */, Ecs::Entity /*client */> _server_indexes;
 
   std::size_t _id_in_server = 0;
 
@@ -71,5 +70,5 @@ private:
   void handle_register(Register const&);
   void handle_login(Login const&);
 
-  std::unordered_set<Registry::Entity> _server_created;
+  std::unordered_set<Ecs::Entity> _server_created;
 };

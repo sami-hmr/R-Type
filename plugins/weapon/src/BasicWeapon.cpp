@@ -7,7 +7,7 @@
 #include "plugin/Hooks.hpp"
 #include "plugin/events/IoEvents.hpp"
 
-void Weapon::init_basic_weapon(Registry::Entity const& entity,
+void Weapon::init_basic_weapon(Ecs::Entity const& entity,
                                JsonObject const& obj)
 {
   auto const& bullet_type = get_value<BasicWeapon, std::string>(

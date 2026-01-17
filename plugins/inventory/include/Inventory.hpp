@@ -21,9 +21,9 @@ private:
   void use_item(std::uint8_t slot, std::size_t nb);
   void add_item(const Item& item, std::size_t nb);
 
-  void init_item_vector(Registry::Entity const& entity, JsonArray& inventory);
+  void init_item_vector(Ecs::Entity const& entity, JsonArray& inventory);
 
-  void init_inventory(Registry::Entity const& entity, JsonObject const& obj);
+  void init_inventory(Ecs::Entity const& entity, JsonObject const& obj);
 
   template<typename T>
   bool usage_emit(const ItemEvent<T>& event, std::string area);

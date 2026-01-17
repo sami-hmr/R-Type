@@ -6,6 +6,7 @@
 #include "ByteParser/ByteParser.hpp"
 #include "EventMacros.hpp"
 #include "Json/JsonParser.hpp"
+#include "ecs/Entity.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
@@ -13,11 +14,11 @@
 
 struct Rebind
 {
-  Registry::Entity entity;
+  Ecs::Entity entity;
   std::uint16_t key_to_replace;
   std::uint16_t replacement_key;
 
-  Rebind(Registry::Entity entity,
+  Rebind(Ecs::Entity entity,
          std::uint16_t key_to_replace,
          std::uint16_t replacement_key)
       : entity(entity)
@@ -26,15 +27,17 @@ struct Rebind
   {
   }
 
-  Rebind(Registry& r, JsonObject const& e)
-      : entity(get_value_copy<Registry::Entity>(r, e, "key_to_replace").value())
+  Rebind(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+      : entity(get_value_copy<Ecs::Entity>(r, e, "entity", entity).value())
       , key_to_replace(
             static_cast<std::uint32_t>(KEY_MAPPING.at_first(
-                get_value_copy<std::string>(r, e, "key_to_replace").value()))
+                get_value_copy<std::string>(r, e, "key_to_replace", entity)
+                    .value()))
             << 8)
       , replacement_key(
             static_cast<std::uint32_t>(KEY_MAPPING.at_first(
-                get_value_copy<std::string>(r, e, "replacement_key").value()))
+                get_value_copy<std::string>(r, e, "replacement_key", entity)
+                    .value()))
             << 8)
   {
   }
@@ -43,11 +46,11 @@ struct Rebind
 
   DEFAULT_BYTE_CONSTRUCTOR(
       Rebind,  // NOLINT
-      ([](Registry::Entity entity,
+      ([](Ecs::Entity entity,
           std::uint16_t key_to_replace,
           std::uint16_t replacement_key)
        { return Rebind(entity, key_to_replace, replacement_key); }),
-      parseByte<Registry::Entity>(),
+      parseByte<Ecs::Entity>(),
       parseByte<std::uint16_t>(),
       parseByte<std::uint16_t>())
 
@@ -88,7 +91,8 @@ struct GenerateRebindingScene
                                   std::string const& lnk,
                                   std::string const& back,
                                   std::string const& base,
-                                  bool main) {
+                                  bool main)
+                               {
                                  return GenerateRebindingScene(
                                      e, bg, btn, txt, lnk, back, base, main);
                                }),
@@ -110,25 +114,27 @@ struct GenerateRebindingScene
                     string_to_byte(this->base_scene),
                     type_to_byte(is_base_scene_main))
 
-  GenerateRebindingScene(Registry& r, JsonObject const& e)
-      : entity(get_value_copy<Registry::Entity>(r, e, "entity").value_or(0))
+  GenerateRebindingScene(Registry& r,
+                         JsonObject const& e,
+                         std::optional<Ecs::Entity> entity = std::nullopt)
+      : entity(get_value_copy<Ecs::Entity>(r, e, "entity", entity).value_or(0))
       , background_template(
-            get_value_copy<std::string>(r, e, "background_template")
+            get_value_copy<std::string>(r, e, "background_template", entity)
                 .value_or(""))
       , button_template(
-            get_value_copy<std::string>(r, e, "button_template").value_or(""))
+            get_value_copy<std::string>(r, e, "button_template", entity).value_or(""))
       , text_template(
-            get_value_copy<std::string>(r, e, "text_template").value_or(""))
+            get_value_copy<std::string>(r, e, "text_template", entity).value_or(""))
       , link_template(
-            get_value_copy<std::string>(r, e, "link_template").value_or(""))
+            get_value_copy<std::string>(r, e, "link_template", entity).value_or(""))
       , card_template(
-            get_value_copy<std::string>(r, e, "card_template").value_or(""))
+            get_value_copy<std::string>(r, e, "card_template", entity).value_or(""))
       , back_to_base_scene_template(
             get_value_copy<std::string>(r, e, "back_to_base_scene_template")
                 .value_or(""))
-      , base_scene(get_value_copy<std::string>(r, e, "base_scene").value_or(""))
+      , base_scene(get_value_copy<std::string>(r, e, "base_scene", entity).value_or(""))
       , is_base_scene_main(
-            get_value_copy<bool>(r, e, "is_base_scene_main").value_or(false))
+            get_value_copy<bool>(r, e, "is_base_scene_main", entity).value_or(false))
   {
   }
 
@@ -149,16 +155,16 @@ struct WatchRebind
 {
   WatchRebind() = default;
 
-  WatchRebind(Registry::Entity entity, std::uint16_t key)
+  WatchRebind(Ecs::Entity entity, std::uint16_t key)
       : entity(entity)
       , key(key)
   {
   }
 
   DEFAULT_BYTE_CONSTRUCTOR(WatchRebind,
-                           ([](Registry::Entity entity, std::uint16_t k)
+                           ([](Ecs::Entity entity, std::uint16_t k)
                             { return WatchRebind(entity, k); }),
-                           parseByte<Registry::Entity>(),
+                           parseByte<Ecs::Entity>(),
                            parseByte<std::uint16_t>())
 
   DEFAULT_SERIALIZE(type_to_byte(key))
@@ -171,7 +177,7 @@ struct WatchRebind
 
   CHANGE_ENTITY_DEFAULT
 
-  Registry::Entity entity;
+  Ecs::Entity entity;
   std::uint16_t key;
 };
 

@@ -11,7 +11,7 @@
 #include "plugin/components/WaveTag.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
 
-void WaveManager::spawn_wave_entities(Registry::Entity wave_entity)
+void WaveManager::spawn_wave_entities(Ecs::Entity wave_entity)
 {
   auto& wave =
       this->_registry.get().get_components<Wave>()[wave_entity].value();

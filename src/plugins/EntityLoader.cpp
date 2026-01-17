@@ -100,7 +100,7 @@ void EntityLoader::load_scene(JsonObject& json_scene)
     JsonArray const& array =
         std::get<JsonArray>(json_scene.at("entities").value);
     for (auto const& it : array) {
-      std::optional<Registry::Entity> new_e =
+      std::optional<Ecs::Entity> new_e =
           this->load_entity(std::get<JsonObject>(it.value));
       if (new_e.has_value()) {
         this->_registry.get().add_component(new_e.value(), Scene(scene));
@@ -193,7 +193,7 @@ void EntityLoader::load_plugin(std::string const& plugin,
   }
 }
 
-void EntityLoader::load_components(Registry::Entity e, JsonObject const& config)
+void EntityLoader::load_components(Ecs::Entity e, JsonObject const& config)
 {
   if (config.contains("template")) {
     std::string name = std::get<std::string>(config.at("template").value);
@@ -235,15 +235,14 @@ void EntityLoader::load_components(Registry::Entity e, JsonObject const& config)
   }
 }
 
-std::optional<Registry::Entity> EntityLoader::load_entity(
-    JsonObject const& config)
+std::optional<Ecs::Entity> EntityLoader::load_entity(JsonObject const& config)
 {
-  Registry::Entity new_entity = this->_registry.get().spawn_entity();
+  Ecs::Entity new_entity = this->_registry.get().spawn_entity();
   this->load_components(new_entity, config);
   return new_entity;
 }
 
-std::optional<Registry::Entity> EntityLoader::load_entity_template(
+std::optional<Ecs::Entity> EntityLoader::load_entity_template(
     std::string const& template_name,
     std::vector<std::pair<std::string, ByteArray>> const& aditionals,
     JsonObject const& parameters)
@@ -285,9 +284,9 @@ void EntityLoader::get_loader(std::string const& plugin)
 }
 
 void EntityLoader::load_byte_component(
-    Registry::Entity entity,
+    Ecs::Entity entity,
     ComponentBuilder const& component,
-    TwoWayMap<Registry::Entity, Registry::Entity> const& indexes)
+    TwoWayMap<Ecs::Entity, Ecs::Entity> const& indexes)
 {
   if (component.id.contains(':')) {
     std::string plugin = component.id.substr(0, component.id.find(':'));
