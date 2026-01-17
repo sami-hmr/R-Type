@@ -1,10 +1,3 @@
-/*
-** EPITECH PROJECT, 2025
-** R-Type
-** File description:
-** DamageEvent
-*/
-
 #pragma once
 
 #include <optional>

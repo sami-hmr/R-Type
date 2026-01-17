@@ -6,7 +6,7 @@
 #include "plugin/APlugin.hpp"
 #include "plugin/components/Item.hpp"
 #include "plugin/components/Inventory.hpp"
-#include "plugin/events/InventoryEvents.hpp"
+#include "plugin/components/Position.hpp"
 
 #define DFLT_MAX 64
 
@@ -26,6 +26,7 @@ private:
 
   void init_inventory(Registry::Entity const& entity, JsonObject const& obj);
 
-  template<typename T>
+  void create_artefact(Item const& item, Position const& pos, Registry::Entity entity);
+
   bool usage_emit(std::string area, const JsonObject &obj);
 };

@@ -1,16 +1,21 @@
+#include <string>
 #include <utility>
 #include <vector>
 
-#include "ecs/Registry.hpp"
-#include "ecs/EmitEvent.hpp"
-#include "plugin/APlugin.hpp"
-#include "Json/JsonParser.hpp"
 #include "InventoryPlugin.hpp"
+
+#include "Json/JsonParser.hpp"
+#include "ecs/EmitEvent.hpp"
 #include "ecs/EventManager.hpp"
 #include "ecs/InitComponent.hpp"
+#include "ecs/Registry.hpp"
+#include "ecs/zipper/ZipperIndex.hpp"
+#include "plugin/APlugin.hpp"
+#include "plugin/Byte.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Item.hpp"
-#include "ecs/zipper/ZipperIndex.hpp"
+#include "plugin/components/Position.hpp"
+#include "plugin/events/CreateEntity.hpp"
 #include "plugin/events/InventoryEvents.hpp"
 
 InventoryPlugin::InventoryPlugin(Registry& r, EventManager& em, EntityLoader& l)
@@ -18,7 +23,7 @@ InventoryPlugin::InventoryPlugin(Registry& r, EventManager& em, EntityLoader& l)
               r,
               em,
               l,
-              {},
+              {"moving", "artefacts"},
               {COMP_INIT(Inventory, Inventory, init_inventory)})
     , entity_loader(l)
 {
@@ -35,9 +40,8 @@ InventoryPlugin::InventoryPlugin(Registry& r, EventManager& em, EntityLoader& l)
         }
         use_item(event.slot_item, event.nb_to_use, inventory);
         if (inventory.slots[event.slot_item].first.consumable) {
-          return usage_emit<ConsumeItem>(
-              "consume",
-              inventory.slots[event.slot_item].first.object.second);
+          return usage_emit(
+              "consume", inventory.slots[event.slot_item].first.object.second);
         }
       }
     }
@@ -52,9 +56,8 @@ InventoryPlugin::InventoryPlugin(Registry& r, EventManager& em, EntityLoader& l)
         }
         use_item(event.slot_item, event.nb_to_use, inventory);
         if (inventory.slots[event.slot_item].first.throwable) {
-          return usage_emit<ThrowItem>(
-              "throw",
-              inventory.slots[event.slot_item].first.object.second);
+          return usage_emit(
+              "throw", inventory.slots[event.slot_item].first.object.second);
         }
       }
     }
@@ -82,8 +85,22 @@ InventoryPlugin::InventoryPlugin(Registry& r, EventManager& em, EntityLoader& l)
   })
 }
 
-std::vector<std::pair<Item, std::size_t>> InventoryPlugin::init_item_vector(Registry::Entity const& entity,
-                                       JsonArray& inventory)
+// void InventoryPlugin::create_artefact(Item const& item, Position const& pos, Registry::Entity entity)
+// {
+//   Artefacts::artefact_to_item();
+//   ByteArray artefact_bytes = artefact.to_bytes();
+//   ByteArray pos_bytes = pos.to_bytes();
+
+//   this->_event_manager.get().emit<ComponentBuilder>(
+//       entity, this->_registry.get().get_component_key<Item>(), artefact_bytes);
+//   CreateEntity::Additional additional = {
+//       {this->_registry.get().get_component_key<Position>(), pos_bytes}};
+
+//   this->_event_manager.get().emit<CreateEntity>(additional);
+// }
+
+std::vector<std::pair<Item, std::size_t>> InventoryPlugin::init_item_vector(
+    Registry::Entity const& entity, JsonArray& inventory)
 {
   std::vector<std::pair<Item, std::size_t>> slots;
 
@@ -136,29 +153,29 @@ void InventoryPlugin::init_inventory(Registry::Entity const& entity,
 {
   std::size_t max_items = std::get<int>(obj.at("max_items").value);
   auto inventory = std::get<JsonArray>(obj.at("items").value);
-  std::vector<std::pair<Item, std::size_t>> items = this->init_item_vector(entity, inventory);
-// create all_content by using all names + nb of items
+  std::vector<std::pair<Item, std::size_t>> items =
+      this->init_item_vector(entity, inventory);
+  std::string all_content;
+  for (auto const &item: items) {
+    all_content.append(item.first.object.first + " x" + std::to_string(item.second) + ";");
+  }
   init_component<Inventory>(this->_registry.get(),
                             this->_event_manager.get(),
                             entity,
                             items,
-                            "",// add all content instead
+                            all_content,
                             entity,
                             max_items);
 }
 
-template<typename T>
-bool InventoryPlugin::usage_emit(std::string area,
-                                 const JsonObject& obj)
+bool InventoryPlugin::usage_emit(std::string area, const JsonObject& obj)
 {
   auto use_item = get_value_copy<JsonObject>(this->_registry.get(), obj, area);
   auto entity = get_value_copy<int>(this->_registry.get(), obj, "entity");
   if (!use_item || !entity) {
-    LOGGER(
-        "InventoryPlugin",
-        LogLevel::ERROR,
-        std::format("Missing {} field in item. No event played",
-                    area));
+    LOGGER("InventoryPlugin",
+           LogLevel::ERROR,
+           std::format("Missing {} field in item. No event played", area));
     return false;
   }
   auto evt_use =
@@ -169,12 +186,11 @@ bool InventoryPlugin::usage_emit(std::string area,
     auto params =
         get_value_copy<JsonObject>(this->_registry.get(), *evt_use, "params");
     if (!name || !params) {
-      LOGGER(
-          "InventoryPlugin",
-          LogLevel::ERROR,
-          std::format(
-              "Invalid event field in item's {} configuration. No even't played",
-              area));
+      LOGGER("InventoryPlugin",
+             LogLevel::ERROR,
+             std::format("Invalid event field in item's {} configuration. No "
+                         "even't played",
+                         area));
       return false;
     }
     params->insert_or_assign("entity", JsonValue(*entity));
@@ -184,7 +200,9 @@ bool InventoryPlugin::usage_emit(std::string area,
   return false;
 }
 
-void InventoryPlugin::add_item(const Item& item, std::size_t nb, Inventory &inventory)
+void InventoryPlugin::add_item(const Item& item,
+                               std::size_t nb,
+                               Inventory& inventory)
 {
   bool added = false;
 
@@ -204,7 +222,9 @@ void InventoryPlugin::add_item(const Item& item, std::size_t nb, Inventory &inve
   inventory.slots.emplace_back(item, nb);
 }
 
-void InventoryPlugin::use_item(std::uint8_t slot, std::size_t nb, Inventory &inventory)
+void InventoryPlugin::use_item(std::uint8_t slot,
+                               std::size_t nb,
+                               Inventory& inventory)
 {
   if (nb < inventory.slots[slot].second) {
     inventory.slots[slot].second -= nb;

@@ -23,6 +23,10 @@ private:
   Item artefact_to_item(TemporalEffect<T> artefact,
                         std::string evt_name,
                         JsonObject evt_params);
+
+  template<typename T>
+  TemporalEffect<T> item_to_temporal_artefact(Item const& item);
+
   template<typename T>
   void on_temporal_effect(CollisionEvent const& event,
                           const std::string& evt_name,

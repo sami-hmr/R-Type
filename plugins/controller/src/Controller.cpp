@@ -161,7 +161,7 @@ void Controller::init_controller(Registry::Entity const& entity,
   this->init_event_map(entity, bindings, result);
 
   this->_registry.get().add_component<Controllable>(entity, std::move(result));
-  std::cout << "CREATED COMPOENTENT Controllable for Entity: " << entity
+  std::cout << "CREATED COMPONENT Controllable for Entity: " << entity
             << "\n";
 }
 

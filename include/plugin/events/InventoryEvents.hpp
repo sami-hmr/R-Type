@@ -93,6 +93,10 @@ struct ItemEvent
                     type_to_byte(consumer))
 };
 
+struct DropItem
+{
+};
+
 struct ThrowItem
 {
 };
@@ -105,6 +109,7 @@ struct RemoveItem
 {
 };
 
+using Drop = ItemEvent<DropItem>;
 using Throw = ItemEvent<ThrowItem>;
 using Remove = ItemEvent<RemoveItem>;
 using Consume = ItemEvent<ConsumeItem>;

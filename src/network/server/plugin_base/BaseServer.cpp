@@ -13,6 +13,7 @@
 #include "network/server/Server.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/events/CleanupEvent.hpp"
+#include "plugin/events/CreateEntity.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
 #include "plugin/events/LoggerEvent.hpp"
 #include "plugin/events/NetworkEvents.hpp"
@@ -105,8 +106,8 @@ BaseServer::BaseServer(std::string const& name,
           return;
         }
 
-        for (auto const& it : this->_server_class->watch_disconected_clients())
-        {
+        for (auto const& it :
+             this->_server_class->watch_disconected_clients()) {
           this->_event_manager.get().emit<DisconnectClient>(it);
         }
       });
@@ -134,6 +135,14 @@ BaseServer::BaseServer(std::string const& name,
   SUBSCRIBE_EVENT(LoadEntityTemplate, {
     this->_loader.get().load_entity_template(event.template_name,
                                              event.aditionals);
+  })
+
+  SUBSCRIBE_EVENT(CreateEntity, {
+    Registry::Entity entity = this->_registry.get().spawn_entity();
+    for (auto const& [id, comp] : event.additionals) {
+      init_component(
+          this->_registry.get(), this->_event_manager.get(), entity, id, comp);
+    }
   })
 
   SUBSCRIBE_EVENT(DeleteEntity, {

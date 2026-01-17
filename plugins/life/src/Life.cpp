@@ -206,7 +206,6 @@ void Life::on_heal(const HealEvent& event)
     return;
   }
   if (event.target < healths.size() && healths[event.target].has_value()) {
-    int old_health = healths[event.target]->current;
     healths[event.target]->current =
         std::min(healths[event.target]->current + event.amount,
                  healths[event.target]->max);
@@ -215,8 +214,6 @@ void Life::on_heal(const HealEvent& event)
         event.target,
         this->_registry.get().get_component_key<Health>(),
         healths[event.target]->to_bytes());
-
-    int actual_heal = healths[event.target]->current - old_health;
     return;
   }
 }

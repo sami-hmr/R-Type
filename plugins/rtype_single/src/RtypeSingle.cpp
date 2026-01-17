@@ -4,12 +4,14 @@
 #include "../include/RtypeSingle.hpp"
 
 #include "Json/JsonParser.hpp"
+#include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/Scenes.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Controllable.hpp"
+#include "plugin/events/CreateEntity.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
 #include "plugin/events/LoadPluginEvent.hpp"
 #include "plugin/events/LogMacros.hpp"
@@ -31,6 +33,13 @@ RtypeSingle::RtypeSingle(Registry& r,
            "LoadEntityTemplate: " + event.template_name);
     this->_loader.get().load_entity_template(event.template_name,
                                              event.aditionals);
+  })
+  SUBSCRIBE_EVENT(CreateEntity, {
+    Registry::Entity entity = this->_registry.get().spawn_entity();
+    for (auto const& [id, comp] : event.additionals) {
+      init_component(
+          this->_registry.get(), this->_event_manager.get(), entity, id, comp);
+    }
   })
 
   SUBSCRIBE_EVENT(PlayerCreated, {

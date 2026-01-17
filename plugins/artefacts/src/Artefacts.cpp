@@ -14,15 +14,20 @@
 #include "plugin/events/InventoryEvents.hpp"
 
 Artefacts::Artefacts(Registry& r, EventManager& em, EntityLoader& l)
-    : APlugin(
-          "collision",
-          r,
-          em,
-          l,
-          {"collision", "inventory"},
-          {COMP_INIT(HealArtefact, HealArtefact, init_temporal_artefacts<HealArtefact>),
-           COMP_INIT(PoisonArtefact, PoisonArtefact, init_temporal_artefacts<PoisonArtefact>),
-           COMP_INIT(SpeedUpArtefact, SpeedArtefact, init_temporal_artefacts<SpeedArtefact>)})
+    : APlugin("collision",
+              r,
+              em,
+              l,
+              {"collision", "inventory"},
+              {COMP_INIT(HealArtefact,
+                         HealArtefact,
+                         init_temporal_artefacts<HealArtefact>),
+               COMP_INIT(PoisonArtefact,
+                         PoisonArtefact,
+                         init_temporal_artefacts<PoisonArtefact>),
+               COMP_INIT(SpeedUpArtefact,
+                         SpeedArtefact,
+                         init_temporal_artefacts<SpeedArtefact>)})
     , entity_loader(l)
 {
   REGISTER_COMPONENT(HealArtefact)
@@ -39,28 +44,36 @@ Artefacts::Artefacts(Registry& r, EventManager& em, EntityLoader& l)
 
 template<typename T>
 void Artefacts::init_temporal_artefacts(Registry::Entity const& entity,
-                                   JsonObject const& obj)
+                                        JsonObject const& obj)
 {
   auto const& activate_on = get_value<T, ActivationEffect>(
       this->_registry.get(), obj, entity, "activate_on");
   auto const& effective_time = get_value<T, double>(
       this->_registry.get(), obj, entity, "effective_time");
-  auto const& name = get_value<T, std::string>(
-      this->_registry.get(), obj, entity, "name");
-  auto const& consumable = get_value<T, bool>(
-      this->_registry.get(), obj, entity, "consumable");
-  auto const& throwable = get_value<T, bool>(
-      this->_registry.get(), obj, entity, "throwable");
-  auto const& points = get_value<T, double>(
-      this->_registry.get(), obj, entity, "points");
+  auto const& name =
+      get_value<T, std::string>(this->_registry.get(), obj, entity, "name");
+  auto const& consumable =
+      get_value<T, bool>(this->_registry.get(), obj, entity, "consumable");
+  auto const& throwable =
+      get_value<T, bool>(this->_registry.get(), obj, entity, "throwable");
+  auto const& points =
+      get_value<T, double>(this->_registry.get(), obj, entity, "points");
 
-  if (!activate_on || !effective_time || !name || !consumable || throwable || !points) {
+  if (!activate_on || !effective_time || !name || !consumable || throwable
+      || !points)
+  {
     std::cerr << "Error loading Temporal artefact: missing a field\n";
     return;
   }
 
-  this->_registry.get().emplace_component<T>(
-      entity, std::nullopt, *activate_on, *effective_time, *name, *consumable, *throwable, *points);
+  this->_registry.get().emplace_component<T>(entity,
+                                             std::nullopt,
+                                             *activate_on,
+                                             *effective_time,
+                                             *name,
+                                             *consumable,
+                                             *throwable,
+                                             *points);
 }
 
 template<typename T>
@@ -117,4 +130,18 @@ Item Artefacts::artefact_to_item(TemporalEffect<T> artefact,
     config.insert_or_assign("throw", JsonValue(throwption));
   }
   return Item(obj, artefact.consumable, artefact.throwable);
+}
+
+template<typename T>
+TemporalEffect<T> Artefacts::item_to_temporal_artefact(Item const& item)
+{
+  ActivationEffect activate_on;
+  std::string name;
+  bool throwable;
+  bool consumable;
+  double points;
+
+
+
+  return TemporalEffect<T>();
 }
