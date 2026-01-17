@@ -271,9 +271,6 @@ JsonObject Registry::get_template(std::string const& name,
   }
   auto const& definition = _entities_templates.find(name)->second;
   JsonObject new_object = definition.obj;
-  if (params.empty()) {
-    return new_object;
-  }
   replace_json_object(new_object, params, definition.default_parameters);
   return new_object;
 }
