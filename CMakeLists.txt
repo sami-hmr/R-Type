@@ -2,6 +2,17 @@ cmake_minimum_required(VERSION 3.14)
 
 include(cmake/prelude.cmake)
 
+# Auto-detect vcpkg triplet based on platform if not explicitly set
+if(NOT DEFINED VCPKG_TARGET_TRIPLET)
+    if(WIN32)
+        set(VCPKG_TARGET_TRIPLET "x64-windows" CACHE STRING "")
+    elseif(APPLE)
+        set(VCPKG_TARGET_TRIPLET "x64-osx" CACHE STRING "")
+    else()
+        set(VCPKG_TARGET_TRIPLET "x64-linux" CACHE STRING "")
+    endif()
+endif()
+
 project(
     r-type
     VERSION 0.1.0
@@ -10,10 +21,33 @@ project(
     LANGUAGES CXX
 )
 
+# Compiler-specific flags
+if(MSVC)
+    # Windows 10+ required for cpp-httplib, prevent Windows macro pollution
+    add_compile_definitions(_WIN32_WINNT=0x0A00 NOMINMAX WIN32_LEAN_AND_MEAN)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4 /O2")
+else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -fPIC -O3")
+endif()
+
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -fPIC -O3")
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 set(CMAKE_SHARED_LIBRARY_PREFIX "")
+
+# Set executable output directory to build/ for all configurations
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+foreach(CONFIG ${CMAKE_CONFIGURATION_TYPES})
+    string(TOUPPER ${CONFIG} CONFIG_UPPER)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CONFIG_UPPER} ${CMAKE_BINARY_DIR})
+endforeach()
+
+# Use vcpkg toolchain if available
+if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+    set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        CACHE STRING "Vcpkg toolchain file")
+endif()
 
 # add_compile_options(-fno-consteval)
 
@@ -48,9 +82,13 @@ target_include_directories(${CORE_LIB}
         ${parser_SOURCE_DIR}/include
 )
 
+target_compile_definitions(${CORE_LIB} PRIVATE
+    PLUGIN_DIR="${CMAKE_BINARY_DIR}/plugins/"
+)
+
 target_link_libraries(${CORE_LIB} PRIVATE parser)
 
-find_package(asio REQUIRED)
+find_package(asio CONFIG REQUIRED)
 find_package(ZLIB REQUIRED)
 
 set(NETWORK_COMMON_LIB r-type_network_common)

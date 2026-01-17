@@ -139,7 +139,7 @@ CUSTOM_EXCEPTION(ClientNotInitialized);
           CONTEXT_LOGGER( \
               context, \
               "http", \
-              LogLevel::ERROR, \
+              LogLevel::ERR, \
               std::format( \
                   "failed to parse http response: {}, \nresponse: \"{}\"", \
                   std::get<ERR>(parsed).message, \

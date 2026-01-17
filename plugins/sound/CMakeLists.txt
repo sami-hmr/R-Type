@@ -6,6 +6,7 @@ add_library(${LIB_NAME} SHARED
     src/Sound.cpp
     src/SoundManager.cpp
     src/MusicManager.cpp
+    src/Volume.cpp
 )
 
 target_compile_features(${LIB_NAME} PRIVATE cxx_std_23)

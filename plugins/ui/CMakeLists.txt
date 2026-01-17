@@ -4,6 +4,7 @@ set(LIB_NAME ui)
 
 add_library(${LIB_NAME} SHARED
   src/UI.cpp
+  src/UIinit.cpp
   src/CameraEvents.cpp
   src/AnimatedSprite.cpp
   src/Slider.cpp

@@ -74,7 +74,7 @@ void Logger::on_log_event(const LogEvent& event)
     case LogLevel::WARNING:
       color_code = "\033[33m";
       break;
-    case LogLevel::ERROR:
+    case LogLevel::ERR:
       color_code = "\033[31m";
       break;
     default:
@@ -105,7 +105,7 @@ std::string Logger::level_to_string(LogLevel level)
       return "INFO";
     case LogLevel::WARNING:
       return "WARNING";
-    case LogLevel::ERROR:
+    case LogLevel::ERR:
       return "ERROR";
     default:
       return "UNKNOWN";
@@ -114,7 +114,7 @@ std::string Logger::level_to_string(LogLevel level)
 
 extern "C"
 {
-void* entry_point(Registry& r,
+PLUGIN_EXPORT void* entry_point(Registry& r,
                   EventManager& em,
                   EntityLoader& e,
                   std::optional<JsonObject> const& config)

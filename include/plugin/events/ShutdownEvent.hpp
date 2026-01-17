@@ -23,7 +23,7 @@ struct ShutdownEvent
 
   DEFAULT_BYTE_CONSTRUCTOR(ShutdownEvent,
                            ([](std::string const& r, int e)
-                            { return (ShutdownEvent) {r, e}; }),
+                            { return ShutdownEvent {r, e}; }),
                            parseByteString(),
                            parseByte<int>())
 

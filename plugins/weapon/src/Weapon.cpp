@@ -207,7 +207,7 @@ void Weapon::on_charge_start(Registry& r, const StartChargeWeapon& e)
     this->_event_manager.get().emit<LoadEntityTemplate>(weapon.charge_indicator,
                                                         additional);
   } else {
-    LOGGER("ChargeWeapon", LogLevel::ERROR, "No charge indicator configured")
+    LOGGER("ChargeWeapon", LogLevel::ERR, "No charge indicator configured")
   }
 }
 
@@ -539,7 +539,7 @@ void Weapon::apply_scale_modifiers()
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager& em, EntityLoader& l)
+PLUGIN_EXPORT void* entry_point(Registry& r, EventManager& em, EntityLoader& l)
 {
   return new Weapon(r, em, l);
 }
