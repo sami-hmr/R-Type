@@ -13,7 +13,7 @@ struct Heal
   }
 
   DEFAULT_BYTE_CONSTRUCTOR(Heal,
-                           ([](int x) { return (Heal) {x}; }),
+                           ([](int x) { return Heal {x}; }),
                            parseByte<int>())
   DEFAULT_SERIALIZE(type_to_byte(this->amount))
 

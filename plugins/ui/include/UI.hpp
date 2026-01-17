@@ -5,6 +5,7 @@
 #include "Json/JsonParser.hpp"
 #include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
+#include "ecs/InitComponent.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/AnimatedSprite.hpp"
@@ -38,6 +39,8 @@ private:
   void cam_zoom_event(const CamZoomEvent& e);
   void cam_rotate_event(const CamRotateEvent& e);
   void cam_speed_event(const CamSpeedEvent& e);
+  void cam_shake_event(const CameraShakeEvent& e);
+
 
   void update_anim_system(Registry& r);
   void input_system(Registry& r);

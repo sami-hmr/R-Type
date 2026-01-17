@@ -48,7 +48,7 @@ Collision::Collision(Registry& r, EventManager& em, EntityLoader& l)
   _collision_algo = std::make_unique<QuadTreeCollision>(2.0, 2.0);
 
   if (!_collision_algo) {
-    LOGGER("COLLISION", LogLevel::ERROR, "Error loading collision algorithm")
+    LOGGER("COLLISION", LogLevel::ERR, "Error loading collision algorithm")
   }
 
   _registry.get().add_system([this](Registry& r) { this->collision_system(r); },
@@ -367,7 +367,7 @@ void Collision::on_collision(const CollisionEvent& c)
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
+PLUGIN_EXPORT void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
   return new Collision(r, em, e);
 }

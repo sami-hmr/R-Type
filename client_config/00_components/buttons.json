@@ -3,6 +3,7 @@
     {
       "name": "button",
       "default_parameters": {
+        "stretch": false,
         "x": 0.0,
         "y": 0.0,
         "z": 10,
@@ -115,7 +116,8 @@
             "default_animation": "idle"
           },
           "ui:Drawable": {
-            "hook": "drawable"
+            "hook": "drawable",
+            "stretch": "$stretch"
           },
           "ath:Clickable": {
             "to_emit": "$on_click"

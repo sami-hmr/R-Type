@@ -175,7 +175,7 @@ void BaseServer::launch_server(ServerLaunching const& infos)
     this->_server_class->receive_loop();
   } catch (std::exception& e) {
     LOGGER("server",
-           LogLevel::ERROR,
+           LogLevel::ERR,
            std::format("Failed to start server: {}", e.what()));
   }
 }

@@ -44,7 +44,7 @@ BaseClient::BaseClient(std::string const& name,
   }
   SUBSCRIBE_EVENT(ClientConnection, {
     if (this->_user_id == -1) {
-      LOGGER("client", LogLevel::ERROR, "client not logged in");
+      LOGGER("client", LogLevel::ERR, "client not logged in");
       return false;
     }
     if (!this->_running) {
@@ -107,7 +107,7 @@ BaseClient::BaseClient(std::string const& name,
             this->_loader.get().load_byte_component(
                 true_entity, server_comp, this->_server_indexes);
           } catch (InvalidPackage const& e) {
-            LOGGER("client", LogLevel::ERROR, e.what());
+            LOGGER("client", LogLevel::ERR, e.what());
           }
         }
       });
@@ -171,7 +171,7 @@ void BaseClient::connection_thread(ClientConnection const& c)
     client.connect(this->_user_id);
   } catch (std::exception& e) {
     LOGGER("client",
-           LogLevel::ERROR,
+           LogLevel::ERR,
            std::format("Connection failed: {}", e.what()));
     _running = false;
   }

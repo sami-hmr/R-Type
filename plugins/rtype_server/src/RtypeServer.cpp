@@ -4,7 +4,9 @@
 
 #include "RtypeServer.hpp"
 
+#ifndef _WIN32
 #include <unistd.h>
+#endif
 
 #include "NetworkShared.hpp"
 #include "ecs/EmitEvent.hpp"
@@ -112,7 +114,7 @@ RtypeServer::RtypeServer(Registry& r,
 
 extern "C"
 {
-void* entry_point(Registry& r,
+PLUGIN_EXPORT void* entry_point(Registry& r,
                   EventManager& em,
                   EntityLoader& e,
                   std::optional<JsonObject> const& config)

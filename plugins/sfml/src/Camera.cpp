@@ -1,5 +1,8 @@
 
 
+#include <chrono>
+#include <cstdlib>
+
 #include "plugin/components/Camera.hpp"
 
 #include <SFML/System/Angle.hpp>
@@ -50,11 +53,38 @@ static void zoom_cam(Camera& cam)
   }
 }
 
-static void shake_cam(Camera& cam)
+static inline double randn()
 {
-  if (cam.shaking) {
+  return -1 + (2 * static_cast<double>(std::rand()) / RAND_MAX);
+}
+
+static void shake_cam(
+    Camera& cam,
+    sf::Vector2f& center,
+    double& display_rotation,
+    std::chrono::time_point<std::chrono::high_resolution_clock> now)
+{
+  if (!cam.shaking) {
     return;
   }
+  std::chrono::duration<double> duration = now - cam.shake_start_time;
+  if (duration.count() >= cam.shake_duration) {
+    cam.shaking = false;
+    cam.shaking_trauma = 0;
+    cam.shaking_angle = 0;
+    cam.shaking_offset = 0;
+    return;
+  }
+
+  double ratio = duration.count() / cam.shake_duration;
+  double effective_trauma = cam.shaking_trauma * (1.0 - (ratio * ratio));
+
+  double angle = cam.shaking_angle * effective_trauma * randn();
+  sf::Vector2f offset(cam.shaking_offset * effective_trauma * randn(),
+                      cam.shaking_offset * effective_trauma * randn());
+
+  display_rotation += angle;
+  center += offset;
 }
 
 void SFMLRenderer::camera_system(Registry& r)
@@ -77,13 +107,16 @@ void SFMLRenderer::camera_system(Registry& r)
     move_cam(pos, cam);
     rotate_cam(cam);
     zoom_cam(cam);
-    shake_cam(cam);
+
     sf::Vector2f new_center(
         static_cast<float>((pos.pos.x + 1.0) * window_size.x / 2.0),
         static_cast<float>((pos.pos.y + 1.0) * window_size.y / 2.0));
+    double display_rotation = cam.rotation;
+    shake_cam(cam, new_center, display_rotation, r.clock().now());
     this->_view.setCenter(new_center);
 
-    this->_view.setRotation(sf::degrees(static_cast<float>(cam.rotation)));
+    this->_view.setRotation(
+        sf::degrees(static_cast<float>(cam.rotation + display_rotation)));
     sf::Vector2f new_size = {static_cast<float>(cam.size.x * window_size.x),
                              static_cast<float>(cam.size.y * window_size.y)};
     this->_view.setSize(new_size);

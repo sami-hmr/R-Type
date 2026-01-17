@@ -74,7 +74,7 @@ RtypeSingle::RtypeSingle(Registry& r,
       this->_event_manager.get().emit<SceneChangeEvent>("game", "", true);
     } else {
       LOGGER("rtype_single",
-             LogLevel::ERROR,
+             LogLevel::ERR,
              "No controllable entity found! client_test.json not loaded?");
     }
   })
@@ -104,7 +104,7 @@ RtypeSingle::RtypeSingle(Registry& r,
 
 extern "C"
 {
-void* entry_point(Registry& r,
+PLUGIN_EXPORT void* entry_point(Registry& r,
                   EventManager& em,
                   EntityLoader& e,
                   std::optional<JsonObject> const& config)

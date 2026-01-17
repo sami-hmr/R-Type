@@ -237,7 +237,7 @@ void Life::update_cooldowns(Registry& reg)
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
+PLUGIN_EXPORT void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
   return new Life(r, em, e);
 }

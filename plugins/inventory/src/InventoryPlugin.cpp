@@ -174,7 +174,7 @@ bool InventoryPlugin::usage_emit(std::string area, const JsonObject& obj)
   auto entity = get_value_copy<int>(this->_registry.get(), obj, "entity");
   if (!use_item || !entity) {
     LOGGER("InventoryPlugin",
-           LogLevel::ERROR,
+           LogLevel::ERR,
            std::format("Missing {} field in item. No event played", area));
     return false;
   }
@@ -187,7 +187,7 @@ bool InventoryPlugin::usage_emit(std::string area, const JsonObject& obj)
         get_value_copy<JsonObject>(this->_registry.get(), *evt_use, "params");
     if (!name || !params) {
       LOGGER("InventoryPlugin",
-             LogLevel::ERROR,
+             LogLevel::ERR,
              std::format("Invalid event field in item's {} configuration. No "
                          "even't played",
                          area));

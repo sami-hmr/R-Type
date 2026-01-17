@@ -8,6 +8,7 @@
 #include <functional>
 #include <iostream>
 #include <locale>
+#include <numbers>
 #include <stdexcept>
 #include <tuple>
 
@@ -88,7 +89,7 @@ static sf::SoundBuffer gen_sound_placeholder()
   for (unsigned int i = 0; i < SAMPLE_COUNT; ++i) {
     double time = static_cast<double>(i) / SAMPLE_RATE;
     samples[i] = static_cast<std::int16_t>(
-        amplitude * std::sin(2.0 * M_PI * FREQUENCY * time));
+        amplitude * std::sin(2.0 * std::numbers::pi * FREQUENCY * time));
   }
   sf::SoundBuffer sound_buffer;
   if (!sound_buffer.loadFromSamples(samples.data(),
@@ -103,7 +104,8 @@ static sf::SoundBuffer gen_sound_placeholder()
 }
 
 SFMLRenderer::SFMLRenderer(Registry& r, EventManager& em, EntityLoader& l)
-    : APlugin("sfml", r, em, l, {"moving", "ath", "ui", "collision", "sound"}, {})
+    : APlugin(
+          "sfml", r, em, l, {"moving", "ath", "ui", "collision", "sound"}, {})
 {
   _window =
       sf::RenderWindow(sf::VideoMode(window_size), "R-Type - SFML Renderer");
@@ -157,7 +159,7 @@ sf::Texture& SFMLRenderer::load_texture(std::string const& path)
   }
   sf::Texture texture;
   if (!texture.loadFromFile(path)) {
-    LOGGER("SFML", LogLevel::ERROR, "Failed to load texture: " + path)
+    LOGGER("SFML", LogLevel::ERR, "Failed to load texture: " + path)
     return _textures.at(placeholder);
   }
   _textures.insert_or_assign(path, std::move(texture));
@@ -171,7 +173,7 @@ sf::Font& SFMLRenderer::load_font(std::string const& path)
   }
   sf::Font font;
   if (!font.openFromFile(path)) {
-    LOGGER("SFML", LogLevel::ERROR, "Failed to load font: " + path)
+    LOGGER("SFML", LogLevel::ERR, "Failed to load font: " + path)
     throw std::runtime_error("Failed to load font: " + path);
   }
   _fonts.insert_or_assign(path, std::move(font));
@@ -560,41 +562,64 @@ void SFMLRenderer::render_animated_sprites(
       anim_data.frame_size.y = texture.getSize().y;
     }
 
-    float scale_x = static_cast<float>(min_dimension * anim_data.sprite_size.x)
-        / anim_data.frame_size.x;
-    float scale_y = static_cast<float>(min_dimension * anim_data.sprite_size.y)
-        / anim_data.frame_size.y;
-    float uniform_scale = std::min(scale_x, scale_y);
+    float scale_x, scale_y = 0;
+    sf::Vector2f uniform_scale;
+
+    if (draw.stretch) {
+      scale_x =
+          (window_size.x * anim_data.sprite_size.x) / anim_data.frame_size.x;
+      scale_y =
+          (window_size.y * anim_data.sprite_size.y) / anim_data.frame_size.y;
+
+      uniform_scale = {scale_x, scale_y};
+    } else {
+      scale_x = static_cast<float>(min_dimension * anim_data.sprite_size.x)
+          / anim_data.frame_size.x;
+      scale_y = static_cast<float>(min_dimension * anim_data.sprite_size.y)
+          / anim_data.frame_size.y;
+      float min_temp = std::min(scale_x, scale_y);
+      uniform_scale = {min_temp, min_temp};
+    }
 
     float rotation = 0.0f;
 
     auto facings = this->_registry.get().get_components<Facing>();
 
-    if (facings.size() > entity && facings[entity].has_value()) {
-      Vector2D norm = (pos.pos - facings[entity].value().direction).normalize();
-      rotation = static_cast<float>(std::atan2(norm.y, norm.x));
+    if (facings.size() > entity && facings.at(entity).has_value()) {
+      if (facings.at(entity).value().plane) {
+        Vector2D dir = facings[entity].value().direction.normalize();
+        rotation = static_cast<float>(std::atan2(dir.y, dir.x) * 180.0 / M_PI);
+      } else {
+        Vector2D norm =
+            (pos.pos - facings[entity].value().direction).normalize();
+        rotation =
+            static_cast<float>(std::atan2(norm.y, norm.x) * 180.0 / M_PI);
+      }
     }
 
     if (!this->_sprite.has_value()) {
       this->_sprite = sf::Sprite(texture);
     }
 
-    draw.true_size = Vector2D(
-        std::max(static_cast<double>(anim_data.frame_size.x * uniform_scale)
-                     / min_dimension,
-                 draw.true_size.x),
-        std::max(static_cast<double>(anim_data.frame_size.y * uniform_scale)
-                     / min_dimension,
-                 draw.true_size.y));
+    if (draw.stretch) {
+      draw.true_size = anim_data.sprite_size;
+    } else {
+      draw.true_size = Vector2D(
+          std::max(static_cast<double>(anim_data.frame_size.x * uniform_scale.x)
+                       / min_dimension,
+                   draw.true_size.x),
+          std::max(static_cast<double>(anim_data.frame_size.y * uniform_scale.y)
+                       / min_dimension,
+                   draw.true_size.y));
+    }
 
-    AnimatedSpriteDrawable anim_drawable(
-        std::ref(*this->_sprite),
-        anim_data.texture_path,
-        new_pos,
-        sf::Vector2f(uniform_scale, uniform_scale),
-        anim_data,
-        rotation,
-        pos.z);
+    AnimatedSpriteDrawable anim_drawable(std::ref(*this->_sprite),
+                                         anim_data.texture_path,
+                                         new_pos,
+                                         uniform_scale,
+                                         anim_data,
+                                         rotation,
+                                         pos.z);
 
     all_drawables.emplace_back(DrawableVariant {std::move(anim_drawable)},
                                pos.z);
@@ -694,7 +719,7 @@ void SFMLRenderer::button_system(Registry& r)
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
+PLUGIN_EXPORT void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
   return new SFMLRenderer(r, em, e);
 }
