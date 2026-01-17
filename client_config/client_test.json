@@ -111,19 +111,20 @@
                   "name": "FireBullet",
                   "params": {}
                 }
-              },
-              {
-                "description": "charge shoot",
-                "key": "SPACE",
-                "pressed": {
-                  "name": "StartChargeWeapon",
-                  "params": {}
-                },
-                "released": {
-                  "name": "ReleaseChargeWeapon",
-                  "params": {}
-                }
               }
+              // ,
+              // {
+              //   "description": "charge shoot",
+              //   "key": "SPACE",
+              //   "pressed": {
+              //     "name": "StartChargeWeapon",
+              //     "params": {}
+              //   },
+              //   "released": {
+              //     "name": "ReleaseChargeWeapon",
+              //     "params": {}
+              //   }
+              // }
             ]
           }
         }
