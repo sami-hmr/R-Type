@@ -148,7 +148,7 @@ void Target::on_interaction_zone(const InteractionZoneEvent& event)
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
+PLUGIN_EXPORT void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
   return new Target(r, em, e);
 }

@@ -24,7 +24,7 @@ void BaseServer::setup_http_requests()
 
   SUBSCRIBE_EVENT(HttpBadCodeEvent, {
     LOGGER("http",
-           LogLevel::ERROR,
+           LogLevel::ERR,
            std::format("error {}: {}", event.code, event.message));
   });
 
@@ -41,7 +41,7 @@ void handle_register_response(void* raw_context, httplib::Result const& result)
     CONTEXT_LOGGER(
         context,
         "http",
-        LogLevel::ERROR,
+        LogLevel::ERR,
         "failed to parse http response: " + std::get<ERR>(parsed).message);
     return;
   }

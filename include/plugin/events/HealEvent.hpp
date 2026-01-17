@@ -31,7 +31,7 @@ struct HealEvent
   DEFAULT_BYTE_CONSTRUCTOR(HealEvent,
                            ([](Ecs::Entity const& t,
                                Ecs::Entity const& s,
-                               int a) { return (HealEvent) {t, s, a}; }),
+                               int a) { return HealEvent(t, s, a); }),
                            parseByte<Ecs::Entity>(),
                            parseByte<Ecs::Entity>(),
                            parseByte<int>())

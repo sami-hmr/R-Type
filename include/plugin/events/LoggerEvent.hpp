@@ -27,7 +27,7 @@ struct LogEvent
   DEFAULT_BYTE_CONSTRUCTOR(
       LogEvent,
       ([](std::string const& n, LogLevel l, std::string const& m)
-       { return (LogEvent) {n, l, m}; }),
+       { return LogEvent(n, l, m); }),
       parseByteString(),
       parseByte<LogLevel>(),
       parseByteString())

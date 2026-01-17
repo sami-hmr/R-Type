@@ -18,6 +18,9 @@
 #include "ecs/Registry.hpp"
 #include "ecs/Scenes.hpp"
 #include "plugin/libLoaders/LDLoader.hpp"
+#ifdef _WIN32
+#  include "plugin/libLoaders/WindowsLoader.hpp"
+#endif
 
 EntityLoader::EntityLoader(Registry& registry, EventManager& em)
     : _registry(std::ref(registry))
@@ -251,7 +254,7 @@ std::optional<Ecs::Entity> EntityLoader::load_entity_template(
 
   if (!entity) {
     // LOGGER("load entity template",
-    //        LogLevel::ERROR,
+    //        LogLevel::ERR,
     //        "failed to load entity template " + event.template_name);
     return std::nullopt;
   }
@@ -269,10 +272,12 @@ void EntityLoader::get_loader(std::string const& plugin)
       this->_loaders[plugin];
       this->_loaders.insert_or_assign(plugin,
                                       std::make_unique<
-#if __linux__
+#ifdef _WIN32
+                                          WindowsLoader
+#elif __linux__
                                           DlLoader
 #endif
-                                          <IPlugin>>("plugins/" + plugin));
+                                          <IPlugin>>(PLUGIN_DIR + plugin));
     }
   } catch (NotExistingLib const& e) {
     std::cerr << e.what() << '\n';

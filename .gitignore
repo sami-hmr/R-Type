@@ -41,3 +41,10 @@ Testing
 
 *.log
 gmon.out
+
+# Windows build artifacts
+*.dll
+*.exp
+*.pdb
+*.lib
+parser

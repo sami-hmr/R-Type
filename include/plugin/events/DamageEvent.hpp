@@ -34,7 +34,7 @@ struct DamageEvent
   DEFAULT_BYTE_CONSTRUCTOR(DamageEvent,
                            ([](Ecs::Entity const& t,
                                Ecs::Entity const& s,
-                               int a) { return (DamageEvent) {t, s, a}; }),
+                               int a) { return DamageEvent(t, s, a); }),
                            parseByte<Ecs::Entity>(),
                            parseByte<Ecs::Entity>(),
                            parseByte<int>())
@@ -43,7 +43,9 @@ struct DamageEvent
                     type_to_byte(this->source),
                     type_to_byte(this->amount))
 
-  DamageEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+  DamageEvent(Registry& r,
+              JsonObject const& e,
+              std::optional<Ecs::Entity> entity)
       : target(static_cast<Ecs::Entity>(
             get_value_copy<double>(r, e, "entity", entity).value()))
       , source(static_cast<Ecs::Entity>(

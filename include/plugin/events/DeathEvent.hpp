@@ -30,13 +30,14 @@ struct DeathEvent
   CHANGE_ENTITY(result.entity = map.at(entity);)
 
   DEFAULT_BYTE_CONSTRUCTOR(DeathEvent,
-                           ([](Ecs::Entity const& e)
-                            { return (DeathEvent) {e}; }),
+                           ([](Ecs::Entity const& e) { return DeathEvent(e); }),
                            parseByte<Ecs::Entity>())
 
   DEFAULT_SERIALIZE(type_to_byte(this->entity))
 
-  DeathEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+  DeathEvent(Registry& r,
+             JsonObject const& e,
+             std::optional<Ecs::Entity> entity)
       : entity(static_cast<Ecs::Entity>(
             get_value_copy<double>(r, e, "entity", entity).value()))
   {

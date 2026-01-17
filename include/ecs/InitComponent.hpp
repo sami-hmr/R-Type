@@ -49,7 +49,7 @@ typename SparseArray<Component>::Ref init_component(Registry& r,
     em.emit<ComponentBuilder>(ComponentBuilder(
         to, r.get_component_key<Component>(), comp.to_bytes()));
   } catch (std::out_of_range const&) {
-    em.emit<LogEvent>("init", LogLevel::ERROR, "unknow component");
+    em.emit<LogEvent>("init", LogLevel::ERR, "unknow component");
   }
   return r.add_component<Component>(to, std::move(comp));
 }
@@ -84,7 +84,7 @@ typename SparseArray<Component>::Ref init_component(Registry& r,
     em.emit<ComponentBuilder>(ComponentBuilder(
         to, r.get_component_key<Component>(), Component(args...).to_bytes()));
   } catch (std::out_of_range const&) {
-    em.emit<LogEvent>("init", LogLevel::ERROR, "unknow component");
+    em.emit<LogEvent>("init", LogLevel::ERR, "unknow component");
   }
   return r.emplace_component<Component>(to, std::forward<Args>(args)...);
 }
@@ -118,7 +118,7 @@ inline void init_component(Registry& r,
   try {
     em.emit<ComponentBuilder>(ComponentBuilder(to, id, comp));
   } catch (std::out_of_range const&) {
-    em.emit<LogEvent>("init", LogLevel::ERROR, "unknow component");
+    em.emit<LogEvent>("init", LogLevel::ERR, "unknow component");
   }
   r.emplace_component(to, id, comp);
 }

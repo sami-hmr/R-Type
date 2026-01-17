@@ -17,7 +17,7 @@ void handle_get_player_save(void* raw_context, httplib::Result const& result)
   auto const& id_it = result->headers.find("id");
   if (id_it == result->headers.end()) {
     CONTEXT_LOGGER(
-        context, "http", LogLevel::ERROR, "no id in header, skipping");
+        context, "http", LogLevel::ERR, "no id in header, skipping");
     return;
   }
   auto parsed = parseInt()(id_it->second);
@@ -25,7 +25,7 @@ void handle_get_player_save(void* raw_context, httplib::Result const& result)
   if (parsed.index() == ERR) {
     CONTEXT_LOGGER(context,
                    "http",
-                   LogLevel::ERROR,
+                   LogLevel::ERR,
                    "error parsing id in header, skipping");
     return;
   }
@@ -47,7 +47,7 @@ void handle_get_player_save(void* raw_context, httplib::Result const& result)
 
     if (parsed.index() == ERR) {
       CONTEXT_LOGGER(
-          context, "http", LogLevel::ERROR, "error parsing save in body");
+          context, "http", LogLevel::ERR, "error parsing save in body");
       context->_loader.get().load_components(
           context->_users_entities[user],
           JsonObject({{"template", JsonValue("player")}}));

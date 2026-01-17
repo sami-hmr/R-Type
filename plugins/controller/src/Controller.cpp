@@ -216,7 +216,7 @@ double Controller::compute_axis(Key negative, Key positive) const
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
+PLUGIN_EXPORT void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
   return new Controller(r, em, e);
 }

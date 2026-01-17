@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <numbers>
 
 #include "MovementPattern.hpp"
 #include "NetworkShared.hpp"
@@ -35,7 +36,7 @@ public:
     double angle = get_value_copy<double>(registry, behavior.params, "angle")
                        .value_or(DEFAULT_ANGLE);
     int dir = static_cast<int>(behavior.movement_delta / switch_interval) % 2;
-    double rad = angle * M_PI / 180.0;
+    double rad = angle * std::numbers::pi / 180.0;
 
     Vector2D new_direction;
     new_direction.x = -1.0;
