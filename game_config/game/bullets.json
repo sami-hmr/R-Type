@@ -3,6 +3,9 @@
     {
       "name": "bullet_spread_3",
       "components": {
+        "moving:IdStorage": {
+          "id": "#global:player_id_client:id"
+        },
         "wave:Wave": {
           "entity_template": "bounce_bullet",
           "count": 3,
@@ -26,6 +29,9 @@
     {
       "name": "bullet_circle_8",
       "components": {
+        "moving:IdStorage": {
+          "id": "#global:player_id_client:id"
+        },
         "wave:Wave": {
           "entity_template": "bounce_bullet",
           "count": 8,
@@ -49,6 +55,9 @@
     {
       "name": "basic_bullet_1",
       "components": {
+        "moving:IdStorage": {
+          "id": "#global:player_id_client:id"
+        },
         "wave:Wave": {
           "entity_template": "basic_bullet",
           "count": 1,
@@ -69,6 +78,9 @@
     {
       "name": "bounce_bullet_1",
       "components": {
+        "moving:IdStorage": {
+          "id": "#global:player_id_client:id"
+        },
         "wave:Wave": {
           "entity_template": "bounce_bullet",
           "count": 1,

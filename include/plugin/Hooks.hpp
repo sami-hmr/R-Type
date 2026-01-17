@@ -832,6 +832,9 @@ std::optional<T> get_value(Registry& r,
         r.template register_binding<ComponentType, T>(
             entity, field_name, stripped);
 
+        using string_convertibles = std::variant<int, bool, double, std::string>;
+        
+        auto tester = []<typename Ts
         auto result = resolve_scoped_hook<T>(r, stripped, entity);
         if (result.has_value()) {
           return result;

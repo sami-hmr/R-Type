@@ -5,6 +5,7 @@
 #include "ecs/Registry.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
+#include "plugin/IPlugin.hpp"
 #include "plugin/components/ScoreManager.hpp"
 #include "plugin/events/DeathEvent.hpp"
 
@@ -18,6 +19,40 @@ Score::Score(Registry& r, EventManager& em, EntityLoader& l)
 {
   REGISTER_COMPONENT(ScoreManager)
   SUBSCRIBE_EVENT(DeathEvent, { this->on_death(this->_registry.get(), event); })
+}
+
+void Score::on_death(Registry& r, const DeathEvent& event)
+{
+
+  if (!r.has_component<ScoreManager>(event.killer))
+  {
+    if (event.killer == 3) {
+      std::cout << "killer has no ScoreManager component, no score awarded." << std::endl;
+    }
+    return;
+  }
+  if (!r.has_component<ScoreManager>(event.entity)) {
+    if (event.killer == 3) {
+      std::cout << "entity has no ScoreManager component, no score to give." << std::endl;
+    }
+    return;
+  }
+
+  std::cout << "Entity " << event.entity << " was killed by " << event.killer
+            << std::endl;
+  auto& scores = r.get_components<ScoreManager>();
+  if (event.killer < scores.size() && scores[event.killer].has_value()
+      && event.entity < scores.size() && scores[event.entity].has_value())
+  {
+    scores[event.killer]->score += scores[event.entity]->points_to_give;
+
+    this->_event_manager.get().emit<ComponentBuilder>(
+        event.killer,
+        r.get_component_key<ScoreManager>(),
+        scores[event.killer]->to_bytes());
+  }
+  std::cout << "Entity " << event.killer << " scored! New score: "
+            << scores[event.killer]->score << std::endl;
 }
 
 void Score::init_score_manager(Registry::Entity& e, const JsonObject& obj)
@@ -37,4 +72,12 @@ void Score::init_score_manager(Registry::Entity& e, const JsonObject& obj)
                                e,
                                initial_score,
                                points_to_give.value());
+}
+
+extern "C"
+{
+PLUGIN_EXPORT void* entry_point(Registry& r, EventManager& em, EntityLoader& l)
+{
+  return new Score(r, em, l);
+}
 }

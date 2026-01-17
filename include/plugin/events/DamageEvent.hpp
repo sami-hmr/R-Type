@@ -23,8 +23,8 @@
 struct DamageEvent
 {
   DamageEvent(Registry::Entity t, Registry::Entity s, int a)
-      : target(std::move(t))
-      , source(std::move(s))
+      : target(t)
+      , source(s)
       , amount(a)
   {
   }
