@@ -35,7 +35,9 @@ struct CleanupEvent
   {
   }
 
-  CleanupEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+  CleanupEvent(Registry& r,
+               JsonObject const& e,
+               std::optional<Ecs::Entity> entity)
       : trigger(get_value_copy<std::string>(r, e, "trigger", entity).value())
   {
   }

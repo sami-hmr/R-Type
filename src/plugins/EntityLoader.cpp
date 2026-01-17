@@ -235,8 +235,7 @@ void EntityLoader::load_components(Ecs::Entity e, JsonObject const& config)
   }
 }
 
-std::optional<Ecs::Entity> EntityLoader::load_entity(
-    JsonObject const& config)
+std::optional<Ecs::Entity> EntityLoader::load_entity(JsonObject const& config)
 {
   Ecs::Entity new_entity = this->_registry.get().spawn_entity();
   this->load_components(new_entity, config);

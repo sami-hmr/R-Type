@@ -11,9 +11,9 @@ APlugin::APlugin(
     EventManager& event_manager,
     EntityLoader& loader,
     std::vector<std::string> const& depends_on,
-    std::unordered_map<
-        std::string,
-        std::function<void(Ecs::Entity, JsonVariant const&)>> components,
+    std::unordered_map<std::string,
+                       std::function<void(Ecs::Entity, JsonVariant const&)>>
+        components,
     std::optional<JsonObject> const& config)
     : name(std::move(name))
     , components(std::move(components))

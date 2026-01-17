@@ -23,11 +23,13 @@ struct Rebind
   Rebind(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
       : key_to_replace(
             static_cast<std::uint32_t>(KEY_MAPPING.at_first(
-                get_value_copy<std::string>(r, e, "key_to_replace", entity).value()))
+                get_value_copy<std::string>(r, e, "key_to_replace", entity)
+                    .value()))
             << 8)
       , replacement_key(
             static_cast<std::uint32_t>(KEY_MAPPING.at_first(
-                get_value_copy<std::string>(r, e, "replacement_key", entity).value()))
+                get_value_copy<std::string>(r, e, "replacement_key", entity)
+                    .value()))
             << 8)
   {
   }

@@ -47,9 +47,11 @@ struct SceneChangeEvent
                     type_to_byte(this->force),
                     type_to_byte(main))
 
-  SceneChangeEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
-      : target_scene(
-            get_value_copy<std::string>(r, e, "target_scene", entity).value_or(""))
+  SceneChangeEvent(Registry& r,
+                   JsonObject const& e,
+                   std::optional<Ecs::Entity> entity)
+      : target_scene(get_value_copy<std::string>(r, e, "target_scene", entity)
+                         .value_or(""))
       , reason(get_value_copy<std::string>(r, e, "reason", entity).value_or(""))
       , force(get_value_copy<bool>(r, e, "force", entity).value_or(false))
       , main(get_value_copy<bool>(r, e, "main", entity).value_or(false))
@@ -80,9 +82,11 @@ struct DisableSceneEvent
 
   DEFAULT_SERIALIZE(string_to_byte(this->target_scene))
 
-  DisableSceneEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
-      : target_scene(
-            get_value_copy<std::string>(r, e, "target_scene", entity).value_or(""))
+  DisableSceneEvent(Registry& r,
+                    JsonObject const& e,
+                    std::optional<Ecs::Entity> entity)
+      : target_scene(get_value_copy<std::string>(r, e, "target_scene", entity)
+                         .value_or(""))
   {
   }
 

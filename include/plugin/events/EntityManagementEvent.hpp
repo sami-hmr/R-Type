@@ -52,8 +52,11 @@ struct LoadEntityTemplate
                         }));
               })))
 
-  LoadEntityTemplate(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
-      : template_name(get_value_copy<std::string>(r, e, "template", entity).value())
+  LoadEntityTemplate(Registry& r,
+                     JsonObject const& e,
+                     std::optional<Ecs::Entity> entity)
+      : template_name(
+            get_value_copy<std::string>(r, e, "template", entity).value())
   {
   }
 
@@ -78,7 +81,9 @@ struct DeleteEntity
 
   DEFAULT_SERIALIZE(type_to_byte(entity))
 
-  DeleteEntity(Registry& r, JsonObject const& conf, std::optional<Ecs::Entity> entity)
+  DeleteEntity(Registry& r,
+               JsonObject const& conf,
+               std::optional<Ecs::Entity> entity)
       : entity(*get_value_copy<int>(r, conf, "entity", entity))
   {
   }
@@ -104,7 +109,9 @@ struct DeleteClientEntity
 
   DEFAULT_SERIALIZE(type_to_byte(entity))
 
-  DeleteClientEntity(Registry& r, JsonObject const& conf, std::optional<Ecs::Entity> entity)
+  DeleteClientEntity(Registry& r,
+                     JsonObject const& conf,
+                     std::optional<Ecs::Entity> entity)
       : entity(*get_value_copy<int>(r, conf, "entity", entity))
   {
   }

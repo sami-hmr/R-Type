@@ -18,7 +18,9 @@ class Registry;
 template<typename T>
 concept json_buildable =
     requires(Registry& r, JsonObject const& j, std::optional<Ecs::Entity> e) {
-      { T(r, j, e) } -> std::same_as<T>;
+      {
+        T(r, j, e)
+      } -> std::same_as<T>;
     };
 
 /**
@@ -40,5 +42,7 @@ concept json_buildable =
 template<typename T>
 concept entity_convertible = requires(
     T const& event, std::unordered_map<std::size_t, std::size_t> const& map) {
-  { event.change_entity(map) } -> std::same_as<T>;
+  {
+    event.change_entity(map)
+  } -> std::same_as<T>;
 };

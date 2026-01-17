@@ -26,11 +26,14 @@ struct SpawnEntityRequestEvent
   {
   }
 
-  SpawnEntityRequestEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+  SpawnEntityRequestEvent(Registry& r,
+                          JsonObject const& e,
+                          std::optional<Ecs::Entity> entity)
       : entity_template(
-            get_value_copy<std::string>(r, e, "entity_template", entity).value())
-      , params(
-            get_value_copy<JsonObject>(r, e, "params", entity).value_or(JsonObject {}))
+            get_value_copy<std::string>(r, e, "entity_template", entity)
+                .value())
+      , params(get_value_copy<JsonObject>(r, e, "params", entity)
+                   .value_or(JsonObject {}))
   {
   }
 
@@ -62,7 +65,9 @@ struct KillEntityRequestEvent
   {
   }
 
-  KillEntityRequestEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+  KillEntityRequestEvent(Registry& r,
+                         JsonObject const& e,
+                         std::optional<Ecs::Entity> entity)
       : target(static_cast<Ecs::Entity>(
             get_value_copy<double>(r, e, "entity", entity).value()))
       , reason(get_value_copy<std::string>(r, e, "reason", entity).value_or(""))
@@ -95,11 +100,15 @@ struct ModifyComponentRequestEvent
   {
   }
 
-  ModifyComponentRequestEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+  ModifyComponentRequestEvent(Registry& r,
+                              JsonObject const& e,
+                              std::optional<Ecs::Entity> entity)
       : target(static_cast<Ecs::Entity>(
             get_value_copy<double>(r, e, "entity", entity).value()))
-      , component_name(get_value_copy<std::string>(r, e, "component", entity).value())
-      , modifications(get_value_copy<JsonObject>(r, e, "modifications", entity).value())
+      , component_name(
+            get_value_copy<std::string>(r, e, "component", entity).value())
+      , modifications(
+            get_value_copy<JsonObject>(r, e, "modifications", entity).value())
   {
   }
 
@@ -134,7 +143,9 @@ struct TimerTickEvent
   {
   }
 
-  TimerTickEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+  TimerTickEvent(Registry& r,
+                 JsonObject const& e,
+                 std::optional<Ecs::Entity> entity)
       : delta_time(get_value_copy<double>(r, e, "delta_time", entity).value())
       , now(std::chrono::steady_clock::now())
   {

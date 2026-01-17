@@ -34,10 +34,9 @@ public:
   void load_plugin(std::string const& plugin,
                    std::optional<JsonObject> const& config = std::nullopt);
 
-  void load_byte_component(
-      Ecs::Entity entity,
-      ComponentBuilder const& component,
-      TwoWayMap<Ecs::Entity, Ecs::Entity> const& indexes);
+  void load_byte_component(Ecs::Entity entity,
+                           ComponentBuilder const& component,
+                           TwoWayMap<Ecs::Entity, Ecs::Entity> const& indexes);
 
   bool is_plugin_loaded(std::string const& plugin);
 

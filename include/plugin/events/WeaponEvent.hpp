@@ -23,7 +23,9 @@ struct FireBullet
 
   DEFAULT_SERIALIZE(type_to_byte(entity))
 
-  FireBullet(Registry& r, JsonObject const& conf, std::optional<Ecs::Entity> entity)
+  FireBullet(Registry& r,
+             JsonObject const& conf,
+             std::optional<Ecs::Entity> entity)
       : entity(*get_value_copy<int>(r, conf, "entity", entity))
   {
   }
@@ -43,13 +45,14 @@ struct StartChargeWeapon
   CHANGE_ENTITY(result.entity = map.at(entity))
 
   DEFAULT_BYTE_CONSTRUCTOR(StartChargeWeapon,
-                           ([](Ecs::Entity e)
-                            { return StartChargeWeapon(e); }),
+                           ([](Ecs::Entity e) { return StartChargeWeapon(e); }),
                            parseByte<Ecs::Entity>())
 
   DEFAULT_SERIALIZE(type_to_byte(entity))
 
-  StartChargeWeapon(Registry& r, JsonObject const& conf, std::optional<Ecs::Entity> entity)
+  StartChargeWeapon(Registry& r,
+                    JsonObject const& conf,
+                    std::optional<Ecs::Entity> entity)
       : entity(*get_value_copy<int>(r, conf, "entity", entity))
   {
   }
@@ -75,7 +78,9 @@ struct ReleaseChargeWeapon
 
   DEFAULT_SERIALIZE(type_to_byte(entity))
 
-  ReleaseChargeWeapon(Registry& r, JsonObject const& conf, std::optional<Ecs::Entity> entity)
+  ReleaseChargeWeapon(Registry& r,
+                      JsonObject const& conf,
+                      std::optional<Ecs::Entity> entity)
       : entity(*get_value_copy<int>(r, conf, "entity", entity))
   {
   }

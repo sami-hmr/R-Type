@@ -46,8 +46,8 @@
  * @endcode
  */
 #define CHANGE_ENTITY(...) \
-  auto change_entity( \
-      std::unordered_map<Ecs::Entity, Ecs::Entity> const& map) const \
+  auto change_entity(std::unordered_map<Ecs::Entity, Ecs::Entity> const& map) \
+      const \
   { \
     try { \
       auto result = *this; \

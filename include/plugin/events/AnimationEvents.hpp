@@ -20,7 +20,9 @@ struct AnimationEndEvent
       : name(std::move(name))
       , entity(entity) {};
 
-  AnimationEndEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+  AnimationEndEvent(Registry& r,
+                    JsonObject const& e,
+                    std::optional<Ecs::Entity> entity)
       : name(get_value_copy<std::string>(r, e, "name", entity).value())
       , entity(get_value_copy<int>(r, e, "entity", entity).value())
   {
@@ -46,7 +48,9 @@ struct AnimationStartEvent
       : name(std::move(name))
       , entity(entity) {};
 
-  AnimationStartEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+  AnimationStartEvent(Registry& r,
+                      JsonObject const& e,
+                      std::optional<Ecs::Entity> entity)
       : name(get_value_copy<std::string>(r, e, "name", entity).value())
       , entity(get_value_copy<int>(r, e, "entity", entity).value())
   {
@@ -84,7 +88,9 @@ struct PlayAnimationEvent
   {
   }
 
-  PlayAnimationEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+  PlayAnimationEvent(Registry& r,
+                     JsonObject const& e,
+                     std::optional<Ecs::Entity> entity)
       : name(get_value_copy<std::string>(r, e, "name", entity).value())
       , entity(get_value_copy<int>(r, e, "entity", entity).value())
       , framerate(get_value_copy<double>(r, e, "framerate", entity).value())

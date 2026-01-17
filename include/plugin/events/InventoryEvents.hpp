@@ -32,10 +32,7 @@ struct PickUp
   std::size_t nb_to_use;
   Ecs::Entity consumer;
 
-  PickUp(Item item,
-         bool usable,
-         std::size_t nb_to_use,
-         Ecs::Entity consumer)
+  PickUp(Item item, bool usable, std::size_t nb_to_use, Ecs::Entity consumer)
       : item(std::move(item))
       , usable(usable)
       , nb_to_use(nb_to_use)
@@ -46,7 +43,8 @@ struct PickUp
   PickUp(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
       : item(get_value_copy<Item>(r, e, "item", entity).value())
       , usable(get_value_copy<bool>(r, e, "usable", entity).value())
-      , nb_to_use(get_value_copy<std::size_t>(r, e, "nb_to_use", entity).value())
+      , nb_to_use(
+            get_value_copy<std::size_t>(r, e, "nb_to_use", entity).value())
       , consumer(static_cast<Ecs::Entity>(
             get_value_copy<Ecs::Entity>(r, e, "consumer", entity).value()))
   {
@@ -56,10 +54,7 @@ struct PickUp
 
   DEFAULT_BYTE_CONSTRUCTOR(
       PickUp,
-      ([](Item item,
-          bool usable,
-          std::size_t nb_to_use,
-          Ecs::Entity consumer)
+      ([](Item item, bool usable, std::size_t nb_to_use, Ecs::Entity consumer)
        { return PickUp(std::move(item), usable, nb_to_use, consumer); }),
       parseByteItem(),
       parseByte<bool>(),
@@ -92,9 +87,11 @@ struct ItemEvent
   }
 
   ItemEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
-      : slot_item(get_value_copy<std::uint8_t>(r, e, "slot_item", entity).value())
+      : slot_item(
+            get_value_copy<std::uint8_t>(r, e, "slot_item", entity).value())
       , usable(get_value_copy<bool>(r, e, "usable", entity).value())
-      , nb_to_use(get_value_copy<std::size_t>(r, e, "nb_to_use", entity).value())
+      , nb_to_use(
+            get_value_copy<std::size_t>(r, e, "nb_to_use", entity).value())
       , consumer(static_cast<Ecs::Entity>(
             get_value_copy<Ecs::Entity>(r, e, "consumer", entity).value()))
   {

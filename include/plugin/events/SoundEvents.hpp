@@ -29,7 +29,9 @@ struct PlaySoundEvent
   {
   }
 
-  PlaySoundEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+  PlaySoundEvent(Registry& r,
+                 JsonObject const& e,
+                 std::optional<Ecs::Entity> entity)
       : entity(get_value_copy<int>(r, e, "entity", entity).value())
       , name(get_value_copy<std::string>(r, e, "name", entity).value())
       , volume(get_value_copy<double>(r, e, "volume", entity).value())

@@ -46,8 +46,7 @@ private:
   bool _connected = false;
 
 protected:
-  TwoWayMap<Ecs::Entity /*server */, Ecs::Entity /*client */>
-      _server_indexes;
+  TwoWayMap<Ecs::Entity /*server */, Ecs::Entity /*client */> _server_indexes;
 
   std::size_t _id_in_server = 0;
 

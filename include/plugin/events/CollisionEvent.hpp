@@ -31,15 +31,16 @@ struct CollisionEvent
   }
 
   DEFAULT_BYTE_CONSTRUCTOR(CollisionEvent,
-                           ([](Ecs::Entity const& c,
-                               Ecs::Entity const& d)
+                           ([](Ecs::Entity const& c, Ecs::Entity const& d)
                             { return CollisionEvent(c, d); }),
                            parseByte<Ecs::Entity>(),
                            parseByte<Ecs::Entity>())
 
   DEFAULT_SERIALIZE(type_to_byte(this->a), type_to_byte(this->b))
 
-  CollisionEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+  CollisionEvent(Registry& r,
+                 JsonObject const& e,
+                 std::optional<Ecs::Entity> entity)
       : a(static_cast<Ecs::Entity>(
             get_value_copy<double>(r, e, "a", entity).value()))
       , b(static_cast<Ecs::Entity>(
@@ -74,7 +75,9 @@ struct UpdateDirection
                     type_to_byte(x_axis),
                     type_to_byte(y_axis))
 
-  UpdateDirection(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+  UpdateDirection(Registry& r,
+                  JsonObject const& e,
+                  std::optional<Ecs::Entity> entity)
       : entity(get_value_copy<int>(r, e, "entity", entity).value())
       , x_axis(get_value_copy<double>(r, e, "x", entity).value())
       , y_axis(get_value_copy<double>(r, e, "y", entity).value())
