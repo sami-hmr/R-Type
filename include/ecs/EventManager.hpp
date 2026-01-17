@@ -249,7 +249,8 @@ public:
    */
   ByteArray get_event_with_id(Registry& r,
                               std::string const&,
-                              JsonObject const&);
+                              JsonObject const&,
+                              std::optional<Ecs::Entity> entity = std::nullopt);
 
   /**
    * @brief Remove all event handlers for a specific event type.
@@ -300,7 +301,10 @@ public:
    * @see emit(const Event&) for direct type-safe emission
    * @see emit<Event>(const byte*, std::size_t) for binary emission
    */
-  void emit(Registry&, std::string const& name, JsonObject const& args);
+  void emit(Registry&,
+            std::string const& name,
+            JsonObject const& args,
+            std::optional<Ecs::Entity> entity = std::nullopt);
 
   /**
    * @brief Emit an event, invoking all registered handlers.
@@ -505,8 +509,10 @@ private:
 
     _json_builder.insert_or_assign(
         type_id,
-        [](Registry& r, JsonObject const& params)
-        { return T(r, params, std::nullopt).to_bytes(); });
+        [](Registry& r,
+           JsonObject const& params,
+           std::optional<Ecs::Entity> entity)
+        { return T(r, params, std::nullopt, entity).to_bytes(); });
   }
 
   template<event EventType>
@@ -541,8 +547,10 @@ private:
   std::unordered_map<std::type_index, std::any> _builders;
 
   std::unordered_map<std::type_index, std::any> _handlers;
-  std::unordered_map<std::type_index,
-                     std::function<ByteArray(Registry&, JsonObject const&)>>
+  std::unordered_map<
+      std::type_index,
+      std::function<ByteArray(
+          Registry&, JsonObject const&, std::optional<Ecs::Entity>)>>
       _json_builder;
 
   std::unordered_map<std::type_index,

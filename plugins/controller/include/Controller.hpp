@@ -1,21 +1,17 @@
 #pragma once
 
-#include <format>
+#include <cstdint>
 #include <map>
-#include <stdexcept>
 #include <string>
-#include <variant>
+#include <unordered_map>
 #include <vector>
 
 #include "Json/JsonParser.hpp"
 #include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
-#include "ecs/SparseArray.hpp"
-#include "ecs/zipper/Zipper.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Controllable.hpp"
-#include "plugin/components/Position.hpp"
 #include "plugin/events/IoEvents.hpp"
 #include "plugin/events/RebindingEvent.hpp"
 
@@ -39,7 +35,22 @@ private:
                                       const std::string& key_string,
                                       const std::string& description,
                                       KeyEventType event_type);
-  static void rebinding(Controllable& c, Rebind event, KeyEventType event_type);
+  static void rebinding(Controllable& c, Rebind const &event, KeyEventType event_type);
 
   std::map<Key, bool> _key_states;
+
+  std::unordered_map<std::string, std::vector<std::size_t>> _rebinding_scenes;
+  void create_binding_scene(std::size_t entity);
+  void delete_binding_scene(bool disable = true);
+  struct RebindingScene {
+    struct Rebinder {
+      std::string key_str;
+      std::uint16_t key;
+      std::string description;
+    };
+    std::vector<Rebinder> elements;
+  };
+  std::optional<GenerateRebindingScene> _current_binding_scene;
+
+  std::optional<WatchRebind> _remaped_key;
 };

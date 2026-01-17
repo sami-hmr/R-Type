@@ -97,6 +97,7 @@ bool Sound::on_play_sound(Registry& r, const PlaySoundEvent& event)
         return false;
       }
 
+      //std::cout << event.volume << std::endl;;
       sound_effect.volume = event.volume;
       sound_effect.pitch = event.pitch;
       sound_effect.loop = event.loop;

@@ -14,8 +14,8 @@
                 "collision:Collidable": {
                     "collision_type": "Trigger",
                     "size": {
-                        "x": 0.9,
-                        "y": 0.1
+                        "width": 0.9,
+                        "height": 0.1
                     }
                 },
                 "ui:Text": {

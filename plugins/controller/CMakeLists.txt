@@ -4,6 +4,7 @@ set(LIB_NAME controller)
 
 add_library(${LIB_NAME} SHARED
     src/Controller.cpp
+    src/BindingScene.cpp
 )
 
 target_compile_features(${LIB_NAME} PRIVATE cxx_std_23)
