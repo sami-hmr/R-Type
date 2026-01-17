@@ -13,8 +13,8 @@ public:
   Projectile(Registry& r, EventManager& event, EntityLoader& l);
 
 private:
-  void init_temporal(Registry::Entity entity, JsonObject const& obj);
-  void init_fragile(Registry::Entity entity, JsonObject const& obj);
+  void init_temporal(Ecs::Entity entity, JsonObject const& obj);
+  void init_fragile(Ecs::Entity entity, JsonObject const& obj);
   static constexpr double fragile_cooldown = 0.5;
 
   void temporal_system(Registry& reg);

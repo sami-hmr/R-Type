@@ -18,7 +18,7 @@ void WaveManager::wave_formation_system(Registry& r)
       continue;
     }
 
-    std::vector<Registry::Entity> wave_entities;
+    std::vector<Ecs::Entity> wave_entities;
     for (auto&& [entity, tag] : ZipperIndex<WaveTag>(r)) {
       if (tag.wave_id == wave.id && !r.is_entity_dying(entity)
           && r.has_component<Position>(entity))

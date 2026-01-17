@@ -33,7 +33,7 @@ void EventManager::emit(std::string const& name, ByteArray const& data)
 ByteArray EventManager::convert_event_entity(
     std::string const& id,
     ByteArray const& event,
-    std::unordered_map<Registry::Entity, Registry::Entity> const& map)
+    std::unordered_map<Ecs::Entity, Ecs::Entity> const& map)
 {
   if (!this->_entity_converter.contains(id)) {
     return event;

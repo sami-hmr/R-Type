@@ -24,20 +24,20 @@ public:
 
   void load_file(std::string const& filepath);
 
-  std::optional<Registry::Entity> load_entity(JsonObject const& config);
-  std::optional<Registry::Entity> load_entity_template(
+  std::optional<Ecs::Entity> load_entity(JsonObject const& config);
+  std::optional<Ecs::Entity> load_entity_template(
       std::string const& name,
       std::vector<std::pair<std::string, ByteArray>> const& additional,
       JsonObject const& parameters = {});
-  void load_components(Registry::Entity e, JsonObject const& config);
+  void load_components(Ecs::Entity e, JsonObject const& config);
 
   void load_plugin(std::string const& plugin,
                    std::optional<JsonObject> const& config = std::nullopt);
 
   void load_byte_component(
-      Registry::Entity entity,
+      Ecs::Entity entity,
       ComponentBuilder const& component,
-      TwoWayMap<Registry::Entity, Registry::Entity> const& indexes);
+      TwoWayMap<Ecs::Entity, Ecs::Entity> const& indexes);
 
   bool is_plugin_loaded(std::string const& plugin);
 

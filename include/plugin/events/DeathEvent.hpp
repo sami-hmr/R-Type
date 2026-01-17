@@ -22,7 +22,7 @@
 
 struct DeathEvent
 {
-  DeathEvent(Registry::Entity e)
+  DeathEvent(Ecs::Entity e)
       : entity(std::move(e))
   {
   }
@@ -30,17 +30,17 @@ struct DeathEvent
   CHANGE_ENTITY(result.entity = map.at(entity);)
 
   DEFAULT_BYTE_CONSTRUCTOR(DeathEvent,
-                           ([](Registry::Entity const& e)
+                           ([](Ecs::Entity const& e)
                             { return (DeathEvent) {e}; }),
-                           parseByte<Registry::Entity>())
+                           parseByte<Ecs::Entity>())
 
   DEFAULT_SERIALIZE(type_to_byte(this->entity))
 
-  DeathEvent(Registry& r, JsonObject const& e)
-      : entity(static_cast<Registry::Entity>(
-            get_value_copy<double>(r, e, "entity").value()))
+  DeathEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+      : entity(static_cast<Ecs::Entity>(
+            get_value_copy<double>(r, e, "entity", entity).value()))
   {
   }
 
-  Registry::Entity entity;
+  Ecs::Entity entity;
 };

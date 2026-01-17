@@ -79,13 +79,13 @@ UI::UI(Registry& r,
 
 }
 
-void UI::init_drawable(Registry::Entity const& entity, JsonObject const&)
+void UI::init_drawable(Ecs::Entity const& entity, JsonObject const&)
 {
   init_component<Drawable>(
       this->_registry.get(), this->_event_manager.get(), entity);
 }
 
-void UI::init_sprite(Registry::Entity const& entity, JsonObject const& obj)
+void UI::init_sprite(Ecs::Entity const& entity, JsonObject const& obj)
 {
   auto const& texture_path = get_value<Sprite, std::string>(
       this->_registry.get(), obj, entity, "texture");
@@ -109,7 +109,7 @@ void UI::init_sprite(Registry::Entity const& entity, JsonObject const& obj)
                          scale);
 }
 
-void UI::init_text(Registry::Entity const& entity, JsonObject const& obj)
+void UI::init_text(Ecs::Entity const& entity, JsonObject const& obj)
 {
   auto const& font_path =
       get_value<Text, std::string>(this->_registry.get(), obj, entity, "font");
@@ -189,7 +189,7 @@ void UI::init_text(Registry::Entity const& entity, JsonObject const& obj)
                       outline_thickness.value()));
 }
 
-void UI::init_input(Registry::Entity entity, const JsonVariant& config)
+void UI::init_input(Ecs::Entity entity, const JsonVariant& config)
 {
   bool enabled = false;
   std::string buffer;
@@ -238,7 +238,7 @@ void UI::handle_key_pressed(const KeyPressedEvent& event)
   }
 }
 
-void UI::init_background(Registry::Entity const& entity, JsonObject const& obj)
+void UI::init_background(Ecs::Entity const& entity, JsonObject const& obj)
 {
   auto const& textures_path = get_value<Background, JsonArray>(
       this->_registry.get(), obj, entity, "layers");
@@ -307,7 +307,7 @@ void UI::init_background(Registry::Entity const& entity, JsonObject const& obj)
 }
 
 std::optional<AnimationData> UI::parse_animation_data(JsonObject const& obj,
-                                                      Registry::Entity const& e)
+                                                      Ecs::Entity const& e)
 {
   AnimationData animdata;
 
@@ -377,7 +377,7 @@ std::optional<AnimationData> UI::parse_animation_data(JsonObject const& obj,
   return animdata;
 }
 
-void UI::init_animated_sprite(Registry::Entity const& entity,
+void UI::init_animated_sprite(Ecs::Entity const& entity,
                               const JsonObject& obj)
 {
   std::unordered_map<std::string, AnimationData> animations;
@@ -437,7 +437,7 @@ void UI::init_animated_sprite(Registry::Entity const& entity,
                                  default_animation);
 }
 
-void UI::init_cam(Registry::Entity const& entity, JsonObject const& obj)
+void UI::init_cam(Ecs::Entity const& entity, JsonObject const& obj)
 {
   Vector2D size(0.5, 0.5);
   Vector2D target(0.0, 0.0);

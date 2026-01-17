@@ -107,11 +107,11 @@ struct KeyPressedEvent
   {
   }
 
-  KeyPressedEvent(Registry& r, JsonObject const& e)
+  KeyPressedEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
       : key_pressed(
             [&]() -> std::unordered_map<Key, bool>
             {
-              JsonArray arr = get_value_copy<JsonArray>(r, e, "keys").value();
+              JsonArray arr = get_value_copy<JsonArray>(r, e, "keys", entity).value();
               std::unordered_map<Key, bool> map;
               for (auto const& i : arr) {
                 map.insert_or_assign(
@@ -119,7 +119,7 @@ struct KeyPressedEvent
               }
               return map;
             }())
-      , key_unicode(get_value_copy<std::string>(r, e, "key_unicode"))
+      , key_unicode(get_value_copy<std::string>(r, e, "key_unicode", entity))
   {
   }
 
@@ -156,11 +156,11 @@ struct KeyReleasedEvent
   {
   }
 
-  KeyReleasedEvent(Registry& r, JsonObject const& e)
+  KeyReleasedEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
       : key_released(
             [&]() -> std::unordered_map<Key, bool>
             {
-              JsonArray arr = get_value_copy<JsonArray>(r, e, "keys").value();
+              JsonArray arr = get_value_copy<JsonArray>(r, e, "keys", entity).value();
               std::unordered_map<Key, bool> map;
               for (auto const& i : arr) {
                 map.insert_or_assign(
@@ -168,7 +168,7 @@ struct KeyReleasedEvent
               }
               return map;
             }())
-      , key_unicode(get_value_copy<std::string>(r, e, "key_unicode"))
+      , key_unicode(get_value_copy<std::string>(r, e, "key_unicode", entity))
   {
   }
 
@@ -216,10 +216,10 @@ struct MousePressedEvent
   {
   }
 
-  MousePressedEvent(Registry& r, JsonObject const& e)
-      : position(get_value_copy<Vector2D>(r, e, "position").value())
+  MousePressedEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+      : position(get_value_copy<Vector2D>(r, e, "position", entity).value())
       , button(static_cast<MouseButton>(
-            get_value_copy<uint8_t>(r, e, "button").value()))
+            get_value_copy<uint8_t>(r, e, "button", entity).value()))
   {
   }
   DEFAULT_BYTE_CONSTRUCTOR(MousePressedEvent,
@@ -245,10 +245,10 @@ struct MouseReleasedEvent
   {
   }
 
-  MouseReleasedEvent(Registry& r, JsonObject const& e)
-      : position(get_value_copy<Vector2D>(r, e, "position").value())
+  MouseReleasedEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+      : position(get_value_copy<Vector2D>(r, e, "position", entity).value())
       , button(static_cast<MouseButton>(
-            get_value_copy<uint8_t>(r, e, "button").value()))
+            get_value_copy<uint8_t>(r, e, "button", entity).value()))
   {
   }
   DEFAULT_BYTE_CONSTRUCTOR(MouseReleasedEvent,
@@ -261,21 +261,21 @@ struct MouseReleasedEvent
 
 struct InputFocusEvent
 {
-  Registry::Entity entity;
+  Ecs::Entity entity;
 
-  InputFocusEvent(Registry::Entity entity)
+  InputFocusEvent(Ecs::Entity entity)
       : entity(entity)
   {
   }
 
-  InputFocusEvent(Registry& r, JsonObject const& obj)
-      : entity(static_cast<Registry::Entity>(
-            get_value_copy<int>(r, obj, "entity").value())) {};
+  InputFocusEvent(Registry& r, JsonObject const& obj, std::optional<Ecs::Entity> entity)
+      : entity(static_cast<Ecs::Entity>(
+            get_value_copy<int>(r, obj, "entity", entity).value())) {};
 
   CHANGE_ENTITY(result.entity = map.at(entity);)
 
   DEFAULT_BYTE_CONSTRUCTOR(InputFocusEvent,
-                           ([](Registry::Entity entity)
+                           ([](Ecs::Entity entity)
                             { return InputFocusEvent(entity); }),
                            parseByte<int>())
   DEFAULT_SERIALIZE(type_to_byte(static_cast<int>(this->entity)))

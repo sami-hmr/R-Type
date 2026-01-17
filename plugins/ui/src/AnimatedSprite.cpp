@@ -27,7 +27,7 @@ void AnimatedSprite::update_anim(
     Registry& /*r*/,
     EventManager& em,
     std::chrono::high_resolution_clock::time_point now,
-    Registry::Entity entity)
+    Ecs::Entity entity)
 {
   AnimationData& animation = this->animations.at(this->current_animation);
 

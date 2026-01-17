@@ -49,7 +49,7 @@ AI::AI(Registry& r, EventManager& em, EntityLoader& l)
                              2);
 }
 
-void AI::init_movement_behavior(Registry::Entity const& entity,
+void AI::init_movement_behavior(Ecs::Entity const& entity,
                                 JsonObject const& obj)
 {
   auto const& movement_type = get_value<MovementBehavior, std::string>(
@@ -69,7 +69,7 @@ void AI::init_movement_behavior(Registry::Entity const& entity,
       entity, movement_type.value(), params);
 }
 
-void AI::init_attack_behavior(Registry::Entity const& entity,
+void AI::init_attack_behavior(Ecs::Entity const& entity,
                               JsonObject const& obj)
 {
   auto const& attack_type = get_value<AttackBehavior, std::string>(

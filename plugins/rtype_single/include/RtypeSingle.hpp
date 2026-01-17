@@ -16,5 +16,5 @@ public:
   ~RtypeSingle() override = default;
 
 private:
-  std::optional<Registry::Entity> _player_entity;
+  std::optional<Ecs::Entity> _player_entity;
 };

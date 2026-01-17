@@ -13,8 +13,8 @@ class Sound : public APlugin
 public:
   Sound(Registry& r, EventManager& em, EntityLoader& l);
 
-  void init_sound_manager(Registry::Entity& e, const JsonObject& obj);
-  void init_music_manager(Registry::Entity& e, const JsonObject& obj);
+  void init_sound_manager(Ecs::Entity& e, const JsonObject& obj);
+  void init_music_manager(Ecs::Entity& e, const JsonObject& obj);
 
   bool on_play_sound(Registry& r, const PlaySoundEvent& event);
   void sound_system(Registry& r);

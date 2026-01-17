@@ -58,7 +58,7 @@ void Collision::set_algorithm(std::unique_ptr<ICollisionAlgorithm> algo)
   _collision_algo = std::move(algo);
 }
 
-void Collision::init_collision(Registry::Entity const& entity,
+void Collision::init_collision(Ecs::Entity const& entity,
                                JsonObject const& obj)
 {
   auto const& size = get_value<Collidable, Vector2D>(
@@ -96,7 +96,7 @@ void Collision::init_collision(Registry::Entity const& entity,
                              true);
 }
 
-void Collision::init_interaction_zone(Registry::Entity const& entity,
+void Collision::init_interaction_zone(Ecs::Entity const& entity,
                                       JsonObject const& obj)
 {
   auto const& radius = get_value<Collidable, double>(
@@ -165,7 +165,7 @@ void Collision::interaction_zone_system(Registry& r)
 
     std::vector<ICollisionAlgorithm::CollisionEntity> candidates =
         _collision_algo->detect_range_collisions(range);
-    std::vector<Registry::Entity> detected_entities;
+    std::vector<Ecs::Entity> detected_entities;
     detected_entities.reserve(candidates.size());
 
     for (const auto& candidate : candidates) {

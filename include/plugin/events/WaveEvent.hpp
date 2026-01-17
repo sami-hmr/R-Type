@@ -33,7 +33,9 @@ struct WaveSpawnEvent
                                        [](const std::string& s)
                                        { return string_to_byte(s); })))
 
-  WaveSpawnEvent(Registry& /*r*/, JsonObject const& conf)
+  WaveSpawnEvent(Registry& /*r*/,
+                 JsonObject const& conf,
+                 std::optional<Ecs::Entity>)
   {
     if (conf.contains("wave_templates")) {
       auto const& wave_array =

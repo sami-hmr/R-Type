@@ -18,7 +18,7 @@ public:
   static constexpr double DEFAULT_AMPLITUDE = 0.7;
   static constexpr double DEFAULT_FREQUENCY = 2.0;
 
-  void update(Registry::Entity entity,
+  void update(Ecs::Entity entity,
               Registry& registry,
               EventManager& em,
               MovementBehavior& behavior,

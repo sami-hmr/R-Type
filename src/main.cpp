@@ -74,7 +74,7 @@ static int true_main(Registry& r,
       "SpawnEntity",
       [&r, &e](const SpawnEntityRequestEvent& event) -> bool
       {
-        Registry::Entity entity = r.spawn_entity();
+        Ecs::Entity entity = r.spawn_entity();
         JsonObject base = r.get_template(event.entity_template);
         e.load_components(entity, base);
         e.load_components(entity, event.params);

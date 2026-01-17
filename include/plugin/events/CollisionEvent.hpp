@@ -19,31 +19,31 @@
 
 struct CollisionEvent
 {
-  Registry::Entity a;
-  Registry::Entity b;
+  Ecs::Entity a;
+  Ecs::Entity b;
 
   CHANGE_ENTITY(result.a = map.at(a); result.b = map.at(b);)
 
-  CollisionEvent(Registry::Entity c, Registry::Entity d)
+  CollisionEvent(Ecs::Entity c, Ecs::Entity d)
       : a(c)
       , b(d)
   {
   }
 
   DEFAULT_BYTE_CONSTRUCTOR(CollisionEvent,
-                           ([](Registry::Entity const& c,
-                               Registry::Entity const& d)
+                           ([](Ecs::Entity const& c,
+                               Ecs::Entity const& d)
                             { return CollisionEvent(c, d); }),
-                           parseByte<Registry::Entity>(),
-                           parseByte<Registry::Entity>())
+                           parseByte<Ecs::Entity>(),
+                           parseByte<Ecs::Entity>())
 
   DEFAULT_SERIALIZE(type_to_byte(this->a), type_to_byte(this->b))
 
-  CollisionEvent(Registry& r, JsonObject const& e)
-      : a(static_cast<Registry::Entity>(
-            get_value_copy<double>(r, e, "a").value()))
-      , b(static_cast<Registry::Entity>(
-            get_value_copy<double>(r, e, "b").value()))
+  CollisionEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+      : a(static_cast<Ecs::Entity>(
+            get_value_copy<double>(r, e, "a", entity).value()))
+      , b(static_cast<Ecs::Entity>(
+            get_value_copy<double>(r, e, "b", entity).value()))
   {
   }
 };
@@ -74,10 +74,10 @@ struct UpdateDirection
                     type_to_byte(x_axis),
                     type_to_byte(y_axis))
 
-  UpdateDirection(Registry& r, JsonObject const& e)
-      : entity(get_value_copy<int>(r, e, "entity").value())
-      , x_axis(get_value_copy<double>(r, e, "x").value())
-      , y_axis(get_value_copy<double>(r, e, "y").value())
+  UpdateDirection(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+      : entity(get_value_copy<int>(r, e, "entity", entity).value())
+      , x_axis(get_value_copy<double>(r, e, "x", entity).value())
+      , y_axis(get_value_copy<double>(r, e, "y", entity).value())
   {
   }
 };

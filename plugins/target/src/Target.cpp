@@ -33,7 +33,7 @@ Target::Target(Registry& r, EventManager& em, EntityLoader& l)
   SUBSCRIBE_EVENT(InteractionZoneEvent, { this->on_interaction_zone(event); })
 }
 
-void Target::init_follower(Registry::Entity entity, JsonObject const& /*obj*/)
+void Target::init_follower(Ecs::Entity entity, JsonObject const& /*obj*/)
 {
   init_component<Follower>(
       this->_registry.get(), this->_event_manager.get(), entity);
@@ -111,10 +111,10 @@ void Target::on_interaction_zone(const InteractionZoneEvent& event)
     return;
   }
 
-  std::optional<Registry::Entity> closest_entity = std::nullopt;
+  std::optional<Ecs::Entity> closest_entity = std::nullopt;
   double closest_distance_sq = event.radius * event.radius;
 
-  for (const Registry::Entity& candidate : event.candidates) {
+  for (const Ecs::Entity& candidate : event.candidates) {
     if (!this->_registry.get().has_component<Health>(candidate)) {
       continue;
     }

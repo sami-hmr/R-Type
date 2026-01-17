@@ -26,11 +26,11 @@ struct SpawnEntityRequestEvent
   {
   }
 
-  SpawnEntityRequestEvent(Registry& r, JsonObject const& e)
+  SpawnEntityRequestEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
       : entity_template(
-            get_value_copy<std::string>(r, e, "entity_template").value())
+            get_value_copy<std::string>(r, e, "entity_template", entity).value())
       , params(
-            get_value_copy<JsonObject>(r, e, "params").value_or(JsonObject {}))
+            get_value_copy<JsonObject>(r, e, "params", entity).value_or(JsonObject {}))
   {
   }
 
@@ -51,28 +51,28 @@ struct SpawnEntityRequestEvent
 
 struct KillEntityRequestEvent
 {
-  Registry::Entity target;
+  Ecs::Entity target;
   std::string reason;
 
   CHANGE_ENTITY(result.target = map.at(target);)
 
-  KillEntityRequestEvent(Registry::Entity t, std::string r)
+  KillEntityRequestEvent(Ecs::Entity t, std::string r)
       : target(t)
       , reason(std::move(r))
   {
   }
 
-  KillEntityRequestEvent(Registry& r, JsonObject const& e)
-      : target(static_cast<Registry::Entity>(
-            get_value_copy<double>(r, e, "entity").value()))
-      , reason(get_value_copy<std::string>(r, e, "reason").value_or(""))
+  KillEntityRequestEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+      : target(static_cast<Ecs::Entity>(
+            get_value_copy<double>(r, e, "entity", entity).value()))
+      , reason(get_value_copy<std::string>(r, e, "reason", entity).value_or(""))
   {
   }
 
   DEFAULT_BYTE_CONSTRUCTOR(KillEntityRequestEvent,
-                           ([](Registry::Entity e, std::string const& r)
+                           ([](Ecs::Entity e, std::string const& r)
                             { return KillEntityRequestEvent(e, r); }),
-                           parseByte<Registry::Entity>(),
+                           parseByte<Ecs::Entity>(),
                            parseByteString())
 
   DEFAULT_SERIALIZE(type_to_byte(this->target), string_to_byte(this->reason))
@@ -80,13 +80,13 @@ struct KillEntityRequestEvent
 
 struct ModifyComponentRequestEvent
 {
-  Registry::Entity target;
+  Ecs::Entity target;
   std::string component_name;
   JsonObject modifications;
 
   CHANGE_ENTITY(result.target = map.at(target);)
 
-  ModifyComponentRequestEvent(Registry::Entity t,
+  ModifyComponentRequestEvent(Ecs::Entity t,
                               std::string comp,
                               JsonObject mods = {})
       : target(t)
@@ -95,18 +95,18 @@ struct ModifyComponentRequestEvent
   {
   }
 
-  ModifyComponentRequestEvent(Registry& r, JsonObject const& e)
-      : target(static_cast<Registry::Entity>(
-            get_value_copy<double>(r, e, "entity").value()))
-      , component_name(get_value_copy<std::string>(r, e, "component").value())
-      , modifications(get_value_copy<JsonObject>(r, e, "modifications").value())
+  ModifyComponentRequestEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+      : target(static_cast<Ecs::Entity>(
+            get_value_copy<double>(r, e, "entity", entity).value()))
+      , component_name(get_value_copy<std::string>(r, e, "component", entity).value())
+      , modifications(get_value_copy<JsonObject>(r, e, "modifications", entity).value())
   {
   }
 
   DEFAULT_BYTE_CONSTRUCTOR(ModifyComponentRequestEvent,
-                           ([](Registry::Entity e, std::string const& r)
+                           ([](Ecs::Entity e, std::string const& r)
                             { return ModifyComponentRequestEvent(e, r); }),
-                           parseByte<Registry::Entity>(),
+                           parseByte<Ecs::Entity>(),
                            parseByteString())
 
   DEFAULT_SERIALIZE(type_to_byte(this->target),
@@ -134,8 +134,8 @@ struct TimerTickEvent
   {
   }
 
-  TimerTickEvent(Registry& r, JsonObject const& e)
-      : delta_time(get_value_copy<double>(r, e, "delta_time").value())
+  TimerTickEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+      : delta_time(get_value_copy<double>(r, e, "delta_time", entity).value())
       , now(std::chrono::steady_clock::now())
   {
   }

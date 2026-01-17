@@ -12,7 +12,7 @@
 #include "plugin/components/Position.hpp"
 #include "plugin/events/IoEvents.hpp"
 
-void UI::init_slider(const Registry::Entity& e, const JsonObject& obj)
+void UI::init_slider(const Ecs::Entity& e, const JsonObject& obj)
 {
   Vector2D size;
   if (!obj.contains("size")) {

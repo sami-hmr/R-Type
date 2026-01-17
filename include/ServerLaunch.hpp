@@ -18,8 +18,10 @@ struct ServerLaunching
   {
   }
 
-  ServerLaunching(Registry& r, JsonObject const& e)
-      : port(get_value_copy<std::size_t>(r, e, "port").value())
+  ServerLaunching(Registry& r,
+                  JsonObject const& e,
+                  std::optional<Ecs::Entity> entity)
+      : port(get_value_copy<std::size_t>(r, e, "port", entity).value())
   {
   }
 
@@ -41,8 +43,10 @@ struct SendMessage
   {
   }
 
-  SendMessage(Registry& r, JsonObject const& e)
-      : message(get_value_copy<std::string>(r, e, "message").value())
+  SendMessage(Registry& r,
+              JsonObject const& e,
+              std::optional<Ecs::Entity> entity)
+      : message(get_value_copy<std::string>(r, e, "message", entity).value())
   {
   }
 

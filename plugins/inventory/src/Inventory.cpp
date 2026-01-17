@@ -83,7 +83,7 @@ Inventory::Inventory(Registry& r, EventManager& em, EntityLoader& l)
   SUBSCRIBE_EVENT(PickUp, { add_item(event.item, event.nb_to_use); })
 }
 
-void Inventory::init_item_vector(Registry::Entity const& entity,
+void Inventory::init_item_vector(Ecs::Entity const& entity,
                                  JsonArray& inventory)
 {
   for (auto& it : inventory) {
@@ -111,7 +111,7 @@ void Inventory::init_item_vector(Registry::Entity const& entity,
   }
 }
 
-void Inventory::init_inventory(Registry::Entity const& entity,
+void Inventory::init_inventory(Ecs::Entity const& entity,
                                JsonObject const& obj)
 {
   _max_items = std::get<int>(obj.at("max_items").value);

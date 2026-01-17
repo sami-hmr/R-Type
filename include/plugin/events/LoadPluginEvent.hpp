@@ -36,9 +36,9 @@ struct LoadPluginEvent
 
   CHANGE_ENTITY_DEFAULT
 
-  LoadPluginEvent(Registry& r, JsonObject const& e)
-      : path(get_value_copy<std::string>(r, e, "path").value())
-      , params(get_value_copy<JsonObject>(r, e, "params").value())
+  LoadPluginEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+      : path(get_value_copy<std::string>(r, e, "path", entity).value())
+      , params(get_value_copy<JsonObject>(r, e, "params", entity).value())
   {
   }
 };
@@ -61,8 +61,8 @@ struct LoadConfigEvent
 
   CHANGE_ENTITY_DEFAULT
 
-  LoadConfigEvent(Registry& r, JsonObject const& e)
-      : path(get_value_copy<std::string>(r, e, "path").value())
+  LoadConfigEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+      : path(get_value_copy<std::string>(r, e, "path", entity).value())
   {
   }
 };

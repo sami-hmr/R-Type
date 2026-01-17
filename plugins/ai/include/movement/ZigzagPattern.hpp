@@ -18,7 +18,7 @@ public:
   static constexpr double DEFAULT_INTERVAL = 1.0;
   static constexpr double DEFAULT_ANGLE = 45.0;
 
-  void update(Registry::Entity entity,
+  void update(Ecs::Entity entity,
               Registry& registry,
               EventManager& em,
               MovementBehavior& behavior,

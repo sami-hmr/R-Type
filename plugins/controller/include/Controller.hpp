@@ -25,15 +25,15 @@ public:
   Controller(Registry& r, EventManager& em, EntityLoader& l);
 
 private:
-  void init_controller(Registry::Entity const& entity, JsonObject const& obj);
+  void init_controller(Ecs::Entity const& entity, JsonObject const& obj);
 
-  void init_event_map(Registry::Entity const& entity,
+  void init_event_map(Ecs::Entity const& entity,
                       JsonArray& events,
                       Controllable& result);
   void handle_key_change(Key key, bool is_pressed);
   double compute_axis(Key negative, Key positive) const;
   bool is_key_active(Key key) const;
-  bool handling_press_release_binding(Registry::Entity const& entity,
+  bool handling_press_release_binding(Ecs::Entity const& entity,
                                       Controllable& result,
                                       JsonObject& event,
                                       const std::string& key_string,

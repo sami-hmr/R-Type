@@ -13,7 +13,7 @@ APlugin::APlugin(
     std::vector<std::string> const& depends_on,
     std::unordered_map<
         std::string,
-        std::function<void(Registry::Entity, JsonVariant const&)>> components,
+        std::function<void(Ecs::Entity, JsonVariant const&)>> components,
     std::optional<JsonObject> const& config)
     : name(std::move(name))
     , components(std::move(components))
@@ -27,7 +27,7 @@ APlugin::APlugin(
   }
 }
 
-void APlugin::set_component(Registry::Entity entity,
+void APlugin::set_component(Ecs::Entity entity,
                             std::string const& key,
                             JsonVariant const& config)
 {

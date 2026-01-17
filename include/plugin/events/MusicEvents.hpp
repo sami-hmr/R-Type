@@ -10,13 +10,13 @@
 
 struct PlayMusicEvent
 {
-  Registry::Entity entity;
+  Ecs::Entity entity;
   std::string name;
   double volume;
   double pitch;
   bool loop;
 
-  PlayMusicEvent(Registry::Entity entity,
+  PlayMusicEvent(Ecs::Entity entity,
                  std::string name,
                  double volume = 100.0,
                  double pitch = 1.0,
@@ -29,12 +29,12 @@ struct PlayMusicEvent
   {
   }
 
-  PlayMusicEvent(Registry& r, JsonObject const& e)
-      : entity(get_value_copy<int>(r, e, "entity").value())
-      , name(get_value_copy<std::string>(r, e, "name").value())
-      , volume(get_value_copy<double>(r, e, "volume").value())
-      , pitch(get_value_copy<double>(r, e, "pitch").value())
-      , loop(get_value_copy<bool>(r, e, "loop").value())
+  PlayMusicEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+      : entity(get_value_copy<int>(r, e, "entity", entity).value())
+      , name(get_value_copy<std::string>(r, e, "name", entity).value())
+      , volume(get_value_copy<double>(r, e, "volume", entity).value())
+      , pitch(get_value_copy<double>(r, e, "pitch", entity).value())
+      , loop(get_value_copy<bool>(r, e, "loop", entity).value())
   {
   }
 
@@ -42,9 +42,9 @@ struct PlayMusicEvent
 
   DEFAULT_BYTE_CONSTRUCTOR(
       PlayMusicEvent,
-      ([](Registry::Entity e, std::string n, double v, double p, bool l)
+      ([](Ecs::Entity e, std::string n, double v, double p, bool l)
        { return PlayMusicEvent(e, std::move(n), v, p, l); }),
-      parseByte<Registry::Entity>(),
+      parseByte<Ecs::Entity>(),
       parseByteString(),
       parseByte<double>(),
       parseByte<double>(),

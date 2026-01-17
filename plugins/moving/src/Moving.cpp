@@ -71,7 +71,7 @@ void Moving::moving_system(Registry& reg)
   }
 }
 
-void Moving::init_id(Registry::Entity const& entity, JsonObject& obj)
+void Moving::init_id(Ecs::Entity const& entity, JsonObject& obj)
 {
   std::string ctx;
   auto id = get_value<IdStorage, std::size_t>(
@@ -92,7 +92,7 @@ void Moving::init_id(Registry::Entity const& entity, JsonObject& obj)
   }
 }
 
-void Moving::init_pos(Registry::Entity const& entity, JsonObject& obj)
+void Moving::init_pos(Ecs::Entity const& entity, JsonObject& obj)
 {
   auto values =
       get_value<Position, Vector2D>(this->_registry.get(), obj, entity, "pos");
@@ -124,7 +124,7 @@ void Moving::init_pos(Registry::Entity const& entity, JsonObject& obj)
   }
 }
 
-void Moving::init_direction(Registry::Entity const& entity, JsonObject& obj)
+void Moving::init_direction(Ecs::Entity const& entity, JsonObject& obj)
 {
   auto dir = get_value<Direction, Vector2D>(
       this->_registry.get(), obj, entity, "direction");
@@ -144,7 +144,7 @@ void Moving::init_direction(Registry::Entity const& entity, JsonObject& obj)
   }
 }
 
-void Moving::init_speed(Registry::Entity const& entity, JsonObject& obj)
+void Moving::init_speed(Ecs::Entity const& entity, JsonObject& obj)
 {
   auto speed =
       get_value<Speed, Vector2D>(this->_registry.get(), obj, entity, "speed");
@@ -164,7 +164,7 @@ void Moving::init_speed(Registry::Entity const& entity, JsonObject& obj)
   }
 }
 
-void Moving::init_facing(Registry::Entity const& entity, JsonObject& obj)
+void Moving::init_facing(Ecs::Entity const& entity, JsonObject& obj)
 {
   auto dir = get_value<Facing, Vector2D>(
       this->_registry.get(), obj, entity, "direction");

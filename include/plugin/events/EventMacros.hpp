@@ -1,7 +1,7 @@
 #pragma once
 
 /**
- * @brief Maps a vector of Registry::Entity using a TwoWayMap
+ * @brief Maps a vector of Ecs::Entity using a TwoWayMap
  * @details Creates a new vector with all entities mapped.
  *
  * @code
@@ -24,7 +24,7 @@
 
 /**
  * @brief Generates a change_entity method for event structs
- * @details Creates a const method that maps Registry::Entity fields using a
+ * @details Creates a const method that maps Ecs::Entity fields using a
  * TwoWayMap. Non-entity fields are automatically copied from the original
  * event. If any mapping fails (std::out_of_range), returns the original event
  * unchanged.
@@ -34,8 +34,8 @@
  *
  * @code
  * struct MyEvent {
- *   Registry::Entity actor;
- *   Registry::Entity target;
+ *   Ecs::Entity actor;
+ *   Ecs::Entity target;
  *   int value;
  *
  *   DEFINE_CHANGE_ENTITY(
@@ -47,7 +47,7 @@
  */
 #define CHANGE_ENTITY(...) \
   auto change_entity( \
-      std::unordered_map<Registry::Entity, Registry::Entity> const& map) const \
+      std::unordered_map<Ecs::Entity, Ecs::Entity> const& map) const \
   { \
     try { \
       auto result = *this; \

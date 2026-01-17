@@ -122,7 +122,7 @@
  * Retrieves a value and optionally registers dynamic binding for auto-updates.
  *
  * @code
- * Registry::Entity entity = r.spawn_entity();
+ * Ecs::Entity entity = r.spawn_entity();
  *
  * // Static hook (no binding)
  * auto init_pos = get_value<Transform, Vector2D>(
@@ -259,7 +259,7 @@
  *   Vector2D target_pos;
  *   Vector2D offset;
  *
- *   Follower(Registry& r, JsonObject const& obj, Registry::Entity self)
+ *   Follower(Registry& r, JsonObject const& obj, Ecs::Entity self)
  *     : target_pos(get_value<Follower, Vector2D>(
  *         r, obj, self, "target_pos"
  *       ).value_or(Vector2D{0, 0}))
@@ -368,6 +368,7 @@
 #include <variant>
 
 #include "Json/JsonParser.hpp"
+#include "ecs/Entity.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/events/LogMacros.hpp"
 
@@ -538,7 +539,7 @@ std::optional<std::reference_wrapper<const T>> get_ref(Registry& r,
 template<typename T>
 std::optional<T> resolve_scoped_hook(Registry& r,
                                      std::string const& value_str,
-                                     Registry::Entity entity)
+                                     Ecs::Entity entity)
 {
   size_t first_colon = value_str.find(':');
   size_t second_colon = value_str.find(':', first_colon + 1);
@@ -636,6 +637,7 @@ std::optional<T> resolve_scoped_hook(Registry& r, std::string const& value_str)
  * @param r Registry instance for hook resolution
  * @param object JSON object containing the key
  * @param key Key name to lookup
+ * @param entity Optional entity for scoped hook resolution (self scope)
  * @param args Additional arguments passed to T's constructor (if needed)
  *
  * @return Optional containing a copy of the value, or nullopt on failure
@@ -648,6 +650,9 @@ std::optional<T> resolve_scoped_hook(Registry& r, std::string const& value_str)
  * 4. If successful, return a copy of the referenced value
  * 5. If T is constructible from JsonObject, try JSON construction
  * 6. Return nullopt if all methods fail
+ *
+ * When entity is provided, it can resolve hooks with "self" scope.
+ * When entity is std::nullopt, only "global" scoped hooks can be resolved.
  *
  * @note Always returns a copy - caller owns the returned value
  * @note For dynamic binding, use get_value() instead
@@ -670,6 +675,14 @@ std::optional<T> resolve_scoped_hook(Registry& r, std::string const& value_str)
  *
  * @code
  * JsonObject obj;
+ * obj["health"] = "%self:Player:maxHealth";
+ *
+ * auto health = get_value_copy<int>(r, obj, "health", entity_id);
+ * // Reads maxHealth from Player component on entity_id
+ * @endcode
+ *
+ * @code
+ * JsonObject obj;
  * obj["rect"] = JsonObject{
  *   {"x", 10}, {"y", 20}, {"w", 100}, {"h", 50}
  * };
@@ -684,19 +697,37 @@ std::optional<T> resolve_scoped_hook(Registry& r, std::string const& value_str)
  * @endcode
  */
 template<typename T, typename... Args>
-std::optional<T> get_value_copy(Registry& r,
-                                JsonObject const& object,
-                                std::string const& key,
-                                Args&&... args)
+std::optional<T> get_value_copy(
+    Registry& r,
+    JsonObject const& object,
+    std::string const& key,
+    std::optional<Ecs::Entity> entity = std::nullopt,
+    Args&&... args)
 {
   try {
     std::string value_str = std::get<std::string>(object.at(key).value);
 
-    if (value_str.starts_with('%') || value_str.starts_with('#')) {
-      std::string stripped = value_str.substr(1);
-      auto result = resolve_scoped_hook<T>(r, stripped);
-      if (result.has_value()) {
-        return result;
+    // self hook: @self
+    if (value_str.starts_with('@')) {
+      if constexpr (std::is_same_v<T, std::size_t>) {
+        if (value_str.substr(1) == "self") {
+          return entity;
+        }
+      }
+    }
+
+    std::string stripped = value_str.substr(1);
+    if (value_str.starts_with('%')) {
+      if (entity.has_value()) {
+        auto result = resolve_scoped_hook<T>(r, stripped, entity.value());
+        if (result.has_value()) {
+          return result;
+        }
+      } else {
+        auto result = resolve_scoped_hook<T>(r, stripped);
+        if (result.has_value()) {
+          return result;
+        }
       }
     }
   } catch (std::bad_variant_access const& e) {
@@ -774,7 +805,7 @@ std::optional<T> get_value_copy(Registry& r,
  * struct Follower {
  *   Vector2D target_pos;
  *
- *   Follower(Registry& r, JsonObject const& obj, Registry::Entity self) {
+ *   Follower(Registry& r, JsonObject const& obj, Ecs::Entity self) {
  *     // JSON: "target_pos": "#self:Position:pos"
  *     target_pos = get_value<Follower, Vector2D>(
  *       r, obj, self, "target_pos"
@@ -790,7 +821,7 @@ std::optional<T> get_value_copy(Registry& r,
  * struct HealthBar {
  *   int max_health;
  *
- *   HealthBar(Registry& r, JsonObject const& obj, Registry::Entity self) {
+ *   HealthBar(Registry& r, JsonObject const& obj, Ecs::Entity self) {
  *     // JSON: "max_health": "#global:GameConfig:maxHealth"
  *     max_health = get_value<HealthBar, int>(
  *       r, obj, self, "max_health"
@@ -806,7 +837,7 @@ std::optional<T> get_value_copy(Registry& r,
  * struct Enemy {
  *   int max_health;
  *
- *   Enemy(Registry& r, JsonObject const& obj, Registry::Entity self) {
+ *   Enemy(Registry& r, JsonObject const& obj, Ecs::Entity self) {
  *     // JSON: "max_health": "%global:EnemyDefaults:health"
  *     max_health = get_value<Enemy, int>(
  *       r, obj, self, "max_health"
@@ -820,7 +851,7 @@ std::optional<T> get_value_copy(Registry& r,
 template<typename ComponentType, typename T, typename... Args>
 std::optional<T> get_value(Registry& r,
                            JsonObject const& object,
-                           Registry::Entity entity,
+                           Ecs::Entity entity,
                            std::string const& field_name,
                            Args&&... args)
 {
@@ -835,6 +866,7 @@ std::optional<T> get_value(Registry& r,
         }
       }
     }
+
     // Dynamic hook: #scope:component:field
     if (value_str.starts_with('#')) {
       std::string stripped = value_str.substr(1);
@@ -862,7 +894,8 @@ std::optional<T> get_value(Registry& r,
   } catch (std::bad_variant_access const&) {  // NOLINT intentional fallthrough
   }
 
-  return get_value_copy<T>(r, object, field_name, std::forward<Args>(args)...);
+  return get_value_copy<T>(
+      r, object, field_name, entity, std::forward<Args>(args)...);
 }
 
 /**

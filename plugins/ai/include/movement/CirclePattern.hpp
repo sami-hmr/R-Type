@@ -19,7 +19,7 @@ public:
   static constexpr double DEFAULT_RADIUS = 100.0;
   static constexpr double DEFAULT_ANGULAR_SPEED = 1.5;
 
-  void update(Registry::Entity entity,
+  void update(Ecs::Entity entity,
               Registry& registry,
               EventManager& em,
               MovementBehavior& behavior,

@@ -9,42 +9,42 @@
 
 struct InteractionZoneEvent
 {
-  Registry::Entity source;
+  Ecs::Entity source;
   double radius;
-  std::vector<Registry::Entity> candidates;
+  std::vector<Ecs::Entity> candidates;
 
   CHANGE_ENTITY(result.source = map.at(source);
                 result.candidates = MAP_ENTITY_VECTOR(candidates);)
 
-  InteractionZoneEvent(Registry::Entity src,
+  InteractionZoneEvent(Ecs::Entity src,
                        double r,
-                       std::vector<Registry::Entity> cands)
+                       std::vector<Ecs::Entity> cands)
       : source(src)
       , radius(r)
       , candidates(std::move(cands))
   {
   }
 
-  InteractionZoneEvent(Registry& r, JsonObject const& e)
-      : source(static_cast<Registry::Entity>(
-            get_value_copy<double>(r, e, "source").value()))
-      , radius(get_value_copy<double>(r, e, "radius").value())
+  InteractionZoneEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+      : source(static_cast<Ecs::Entity>(
+            get_value_copy<double>(r, e, "source", entity).value()))
+      , radius(get_value_copy<double>(r, e, "radius", entity).value())
   {
   }
 
   DEFAULT_BYTE_CONSTRUCTOR(
       InteractionZoneEvent,
-      ([](Registry::Entity s, double r, std::vector<Registry::Entity> const& c)
+      ([](Ecs::Entity s, double r, std::vector<Ecs::Entity> const& c)
        { return InteractionZoneEvent(s, r, c); }),
-      parseByte<Registry::Entity>(),
+      parseByte<Ecs::Entity>(),
       parseByte<double>(),
-      parseByteArray<Registry::Entity>(parseByte<Registry::Entity>()))
+      parseByteArray<Ecs::Entity>(parseByte<Ecs::Entity>()))
 
   DEFAULT_SERIALIZE(
       type_to_byte(source),
       type_to_byte(radius),
       vector_to_byte(candidates,
-                     std::function<ByteArray(Registry::Entity const&)>(
-                         [](Registry::Entity const& e)
-                         { return type_to_byte<Registry::Entity>(e); })))
+                     std::function<ByteArray(Ecs::Entity const&)>(
+                         [](Ecs::Entity const& e)
+                         { return type_to_byte<Ecs::Entity>(e); })))
 };
