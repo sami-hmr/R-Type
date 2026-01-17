@@ -1,129 +1,136 @@
 {
   "entities_template": [
     {
-      "name": "basic_button",
+      "name": "button",
+      "default_parameters": {
+        "stretch": false,
+        "x": 0.0,
+        "y": 0.0,
+        "z": 10,
+        "width": 0.5,
+        "height": 0.5,
+        "text_size": {
+          "x": 0.35,
+          "y": 0.35
+        },
+        "font": "assets/fonts/roboto.ttf",
+        "sprite_idle": "assets/ui/card.png",
+        "frame_size_idle": {
+          "x": 1080.0,
+          "y": 317.0
+        },
+        "frame_pos_idle": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "sprite_hover": "assets/ui/card_focus.png",
+        "frame_size_hover": {
+          "x": 1080.0,
+          "y": 317.0
+        },
+        "frame_pos_hover": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "sprite_pressed": "assets/ui/card.png",
+        "frame_size_pressed": {
+          "x": 1080.0,
+          "y": 317.0
+        },
+        "frame_pos_pressed": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "on_click": []
+      },
       "components": {
-        "ui:AnimatedSprite": {
-          "animations": [
-            {
-              "name": "idle",
-              "texture": "assets/ui/card.png",
-              "frame_size": {
-                "x": 1080.0,
-                "y": 317.0
-              },
-              "frame_pos": {
-                "x": 0.0,
-                "y": 0.0
-              },
-              "sprite_size": {
-                "width": "30.0%",
-                "height": "30.0%"
-              },
-              "direction": {
-                "x": 0.0,
-                "y": 0.0
-              },
-              "framerate": 1.0,
-              "nb_frames": 1,
-              "loop": true,
-              "rollback": false
-            },
-            {
-              "name": "hover",
-              "texture": "assets/ui/card_focus.png",
-              "frame_size": {
-                "x": 1080.0,
-                "y": 317.0
-              },
-              "frame_pos": {
-                "x": 0.0,
-                "y": 0.0
-              },
-              "sprite_size": {
-                "width": "30.0%",
-                "height": "30.0%"
-              },
-              "direction": {
-                "x": 0.0,
-                "y": 0.0
-              },
-              "framerate": 1.0,
-              "nb_frames": 1,
-              "loop": false,
-              "rollback": false
-            },
-            {
-              "name": "pressed",
-              "texture": "assets/ui/card.png",
-              "frame_size": {
-                "x": 1080.0,
-                "y": 317.0
-              },
-              "frame_pos": {
-                "x": 0.0,
-                "y": 0.0
-              },
-              "sprite_size": {
-                "width": "30.0%",
-                "height": "30.0%"
-              },
-              "direction": {
-                "x": 0.0,
-                "y": 0.0
-              },
-              "framerate": 1.0,
-              "nb_frames": 1,
-              "loop": true,
-              "rollback": false
-            }
-          ],
-          "default_animation": "idle"
-        },
-        "ui:Drawable": {},
-        "ath:Clickable": {
-          "to_emit": "$events"
-        },
-        "moving:Position": {
-          "pos": {
-            "x": "$x",
-            "y": "$y"
-          },
-          "z": 10
-        },
-        "collision:Collidable": {
-          "size": {
-            "x": 0.3,
-            "y": 0.08
-          },
-          "collision_type": "solid"
-        },
-        "ath:Button": {
-          "hover": false,
-          "toggle": false,
-          "pressed": false
-        },
-        "ui:Text": {
-          "font": "assets/fonts/roboto.ttf",
-          "size": {
-            "width": "20.0%",
-            "height": "2.0%"
-          },
-          "fill_color": {
-            "r": 255,
-            "g": 255,
-            "b": 255,
-            "a": 255
-          },
-          "outline_color": {
-            "r": 0,
-            "g": 0,
-            "b": 0,
-            "a": 255
-          },
-          "outline_thickness": 30.0,
-          "outline": true,
+        "template": "card",
+        "parameters": {
+          "x": "$x",
+          "y": "$y",
+          "z": "$z",
+          "width": "$width",
+          "height": "$height",
+          "text_size": "$text_size",
+          "font": "$font",
           "text": "$text"
+        },
+        "config": {
+          "ui:AnimatedSprite": {
+            "animations": [
+              {
+                "name": "idle",
+                "texture": "$sprite_idle",
+                "frame_size": "$frame_size_idle",
+                "frame_pos": "$frame_pos_idle",
+                "sprite_size": {
+                  "width": "$width",
+                  "height": "$height"
+                },
+                "direction": {
+                  "x": 0.0,
+                  "y": 0.0
+                },
+                "framerate": 1.0,
+                "nb_frames": 1,
+                "loop": true,
+                "rollback": false
+              },
+              {
+                "name": "hover",
+                "texture": "$sprite_hover",
+                "frame_size": "$frame_size_hover",
+                "frame_pos": "$frame_pos_hover",
+                "sprite_size": {
+                  "width": "$width",
+                  "height": "$height"
+                },
+                "direction": {
+                  "x": 0.0,
+                  "y": 0.0
+                },
+                "framerate": 1.0,
+                "nb_frames": 1,
+                "loop": false,
+                "rollback": false
+              },
+              {
+                "name": "pressed",
+                "texture": "$sprite_pressed",
+                "frame_size": "$frame_size_pressed",
+                "frame_pos": "$frame_pos_pressed",
+                "sprite_size": {
+                  "width": "$width",
+                  "height": "$height"
+                },
+                "direction": {
+                  "x": 0.0,
+                  "y": 0.0
+                },
+                "framerate": 1.0,
+                "nb_frames": 1,
+                "loop": true,
+                "rollback": false
+              }
+            ],
+            "default_animation": "idle"
+          },
+          "ui:Drawable": {
+            "hook": "drawable",
+            "stretch": "$stretch"
+          },
+          "ath:Clickable": {
+            "to_emit": "$on_click"
+          },
+          "collision:Collidable": {
+            "size": "#self:drawable:true_size",
+            "collision_type": "solid"
+          },
+          "ath:Button": {
+            "hover": false,
+            "toggle": false,
+            "pressed": false
+          }
         }
       }
     }
