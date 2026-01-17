@@ -39,8 +39,7 @@
                             },
                             "to_emit": [
                                 {
-                                    "name": "DisableSceneEvent",
-                                    "params": {
+                                    "DisableSceneEvent": {
                                         "target_scene": "pause"
                                     }
                                 }

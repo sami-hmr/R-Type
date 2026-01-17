@@ -172,8 +172,7 @@
             },
             "to_emit": [
               {
-                "name": "SceneChangeEvent",
-                "params": {
+                "SceneChangeEvent": {
                   "target_scene": "pause",
                   "reason": "",
                   "force": false,

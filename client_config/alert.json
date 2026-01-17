@@ -24,8 +24,9 @@
                     }
                 },
                 {
-                    "template": "button",
+                    "template": "action_button",
                     "parameters": {
+                        "key_to_press": "ENTER",
                         "y": 0.3,
                         "width": 0.3,
                         "height": 0.3,

@@ -169,7 +169,6 @@ void Controller::delete_binding_scene(bool disable)
       if (!disable && scene == "__rebinding_card__") {
         continue;
       }
-      if (scene == "__rebinding_card__") {std::cout << "sjkfsdkjfhdskfds\n";};
       this->_registry.get().kill_entity(e);
     }
     if (disable) {

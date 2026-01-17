@@ -16,6 +16,17 @@
                         "height": 0.03
                     },
                     "text": "<-"
+                },
+                "config": {
+                    "actions:ActionTrigger": {
+                        "trigger": {
+                            "type": "KeyPressed",
+                            "params": {
+                                "key": "ECHAP"
+                            }
+                        },
+                        "to_emit": "$to_emit"
+                    }
                 }
             }
         },

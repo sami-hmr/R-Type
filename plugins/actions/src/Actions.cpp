@@ -87,19 +87,33 @@ void Actions::init_action_trigger(Registry::Entity const& entity,
   }
 
   std::vector<std::pair<std::string, JsonObject>> to_emit_map;
-  JsonArray to_emit = std::get<JsonArray>(obj.at("to_emit").value);
-  for (auto const& i : to_emit) {
-    JsonObject obj_array = std::get<JsonObject>(i.value);
-    std::string name = get_value<ActionTrigger, std::string>(
-                           this->_registry.get(), obj_array, entity, "name")
-                           .value();
-    JsonObject params;
-    if (trigger.contains("params")) {
-      params = get_value<ActionTrigger, JsonObject>(
-                   this->_registry.get(), obj_array, entity, "params")
-                   .value();
+
+  if (obj.contains("to_emit")) {
+    try {
+      JsonArray emits_array = std::get<JsonArray>(obj.at("to_emit").value);
+      for (auto const& emit_value : emits_array) {
+        try {
+          JsonObject emit_obj = std::get<JsonObject>(emit_value.value);
+          for (auto const& [event_name, event_data_value] : emit_obj) {
+            try {
+              JsonObject event_data =
+                  std::get<JsonObject>(event_data_value.value);
+              to_emit_map.emplace_back(event_name, event_data);
+            } catch (std::bad_variant_access const&) {
+              std::cerr << "Error parsing action emit: event data is not a "
+                           "JsonObject"
+                        << '\n';
+            }
+          }
+        } catch (std::bad_variant_access const&) {
+          std::cerr << "Error parsing action emit: invalid format" << '\n';
+        }
+      }
+    } catch (std::bad_variant_access const&) {
+      std::cerr
+          << "Error parsing action component: 'to_emit' is not a JsonArray"
+          << '\n';
     }
-    to_emit_map.emplace_back(name, params);
   }
 
   init_component<ActionTrigger>(this->_registry.get(),

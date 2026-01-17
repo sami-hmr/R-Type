@@ -6,7 +6,7 @@
             "plugins": [],
             "entities": [
                 {
-                   "template": "login_title",
+                    "template": "login_title",
                     "parameters": {
                         "text": "register"
                     }
@@ -14,21 +14,21 @@
                 {
                     "template": "input",
                     "parameters": {
-                       "x": 0.0,
-                       "y": -0.15,
-                       "input_hook": "register_id_input",
-                       "text": "#global:register_id_input:buffer",
-                       "placeholder": "identifier"
+                        "x": 0.0,
+                        "y": -0.15,
+                        "input_hook": "register_id_input",
+                        "text": "#global:register_id_input:buffer",
+                        "placeholder": "identifier"
                     }
                 },
                 {
                     "template": "input",
                     "parameters": {
-                       "x": 0.0,
-                       "y": 0.15,
-                       "input_hook": "register_pswd_input",
-                       "text": "#global:register_pswd_input:buffer",
-                       "placeholder": "password"
+                        "x": 0.0,
+                        "y": 0.15,
+                        "input_hook": "register_pswd_input",
+                        "text": "#global:register_pswd_input:buffer",
+                        "placeholder": "password"
                     }
                 },
                 {
@@ -40,9 +40,10 @@
                         "current_scene": "register"
                     }
                 },
-                 {
-                    "template": "button",
+                {
+                    "template": "action_button",
                     "parameters": {
+                        "key_to_press": "ENTER",
                         "y": 0.7,
                         "width": 0.3,
                         "height": 0.3,
