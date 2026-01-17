@@ -352,7 +352,7 @@
         //   "charge_indicator": "beam_start"
         // },
         "weapon:BasicWeapon": {
-          "bullet_type": "bounce_bullet_spread_3",
+          "bullet_type": "crossed_3_multiple_bullet",
           "magazine_size": 6,
           "magazine_nb": 100,
           "reload_time": 2.0,
@@ -382,8 +382,8 @@
                 "y": 0.0
               },
               "sprite_size": {
-                "width": "20.0%",
-                "height": "20.0%"
+                "width": "15.0%",
+                "height": "15.0%"
               },
               "framerate": 10.0,
               "nb_frames": 7,
@@ -406,8 +406,8 @@
                 "y": 0.0
               },
               "sprite_size": {
-                "width": "20.0%",
-                "height": "20.0%"
+                "width": "15.0%",
+                "height": "15.0%"
               },
               "framerate": 10.0,
               "nb_frames": 4,
