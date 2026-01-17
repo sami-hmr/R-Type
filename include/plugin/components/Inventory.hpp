@@ -27,6 +27,7 @@ struct Inventory
               if (self.slots.size() < 1) {
                 return std::reference_wrapper("");
               }
+              return std::reference_wrapper(self.slots[0].first.object.first);
             }},
            {"slot_2",
             [](Component& self) -> std::any

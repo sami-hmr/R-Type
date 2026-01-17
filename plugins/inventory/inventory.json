@@ -1,49 +1,37 @@
 {
-    "inventory:Item": {
+    "inventory:inventory": {
         "max_items": 5,
         "items": [
             {
-                "name": "apple",
-                "quantity": 1,
+                // 1st example: consumable
+                "name": "oil",
+                "quantity": 5,
+                "throwable": false,
                 "consumable": true,
-                "throwable": true,
                 "config": {
                     "consume": {
-                        "animation": "Consumed",
-                        "event": {
-                            "name": "HealEvent",
-                            "params": {
-                                "dgts": 1
-                            }
+                        "name": "HealEvent",
+                        "params": {
+                            "amount": 5
                         }
-                    },
+                    }
+                }
+            },
+            // 2nd example: throwable
+            {
+                "name": "grenade",
+                "quantity": 1,
+                "throwable": true,
+                "consumable": false,
+                "config": {
                     "throw": {
-                        "animation": "Thrown"
+                        "name": "DamageEvent",
+                        "params": {
+                            "amount": 50
+                        }
                     }
                 }
             }
         ]
     },
-    "inventory:Item2": {
-        "max_items": 64,
-        "items": [
-            {
-                "name": "oil",
-                "quantity": 1,
-                "consumable": true,
-                "throwable": false,
-                "config": {
-                    "consume": {
-                        "animation": "Consumed",
-                        "event": {
-                            "name": "HealEvent",
-                            "params": {
-                                "dgts": 1
-                            }
-                        }
-                    }
-                }
-            }
-        ]
-    }
 }

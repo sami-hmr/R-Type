@@ -1,3 +1,4 @@
+#include <cstddef>
 #include <string>
 #include <utility>
 #include <vector>
@@ -16,6 +17,7 @@
 #include "plugin/components/Item.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/events/CreateEntity.hpp"
+#include "plugin/events/DeathEvent.hpp"
 #include "plugin/events/InventoryEvents.hpp"
 #include "plugin/events/LogMacros.hpp"
 
@@ -26,89 +28,94 @@ InventoryPlugin::InventoryPlugin(Registry& r, EventManager& em, EntityLoader& l)
               l,
               {"moving", "artefacts"},
               {COMP_INIT(Inventory, Inventory, init_inventory)})
-    , entity_loader(
-          l) {REGISTER_COMPONENT(Item) REGISTER_COMPONENT(Inventory)
+    , entity_loader(l)
+{
+  REGISTER_COMPONENT(Item);
+  REGISTER_COMPONENT(Inventory);
 
-                  SUBSCRIBE_EVENT(
-                      Consume,
-                      {
-                        for (auto&& [entity, inventory] :
-                             ZipperIndex<Inventory>(this->_registry.get()))
-                        {
-                          if (entity == event.consumer) {
-                            if (event.slot_item >= inventory.slots.size()) {
-                              return false;
-                            }
-                            use_item(
-                                event.slot_item, event.nb_to_use, inventory);
-                            if (inventory.slots[event.slot_item]
-                                    .first.consumable) {
-                              return usage_emit("consume",
-                                                inventory.slots[event.slot_item]
-                                                    .first.object.second);
-                            }
-                          }
-                        }
-                      })
-                      SUBSCRIBE_EVENT(
-                          Throw,
-                          {
-                            for (auto&& [entity, inventory] :
-                                 ZipperIndex<Inventory>(this->_registry.get()))
-                            {
-                              if (entity == event.consumer) {
-                                if (event.slot_item >= inventory.slots.size()) {
-                                  return false;
-                                }
-                                use_item(event.slot_item,
-                                         event.nb_to_use,
-                                         inventory);
-                                if (inventory.slots[event.slot_item]
-                                        .first.throwable) {
-                                  create_artefact(
-                                      inventory.slots[event.slot_item].first,
-                                      entity);
-                                  return usage_emit(
-                                      "throw",
-                                      inventory.slots[event.slot_item]
-                                          .first.object.second);
-                                }
-                              }
-                            }
-                          })
-                          SUBSCRIBE_EVENT(Remove,
-                                          {
-                                            for (auto&& [entity, inventory] :
-                                                 ZipperIndex<Inventory>(
-                                                     this->_registry.get()))
-                                            {
-                                              if (entity == event.consumer) {
-                                                if (event.slot_item
-                                                    >= inventory.slots.size()) {
-                                                  return false;
-                                                }
-                                                use_item(event.slot_item,
-                                                         event.nb_to_use,
-                                                         inventory);
-                                              }
-                                            }
-                                          })
-                              SUBSCRIBE_EVENT(
-                                  PickUp,
-                                  {
-                                    for (auto&& [entity, inventory] :
-                                         ZipperIndex<Inventory>(
-                                             this->_registry.get()))
-                                    {
-                                      if (entity == event.possessor) {
-                                        add_item(event.item,
-                                                 event.quantity,
-                                                 inventory);
-                                      }
-                                    }
-                                  })}
+  SUBSCRIBE_EVENT(Consume, {
+    for (auto&& [entity, inventory] :
+         ZipperIndex<Inventory>(this->_registry.get()))
+    {
+      if (entity == event.consumer) {
+        if (event.slot_item >= inventory.slots.size()) {
+          return false;
+        }
+        use_item(event.slot_item, event.nb_to_use, inventory);
+        if (inventory.slots[event.slot_item].first.consumable) {
+          return usage_emit(
+              "consume", inventory.slots[event.slot_item].first.object.second);
+        }
+      }
+    }
+  })
+  SUBSCRIBE_EVENT(DeathEvent, {
+    auto inventory = _registry.get().get_components<Inventory>()[event.entity];
+    if (!inventory)
+      return false;
+    std::size_t i =0;
+    for (auto item : (*inventory).slots) {
+      this->_event_manager.get().emit<Drop>(i, true, 1, event.entity);
+      i += 1;
+    }
+  })
+  SUBSCRIBE_EVENT(Drop, {
+    for (auto&& [entity, inventory] :
+         ZipperIndex<Inventory>(this->_registry.get()))
+    {
+      if (entity == event.consumer) {
+        if (event.slot_item >= inventory.slots.size()) {
+          return false;
+        }
+        use_item(event.slot_item, event.nb_to_use, inventory);
+        if (inventory.slots[event.slot_item].first.throwable) {
+          create_artefact(inventory.slots[event.slot_item].first, entity);
+          return false;
+        }
+      }
+    }
+  })
+  SUBSCRIBE_EVENT(Throw, {
+    for (auto&& [entity, inventory] :
+         ZipperIndex<Inventory>(this->_registry.get()))
+    {
+      if (entity == event.consumer) {
+        if (event.slot_item >= inventory.slots.size()) {
+          return false;
+        }
+        use_item(event.slot_item, event.nb_to_use, inventory);
+        if (inventory.slots[event.slot_item].first.throwable) {
+          create_artefact(inventory.slots[event.slot_item].first, entity);
+          return usage_emit(
+              "throw", inventory.slots[event.slot_item].first.object.second);
+        }
+      }
+    }
+  })
+  SUBSCRIBE_EVENT(Remove, {
+    for (auto&& [entity, inventory] :
+         ZipperIndex<Inventory>(this->_registry.get()))
+    {
+      if (entity == event.consumer) {
+        if (event.slot_item >= inventory.slots.size()) {
+          return false;
+        }
+        use_item(event.slot_item, event.nb_to_use, inventory);
+      }
+    }
+  })
+  SUBSCRIBE_EVENT(PickUp, {
+    for (auto&& [entity, inventory] :
+         ZipperIndex<Inventory>(this->_registry.get()))
+    {
+      if (entity == event.possessor) {
+        add_item(event.item, event.quantity, inventory);
+      }
+    }
+  })
+}
 
-    PickableTool InventoryPlugin::item_to_artefact(Item const& item)
+PickableTool InventoryPlugin::item_to_artefact(Item const& item)
 {
   std::string name = item.object.first;
   auto on_consumption = get_value_copy<JsonObject>(
@@ -119,8 +126,7 @@ InventoryPlugin::InventoryPlugin(Registry& r, EventManager& em, EntityLoader& l)
   return {on_consumption, on_throw, name, item.consumable, item.throwable};
 }
 
-void InventoryPlugin::create_artefact(Item const& item,
-                                      Registry::Entity entity)
+void InventoryPlugin::create_artefact(Item const& item, Registry::Entity entity)
 {
   PickableTool artefact = item_to_artefact(item);
   ByteArray artefact_bytes = artefact.to_bytes();
@@ -132,14 +138,18 @@ void InventoryPlugin::create_artefact(Item const& item,
        artefact_bytes}};
 
   if (this->_registry.get().has_component<Position>(entity)) {
-    additional.push_back(
-        {this->_registry.get().get_component_key<Position>(),
-         this->_registry.get().get_components<Position>()[entity].value().to_bytes()});
+    additional.push_back({this->_registry.get().get_component_key<Position>(),
+                          this->_registry.get()
+                              .get_components<Position>()[entity]
+                              .value()
+                              .to_bytes()});
   }
   if (this->_registry.get().has_component<Scene>(entity)) {
-    additional.push_back(
-        {this->_registry.get().get_component_key<Scene>(),
-         this->_registry.get().get_components<Scene>()[entity].value().to_bytes()});
+    additional.push_back({this->_registry.get().get_component_key<Scene>(),
+                          this->_registry.get()
+                              .get_components<Scene>()[entity]
+                              .value()
+                              .to_bytes()});
   }
   LOGGER("Inventory Plugin", LogLevel::WARNING, "Creating an entity...")
   this->_event_manager.get().emit<CreateEntity>(additional);
@@ -154,12 +164,12 @@ std::vector<std::pair<Item, std::size_t>> InventoryPlugin::init_item_vector(
     auto& item = std::get<JsonObject>(it.value);
     auto name =
         get_value_copy<std::string>(this->_registry.get(), item, "name");
+    auto quantity =
+        get_value_copy<int>(this->_registry.get(), item, "quantity");
     auto consumable =
         get_value_copy<bool>(this->_registry.get(), item, "consumable");
     auto throwable =
         get_value_copy<bool>(this->_registry.get(), item, "throwable");
-    auto quantity =
-        get_value_copy<int>(this->_registry.get(), item, "quantity");
     auto config =
         get_value_copy<JsonObject>(this->_registry.get(), item, "config");
     if (!name) {
@@ -224,25 +234,20 @@ bool InventoryPlugin::usage_emit(std::string area, const JsonObject& obj)
            std::format("Missing {} field in item. No event played", area));
     return false;
   }
-  auto evt_use =
-      get_value_copy<JsonObject>(this->_registry.get(), *use_item, "event");
-  if (evt_use) {
-    auto name =
-        get_value_copy<std::string>(this->_registry.get(), *evt_use, "name");
-    auto params =
-        get_value_copy<JsonObject>(this->_registry.get(), *evt_use, "params");
-    if (!name || !params) {
-      LOGGER("InventoryPlugin",
-             LogLevel::ERR,
-             std::format(
-                 "Invalid event field in item's {} configuration. No " "even't "
-                                                                       "played",
-                 area));
-      return false;
-    }
-    emit_event(
-        this->_event_manager.get(), this->_registry.get(), *name, *params);
+  auto name =
+      get_value_copy<std::string>(this->_registry.get(), *use_item, "name");
+  auto params =
+      get_value_copy<JsonObject>(this->_registry.get(), *use_item, "params");
+  if (!name || !params) {
+    LOGGER(
+        "InventoryPlugin",
+        LogLevel::ERR,
+        std::format(
+            "Invalid event field in item's {} configuration. No even't played",
+            area));
+    return false;
   }
+  emit_event(this->_event_manager.get(), this->_registry.get(), *name, *params);
   return false;
 }
 
