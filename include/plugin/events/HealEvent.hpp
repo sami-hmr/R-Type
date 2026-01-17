@@ -27,13 +27,12 @@ struct HealEvent
   }
 
   DEFAULT_BYTE_CONSTRUCTOR(HealEvent,
-                           ([](Registry::Entity const& t,
-                               int a) { return HealEvent(t, a); }),
+                           ([](Registry::Entity const& t, int a)
+                            { return HealEvent(t, a); }),
                            parseByte<Registry::Entity>(),
                            parseByte<int>())
 
-  DEFAULT_SERIALIZE(type_to_byte(this->target),
-                    type_to_byte(this->amount))
+  DEFAULT_SERIALIZE(type_to_byte(this->target), type_to_byte(this->amount))
 
   HealEvent(Registry& r, JsonObject const& e)
       : target(static_cast<Registry::Entity>(
