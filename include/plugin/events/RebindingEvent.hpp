@@ -91,8 +91,7 @@ struct GenerateRebindingScene
                                   std::string const& lnk,
                                   std::string const& back,
                                   std::string const& base,
-                                  bool main)
-                               {
+                                  bool main) {
                                  return GenerateRebindingScene(
                                      e, bg, btn, txt, lnk, back, base, main);
                                }),
@@ -122,19 +121,22 @@ struct GenerateRebindingScene
             get_value_copy<std::string>(r, e, "background_template", entity)
                 .value_or(""))
       , button_template(
-            get_value_copy<std::string>(r, e, "button_template", entity).value_or(""))
-      , text_template(
-            get_value_copy<std::string>(r, e, "text_template", entity).value_or(""))
-      , link_template(
-            get_value_copy<std::string>(r, e, "link_template", entity).value_or(""))
-      , card_template(
-            get_value_copy<std::string>(r, e, "card_template", entity).value_or(""))
+            get_value_copy<std::string>(r, e, "button_template", entity)
+                .value_or(""))
+      , text_template(get_value_copy<std::string>(r, e, "text_template", entity)
+                          .value_or(""))
+      , link_template(get_value_copy<std::string>(r, e, "link_template", entity)
+                          .value_or(""))
+      , card_template(get_value_copy<std::string>(r, e, "card_template", entity)
+                          .value_or(""))
       , back_to_base_scene_template(
             get_value_copy<std::string>(r, e, "back_to_base_scene_template")
                 .value_or(""))
-      , base_scene(get_value_copy<std::string>(r, e, "base_scene", entity).value_or(""))
+      , base_scene(get_value_copy<std::string>(r, e, "base_scene", entity)
+                       .value_or(""))
       , is_base_scene_main(
-            get_value_copy<bool>(r, e, "is_base_scene_main", entity).value_or(false))
+            get_value_copy<bool>(r, e, "is_base_scene_main", entity)
+                .value_or(false))
   {
   }
 

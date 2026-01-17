@@ -4,16 +4,17 @@
 
 void EventManager::emit(Registry& r,
                         std::string const& name,
-                        JsonObject const& args, std::optional<Ecs::Entity> entity)
+                        JsonObject const& args,
+                        std::optional<Ecs::Entity> entity)
 {
   std::type_index type_id = _index_getter.at_second(name);
   if (!_handlers.contains(type_id)) {
     return;
   }
 
-  auto builder =
-      std::any_cast<std::function<std::any(Registry&, JsonObject const&, std::optional<Ecs::Entity>)>>(
-          _builders.at(type_id));
+  auto builder = std::any_cast<std::function<std::any(
+      Registry&, JsonObject const&, std::optional<Ecs::Entity>)>>(
+      _builders.at(type_id));
   std::any event = builder(r, args, entity);
 
   auto invoker =
@@ -43,9 +44,11 @@ ByteArray EventManager::convert_event_entity(
 
 ByteArray EventManager::get_event_with_id(Registry& r,
                                           std::string const& id,
-                                          JsonObject const& params, std::optional<Ecs::Entity> entity)
+                                          JsonObject const& params,
+                                          std::optional<Ecs::Entity> entity)
 {
-  return this->_json_builder.at(this->_index_getter.at_second(id))(r, params, entity);
+  return this->_json_builder.at(this->_index_getter.at_second(id))(
+      r, params, entity);
 }
 
 void EventManager::delete_all()
