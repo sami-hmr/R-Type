@@ -1,0 +1,63 @@
+{
+  "scenes": [
+    {
+      "name": "level_5",
+      "state": "disabled",
+      "plugins": [],
+      "entities": [
+        {
+          "moving:Position": {
+            "pos": {
+              "x": 3.0,
+              "y": 0.5
+            }
+          },
+          "mob:Spawner": {
+            "entity_template": "wave_1_level_5",
+            "spawn_interval": 5.0,
+            "max_spawns": 3
+          }
+        },
+        {
+          "moving:Position": {
+            "pos": {
+              "x": 3.0,
+              "y": -0.5
+            }
+          },
+          "mob:Spawner": {
+            "entity_template": "wave_1_level_5",
+            "spawn_interval": 10.0,
+            "max_spawns": 3
+          }
+        },
+        {
+          "moving:Position": {
+            "pos": {
+              "x": 3.0,
+              "y": 0.0
+            }
+          },
+          "mob:Spawner": {
+            "entity_template": "wave_2_level_5",
+            "spawn_interval": 7.5,
+            "max_spawns": 3
+          }
+        },
+        {
+          "moving:Position": {
+            "pos": {
+              "x": 2.5,
+              "y": -1.0
+            }
+          },
+          "mob:Spawner": {
+            "entity_template": "wave_end_level_5",
+            "spawn_interval": 30.0,
+            "max_spawns": 2
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,66 +1,100 @@
 {
   "scenes": [
     {
-      "name": "game",
+      "name": "level_1",
       "state": "disabled",
       "plugins": [],
       "entities": [
-        // {
-        //   "moving:Position": {
-        //     "pos": {
-        //       "x": -0.5,
-        //       "y": 0.0
-        //     }
-        //   },
-        //   "mob:Spawner": {
-        //     "entity_template": "ally_force_1",
-        //     "spawn_interval": 1.0,
-        //     "max_spawns": 4
-        //   }
-        // },
-        // {
-        //   "moving:Position": {
-        //     "pos": {
-        //       "x": 0.5,
-        //       "y": -1.5
-        //     }
-        //   },
-        //   "mob:Spawner": {
-        //     "entity_template": "enemy_boss_2",
-        //     "spawn_interval": 1.0,
-        //     "max_spawns": 1
-        //   }
-        // },
+                {
+          "moving:Position": {
+            "pos": {
+              "x": 3.0,
+              "y": 0.4
+            }
+          },
+          "mob:Spawner": {
+            "entity_template": "enemy_wave_1",
+            "spawn_interval": 3.0,
+            "max_spawns": 5
+          }
+        },
         {
           "moving:Position": {
             "pos": {
-              "x": 0.8,
+              "x": 3.0,
+              "y": -0.4
+            }
+          },
+          "mob:Spawner": {
+            "entity_template": "enemy_wave_1",
+            "spawn_interval": 3.5,
+            "max_spawns": 5
+          }
+        },
+        {
+          "moving:Position": {
+            "pos": {
+              "x": 2.5,
               "y": 0.0
             }
           },
           "mob:Spawner": {
-            "entity_template": "enemy_boss_3",
-            "spawn_interval": 0.0,
+            "entity_template": "wave_end_level_1",
+            "spawn_interval": 15.0,
             "max_spawns": 1
           }
         }
-        ,
-        {
-          "wave:Wave": {
-            "entity_template": "enemy_ghost_1",
-            "count": 8,
-            "tracked": true,
-            "components_inheritance": ["scene"],
-            "pattern": {
-              "type": "circle",
-              "origin": { "x": 0.8, "y": 0.0 },
-              "params": {
-                "radius": 0.7
-              }
-            },
-            "on_end": []
-          }
-        }
+        //   "scenes": [
+//     {
+//         {
+//           "wave:Wave": {
+//             "entity_template": "enemy_ghost_1",
+//             "count": 8,
+//             "tracked": true,
+//             "components_inheritance": ["scene"],
+//             "pattern": {
+//               "type": "circle",
+//               "origin": { "x": 0.8, "y": 0.0 },
+//               "params": {
+//                 "radius": 0.7
+//               }
+//             },
+//             "on_end": []
+//           }
+//         }
+//       ]
+//     }
+//   ]
+// }
+        // {
+        //   "moving:Position": {
+        //     "pos": {
+        //       "x": 0.8,
+        //       "y": 0.0
+        //     }
+        //   },
+        //   "mob:Spawner": {
+        //     "entity_template": "enemy_boss_3",
+        //     "spawn_interval": 0.0,
+        //     "max_spawns": 1
+        //   }
+        // },
+        // {
+        //   "wave:Wave": {
+        //     "entity_template": "enemy_ghost_1",
+        //     "count": 8,
+        //     "tracked": true,
+        //     "components_inheritance": ["scene"],
+        //     "pattern": {
+        //       "type": "circle",
+        //       "origin": { "x": 0.8, "y": 0.0 },
+        //       "params": {
+        //         "radius": 0.7
+        //       }
+        //     },
+        //     "on_end": []
+        //   }
+        // }
       ]
     }
   ]

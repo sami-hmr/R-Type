@@ -3,7 +3,7 @@
     {
       "name": "enemy_boss_1",
       "default_parameters": {
-        "health_max": 1.0,
+        "health_max": 30.0,
         "bullet_type": "bolt_8_multiple_bullet",
         "zone_radius": 1.5,
         "attack_behavior_attack_type": "continuous"
@@ -17,6 +17,8 @@
           "idle_direction": { "x": 0.0, "y": 1.0 },
           "idle_nb_frames": 9,
           "idle_sprite_size": { "width": "30.0%", "height": "30.0%" },
+          "idle_flip_v": true,
+          "idle_flip_h": true,
 
           // "death_texture": "assets/explosion/enemy-death.png",
           // "death_frame_size": { "x": 64.0, "y": 64.0 },
@@ -62,7 +64,7 @@
       "name": "enemy_boss_2",
       "default_parameters": {
         "health_max": 100.0,
-        "bullet_type": "follow_bullet",
+        "bullet_type": "bolt_follow_bullet",
         "attack_behavior_attack_type": "continuous"
       },
       "components": {
@@ -74,6 +76,8 @@
           "idle_direction": { "x": 1.0, "y": 0.0 },
           "idle_nb_frames": 3,
           "idle_sprite_size": { "width": "60.0%", "height": "60.0%" },
+          "idle_flip_v": true,
+          "idle_flip_h": true,
 
           "death_texture": "assets/explosion/explosion-animation.png",
           "death_frame_size": { "x": 112.0, "y": 128.0 },
@@ -85,6 +89,7 @@
           "health_current": "$health_max",
           "health_max": "$health_max",
           "damage_amount": 1,
+          "facing_plane": true,
 
           "collision_size": { "x": 0.7, "y": 0.25 },
           "collision_type": "push",
@@ -112,8 +117,7 @@
       "default_parameters": {
         "health_max": 100.0,
         "bullet_type": "rays_bullet",
-        "attack_behavior_attack_type": "continuous",
-        "zone_radius": 1.5
+        "attack_behavior_attack_type": "continuous"
       },
       "components": {
         "template": "enemy",
@@ -142,8 +146,6 @@
           "movement_behavior_movement_type": "turret"
         },
         "config": {
-          "target:Follower": {},
-          "collision:InteractionZone": { "radius": "$zone_radius" },
           "weapon:BasicWeapon": {
             "bullet_type": "$bullet_type",
             "magazine_size": 6,

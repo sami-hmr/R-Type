@@ -25,7 +25,6 @@
 
         "damage_amount": 5,
         "speed": { "x": 1.5, "y": 1.5 },
-        "facing_direction": { "x": -1.0, "y": 0.0 },
 
         "collision_size": { "x": 0.15, "y": 0.15 },
         "collision_type": "trigger",
@@ -88,9 +87,6 @@
             "x": 0.0,
             "y": 0.0
           }
-        },
-        "moving:Facing": {
-          "direction": "$facing_direction"
         },
         "projectile:Temporal": {
           "lifetime": "$temporal_lifetime"
@@ -334,7 +330,7 @@
       }
     },
     {
-      "name": "follow_bullet",
+      "name": "bolt_follow_bullet",
       "default_parameters": {},
       "components": {
         "template": "bolt_bullet",
@@ -345,6 +341,52 @@
         "config": {
           "target:Follower": {},
           "collision:InteractionZone": { "radius": 1.5 }
+        }
+      }
+    },
+    {
+      "name": "waveform_follow_bullet",
+      "default_parameters": {},
+      "components": {
+        "template": "waveform_bullet",
+        "parameters": {
+          "damage_amount": 5,
+          "speed": {"x": 1.0, "y": 1.0}
+        },
+        "config": {
+          "target:Follower": {},
+          "collision:InteractionZone": { "radius": 1.5 }
+        }
+      }
+    },
+    {
+      "name": "crossed_follow_bullet",
+      "default_parameters": {},
+      "components": {
+        "template": "crossed_bullet",
+        "parameters": {
+          "damage_amount": 5,
+          "speed": {"x": 1.0, "y": 1.0}
+        },
+        "config": {
+          "target:Follower": {},
+          "collision:InteractionZone": { "radius": 2.0 }
+        }
+      }
+    },
+    {
+      "name": "fire_ball_follow_bullet",
+      "default_parameters": {},
+      "components": {
+        "template": "fire_ball_bullet",
+        "parameters": {
+          "damage_amount": 5,
+          "speed": {"x": 1.0, "y": 1.0},
+          "temporal_lifetime": 6.0
+        },
+        "config": {
+          "target:Follower": {},
+          "collision:InteractionZone": { "radius": 2.5 }
         }
       }
     },

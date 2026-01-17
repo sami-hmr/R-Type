@@ -18,7 +18,7 @@
           "idle_nb_frames": 6,
           "idle_sprite_size": { "width": "5.0%", "height": "5.0%" },
 
-            "death_texture": "assets/explosion/spritesheet.png",
+          "death_texture": "assets/explosion/spritesheet.png",
           "death_frame_size": { "x": 48.0, "y": 48.0 },
           "death_frame_pos": { "x": 0.0, "y": 0.0 },
           "death_direction": { "x": 1.0, "y": 0.0 },
@@ -31,6 +31,8 @@
           "speed": { "x": 0.8, "y": 0.8 },
           "team_name": "player",
 
+          "facing_direction": { "x": 1.0, "y": 0.0},
+          "facing_plane":true,
           "collision_size": { "x": 0.05, "y": 0.05 },
           "collision_type": "trigger",
 
