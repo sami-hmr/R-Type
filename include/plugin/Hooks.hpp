@@ -477,45 +477,42 @@ std::optional<std::reference_wrapper<const T>> get_ref(Registry& r,
                                                        JsonObject const& object,
                                                        std::string const& key)
 {
-  auto it = object.find(key);
-  if (it == object.end()) {
+  if (!object.contains(key)) {
     return std::nullopt;
   }
 
-  auto const& value = it->second.value;
+  auto const& value = object.at(key).value;
 
-  try {
-    std::string hook = std::get<std::string>(value);
+  const auto* hook = std::get_if<std::string>(&value);
+  if (hook != nullptr) {
     try {
-      if (hook.starts_with('#')) {
-        std::string striped = hook.substr(1);
+      if (hook->starts_with('#')) {
+        std::string striped = hook->substr(1);
         std::string comp = striped.substr(0, striped.find(':'));
         std::string value = striped.substr(striped.find(':') + 1);
         return r.get_hooked_value<T>(comp, value);
       }
     } catch (std::bad_any_cast const&) {
       LOGGER_EVTLESS(
-          LogLevel::ERROR,
+          LogLevel::ERR,
           "Hooks",
           std::format(R"(Error geting hooked value "{}": Invalid type\n)",
-                      hook));
+                      *hook));
       return std::nullopt;
     } catch (std::out_of_range const&) {
       LOGGER_EVTLESS(
-          LogLevel::ERROR,
+          LogLevel::ERR,
           "Hooks",
           std::format(R"(Error geting hooked value "{}": Invalid hook\n)",
-                      hook));
+                      *hook));
       return std::nullopt;
     }
-  } catch (std::bad_variant_access const&) {  // NOLINT intentional fallthrought
   }
 
   if constexpr (is_in_json_variant_v<T>) {
-    try {
-      return std::reference_wrapper<const T>(std::get<T>(value));
-    } catch (std::bad_variant_access const&) {
-      return std::nullopt;
+    const auto* return_ref = std::get_if<T>(&value);
+    if (return_ref != nullptr) {
+      return std::reference_wrapper<const T>(*return_ref);
     }
   }
 
@@ -545,7 +542,7 @@ std::optional<T> resolve_scoped_hook(Registry& r,
 
   if (first_colon == std::string::npos || second_colon == std::string::npos) {
     LOGGER_EVTLESS(
-        LogLevel::ERROR,
+        LogLevel::ERR,
         "Hooks",
         std::format(
             R"(Error parsing hook: Expected format "scope:component:field", got "{}")",
@@ -567,7 +564,7 @@ std::optional<T> resolve_scoped_hook(Registry& r,
     hooked_val = r.template get_global_hooked_value<T>(comp, value);
   } else {
     LOGGER_EVTLESS(
-        LogLevel::ERROR,
+        LogLevel::ERR,
         "Hooks",
         std::format(R"(Unknown scope "{}": Expected "self" or "global")",
                     scope));
@@ -589,7 +586,7 @@ std::optional<T> resolve_scoped_hook(Registry& r, std::string const& value_str)
 
   if (first_colon == std::string::npos || second_colon == std::string::npos) {
     LOGGER_EVTLESS(
-        LogLevel::ERROR,
+        LogLevel::ERR,
         "Hooks",
         std::format(
             R"(Error parsing hook: Expected format "scope:component:field", got "{}")",
@@ -608,7 +605,7 @@ std::optional<T> resolve_scoped_hook(Registry& r, std::string const& value_str)
     hooked_val = r.template get_global_hooked_value<T>(comp, value);
   } else {
     LOGGER_EVTLESS(
-        LogLevel::ERROR,
+        LogLevel::ERR,
         "Hooks",
         std::format(R"(Unknown scope "{}": Expected "self" or "global")",
                     scope));
@@ -689,20 +686,18 @@ std::optional<T> get_value_copy(Registry& r,
                                 std::string const& key,
                                 Args&&... args)
 {
-  try {
-    std::string value_str = std::get<std::string>(object.at(key).value);
-
-    if (value_str.starts_with('%') || value_str.starts_with('#')) {
-      std::string stripped = value_str.substr(1);
+  if (!object.contains(key)) {
+    return std::nullopt;
+  }
+  const auto* value_str = std::get_if<std::string>(&object.at(key).value);
+  if (value_str != nullptr) {
+    if (value_str->starts_with('%') || value_str->starts_with('#')) {
+      std::string stripped = value_str->substr(1);
       auto result = resolve_scoped_hook<T>(r, stripped);
       if (result.has_value()) {
         return result;
       }
     }
-  } catch (std::bad_variant_access const& e) {
-    // Not a string, fall through to other methods
-  } catch (std::out_of_range const& e) {
-    // Key not found, fall through
   }
 
   auto tmp = get_ref<T>(r, object, key);
@@ -711,21 +706,14 @@ std::optional<T> get_value_copy(Registry& r,
   }
 
   if constexpr (std::is_constructible_v<T, JsonObject, Args...>) {
-    try {
-      const JsonObject& obj = std::get<JsonObject>(object.at(key).value);
-      return T(obj, std::forward<Args>(args)...);
-    } catch (std::bad_variant_access const&) {
-      LOGGER_EVTLESS(LogLevel::ERROR,
-                     "Hooks",
-                     "hooked value construction via jsonobject failed");
-    } catch (std::out_of_range const&) {
-      LOGGER_EVTLESS(
-          LogLevel::ERROR,
-          "Hooks",
-          std::format("hooked value lookup in object \"{}\" failed", key));
+    if (!object.contains(key)) {
+      return std::nullopt;
+    }
+    const auto* obj = std::get_if<JsonObject>(&object.at(key).value);
+    if (obj != nullptr) {
+      return T(*obj, std::forward<Args>(args)...);
     }
   }
-
   return std::nullopt;
 }
 
@@ -824,42 +812,43 @@ std::optional<T> get_value(Registry& r,
                            std::string const& field_name,
                            Args&&... args)
 {
-  try {
-    std::string value_str = std::get<std::string>(object.at(field_name).value);
+  if (object.contains(field_name)) {
+    const auto* value_str =
+        std::get_if<std::string>(&object.at(field_name).value);
 
-    // self hook: @self
-    if (value_str.starts_with('@')) {
-      if constexpr (std::is_same_v<T, std::size_t>) {
-        if (value_str.substr(1) == "self") {
-          return entity;
+    if (value_str != nullptr) {
+      // self hook: @self
+      if (value_str->starts_with('@')) {
+        if constexpr (std::is_same_v<T, std::size_t>) {
+          if (value_str->substr(1) == "self") {
+            return entity;
+          }
+        }
+      }
+      // Dynamic hook: #scope:component:field
+      if (value_str->starts_with('#')) {
+        std::string stripped = value_str->substr(1);
+
+        r.template register_binding<ComponentType, T>(
+            entity, field_name, stripped);
+
+        auto result = resolve_scoped_hook<T>(r, stripped, entity);
+        if (result.has_value()) {
+          return result;
+        }
+
+        return T {};
+      }
+
+      if (value_str->starts_with('%')) {
+        std::string stripped = value_str->substr(1);
+
+        auto result = resolve_scoped_hook<T>(r, stripped, entity);
+        if (result.has_value()) {
+          return result;
         }
       }
     }
-    // Dynamic hook: #scope:component:field
-    if (value_str.starts_with('#')) {
-      std::string stripped = value_str.substr(1);
-
-      r.template register_binding<ComponentType, T>(
-          entity, field_name, stripped);
-
-      auto result = resolve_scoped_hook<T>(r, stripped, entity);
-      if (result.has_value()) {
-        return result;
-      }
-
-      return T {};
-    }
-
-    if (value_str.starts_with('%')) {
-      std::string stripped = value_str.substr(1);
-
-      auto result = resolve_scoped_hook<T>(r, stripped, entity);
-      if (result.has_value()) {
-        return result;
-      }
-    }
-
-  } catch (std::bad_variant_access const&) {  // NOLINT intentional fallthrough
   }
 
   return get_value_copy<T>(r, object, field_name, std::forward<Args>(args)...);
@@ -893,14 +882,12 @@ std::optional<T> get_value(Registry& r,
  */
 inline bool is_hook(JsonObject const& object, std::string const& key)
 {
-  try {
-    std::string value = std::get<std::string>(object.at(key).value);
-    return value.starts_with('#');
-  } catch (std::bad_variant_access const&) {
-    // Value is not a string
-    return false;
-  } catch (std::out_of_range const&) {
-    // Key not found
+  if (!object.contains(key)) {
     return false;
   }
+  const auto* value = std::get_if<std::string>(&object.at(key).value);
+  if (value == nullptr) {
+    return false;
+  }
+  return value->starts_with('#');
 }

@@ -25,7 +25,7 @@ struct InteractionZone
 
   DEFAULT_BYTE_CONSTRUCTOR(InteractionZone,
                            ([](double radius, bool enabled)
-                            { return (InteractionZone) {radius, enabled}; }),
+                            { return InteractionZone {radius, enabled}; }),
                            parseByte<double>(),
                            parseByte<bool>())
   DEFAULT_SERIALIZE(type_to_byte(this->radius), type_to_byte(this->enabled))

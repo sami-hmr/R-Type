@@ -118,7 +118,8 @@
           "direction": {
             "x": 1.0,
             "y": 0.0
-          }
+          },
+          "plane": true
         },
         "collision:Collidable": {
           "size": {
@@ -269,7 +270,8 @@
           "direction": {
             "x": 1.0,
             "y": 0.0
-          }
+          },
+          "plane": true
         },
         "collision:Collidable": {
           "size": {
@@ -424,7 +426,8 @@
           "direction": {
             "x": 1.0,
             "y": 0.0
-          }
+          },
+          "plane": true
         },
         "collision:Collidable": {
           "size": {

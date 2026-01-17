@@ -10,23 +10,27 @@ struct Drawable
 {
   Drawable() = default;
 
-  Drawable(bool enabled, Vector2D const& v = {0, 0})
+  Drawable(bool enabled, bool stretch = false, Vector2D const& v = {0, 0})
       : enabled(enabled)
+      , stretch(stretch)
       , true_size(v)
   {
   }
   DEFAULT_BYTE_CONSTRUCTOR(Drawable,
-                           ([](bool e, Vector2D const& v)
-                            { return Drawable(e, v); }),
+                           ([](bool e, bool s, Vector2D const& v)
+                            { return Drawable(e, s, v); }),
+                           parseByte<bool>(),
                            parseByte<bool>(),
                            parseVector2D())
   DEFAULT_SERIALIZE(type_to_byte<bool>(this->enabled),
+                    type_to_byte<bool>(this->stretch),
                     vector2DToByte(true_size))
 
   CHANGE_ENTITY_DEFAULT
 
   bool enabled = true;
+  bool stretch = false;
   Vector2D true_size;
 
-  HOOKABLE(Drawable, HOOK(enabled), HOOK(true_size))
+  HOOKABLE(Drawable, HOOK(enabled), HOOK(stretch), HOOK(true_size))
 };
