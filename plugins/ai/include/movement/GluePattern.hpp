@@ -18,7 +18,7 @@ public:
   static constexpr double DEFAULT_RADIUS = 0.3;
   static constexpr std::string DEFAULT_BEHAVIOR = "glue";
 
-  void update(Registry::Entity entity,
+  void update(Ecs::Entity entity,
               Registry& registry,
               EventManager& em,
               MovementBehavior& behavior,

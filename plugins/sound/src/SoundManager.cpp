@@ -10,7 +10,7 @@
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "plugin/events/SoundEvents.hpp"
 
-void Sound::init_sound_manager(Registry::Entity& e, const JsonObject& obj)
+void Sound::init_sound_manager(Ecs::Entity& e, const JsonObject& obj)
 {
   std::unordered_map<std::string, SoundEffect> sound_effects;
 

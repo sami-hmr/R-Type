@@ -52,8 +52,11 @@ struct LoadEntityTemplate
                         }));
               })))
 
-  LoadEntityTemplate(Registry& r, JsonObject const& e)
-      : template_name(get_value_copy<std::string>(r, e, "template").value())
+  LoadEntityTemplate(Registry& r,
+                     JsonObject const& e,
+                     std::optional<Ecs::Entity> entity)
+      : template_name(
+            get_value_copy<std::string>(r, e, "template", entity).value())
   {
   }
 
@@ -65,7 +68,7 @@ struct DeleteEntity
 {
   DeleteEntity() = default;
 
-  DeleteEntity(Registry::Entity e)
+  DeleteEntity(Ecs::Entity e)
       : entity(e)
   {
   }
@@ -73,24 +76,26 @@ struct DeleteEntity
   CHANGE_ENTITY(result.entity = map.at(entity))
 
   DEFAULT_BYTE_CONSTRUCTOR(DeleteEntity,
-                           ([](Registry::Entity e) { return DeleteEntity(e); }),
-                           parseByte<Registry::Entity>())
+                           ([](Ecs::Entity e) { return DeleteEntity(e); }),
+                           parseByte<Ecs::Entity>())
 
   DEFAULT_SERIALIZE(type_to_byte(entity))
 
-  DeleteEntity(Registry& r, JsonObject const& conf)
-      : entity(*get_value_copy<int>(r, conf, "entity"))
+  DeleteEntity(Registry& r,
+               JsonObject const& conf,
+               std::optional<Ecs::Entity> entity)
+      : entity(*get_value_copy<int>(r, conf, "entity", entity))
   {
   }
 
-  Registry::Entity entity;
+  Ecs::Entity entity;
 };
 
 struct DeleteClientEntity
 {
   DeleteClientEntity() = default;
 
-  DeleteClientEntity(Registry::Entity e)
+  DeleteClientEntity(Ecs::Entity e)
       : entity(e)
   {
   }
@@ -98,16 +103,18 @@ struct DeleteClientEntity
   CHANGE_ENTITY(result.entity = map.at(entity))
 
   DEFAULT_BYTE_CONSTRUCTOR(DeleteClientEntity,
-                           ([](Registry::Entity e)
+                           ([](Ecs::Entity e)
                             { return DeleteClientEntity(e); }),
-                           parseByte<Registry::Entity>())
+                           parseByte<Ecs::Entity>())
 
   DEFAULT_SERIALIZE(type_to_byte(entity))
 
-  DeleteClientEntity(Registry& r, JsonObject const& conf)
-      : entity(*get_value_copy<int>(r, conf, "entity"))
+  DeleteClientEntity(Registry& r,
+                     JsonObject const& conf,
+                     std::optional<Ecs::Entity> entity)
+      : entity(*get_value_copy<int>(r, conf, "entity", entity))
   {
   }
 
-  Registry::Entity entity;
+  Ecs::Entity entity;
 };

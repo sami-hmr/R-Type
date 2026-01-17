@@ -145,14 +145,6 @@
                 "pressed": {
                   "name": "FireBullet",
                   "params": {}
-                }
-              },
-              {
-                "description": "charge shoot",
-                "key": "SPACE",
-                "pressed": {
-                  "name": "StartChargeWeapon",
-                  "params": {}
                 },
                 "released": {
                   "name": "ReleaseChargeWeapon",
@@ -166,3 +158,4 @@
     }
   ]
 }
+

@@ -16,7 +16,7 @@ public:
   static constexpr double DIRECTION_TOLERANCE = 0.1;
   static constexpr double DELTA_TOLERANCE = 0.5;
 
-  virtual void update(Registry::Entity entity,
+  virtual void update(Ecs::Entity entity,
                       Registry& registry,
                       EventManager& em,
                       MovementBehavior& behavior,
@@ -50,7 +50,7 @@ public:
 
   static void update_delta(Registry& registry,
                            EventManager& em,
-                           Registry::Entity const& entity,
+                           Ecs::Entity const& entity,
                            MovementBehavior& behavior,
                            double const& dt)
   {

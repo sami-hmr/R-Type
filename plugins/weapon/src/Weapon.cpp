@@ -1,3 +1,4 @@
+#include <iostream>
 #include <optional>
 #include <vector>
 
@@ -44,7 +45,14 @@ Weapon::Weapon(Registry& r, EventManager& em, EntityLoader& l)
   REGISTER_COMPONENT(ChargeWeapon)
   REGISTER_COMPONENT(DelayedWeapon)
   REGISTER_COMPONENT(ScaleModifier)
-  SUBSCRIBE_EVENT(FireBullet, { this->on_fire(this->_registry.get(), event); })
+  SUBSCRIBE_EVENT(FireBullet, {
+    if (this->_registry.get().has_component<ChargeWeapon>(event.entity)) {
+      emit_event<StartChargeWeapon>(
+          this->_event_manager.get(), "StartChargeWeapon", event.entity);
+    } else {
+      this->on_fire(this->_registry.get(), event);
+    }
+  })
   SUBSCRIBE_EVENT(StartChargeWeapon,
                   { this->on_charge_start(this->_registry.get(), event); })
   SUBSCRIBE_EVENT(ReleaseChargeWeapon,
@@ -176,6 +184,10 @@ void Weapon::on_charge_start(Registry& r, const StartChargeWeapon& e)
 
   auto& weapon =
       *this->_registry.get().get_components<ChargeWeapon>()[e.entity];
+
+  if (weapon.charge_indicator_entity.has_value()) {
+    return;
+  }
 
   if (!weapon.update_basic_weapon(now)) {
     return;
@@ -414,12 +426,9 @@ void Weapon::charge_weapon_system(
         auto& animated_sprite =
             *this->_registry.get().get_components<AnimatedSprite>()
                  [weapon.charge_indicator_entity.value()];
-        auto anim_it =
-            animated_sprite.animations.find(animated_sprite.current_animation);
-        if (anim_it != animated_sprite.animations.end()) {
-          anim_it->second.sprite_size =
-              weapon.charge_indicator_base_scale * scale_factor;
-        }
+
+        animated_sprite.update_size(weapon.charge_indicator_base_scale
+                                    * scale_factor);
         this->_event_manager.get().emit<ComponentBuilder>(
             weapon.charge_indicator_entity.value(),
             this->_registry.get().get_component_key<AnimatedSprite>(),

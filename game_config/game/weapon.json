@@ -263,7 +263,10 @@
     {
       "name": "beam_segment",
       "components": {
-        "ui:Drawable": {},
+        "ui:Drawable": {
+          "hook": "beam_size",
+          "stretch": true
+        },
         "ui:AnimatedSprite": {
           "animations": [
             {
@@ -286,7 +289,7 @@
                 "height": "8.0%"
               },
               "framerate": 15.0,
-              "nb_frames": 3,
+              "nb_frames": 12,
               "loop": true,
               "rollback": false
             }
@@ -314,21 +317,14 @@
         "life:Team": {
           "name": "test1"
         },
-        "life:Health": {
-          "current": 1.0,
-          "max": 1.0
-        },
         "life:Damage": {
-          "amount": 5
+          "amount": 1
         },
         "projectile:Temporal": {
           "lifetime": 0.9
         },
         "collision:Collidable": {
-          "size": {
-            "x": 1.5,
-            "y": 0.08
-          },
+          "size": "#self:beam_size:true_size",
           "collision_type": "trigger"
         }
       }
@@ -360,7 +356,7 @@
               },
               "framerate": 30.0,
               "nb_frames": 12,
-              "loop": false,
+              "loop": true,
               "rollback": false
             }
           ],
@@ -371,11 +367,9 @@
             "x": 0.0,
             "y": 0.0
           }
-        },
-        "projectile:Temporal": {
-          "lifetime": 0.4
         }
       }
     }
   ]
 }
+

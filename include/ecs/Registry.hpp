@@ -217,11 +217,14 @@
 #include "SparseArray.hpp"
 #include "TwoWayMap.hpp"
 #include "ecs/ComponentState.hpp"
+#include "ecs/Entity.hpp"
 #include "ecs/Scenes.hpp"
 #include "ecs/Systems.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/HookConcept.hpp"
 #include "plugin/events/EventConcept.hpp"
+
+using Ecs::Entity;
 
 /**
  * @concept component
@@ -304,14 +307,6 @@ class EventManager;
 class Registry
 {
 public:
-  /**
-   * @brief Type alias for an entity identifier.
-   *
-   * Entities are lightweight indices into component arrays. Valid entity IDs
-   * start at 0 and increment. Deleted entity IDs are recycled.
-   */
-  using Entity = std::size_t;
-
   /**
    * @brief Registers a bytable component type with a string identifier.
    *

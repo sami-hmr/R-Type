@@ -21,9 +21,9 @@ public:
   AI(Registry& r, EventManager& em, EntityLoader& l);
 
 private:
-  void init_movement_behavior(Registry::Entity const& entity,
+  void init_movement_behavior(Ecs::Entity const& entity,
                               JsonObject const& obj);
-  void init_attack_behavior(Registry::Entity const& entity,
+  void init_attack_behavior(Ecs::Entity const& entity,
                             JsonObject const& obj);
 
   void movement_behavior_system(Registry& r);

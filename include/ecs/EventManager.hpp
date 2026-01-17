@@ -20,7 +20,7 @@
  *
  * @code
  * struct DamageEvent {
- *   Registry::Entity target;
+ *   Ecs::Entity target;
  *   int amount;
  *
  *   // Bytable
@@ -191,7 +191,7 @@ public:
       _entity_converter.insert_or_assign(
           name,
           [](ByteArray const& b,
-             std::unordered_map<Registry::Entity, Registry::Entity> const& map)
+             std::unordered_map<Ecs::Entity, Ecs::Entity> const& map)
           { return EventType(b).change_entity(map).to_bytes(); });
     }
 
@@ -418,7 +418,7 @@ public:
   ByteArray convert_event_entity(
       std::string const& id,
       ByteArray const& event,
-      std::unordered_map<Registry::Entity, Registry::Entity> const& map);
+      std::unordered_map<Ecs::Entity, Ecs::Entity> const& map);
 
   void delete_all();
 
@@ -486,7 +486,7 @@ private:
         type_id,
         std::function<std::any(Registry&, JsonObject const&)>(
             [](Registry& r, JsonObject const& e) -> std::any
-            { return T(r, e); }));
+            { return T(r, e, std::nullopt); }));
 
     _invokers.insert_or_assign(
         type_id,
@@ -503,9 +503,10 @@ private:
           }
         });
 
-    _json_builder.insert_or_assign(type_id,
-                                   [](Registry& r, JsonObject const& params)
-                                   { return T(r, params).to_bytes(); });
+    _json_builder.insert_or_assign(
+        type_id,
+        [](Registry& r, JsonObject const& params)
+        { return T(r, params, std::nullopt).to_bytes(); });
   }
 
   template<event EventType>
@@ -527,11 +528,10 @@ private:
     handlers.insert(insert_pos, std::move(tmp));
   }
 
-  std::unordered_map<
-      std::string,
-      std::function<ByteArray(
-          ByteArray const&,
-          std::unordered_map<Registry::Entity, Registry::Entity> const&)>>
+  std::unordered_map<std::string,
+                     std::function<ByteArray(
+                         ByteArray const&,
+                         std::unordered_map<Ecs::Entity, Ecs::Entity> const&)>>
       _entity_converter;
 
   std::unordered_map<std::string, std::function<void(ByteArray const&)>>

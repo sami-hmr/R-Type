@@ -8,7 +8,7 @@
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "plugin/Hooks.hpp"
 
-void ATH::init_bar(Registry::Entity& e, const JsonObject& obj)
+void ATH::init_bar(Ecs::Entity& e, const JsonObject& obj)
 {
   auto size = get_value<Bar, Vector2D>(this->_registry.get(), obj, e, "size");
   if (!size) {

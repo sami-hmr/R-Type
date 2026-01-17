@@ -18,8 +18,8 @@ public:
       EntityLoader& l,
       std::optional<JsonObject> const& config);
 
-  void init_bar(Registry::Entity& e, const JsonObject& obj);
+  void init_bar(Ecs::Entity& e, const JsonObject& obj);
 
-  void init_clickable(Registry::Entity const& e, JsonObject const& obj);
-  void init_button(Registry::Entity const& e, JsonObject const& obj);
+  void init_clickable(Ecs::Entity const& e, JsonObject const& obj);
+  void init_button(Ecs::Entity const& e, JsonObject const& obj);
 };

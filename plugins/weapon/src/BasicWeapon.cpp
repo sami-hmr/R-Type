@@ -5,7 +5,7 @@
 #include "ecs/Registry.hpp"
 #include "plugin/Hooks.hpp"
 
-void Weapon::init_basic_weapon(Registry::Entity const& entity,
+void Weapon::init_basic_weapon(Ecs::Entity const& entity,
                                JsonObject const& obj)
 {
   auto const& bullet_type = get_value<BasicWeapon, std::string>(
