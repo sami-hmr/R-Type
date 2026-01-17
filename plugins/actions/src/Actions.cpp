@@ -70,7 +70,7 @@ Actions::Actions(Registry& r, EventManager& em, EntityLoader& l)
   })
 }
 
-void Actions::init_action_trigger(Registry::Entity const& entity,
+void Actions::init_action_trigger(Ecs::Entity const& entity,
                                   JsonObject& obj)
 {
   JsonObject trigger = std::get<JsonObject>(obj.at("trigger").value);

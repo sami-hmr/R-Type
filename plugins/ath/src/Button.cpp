@@ -5,7 +5,7 @@
 #include "ecs/zipper/Zipper.hpp"
 #include "plugin/Hooks.hpp"
 
-void ATH::init_button(Registry::Entity const& e, JsonObject const& obj)
+void ATH::init_button(Ecs::Entity const& e, JsonObject const& obj)
 {
   bool pressed = false;
   bool hovered = false;

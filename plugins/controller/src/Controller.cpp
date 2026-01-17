@@ -65,7 +65,7 @@ void Controller::rebinding(Controllable& c, Rebind event, KeyEventType event_typ
   c.event_map.insert_or_assign(binding.key(), std::move(binding.mapped()));
 }
 
-bool Controller::handling_press_release_binding(Registry::Entity const& entity,
+bool Controller::handling_press_release_binding(Ecs::Entity const& entity,
                                                 Controllable& result,
                                                 JsonObject& event,
                                                 const std::string& key_string,
@@ -98,7 +98,7 @@ bool Controller::handling_press_release_binding(Registry::Entity const& entity,
   return true;
 }
 
-void Controller::init_event_map(Registry::Entity const& entity,
+void Controller::init_event_map(Ecs::Entity const& entity,
                                 JsonArray& events,
                                 Controllable& result)
 {
@@ -151,7 +151,7 @@ void Controller::init_event_map(Registry::Entity const& entity,
   }
 }
 
-void Controller::init_controller(Registry::Entity const& entity,
+void Controller::init_controller(Ecs::Entity const& entity,
                                  JsonObject const& obj)
 {
   Controllable result(

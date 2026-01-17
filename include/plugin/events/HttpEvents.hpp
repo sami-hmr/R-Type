@@ -15,9 +15,11 @@ struct HttpBadCodeEvent
   {
   }
 
-  HttpBadCodeEvent(Registry& r, JsonObject const& e)
-      : code(get_value_copy<int>(r, e, "code").value())
-      , message(get_value_copy<std::string>(r, e, "message").value())
+  HttpBadCodeEvent(Registry& r,
+                   JsonObject const& e,
+                   std::optional<Ecs::Entity> entity)
+      : code(get_value_copy<int>(r, e, "code", entity).value())
+      , message(get_value_copy<std::string>(r, e, "message", entity).value())
   {
   }
 
@@ -41,7 +43,11 @@ struct FetchAvailableServers
 
   CHANGE_ENTITY_DEFAULT
 
-  FetchAvailableServers(Registry& /* */, JsonObject const& /* */) {}
+  FetchAvailableServers(Registry& /* */,
+                        JsonObject const& /* */,
+                        std::optional<Ecs::Entity>)
+  {
+  }
 
   HOOKABLE(FetchAvailableServers)
 };
@@ -55,7 +61,11 @@ struct FetchAvailableServersSuccessfull
 
   CHANGE_ENTITY_DEFAULT
 
-  FetchAvailableServersSuccessfull(Registry& /* */, JsonObject const& /* */) {}
+  FetchAvailableServersSuccessfull(Registry& /* */,
+                                   JsonObject const& /* */,
+                                   std::optional<Ecs::Entity>)
+  {
+  }
 
   HOOKABLE(FetchAvailableServersSuccessfull)
 };
@@ -69,8 +79,10 @@ struct ExposeServer
   {
   }
 
-  ExposeServer(Registry& r, JsonObject const& e)
-      : host(get_value_copy<std::string>(r, e, "host").value())
+  ExposeServer(Registry& r,
+               JsonObject const& e,
+               std::optional<Ecs::Entity> entity)
+      : host(get_value_copy<std::string>(r, e, "host", entity).value())
   {
   }
 
@@ -95,9 +107,10 @@ struct Register
   {
   }
 
-  Register(Registry& r, JsonObject const& e)
-      : identifier(get_value_copy<std::string>(r, e, "identifier").value())
-      , password(get_value_copy<std::string>(r, e, "password").value())
+  Register(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+      : identifier(
+            get_value_copy<std::string>(r, e, "identifier", entity).value())
+      , password(get_value_copy<std::string>(r, e, "password", entity).value())
   {
   }
 
@@ -121,8 +134,10 @@ struct LoginSuccessfull
   {
   }
 
-  LoginSuccessfull(Registry& r, JsonObject const& e)
-      : user(get_value_copy<int>(r, e, "user").value())
+  LoginSuccessfull(Registry& r,
+                   JsonObject const& e,
+                   std::optional<Ecs::Entity> entity)
+      : user(get_value_copy<int>(r, e, "user", entity).value())
   {
   }
 
@@ -146,9 +161,10 @@ struct Login
   {
   }
 
-  Login(Registry& r, JsonObject const& e)
-      : identifier(get_value_copy<std::string>(r, e, "identifier").value())
-      , password(get_value_copy<std::string>(r, e, "password").value())
+  Login(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+      : identifier(
+            get_value_copy<std::string>(r, e, "identifier", entity).value())
+      , password(get_value_copy<std::string>(r, e, "password", entity).value())
   {
   }
 
@@ -172,7 +188,9 @@ struct Logout
 
   CHANGE_ENTITY_DEFAULT
 
-  Logout(Registry& /* */, JsonObject const& /* */) {}
+  Logout(Registry& /* */, JsonObject const& /* */, std::optional<Ecs::Entity>)
+  {
+  }
 
   HOOKABLE(Logout)
 };
@@ -186,7 +204,11 @@ struct FailLogin
 
   CHANGE_ENTITY_DEFAULT
 
-  FailLogin(Registry& /* */, JsonObject const& /* */) {}
+  FailLogin(Registry& /* */,
+            JsonObject const& /* */,
+            std::optional<Ecs::Entity>)
+  {
+  }
 
   HOOKABLE(FailLogin)
 };
@@ -200,7 +222,7 @@ struct Save
 
   CHANGE_ENTITY_DEFAULT
 
-  Save(Registry& /* */, JsonObject const& /* */) {}
+  Save(Registry& /* */, JsonObject const& /* */, std::optional<Ecs::Entity>) {}
 
   HOOKABLE(Save)
 };
@@ -214,8 +236,10 @@ struct SavePlayer
   {
   }
 
-  SavePlayer(Registry& r, JsonObject const& e)
-      : user(get_value_copy<int>(r, e, "user").value())
+  SavePlayer(Registry& r,
+             JsonObject const& e,
+             std::optional<Ecs::Entity> entity)
+      : user(get_value_copy<int>(r, e, "user", entity).value())
   {
   }
 

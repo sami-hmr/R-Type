@@ -15,7 +15,7 @@
 #include "ecs/Systems.hpp"
 #include "plugin/Byte.hpp"
 
-Registry::Entity Registry::spawn_entity()
+Ecs::Entity Registry::spawn_entity()
 {
   Entity to_return = 0;
   if (this->_dead_entities.empty()) {

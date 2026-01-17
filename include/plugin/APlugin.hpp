@@ -74,20 +74,19 @@ public:
       EventManager& event_manager,
       EntityLoader& loader,
       std::vector<std::string> const& depends_on,
-      std::unordered_map<
-          std::string,
-          std::function<void(Registry::Entity, JsonVariant const&)>> components,
+      std::unordered_map<std::string,
+                         std::function<void(Ecs::Entity, JsonVariant const&)>>
+          components,
       std::optional<JsonObject> const& config = std::nullopt);
 
-  void set_component(Registry::Entity entity,
+  void set_component(Ecs::Entity entity,
                      std::string const& key,
                      JsonVariant const& config) override;
 
 protected:
   const std::string name;
-  const std::unordered_map<
-      std::string,
-      std::function<void(Registry::Entity, JsonVariant const&)>>
+  const std::unordered_map<std::string,
+                           std::function<void(Ecs::Entity, JsonVariant const&)>>
       components;
   std::reference_wrapper<Registry> _registry;
   std::reference_wrapper<EventManager> _event_manager;

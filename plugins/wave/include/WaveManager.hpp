@@ -21,16 +21,16 @@ public:
   WaveManager(Registry& r, EventManager& em, EntityLoader& l);
 
 private:
-  void init_wave(Registry::Entity const& entity, JsonObject const& obj);
-  void init_formation(Registry::Entity const& entity, JsonObject const& obj);
+  void init_wave(Ecs::Entity const& entity, JsonObject const& obj);
+  void init_formation(Ecs::Entity const& entity, JsonObject const& obj);
 
-  void spawn_wave_entities(Registry::Entity wave_entity);
+  void spawn_wave_entities(Ecs::Entity wave_entity);
 
   void wave_formation_system(Registry& r);
   void wave_spawn_system(Registry& r);
   void wave_death_system(Registry& r);
 
-  std::optional<Registry::Entity> find_wave_by_id(std::size_t id);
+  std::optional<Ecs::Entity> find_wave_by_id(std::size_t id);
   std::size_t generate_wave_id();
   
   std::vector<Vector2D> calculate_spawn_positions(const WavePattern& pattern,

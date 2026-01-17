@@ -24,8 +24,8 @@ public:
   void set_algorithm(std::unique_ptr<ICollisionAlgorithm> algo);
 
 private:
-  void init_collision(Registry::Entity const& entity, JsonObject const& obj);
-  void init_interaction_zone(Registry::Entity const& entity,
+  void init_collision(Ecs::Entity const& entity, JsonObject const& obj);
+  void init_interaction_zone(Ecs::Entity const& entity,
                              JsonObject const& obj);
 
   void collision_system(Registry& r);
