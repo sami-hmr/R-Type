@@ -172,9 +172,9 @@ struct WatchRebind
 
   DEFAULT_SERIALIZE(type_to_byte(key))
 
-  WatchRebind(Registry& r, JsonObject const& e, std::optional<Ecs::Entity>  /*entity*/)
-      : entity(get_value_copy<int>(r, e, "entity").value_or(0))
-      , key(get_value_copy<int>(r, e, "key").value_or(0))
+  WatchRebind(Registry& r, JsonObject const& e, std::optional<Ecs::Entity>  entity)
+      : entity(get_value_copy<int>(r, e, "entity", entity).value_or(0))
+      , key(get_value_copy<int>(r, e, "key", entity).value_or(0))
   {
   }
 
