@@ -6,6 +6,7 @@
 #include "network/Httplib.hpp"
 #include "network/server/Server.hpp"
 #include "plugin/Byte.hpp"
+#include "plugin/components/Position.hpp"
 #include "plugin/events/LogMacros.hpp"
 #include "plugin/events/NetworkEvents.hpp"
 #include "plugin/events/SceneChangeEvent.hpp"
