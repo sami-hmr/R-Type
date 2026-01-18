@@ -13,10 +13,14 @@ public:
 
 private:
   void init_pos(Ecs::Entity const& entity, JsonObject& obj);
+  void init_off(Ecs::Entity const& entity, JsonObject& obj);
   void init_direction(Ecs::Entity const& entity, JsonObject& obj);
   void init_speed(Ecs::Entity const& entity, JsonObject& obj);
   void init_facing(Ecs::Entity const& entity, JsonObject& obj);
 
   void init_id(Ecs::Entity const& entity, JsonObject& obj);
   void moving_system(Registry&);
+
+  void add_offset(Registry& r);
+  void remove_offset(Registry& r);
 };

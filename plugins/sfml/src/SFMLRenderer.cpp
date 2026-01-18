@@ -115,21 +115,27 @@ SFMLRenderer::SFMLRenderer(Registry& r, EventManager& em, EntityLoader& l)
   _window.setFramerateLimit(window_rate);
 
   _registry.get().add_system([this](Registry&) { this->handle_events(); }, 1);
-  _registry.get().add_system([this](Registry& r) { this->volumes_system(r); });
-  _registry.get().add_system([this](Registry& r) { this->camera_system(r); });
-  _registry.get().add_system([this](Registry&)
-                             { _window.clear(sf::Color::Black); });
-  _registry.get().add_system([this](Registry& r)
-                             { this->background_system(r); });
+  _registry.get().add_system([this](Registry& r) { this->volumes_system(r); },
+                             2);
+  _registry.get().add_system([this](Registry& r) { this->camera_system(r); },
+                             2);
+  _registry.get().add_system(
+      [this](Registry&) { _window.clear(sf::Color::Black); }, 2);
+  _registry.get().add_system(
+      [this](Registry& r) { this->background_system(r); }, 2);
 
-  _registry.get().add_system([this](Registry& r) { this->button_system(r); });
-  _registry.get().add_system([this](Registry& r) { this->slider_system(r); });
-  _registry.get().add_system([this](Registry& r)
-                             { this->unified_render_system(r); });
-  _registry.get().add_system([this](Registry&) { this->display(); });
-  _registry.get().add_system([this](Registry& r) { this->sounds_system(r); });
-  _registry.get().add_system([this](Registry& r) { this->musics_system(r); });
-  _registry.get().add_system([this](Registry& r) { this->hover_system(r); });
+  _registry.get().add_system([this](Registry& r) { this->button_system(r); },
+                             2);
+  _registry.get().add_system([this](Registry& r) { this->slider_system(r); },
+                             2);
+  _registry.get().add_system(
+      [this](Registry& r) { this->unified_render_system(r); }, 2);
+  _registry.get().add_system([this](Registry&) { this->display(); }, 2);
+  _registry.get().add_system([this](Registry& r) { this->sounds_system(r); },
+                             2);
+  _registry.get().add_system([this](Registry& r) { this->musics_system(r); },
+                             2);
+  _registry.get().add_system([this](Registry& r) { this->hover_system(r); }, 2);
 
   _textures.insert_or_assign(SFMLRenderer::placeholder, gen_placeholder());
   _sound_buffers.insert_or_assign(SFMLRenderer::placeholder,
@@ -614,13 +620,15 @@ void SFMLRenderer::render_animated_sprites(
     if (draw.stretch) {
       draw.true_size = anim_data.sprite_size;
     } else {
-      draw.true_size = Vector2D(
-          std::max(static_cast<double>(anim_data.frame_size.x * std::abs(uniform_scale.x))
-                       / min_dimension,
-                   draw.true_size.x),
-          std::max(static_cast<double>(anim_data.frame_size.y * std::abs(uniform_scale.y))
-                       / min_dimension,
-                   draw.true_size.y));
+      draw.true_size =
+          Vector2D(std::max(static_cast<double>(anim_data.frame_size.x
+                                                * std::abs(uniform_scale.x))
+                                / min_dimension,
+                            draw.true_size.x),
+                   std::max(static_cast<double>(anim_data.frame_size.y
+                                                * std::abs(uniform_scale.y))
+                                / min_dimension,
+                            draw.true_size.y));
     }
 
     AnimatedSpriteDrawable anim_drawable(std::ref(*this->_sprite),

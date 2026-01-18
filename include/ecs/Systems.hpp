@@ -86,7 +86,7 @@ public:
     return this->_priority > other._priority;
   }
 
-  size_t _priority;  ///< Execution priority (public for sorting access)
+  size_t _priority = 1;  ///< Execution priority (public for sorting access)
 private:
   std::function<void(Args...)> _fn;  ///< The wrapped system function
 };

@@ -3,12 +3,9 @@
 #include "Weapon.hpp"
 #include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
-#include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
-#include "plugin/events/IoEvents.hpp"
 
-void Weapon::init_basic_weapon(Ecs::Entity const& entity,
-                               JsonObject const& obj)
+void Weapon::init_basic_weapon(Ecs::Entity const& entity, JsonObject const& obj)
 {
   auto const& bullet_type = get_value<BasicWeapon, std::string>(
       this->_registry.get(), obj, entity, "bullet_type");
@@ -53,6 +50,14 @@ void Weapon::init_basic_weapon(Ecs::Entity const& entity,
   std::string attack_anim_name =
       attack_animation ? attack_animation.value() : "";
 
+  auto const& offset_x = get_value<BasicWeapon, double>(
+      this->_registry.get(), obj, entity, "offset_x");
+  double offset_x_value = offset_x ? offset_x.value() : 0.0;
+
+  auto const& offset_y = get_value<BasicWeapon, double>(
+      this->_registry.get(), obj, entity, "offset_y");
+  double offset_y_value = offset_y ? offset_y.value() : 0.0;
+
   init_component<BasicWeapon>(this->_registry.get(),
                               this->_event_manager.get(),
                               entity,
@@ -61,28 +66,7 @@ void Weapon::init_basic_weapon(Ecs::Entity const& entity,
                               magazine_nb.value(),
                               reload_time.value(),
                               cooldown.value(),
+                              offset_x_value,
+                              offset_y_value,
                               attack_anim_name);
-}
-
-bool BasicWeapon::update_basic_weapon(
-    std::chrono::high_resolution_clock::time_point now)
-{
-  if (this->reloading) {
-    return false;
-  }
-  if (this->remaining_ammo <= 0) {
-    return false;
-  }
-  double elapsed_time =
-      std::chrono::duration<double>(now - this->last_shot_time).count();
-  if (elapsed_time < this->cooldown) {
-    return false;
-  }
-  this->last_shot_time = now;
-  this->remaining_ammo -= 1;
-  if (this->remaining_ammo <= 0 && this->remaining_magazine > 0) {
-    this->reloading = true;
-    this->last_reload_time = std::chrono::high_resolution_clock::now();
-  }
-  return true;
 }
