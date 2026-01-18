@@ -11,7 +11,7 @@
                 {
                     "template": "button",
                     "parameters": {
-                        "y": -0.3,
+                        "y": -0.6,
                         "z": 21,
                         "width": 0.3,
                         "height": 0.3,
@@ -50,7 +50,7 @@
                 {
                     "template": "button",
                     "parameters": {
-                        "y": 0.0,
+                        "y": -0.3,
                         "z": 21,
                         "width": 0.3,
                         "height": 0.3,
@@ -80,7 +80,7 @@
                 {
                     "template": "button",
                     "parameters": {
-                        "y": 0.3,
+                        "y": 0.0,
                         "z": 21,
                         "width": 0.3,
                         "height": 0.3,
@@ -104,6 +104,46 @@
                             "height": 0.06
                         },
                         "text": "bindings",
+                        "font": "assets/fonts/Starjedi.ttf"
+                    }
+                },
+                {
+                    "template": "button",
+                    "parameters": {
+                        "y": 0.3,
+                        "z": 21,
+                        "width": 0.3,
+                        "height": 0.3,
+                        "on_click": [
+                            {
+                                "Save": {}
+                            }
+                        ],
+                        "text_size": {
+                            "width": 0.2,
+                            "height": 0.06
+                        },
+                        "text": "save",
+                        "font": "assets/fonts/Starjedi.ttf"
+                    }
+                },
+                {
+                    "template": "button",
+                    "parameters": {
+                        "y": 0.6,
+                        "z": 21,
+                        "width": 0.3,
+                        "height": 0.3,
+                        "on_click": [
+                            {
+                                "Disconnection": {}
+                            }
+                        ],
+                        "text_size": {
+                            "width": 0.2,
+                            "height": 0.06
+                        },
+                        "text": "disconnect",
                         "font": "assets/fonts/Starjedi.ttf"
                     }
                 }
