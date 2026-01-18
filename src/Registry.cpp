@@ -170,6 +170,7 @@ void Registry::deactivate_all_scenes()
   }
   _current_scene.clear();
   _active_scenes_set.clear();
+  _main_scene.clear();
 }
 
 void Registry::push_scene(std::string const& scene_name)
@@ -271,7 +272,7 @@ JsonObject Registry::get_template(std::string const& name,
   }
   auto const& definition = _entities_templates.find(name)->second;
   JsonObject new_object = definition.obj;
-  if (params.empty()) {
+  if (params.empty() && definition.default_parameters.empty()) {
     return new_object;
   }
   replace_json_object(new_object, params, definition.default_parameters);

@@ -1,0 +1,331 @@
+{
+  "entities_template": [
+    {
+      "name": "multiple_bullet",
+      "default_parameters": {
+        "wave_entity_template": "fire_bullet",
+        "wave_count": 3,
+        "wave_components_inheritance": ["scene", "moving:Direction", "life:Team", "moving:Position"],
+        "pattern_type": "arc",
+        "pattern_params": {"angle": 45.0}
+      },
+      "components": {
+        "wave:Wave": {
+          "entity_template": "$wave_entity_template",
+          "count": "$wave_count",
+          "tracked": false,
+          "components_inheritance": "$wave_components_inheritance",
+          "pattern": {
+            "type": "$pattern_type",
+            "params": "$pattern_params"
+          },
+          "on_end": []
+        }
+      }
+    },
+    {
+      "name": "fire_3_multiple_bullet",
+      "default_parameters": {
+        "wave_entity_template": "fire_bullet",
+        "wave_count": 3,
+        "pattern_type": "arc",
+        "pattern_params": {"angle": 45.0}
+      },
+      "components": {
+        "template": "multiple_bullet",
+        "parameters": {
+            "wave_entity_template": "$wave_entity_template",
+            "wave_count": "$wave_count",
+            "pattern_type": "$pattern_type",
+            "pattern_params": "$pattern_params"
+        },
+        "config": {}
+      }
+    },
+    {
+      "name": "bounce_3_multiple_bullet",
+      "default_parameters": {
+        "wave_entity_template": "bounce_bullet",
+        "wave_count": 3,
+        "pattern_type": "arc",
+        "pattern_params": {"angle": 45.0}
+      },
+      "components": {
+        "template": "multiple_bullet",
+        "parameters": {
+            "wave_entity_template": "$wave_entity_template",
+            "wave_count": "$wave_count",
+            "pattern_type": "$pattern_type",
+            "pattern_params": "$pattern_params"
+        },
+        "config": {}
+      }
+    },
+    {
+      "name": "waveform_3_multiple_bullet",
+      "default_parameters": {
+        "wave_entity_template": "waveform_bullet",
+        "wave_count": 3,
+        "pattern_type": "arc",
+        "pattern_params": {"angle": 45.0}
+      },
+      "components": {
+        "template": "multiple_bullet",
+        "parameters": {
+            "wave_entity_template": "$wave_entity_template",
+            "wave_count": "$wave_count",
+            "pattern_type": "$pattern_type",
+            "pattern_params": "$pattern_params"
+        },
+        "config": {}
+      }
+    },
+    {
+      "name": "pulse_3_multiple_bullet",
+      "default_parameters": {
+        "wave_entity_template": "pulse_bullet",
+        "wave_count": 3,
+        "pattern_type": "arc",
+        "pattern_params": {"angle": 45.0}
+      },
+      "components": {
+        "template": "multiple_bullet",
+        "parameters": {
+            "wave_entity_template": "$wave_entity_template",
+            "wave_count": "$wave_count",
+            "pattern_type": "$pattern_type",
+            "pattern_params": "$pattern_params"
+        },
+        "config": {}
+      }
+    },
+    {
+      "name": "crossed_3_multiple_bullet",
+      "default_parameters": {
+        "wave_entity_template": "crossed_bullet",
+        "wave_count": 3,
+        "pattern_type": "arc",
+        "pattern_params": {"angle": 45.0}
+      },
+      "components": {
+        "template": "multiple_bullet",
+        "parameters": {
+            "wave_entity_template": "$wave_entity_template",
+            "wave_count": "$wave_count",
+            "pattern_type": "$pattern_type",
+            "pattern_params": "$pattern_params"
+        },
+        "config": {}
+      }
+    },
+    {
+      "name": "charged_3_multiple_bullet",
+      "default_parameters": {
+        "wave_entity_template": "charged_bullet",
+        "wave_count": 3,
+        "pattern_type": "arc",
+        "pattern_params": {"angle": 45.0}
+      },
+      "components": {
+        "template": "multiple_bullet",
+        "parameters": {
+            "wave_entity_template": "$wave_entity_template",
+            "wave_count": "$wave_count",
+            "pattern_type": "$pattern_type",
+            "pattern_params": "$pattern_params"
+        },
+        "config": {}
+      }
+    },
+    {
+      "name": "bolt_3_multiple_bullet",
+      "default_parameters": {
+        "wave_entity_template": "bolt_bullet",
+        "wave_count": 3,
+        "pattern_type": "arc",
+        "pattern_params": {"angle": 45.0}
+      },
+      "components": {
+        "template": "multiple_bullet",
+        "parameters": {
+            "wave_entity_template": "$wave_entity_template",
+            "wave_count": "$wave_count",
+            "pattern_type": "$pattern_type",
+            "pattern_params": "$pattern_params"
+        },
+        "config": {}
+      }
+    },
+    {
+      "name": "fire_ball_3_multiple_bullet",
+      "default_parameters": {
+        "wave_entity_template": "fire_ball_bullet",
+        "wave_count": 3,
+        "pattern_type": "arc",
+        "pattern_params": {"angle": 45.0}
+      },
+      "components": {
+        "template": "multiple_bullet",
+        "parameters": {
+            "wave_entity_template": "$wave_entity_template",
+            "wave_count": "$wave_count",
+            "pattern_type": "$pattern_type",
+            "pattern_params": "$pattern_params"
+        },
+        "config": {}
+      }
+    },
+    {
+      "name": "fire_8_multiple_bullet",
+      "default_parameters": {
+        "wave_entity_template": "fire_bullet",
+        "wave_count": 8,
+        "pattern_type": "circle",
+        "pattern_params": {"radius": 0.1}
+      },
+      "components": {
+        "template": "multiple_bullet",
+        "parameters": {
+            "wave_entity_template": "$wave_entity_template",
+            "wave_count": "$wave_count",
+            "pattern_type": "$pattern_type",
+            "pattern_params": "$pattern_params"
+        },
+        "config": {}
+      }
+    },
+    {
+      "name": "bounce_8_multiple_bullet",
+      "default_parameters": {
+        "wave_entity_template": "bounce_bullet",
+        "wave_count": 8,
+        "pattern_type": "circle",
+        "pattern_params": {"radius": 0.1}
+      },
+      "components": {
+        "template": "multiple_bullet",
+        "parameters": {
+            "wave_entity_template": "$wave_entity_template",
+            "wave_count": "$wave_count",
+            "pattern_type": "$pattern_type",
+            "pattern_params": "$pattern_params"
+        },
+        "config": {}
+      }
+    },
+    {
+      "name": "waveform_8_multiple_bullet",
+      "default_parameters": {
+        "wave_entity_template": "waveform_bullet",
+        "wave_count": 8,
+        "pattern_type": "circle",
+        "pattern_params": {"radius": 0.1}
+      },
+      "components": {
+        "template": "multiple_bullet",
+        "parameters": {
+            "wave_entity_template": "$wave_entity_template",
+            "wave_count": "$wave_count",
+            "pattern_type": "$pattern_type",
+            "pattern_params": "$pattern_params"
+        },
+        "config": {}
+      }
+    },
+    {
+      "name": "pulsed_8_multiple_bullet",
+      "default_parameters": {
+        "wave_entity_template": "pulsed_bullet",
+        "wave_count": 8,
+        "pattern_type": "circle",
+        "pattern_params": {"radius": 0.1}
+      },
+      "components": {
+        "template": "multiple_bullet",
+        "parameters": {
+            "wave_entity_template": "$wave_entity_template",
+            "wave_count": "$wave_count",
+            "pattern_type": "$pattern_type",
+            "pattern_params": "$pattern_params"
+        },
+        "config": {}
+      }
+    },
+    {
+      "name": "crossed_8_multiple_bullet",
+      "default_parameters": {
+        "wave_entity_template": "crossed_bullet",
+        "wave_count": 8,
+        "pattern_type": "circle",
+        "pattern_params": {"radius": 0.1}
+      },
+      "components": {
+        "template": "multiple_bullet",
+        "parameters": {
+            "wave_entity_template": "$wave_entity_template",
+            "wave_count": "$wave_count",
+            "pattern_type": "$pattern_type",
+            "pattern_params": "$pattern_params"
+        },
+        "config": {}
+      }
+    },
+    {
+      "name": "charged_8_multiple_bullet",
+      "default_parameters": {
+        "wave_entity_template": "charged_bullet",
+        "wave_count": 8,
+        "pattern_type": "circle",
+        "pattern_params": {"radius": 0.1}
+      },
+      "components": {
+        "template": "multiple_bullet",
+        "parameters": {
+            "wave_entity_template": "$wave_entity_template",
+            "wave_count": "$wave_count",
+            "pattern_type": "$pattern_type",
+            "pattern_params": "$pattern_params"
+        },
+        "config": {}
+      }
+    },
+    {
+      "name": "bolt_8_multiple_bullet",
+      "default_parameters": {
+        "wave_entity_template": "bolt_bullet",
+        "wave_count": 8,
+        "pattern_type": "circle",
+        "pattern_params": {"radius": 0.1}
+      },
+      "components": {
+        "template": "multiple_bullet",
+        "parameters": {
+            "wave_entity_template": "$wave_entity_template",
+            "wave_count": "$wave_count",
+            "pattern_type": "$pattern_type",
+            "pattern_params": "$pattern_params"
+        },
+        "config": {}
+      }
+    },
+    {
+      "name": "fire_ball_8_multiple_bullet",
+      "default_parameters": {
+        "wave_entity_template": "fire_ball_bullet",
+        "wave_count": 8,
+        "pattern_type": "circle",
+        "pattern_params": {"radius": 0.1}
+      },
+      "components": {
+        "template": "multiple_bullet",
+        "parameters": {
+            "wave_entity_template": "$wave_entity_template",
+            "wave_count": "$wave_count",
+            "pattern_type": "$pattern_type",
+            "pattern_params": "$pattern_params"
+        },
+        "config": {}
+      }
+    }
+  ]
+}

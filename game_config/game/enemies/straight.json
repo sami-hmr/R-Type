@@ -35,7 +35,9 @@
               "framerate": 10.0,
               "nb_frames": 4,
               "loop": true,
-              "rollback": true
+              "rollback": true,
+              "flip_h": true,
+              "flip_v": false
             },
             {
               "name": "death",
@@ -94,8 +96,8 @@
         },
         "collision:Collidable": {
           "size": {
-            "x": 0.1,
-            "y": 0.1
+            "width": 0.1,
+            "height": 0.1
           },
           "collision_type": "push"
         },

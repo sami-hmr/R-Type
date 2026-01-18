@@ -5,7 +5,6 @@
 #include "libs/Vector2D.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/HookMacros.hpp"
-#include "plugin/Hooks.hpp"
 
 struct Slider
 {

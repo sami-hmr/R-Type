@@ -62,7 +62,7 @@ void Collision::init_collision(Ecs::Entity const& entity,
                                JsonObject const& obj)
 {
   auto const& size = get_value<Collidable, Vector2D>(
-      this->_registry.get(), obj, entity, "size");
+      this->_registry.get(), obj, entity, "size", "width", "height");
   auto const& type_str = get_value<Collidable, std::string>(
       this->_registry.get(), obj, entity, "collision_type");
 

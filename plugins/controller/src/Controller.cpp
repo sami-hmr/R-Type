@@ -14,9 +14,11 @@
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Controllable.hpp"
+#include "plugin/components/Text.hpp"
 #include "plugin/events/IoEvents.hpp"
 #include "plugin/events/LogMacros.hpp"
 #include "plugin/events/RebindingEvent.hpp"
+#include "plugin/events/SceneChangeEvent.hpp"
 
 Controller::Controller(Registry& r, EventManager& em, EntityLoader& l)
     : APlugin("Controller",
@@ -29,6 +31,20 @@ Controller::Controller(Registry& r, EventManager& em, EntityLoader& l)
   REGISTER_COMPONENT(Controllable)
 
   SUBSCRIBE_EVENT(KeyPressedEvent, {
+    if (this->_remaped_key && this->_current_binding_scene) {
+      this->_event_manager.get().emit<DisableSceneEvent>("__rebinding_card__");
+      for (auto const& [key, active] : event.key_pressed) {
+        if (active) {
+          this->_event_manager.get().emit<Rebind>(
+              this->_remaped_key->entity, this->_remaped_key->key, key << 8);
+          this->delete_binding_scene(false);
+          this->create_binding_scene(this->_remaped_key->entity);
+          break;
+        }
+      }
+      this->_remaped_key.reset();
+      return PREVENT_DEFAULT;
+    }
     for (auto const& [key, active] : event.key_pressed) {
       if (active) {
         this->handle_key_change(key, true);
@@ -45,22 +61,82 @@ Controller::Controller(Registry& r, EventManager& em, EntityLoader& l)
   })
 
   SUBSCRIBE_EVENT(Rebind, {
-    for (auto&& [c] : Zipper<Controllable>(this->_registry.get())) {
-      rebinding(c, event, KEY_PRESSED);
-      rebinding(c, event, KEY_RELEASED);
+    if (!this->_registry.get().has_component<Controllable>(event.entity)) {
+      return false;
     }
+    auto& c =
+        *this->_registry.get().get_components<Controllable>()[event.entity];
+    rebinding(c, event, KEY_PRESSED);
+    rebinding(c, event, KEY_RELEASED);
+  })
+
+  SUBSCRIBE_EVENT(GenerateRebindingScene, {
+    if (!this->_registry.get().has_component<Controllable>(event.entity)
+        && (this->_registry.get().get_components<Controllable>()[event.entity])
+                ->event_map.size()
+            != 0)
+    {
+      return false;
+    }
+    this->_rebinding_scenes["__rebinding_card__"].emplace_back(
+        *this->_loader.get().load_entity_template(
+            event.card_template,
+            {{this->_registry.get().get_component_key<Scene>(),
+              Scene("__rebinding_card__").to_bytes()}},
+            JsonObject({{"z", JsonValue(1002)},  // NOLINT
+                        {"text", JsonValue("Press any key")},
+                        {"width", JsonValue(0.8)},
+                        {"height", JsonValue(0.5)},
+                        {"text_size",
+                         JsonValue(JsonObject(
+                             {{"height", JsonValue(0.4)},
+                              {"width",
+                               JsonValue(0.65)}}))}})));  // SCENE ID INDICATOR
+    std::cout
+        << this->_registry.get()
+               .get_components<
+                   Text>()[this->_rebinding_scenes["__rebinding_card__"][0]]
+               ->text
+        << "\n";
+    this->_current_binding_scene.emplace(event);
+    this->create_binding_scene(event.entity);
+    this->_event_manager.get().emit<SceneChangeEvent>(
+        "__bindings_scene__0", "", false, true);
+
+    this->_event_manager.get().emit<DisableSceneEvent>(event.base_scene);
+  })
+
+  SUBSCRIBE_EVENT(WatchRebind, {
+    this->_event_manager.get().emit<SceneChangeEvent>(
+        "__rebinding_card__", "", false, true);
+    this->_remaped_key.emplace(event);
+  })
+
+  SUBSCRIBE_EVENT(ExitRebind, {
+    this->_remaped_key.reset();
+    this->delete_binding_scene();
+    this->_event_manager.get().emit<SceneChangeEvent>(
+        this->_current_binding_scene->base_scene,
+        "",
+        false,
+        this->_current_binding_scene->is_base_scene_main);
+    this->_current_binding_scene.reset();
   })
 }
 
-void Controller::rebinding(Controllable& c, Rebind event, KeyEventType event_type)
+void Controller::rebinding(Controllable& c,
+                           Rebind const& event,
+                           KeyEventType event_type)
 {
   if (!c.event_map.contains(event.key_to_replace + event_type)) {
+    std::cout << "failed to replace key, not in map\n";
     return;
   }
   auto binding = c.event_map.extract(event.key_to_replace + event_type);
   binding.key() = event.replacement_key + event_type;
   if (c.event_map.contains(binding.key())) {
-    c.event_map.insert_or_assign(event.key_to_replace + event_type, c.event_map.at(binding.key()));
+    c.event_map.insert_or_assign(event.key_to_replace + event_type,
+                                 c.event_map.at(binding.key()));
   }
   c.event_map.insert_or_assign(binding.key(), std::move(binding.mapped()));
 }
@@ -90,7 +166,6 @@ bool Controller::handling_press_release_binding(Ecs::Entity const& entity,
                        *event_id));
     return false;
   }
-  params->insert_or_assign("entity", JsonValue(static_cast<int>(entity)));
   result.event_map.insert_or_assign(
       (static_cast<std::uint32_t>(KEY_MAPPING.at_first(key_string)) << byte)
           + static_cast<int>(event_type),
@@ -182,12 +257,13 @@ void Controller::handle_key_change(Key key, bool is_pressed)
     auto const& event = c.event_map.at(key_map);
 
     to_emit.emplace_back(
-        [this, &event]()
+        [this, &event, e]()
         {
           emit_event(this->_event_manager.get(),
                      this->_registry.get(),
                      event.first.first,
-                     event.second);
+                     event.second,
+                     e);
         });
   }
   for (auto const& it : to_emit) {

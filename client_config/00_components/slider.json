@@ -1,0 +1,67 @@
+{
+    "entities_template": [
+        {
+            "name": "slider",
+            "default_parameters": {
+                "x": 0.0,
+                "y": 0.0,
+                "z": 1,
+                "width": 0.4,
+                "height": 0.02,
+                "bar_color": {
+                    "r": 255,
+                    "g": 255,
+                    "b": 255,
+                    "a": 255
+                },
+                "circle_color": {
+                    "r": 0,
+                    "g": 0,
+                    "b": 0,
+                    "a": 255
+                },
+                "value_hook": "undefined_hook",
+                "global_hook": true,
+                "min_value": 0.0,
+                "max_value": 100.0,
+                "current_value": 50.0,
+                "step": 1.0
+            },
+            "components": {
+                "ui:Drawable": {},
+                "moving:Position": {
+                    "pos": {
+                        "x": "$x",
+                        "y": "$y"
+                    },
+                    "z": "$z"
+                },
+                "collision:Collidable": {
+                    "collision_type": "trigger",
+                    "size": {
+                        "width": "$width",
+                        "height": "$height"
+                    }
+                },
+                "ath:Clickable": {
+                    "to_emit": []
+                },
+                "ui:Slider": {
+                    "hook": "$value_hook",
+                    "global_hook": "$global_hook",
+                    "size": {
+                        "width": "$width",
+                        "height": "$height"
+                    },
+                    "bar_color": "$bar_color",
+                    "circle_color": "$circle_color",
+                    "min_value": "$min_value",
+                    "max_value": "$max_value",
+                    "current_value": "$current_value",
+                    "step": "$step"
+                }
+            }
+        }
+    ],
+    "scenes": []
+}

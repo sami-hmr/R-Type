@@ -21,6 +21,9 @@ static void replace_json_value(JsonValue& value,
         if (!params.contains(arg)) {
           if (default_parameters.contains(arg)) {
             value = default_parameters.at(arg);
+          } else {
+            std::cout << "warning, no default value for parameter " << arg
+                      << "\n";
           }
           return;
         }

@@ -100,8 +100,8 @@
         },
         "collision:Collidable": {
           "size": {
-            "x": 0.1,
-            "y": 0.1
+            "width": 0.1,
+            "height": 0.1
           },
           "collision_type": "solid"
         },
@@ -134,7 +134,7 @@
           "cooldown": 2.0,
           "attack_animation": "attack"
         },
-        "ai:MovementBehavior": { "movement_type": "glue", "params": {"parasite_behavior": "circle","zone_radius": 0.5, "radius": 1.0, "angular_speed": 1.0}},
+        "ai:MovementBehavior": { "movement_type": "glue", "params": {"parasite_behavior": "circle","zone_radius": 0.3, "radius": 1.0, "angular_speed": 1.0}},
         "ai:AttackBehavior": {
           "attack_type": "continuous"
         }

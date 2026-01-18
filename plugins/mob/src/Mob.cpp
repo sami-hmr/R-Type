@@ -61,8 +61,8 @@ void Mob::init_spawner(Ecs::Entity const& entity, JsonObject const& obj)
 
 void Mob::init_parasite(Ecs::Entity const& entity, JsonObject const& obj)
 {
-  auto const& behaviour = get_value<Parasite, std::string>(
-      this->_registry.get(), obj, entity, "behaviour");
+  auto const& behavior = get_value<Parasite, std::string>(
+      this->_registry.get(), obj, entity, "behavior");
 
   std::optional<std::size_t> id = std::nullopt;
   if (obj.contains("entity_id")) {
@@ -70,13 +70,13 @@ void Mob::init_parasite(Ecs::Entity const& entity, JsonObject const& obj)
         this->_registry.get(), obj, entity, "entity_id");
   }
 
-  if (!behaviour) {
+  if (!behavior) {
     std::cerr << "Error loading Parasite component: unexpected value type or "
                  "missing value in JsonObject\n";
     return;
   }
   this->_registry.get().emplace_component<Parasite>(
-      entity, id, behaviour.value());
+      entity, id, behavior.value());
 }
 
 void Mob::on_interaction_zone(const InteractionZoneEvent& event)
