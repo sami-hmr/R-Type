@@ -1,0 +1,85 @@
+{
+  "entities_template": [
+    {
+      "name": "charge_weapon_item",
+      "default_parameters": {},
+      "components": {
+        "moving:Position": {
+          "pos": {
+            "x": 0.7,
+            "y": -0.8
+          },
+          "z": 2
+        },
+        "ui:Drawable": {
+          "hook": "drawable"
+        },
+        "ui:AnimatedSprite": {
+          "animations": [
+            {
+              "name": "idle",
+              "texture": "assets/items/Round Potion - GREEN - Spritesheet.png",
+              "frame_size": {
+                "x": 19.0,
+                "y": 38.0
+              },
+              "frame_pos": {
+                "x": 0.0,
+                "y": 0.0
+              },
+              "direction": {
+                "x": 1.0,
+                "y": 0.0
+              },
+              "sprite_size": {
+                "width": "4.0%",
+                "height": "4.0%"
+              },
+              "framerate": 10.0,
+              "nb_frames": 15,
+              "loop": true,
+              "rollback": true
+            }
+          ],
+          "default_animation": "idle"
+        },
+        "collision:Collidable": {
+          "size": "#self:drawable:true_size",
+          "collision_type": "trigger"
+        },
+        "projectile:Temporal": {
+          "lifetime": 10.0
+        },
+        "inventory:Pickable": {
+          "item_name": "charge_weapon",
+          "artefact_template": "charge_weapon_item",
+          "item": {
+            "on_use": [
+              {
+                "WeaponSwitchEvent": {
+                  "entity": "@self",
+                  "weapon_type": "ChargeWeapon",
+                  "params": {
+                    "bullet_type": "beam_segment",
+                    "offset_x": 1.2,
+                    "offset_y": 0.0,
+                    "magazine_size": 10,
+                    "magazine_nb": 3,
+                    "reload_time": 2.0,
+                    "cooldown": 0.5,
+                    "charge_time": 2.0,
+                    "max_scale": 3.0,
+                    "min_charge_threshold": 0.3,
+                    "scale_damage": true,
+                    "attack_animation": "attack",
+                    "charge_indicator": "beam_start"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  ]
+}

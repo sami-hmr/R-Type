@@ -817,6 +817,9 @@ public:
   template<typename Component>
   void remove_component(Entity const& from)
   {
+    if (!this->has_component<Component>(from)) {
+      return;
+    }
     this->get_components<Component>().erase(from);
   }
 
