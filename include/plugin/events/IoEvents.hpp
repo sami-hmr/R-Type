@@ -91,6 +91,26 @@ static const TwoWayMap<std::string, Key> KEY_MAPPING = {
     {"5", Key::FIVE},        {"6", Key::SIX},       {"7", Key::SEVEN},
     {"8", Key::EIGHT},       {"9", Key::NINE},      {"0", Key::ZERO}};
 
+namespace Controller
+{
+enum Keys : int
+{
+  Unknown = -1,
+  LeftJoyStick,
+  RightJoyStick,
+  A,
+  B,
+  X,
+  Y,
+  LB,
+  RB,
+  Back,
+  Start,
+  LeftJoyPress,
+  RightJoyPress
+};
+}  // namespace Controller
+
 struct KeyPressedEvent
 {
   std::unordered_map<Key, bool> key_pressed;

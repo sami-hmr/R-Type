@@ -130,7 +130,7 @@
           "raycasting:Camera": {
             "angle": 45.0,
             "fov": 66.0,
-            "nb_rays": 8000
+            "nb_rays": 670
           },
           "moving:Position": {
             "pos": {

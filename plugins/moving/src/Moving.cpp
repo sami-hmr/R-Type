@@ -56,6 +56,18 @@ Moving::Moving(Registry& r, EventManager& em, EntityLoader& l)
     comp->direction.y =
         std::max(-1.0, std::min(comp->direction.y + event.y_axis, 1.0));
   })
+  SUBSCRIBE_EVENT(SetDirectionEvent,
+                  { this->on_set_direction(this->_registry.get(), event); })
+}
+
+void Moving::on_set_direction(Registry& r, const SetDirectionEvent& event)
+{
+  if (!r.has_component<Direction>(event.entity)) {
+    return;
+  }
+  auto& direction = r.get_components<Direction>()[event.entity];
+  direction->direction.x = std::clamp(event.direction.x, -1.0, 1.0);
+  direction->direction.y = std::clamp(event.direction.y, -1.0, 1.0);
 }
 
 void Moving::moving_system(Registry& reg)
@@ -241,8 +253,11 @@ void Moving::init_facing(Ecs::Entity const& entity, JsonObject& obj)
                    "(expected plane: bool)\n";
     }
   }
-  init_component<Facing>(
-      this->_registry.get(), this->_event_manager.get(), entity, dir.value(), plane);
+  init_component<Facing>(this->_registry.get(),
+                         this->_event_manager.get(),
+                         entity,
+                         dir.value(),
+                         plane);
 }
 
 extern "C"

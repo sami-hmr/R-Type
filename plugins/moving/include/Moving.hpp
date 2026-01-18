@@ -7,6 +7,7 @@
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Position.hpp"
+#include "plugin/events/CollisionEvent.hpp"
 
 class Moving : public APlugin
 {
@@ -21,4 +22,6 @@ private:
 
   void init_id(Ecs::Entity const& entity, JsonObject& obj);
   void moving_system(Registry&);
+
+  void on_set_direction(Registry& r, const SetDirectionEvent& event);
 };
