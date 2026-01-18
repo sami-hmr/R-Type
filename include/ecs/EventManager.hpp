@@ -488,9 +488,12 @@ private:
 
     _builders.insert_or_assign(
         type_id,
-        std::function<std::any(Registry&, JsonObject const&)>(
-            [](Registry& r, JsonObject const& e) -> std::any
-            { return T(r, e, std::nullopt); }));
+        std::function<std::any(
+            Registry&, JsonObject const&, std::optional<Ecs::Entity>)>(
+            [](Registry& r,
+               JsonObject const& e,
+               std::optional<Ecs::Entity> entity) -> std::any
+            { return T(r, e, entity); }));
 
     _invokers.insert_or_assign(
         type_id,
@@ -507,12 +510,11 @@ private:
           }
         });
 
-    _json_builder.insert_or_assign(
-        type_id,
-        [](Registry& r,
-           JsonObject const& params,
-           std::optional<Ecs::Entity> entity)
-        { return T(r, params, std::nullopt, entity).to_bytes(); });
+    _json_builder.insert_or_assign(type_id,
+                                   [](Registry& r,
+                                      JsonObject const& params,
+                                      std::optional<Ecs::Entity> entity)
+                                   { return T(r, params, entity).to_bytes(); });
   }
 
   template<event EventType>

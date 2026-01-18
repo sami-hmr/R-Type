@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <optional>
 
 #include "ByteParser/ByteParser.hpp"
 #include "EventMacros.hpp"
@@ -171,7 +172,9 @@ struct WatchRebind
 
   DEFAULT_SERIALIZE(type_to_byte(key))
 
-  WatchRebind(Registry& r, JsonObject const& e)
+  WatchRebind(Registry& r,
+              JsonObject const& e,
+              std::optional<Ecs::Entity> /*entity*/)
       : entity(get_value_copy<int>(r, e, "entity").value_or(0))
       , key(get_value_copy<int>(r, e, "key").value_or(0))
   {
@@ -192,7 +195,7 @@ struct ExitRebind
 
   CHANGE_ENTITY_DEFAULT
 
-  ExitRebind(Registry&, JsonObject const&) {}
+  ExitRebind(Registry&, JsonObject const&, std::optional<Ecs::Entity>) {}
 
   HOOKABLE(ExitRebind)
 };

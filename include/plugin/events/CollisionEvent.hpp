@@ -12,6 +12,7 @@
 #include <string>
 
 #include "ByteParser/ByteParser.hpp"
+#include "ecs/Entity.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
@@ -41,23 +42,21 @@ struct CollisionEvent
   CollisionEvent(Registry& r,
                  JsonObject const& e,
                  std::optional<Ecs::Entity> entity)
-      : a(static_cast<Ecs::Entity>(
-            get_value_copy<double>(r, e, "a", entity).value()))
-      , b(static_cast<Ecs::Entity>(
-            get_value_copy<double>(r, e, "b", entity).value()))
+      : a(get_value_copy<Ecs::Entity>(r, e, "a", entity).value())
+      , b(get_value_copy<Ecs::Entity>(r, e, "b", entity).value())
   {
   }
 };
 
 struct UpdateDirection
 {
-  std::size_t entity;
+  Ecs::Entity entity;
   double x_axis;
   double y_axis;
 
   CHANGE_ENTITY(result.entity = map.at(entity))
 
-  UpdateDirection(std::size_t e, double x, double y)
+  UpdateDirection(Ecs::Entity e, double x, double y)
       : entity(e)
       , x_axis(x)
       , y_axis(y)
@@ -65,9 +64,9 @@ struct UpdateDirection
   }
 
   DEFAULT_BYTE_CONSTRUCTOR(UpdateDirection,
-                           ([](std::size_t e, double x, double y)
+                           ([](Ecs::Entity e, double x, double y)
                             { return UpdateDirection(e, x, y); }),
-                           parseByte<std::size_t>(),
+                           parseByte<Ecs::Entity>(),
                            parseByte<double>(),
                            parseByte<double>())
 
@@ -78,7 +77,7 @@ struct UpdateDirection
   UpdateDirection(Registry& r,
                   JsonObject const& e,
                   std::optional<Ecs::Entity> entity)
-      : entity(get_value_copy<int>(r, e, "entity", entity).value())
+      : entity(get_value_copy<Ecs::Entity>(r, e, "entity", entity).value())
       , x_axis(get_value_copy<double>(r, e, "x", entity).value())
       , y_axis(get_value_copy<double>(r, e, "y", entity).value())
   {

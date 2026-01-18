@@ -35,7 +35,9 @@
               "framerate": 10.0,
               "nb_frames": 4,
               "loop": true,
-              "rollback": true
+              "rollback": true,
+              "flip_h": true,
+              "flip_v": false
             },
             {
               "name": "death",

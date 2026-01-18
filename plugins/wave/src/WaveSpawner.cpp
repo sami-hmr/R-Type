@@ -13,6 +13,8 @@
 
 void WaveManager::spawn_wave_entities(Ecs::Entity wave_entity)
 {
+  std::vector<std::function<void()>> event_to_emit;
+
   auto& wave =
       this->_registry.get().get_components<Wave>()[wave_entity].value();
 
@@ -83,10 +85,12 @@ void WaveManager::spawn_wave_entities(Ecs::Entity wave_entity)
       }
     }
 
-    this->_event_manager.get().emit<LoadEntityTemplate>(wave.entity_template,
-                                                        entity_additionals);
+    event_to_emit.emplace_back([this, wave, entity_additionals]() {this->_event_manager.get().emit<LoadEntityTemplate>(wave.entity_template,
+                                                        entity_additionals);});
   }
-
+  for (auto const& fn : event_to_emit) {
+    fn();
+  }
   if (!wave.tracked) {
     this->_event_manager.get().emit<DeleteEntity>(wave_entity);
   }

@@ -83,11 +83,12 @@
             }
           },
           "on_end": [{
-            "event_name": "LogEvent",
+            "event_name": "SceneChangeEvent",
             "params": {
-              "name": "logEvent",
-              "level": "INFO",
-              "message": "Wave completed"
+              "target_scene": "level_4",
+              "state": "active",
+              "reason": "User completed wave",
+              "force": false
             }
           }]
         }

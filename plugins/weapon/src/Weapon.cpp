@@ -115,7 +115,9 @@ void Weapon::on_fire(Registry& r, const FireBullet& e)
         {this->_registry.get().get_component_key<Position>(), pos.to_bytes()},
         {this->_registry.get().get_component_key<Direction>(),
          direction.to_bytes()},
-        {this->_registry.get().get_component_key<Team>(), team.to_bytes()}};
+        {this->_registry.get().get_component_key<Team>(), team.to_bytes()},
+        {this->_registry.get().get_component_key<Facing>(),
+           Facing(direction.direction, /*plane=*/true).to_bytes()}};
 
     if (this->_registry.get().has_component<Scene>(e.entity)) {
       additional.push_back({this->_registry.get().get_component_key<Scene>(),
