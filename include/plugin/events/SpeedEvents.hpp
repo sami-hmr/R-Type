@@ -34,7 +34,9 @@ struct SpeedModifierEvent
                     type_to_byte(this->source),
                     type_to_byte(this->multiplier))
 
-  SpeedModifierEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+  SpeedModifierEvent(Registry& r,
+                     JsonObject const& e,
+                     std::optional<Ecs::Entity> entity)
       : target(static_cast<Ecs::Entity>(
             get_value_copy<double>(r, e, "entity", entity).value()))
       , source(static_cast<Ecs::Entity>(
@@ -71,7 +73,9 @@ struct SpeedSwitcherEvent
                     type_to_byte(this->source),
                     type_to_byte(this->new_speed))
 
-  SpeedSwitcherEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+  SpeedSwitcherEvent(Registry& r,
+                     JsonObject const& e,
+                     std::optional<Ecs::Entity> entity)
       : target(static_cast<Ecs::Entity>(
             get_value_copy<double>(r, e, "entity", entity).value()))
       , source(static_cast<Ecs::Entity>(

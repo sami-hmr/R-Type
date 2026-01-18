@@ -42,8 +42,7 @@ struct InteractionBorders
   DEFAULT_BYTE_CONSTRUCTOR(
       InteractionBorders,
       (
-          [](bool e, double r, std::vector<Ecs::Entity> const& i)
-          {
+          [](bool e, double r, std::vector<Ecs::Entity> const& i) {
             return InteractionBorders(
                 e, r, std::unordered_set(i.begin(), i.end()));
           }),

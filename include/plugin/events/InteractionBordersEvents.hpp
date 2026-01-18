@@ -17,7 +17,9 @@ struct ReachBorders
   {
   }
 
-  ReachBorders(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+  ReachBorders(Registry& r,
+               JsonObject const& e,
+               std::optional<Ecs::Entity> entity)
       : zone(static_cast<Ecs::Entity>(
             get_value_copy<double>(r, e, "zone", entity).value()))
       , player(static_cast<Ecs::Entity>(
