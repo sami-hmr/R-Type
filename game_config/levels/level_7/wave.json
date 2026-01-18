@@ -52,7 +52,7 @@
             }
           },
           "mob:Spawner": {
-            "entity_template": "enemy_ship_1",
+            "entity_template": "wave_2_level_7",
             "spawn_interval": 5.0,
             "max_spawns": 1
           }

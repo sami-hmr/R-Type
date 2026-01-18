@@ -18,7 +18,8 @@
               }
             },
             "disable_scene": "level_1",
-            "enable_scene": "level_2"
+            "enable_scene": "level_2",
+            "music_name": "shooting_stars"
         },
         "config": {
           "wave:Formation": {

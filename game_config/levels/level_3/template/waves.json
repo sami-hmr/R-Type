@@ -118,7 +118,8 @@
             }
           },
           "disable_scene": "level_3",
-          "enable_scene": "level_4"
+          "enable_scene": "level_4",
+          "music_name": "emmenez_moi_soso_maness"
         },
         "config": {}
       }
