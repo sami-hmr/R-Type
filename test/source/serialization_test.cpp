@@ -600,8 +600,14 @@ TEST_CASE("Serialization - Text with unicode-like characters",
 
 TEST_CASE("Serialization - Text with only whitespace", "[serialization]")
 {
-  Text original(
-      "font.ttf", Vector2D {1.0, 1.0}, "   \t\n   ", "", WHITE, BLACK, true, 1.0f);
+  Text original("font.ttf",
+                Vector2D {1.0, 1.0},
+                "   \t\n   ",
+                "",
+                WHITE,
+                BLACK,
+                true,
+                1.0f);
   ByteArray bytes = original.to_bytes();
   Text deserialized(bytes);
 
