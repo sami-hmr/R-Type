@@ -267,14 +267,24 @@ TEST_CASE("Hooks - Position component hooks work correctly",
 
   const auto& hooks = Position::hook_map();
 
-  REQUIRE(hooks.size() == 2);
+  REQUIRE(hooks.size() == 4);
   REQUIRE(hooks.find("pos") != hooks.end());
+  REQUIRE(hooks.find("pos.x") != hooks.end());
+  REQUIRE(hooks.find("pos.y") != hooks.end());
   REQUIRE(hooks.find("z") != hooks.end());
 
   auto pos_any = hooks.at("pos")(pos);
   auto pos_ref = std::any_cast<std::reference_wrapper<Vector2D>>(pos_any);
   REQUIRE(pos_ref.get().x == 100.0);
   REQUIRE(pos_ref.get().y == 200.0);
+
+  auto pos_x_any = hooks.at("pos.x")(pos);
+  auto pos_x_ref = std::any_cast<std::reference_wrapper<double>>(pos_x_any);
+  REQUIRE(pos_x_ref.get() == 100.0);
+
+  auto pos_y_any = hooks.at("pos.y")(pos);
+  auto pos_y_ref = std::any_cast<std::reference_wrapper<double>>(pos_y_any);
+  REQUIRE(pos_y_ref.get() == 200.0);
 
   auto z_any = hooks.at("z")(pos);
   auto z_ref = std::any_cast<std::reference_wrapper<int>>(z_any);

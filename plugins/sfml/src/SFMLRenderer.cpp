@@ -604,12 +604,12 @@ void SFMLRenderer::render_animated_sprites(
     if (facings.size() > entity && facings.at(entity).has_value()) {
       if (facings.at(entity).value().plane) {
         Vector2D dir = facings[entity].value().direction.normalize();
-        rotation = static_cast<float>(std::atan2(dir.y, dir.x) * 180.0 / M_PI);
+        rotation = static_cast<float>(std::atan2(dir.y, dir.x) * 180.0 / std::numbers::pi);
       } else {
         Vector2D norm =
             (pos.pos - facings[entity].value().direction).normalize();
         rotation =
-            static_cast<float>(std::atan2(norm.y, norm.x) * 180.0 / M_PI);
+            static_cast<float>(std::atan2(norm.y, norm.x) * 180.0 / std::numbers::pi);
       }
     }
 

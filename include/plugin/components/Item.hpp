@@ -34,7 +34,7 @@ struct Item
         get_value_copy<JsonArray>(r, e, "on_use", entity);
     if (!on_use_array) {
       LOGGER_EVTLESS(
-            "item", LogLevel::WARNING, "on_use invalid parsing json array");
+          "item", LogLevel::WARNING, "on_use invalid parsing json array");
       return;
     }
     for (auto const& it : *on_use_array) {
