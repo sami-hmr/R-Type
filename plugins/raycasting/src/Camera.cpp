@@ -9,15 +9,12 @@ void Raycasting::init_cam(Ecs::Entity& e, const JsonObject& obj)
 {
   double angle = 0.0;
 
-  // Angle can be specified directly or computed from a target direction
   if (obj.contains("angle")) {
     angle = get_value<RaycastingCamera, double>(
                 this->_registry.get(), obj, e, "angle")
                 .value();
-    // Convert from degrees to radians if specified in degrees
-    angle = angle * M_PI / 180.0;
+    angle = angle * std::numbers::pi / 180.0;
   } else if (obj.contains("target")) {
-    // Compute angle from target direction vector
     Vector2D target = get_value<RaycastingCamera, Vector2D>(
                           this->_registry.get(), obj, e, "target", "x", "y")
                           .value();
@@ -28,14 +25,14 @@ void Raycasting::init_cam(Ecs::Entity& e, const JsonObject& obj)
     return;
   }
 
-  double fov = 60.0;  // Default FOV
+  double fov = 60.0;
   if (obj.contains("fov")) {
     fov = get_value<RaycastingCamera, double>(
               this->_registry.get(), obj, e, "fov")
               .value();
   }
 
-  int nb_rays = 320;  // Default number of rays
+  int nb_rays = 320;
   if (obj.contains("nb_rays")) {
     nb_rays = get_value<RaycastingCamera, int>(
                   this->_registry.get(), obj, e, "nb_rays")

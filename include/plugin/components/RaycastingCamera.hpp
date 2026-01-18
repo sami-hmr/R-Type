@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <numbers>
 #include <unordered_map>
 
 #include "ByteParser/ByteParser.hpp"
@@ -27,7 +28,7 @@ struct RaycastingCamera
 
   void rotate(double delta)
   {
-    angle = std::fmod(angle + (delta * M_PI / 180.0), 2 * M_PI);
+    angle = std::fmod(angle + (delta * std::numbers::pi / 180.0), 2 * std::numbers::pi);
   }
 
   CHANGE_ENTITY_DEFAULT
