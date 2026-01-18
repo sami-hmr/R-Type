@@ -5,6 +5,7 @@
 #include "ecs/Registry.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
+#include "plugin/events/DeathEvent.hpp"
 #include "plugin/events/MusicEvents.hpp"
 #include "plugin/events/SoundEvents.hpp"
 
@@ -24,4 +25,5 @@ public:
   bool on_play_music(Registry& r, const PlayMusicEvent& event);
   void music_system(Registry& r);
 
+  void on_death(Registry& r, EventManager &em, const DeathEvent& event);
 };
