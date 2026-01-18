@@ -92,6 +92,40 @@ static const TwoWayMap<std::string, Key> KEY_MAPPING = {
     {"5", Key::FIVE},        {"6", Key::SIX},       {"7", Key::SEVEN},
     {"8", Key::EIGHT},       {"9", Key::NINE},      {"0", Key::ZERO}};
 
+namespace GamePad
+{
+enum Keys : int
+{
+  Unknown = -1,
+  LeftJoyStick,
+  RightJoyStick,
+  A,
+  B,
+  X,
+  Y,
+  LB,
+  RB,
+  Back,
+  Start,
+  LeftJoyPress,
+  RightJoyPress
+};
+
+static const TwoWayMap<std::string, Keys> GAMEPAD_KEY_MAPPING = {
+    {"LEFT_JOYSTICK", GamePad::LeftJoyStick},
+    {"RIGHT_JOYSTICK", GamePad::RightJoyStick},
+    {"A", GamePad::A},
+    {"B", GamePad::B},
+    {"X", GamePad::X},
+    {"Y", GamePad::Y},
+    {"LB", GamePad::LB},
+    {"RB", GamePad::RB},
+    {"BACK", GamePad::Back},
+    {"START", GamePad::Start},
+    {"LEFT_JOYSTICK_PRESS", GamePad::LeftJoyPress},
+    {"RIGHT_JOYSTICK_PRESS", GamePad::RightJoyPress}};
+}  // namespace GamePad
+
 struct KeyPressedEvent
 {
   std::unordered_map<Key, bool> key_pressed;

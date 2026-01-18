@@ -14,6 +14,7 @@
 #include "ByteParser/ByteParser.hpp"
 #include "ecs/Entity.hpp"
 #include "ecs/Registry.hpp"
+#include "libs/Vector2D.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/events/EventMacros.hpp"
@@ -80,6 +81,37 @@ struct UpdateDirection
       : entity(get_value_copy<Ecs::Entity>(r, e, "entity", entity).value())
       , x_axis(get_value_copy<double>(r, e, "x", entity).value())
       , y_axis(get_value_copy<double>(r, e, "y", entity).value())
+  {
+  }
+};
+
+struct SetDirectionEvent
+{
+  Ecs::Entity entity;
+  Vector2D direction;
+
+  CHANGE_ENTITY(result.entity = map.at(entity))
+
+  SetDirectionEvent(Ecs::Entity e, Vector2D dir)
+      : entity(e)
+      , direction(dir)
+  {
+  }
+
+  DEFAULT_BYTE_CONSTRUCTOR(SetDirectionEvent,
+                           ([](Ecs::Entity e, Vector2D dir)
+                            { return SetDirectionEvent(e, dir); }),
+                           parseByte<Ecs::Entity>(),
+                           parseVector2D())
+
+  DEFAULT_SERIALIZE(type_to_byte(entity), vector2DToByte(direction))
+
+  SetDirectionEvent(Registry& r,
+                    JsonObject const& e,
+                    std::optional<Ecs::Entity> entity)
+      : entity(get_value_copy<Ecs::Entity>(r, e, "entity", entity).value_or(0))
+      , direction(get_value_copy<Vector2D>(r, e, "direction", entity)
+                      .value_or(Vector2D(0.0)))
   {
   }
 };

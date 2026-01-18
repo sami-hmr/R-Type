@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cmath>
 #include <cstddef>
 #include <iostream>
 #include <string>
@@ -16,9 +17,11 @@
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
+#include "plugin/components/BasicMap.hpp"
 #include "plugin/components/Direction.hpp"
 #include "plugin/components/Facing.hpp"
 #include "plugin/components/Position.hpp"
+#include "plugin/components/RaycastingCamera.hpp"
 #include "plugin/components/Speed.hpp"
 #include "plugin/events/CollisionEvent.hpp"
 #include "plugin/events/SpeedEvents.hpp"
@@ -28,7 +31,7 @@ Moving::Moving(Registry& r, EventManager& em, EntityLoader& l)
               r,
               em,
               l,
-              {},
+              {"raycasting"},
               {COMP_INIT(Position, Position, init_pos),
                COMP_INIT(Offset, Offset, init_off),
                COMP_INIT(Direction, Direction, init_direction),
@@ -60,12 +63,13 @@ Moving::Moving(Registry& r, EventManager& em, EntityLoader& l)
     comp->direction.y =
         std::max(-1.0, std::min(comp->direction.y + event.y_axis, 1.0));
   })
+  SUBSCRIBE_EVENT(SetDirectionEvent,
+                  { this->on_set_direction(this->_registry.get(), event); })
   SUBSCRIBE_EVENT(SpeedModifierEvent, {
     if (!this->_registry.get().has_component<Direction>(event.target)) {
       return false;
     }
-    auto& comp =
-        this->_registry.get().get_components<Speed>()[event.target];
+    auto& comp = this->_registry.get().get_components<Speed>()[event.target];
     comp->speed.x *= event.multiplier;
     comp->speed.y *= event.multiplier;
   })
@@ -73,21 +77,83 @@ Moving::Moving(Registry& r, EventManager& em, EntityLoader& l)
     if (!this->_registry.get().has_component<Direction>(event.target)) {
       return false;
     }
-    auto& comp =
-        this->_registry.get().get_components<Speed>()[event.target];
+    auto& comp = this->_registry.get().get_components<Speed>()[event.target];
     comp->speed.x = event.new_speed;
     comp->speed.y = event.new_speed;
   })
+}
+
+void Moving::on_set_direction(Registry& r, const SetDirectionEvent& event)
+{
+  if (!r.has_component<Direction>(event.entity)) {
+    return;
+  }
+  auto& direction = r.get_components<Direction>()[event.entity];
+  direction->direction.x = std::clamp(event.direction.x, -1.0, 1.0);
+  direction->direction.y = std::clamp(event.direction.y, -1.0, 1.0);
 }
 
 void Moving::moving_system(Registry& reg)
 {
   double dt = reg.clock().delta_seconds();
 
+  auto& raycasting_cameras = reg.get_components<RaycastingCamera>();
+  auto& basic_maps = reg.get_components<BasicMap>();
+
   for (auto&& [index, position, direction, speed] :
        ZipperIndex<Position, Direction, Speed>(reg))
   {
-    Vector2D movement = (direction.direction).normalize() * speed.speed * dt;
+    Vector2D real_direction = direction.direction;
+    bool use_grid_collision = false;
+
+    if (index < raycasting_cameras.size()
+        && raycasting_cameras[index].has_value())
+    {
+      double cam_angle = raycasting_cameras[index]->angle;
+      real_direction.rotate_radians(cam_angle);
+      use_grid_collision = true;
+    }
+
+    Vector2D movement = real_direction.normalize() * speed.speed * dt;
+
+    if (use_grid_collision && movement.length() > 0) {
+      constexpr double player_radius = 0.2;
+      Vector2D new_pos = position.pos + movement;
+
+      for (auto const& map_opt : basic_maps) {
+        if (!map_opt.has_value()) {
+          continue;
+        }
+        auto const& map = map_opt.value();
+
+        if (position.pos.x < 0 || position.pos.x >= map.size.x
+            || position.pos.y < 0 || position.pos.y >= map.size.y)
+        {
+          continue;
+        }
+
+        int check_x = static_cast<int>(std::floor(
+            new_pos.x + (movement.x > 0 ? player_radius : -player_radius)));
+        int current_y = static_cast<int>(std::floor(position.pos.y));
+        if (check_x >= 0 && check_x < static_cast<int>(map.size.x)
+            && current_y >= 0 && current_y < static_cast<int>(map.size.y)
+            && map.data[current_y][check_x] != 0)
+        {
+          movement.x = 0;
+        }
+
+        int current_x = static_cast<int>(std::floor(position.pos.x));
+        int check_y = static_cast<int>(std::floor(
+            new_pos.y + (movement.y > 0 ? player_radius : -player_radius)));
+        if (current_x >= 0 && current_x < static_cast<int>(map.size.x)
+            && check_y >= 0 && check_y < static_cast<int>(map.size.y)
+            && map.data[check_y][current_x] != 0)
+        {
+          movement.y = 0;
+        }
+      }
+    }
+
     position.pos += movement;
     if (movement.length() != 0) {
       this->_event_manager.get().emit<ComponentBuilder>(
