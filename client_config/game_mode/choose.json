@@ -7,13 +7,13 @@
       "entities": [
         {
           "sound:MasterVolume": {
-            "value": 100.0
+            "value": "#global:master_volume:current_value"
           },
-          "sound:MusicVolume" : {
-            "value": 100.0
+          "sound:MusicVolume": {
+            "value": "#global:music_volume:current_value"
           },
-          "sound:SFXVolume" : {
-            "value" : 50.0
+          "sound:SFXVolume": {
+            "value": "#global:sfx_volume:current_value"
           }
         },
         {
@@ -155,7 +155,7 @@
                     "entity": "@self",
                     "volume": 100.0,
                     "pitch": 0.7,
-                    "loop": false
+                    "loop": true
                   }
                 }
               }

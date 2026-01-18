@@ -39,7 +39,7 @@ Mob::Mob(Registry& r, EventManager& em, EntityLoader& l)
   SUBSCRIBE_EVENT(InteractionZoneEvent, { this->on_interaction_zone(event); })
 }
 
-void Mob::init_spawner(Registry::Entity const& entity, JsonObject const& obj)
+void Mob::init_spawner(Ecs::Entity const& entity, JsonObject const& obj)
 {
   auto const& entity_template = get_value<Spawner, std::string>(
       this->_registry.get(), obj, entity, "entity_template");
@@ -59,7 +59,7 @@ void Mob::init_spawner(Registry::Entity const& entity, JsonObject const& obj)
                                                    max_spawns.value());
 }
 
-void Mob::init_parasite(Registry::Entity const& entity, JsonObject const& obj)
+void Mob::init_parasite(Ecs::Entity const& entity, JsonObject const& obj)
 {
   auto const& behaviour = get_value<Parasite, std::string>(
       this->_registry.get(), obj, entity, "behaviour");
@@ -90,10 +90,10 @@ void Mob::on_interaction_zone(const InteractionZoneEvent& event)
     return;
   }
 
-  std::optional<Registry::Entity> closest_entity = std::nullopt;
+  std::optional<Ecs::Entity> closest_entity = std::nullopt;
   double closest_distance_sq = event.radius * event.radius;
 
-  for (const Registry::Entity& candidate : event.candidates) {
+  for (const Ecs::Entity& candidate : event.candidates) {
     if (!this->_registry.get().has_component<Health>(candidate)) {
       continue;
     }

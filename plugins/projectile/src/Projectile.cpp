@@ -34,7 +34,7 @@ Projectile::Projectile(Registry& r, EventManager& em, EntityLoader& l)
   SUBSCRIBE_EVENT(CollisionEvent, { this->on_collision(event); })
 }
 
-void Projectile::init_temporal(Registry::Entity entity, JsonObject const& obj)
+void Projectile::init_temporal(Ecs::Entity entity, JsonObject const& obj)
 {
   auto const& lifetime = get_value<Temporal, double>(
       this->_registry.get(), obj, entity, "lifetime");
@@ -51,7 +51,7 @@ void Projectile::init_temporal(Registry::Entity entity, JsonObject const& obj)
                            lifetime.value());
 }
 
-void Projectile::init_fragile(Registry::Entity entity, JsonObject const& obj)
+void Projectile::init_fragile(Ecs::Entity entity, JsonObject const& obj)
 {
   auto const& hits =
       get_value<Fragile, int>(this->_registry.get(), obj, entity, "hits");

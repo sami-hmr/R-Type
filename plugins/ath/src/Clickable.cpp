@@ -7,7 +7,7 @@
 #include "plugin/APlugin.hpp"
 #include "plugin/components/Collidable.hpp"
 
-void ATH::init_clickable(Registry::Entity const& e, JsonObject const& obj)
+void ATH::init_clickable(Ecs::Entity const& e, JsonObject const& obj)
 {
   std::vector<std::pair<std::string, JsonObject>> emits;
 

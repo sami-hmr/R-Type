@@ -1,0 +1,77 @@
+{
+    "scenes": [
+        {
+            "name": "settings",
+            "state": "disabled",
+            "plugins": [],
+            "entities": [
+                {
+                    "template": "pause_bg"
+                },
+                {
+                    "template": "return_to_pause",
+                    "parameters": {
+                        "current_scene": "settings"
+                    }
+                },
+                {
+                    "template": "text",
+                    "parameters": {
+                        "width": 0.3,
+                        "height": 0.04,
+                        "y": -0.3,
+                        "z": 21,
+                        "font": "assets/fonts/Starjedi.ttf",
+                        "text": "global volume"
+                    }
+                },
+                {
+                    "template": "slider",
+                    "parameters": {
+                        "y": -0.2,
+                        "z": 21,
+                        "value_hook": "master_volume"
+                    }
+                },
+                {
+                    "template": "text",
+                    "parameters": {
+                        "width": 0.3,
+                        "height": 0.04,
+                        "y": -0.05,
+                        "z": 21,
+                        "font": "assets/fonts/Starjedi.ttf",
+                        "text": "music volume"
+                    }
+                },
+                {
+                    "template": "slider",
+                    "parameters": {
+                        "y": 0.05,
+                        "z": 21,
+                        "value_hook": "music_volume"
+                    }
+                },
+                 {
+                    "template": "text",
+                    "parameters": {
+                        "width": 0.3,
+                        "height": 0.04,
+                        "y": 0.2,
+                        "z": 21,
+                        "font": "assets/fonts/Starjedi.ttf",
+                        "text": "sfx volume"
+                    }
+                },
+                {
+                    "template": "slider",
+                    "parameters": {
+                        "y": 0.3,
+                        "z": 21,
+                        "value_hook": "sfx_volume"
+                    }
+                }
+            ]
+        }
+    ]
+}

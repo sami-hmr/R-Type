@@ -80,7 +80,7 @@ static void update(TextDrawable& drawable,
   drawable.text.get().setString(drawable.text_str);
   drawable.text.get().setFont(font);
   drawable.text.get().setCharacterSize(drawable.size);
-  drawable.text.get().setString("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");
+  drawable.text.get().setString(abc);
   sf::FloatRect y_text_rect = drawable.text.get().getLocalBounds();
   drawable.text.get().setString(drawable.text_str);
   sf::FloatRect text_rect = drawable.text.get().getLocalBounds();

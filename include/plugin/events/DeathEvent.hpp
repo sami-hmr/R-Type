@@ -16,37 +16,36 @@
 #include "ByteParser/ByteParser.hpp"
 #include "EventMacros.hpp"
 #include "ParserUtils.hpp"
+#include "ecs/Entity.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
 
 struct DeathEvent
 {
-  DeathEvent(Registry::Entity e, Registry::Entity k)
-      : entity(e)
-      , killer(k)
+  DeathEvent(Ecs::Entity e, Ecs::Entity k)
+      : entity(e), killer(k)
   {
   }
 
   CHANGE_ENTITY(result.entity = map.at(entity), result.killer = map.at(killer);)
 
   DEFAULT_BYTE_CONSTRUCTOR(DeathEvent,
-                           ([](Registry::Entity const& e,
-                               Registry::Entity const& k)
-                            { return DeathEvent {e, k}; }),
-                           parseByte<Registry::Entity>(),
-                           parseByte<Registry::Entity>())
+                           ([](Ecs::Entity const& e, Ecs::Entity const& k) { return DeathEvent(e, k); }),
+                           parseByte<Ecs::Entity>(), parseByte<Ecs::Entity>())
 
   DEFAULT_SERIALIZE(type_to_byte(this->entity), type_to_byte(this->killer))
 
-  DeathEvent(Registry& r, JsonObject const& e)
-      : entity(static_cast<Registry::Entity>(
-            get_value_copy<double>(r, e, "entity").value()))
-      , killer(static_cast<Registry::Entity>(
-            get_value_copy<double>(r, e, "killer").value()))
+  DeathEvent(Registry& r,
+             JsonObject const& e,
+             std::optional<Ecs::Entity> entity)
+      : entity(static_cast<Ecs::Entity>(
+            get_value_copy<double>(r, e, "entity", entity).value())),
+        killer(static_cast<Ecs::Entity>(
+            get_value_copy<double>(r, e, "killer", entity).value()))
   {
   }
 
-  Registry::Entity entity;
-  Registry::Entity killer;
+  Ecs::Entity entity;
+  Ecs::Entity killer;
 };

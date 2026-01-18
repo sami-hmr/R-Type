@@ -55,7 +55,7 @@ void Score::on_death(Registry& r, const DeathEvent& event)
             << scores[event.killer]->score << std::endl;
 }
 
-void Score::init_score_manager(Registry::Entity& e, const JsonObject& obj)
+void Score::init_score_manager(Ecs::Entity& e, const JsonObject& obj)
 {
   int initial_score =
       get_value<ScoreManager, int>(this->_registry.get(), obj, e, "score")

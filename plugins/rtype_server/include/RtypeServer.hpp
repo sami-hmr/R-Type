@@ -31,5 +31,5 @@ private:
   void ask_player_save(int user_id);
   void save_player(int user_id);
   std::unordered_map<std::size_t, bool> _player_ready;
-  std::unordered_map<Registry::Entity, size_t> _player_entities;
+  std::unordered_map<Ecs::Entity, size_t> _player_entities;
 };

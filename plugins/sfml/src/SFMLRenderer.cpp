@@ -5,12 +5,14 @@
 #include <cmath>
 #include <cstdint>
 #include <cstdio>
+#include <format>
 #include <functional>
 #include <iostream>
 #include <locale>
 #include <numbers>
 #include <stdexcept>
 #include <tuple>
+#include <utility>
 
 #include "SFMLRenderer.hpp"
 
@@ -137,7 +139,7 @@ SFMLRenderer::SFMLRenderer(Registry& r, EventManager& em, EntityLoader& l)
   SUBSCRIBE_EVENT(InputFocusEvent, { this->on_input_focus(event); });
   sf::SoundBuffer& buffer = _sound_buffers.at(SFMLRenderer::placeholder);
   for (auto& sound : this->_sounds) {
-    sound = sf::Sound(buffer);
+    sound = std::make_pair(sf::Sound(buffer), SoundEffect());
   }
   this->_musics.insert_or_assign(SFMLRenderer::placeholder, sf::Music());
   this->_cursors.insert_or_assign("arrow", sf::Cursor(sf::Cursor::Type::Arrow));
@@ -409,8 +411,7 @@ void SFMLRenderer::render_texts(Registry& r,
     _text.value().setCharacterSize(base_size);
     sf::Rect<float> text_rect;
 
-    _text.value().setString(
-        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789");  // caluculate height with all possible letters
+    _text.value().setString(abc);  // caluculate height with all letters
     text_rect = _text.value().getLocalBounds();
     double min_dim = std::min(window_size.x, window_size.y);
     double desired_height = min_dim * txt.scale.y;
