@@ -1,6 +1,7 @@
 
 #include <cstdlib>
 #include <optional>
+#include <variant>
 
 #include "Json/JsonParser.hpp"
 #include "NetworkShared.hpp"
@@ -49,8 +50,33 @@ inline void emit_event(EventManager& em,
   } catch (std::out_of_range const&) {
     em.emit<LogEvent>(
         "Emit event", LogLevel::ERR, "unknown event: \"" + id + "\"");
+    return;
+  } catch (std::bad_optional_access const&) {
+    em.emit<LogEvent>(
+        "Emit event",
+        LogLevel::ERR,
+        "Bad optional access: missing parameter for event: \"" + id + "\"");
+    return;
+  } catch (std::bad_variant_access const& e) {
+    em.emit<LogEvent>(
+        "Emit event",
+        LogLevel::ERR,
+        "Bad variant access: invalid parameter type for event: \"" + id + "\"");
+    return;
   }
-  em.emit(r, id, params, entity);
+  try {
+    em.emit(r, id, params, entity);
+  } catch (std::bad_optional_access const&) {
+    em.emit<LogEvent>(
+        "Emit event",
+        LogLevel::ERR,
+        "Bad optional access: missing parameter for event: \"" + id + "\"");
+  } catch (std::bad_variant_access const& e) {
+    em.emit<LogEvent>(
+        "Emit event",
+        LogLevel::ERR,
+        "Bad variant access: invalid parameter type for event: \"" + id + "\"");
+  }
 }
 
 /**

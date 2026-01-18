@@ -109,8 +109,12 @@ static sf::SoundBuffer gen_sound_placeholder()
 }
 
 SFMLRenderer::SFMLRenderer(Registry& r, EventManager& em, EntityLoader& l)
-    : APlugin(
-          "sfml", r, em, l, {"moving", "ath", "ui", "collision", "sound"}, {})
+    : APlugin("sfml",
+              r,
+              em,
+              l,
+              {"moving", "ath", "ui", "collision", "sound", "raycasting"},
+              {})
 {
   _window =
       sf::RenderWindow(sf::VideoMode(window_size), "R-Type - SFML Renderer");
@@ -132,6 +136,7 @@ SFMLRenderer::SFMLRenderer(Registry& r, EventManager& em, EntityLoader& l)
   _registry.get().add_system([this](Registry& r) { this->musics_system(r); });
   _registry.get().add_system([this](Registry& r) { this->hover_system(r); });
   _registry.get().add_system([this](Registry&) { this->display(); });
+  _registry.get().add_system([this](Registry& r) { this->gamepad_system(r); });
   _textures.insert_or_assign(SFMLRenderer::placeholder, gen_placeholder());
   this->_triangle_vertices.setPrimitiveType(sf::PrimitiveType::Triangles);
   this->_line_vertices.setPrimitiveType(sf::PrimitiveType::Lines);
@@ -661,33 +666,6 @@ void SFMLRenderer::unified_render_system(Registry& r)
   sf::Vector2f view_pos = this->_view.getCenter();
   float min_dimension =
       static_cast<float>(std::min(window_size.x, window_size.y));
-
-  //test if controller is connected
-  for (unsigned int i = 0; i < sf::Joystick::Count; ++i) {
-    if (sf::Joystick::isConnected(i)) {
-      std::cout << "Joystick " << i << " is connected." << "\n";
-      unsigned int button_count = sf::Joystick::getButtonCount(i);
-      std::cout << "It has " << button_count << " buttons." << "\n";
-      bool has_x = sf::Joystick::hasAxis(i, sf::Joystick::Axis::X);
-      bool has_y = sf::Joystick::hasAxis(i, sf::Joystick::Axis::Y);
-      std::cout << "Has X axis: " << (has_x ? "Yes" : "No") << "\n";
-      std::cout << "Has Y axis: " << (has_y ? "Yes" : "No") << "\n";
-      for (unsigned int j = 0; j < button_count; ++j) {
-        if (sf::Joystick::isButtonPressed(i, j)) {
-          std::cout << "Button " << j << " is pressed." << "\n";
-        }
-      }
-      for (unsigned int j = 0; j < sf::Joystick::AxisCount; ++j) {
-        if (sf::Joystick::hasAxis(i, static_cast<sf::Joystick::Axis>(j))) {
-          float position = sf::Joystick::getAxisPosition(
-              i, static_cast<sf::Joystick::Axis>(j));
-          std::cout << "Axis " << JOYAXISMAP.at(static_cast<sf::Joystick::Axis>(j)) << " position: " << position << "\n";
-        }
-      }
-      break;
-    }
-  }
-
 
   render_sprites(
       r, all_drawables, min_dimension, window_size, view_size, view_pos);

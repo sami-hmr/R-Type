@@ -59,6 +59,26 @@
             "global_hook": true
           },
           "controller:Controllable": {
+            "gamepad_bindings": [
+              {
+                "description": "move stick",
+                "key": "LEFT_JOYSTICK",
+                "name": "SetDirectionEvent",
+                "params": {
+                  "entity": "@self",
+                  "direction": {
+                    "x": 1.0,
+                    "y": 0.0
+                  }
+                }
+              },
+              {
+                "description": "move stick",
+                "key": "A",
+                "name": "FireBullet",
+                "params": {}
+              }
+            ],
             "bindings": [
               {
                 "description": "shake cam",

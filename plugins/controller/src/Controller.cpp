@@ -226,14 +226,65 @@ void Controller::init_event_map(Ecs::Entity const& entity,
   }
 }
 
+void Controller::init_gamepad_event_map(Ecs::Entity const& entity,
+                                     JsonArray& events,
+                                     Controllable& result)
+{
+  for (auto& it : events) {
+    auto& event = std::get<JsonObject>(it.value);
+    auto description = get_value_copy<std::string>(
+        this->_registry.get(), event, "description");
+    auto key_string =
+        get_value_copy<std::string>(this->_registry.get(), event, "key");
+    auto params =
+        get_value_copy<JsonObject>(this->_registry.get(), event, "params");
+    auto event_id =
+        get_value_copy<std::string>(this->_registry.get(), event, "name");
+    if (!event_id) {
+      LOGGER("Controller",
+             LogLevel::WARNING,
+             "Missing name field in event, skipping");
+      continue;
+    }
+    if (!description) {
+      LOGGER("Controller",
+             LogLevel::WARNING,
+             std::format("Missing description field in event, skipping"));
+      continue;
+    }
+    if (!key_string) {
+      LOGGER("Controller",
+             LogLevel::WARNING,
+             std::format("Missing key field in event, skipping"));
+      continue;
+    }
+    if (!params) {
+      LOGGER("Controller",
+             LogLevel::WARNING,
+             std::format("Missing params field in event \"{}\", skipping",
+                         *description));
+      continue;
+    }
+    result.gamepad_event_map.insert_or_assign(
+        GamePad::GAMEPAD_KEY_MAPPING.at_first(*key_string),
+        Controllable::Trigger {{*event_id, *description}, *params});
+  }
+}
+
 void Controller::init_controller(Ecs::Entity const& entity,
                                  JsonObject const& obj)
 {
   Controllable result(
-      (std::unordered_map<std::uint16_t, Controllable::Trigger>()));
+      (std::unordered_map<std::uint16_t, Controllable::Trigger>()),
+      (std::unordered_map<int, Controllable::Trigger>()));
   auto bindings = std::get<JsonArray>(obj.at("bindings").value);
 
   this->init_event_map(entity, bindings, result);
+  if (obj.contains("gamepad_bindings")) {
+    auto gamepad_bindings =
+        std::get<JsonArray>(obj.at("gamepad_bindings").value);
+    this->init_gamepad_event_map(entity, gamepad_bindings, result);
+  }
 
   this->_registry.get().add_component<Controllable>(entity, std::move(result));
   std::cout << "CREATED COMPOENTENT Controllable for Entity: " << entity

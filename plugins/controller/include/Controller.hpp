@@ -26,6 +26,9 @@ private:
   void init_event_map(Ecs::Entity const& entity,
                       JsonArray& events,
                       Controllable& result);
+  void init_gamepad_event_map(Ecs::Entity const& entity,
+                              JsonArray& events,
+                              Controllable& result);
   void handle_key_change(Key key, bool is_pressed);
   double compute_axis(Key negative, Key positive) const;
   bool is_key_active(Key key) const;
@@ -35,21 +38,28 @@ private:
                                       const std::string& key_string,
                                       const std::string& description,
                                       KeyEventType event_type);
-  static void rebinding(Controllable& c, Rebind const &event, KeyEventType event_type);
+  static void rebinding(Controllable& c,
+                        Rebind const& event,
+                        KeyEventType event_type);
 
   std::map<Key, bool> _key_states;
 
   std::unordered_map<std::string, std::vector<std::size_t>> _rebinding_scenes;
   void create_binding_scene(std::size_t entity);
   void delete_binding_scene(bool disable = true);
-  struct RebindingScene {
-    struct Rebinder {
+
+  struct RebindingScene
+  {
+    struct Rebinder
+    {
       std::string key_str;
       std::uint16_t key;
       std::string description;
     };
+
     std::vector<Rebinder> elements;
   };
+
   std::optional<GenerateRebindingScene> _current_binding_scene;
 
   std::optional<WatchRebind> _remaped_key;

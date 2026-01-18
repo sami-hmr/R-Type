@@ -27,6 +27,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window.hpp>
 #include <SFML/Window/Cursor.hpp>
+#include <SFML/Window/Joystick.hpp>
 
 #include "Drawable.hpp"
 #include "Json/JsonParser.hpp"
@@ -49,6 +50,36 @@
 #include "plugin/components/Text.hpp"
 #include "plugin/events/CameraEvents.hpp"
 #include "plugin/events/IoEvents.hpp"
+
+struct JoystickState
+{
+  JoystickState() = default;
+
+  JoystickState(const std::array<double, sf::Joystick::AxisCount>& a,
+                const std::array<bool, sf::Joystick::ButtonCount>& b)
+      : axes(a)
+      , buttons(b)
+  {
+  }
+
+  std::array<double, sf::Joystick::AxisCount> axes;
+  std::array<bool, sf::Joystick::ButtonCount> buttons;
+
+  bool operator!=(const JoystickState& other) const
+  {
+    for (std::size_t i = 0; i < axes.size(); ++i) {
+      if (this->axes[i] != other.axes[i]) {
+        return true;
+      }
+    }
+    for (std::size_t i = 0; i < buttons.size(); ++i) {
+      if (this->buttons[i] != other.buttons[i]) {
+        return true;
+      }
+    }
+    return false;
+  }
+};
 
 class SFMLRenderer : public APlugin
 {
@@ -86,6 +117,7 @@ private:
   void musics_system(Registry& r);
   void volumes_system(Registry& r);
   void hover_system(Registry& r);
+  void gamepad_system(Registry& r);
   void display();
 
   void on_input_focus(const InputFocusEvent& /*unused*/);
@@ -120,13 +152,13 @@ private:
                         float min_dimension,
                         const sf::Vector2u& window_size);
 
-
-    void cast_rays(Registry& r,
-                   RaycastingData const& raycasting_data,
-                   std::vector<std::vector<int>> const& map_data,
-                   const sf::Vector2u& window_size);
+  void cast_rays(Registry& r,
+                 RaycastingData const& raycasting_data,
+                 std::vector<std::vector<int>> const& map_data,
+                 const sf::Vector2u& window_size);
   void draw_textured_walls(
-      std::unordered_map<std::string, std::vector<sf::Vertex>>& textured_vertices);
+      std::unordered_map<std::string, std::vector<sf::Vertex>>&
+          textured_vertices);
   void draw_colored_walls(std::vector<sf::Vertex>& colored_vertices);
   std::optional<Key> sfml_key_to_key(sf::Keyboard::Key sfml_key);
 
@@ -156,16 +188,20 @@ private:
   bool _camera_initialized = false;
   std::map<std::string, sf::Cursor> _cursors;
 
+  std::array<JoystickState, sf::Joystick::Count> _joysticks;
+
   void draw_nothing_background(Background& background);
   void draw_repeat_background(Background& background);
   void draw_stretch_background(Background& background);
 
-  void fill_vertices(const std::unordered_map<int, std::unordered_map<std::string, TileData>> &tiles_data,
-                          int wall_value,
-                          Vector2D screen,
-                          Vector2D next_screen,
-                          Vector2D start,
-                          Vector2D end);
+  void fill_vertices(
+      const std::unordered_map<int, std::unordered_map<std::string, TileData>>&
+          tiles_data,
+      int wall_value,
+      Vector2D screen,
+      Vector2D next_screen,
+      Vector2D start,
+      Vector2D end);
 
   std::map<Background::RenderType, std::function<void(Background&)>>
       _draw_functions {
@@ -236,6 +272,23 @@ static const std::map<sf::Keyboard::Key, Key> key_association = {
     {sf::Keyboard::Key::Num8, Key::EIGHT},
     {sf::Keyboard::Key::Num9, Key::NINE},
     {sf::Keyboard::Key::Num0, Key::ZERO}};
+
+static const std::map<GamePad::Keys, std::pair<sf::Joystick::Axis, sf::Joystick::Axis>> GAMEPAD_AXIS_MAP = {
+    {GamePad::LeftJoyStick, {sf::Joystick::Axis::X, sf::Joystick::Axis::Y}},
+    {GamePad::RightJoyStick, {sf::Joystick::Axis::U, sf::Joystick::Axis::V}}};
+
+static const std::map<GamePad::Keys, unsigned int> GAMEPAD_BUTTON_MAP = {
+    {GamePad::A, 0},
+    {GamePad::B, 1},
+    {GamePad::X, 2},
+    {GamePad::Y, 3},
+    {GamePad::LB, 4},
+    {GamePad::RB, 5},
+    {GamePad::Back, 6},
+    {GamePad::Start, 7},
+    {GamePad::LeftJoyPress, 8},
+    {GamePad::RightJoyPress, 9},
+};
 
 static const std::map<sf::Mouse::Button, MouseButton> MOUSEBUTTONMAP = {
     {sf::Mouse::Button::Left, MouseButton::MOUSELEFT},
