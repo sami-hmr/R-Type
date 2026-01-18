@@ -92,8 +92,7 @@ struct GenerateRebindingScene
                                   std::string const& lnk,
                                   std::string const& back,
                                   std::string const& base,
-                                  bool main)
-                               {
+                                  bool main) {
                                  return GenerateRebindingScene(
                                      e, bg, btn, txt, lnk, back, base, main);
                                }),
