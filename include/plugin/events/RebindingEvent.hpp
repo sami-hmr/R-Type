@@ -170,7 +170,7 @@ struct WatchRebind
                            parseByte<Ecs::Entity>(),
                            parseByte<std::uint16_t>())
 
-  DEFAULT_SERIALIZE(type_to_byte(key))
+  DEFAULT_SERIALIZE(type_to_byte(entity), type_to_byte(key))
 
   WatchRebind(Registry& r,
               JsonObject const& e,
@@ -180,7 +180,7 @@ struct WatchRebind
   {
   }
 
-  CHANGE_ENTITY_DEFAULT
+  CHANGE_ENTITY(result.entity = map.at(entity);)
 
   Ecs::Entity entity;
   std::uint16_t key;
@@ -195,7 +195,11 @@ struct ExitRebind
 
   CHANGE_ENTITY_DEFAULT
 
-  ExitRebind(Registry&, JsonObject const&, std::optional<Ecs::Entity>) {}
+  ExitRebind(Registry& /*unused*/,
+             JsonObject const& /*unused*/,
+             std::optional<Ecs::Entity> /*unused*/)
+  {
+  }
 
   HOOKABLE(ExitRebind)
 };

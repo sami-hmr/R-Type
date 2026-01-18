@@ -7,6 +7,7 @@
 
 #include "Life.hpp"
 
+#include "EntityExpose.hpp"
 #include "Json/JsonParser.hpp"
 #include "Logger.hpp"
 #include "NetworkShared.hpp"
@@ -190,11 +191,16 @@ void Life::on_damage(const DamageEvent& event)
   } else {
     return;
   }
+  Ecs::Entity killer = event.source;
+  if (this->_registry.get().has_component<IdStorage>(event.source)) {
+    auto& id_storages = this->_registry.get().get_components<IdStorage>();
+    killer = id_storages[event.source]->id_s;
+  }
 
   if (healths[event.target]->current <= 0
       && !this->_registry.get().is_entity_dying(event.target))
   {
-    this->_event_manager.get().emit<DeathEvent>(event.target);
+    this->_event_manager.get().emit<DeathEvent>(event.target, killer);
   }
 }
 

@@ -31,6 +31,12 @@
               "y": 0.0
             }
           },
+          "score:ScoreManager": {
+            "hook": "player_score",
+            "global_hook": true,
+            "points_to_give": 1,
+            "score": 0
+          },
           "ui:Camera": {
             "size": {
               "width": 1.0,
@@ -194,7 +200,27 @@
                   "main": true
                 }
               }
+              // {
+              //   "description": "charge shoot",
+              //   "key": "SPACE",
+              //   "pressed": {
+              //     "name": "StartChargeWeapon",
+              //     "params": {}
+              //   },
+              //   "released": {
+              //     "name": "ReleaseChargeWeapon",
+              //     "params": {}
+              //   }
+              // }
             ]
+          }
+        },
+        {
+          "template": "text",
+          "parameters": {
+            "text_size": {},
+            "text": "#global:player_score:score_str",
+            "z": 90000
           }
         }
       ]

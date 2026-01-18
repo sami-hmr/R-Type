@@ -6,6 +6,9 @@
         "entity_template": "basic_bullet"
       },
       "components": {
+        "moving:IdStorage": {
+          "id": "#global:player_id_client:id"
+        },
         "wave:Wave": {
           "entity_template": "$entity_template",
           "count": 3,
@@ -32,6 +35,9 @@
         "entity_template": "basic_bullet"
       },
       "components": {
+        "moving:IdStorage": {
+          "id": "#global:player_id_client:id"
+        },
         "wave:Wave": {
           "entity_template": "$entity_template",
           "count": 8,
@@ -58,6 +64,9 @@
         "entity_template": "basic_bullet"
       },
       "components": {
+        "moving:IdStorage": {
+          "id": "#global:player_id_client:id"
+        },
         "wave:Wave": {
           "entity_template": "$entity_template",
           "count": 1,
