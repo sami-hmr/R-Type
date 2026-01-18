@@ -74,15 +74,28 @@ void Actions::init_action_trigger(Ecs::Entity const& entity, JsonObject& obj)
 {
   JsonObject trigger = std::get<JsonObject>(obj.at("trigger").value);
 
-  std::string type = get_value<ActionTrigger, std::string>(
-                         this->_registry.get(), trigger, entity, "type")
-                         .value();
+  auto type_opt = get_value<ActionTrigger, std::string>(
+      this->_registry.get(), trigger, entity, "type");
+
+  if (!type_opt.has_value()) {
+    std::cerr << "Error: ActionTrigger 'type' field is required but not found"
+              << '\n';
+    return;
+  }
+
+  std::string type = type_opt.value();
 
   JsonObject params;
   if (trigger.contains("params")) {
-    params = get_value<ActionTrigger, JsonObject>(
-                 this->_registry.get(), trigger, entity, "params")
-                 .value();
+    auto params_opt = get_value<ActionTrigger, JsonObject>(
+        this->_registry.get(), trigger, entity, "params");
+
+    if (!params_opt.has_value()) {
+      std::cerr << "Warning: ActionTrigger 'params' could not be resolved"
+                << '\n';
+    } else {
+      params = params_opt.value();
+    }
   }
 
   std::vector<std::pair<std::string, JsonObject>> to_emit_map;

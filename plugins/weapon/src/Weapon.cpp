@@ -14,9 +14,12 @@
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
+#include "plugin/Hooks.hpp"
 #include "plugin/components/AnimatedSprite.hpp"
 #include "plugin/components/BasicWeapon.hpp"
+#include "plugin/components/ChargeWeapon.hpp"
 #include "plugin/components/Damage.hpp"
+#include "plugin/components/DelayedWeapon.hpp"
 #include "plugin/components/Direction.hpp"
 #include "plugin/components/Facing.hpp"
 #include "plugin/components/Position.hpp"
@@ -25,7 +28,6 @@
 #include "plugin/components/Team.hpp"
 #include "plugin/events/AnimationEvents.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
-#include "plugin/events/IoEvents.hpp"
 #include "plugin/events/LogMacros.hpp"
 #include "plugin/events/WeaponEvent.hpp"
 
@@ -44,7 +46,14 @@ Weapon::Weapon(Registry& r, EventManager& em, EntityLoader& l)
   REGISTER_COMPONENT(ChargeWeapon)
   REGISTER_COMPONENT(DelayedWeapon)
   REGISTER_COMPONENT(ScaleModifier)
-  SUBSCRIBE_EVENT(FireBullet, { this->on_fire(this->_registry.get(), event); })
+  SUBSCRIBE_EVENT(FireBullet, {
+    if (this->_registry.get().has_component<ChargeWeapon>(event.entity)) {
+      emit_event<StartChargeWeapon>(
+          this->_event_manager.get(), "StartChargeWeapon", event.entity);
+    } else {
+      this->on_fire(this->_registry.get(), event);
+    }
+  })
   SUBSCRIBE_EVENT(StartChargeWeapon,
                   { this->on_charge_start(this->_registry.get(), event); })
   SUBSCRIBE_EVENT(ReleaseChargeWeapon,
@@ -88,8 +97,7 @@ void Weapon::on_fire(Registry& r, const FireBullet& e)
       }
     }
 
-    auto const& pos =
-        *this->_registry.get().get_components<Position>()[e.entity];
+    auto& pos = *this->_registry.get().get_components<Position>()[e.entity];
 
     auto const& vel_direction =
         (this->_registry.get().has_component<Direction>(e.entity))
@@ -111,20 +119,24 @@ void Weapon::on_fire(Registry& r, const FireBullet& e)
       return;
     }
 
+    Position new_pos = pos;
+    new_pos.pos.x += weapon.offset_x;
+    new_pos.pos.y += weapon.offset_y;
     LoadEntityTemplate::Additional additional = {
-        {this->_registry.get().get_component_key<Position>(), pos.to_bytes()},
+        {this->_registry.get().get_component_key<Position>(),
+         new_pos.to_bytes()},
         {this->_registry.get().get_component_key<Direction>(),
          direction.to_bytes()},
         {this->_registry.get().get_component_key<Team>(), team.to_bytes()},
         {this->_registry.get().get_component_key<Facing>(),
-           Facing(direction.direction, /*plane=*/true).to_bytes()}};
+         Facing(direction.direction, /*plane=*/true).to_bytes()}};
 
     if (this->_registry.get().has_component<Scene>(e.entity)) {
-      additional.push_back({this->_registry.get().get_component_key<Scene>(),
-                            this->_registry.get()
-                                .get_components<Scene>()[e.entity]
-                                .value()
-                                .to_bytes()});
+      additional.emplace_back(this->_registry.get().get_component_key<Scene>(),
+                              this->_registry.get()
+                                  .get_components<Scene>()[e.entity]
+                                  .value()
+                                  .to_bytes());
     }
     this->_event_manager.get().emit<LoadEntityTemplate>(weapon.bullet_type,
                                                         additional);
@@ -178,6 +190,10 @@ void Weapon::on_charge_start(Registry& r, const StartChargeWeapon& e)
 
   auto& weapon =
       *this->_registry.get().get_components<ChargeWeapon>()[e.entity];
+
+  if (weapon.charge_indicator_entity.has_value()) {
+    return;
+  }
 
   if (!weapon.update_basic_weapon(now)) {
     return;
@@ -259,7 +275,8 @@ void Weapon::on_charge_release(Registry& r, const ReleaseChargeWeapon& e)
     }
   }
 
-  auto const& pos = *this->_registry.get().get_components<Position>()[e.entity];
+  auto const& pos =
+      this->_registry.get().get_components<Position>()[e.entity].value();
 
   auto const& vel_direction =
       (this->_registry.get().has_component<Direction>(e.entity))
@@ -280,8 +297,10 @@ void Weapon::on_charge_release(Registry& r, const ReleaseChargeWeapon& e)
   double scale_multiplier =
       1.0 + (weapon.current_charge_level * (weapon.max_scale - 1.0));
 
+  Offset offset(weapon.offset_x, weapon.offset_y);
   LoadEntityTemplate::Additional additional = {
       {this->_registry.get().get_component_key<Position>(), pos.to_bytes()},
+      {this->_registry.get().get_component_key<Offset>(), offset.to_bytes()},
       {this->_registry.get().get_component_key<Direction>(),
        direction.to_bytes()},
       {this->_registry.get().get_component_key<Team>(), team.to_bytes()}};
@@ -309,7 +328,8 @@ void Weapon::on_charge_release(Registry& r, const ReleaseChargeWeapon& e)
         weapon.charge_indicator_entity.value());
     weapon.charge_indicator_entity = std::nullopt;
   } else {
-    // std::cout << "[ChargeWeapon] No charge indicator to destroy" << std::endl;
+    // std::cout << "[ChargeWeapon] No charge indicator to destroy" <<
+    // std::endl;
   }
 }
 
@@ -393,14 +413,6 @@ void Weapon::charge_weapon_system(
       double scale_factor =
           0.1 + (weapon.current_charge_level * (weapon.max_scale - 0.1));
 
-      if (this->_registry.get().has_component<Position>(
-              weapon.charge_indicator_entity.value()))
-      {
-        auto& indicator_pos = *this->_registry.get().get_components<Position>()
-                                   [weapon.charge_indicator_entity.value()];
-        indicator_pos.pos = pos.pos;
-      }
-
       if (this->_registry.get().has_component<Sprite>(
               weapon.charge_indicator_entity.value()))
       {
@@ -409,22 +421,35 @@ void Weapon::charge_weapon_system(
         sprite.scale = weapon.charge_indicator_base_scale * scale_factor;
       }
 
+      Vector2D offset;
       if (this->_registry.get().has_component<AnimatedSprite>(
               weapon.charge_indicator_entity.value()))
       {
         auto& animated_sprite =
             *this->_registry.get().get_components<AnimatedSprite>()
                  [weapon.charge_indicator_entity.value()];
-        auto anim_it =
-            animated_sprite.animations.find(animated_sprite.current_animation);
-        if (anim_it != animated_sprite.animations.end()) {
-          anim_it->second.sprite_size =
-              weapon.charge_indicator_base_scale * scale_factor;
+
+        animated_sprite.update_size(weapon.charge_indicator_base_scale
+                                    * scale_factor);
+        offset.x += (weapon.charge_indicator_base_scale.x * scale_factor) / 2;
+        if (this->_registry.get().has_component<AnimatedSprite>(entity)) {
+          auto const& ship_annim =
+              this->_registry.get().get_components<AnimatedSprite>()[entity];
+          offset.x += ship_annim->animations.at(ship_annim->current_animation)
+                          .sprite_size.x
+              / 2;
         }
         this->_event_manager.get().emit<ComponentBuilder>(
             weapon.charge_indicator_entity.value(),
             this->_registry.get().get_component_key<AnimatedSprite>(),
             animated_sprite.to_bytes());
+      }
+      if (this->_registry.get().has_component<Position>(
+              weapon.charge_indicator_entity.value()))
+      {
+        auto& indicator_pos = *this->_registry.get().get_components<Position>()
+                                   [weapon.charge_indicator_entity.value()];
+        indicator_pos.pos = pos.pos + offset;
       }
     }
   }
@@ -472,8 +497,12 @@ void Weapon::delayed_weapon_system(
           ? *this->_registry.get().get_components<Team>()[entity]
           : std::string("");
 
+      Position bullet_pos = pos;
+      bullet_pos.pos.x += weapon.offset_x;
+      bullet_pos.pos.y += weapon.offset_y;
       LoadEntityTemplate::Additional additional = {
-          {this->_registry.get().get_component_key<Position>(), pos.to_bytes()},
+          {this->_registry.get().get_component_key<Position>(),
+           bullet_pos.to_bytes()},
           {this->_registry.get().get_component_key<Direction>(),
            direction.to_bytes()},
           {this->_registry.get().get_component_key<Team>(), team.to_bytes()}};

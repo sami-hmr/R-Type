@@ -82,7 +82,7 @@ void Projectile::temporal_system(Registry& reg)
           temporal.to_bytes());
 
       if (temporal.elapsed >= temporal.lifetime) {
-        this->_event_manager.get().emit<DeathEvent>(i);
+        this->_event_manager.get().emit<DeathEvent>(i, i);
       }
     }
   }
@@ -133,7 +133,7 @@ void Projectile::on_collision(const CollisionEvent& event)
     if (fragiles[event.a]->counter >= fragiles[event.a]->hits
         && !this->_registry.get().is_entity_dying(event.a))
     {
-      this->_event_manager.get().emit<DeathEvent>(event.a);
+      this->_event_manager.get().emit<DeathEvent>(event.a, event.a);
       return;
     }
     fragiles[event.a]->counter += 1;

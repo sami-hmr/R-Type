@@ -12,18 +12,23 @@
 #include "plugin/components/BaseWeapon.hpp"
 #include "plugin/events/EventMacros.hpp"
 
-struct BasicWeapon : public BaseWeapon
+struct DelayedWeapon : public BaseWeapon
 {
-  BasicWeapon() = default;
+  double delay_time;
+  std::chrono::high_resolution_clock::time_point pending_shot_time;
+  bool has_pending_shot = false;
 
-  BasicWeapon(std::string bullet_type,
-              int magazine_size,
-              int magazine_nb,
-              double reload_time,
-              double cooldown,
-              double offset_x = 0.0,
-              double offset_y = 0.0,
-              std::string attack_animation = "")
+  DelayedWeapon() = default;
+
+  DelayedWeapon(std::string bullet_type,
+                int magazine_size,
+                int magazine_nb,
+                double reload_time,
+                double cooldown,
+                double delay_time,
+                double offset_x = 0.0,
+                double offset_y = 0.0,
+                std::string attack_animation = "")
       : BaseWeapon(std::move(bullet_type),
                    magazine_size,
                    magazine_nb,
@@ -32,10 +37,11 @@ struct BasicWeapon : public BaseWeapon
                    offset_x,
                    offset_y,
                    std::move(attack_animation))
+      , delay_time(delay_time)
   {
   }
 
-  DEFAULT_BYTE_CONSTRUCTOR(BasicWeapon,
+  DEFAULT_BYTE_CONSTRUCTOR(DelayedWeapon,
                            (
                                [](std::string bullet_type,
                                   int mag_size,
@@ -44,20 +50,23 @@ struct BasicWeapon : public BaseWeapon
                                   double cooldown,
                                   double offset_x,
                                   double offset_y,
+                                  double delay_time,
                                   std::string attack_animation)
                                {
-                                 return BasicWeapon(bullet_type,
-                                                    mag_size,
-                                                    mag_nb,
-                                                    reload_time,
-                                                    cooldown,
-                                                    offset_x,
-                                                    offset_y,
-                                                    attack_animation);
+                                 return DelayedWeapon(bullet_type,
+                                                      mag_size,
+                                                      mag_nb,
+                                                      reload_time,
+                                                      cooldown,
+                                                      delay_time,
+                                                      offset_x,
+                                                      offset_y,
+                                                      attack_animation);
                                }),
                            parseByteString(),
                            parseByte<int>(),
                            parseByte<int>(),
+                           parseByte<double>(),
                            parseByte<double>(),
                            parseByte<double>(),
                            parseByte<double>(),
@@ -70,10 +79,11 @@ struct BasicWeapon : public BaseWeapon
                     type_to_byte(this->cooldown),
                     type_to_byte(this->offset_x),
                     type_to_byte(this->offset_y),
+                    type_to_byte(this->delay_time),
                     string_to_byte(this->attack_animation))
   CHANGE_ENTITY_DEFAULT
 
-  HOOKABLE(BasicWeapon,
+  HOOKABLE(DelayedWeapon,
            HOOK(bullet_type),
            HOOK(magazine_size),
            HOOK(magazine_nb),
@@ -85,6 +95,7 @@ struct BasicWeapon : public BaseWeapon
            HOOK(cooldown),
            HOOK(offset_x),
            HOOK(offset_y),
+           HOOK(delay_time),
            HOOK(attack_animation))
 
   /**

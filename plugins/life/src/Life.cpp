@@ -7,6 +7,7 @@
 
 #include "Life.hpp"
 
+#include "EntityExpose.hpp"
 #include "Json/JsonParser.hpp"
 #include "Logger.hpp"
 #include "NetworkShared.hpp"
@@ -141,7 +142,7 @@ void Life::heal_entity(const CollisionEvent& event,
   if (healths[event.a]->heal_delta >= heal_cooldown) {
     healths[event.a]->heal_delta = 0.0;
     this->_event_manager.get().emit<HealEvent>(
-        event.a, event.b, healers[event.b]->amount);
+        event.a, healers[event.b]->amount);
 
     this->_event_manager.get().emit<ComponentBuilder>(
         event.a,
@@ -190,11 +191,16 @@ void Life::on_damage(const DamageEvent& event)
   } else {
     return;
   }
+  Ecs::Entity killer = event.source;
+  if (this->_registry.get().has_component<IdStorage>(event.source)) {
+    auto& id_storages = this->_registry.get().get_components<IdStorage>();
+    killer = id_storages[event.source]->id_s;
+  }
 
   if (healths[event.target]->current <= 0
       && !this->_registry.get().is_entity_dying(event.target))
   {
-    this->_event_manager.get().emit<DeathEvent>(event.target);
+    this->_event_manager.get().emit<DeathEvent>(event.target, killer);
   }
 }
 
@@ -206,7 +212,6 @@ void Life::on_heal(const HealEvent& event)
     return;
   }
   if (event.target < healths.size() && healths[event.target].has_value()) {
-    int old_health = healths[event.target]->current;
     healths[event.target]->current =
         std::min(healths[event.target]->current + event.amount,
                  healths[event.target]->max);
@@ -215,8 +220,6 @@ void Life::on_heal(const HealEvent& event)
         event.target,
         this->_registry.get().get_component_key<Health>(),
         healths[event.target]->to_bytes());
-
-    int actual_heal = healths[event.target]->current - old_health;
     return;
   }
 }
