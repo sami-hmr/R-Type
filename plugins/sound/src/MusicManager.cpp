@@ -105,14 +105,36 @@ bool Sound::on_play_music(Registry& r, const PlayMusicEvent& event)
   return false;
 }
 
-void Sound::music_system(Registry& r)
+void Sound::on_stop_all_musics(Registry& r, const StopAllMusicsEvent& event)
 {
   for (auto&& [music] : Zipper<MusicManager>(r)) {
     for (auto& [name, music_data] : music.musics) {
-      if (music_data.stop) {
-        music_data.playing = false;
-        music_data.stop = false;
-      }
+      music_data.stop = true;
     }
   }
+}
+
+void Sound::on_stop_music(Registry& r, const StopMusicEvent& event)
+{
+  for (const auto&& [e, music] : ZipperIndex<MusicManager>(r)) {
+    if (e == event.entity) {
+      if (!music.musics.contains(event.name)) {
+        return;
+      }
+      SoundEffect& music_data = music.musics.at(event.name);
+      music_data.stop = true;
+      return;
+    }
+  }
+}
+
+void Sound::music_system(Registry& r)
+{
+  // for (auto&& [music] : Zipper<MusicManager>(r)) {
+  //   for (auto& [name, music_data] : music.musics) {
+  //     if (music_data.stop) {
+  //       music_data.stop = false;
+  //     }
+  //   }
+  // }
 }

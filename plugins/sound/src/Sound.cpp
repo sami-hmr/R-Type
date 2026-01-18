@@ -35,6 +35,14 @@ Sound::Sound(Registry& r, EventManager& em, EntityLoader& l)
                   { this->on_play_music(this->_registry.get(), event); })
     SUBSCRIBE_EVENT(DeathEvent,
                     { this->on_death(this->_registry.get(), this->_event_manager.get(), event); })
+    SUBSCRIBE_EVENT(StopSoundEvent,
+                    { this->on_stop_sound(this->_registry.get(), event); })
+    SUBSCRIBE_EVENT(StopAllSoundsEvent,
+                    { this->on_stop_all_sounds(this->_registry.get(), event); })
+    SUBSCRIBE_EVENT(StopMusicEvent,
+                    { this->on_stop_music(this->_registry.get(), event); })
+    SUBSCRIBE_EVENT(StopAllMusicsEvent,
+                    { this->on_stop_all_musics(this->_registry.get(), event); })
 }
 
 
