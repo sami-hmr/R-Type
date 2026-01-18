@@ -134,9 +134,22 @@
           "cooldown": 2.0,
           "attack_animation": "attack"
         },
-        "ai:MovementBehavior": { "movement_type": "straight" },
+        "ai:MovementBehavior": {
+          "movement_type": "straight"
+        },
         "ai:AttackBehavior": {
           "attack_type": "continuous"
+        },
+        "sound:SoundManager": {
+          "sound_effects": [
+            {
+              "name": "death",
+              "filepath": "assets/sounds/fah.mp3",
+              "volume": 100.0,
+              "pitch": 1.0,
+              "loop": false
+            }
+          ]
         }
       }
     }
