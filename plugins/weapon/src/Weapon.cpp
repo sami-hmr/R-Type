@@ -44,6 +44,7 @@ Weapon::Weapon(Registry& r, EventManager& em, EntityLoader& l)
   REGISTER_COMPONENT(DelayedWeapon)
   REGISTER_COMPONENT(ScaleModifier)
   SUBSCRIBE_EVENT(FireBullet, {
+    std::cout << "WHTF" << std::endl;
     if (this->_registry.get().has_component<ChargeWeapon>(event.entity)) {
       emit_event<StartChargeWeapon>(
           this->_event_manager.get(), "StartChargeWeapon", event.entity);
