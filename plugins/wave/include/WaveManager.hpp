@@ -24,7 +24,7 @@ private:
   void init_wave(Ecs::Entity const& entity, JsonObject const& obj);
   void init_formation(Ecs::Entity const& entity, JsonObject const& obj);
 
-  void spawn_wave_entities(Ecs::Entity wave_entity);
+  void spawn_wave_entities(Ecs::Entity wave_entity, std::vector<std::function<void()>> &event_to_emit);
 
   void wave_formation_system(Registry& r);
   void wave_spawn_system(Registry& r);

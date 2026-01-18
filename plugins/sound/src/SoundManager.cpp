@@ -4,10 +4,12 @@
 
 #include "Json/JsonParser.hpp"
 #include "Sound.hpp"
+#include "ecs/EventManager.hpp"
 #include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/zipper/Zipper.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
+#include "plugin/events/DeathEvent.hpp"
 #include "plugin/events/SoundEvents.hpp"
 
 void Sound::init_sound_manager(Ecs::Entity& e, const JsonObject& obj)
@@ -97,7 +99,7 @@ bool Sound::on_play_sound(Registry& r, const PlaySoundEvent& event)
         return false;
       }
 
-      //std::cout << event.volume << std::endl;;
+      // std::cout << event.volume << std::endl;;
       sound_effect.volume = event.volume;
       sound_effect.pitch = event.pitch;
       sound_effect.loop = event.loop;
@@ -118,5 +120,29 @@ void Sound::sound_system(Registry& r)
         sound_effect.stop = false;
       }
     }
+  }
+}
+
+void Sound::on_death(Registry& r, EventManager& em, const DeathEvent& event)
+{
+  if (r.is_entity_dying(event.entity)) {
+    return;
+  }
+  if (!r.has_component<SoundManager>(event.entity)) {
+    return;
+  }
+
+  auto& sounds = r.get_components<SoundManager>();
+
+  if (sounds[event.entity].value()._sound_effects.contains("death")
+      && !sounds[event.entity].value()._sound_effects.at("death").playing)
+  {
+    SoundEffect& sound_effect =
+        sounds[event.entity].value()._sound_effects.at("death");
+    em.emit<PlaySoundEvent>(event.entity,
+                            "death",
+                            sound_effect.volume,
+                            sound_effect.pitch,
+                            sound_effect.loop);
   }
 }
