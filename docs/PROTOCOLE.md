@@ -8,6 +8,9 @@ This document describes the wire protocol for R-Type multiplayer communication. 
 - **Byte Order**: Big-endian (network byte order) for all multi-byte values
 - **Character Encoding**: UTF-8 for all text strings
 - **Max Packet Size**: 2048 bytes (including headers and EOF marker)
+- **Compression**: zlib (DEFLATE algorithm)
+- **Encryption**: XOR cipher with key = 67
+- **Reliability**: Custom acknowledgment system with retransmission
 
 ### Quick Reference - Common Data Types
 
@@ -25,8 +28,10 @@ Connectionless packets are used for server discovery and connection establishmen
 
 ### Protocol Constants
 
-- **MAGIC_SEQUENCE**: `0x93 0x27 0x48 0x43` (4 bytes, identifies protocol version)
+- **MAGIC_SEQUENCE**: `0x436482793` (defined as `__VERSION_MAGIC_SEQUENCE__` in code)
 - **PROTOCOL_EOF**: `0x42 0x67 0xAB 0x01` (4 bytes, marks end of packet)
+- **XOR_KEY**: 67 (used for packet encryption)
+- **BUFFER_SIZE**: 9092 bytes
 
 ### 1.1 Connectionless Packet Structure
 
@@ -177,11 +182,47 @@ Example: `[MAGIC_SEQUENCE] 0x09 "Server full" [PROTOCOL_EOF]`
 
 All connected packets use binary format. Connected mode is entered after receiving a connectResponse.
 
-### 2.1 Packet Fragmentation
+### 2.1 Packet Compression and Encryption
 
-Connected packets are always smaller than 2048 bytes (including EOF and header). If a message exceeds this size, it is fragmented across multiple packets with the same sequence number. The `end_of_content` flag indicates whether this is the final fragment (true) or more fragments follow (false).
+**Before transmission:**
+1. Payload is compressed using zlib (DEFLATE algorithm)
+2. Entire packet (including headers) is encrypted using XOR cipher with key = 67
 
-### 2.2 Server-to-Client Packet Structure
+**On reception:**
+1. Entire packet is decrypted using XOR cipher with key = 67
+2. Payload is decompressed using zlib (inflate)
+
+### 2.2 Packet Fragmentation
+
+If a compressed message exceeds 2048 bytes (including headers and EOF), it is fragmented:
+- Each fragment has an incrementing sequence number
+- The `end_of_content` flag is `0` for all fragments except the last
+- The final fragment has `end_of_content = 1`
+- Receiver accumulates fragments in a buffer until `end_of_content = 1`, then decompresses
+
+### 2.3 Reliability Layer
+
+The implementation includes an acknowledgment system for reliable delivery:
+
+**Sequence Numbers:**
+- Both client and server maintain independent 32-bit sequence counters
+- Sequence starts at 1 and increments for each sent packet
+
+**Acknowledge Field:**
+- Contains the highest in-order sequence number successfully received
+- Allows sender to free buffers for acknowledged packets
+
+**Retransmission:**
+- Unacknowledged packets are buffered in `_waiting_for_aprouval` map
+- Retransmission timeout: 100ms (0.1 second)
+- Lost packets are detected via sequence number gaps
+- Receiver requests retransmission by including lost sequence numbers in heartbeat
+
+**Priority Flag:**
+- Packets with `prioritary = true` bypass the acknowledgment manager
+- Sent and processed immediately without buffering
+
+### 2.4 Server-to-Client Packet Structure
 
 All server-to-client connected packets follow this structure:
 
@@ -192,14 +233,28 @@ All server-to-client connected packets follow this structure:
 ```
 
 Fields:
-- **MAGIC_SEQUENCE**: 4 bytes (0x93 0x27 0x48 0x43)
-- **Sequence_Number**: 32-bit unsigned integer (big-endian) - Incrementing packet sequence (starts at 0)
-- **Acknowledge**: 32-bit unsigned integer (big-endian) - Currently unused (set to 0)
+- **MAGIC_SEQUENCE**: 4 bytes (0x436482793 in actual implementation)
+- **Sequence_Number**: 32-bit unsigned integer (big-endian) - Incrementing packet sequence (starts at 1)
+- **Acknowledge**: 32-bit unsigned integer (big-endian) - Highest in-order sequence received
 - **End_Of_Content**: 8-bit boolean - 1 if last fragment, 0 if more fragments follow
 - **Payload**: Variable length - Contains one or more server operations
 - **PROTOCOL_EOF**: 4 bytes (0x42 0x67 0xAB 0x01)
 
 **Server Operations:**
+
+##### **srv_sendevent (opcode 0x01):**
+
+Sends an event from server to client.
+
+Format:
+```
+[0x01] [event_id:string] [event_data:variable]
+```
+
+Fields:
+- **Opcode**: 0x01
+- **Event_ID**: String - Event type identifier (e.g., "PlayerDeath", "LevelComplete")
+- **Event_Data**: Byte array - Serialized event data (format depends on event type)
 
 ##### **srv_sendcomp (opcode 0x02):**
 
@@ -216,21 +271,35 @@ Fields:
 - **Component_ID**: String - Component type identifier (e.g., "Position", "Velocity")
 - **Component_Data**: Byte array - Serialized component data (format depends on component type)
 
-##### **srv_sendevent (opcode 0x01):**
+##### **srv_sendheartbeat (opcode 0x03):**
 
-Sends an event from server to client.
+Heartbeat packet containing timing and lost packet information.
 
 Format:
 ```
-[0x01] [event_id:string] [event_data:variable]
+[0x03] [timestamp:64] [lost_packages_count:32] [lost_seq1:64] [lost_seq2:64] ...
 ```
 
 Fields:
-- **Opcode**: 0x01
-- **Event_ID**: String - Event type identifier (e.g., "PlayerDeath", "LevelComplete")
-- **Event_Data**: Byte array - Serialized event data (format depends on event type)
+- **Opcode**: 0x03
+- **Timestamp**: 64-bit unsigned integer - Send timestamp for latency calculation
+- **Lost_Packages_Count**: 32-bit unsigned integer - Number of lost sequence numbers
+- **Lost_Sequences**: List of 64-bit sequence numbers that need retransmission
 
-### 2.3 Client-to-Server Packet Structure
+##### **srv_ffgonext (opcode 0x04):**
+
+Reset acknowledgment state (used for crash recovery).
+
+Format:
+```
+[0x04] [next_sequence:64]
+```
+
+Fields:
+- **Opcode**: 0x04
+- **Next_Sequence**: 64-bit unsigned integer - New sequence number to skip to
+
+### 2.5 Client-to-Server Packet Structure
 
 All client-to-server connected packets follow this structure:
 
@@ -241,9 +310,9 @@ All client-to-server connected packets follow this structure:
 ```
 
 Fields:
-- **MAGIC_SEQUENCE**: 4 bytes (0x93 0x27 0x48 0x43)
-- **Sequence_Number**: 32-bit unsigned integer (big-endian) - Incrementing packet sequence (starts at 0)
-- **Acknowledge**: 32-bit unsigned integer (big-endian) - Currently unused (set to 0)
+- **MAGIC_SEQUENCE**: 4 bytes (0x436482793 in actual implementation)
+- **Sequence_Number**: 32-bit unsigned integer (big-endian) - Incrementing packet sequence (starts at 1)
+- **Acknowledge**: 32-bit unsigned integer (big-endian) - Highest in-order sequence received
 - **End_Of_Content**: 8-bit boolean - 1 if last fragment, 0 if more fragments follow
 - **Payload**: Variable length - Contains client operation
 - **PROTOCOL_EOF**: 4 bytes (0x42 0x67 0xAB 0x01)
@@ -431,58 +500,106 @@ Data format: [direction:8] [speed:32 (float)]
 6. Server sends initial game state via `srv_sendcomp` and `srv_sendevent` packets
 7. Client and server exchange connected packets for game synchronization
 
-## 5. Protocol Notes
+## 5. Implementation Details
 
-### 5.1 No Reliability Layer
+### 5.1 Heartbeat System
 
-The protocol does NOT include automatic retransmission or acknowledgment of lost packets. Applications must handle packet loss:
-- Accept loss of component updates (next update will overwrite)
-- Implement application-level acknowledgment for critical events if needed
-- Use redundant packets for important state transitions
+The implementation uses heartbeats for connection monitoring and lost packet recovery:
 
-### 5.2 Packet Fragmentation
+**Frequency**: 15 Hz (66.67ms interval)
+- Defined as: `hearthbeat_delta = 1000000000 / 15` nanoseconds
 
-Messages larger than 2048 bytes (including all headers and EOF marker) are fragmented:
-1. Split message into chunks
-2. Send each chunk with the SAME sequence number
-3. Set `End_Of_Content` to 0 for all fragments except the last
-4. Set `End_Of_Content` to 1 for the final fragment
-5. Receiver reassembles all fragments with matching sequence numbers
+**Heartbeat Contents:**
+- Timestamp for RTT calculation
+- List of lost packet sequence numbers for retransmission requests
 
-### 5.3 Entity-Component System
+**Network Status Reports:**
+- Generated every 1 second (1,000,000,000 nanoseconds)
+- Contains latency, packet loss statistics
 
-The protocol supports component-based entity architecture:
-- **Entities**: Identified by unique 64-bit unsigned integers
-- **Components**: Identified by string names (e.g., "Position", "Velocity", "Health")
-- Component data format is application-specific and not defined by this protocol
+### 5.2 Timeout Values
 
-### 5.4 Event System
+**Client Disconnection Timeout**: 1.5 seconds
+- Client considers server disconnected after 1,500,000,000 nanoseconds without response
 
-Events carry application-specific game state changes:
-- **Events**: Identified by string names (e.g., "PlayerDeath", "EnemySpawn")
-- Event data format is application-specific and not defined by this protocol
-- Events flow bidirectionally (client→server and server→client)
+**Server Client Timeout**: 5 seconds
+- Server disconnects idle clients after 5,000,000,000 nanoseconds
+
+**Retransmission Cooldown**: 100ms
+- Unacknowledged packets are retransmitted after 100,000 microseconds
+
+**Lost Packet Request Cooldown**: 200ms
+- Gap detection re-requests after 200,000 microseconds
+
+**Reset Delta**: 2 seconds
+- Time between state transfer resets: 2,000,000,000 nanoseconds
+
+**Reset Max Count**: 20
+- Maximum number of resets before disconnection
+
+### 5.3 Buffer Limits
+
+**Circular Buffer**: 9092 bytes
+- Used for packet reception and boundary detection
+
+**Max Packet Division**: Calculated based on compressed payload size
+
+### 5.4 State Transfer (Crash Recovery)
+
+When a client sends malformed packets or gets out of sync:
+1. Server sends `FFGONEXT` command with new sequence number
+2. Client resets its acknowledgment manager to the new sequence
+3. Server emits `StateTransfer` event
+4. All current component states are sent to the client
+5. Client emits `ResetClient` event to clear local entities
 
 ## 6. Protocol Constants
 
 | Constant | Value | Description |
 |----------|-------|-------------|
-| **MAGIC_SEQUENCE** | `0x93 0x27 0x48 0x43` | Protocol version identifier |
+| **MAGIC_SEQUENCE** | `0x436482793` | Protocol version identifier (`__VERSION_MAGIC_SEQUENCE__`) |
 | **PROTOCOL_EOF** | `0x42 0x67 0xAB 0x01` | End-of-packet marker |
-| **MAX_PLAYERS** | 4 | Maximum number of simultaneous players |
+| **XOR_KEY** | 67 | Encryption key for XOR cipher |
+| **BUFFER_SIZE** | 9092 bytes | Circular buffer size |
+| **MAX_PLAYERS** | 4 | Maximum simultaneous players (client ID is uint8_t, actual limit 256) |
 | **MAX_PACKET_SIZE** | 2048 bytes | Maximum packet size (including headers) |
 | **PROTOCOL_VERSION** | 1 | Current protocol version number |
 | **MAX_PLAYERNAME** | 32 bytes | Maximum player name length |
 | **MAX_HOSTNAME** | 64 bytes | Maximum server hostname length |
 | **MAX_MAPNAME** | 32 bytes | Maximum map name length |
+| **HEARTBEAT_INTERVAL** | 66.67ms (15 Hz) | Time between heartbeat packets |
+| **HEARTBEAT_DELTA** | 66,666,667 ns | Heartbeat interval in nanoseconds (1000000000/15) |
+| **RAPPORT_COOLDOWN** | 1000ms | Network status report interval |
+| **DISCONNECTION_TIMEOUT** | 1500ms | Client-side disconnect timeout |
+| **CLIENT_DISCONNECT_TIMEOUT** | 5000ms | Server-side client timeout |
+| **SENT_DELTA** | 100ms | Retransmission cooldown (100,000 μs) |
+| **ASK_COOLDOWN** | 200ms | Lost packet request cooldown (200,000 μs) |
+| **RESET_DELTA** | 2000ms | State transfer reset interval |
+| **RESET_MAX_COUNT** | 20 | Maximum resets before disconnection |
 
 ## 7. Implementation Reference
 
 The reference implementation is written in C++ and can be found in:
+- `include/network/` - Network interface headers
+  - `Server.hpp`, `Client.hpp` - Main network interfaces
+  - `PacketCompresser.hpp` - Compression and encryption
+  - `AcknowledgeManager.hpp` - Reliability layer
+  - `HttpClient.hpp` - HTTP client for API
+- `src/network/` - Network implementation
+  - `server/` - Server implementation (receive_loop, send_comp, send_event)
+  - `client/` - Client implementation (receive_loop, send_evt, send_hearthbeat)
+  - `PacketCompresser.cpp` - zlib compression and XOR encryption
+  - `AcknowledgeManager.cpp` - Packet buffering and retransmission
+  - `HttpClient.cpp` - Asynchronous HTTP requests
 - `include/plugin/Byte.hpp` - Serialization utilities
-- `src/plugins/Byte.cpp` - Serialization implementation
-- `plugins/client_network/` - Client network plugin
-- `plugins/server_network/` - Server network plugin
-- `include/NetworkCommun.hpp` - Protocol constants and structures
+- `src/plugins/Byte.cpp` - Type serialization implementation
+
+**Key Implementation Features:**
+- **Threading**: Client and server use separate threads for receive, send, and heartbeat
+- **Compression**: zlib DEFLATE with 20,000-byte buffer
+- **Encryption**: Simple XOR cipher applied to entire packet
+- **Reliability**: Per-client AcknowledgeManager on server, single manager on client
+- **Buffering**: Circular buffer for efficient packet extraction
+- **Fragmentation**: Automatic fragmentation with sequence-based reassembly
 
 Implementers in other languages should follow this specification, not the C++ implementation details.

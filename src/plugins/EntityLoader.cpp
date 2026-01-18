@@ -19,8 +19,34 @@
 #include "ecs/Scenes.hpp"
 #include "plugin/libLoaders/LDLoader.hpp"
 #ifdef _WIN32
+#  include <windows.h>
+
 #  include "plugin/libLoaders/WindowsLoader.hpp"
 #endif
+
+static std::string get_executable_dir()
+{
+#ifdef _WIN32
+  char path[MAX_PATH];
+  GetModuleFileNameA(NULL, path, MAX_PATH);
+  std::string exe_path(path);
+  size_t last_slash = exe_path.find_last_of("\\/");
+  return (last_slash != std::string::npos) ? exe_path.substr(0, last_slash + 1)
+                                           : "";
+#else
+  char path[1024];
+  ssize_t len = readlink("/proc/self/exe", path, sizeof(path) - 1);
+  if (len != -1) {
+    path[len] = '\0';
+    std::string exe_path(path);
+    size_t last_slash = exe_path.find_last_of('/');
+    return (last_slash != std::string::npos)
+        ? exe_path.substr(0, last_slash + 1)
+        : "";
+  }
+  return "";
+#endif
+}
 
 EntityLoader::EntityLoader(Registry& registry, EventManager& em)
     : _registry(std::ref(registry))
@@ -177,6 +203,10 @@ void EntityLoader::load_plugin(std::string const& plugin,
                                std::optional<JsonObject> const& config)
 {
   this->get_loader(plugin);
+  if (!this->_loaders.contains(plugin)) {
+    std::cerr << "Failed to load plugin loader for: " << plugin << '\n';
+    return;
+  }
   if (!this->_plugins.contains(plugin)) {
     try {
       this->_plugins[plugin];
@@ -189,6 +219,7 @@ void EntityLoader::load_plugin(std::string const& plugin,
                                                   config));
     } catch (LoaderException const& e) {
       std::cerr << e.what() << '\n';
+      this->_plugins.erase(plugin);
     }
   }
 }
@@ -214,7 +245,15 @@ void EntityLoader::load_components(Ecs::Entity e, JsonObject const& config)
 
     try {
       this->load_plugin(plugin);
-      this->_plugins.at(plugin)->set_component(e, comp, sub_config.value);
+      if (this->_plugins.contains(plugin)) {
+        this->_plugins.at(plugin)->set_component(e, comp, sub_config.value);
+      } else {
+        std::cerr << std::format(
+            "Skipping component {} because plugin {} failed to load\n",
+            comp,
+            plugin);
+        return;
+      }
     } catch (BadComponentDefinition const& e) {
       std::cerr
           << std::format(
@@ -269,6 +308,7 @@ void EntityLoader::get_loader(std::string const& plugin)
   try {
     if (!this->_loaders.contains(plugin)) {
       this->_loaders[plugin];
+      std::string plugin_path = get_executable_dir() + PLUGIN_DIR + plugin;
       this->_loaders.insert_or_assign(plugin,
                                       std::make_unique<
 #ifdef _WIN32
@@ -276,10 +316,10 @@ void EntityLoader::get_loader(std::string const& plugin)
 #elif __linux__
                                           DlLoader
 #endif
-                                          <IPlugin>>(PLUGIN_DIR + plugin));
+                                          <IPlugin>>(plugin_path));
     }
   } catch (NotExistingLib const& e) {
-    std::cerr << e.what() << '\n';
+    std::cerr << "From: " << plugin << "; " << e.what() << '\n';
   }
 }
 

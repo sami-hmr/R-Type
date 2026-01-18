@@ -12,18 +12,25 @@ else()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -fPIC -O3")
 endif()
 
-# Output plugins to build/plugins/ directory (next to executable)
-# On Windows, DLLs go to RUNTIME, on Linux/Mac, .so goes to LIBRARY
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/plugins)
-set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/plugins)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/plugins)
+# Output plugins to appropriate directory based on build type
+# For release-tek builds: project_root/plugin_release/
+# For other builds: build/plugins/
+if(BUILD_EPITECH_BINARIES)
+    set(PLUGIN_OUTPUT_DIR ${CMAKE_SOURCE_DIR}/plugin_release)
+else()
+    set(PLUGIN_OUTPUT_DIR ${CMAKE_BINARY_DIR}/plugins)
+endif()
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PLUGIN_OUTPUT_DIR})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PLUGIN_OUTPUT_DIR})
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PLUGIN_OUTPUT_DIR})
 
 # Also set per-config output directories for MSVC multi-config generators
 foreach(CONFIG ${CMAKE_CONFIGURATION_TYPES})
   string(TOUPPER ${CONFIG} CONFIG_UPPER)
-  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CONFIG_UPPER} ${CMAKE_BINARY_DIR}/plugins)
-  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CONFIG_UPPER} ${CMAKE_BINARY_DIR}/plugins)
-  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${CONFIG_UPPER} ${CMAKE_BINARY_DIR}/plugins)
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CONFIG_UPPER} ${PLUGIN_OUTPUT_DIR})
+  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY_${CONFIG_UPPER} ${PLUGIN_OUTPUT_DIR})
+  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_${CONFIG_UPPER} ${PLUGIN_OUTPUT_DIR})
 endforeach()
 
 include_directories(${parser_SOURCE_DIR}/include)
@@ -41,9 +48,13 @@ if(WIN32 AND DEFINED VCPKG_INSTALLED_DIR)
   file(GLOB VCPKG_DLLS "${VCPKG_BIN_DIR}/*.dll")
   foreach(DLL ${VCPKG_DLLS})
     # Copy to executable directory
-    file(COPY ${DLL} DESTINATION ${CMAKE_BINARY_DIR})
+    if(BUILD_EPITECH_BINARIES)
+      file(COPY ${DLL} DESTINATION ${CMAKE_SOURCE_DIR})
+    else()
+      file(COPY ${DLL} DESTINATION ${CMAKE_BINARY_DIR})
+    endif()
     # Copy to plugins directory (for plugin DLL dependency resolution)
-    file(COPY ${DLL} DESTINATION ${CMAKE_BINARY_DIR}/plugins)
+    file(COPY ${DLL} DESTINATION ${PLUGIN_OUTPUT_DIR})
   endforeach()
 endif()
 

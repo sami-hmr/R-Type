@@ -1,3 +1,4 @@
+#include <iostream>
 #include <vector>
 
 #include "Weapon.hpp"
@@ -45,9 +46,11 @@ Weapon::Weapon(Registry& r, EventManager& em, EntityLoader& l)
   REGISTER_COMPONENT(ScaleModifier)
   SUBSCRIBE_EVENT(FireBullet, {
     if (this->_registry.get().has_component<ChargeWeapon>(event.entity)) {
+      std::cout << "fire in charge" << event.entity << std::endl;
       emit_event<StartChargeWeapon>(
           this->_event_manager.get(), "StartChargeWeapon", event.entity);
     } else {
+      std::cout << "fire in the hole" << event.entity << std::endl;
       this->on_fire(this->_registry.get(), event);
     }
   })
