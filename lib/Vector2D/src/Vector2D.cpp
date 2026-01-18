@@ -41,7 +41,7 @@ Vector2D::Vector2D(JsonObject const& obj,
       this->y = 0.0;
     }
   } catch (std::out_of_range const&) {
-    std::cerr << "Error parsing Vector2D: missing " << y << " or " << x
+    std::cerr << "Error parsing Vector2D: missing " << x << " or " << y
               << " in JsonObject\n";
     this->x = 0.0;
     this->y = 0.0;

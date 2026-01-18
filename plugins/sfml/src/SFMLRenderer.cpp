@@ -22,6 +22,7 @@
 #include <SFML/Audio/SoundBuffer.hpp>
 #include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Image.hpp>
+#include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <SFML/Graphics/Sprite.hpp>
@@ -31,6 +32,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Cursor.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Mouse.hpp>
 
@@ -107,8 +109,12 @@ static sf::SoundBuffer gen_sound_placeholder()
 }
 
 SFMLRenderer::SFMLRenderer(Registry& r, EventManager& em, EntityLoader& l)
-    : APlugin(
-          "sfml", r, em, l, {"moving", "ath", "ui", "collision", "sound"}, {})
+    : APlugin("sfml",
+              r,
+              em,
+              l,
+              {"moving", "ath", "ui", "collision", "sound", "raycasting"},
+              {})
 {
   _window =
       sf::RenderWindow(sf::VideoMode(window_size), "R-Type - SFML Renderer");
@@ -136,7 +142,11 @@ SFMLRenderer::SFMLRenderer(Registry& r, EventManager& em, EntityLoader& l)
   _registry.get().add_system([this](Registry& r) { this->musics_system(r); },
                              2);
   _registry.get().add_system([this](Registry& r) { this->hover_system(r); }, 2);
+  _registry.get().add_system([this](Registry& r) { this->gamepad_system(r); });
 
+  _textures.insert_or_assign(SFMLRenderer::placeholder, gen_placeholder());
+  this->_triangle_vertices.setPrimitiveType(sf::PrimitiveType::Triangles);
+  this->_line_vertices.setPrimitiveType(sf::PrimitiveType::Lines);
   _textures.insert_or_assign(SFMLRenderer::placeholder, gen_placeholder());
   _sound_buffers.insert_or_assign(SFMLRenderer::placeholder,
                                   gen_sound_placeholder());
@@ -604,12 +614,13 @@ void SFMLRenderer::render_animated_sprites(
     if (facings.size() > entity && facings.at(entity).has_value()) {
       if (facings.at(entity).value().plane) {
         Vector2D dir = facings[entity].value().direction.normalize();
-        rotation = static_cast<float>(std::atan2(dir.y, dir.x) * 180.0 / std::numbers::pi);
+        rotation = static_cast<float>(std::atan2(dir.y, dir.x) * 180.0
+                                      / std::numbers::pi);
       } else {
         Vector2D norm =
             (pos.pos - facings[entity].value().direction).normalize();
-        rotation =
-            static_cast<float>(std::atan2(norm.y, norm.x) * 180.0 / std::numbers::pi);
+        rotation = static_cast<float>(std::atan2(norm.y, norm.x) * 180.0
+                                      / std::numbers::pi);
       }
     }
 
@@ -644,6 +655,16 @@ void SFMLRenderer::render_animated_sprites(
   }
 }
 
+static const std::map<sf::Joystick::Axis, char> JOYAXISMAP = {
+    {sf::Joystick::Axis::X, 'X'},
+    {sf::Joystick::Axis::Y, 'Y'},
+    {sf::Joystick::Axis::Z, 'Z'},
+    {sf::Joystick::Axis::R, 'R'},
+    {sf::Joystick::Axis::U, 'U'},
+    {sf::Joystick::Axis::V, 'V'},
+    {sf::Joystick::Axis::PovX, 'P'},
+    {sf::Joystick::Axis::PovY, 'O'}};
+
 void SFMLRenderer::unified_render_system(Registry& r)
 {
   std::vector<DrawableItem> all_drawables;
@@ -667,6 +688,7 @@ void SFMLRenderer::unified_render_system(Registry& r)
     drawable.draw(_window, this->_textures, this->_fonts);
   }
   this->_sprite->setRotation(sf::degrees(0));
+  render_basic_map(r, all_drawables, min_dimension, window_size);
 }
 
 void SFMLRenderer::hover_system(Registry& r)

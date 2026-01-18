@@ -59,6 +59,30 @@
             "global_hook": true
           },
           "controller:Controllable": {
+            "gamepad_bindings": [
+              {
+                "description": "move stick",
+                "key": "LEFT_JOYSTICK",
+                "name": "SetDirectionEvent",
+                "params": {}
+              },
+              {
+                "description": "move stick",
+                "key": "A",
+                "name": "FireBullet",
+                "params": {
+                  "entity": "@self"
+                }
+              },
+              {
+                "description" : "release charge shoot",
+                "key": "B",
+                "name": "ReleaseChargeWeapon",
+                "params": {
+                  "entity": "@self"
+                }
+              }
+            ],
             "bindings": [
               {
                 "description": "drop slot 0",

@@ -22,6 +22,7 @@
 #include "plugin/components/InteractionBorders.hpp"
 #include "plugin/components/InteractionZone.hpp"
 #include "plugin/components/Position.hpp"
+#include "plugin/components/RaycastingCamera.hpp"
 #include "plugin/components/Speed.hpp"
 #include "plugin/components/Team.hpp"
 #include "plugin/events/CollisionEvent.hpp"
@@ -271,6 +272,7 @@ void Collision::on_collision(const CollisionEvent& c)
   auto& directions = this->_registry.get().get_components<Direction>();
   auto& speeds = this->_registry.get().get_components<Speed>();
   auto& positions = this->_registry.get().get_components<Position>();
+  auto& raycasting_cameras = this->_registry.get().get_components<RaycastingCamera>();
   auto const& teams = this->_registry.get().get_components<Team>();
   auto const& collidables = this->_registry.get().get_components<Collidable>();
 
@@ -304,8 +306,13 @@ void Collision::on_collision(const CollisionEvent& c)
   if (this->_registry.get().has_component<Direction>(c.a)
       && this->_registry.get().has_component<Speed>(c.a))
   {
+    Vector2D real_direction = directions[c.a]->direction;
+    if (this->_registry.get().has_component<RaycastingCamera>(c.a)) {
+      double cam_angle = raycasting_cameras[c.a]->angle;
+      real_direction.rotate_radians(cam_angle);
+    }
     Vector2D movement =
-        (directions[c.a]->direction).normalize() * speeds[c.a]->speed * dt;
+        (real_direction).normalize() * speeds[c.a]->speed * dt;
     Vector2D collision_normal =
         (positions[c.a]->pos - positions[c.b]->pos).normalize();
 

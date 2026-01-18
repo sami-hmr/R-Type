@@ -1,0 +1,167 @@
+{
+  "scenes": [
+    {
+      "name": "game",
+      "state": "active",
+      "plugins": [
+        {
+          "name": "raycasting",
+          "config": {}
+        },
+        {
+          "name": "moving",
+          "config": {}
+        },
+        {
+          "name": "controller",
+          "config": {}
+        },
+        {
+          "name": "sfml",
+          "config": {}
+        }
+      ],
+      "entities": [
+        {
+          "controller:Controllable": {
+            "bindings": [
+              {
+                "description": "Move forward",
+                "key": "Z",
+                "pressed": {
+                  "name": "UpdateDirection",
+                  "params": {
+                    "entity": "@self",
+                    "x": 1.0,
+                    "y": 0.0
+                  }
+                },
+                "released": {
+                  "name": "UpdateDirection",
+                  "params": {
+                    "entity": "@self",
+                    "x": -1.0,
+                    "y": 0.0
+                  }
+                }
+              },
+              {
+                "description": "Move left",
+                "key": "Q",
+                "pressed": {
+                  "name": "UpdateDirection",
+                  "params": {
+                    "entity": "@self",
+                    "x": 0.0,
+                    "y": -1.0
+                  }
+                },
+                "released": {
+                  "name": "UpdateDirection",
+                  "params": {
+                    "entity": "@self",
+                    "x": 0.0,
+                    "y": 1.0
+                  }
+                }
+              },
+              {
+                "description": "Move backward",
+                "key": "S",
+                "pressed": {
+                  "name": "UpdateDirection",
+                  "params": {
+                    "entity": "@self",
+                    "x": -1.0,
+                    "y": 0.0
+                  }
+                },
+                "released": {
+                  "name": "UpdateDirection",
+                  "params": {
+                    "entity": "@self",
+                    "x": 1.0,
+                    "y": 0.0
+                  }
+                }
+              },
+              {
+                "description": "Move right",
+                "key": "D",
+                "pressed": {
+                  "name": "UpdateDirection",
+                  "params": {
+                    "entity": "@self",
+                    "x": 0.0,
+                    "y": 1.0
+                  }
+                },
+                "released": {
+                  "name": "UpdateDirection",
+                  "params": {
+                    "entity": "@self",
+                    "x": 0.0,
+                    "y": -1.0
+                  }
+                }
+              },
+              {
+                "description": "Rotate camera left",
+                "key": "LEFT",
+                "pressed": {
+                  "name": "RaycastingCameraRotateEvent",
+                  "params": {
+                    "angle": -8.0
+                  }
+                }
+              },
+              {
+                "description": "Rotate camera right",
+                "key": "RIGHT",
+                "pressed": {
+                  "name": "RaycastingCameraRotateEvent",
+                  "params": {
+                    "angle": 8.0
+                  }
+                }
+              }
+            ]
+          },
+          "raycasting:Camera": {
+            "angle": 45.0,
+            "fov": 66.0,
+            "nb_rays": 670
+          },
+          "moving:Position": {
+            "pos": {
+              "x": 2.0,
+              "y": 2.0
+            }
+          },
+          "moving:Speed": {
+            "speed": {
+              "x": 3.0,
+              "y": 3.0
+            }
+          },
+          "moving:Direction": {
+            "direction": {
+              "x": 0.0,
+              "y": 0.0
+            }
+          },
+          "collision:Collidable": {
+            "collision_type": "Solid",
+            "size": {
+              "height": 1.0,
+              "width": 1.0
+            }
+          },
+          "life:Team": {
+            "name": "player"
+          }
+        }
+      ]
+    }
+  ]
+}

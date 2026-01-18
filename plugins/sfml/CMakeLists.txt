@@ -10,7 +10,9 @@ add_library(${LIB_NAME} SHARED
     src/Background.cpp
     src/Drawable.cpp
     src/SliderDrawing.cpp
+    src/BasicMap.cpp
     src/Sounds.cpp
+    src/Gamepad.cpp
 )
 
 target_compile_features(${LIB_NAME} PRIVATE cxx_std_23)
