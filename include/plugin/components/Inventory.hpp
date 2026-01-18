@@ -59,6 +59,12 @@ struct Inventory
       : inventory(inventory)
       , max_items(max_items)
   {
+    std::cout << "WHAT\n";
+    std::cout << "WHAT\n";
+    std::cout << "WHAT\n";
+    std::cout << "WHAT\n";
+    std::cout << "WHAT\n";
+    std::cout << "WHAT\n";
   }
 
   DEFAULT_BYTE_CONSTRUCTOR(

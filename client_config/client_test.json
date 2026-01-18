@@ -21,6 +21,10 @@
         {
           "name": "weapon",
           "config": {}
+        },
+        {
+          "name": "inventory",
+          "config": {}
         }
       ],
       "entities": [

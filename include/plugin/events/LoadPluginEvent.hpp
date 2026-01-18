@@ -30,7 +30,7 @@ struct LoadPluginEvent
       ([](std::string p, JsonObject pm)
        { return LoadPluginEvent(std::move(p), std::move(pm)); }),
       parseByteString(),
-      parseJsonObject())
+      parseByteJsonObject())
 
   DEFAULT_SERIALIZE(string_to_byte(path), json_object_to_byte(params))
 

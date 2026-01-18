@@ -113,12 +113,35 @@ bool Sound::on_play_sound(Registry& r, const PlaySoundEvent& event)
 
 void Sound::sound_system(Registry& r)
 {
+  // for (auto&& [sound] : Zipper<SoundManager>(r)) {
+  //   for (auto& [name, sound_effect] : sound._sound_effects) {
+  //     if (sound_effect.stop) {
+  //       sound_effect.stop = false;
+  //     }
+  //   }
+  // }
+}
+
+void Sound::on_stop_all_sounds(Registry& r, const StopAllSoundsEvent& event)
+{
   for (auto&& [sound] : Zipper<SoundManager>(r)) {
     for (auto& [name, sound_effect] : sound._sound_effects) {
-      if (sound_effect.stop) {
-        sound_effect.playing = false;
-        sound_effect.stop = false;
+      sound_effect.stop = true;
+    }
+  }
+}
+
+void Sound::on_stop_sound(Registry& r, const StopSoundEvent& event)
+{
+  std::cout << "Stopping sound\n";
+  for (const auto&& [e, sound] : ZipperIndex<SoundManager>(r)) {
+    if (e == event.entity) {
+      if (!sound._sound_effects.contains(event.name)) {
+        return;
       }
+      SoundEffect& sound_effect = sound._sound_effects.at(event.name);
+      sound_effect.stop = true;
+      return;
     }
   }
 }

@@ -8,6 +8,51 @@
 #include "ecs/Registry.hpp"
 #include "plugin/Hooks.hpp"
 
+struct StopSoundEvent
+{
+  Ecs::Entity entity;
+  std::string name;
+
+  StopSoundEvent(Ecs::Entity entity, std::string name)
+      : entity(entity)
+      , name(std::move(name))
+  {
+  }
+
+  StopSoundEvent(Registry& r,
+                 JsonObject const& e,
+                 std::optional<Ecs::Entity> entity)
+      : entity(get_value_copy<Ecs::Entity>(r, e, "entity", entity).value())
+      , name(get_value_copy<std::string>(r, e, "name", entity).value())
+  {
+  }
+
+  CHANGE_ENTITY(result.entity = map.at(entity);)
+
+  DEFAULT_BYTE_CONSTRUCTOR(StopSoundEvent,
+                           ([](Ecs::Entity e, std::string n)
+                            { return StopSoundEvent(e, std::move(n)); }),
+                           parseByte<Ecs::Entity>(),
+                           parseByteString())
+
+  DEFAULT_SERIALIZE(type_to_byte(this->entity), string_to_byte(this->name))
+};
+
+struct StopAllSoundsEvent
+{
+  StopAllSoundsEvent() {};
+
+  StopAllSoundsEvent(Registry&, JsonObject const&, std::optional<Ecs::Entity>)
+  {
+  }
+
+  CHANGE_ENTITY_DEFAULT
+
+  EMPTY_BYTE_CONSTRUCTOR(StopAllSoundsEvent)
+
+  DEFAULT_SERIALIZE(ByteArray {})
+};
+
 struct PlaySoundEvent
 {
   Ecs::Entity entity;

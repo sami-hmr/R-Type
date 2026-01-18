@@ -51,7 +51,10 @@ struct Item
 
 inline Parser<Item> parse_byte_item()
 {
-  return apply([](const std::vector<JsonObject>& to_use)
-               { return Item(to_use); },
-               parseByteArray(parseJsonObject()));
+  return apply(
+      [](const std::vector<JsonObject>& to_use)
+      {
+        return Item(to_use);
+      },
+      parseByteArray(parseByteJsonObject()));
 }
