@@ -5,6 +5,7 @@
 #include "WeaponHelpers.hpp"
 #include "ecs/EmitEvent.hpp"
 #include "ecs/EventManager.hpp"
+#include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/Scenes.hpp"
 #include "ecs/zipper/Zipper.hpp"
@@ -25,6 +26,7 @@
 #include "plugin/events/AnimationEvents.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
 #include "plugin/events/WeaponEvent.hpp"
+#include "plugin/events/WeaponSwitchEvent.hpp"
 
 Weapon::Weapon(Registry& r, EventManager& em, EntityLoader& l)
     : APlugin("weapon",
@@ -53,6 +55,26 @@ Weapon::Weapon(Registry& r, EventManager& em, EntityLoader& l)
                   { this->on_charge_start(this->_registry.get(), event); })
   SUBSCRIBE_EVENT(ReleaseChargeWeapon,
                   { this->on_charge_release(this->_registry.get(), event); })
+
+  SUBSCRIBE_EVENT(WeaponSwitchEvent, {
+    if (this->_registry.get().has_component<BasicWeapon>(event.entity)) {
+      this->_registry.get().remove_component<BasicWeapon>(event.entity);
+    }
+    if (this->_registry.get().has_component<ChargeWeapon>(event.entity)) {
+      this->_registry.get().remove_component<ChargeWeapon>(event.entity);
+    }
+    if (this->_registry.get().has_component<DelayedWeapon>(event.entity)) {
+      this->_registry.get().remove_component<DelayedWeapon>(event.entity);
+    }
+    if (event.weapon_type == "ChargeWeapon") {
+      init_charge_weapon(event.entity, event.params);
+    } else if (event.weapon_type == "BasicWeapon") {
+      init_basic_weapon(event.entity, event.params);
+    } else if (event.weapon_type == "DelayedWeapon") {
+      init_delayed_weapon(event.entity, event.params);
+    }
+  })
+
   _registry.get().add_system([this](Registry& r)
                              { this->basic_weapon_system(r.clock().now()); });
   _registry.get().add_system([this](Registry& r)
