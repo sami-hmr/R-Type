@@ -5,7 +5,7 @@
 #include "RtypeServer.hpp"
 
 #ifndef _WIN32
-#include <unistd.h>
+#  include <unistd.h>
 #endif
 
 #include "NetworkShared.hpp"
@@ -87,9 +87,7 @@ RtypeServer::RtypeServer(Registry& r,
       if (this->_player_entities.erase(event.entity)) {
         if (this->_player_entities.empty()) {
           this->_event_manager.get().emit<EventBuilderId>(
-              std::nullopt,
-              "ShutdownEvent",
-              ShutdownEvent("death of all players...", 0).to_bytes());
+              std::nullopt, "Disconnection", Disconnection().to_bytes());
           this->_event_manager.get().emit<ShutdownEvent>("game ended", 0);
         }
       }
@@ -115,9 +113,9 @@ RtypeServer::RtypeServer(Registry& r,
 extern "C"
 {
 PLUGIN_EXPORT void* entry_point(Registry& r,
-                  EventManager& em,
-                  EntityLoader& e,
-                  std::optional<JsonObject> const& config)
+                                EventManager& em,
+                                EntityLoader& e,
+                                std::optional<JsonObject> const& config)
 {
   return new RtypeServer(r, em, e, config);
 }
