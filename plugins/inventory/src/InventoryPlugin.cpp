@@ -243,12 +243,9 @@ void InventoryPlugin::remove_item(Inventory& inventory,
             slot_item))
     return;
   }
-  std::cout << "salem ? " << inventory.inventory[slot_item].nb << "   "
-            << nb_to_use << "\n";
   if (inventory.inventory[slot_item].nb > nb_to_use) {
     inventory.inventory[slot_item].nb -= nb_to_use;
   } else {
-    std::cout << "allo salem " << slot_item << "\n";
     inventory.inventory.erase(inventory.inventory.begin() + slot_item);
   }
 }
@@ -290,13 +287,11 @@ void InventoryPlugin::use_item(Inventory& inventory,
     return;
   }
   nb_to_use = std::min(nb_to_use, inventory.inventory[slot_item].nb);
-  std::cout << "nb to use" << nb_to_use << "\n";
   for (std::size_t i = 0; i < nb_to_use; i++) {
     for (auto const& it : inventory.inventory[slot_item].item.on_use) {
       for (auto const& [event, params] : it) {
         auto const* obj = std::get_if<JsonObject>(&params.value);
         if (obj != nullptr) {
-          std::cout << event << "\n";
           this->_event_manager.get().emit(
               this->_registry.get(), event, *obj, consumer);
         } else {

@@ -339,7 +339,7 @@
               "item_name": "heal",
               "nb": 2,
               "item": {
-                "to_emit": [
+                "on_use": [
                   {
                     "HealEvent": {
                       "entity": "@self",

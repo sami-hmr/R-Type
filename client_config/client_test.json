@@ -67,7 +67,7 @@
                 }
               },
                             {
-                "description": "drop slot 0",
+                "description": "use slot 0",
                 "key": "O",
                 "pressed": {
                   "name": "UseItem",
