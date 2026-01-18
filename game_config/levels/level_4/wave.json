@@ -34,7 +34,7 @@
         {
           "wave:Wave": {
             "entity_template": "enemy_parasite_1",
-            "count": 1,
+            "count": 2,
             "tracked": false,
             "components_inheritance": ["scene"],
             "pattern": {

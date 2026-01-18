@@ -74,7 +74,12 @@
             "type": "point",
             "origin": { "x": 0.8, "y": 0.0 }
           },
-          "on_end": []
+          "on_end": [
+            {
+              "event_name": "Disconnection",
+              "params": {}
+            }
+          ]
         }
       }
     }

@@ -238,8 +238,6 @@ void Moving::init_pos(Ecs::Entity const& entity, JsonObject& obj)
     std::cerr << "Error creating Position component\n";
     return;
   }
-  std::cout << "init_pos parsed: pos = " << pos.value() << " for entity "
-            << entity << "\n";
 }
 
 void Moving::init_off(Ecs::Entity const& entity, JsonObject& obj)
