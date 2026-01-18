@@ -172,7 +172,9 @@ struct WatchRebind
 
   DEFAULT_SERIALIZE(type_to_byte(entity), type_to_byte(key))
 
-  WatchRebind(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+  WatchRebind(Registry& r,
+              JsonObject const& e,
+              std::optional<Ecs::Entity> entity)
       : entity(get_value_copy<int>(r, e, "entity", entity).value_or(0))
       , key(get_value_copy<int>(r, e, "key", entity).value_or(0))
   {
@@ -193,7 +195,11 @@ struct ExitRebind
 
   CHANGE_ENTITY_DEFAULT
 
-  ExitRebind(Registry& /*unused*/, JsonObject const& /*unused*/, std::optional<Ecs::Entity> /*unused*/) {}
+  ExitRebind(Registry& /*unused*/,
+             JsonObject const& /*unused*/,
+             std::optional<Ecs::Entity> /*unused*/)
+  {
+  }
 
   HOOKABLE(ExitRebind)
 };
