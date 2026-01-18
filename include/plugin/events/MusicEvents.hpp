@@ -41,11 +41,11 @@ struct StopMusicEvent
 struct StopAllMusicsEvent
 {
   StopAllMusicsEvent() {};
-  StopAllMusicsEvent(Registry&,
-                     JsonObject const&,
-                     std::optional<Ecs::Entity>)
+
+  StopAllMusicsEvent(Registry&, JsonObject const&, std::optional<Ecs::Entity>)
   {
   }
+
   CHANGE_ENTITY_DEFAULT
 
   EMPTY_BYTE_CONSTRUCTOR(StopAllMusicsEvent)
