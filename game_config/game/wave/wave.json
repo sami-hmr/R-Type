@@ -22,7 +22,6 @@
             "offset": 0.1
           }
         },
-        "music_filepath": "assets/sounds/shooting_stars.mp3",
         "music_name": "shooting_stars"
       },
       "components": {
@@ -56,7 +55,7 @@
             {
               "event_name": "PlayMusicEvent",
               "params": {
-                "name": "shooting_stars",
+                "name": "$music_name",
                 "entity": "%global:wall_id:id",
                 "volume": 100.0,
                 "pitch": 1.0,
@@ -65,17 +64,6 @@
             }
           ]
         }
-        // "sound:MusicManager": {
-        //   "sound_effects": [
-        //     {
-        //       "name": "$music_name",
-        //       "filepath": "$music_filepath",
-        //       "volume": 100.0,
-        //       "pitch": 1.0,
-        //       "loop": true
-        //     }
-        //   ]
-        // }
       }
     }
   ]

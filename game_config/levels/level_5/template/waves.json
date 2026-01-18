@@ -51,7 +51,8 @@
             "origin": { "x": 2.0, "y": 1.0 }
           },
           "disable_scene": "level_5",
-          "enable_scene": "level_6"
+          "enable_scene": "level_6",
+          "music_name": "coconut_mall"
         },
         "config": {}
       }

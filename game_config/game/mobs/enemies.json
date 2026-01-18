@@ -28,7 +28,7 @@
         "damage_amount": 1,
         "speed": { "x": 0.3, "y": 0.3 },
         "team_name": "enemy",
-        "facing_direction": { "x": -1.0, "y": 0.0},
+        "facing_direction": { "x": -1.0, "y": 0.0 },
         "facing_plane": true,
 
         "collision_size": { "width": 0.15, "height": 0.1 },
@@ -132,10 +132,10 @@
           "movement_type": "$movement_behavior_movement_type",
           "params": "$movement_behavior_params"
         },
-        "score:ScoreManager": {
-          "points_to_give": "$score_points_to_give",
-          "score": 0
-        },
+        // "score:ScoreManager": {
+        //   "points_to_give": "$score_points_to_give",
+        //   "score": 0
+        // },
         "inventory:Inventory": {
           "max_items": 1,
           "inventory": [
@@ -261,7 +261,6 @@
           "idle_flip_v": true,
           "idle_flip_h": true,
 
-
           "death_texture": "assets/explosion.png",
           "death_frame_size": { "x": 128.0, "y": 128.0 },
           "death_frame_pos": { "x": 0.0, "y": 0.0 },
@@ -361,7 +360,7 @@
           "movement_behavior_movement_type": "zigzag"
         },
         "config": {
-            "weapon:BasicWeapon": {
+          "weapon:BasicWeapon": {
             "bullet_type": "$bullet_type",
             "magazine_size": 6,
             "magazine_nb": 3,
@@ -455,7 +454,12 @@
           "collision_size": { "width": 0.05, "height": 0.05 },
           "collision_type": "push",
 
-          "movement_behavior_params": {"parasite_behavior": "circle", "zone_radius": "$zone_radius", "radius": 0.4, "angular_speed": 2.5},
+          "movement_behavior_params": {
+            "parasite_behavior": "circle",
+            "zone_radius": "$zone_radius",
+            "radius": 0.4,
+            "angular_speed": 2.5
+          },
           "movement_behavior_movement_type": "glue"
         },
         "config": {
