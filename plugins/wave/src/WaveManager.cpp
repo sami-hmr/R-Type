@@ -54,9 +54,9 @@ WaveManager::WaveManager(Registry& r, EventManager& em, EntityLoader& l)
   })
 }
 
-std::optional<Registry::Entity> WaveManager::find_wave_by_id(std::size_t id)
+std::optional<Ecs::Entity> WaveManager::find_wave_by_id(std::size_t id)
 {
-  std::optional<Registry::Entity> wave_opt;
+  std::optional<Ecs::Entity> wave_opt;
 
   for (auto&& [wave_entity, wave] : ZipperIndex<Wave>(this->_registry.get())) {
     if (wave.id == id) {
@@ -77,7 +77,7 @@ std::size_t WaveManager::generate_wave_id()
   return new_id;
 }
 
-void WaveManager::init_wave(Registry::Entity const& entity,
+void WaveManager::init_wave(Ecs::Entity const& entity,
                             JsonObject const& obj)
 {
   auto entity_template = get_value<Wave, std::string>(
@@ -177,7 +177,7 @@ void WaveManager::init_wave(Registry::Entity const& entity,
                                                 inheritance);
 }
 
-void WaveManager::init_formation(Registry::Entity const& entity,
+void WaveManager::init_formation(Ecs::Entity const& entity,
                                  JsonObject const& obj)
 {
   auto strength = get_value<Formation, double>(

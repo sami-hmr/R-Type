@@ -10,8 +10,8 @@
         "width": 0.5,
         "height": 0.5,
         "text_size": {
-          "x": 0.35,
-          "y": 0.35
+          "height": 0.35,
+          "width": 0.35
         },
         "font": "assets/fonts/roboto.ttf",
         "sprite_idle": "assets/ui/card.png",
@@ -130,6 +130,85 @@
             "hover": false,
             "toggle": false,
             "pressed": false
+          }
+        }
+      }
+    },
+    {
+      "name": "action_button",
+      "default_parameters": {
+        "stretch": false,
+        "x": 0.0,
+        "y": 0.0,
+        "z": 10,
+        "width": 0.5,
+        "height": 0.5,
+        "text_size": {
+          "height": 0.35,
+          "width": 0.35
+        },
+        "font": "assets/fonts/roboto.ttf",
+        "sprite_idle": "assets/ui/card.png",
+        "frame_size_idle": {
+          "x": 1080.0,
+          "y": 317.0
+        },
+        "frame_pos_idle": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "sprite_hover": "assets/ui/card_focus.png",
+        "frame_size_hover": {
+          "x": 1080.0,
+          "y": 317.0
+        },
+        "frame_pos_hover": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "sprite_pressed": "assets/ui/card.png",
+        "frame_size_pressed": {
+          "x": 1080.0,
+          "y": 317.0
+        },
+        "frame_pos_pressed": {
+          "x": 0.0,
+          "y": 0.0
+        },
+        "on_click": []
+      },
+      "components": {
+        "template": "button",
+        "parameters": {
+          "stretch": "$stretch",
+          "x": "$x",
+          "y": "$y",
+          "z": "$z",
+          "width": "$width",
+          "height": "$height",
+          "text_size": "$text_size",
+          "font": "$font",
+          "sprite_idle": "$sprite_idle",
+          "frame_size_idle": "$frame_size_idle",
+          "frame_pos_idle": "$frame_pos_idle",
+          "sprite_hover": "$sprite_hover",
+          "frame_size_hover": "$frame_size_hover",
+          "frame_pos_hover": "$frame_pos_hover",
+          "sprite_pressed": "$sprite_pressed",
+          "frame_size_pressed": "$frame_size_pressed",
+          "frame_pos_pressed": "$frame_pos_pressed",
+          "on_click": "$on_click",
+          "text": "$text"
+        },
+        "config": {
+          "actions:ActionTrigger": {
+            "trigger": {
+              "type": "KeyPressed",
+              "params": {
+                "key": "$key_to_press"
+              }
+            },
+            "to_emit": "$on_click"
           }
         }
       }

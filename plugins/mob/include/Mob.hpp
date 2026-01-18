@@ -15,9 +15,9 @@ public:
   EntityLoader& entity_loader;
 
 private:
-  void init_enemy(Registry::Entity const& entity, JsonObject const& obj);
-  void init_spawner(Registry::Entity const& entity, JsonObject const& obj);
-  void init_parasite(Registry::Entity const& entity, JsonObject const& obj);
+  void init_enemy(Ecs::Entity const& entity, JsonObject const& obj);
+  void init_spawner(Ecs::Entity const& entity, JsonObject const& obj);
+  void init_parasite(Ecs::Entity const& entity, JsonObject const& obj);
 
   void on_interaction_zone(const InteractionZoneEvent& event);
   void spawner_system(Registry& r);

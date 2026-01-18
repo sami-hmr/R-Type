@@ -28,7 +28,7 @@ void AnimatedSprite::update_anim(
     Registry& /*r*/,
     EventManager& em,
     std::chrono::high_resolution_clock::time_point now,
-    Registry::Entity entity)
+    Ecs::Entity entity)
 {
   AnimationData& animation = this->animations.at(this->current_animation);
 
@@ -151,7 +151,7 @@ void UI::update_anim_system(Registry& r)
 
 
 std::optional<AnimationData> UI::parse_animation_data(JsonObject const& obj,
-                                                      Registry::Entity const& e)
+                                                      Ecs::Entity const& e)
 {
   AnimationData animdata;
 
@@ -244,7 +244,7 @@ std::optional<AnimationData> UI::parse_animation_data(JsonObject const& obj,
   return animdata;
 }
 
-void UI::init_animated_sprite(Registry::Entity const& entity,
+void UI::init_animated_sprite(Ecs::Entity const& entity,
                               const JsonObject& obj)
 {
   std::unordered_map<std::string, AnimationData> animations;

@@ -15,7 +15,7 @@
 class StraightPattern : public MovementPattern
 {
 public:
-  void update(Registry::Entity entity,
+  void update(Ecs::Entity entity,
               Registry& registry,
               EventManager& em,
               MovementBehavior& /*behavior*/,

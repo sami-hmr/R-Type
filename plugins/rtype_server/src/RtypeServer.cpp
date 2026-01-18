@@ -99,7 +99,7 @@ RtypeServer::RtypeServer(Registry& r,
   SUBSCRIBE_EVENT_PRIORITY(
       DisconnectClient,
       {
-        std::vector<Registry::Entity> to_delete;
+        std::vector<Ecs::Entity> to_delete;
         for (auto const& [entity, id] : this->_player_entities) {
           if (id == event.client) {
             to_delete.push_back(entity);

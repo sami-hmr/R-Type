@@ -7,6 +7,7 @@
                 "height": 0.1,
                 "x": 0.0,
                 "y": 0.0,
+                "z": 1,
                 "font": "assets/fonts/roboto.ttf",
                 "fill_color": {
                     "r": 255,
@@ -31,6 +32,7 @@
                     "height": "$height",
                     "x": "$x",
                     "y": "$y",
+                    "z": "$z",
                     "font": "$font",
                     "fill_color": "$fill_color",
                     "outline_color": "$outline_color",

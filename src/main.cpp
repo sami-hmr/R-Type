@@ -7,11 +7,9 @@
 #include <thread>
 #include <vector>
 
-#include "EntityExpose.hpp"
 #include "Json/JsonParser.hpp"
 #include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
-#include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/events/ActionEvents.hpp"
 #include "plugin/events/LoadPluginEvent.hpp"
@@ -76,7 +74,7 @@ static int true_main(Registry& r,
       "SpawnEntity",
       [&r, &e](const SpawnEntityRequestEvent& event) -> bool
       {
-        Registry::Entity entity = r.spawn_entity();
+        Ecs::Entity entity = r.spawn_entity();
         JsonObject base = r.get_template(event.entity_template);
         e.load_components(entity, base);
         e.load_components(entity, event.params);

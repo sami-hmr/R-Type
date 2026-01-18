@@ -128,7 +128,7 @@ struct Follower
 {
   Follower() = default;
 
-  Follower(Registry& r, JsonObject const& obj, Registry::Entity self)
+  Follower(Registry& r, JsonObject const& obj, Ecs::Entity self)
       : target_pos(get_value<Follower, Vector2D>(r, obj, self, "target_pos")
                        .value_or(Vector2D {0.0, 0.0}))
       , offset_x(get_value_copy<double>(r, obj, "offset_x").value_or(0.0))
@@ -189,7 +189,7 @@ struct Follower
 
   Follower() = default;
 
-  Follower(Registry& r, JsonObject const& obj, Registry::Entity self)
+  Follower(Registry& r, JsonObject const& obj, Ecs::Entity self)
       : target_pos(get_value<Follower, Vector2D>(r, obj, self, "target_pos")
                        .value_or(Vector2D {0.0, 0.0}))
       , offset_x(get_value_copy<double>(r, obj, "offset_x").value_or(0.0))

@@ -36,11 +36,11 @@ struct LogEvent
                     type_to_byte(this->level),
                     string_to_byte(this->message))
 
-  LogEvent(Registry& r, JsonObject const& e)
-      : name(get_value_copy<std::string>(r, e, "name").value())
+  LogEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+      : name(get_value_copy<std::string>(r, e, "name", entity).value())
       , level(static_cast<LogLevel>(LOG_LEVEL_STR.at_first(
-            get_value_copy<std::string>(r, e, "level").value())))
-      , message(get_value_copy<std::string>(r, e, "message").value())
+            get_value_copy<std::string>(r, e, "level", entity).value())))
+      , message(get_value_copy<std::string>(r, e, "message", entity).value())
   {
   }
 };

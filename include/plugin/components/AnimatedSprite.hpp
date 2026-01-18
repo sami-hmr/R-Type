@@ -203,7 +203,7 @@ public:
   void update_anim(Registry& r,
                    EventManager& em,
                    std::chrono::high_resolution_clock::time_point now,
-                   Registry::Entity entity);
+                   Ecs::Entity entity);
   static void on_death(Registry& r, EventManager& em, const DeathEvent& event);
   static void on_animation_end(Registry& r,
                                EventManager& em,

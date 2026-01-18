@@ -1,0 +1,17 @@
+{
+    "entities_template": [
+        {
+            "name": "pause_bg",
+            "components": {
+                "template": "card",
+                "parameters": {
+                    "z": 20,
+                    "width": 1000.0,
+                    "height": 1000.0,
+                    "sprite": "assets/ui/semi_black_bg.png"
+                }
+            }
+        }
+    ],
+    "scenes": []
+}
