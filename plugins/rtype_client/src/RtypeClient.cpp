@@ -12,6 +12,7 @@
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Controllable.hpp"
+#include "plugin/components/Position.hpp"
 #include "plugin/components/Team.hpp"
 #include "plugin/components/Text.hpp"
 #include "plugin/events/HttpEvents.hpp"
@@ -31,6 +32,7 @@ RtypeClient::RtypeClient(Registry& r,
     if (zipper.begin() != zipper.end()) {
       std::size_t index = std::get<0>(*zipper.begin());
 
+      _player = index;
       this->_server_indexes.insert(event.server_index, index);
     } else {
       LOGGER("client",
@@ -73,6 +75,14 @@ RtypeClient::RtypeClient(Registry& r,
     this->_event_manager.get().emit<ResetClient>(0);
     this->_event_manager.get().emit<SceneChangeEvent>(
         "server_search", "Disconected", true);
+    this->_event_manager.get().emit<SceneChangeEvent>(
+        "game", "Disconected", false);
+    this->_event_manager.get().emit<SceneChangeEvent>(
+        "server_search_0", "Disconected", false);
+    this->_event_manager.get().emit<SceneChangeEvent>(
+        "connection_background", "Disconected", false);
+
+    this->_registry.get().remove_component<Position>(_player);
     this->alert("Disconected");
   })
 
