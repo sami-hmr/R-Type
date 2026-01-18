@@ -8,7 +8,6 @@
 #include "ecs/Registry.hpp"
 #include "plugin/Hooks.hpp"
 
-
 struct PlaySoundEvent
 {
   Ecs::Entity entity;
