@@ -21,4 +21,7 @@ private:
 
   void init_id(Ecs::Entity const& entity, JsonObject& obj);
   void moving_system(Registry&);
+
+  void add_offset(Registry &r);
+  void remove_offset(Registry &r);
 };

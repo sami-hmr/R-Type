@@ -15,25 +15,28 @@ struct Position
   {
   }
 
-  Position(Vector2D pos, int z = 1)
+  Position(Vector2D pos, Vector2D offset = {0.0, 0.0}, int z = 1)
       : pos(pos)
+      , offset(offset)
       , z(z)
   {
   }
 
-  DEFAULT_BYTE_CONSTRUCTOR(Position,
-                           ([](double x, double y, int z)
-                            { return Position {x, y, z}; }),
-                           parseByte<double>(),
-                           parseByte<double>(),
-                           parseByte<int>())
-  DEFAULT_SERIALIZE(type_to_byte(this->pos.x),
-                    type_to_byte(this->pos.y),
+  DEFAULT_BYTE_CONSTRUCTOR(
+      Position,
+      ([](Vector2D pos, Vector2D offset = {0.0, 0.0}, int z = 1)
+       { return Position {pos, offset, z}; }),
+      parseVector2D(),
+      parseVector2D(),
+      parseByte<int>())
+  DEFAULT_SERIALIZE(vector2DToByte(this->pos),
+                    vector2DToByte(this->offset),
                     type_to_byte(this->z))
 
   CHANGE_ENTITY_DEFAULT
 
   Vector2D pos;
+  Vector2D offset;
   int z;
-  HOOKABLE(Position, HOOK(pos), HOOK(z))
+  HOOKABLE(Position, HOOK(pos), HOOK(offset), HOOK(z))
 };

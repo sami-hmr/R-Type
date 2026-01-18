@@ -39,8 +39,12 @@ Moving::Moving(Registry& r, EventManager& em, EntityLoader& l)
   REGISTER_COMPONENT(Speed)
   REGISTER_COMPONENT(Facing)
   REGISTER_COMPONENT(IdStorage)
+  this->_registry.get().add_system([this](Registry& r) { this->add_offset(r); },
+                                   1000);
   this->_registry.get().add_system(
       [this](Registry& r) { this->moving_system(r); }, 4);
+  this->_registry.get().add_system(
+      [this](Registry& r) { this->remove_offset(r); }, 0);
 
   SUBSCRIBE_EVENT(UpdateDirection, {
     if (!this->_registry.get().has_component<Direction>(event.entity)) {
@@ -71,6 +75,25 @@ void Moving::moving_system(Registry& reg)
   }
 }
 
+void Moving::add_offset(Registry& r)
+{
+  for (auto&& [e, pos] : ZipperIndex<Position>(r)) {
+    pos.pos += pos.offset;
+    this->_event_manager.get().emit<ComponentBuilder>(
+        e, r.get_component_key<Position>(), pos.to_bytes());
+  }
+}
+
+void Moving::remove_offset(Registry& r)
+{
+  std::cout << "removing offset\n";
+  for (auto&& [e, pos] : ZipperIndex<Position>(r)) {
+    pos.pos -= pos.offset;
+    this->_event_manager.get().emit<ComponentBuilder>(
+        e, r.get_component_key<Position>(), pos.to_bytes());
+  }
+}
+
 void Moving::init_id(Ecs::Entity const& entity, JsonObject& obj)
 {
   std::string ctx;
@@ -94,13 +117,25 @@ void Moving::init_id(Ecs::Entity const& entity, JsonObject& obj)
 
 void Moving::init_pos(Ecs::Entity const& entity, JsonObject& obj)
 {
-  auto values =
+  auto pos =
       get_value<Position, Vector2D>(this->_registry.get(), obj, entity, "pos");
 
-  if (!values.has_value()) {
+  if (!pos.has_value()) {
     std::cerr << "Error creating Position component\n";
     return;
   }
+  Vector2D offset = {0.0, 0.0};
+  if (obj.contains("offset")) {
+    auto const& offset_value = get_value<Position, Vector2D>(
+        this->_registry.get(), obj, entity, "offset");
+    if (offset_value) {
+      offset = offset_value.value();
+    } else {
+      std::cerr << "Error loading Position component: unexpected value type "
+                   "(expected offset: Vector2D)\n";
+    }
+  }
+
   int z = 1;
   if (obj.contains("z")) {
     auto const& z_value =
@@ -115,13 +150,16 @@ void Moving::init_pos(Ecs::Entity const& entity, JsonObject& obj)
   auto& pos_opt = init_component<Position>(this->_registry.get(),
                                            this->_event_manager.get(),
                                            entity,
-                                           values.value(),
+                                           pos.value(),
+                                           offset,
                                            z);
 
   if (!pos_opt.has_value()) {
     std::cerr << "Error creating Position component\n";
     return;
   }
+  std::cout << "init_pos parsed: pos = " << pos.value()
+            << " offset = " << offset << " for entity " << entity << "\n";
 }
 
 void Moving::init_direction(Ecs::Entity const& entity, JsonObject& obj)
@@ -185,8 +223,11 @@ void Moving::init_facing(Ecs::Entity const& entity, JsonObject& obj)
                    "(expected plane: bool)\n";
     }
   }
-  init_component<Facing>(
-      this->_registry.get(), this->_event_manager.get(), entity, dir.value(), plane);
+  init_component<Facing>(this->_registry.get(),
+                         this->_event_manager.get(),
+                         entity,
+                         dir.value(),
+                         plane);
 }
 
 extern "C"

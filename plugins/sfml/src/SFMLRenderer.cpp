@@ -112,21 +112,27 @@ SFMLRenderer::SFMLRenderer(Registry& r, EventManager& em, EntityLoader& l)
   _window.setFramerateLimit(window_rate);
 
   _registry.get().add_system([this](Registry&) { this->handle_events(); }, 1);
-  _registry.get().add_system([this](Registry& r) { this->volumes_system(r); });
-  _registry.get().add_system([this](Registry& r) { this->camera_system(r); });
-  _registry.get().add_system([this](Registry&)
-                             { _window.clear(sf::Color::Black); });
-  _registry.get().add_system([this](Registry& r)
-                             { this->background_system(r); });
+  _registry.get().add_system([this](Registry& r) { this->volumes_system(r); },
+                             2);
+  _registry.get().add_system([this](Registry& r) { this->camera_system(r); },
+                             2);
+  _registry.get().add_system(
+      [this](Registry&) { _window.clear(sf::Color::Black); }, 2);
+  _registry.get().add_system(
+      [this](Registry& r) { this->background_system(r); }, 2);
 
-  _registry.get().add_system([this](Registry& r) { this->button_system(r); });
-  _registry.get().add_system([this](Registry& r) { this->slider_system(r); });
-  _registry.get().add_system([this](Registry& r)
-                             { this->unified_render_system(r); });
-  _registry.get().add_system([this](Registry&) { this->display(); });
-  _registry.get().add_system([this](Registry& r) { this->sounds_system(r); });
-  _registry.get().add_system([this](Registry& r) { this->musics_system(r); });
-  _registry.get().add_system([this](Registry& r) { this->hover_system(r); });
+  _registry.get().add_system([this](Registry& r) { this->button_system(r); },
+                             2);
+  _registry.get().add_system([this](Registry& r) { this->slider_system(r); },
+                             2);
+  _registry.get().add_system(
+      [this](Registry& r) { this->unified_render_system(r); }, 2);
+  _registry.get().add_system([this](Registry&) { this->display(); }, 2);
+  _registry.get().add_system([this](Registry& r) { this->sounds_system(r); },
+                             2);
+  _registry.get().add_system([this](Registry& r) { this->musics_system(r); },
+                             2);
+  _registry.get().add_system([this](Registry& r) { this->hover_system(r); }, 2);
 
   _textures.insert_or_assign(SFMLRenderer::placeholder, gen_placeholder());
   _sound_buffers.insert_or_assign(SFMLRenderer::placeholder,
@@ -399,6 +405,10 @@ void SFMLRenderer::render_texts(Registry& r,
       fill_color.a /= 2;
     }
 
+    if (pos.offset.x > 0) {
+      std::cout << "offset ici la par pitié pos = " << pos.pos
+                << " offset = " << pos.offset << "\n";
+    }
     sf::Font& font = load_font(txt.font_path);
     if (!_text.has_value()) {
       _text = sf::Text(font);
@@ -636,6 +646,7 @@ void SFMLRenderer::unified_render_system(Registry& r)
   float min_dimension =
       static_cast<float>(std::min(window_size.x, window_size.y));
 
+  std::cout << "rendering system\n";
   render_sprites(
       r, all_drawables, min_dimension, window_size, view_size, view_pos);
   render_bars(r, all_drawables, min_dimension, window_size);
