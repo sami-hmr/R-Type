@@ -46,7 +46,6 @@ Controller::Controller(Registry& r, EventManager& em, EntityLoader& l)
       this->_remaped_key.reset();
       return PREVENT_DEFAULT;
     }
-    std::cout << "fireeeee" << std::endl;
     for (auto const& [key, active] : event.key_pressed) {
       if (active) {
         this->handle_key_change(key, true);

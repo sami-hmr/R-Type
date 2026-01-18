@@ -72,7 +72,7 @@
                   }
                 }
               },
-                            {
+              {
                 "description": "use slot 0",
                 "key": "O",
                 "pressed": {
@@ -188,7 +188,9 @@
                 },
                 "released": {
                   "name": "ReleaseChargeWeapon",
-                  "params": {}
+                  "params": {
+                    "entity": "@self"
+                  }
                 }
               }
             ]
