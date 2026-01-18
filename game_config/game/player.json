@@ -183,10 +183,10 @@
         },
         "weapon:BasicWeapon": {
           "bullet_type": "beam_segment",
-          "magazine_size": 10,
-          "magazine_nb": 5,
-          "reload_time": 2.0,
-          "cooldown": 0.8,
+          "magazine_size": 1000,
+          "magazine_nb": 500,
+          "reload_time": 0.1,
+          "cooldown": 0.01,
           "attack_animation": "beam_start"
         },
         "ui:AnimatedSprite": {
