@@ -16,6 +16,7 @@
 #include "plugin/components/Team.hpp"
 #include "plugin/components/Text.hpp"
 #include "plugin/events/HttpEvents.hpp"
+#include "plugin/events/InventoryEvents.hpp"
 #include "plugin/events/LoggerEvent.hpp"
 #include "plugin/events/NetworkEvents.hpp"
 #include "plugin/events/SceneChangeEvent.hpp"

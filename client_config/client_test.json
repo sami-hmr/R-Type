@@ -21,6 +21,10 @@
         {
           "name": "weapon",
           "config": {}
+        },
+        {
+          "name": "inventory",
+          "config": {}
         }
       ],
       "entities": [
@@ -59,7 +63,6 @@
             "global_hook": true
           },
           "controller:Controllable": {
-
             "bindings": [
               {
                 "description": "drop slot 0",
@@ -226,6 +229,23 @@
               //     "params": {}
               //   }
               // }
+            ]
+          }
+        },
+        {
+          "actions:ActionTrigger": {
+            "trigger": {
+              "type": "KeyPressed",
+              "params": {
+                "key": "E"
+              }
+            },
+            "to_emit": [
+              {
+                "GenerateInventoryScene": {
+                  "entity": "%global:player_id_client:id"
+                }
+              }
             ]
           }
         },

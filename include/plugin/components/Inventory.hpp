@@ -50,21 +50,25 @@ struct Inventory
 
   std::vector<ItemSlot> inventory;
   std::size_t max_items;
+  bool show;
 
   CHANGE_ENTITY_DEFAULT
 
   HOOKABLE(Inventory, HOOK(max_items))
 
-  Inventory(std::vector<ItemSlot> const& inventory, std::size_t max_items)
+  Inventory(std::vector<ItemSlot> const& inventory,
+            std::size_t max_items,
+            bool show)
       : inventory(inventory)
       , max_items(max_items)
+      , show(show)
   {
   }
 
   DEFAULT_BYTE_CONSTRUCTOR(
       Inventory,
-      ([](std::vector<ItemSlot> const& tmp, std::size_t max_items)
-       { return Inventory(tmp, max_items); }),
+      ([](std::vector<ItemSlot> const& tmp, std::size_t max_items, bool show)
+       { return Inventory(tmp, max_items, show); }),
       parseByteArray(apply([](std::string const& s,
                               std::size_t nb,
                               Item const& i,
@@ -74,13 +78,15 @@ struct Inventory
                            parseByte<std::size_t>(),
                            parse_byte_item(),
                            parseByteString())),
-      parseByte<std::size_t>())
+      parseByte<std::size_t>(),
+      parseByte<bool>())
 
   DEFAULT_SERIALIZE(
       vector_to_byte(this->inventory,
                      SERIALIZE_FUNCTION<ItemSlot>([](ItemSlot const& i)
                                                   { return i.to_bytes(); })),
-      type_to_byte(this->max_items))
+      type_to_byte(this->max_items),
+      type_to_byte(this->show))
 };
 
 struct Pickable
