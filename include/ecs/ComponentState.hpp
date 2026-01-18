@@ -23,6 +23,6 @@
 struct ComponentState
 {
   std::string id;  ///< Component type identifier (format: "plugin:component")
-  std::vector<std::pair<size_t, ByteArray>>
-      comps = {};  ///< Entity-component pairs (entity ID, serialized component data)
+  std::vector<std::pair<size_t, ByteArray>> comps =
+      {};  ///< Entity-component pairs (entity ID, serialized component data)
 };
