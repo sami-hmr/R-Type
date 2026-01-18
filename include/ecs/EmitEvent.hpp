@@ -107,7 +107,8 @@ void emit_event(EventManager& em, std::string const& id, Event event)
   } catch (std::out_of_range const&) {
     em.emit<LogEvent>("init", LogLevel::ERR, "unknown event: \"" + id + "\"");
   } catch (std::bad_optional_access const&) {
-    em.emit<LogEvent>("init", LogLevel::ERR, "Bad optionnal access voila: \"" + id + "\"");
+    em.emit<LogEvent>(
+        "init", LogLevel::ERR, "Bad optionnal access voila: \"" + id + "\"");
   }
   em.emit(id, event.to_bytes());
 }

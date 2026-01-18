@@ -110,7 +110,8 @@ struct SetDirectionEvent
                     JsonObject const& e,
                     std::optional<Ecs::Entity> entity)
       : entity(get_value_copy<Ecs::Entity>(r, e, "entity", entity).value_or(0))
-      , direction(get_value_copy<Vector2D>(r, e, "direction", entity).value_or(Vector2D(0.0)))
+      , direction(get_value_copy<Vector2D>(r, e, "direction", entity)
+                      .value_or(Vector2D(0.0)))
   {
   }
 };

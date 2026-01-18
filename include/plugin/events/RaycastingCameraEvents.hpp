@@ -16,7 +16,9 @@ struct RaycastingCameraRotateEvent
   {
   }
 
-  RaycastingCameraRotateEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> /*unused*/)
+  RaycastingCameraRotateEvent(Registry& r,
+                              JsonObject const& e,
+                              std::optional<Ecs::Entity> /*unused*/)
       : angle(get_value_copy<double>(r, e, "angle").value())
   {
   }

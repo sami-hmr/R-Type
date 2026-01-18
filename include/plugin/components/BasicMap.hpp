@@ -17,7 +17,10 @@ struct TileData
 
   TileData() = default;
 
-  TileData(Vector2D size, Vector2D pos, std::string texture_path, bool collidable = true)
+  TileData(Vector2D size,
+           Vector2D pos,
+           std::string texture_path,
+           bool collidable = true)
       : size(size)
       , pos(pos)
       , texture_path(std::move(texture_path))
@@ -36,19 +39,21 @@ struct TileData
                     vector2DToByte(this->pos),
                     string_to_byte(this->texture_path),
                     type_to_byte<bool>(this->collidable))
-  HOOKABLE(TileData, HOOK(size), HOOK(pos), HOOK(texture_path), HOOK(collidable))
+  HOOKABLE(
+      TileData, HOOK(size), HOOK(pos), HOOK(texture_path), HOOK(collidable))
 
   CHANGE_ENTITY_DEFAULT
 };
 
 inline Parser<TileData> parse_tile_data()
 {
-  return apply([](Vector2D size, Vector2D pos, std::string texture_path, bool collidable)
-               { return TileData(size, pos, texture_path, collidable); },
-               parseVector2D(),
-               parseVector2D(),
-               parseByteString(),
-               parseByte<bool>());
+  return apply(
+      [](Vector2D size, Vector2D pos, std::string texture_path, bool collidable)
+      { return TileData(size, pos, texture_path, collidable); },
+      parseVector2D(),
+      parseVector2D(),
+      parseByteString(),
+      parseByte<bool>());
 }
 
 struct BasicMap
