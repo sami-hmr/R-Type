@@ -13,6 +13,7 @@
 #include "ecs/Entity.hpp"
 #include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
+#include "ecs/zipper/ZipperIndex.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
@@ -38,6 +39,16 @@ InventoryPlugin::InventoryPlugin(Registry& r, EventManager& em, EntityLoader& l)
 
   this->_registry.get().add_system([this](Registry&)
                                    { this->update_ath_scenes(); });
+  this->_registry.get().add_system(
+      [this](Registry&)
+      {
+        for (auto&& [e, inv] : ZipperIndex<Inventory>(this->_registry.get())) {
+          if (inv.show) {
+            this->generate_ath_scene(GenerateInventoryScene(e));
+            inv.show = false;
+          }
+        }
+      });
 
   SUBSCRIBE_EVENT(DropItem, {
     if (!this->_registry.get().has_component<Inventory>(event.consumer)) {
@@ -173,15 +184,11 @@ void InventoryPlugin::init_inventory(Ecs::Entity const& entity,
     inventory_slots.erase(inventory_slots.begin() + *max_items,
                           inventory_slots.end());
   }
-  this->_registry.get().emplace_component<Inventory>(
-      entity, inventory_slots, *max_items);
-
   auto const& show =
-      get_value<Inventory, bool>(this->_registry.get(), obj, entity, "show");
-  if (show && *show) {
-    this->_event_manager.get().emit<GenerateInventoryScene>(entity);
-    return;
-  }
+      get_value<Inventory, bool>(this->_registry.get(), obj, entity, "show")
+          .value_or(false);
+  this->_registry.get().emplace_component<Inventory>(
+      entity, inventory_slots, *max_items, show);
 }
 
 void InventoryPlugin::init_pickable(Ecs::Entity const& entity,

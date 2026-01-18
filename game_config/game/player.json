@@ -338,24 +338,9 @@
             "y": 0.0
           }
         },
-        "weapon:ChargeWeapon": {
-          "bullet_type": "beam_segment",
-          "offset_x": 1.2,
-          "offset_y": 0.0,
-          "magazine_size": 10,
-          "magazine_nb": 3,
-          "reload_time": 2.0,
-          "cooldown": 0.5,
-          "charge_time": 2.0,
-          "max_scale": 3.0,
-          "min_charge_threshold": 0.3,
-          "scale_damage": true,
-          "attack_animation": "attack",
-          "charge_indicator": "beam_start"
-        },
         "inventory:Inventory": {
           "show": true,
-          "max_items": 10,
+          "max_items": 5,
           "inventory": [
             {
               "item_name": "heal",
@@ -517,7 +502,6 @@
             "a": 255
           },
           "outline": true
-          
         }
       }
     }
