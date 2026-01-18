@@ -58,10 +58,8 @@ struct ItemEvent
   ItemEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
       : consumer(static_cast<Ecs::Entity>(
             get_value_copy<Ecs::Entity>(r, e, "consumer", entity).value()))
-      , slot_item(
-            get_value_copy<int>(r, e, "slot_item", entity).value())
-      , nb_to_use(
-            get_value_copy<int>(r, e, "nb_to_use", entity).value())
+      , slot_item(get_value_copy<int>(r, e, "slot_item", entity).value())
+      , nb_to_use(get_value_copy<int>(r, e, "nb_to_use", entity).value())
   {
   }
 
