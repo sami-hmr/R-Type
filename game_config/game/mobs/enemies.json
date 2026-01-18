@@ -34,6 +34,7 @@
         "collision_size": { "width": 0.15, "height": 0.1 },
         "collision_type": "push",
 
+        "score_points_to_give": 5,
         "movement_behavior_params": {},
         "movement_behavior_movement_type": "turret"
       },
@@ -130,6 +131,30 @@
         "ai:MovementBehavior": {
           "movement_type": "$movement_behavior_movement_type",
           "params": "$movement_behavior_params"
+        },
+        "score:ScoreManager": {
+          "points_to_give": "$score_points_to_give",
+          "score": 0
+        },
+        "inventory:Inventory": {
+          "max_items": 1,
+          "inventory": [
+            {
+              "item_name": "heal",
+              "nb": 2,
+              "item": {
+                "on_use": [
+                  {
+                    "HealEvent": {
+                      "entity": "@self",
+                      "amount": 10000000
+                    }
+                  }
+                ]
+              },
+              "artefact_template": "heal_item"
+            }
+          ]
         }
       }
     },

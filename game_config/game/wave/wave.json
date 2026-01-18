@@ -12,7 +12,18 @@
           "origin": { "x": 0.0, "y": 0.0 }
         },
         "disable_scene": "level_1",
-        "enable_scene": "level_2"
+        "enable_scene": "level_2",
+        "shake_event": {
+          "event_name": "CameraShakeEvent",
+          "params": {
+            "trauma": 0.1,
+            "duration": 1.0,
+            "angle": 15.0,
+            "offset": 0.1
+          }
+        },
+        "music_filepath": "assets/sounds/shooting_stars.mp3",
+        "music_name": "shooting_stars"
       },
       "components": {
         "wave:Wave": {
@@ -36,9 +47,35 @@
                 "reason": "Change scene in Wave event",
                 "force": false
               }
+            },
+            "$shake_event",
+            {
+              "event_name": "StopAllMusicsEvent",
+              "params": {}
+            },
+            {
+              "event_name": "PlayMusicEvent",
+              "params": {
+                "name": "shooting_stars",
+                "entity": "%global:wall_id:id",
+                "volume": 100.0,
+                "pitch": 1.0,
+                "loop": true
+              }
             }
           ]
         }
+        // "sound:MusicManager": {
+        //   "sound_effects": [
+        //     {
+        //       "name": "$music_name",
+        //       "filepath": "$music_filepath",
+        //       "volume": 100.0,
+        //       "pitch": 1.0,
+        //       "loop": true
+        //     }
+        //   ]
+        // }
       }
     }
   ]

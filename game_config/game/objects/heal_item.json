@@ -1,46 +1,70 @@
 {
-    "entities_template": [
-        {
-            "name": "heal_item",
-            "default_parameters": {},
-            "components": {
-                "moving:Position": {
-                    "pos": {
-                        "x": 0.7,
-                        "y": -0.8
-                    },
-                    "z": 2
-                },
-                "ui:Drawable": {
-                    "hook": "drawable"
-                },
-                "ui:Sprite": {
-                    "texture": "assets/enemy.png",
-                    "size": {
-                        "width": 0.1,
-                        "height": 0.1
-                    }
-                },
-                "collision:Collidable": {
-                    "size": "#self:drawable:true_size",
-                    "collision_type": "trigger"
-                },
-                "inventory:Pickable": {
-                    "item_name": "heal",
-                    "artefact_template": "heal_item",
-                    "item": {
-                        "on_use": [
-                            {
-                                "HealEvent": {
-                                    "entity": "@self",
-                                    "amount": 10000000
-                                }
-                            }
-                        ]
-                    }
-                }
+  "entities_template": [
+    {
+      "name": "heal_item",
+      "default_parameters": {},
+      "components": {
+        "moving:Position": {
+          "pos": {
+            "x": 0.7,
+            "y": -0.8
+          },
+          "z": 2
+        },
+        "ui:Drawable": {
+          "hook": "drawable"
+        },
+        "ui:AnimatedSprite": {
+          "animations": [
+            {
+              "name": "idle",
+              "texture": "assets/items/Large Tonic - RED - Spritesheet.png",
+              "frame_size": {
+                "x": 19.0,
+                "y": 37.0
+              },
+              "frame_pos": {
+                "x": 0.0,
+                "y": 0.0
+              },
+              "direction": {
+                "x": 1.0,
+                "y": 0.0
+              },
+              "sprite_size": {
+                "width": "4.0%",
+                "height": "4.0%"
+              },
+              "framerate": 10.0,
+              "nb_frames": 9,
+              "loop": true,
+              "rollback": true
             }
+          ],
+          "default_animation": "idle"
+        },
+        "collision:Collidable": {
+          "size": "#self:drawable:true_size",
+          "collision_type": "trigger"
+        },
+        "projectile:Temporal": {
+          "lifetime": 5.0
+        },
+        "inventory:Pickable": {
+          "item_name": "heal",
+          "artefact_template": "heal_item",
+          "item": {
+            "on_use": [
+              {
+                "HealEvent": {
+                  "entity": "@self",
+                  "amount": 10000000
+                }
+              }
+            ]
+          }
         }
-    ],
-    "scenes": []
+      }
+    }
+  ]
 }
