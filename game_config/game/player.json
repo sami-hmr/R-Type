@@ -1,8 +1,7 @@
 {
-  // player charge bounce
   "entities_template": [
     {
-      "name": "player_cb",
+      "name": "player_tmp",
       "components": {
         "moving:Position": {
           "pos": {
@@ -36,6 +35,11 @@
           "scale_damage": true,
           "attack_animation": "attack",
           "charge_indicator": "bounce_bullet_charge"
+        },
+        "moving:IdStorage": {
+          "id": "@self",
+          "hook": "player_id",
+          "global_hook": true
         },
         "ui:AnimatedSprite": {
           "animations": [
@@ -118,8 +122,7 @@
           "direction": {
             "x": 1.0,
             "y": 0.0
-          },
-          "plane": true
+          }
         },
         "collision:Collidable": {
           "size": {
@@ -158,8 +161,7 @@
       }
     },
     {
-      // player beam
-      "name": "player_beam",
+      "name": "player_b",
       "components": {
         "moving:Position": {
           "pos": {
@@ -188,6 +190,11 @@
           "reload_time": 2.0,
           "cooldown": 0.8,
           "attack_animation": "beam_start"
+        },
+        "moving:IdStorage": {
+          "id": "@self",
+          "hook": "player_id",
+          "global_hook": true
         },
         "ui:AnimatedSprite": {
           "animations": [
@@ -270,8 +277,7 @@
           "direction": {
             "x": 1.0,
             "y": 0.0
-          },
-          "plane": true
+          }
         },
         "collision:Collidable": {
           "size": {
@@ -346,12 +352,17 @@
         //   "charge_indicator": "beam_start"
         // },
         "weapon:BasicWeapon": {
-          "bullet_type": "bounce_bullet_spread_3",
+          "bullet_type": "crossed_3_multiple_bullet",
           "magazine_size": 6,
           "magazine_nb": 100,
           "reload_time": 2.0,
           "cooldown": 0.5,
           "attack_animation": "attack"
+        },
+        "moving:IdStorage": {
+          "id": "@self",
+          "hook": "player_id",
+          "global_hook": true
         },
         "ui:AnimatedSprite": {
           "animations": [
@@ -371,8 +382,8 @@
                 "y": 0.0
               },
               "sprite_size": {
-                "width": "20.0%",
-                "height": "20.0%"
+                "width": "15.0%",
+                "height": "15.0%"
               },
               "framerate": 10.0,
               "nb_frames": 7,
@@ -395,8 +406,8 @@
                 "y": 0.0
               },
               "sprite_size": {
-                "width": "20.0%",
-                "height": "20.0%"
+                "width": "15.0%",
+                "height": "15.0%"
               },
               "framerate": 10.0,
               "nb_frames": 4,
@@ -470,6 +481,7 @@
             "a": 255
           },
           "outline": true
+          
         }
       }
     }

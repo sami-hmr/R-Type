@@ -1,10 +1,23 @@
 {
   "scenes": [
     {
-      "name": "level_1",
+      "name": "level_7",
       "state": "disabled",
       "plugins": [],
       "entities": [
+        {
+          "moving:Position": {
+            "pos": {
+              "x": 2.5,
+              "y": 0.0
+            }
+          },
+          "mob:Spawner": {
+            "entity_template": "wave_1_level_7",
+            "spawn_interval": 1.0,
+            "max_spawns": 1
+          }
+        },
         {
           "moving:Position": {
             "pos": {
@@ -13,7 +26,7 @@
             }
           },
           "mob:Spawner": {
-            "entity_template": "enemy_wave_1",
+            "entity_template": "enemy_1_level_7",
             "spawn_interval": 3.0,
             "max_spawns": 5
           }
@@ -26,7 +39,7 @@
             }
           },
           "mob:Spawner": {
-            "entity_template": "enemy_wave_1",
+            "entity_template": "enemy_1_level_7",
             "spawn_interval": 3.5,
             "max_spawns": 5
           }
@@ -35,12 +48,12 @@
           "moving:Position": {
             "pos": {
               "x": 2.5,
-              "y": 0.0
+              "y": -0.8
             }
           },
           "mob:Spawner": {
-            "entity_template": "wave_end_level_1",
-            "spawn_interval": 15.0,
+            "entity_template": "enemy_ship_1",
+            "spawn_interval": 5.0,
             "max_spawns": 1
           }
         }

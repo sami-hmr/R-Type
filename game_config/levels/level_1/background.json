@@ -1,7 +1,7 @@
 {
   "scenes": [
     {
-      "name": "game",
+      "name": "level_1",
       "state": "disabled",
       "plugins": [],
       "entities": [
@@ -10,31 +10,28 @@
           "ui:Background": {
             "layers": [
               {
-                "path": "assets/backgrounds/skies/Sky_sky.png"
+                "path": "assets/backgrounds/assetpack/parallax/Iceberg/1-Sky.png"
               },
               {
-                "path": "assets/backgrounds/skies/sky_moon.png"
+                "path": "assets/backgrounds/assetpack/parallax/Iceberg/0-water.png"
               },
               {
-                "path": "assets/backgrounds/skies/Sky_back_mountain.png"
+                "path": "assets/backgrounds/assetpack/parallax/Iceberg/2-cloud.png"
               },
               {
-                "path": "assets/backgrounds/skies/sky_front_mountain.png"
+                "path": "assets/backgrounds/assetpack/parallax/Iceberg/3-mountains.png"
+              },
+              // {
+              //   "path": "assets/backgrounds/assetpack/parallax/Iceberg/5-iceberg.png"
+              // },
+              // {
+              //   "path": "assets/backgrounds/assetpack/parallax/Iceberg/4-icebergreflex.png"
+              // },
+              {
+                "path": "assets/backgrounds/assetpack/parallax/Iceberg/2-2-water reflex back.png"
               },
               {
-                "path": "assets/backgrounds/skies/sky_clouds.png"
-              },
-              {
-                "path": "assets/backgrounds/skies/Sky_cloud_single.png"
-              },
-              {
-                "path": "assets/backgrounds/skies/Sky_front_cloud.png"
-              },
-              {
-                "path": "assets/backgrounds/skies/sky_cloud_floor.png"
-              },
-              {
-                "path": "assets/backgrounds/skies/sky_cloud_floor_2.png"
+                "path": "assets/backgrounds/assetpack/parallax/Iceberg/2-1-water reflex.png"
               }
             ],
             "render_type": "STRETCH",
