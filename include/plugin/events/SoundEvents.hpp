@@ -41,11 +41,11 @@ struct StopSoundEvent
 struct StopAllSoundsEvent
 {
   StopAllSoundsEvent() {};
-  StopAllSoundsEvent(Registry&,
-                     JsonObject const&,
-                     std::optional<Ecs::Entity>)
+
+  StopAllSoundsEvent(Registry&, JsonObject const&, std::optional<Ecs::Entity>)
   {
   }
+
   CHANGE_ENTITY_DEFAULT
 
   EMPTY_BYTE_CONSTRUCTOR(StopAllSoundsEvent)

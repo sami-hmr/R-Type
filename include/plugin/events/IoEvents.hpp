@@ -282,8 +282,8 @@ struct InputFocusEvent
   InputFocusEvent(Registry& r,
                   JsonObject const& obj,
                   std::optional<Ecs::Entity> entity)
-      : entity(get_value_copy<Ecs::Entity>(r, obj, "entity", entity).value()) {
-      };
+      : entity(
+            get_value_copy<Ecs::Entity>(r, obj, "entity", entity).value()) {};
 
   CHANGE_ENTITY(result.entity = map.at(entity);)
 
