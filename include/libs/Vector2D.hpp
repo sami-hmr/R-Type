@@ -11,6 +11,7 @@
 #include <cmath>
 #include <iostream>
 #include <ostream>
+#include <numbers>
 
 #include "ByteParser/ByteParser.hpp"
 #include "Json/JsonParser.hpp"

@@ -37,7 +37,7 @@ struct RaycastingCamera
   DEFAULT_BYTE_CONSTRUCTOR(
       RaycastingCamera,
       ([](double angle, double fov, int nb_rays)
-       { return (RaycastingCamera) {angle, fov, nb_rays}; }),
+       { return RaycastingCamera(angle, fov, nb_rays); }),
       parseByte<double>(),
       parseByte<double>(),
       parseByte<int>())
