@@ -91,7 +91,9 @@ InventoryPlugin::InventoryPlugin(Registry& r, EventManager& em, EntityLoader& l)
         *_registry.get().get_components<Pickable>()[event.to_pick];
 
     if (pickable.delta + pick_delta
-        < std::chrono::high_resolution_clock::now().time_since_epoch().count())
+        < static_cast<std::size_t>(std::chrono::high_resolution_clock::now()
+                                       .time_since_epoch()
+                                       .count()))
     {
       this->pick_item(inventory, pickable, event.to_pick);
     }
@@ -157,7 +159,7 @@ void InventoryPlugin::init_inventory(Ecs::Entity const& entity,
       return;
     }
   }
-  if (inventory_slots.size() > *max_items) {
+  if (inventory_slots.size() > static_cast<std::size_t>(*max_items)) {
     inventory_slots.erase(inventory_slots.begin() + *max_items,
                           inventory_slots.end());
   }
