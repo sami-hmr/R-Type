@@ -1,6 +1,7 @@
 #include <cstdint>
 #include <format>
 #include <functional>
+#include <iostream>
 #include <vector>
 
 #include "Controller.hpp"
@@ -45,6 +46,7 @@ Controller::Controller(Registry& r, EventManager& em, EntityLoader& l)
       this->_remaped_key.reset();
       return PREVENT_DEFAULT;
     }
+    std::cout << "fireeeee" << std::endl;
     for (auto const& [key, active] : event.key_pressed) {
       if (active) {
         this->handle_key_change(key, true);
@@ -236,8 +238,7 @@ void Controller::init_controller(Ecs::Entity const& entity,
   this->init_event_map(entity, bindings, result);
 
   this->_registry.get().add_component<Controllable>(entity, std::move(result));
-  std::cout << "CREATED COMPONENT Controllable for Entity: " << entity
-            << "\n";
+  std::cout << "CREATED COMPONENT Controllable for Entity: " << entity << "\n";
 }
 
 void Controller::handle_key_change(Key key, bool is_pressed)
