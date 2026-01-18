@@ -162,22 +162,6 @@
                     "entity": "@self"
                   }
                 }
-              },
-              {
-                "description": "charge shoot",
-                "key": "SPACE",
-                "pressed": {
-                  "name": "StartChargeWeapon",
-                  "params": {
-                    "entity": "@self"
-                  }
-                },
-                "released": {
-                  "name": "ReleaseChargeWeapon",
-                  "params": {
-                    "entity": "@self"
-                  }
-                }
               }
             ]
           }
@@ -218,7 +202,7 @@
           "template": "text",
           "parameters": {
             "text_size": {},
-            "text": "global:player_score:score_str",
+            "text": "#global:player_score:score_str",
             "z": 90000
           }
         }

@@ -26,20 +26,12 @@ void Score::on_death(Registry& r, const DeathEvent& event)
 
   if (!r.has_component<ScoreManager>(event.killer))
   {
-    if (event.killer == 3) {
-      std::cout << "killer has no ScoreManager component, no score awarded." << std::endl;
-    }
     return;
   }
   if (!r.has_component<ScoreManager>(event.entity)) {
-    if (event.killer == 3) {
-      std::cout << "entity has no ScoreManager component, no score to give." << std::endl;
-    }
     return;
   }
 
-  std::cout << "Entity " << event.entity << " was killed by " << event.killer
-            << std::endl;
   auto& scores = r.get_components<ScoreManager>();
   if (event.killer < scores.size() && scores[event.killer].has_value()
       && event.entity < scores.size() && scores[event.entity].has_value())
@@ -51,8 +43,6 @@ void Score::on_death(Registry& r, const DeathEvent& event)
         r.get_component_key<ScoreManager>(),
         scores[event.killer]->to_bytes());
   }
-  std::cout << "Entity " << event.killer << " scored! New score: "
-            << scores[event.killer]->score << std::endl;
 }
 
 void Score::init_score_manager(Ecs::Entity& e, const JsonObject& obj)
