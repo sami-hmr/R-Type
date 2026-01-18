@@ -19,8 +19,9 @@
 #include "ecs/Scenes.hpp"
 #include "plugin/libLoaders/LDLoader.hpp"
 #ifdef _WIN32
-#  include "plugin/libLoaders/WindowsLoader.hpp"
 #  include <windows.h>
+
+#  include "plugin/libLoaders/WindowsLoader.hpp"
 #endif
 
 static std::string get_executable_dir()
@@ -39,8 +40,9 @@ static std::string get_executable_dir()
     path[len] = '\0';
     std::string exe_path(path);
     size_t last_slash = exe_path.find_last_of('/');
-    return (last_slash != std::string::npos) ? exe_path.substr(0, last_slash + 1)
-                                             : "";
+    return (last_slash != std::string::npos)
+        ? exe_path.substr(0, last_slash + 1)
+        : "";
   }
   return "";
 #endif

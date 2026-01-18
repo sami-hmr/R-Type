@@ -37,8 +37,9 @@ static std::string get_executable_dir()
     path[len] = '\0';
     std::string exe_path(path);
     size_t last_slash = exe_path.find_last_of('/');
-    return (last_slash != std::string::npos) ? exe_path.substr(0, last_slash + 1)
-                                             : "";
+    return (last_slash != std::string::npos)
+        ? exe_path.substr(0, last_slash + 1)
+        : "";
   }
   return "";
 #endif
