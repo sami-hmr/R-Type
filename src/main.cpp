@@ -37,8 +37,9 @@ static std::string get_executable_dir()
     path[len] = '\0';
     std::string exe_path(path);
     size_t last_slash = exe_path.find_last_of('/');
-    return (last_slash != std::string::npos) ? exe_path.substr(0, last_slash + 1)
-                                             : "";
+    return (last_slash != std::string::npos)
+        ? exe_path.substr(0, last_slash + 1)
+        : "";
   }
   return "";
 #endif
@@ -110,6 +111,13 @@ static int true_main(Registry& r,
 
   r.init_scene_management();
 
+  if (argv.empty()) {
+    std::cerr << "Error: No configuration directory provided\n";
+    std::cerr << "Usage: r-type <config_directory> [additional_configs...]\n";
+    std::cerr << "Example: r-type client_config\n";
+    return 1;
+  }
+
   for (auto const& i : argv) {
     e.load(i);
   }
@@ -118,9 +126,9 @@ static int true_main(Registry& r,
 
   auto frame_duration =
       std::chrono::microseconds(1000000 / 60);  // ~33333 microseconds
-  if (argv[0].contains("server")) {
+  if (!argv.empty() && argv[0].contains("server")) {
     frame_duration =
-        std::chrono::microseconds(1000000 / 40);  // ~33333 microseconds
+        std::chrono::microseconds(1000000 / 40);  // ~25000 microseconds
   }
   auto next_frame_time = std::chrono::duration_cast<std::chrono::microseconds>(
       r.clock().now().time_since_epoch());
