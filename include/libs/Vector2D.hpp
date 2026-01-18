@@ -204,7 +204,7 @@ public:
    */
   void rotate_degrees(double angle)
   {
-    double rad = angle * M_PI / 180.0;
+    double rad = angle * std::numbers::pi / 180.0;
     double cos_angle = std::cos(rad);
     double sin_angle = std::sin(rad);
     double new_x = (this->x * cos_angle) - (this->y * sin_angle);

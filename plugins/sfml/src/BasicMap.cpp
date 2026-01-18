@@ -17,7 +17,7 @@
 #include "plugin/components/RaycastingCamera.hpp"
 #include "plugin/events/RaycastingCameraEvents.hpp"
 
-#define TO_RAD(degrees) ((degrees) * M_PI / 180.0)
+#define TO_RAD(degrees) ((degrees) * std::numbers::pi / 180.0)
 
 namespace
 {

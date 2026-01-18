@@ -338,24 +338,9 @@
             "y": 0.0
           }
         },
-        // "weapon:ChargeWeapon": {
-        //   "bullet_type": "beam_segment",
-        //   "offset_x": 1.2,
-        //   "offset_y": 0.0,
-        //   "magazine_size": 10,
-        //   "magazine_nb": 3,
-        //   "reload_time": 2.0,
-        //   "cooldown": 0.5,
-        //   "charge_time": 2.0,
-        //   "max_scale": 3.0,
-        //   "min_charge_threshold": 0.3,
-        //   "scale_damage": true,
-        //   "attack_animation": "attack",
-        //   "charge_indicator": "beam_start"
-        // },
         "inventory:Inventory": {
           "show": true,
-          "max_items": 4,
+          "max_items": 5,
           "inventory": [
             {
               "item_name": "heal",
@@ -374,19 +359,6 @@
             }
           ]
         },
-        // "weapon:ChargeWeapon": {
-        //   "bullet_type": "beam_segment",
-        //   "magazine_size": 5,
-        //   "magazine_nb": 3,
-        //   "reload_time": 3.0,
-        //   "cooldown": 0.3,
-        //   "charge_time": 1.5,
-        //   "max_scale": 3.0,
-        //   "min_charge_threshold": 0.2,
-        //   "scale_damage": true,
-        //   "attack_animation": "attack",
-        //   "charge_indicator": "beam_start"
-        // },
         "weapon:BasicWeapon": {
           "bullet_type": "fire_ball_bullet",
           "magazine_size": 6,

@@ -21,6 +21,10 @@
         {
           "name": "weapon",
           "config": {}
+        },
+        {
+          "name": "inventory",
+          "config": {}
         }
       ],
       "entities": [
@@ -345,6 +349,23 @@
               //     "params": {}
               //   }
               // }
+            ]
+          }
+        },
+        {
+          "actions:ActionTrigger": {
+            "trigger": {
+              "type": "KeyPressed",
+              "params": {
+                "key": "E"
+              }
+            },
+            "to_emit": [
+              {
+                "GenerateInventoryScene": {
+                  "entity": "%global:player_id_client:id"
+                }
+              }
             ]
           }
         },
