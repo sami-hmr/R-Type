@@ -3,6 +3,9 @@
     {
       "name": "basic_bullet",
       "components": {
+        "moving:IdStorage": {
+          "id": "#global:player_id_client:id"
+        },
         "ui:Drawable": {},
         "ui:AnimatedSprite": {
           "animations": [

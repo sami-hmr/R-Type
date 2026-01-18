@@ -11,6 +11,10 @@
           }
         },
         "ui:Drawable": {},
+        "score:ScoreManager": {
+          "points_to_give": 1,
+          "score": 0
+        },
         "ui:AnimatedSprite": {
           "animations": [
             {

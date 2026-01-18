@@ -21,6 +21,7 @@
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Speed.hpp"
 #include "plugin/events/CollisionEvent.hpp"
+#include "plugin/events/SpeedEvents.hpp"
 
 Moving::Moving(Registry& r, EventManager& em, EntityLoader& l)
     : APlugin("moving",
@@ -58,6 +59,24 @@ Moving::Moving(Registry& r, EventManager& em, EntityLoader& l)
         std::max(-1.0, std::min(comp->direction.x + event.x_axis, 1.0));
     comp->direction.y =
         std::max(-1.0, std::min(comp->direction.y + event.y_axis, 1.0));
+  })
+  SUBSCRIBE_EVENT(SpeedModifierEvent, {
+    if (!this->_registry.get().has_component<Direction>(event.target)) {
+      return false;
+    }
+    auto& comp =
+        this->_registry.get().get_components<Speed>()[event.target];
+    comp->speed.x *= event.multiplier;
+    comp->speed.y *= event.multiplier;
+  })
+  SUBSCRIBE_EVENT(SpeedSwitcherEvent, {
+    if (!this->_registry.get().has_component<Direction>(event.target)) {
+      return false;
+    }
+    auto& comp =
+        this->_registry.get().get_components<Speed>()[event.target];
+    comp->speed.x = event.new_speed;
+    comp->speed.y = event.new_speed;
   })
 }
 

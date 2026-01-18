@@ -31,6 +31,12 @@
               "y": 0.0
             }
           },
+          "score:ScoreManager": {
+            "hook": "player_score",
+            "global_hook": true,
+            "points_to_give": 1,
+            "score": 0
+          },
           "ui:Camera": {
             "size": {
               "width": 1.0,
@@ -54,6 +60,30 @@
           },
           "controller:Controllable": {
             "bindings": [
+              {
+                "description": "drop slot 0",
+                "key": "I",
+                "pressed": {
+                  "name": "DropItem",
+                  "params": {
+                    "consumer": "@self",
+                    "slot_item": 0,
+                    "nb_to_use": 1
+                  }
+                }
+              },
+                            {
+                "description": "use slot 0",
+                "key": "O",
+                "pressed": {
+                  "name": "UseItem",
+                  "params": {
+                    "consumer": "@self",
+                    "slot_item": 0,
+                    "nb_to_use": 1
+                  }
+                }
+              },
               {
                 "description": "shake cam",
                 "key": "H",
@@ -181,7 +211,27 @@
                   "main": true
                 }
               }
+              // {
+              //   "description": "charge shoot",
+              //   "key": "SPACE",
+              //   "pressed": {
+              //     "name": "StartChargeWeapon",
+              //     "params": {}
+              //   },
+              //   "released": {
+              //     "name": "ReleaseChargeWeapon",
+              //     "params": {}
+              //   }
+              // }
             ]
+          }
+        },
+        {
+          "template": "text",
+          "parameters": {
+            "text_size": {},
+            "text": "#global:player_score:score_str",
+            "z": 90000
           }
         }
       ]

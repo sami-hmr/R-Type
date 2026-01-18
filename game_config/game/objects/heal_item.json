@@ -1,0 +1,46 @@
+{
+    "entities_template": [
+        {
+            "name": "heal_item",
+            "default_parameters": {},
+            "components": {
+                "moving:Position": {
+                    "pos": {
+                        "x": 0.7,
+                        "y": -0.8
+                    },
+                    "z": 2
+                },
+                "ui:Drawable": {
+                    "hook": "drawable"
+                },
+                "ui:Sprite": {
+                    "texture": "assets/enemy.png",
+                    "size": {
+                        "width": 0.1,
+                        "height": 0.1
+                    }
+                },
+                "collision:Collidable": {
+                    "size": "#self:drawable:true_size",
+                    "collision_type": "trigger"
+                },
+                "inventory:Pickable": {
+                    "item_name": "heal",
+                    "artefact_template": "heal_item",
+                    "item": {
+                        "on_use": [
+                            {
+                                "HealEvent": {
+                                    "entity": "@self",
+                                    "amount": 10000000
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    ],
+    "scenes": []
+}

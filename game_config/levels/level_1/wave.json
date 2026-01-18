@@ -36,23 +36,30 @@
             "entity_template": "enemy_straight_1",
             "count": 4,
             "tracked": true,
-            "components_inheritance": ["scene"],
+            "components_inheritance": [
+              "scene"
+            ],
             "pattern": {
               "type": "line",
-              "origin": { "x": 1.0, "y": 0.0 },
+              "origin": {
+                "x": 1.0,
+                "y": 0.0
+              },
               "params": {
                 "spacing": 0.7
               }
             },
-            "on_end": [{
-              "event_name": "SceneChangeEvent",
-              "params": {
-                "target_scene": "level_3",
-                "state": "active",
-                "reason": "User completed wave",
-                "force": false
+            "on_end": [
+              {
+                "event_name": "SceneChangeEvent",
+                "params": {
+                  "target_scene": "level_3",
+                  "state": "active",
+                  "reason": "User completed wave",
+                  "force": false
+                }
               }
-            }]
+            ]
           },
           "wave:Formation": {
             "strength": 0.1
