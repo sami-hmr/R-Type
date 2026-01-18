@@ -14,6 +14,7 @@
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/Hooks.hpp"
+#include "plugin/components/Collidable.hpp"
 #include "plugin/components/Drawable.hpp"
 #include "plugin/components/Health.hpp"
 #include "plugin/components/Position.hpp"
@@ -89,6 +90,7 @@ void AnimatedSprite::on_death(Registry& r,
     em.emit<PlayAnimationEvent>(
         "death", event.entity, animdata.framerate, false, false);
     r.remove_component<Speed>(event.entity);
+    r.remove_component<Collidable>(event.entity);
   } else {
     em.emit<DeleteEntity>(event.entity);
   }

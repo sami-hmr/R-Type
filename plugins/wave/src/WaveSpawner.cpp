@@ -11,10 +11,8 @@
 #include "plugin/components/WaveTag.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
 
-void WaveManager::spawn_wave_entities(Ecs::Entity wave_entity)
+void WaveManager::spawn_wave_entities(Ecs::Entity wave_entity, std::vector<std::function<void()>> &event_to_emit)
 {
-  std::vector<std::function<void()>> event_to_emit;
-
   auto& wave =
       this->_registry.get().get_components<Wave>()[wave_entity].value();
 
@@ -88,9 +86,6 @@ void WaveManager::spawn_wave_entities(Ecs::Entity wave_entity)
     event_to_emit.emplace_back([this, wave, entity_additionals]() {this->_event_manager.get().emit<LoadEntityTemplate>(wave.entity_template,
                                                         entity_additionals);});
   }
-  for (auto const& fn : event_to_emit) {
-    fn();
-  }
   if (!wave.tracked) {
     this->_event_manager.get().emit<DeleteEntity>(wave_entity);
   }
@@ -98,6 +93,8 @@ void WaveManager::spawn_wave_entities(Ecs::Entity wave_entity)
 
 void WaveManager::wave_spawn_system(Registry& r)
 {
+  std::vector<std::function<void()>> event_to_emit;
+
   for (auto&& [entity, wave] : ZipperIndex<Wave>(r)) {
     if (r.is_entity_dying(entity)) {
       continue;
@@ -110,6 +107,9 @@ void WaveManager::wave_spawn_system(Registry& r)
     this->_event_manager.get().emit<ComponentBuilder>(
         entity, r.get_component_key<Wave>(), wave.to_bytes());
 
-    spawn_wave_entities(entity);
+    spawn_wave_entities(entity, event_to_emit);
+  }
+  for (auto const& fn : event_to_emit) {
+    fn();
   }
 }
