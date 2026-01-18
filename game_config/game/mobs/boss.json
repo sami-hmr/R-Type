@@ -11,7 +11,7 @@
       "components": {
         "template": "enemy",
         "parameters": {
-          "idle_texture": "assets/r-type/Arcade - R-Type - Enemies - Dobkeratops.png",
+          "idle_texture": "assets/R-type/Arcade - R-Type - Enemies - Dobkeratops.png",
           "idle_frame_size": { "x": 180.0, "y": 213.0 },
           "idle_frame_pos": { "x": 5.0, "y": 0.0 },
           "idle_direction": { "x": 0.0, "y": 1.0 },

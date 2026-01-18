@@ -433,7 +433,7 @@
       "components": {
         "template": "enemy",
         "parameters": {
-          "idle_texture": "assets/r-type/SNES - Super R-Type - Player - Force _ Pit _ Beam.png",
+          "idle_texture": "assets/R-type/SNES - Super R-Type - Player - Force _ Pit _ Beam.png",
           "idle_frame_size": { "x": 22.0, "y": 17.0 },
           "idle_frame_pos": { "x": 10.0, "y": 190.0 },
           "idle_direction": { "x": 1.0, "y": 0.0 },

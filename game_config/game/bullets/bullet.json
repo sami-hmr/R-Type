@@ -303,7 +303,7 @@
     {
       "name": "fire_ball_bullet",
       "default_parameters": {
-        "damage_amount": 50,
+        "damage_amount": 5,
         "speed": { "x": 1.5, "y": 1.5 }
       },
       "components": {
