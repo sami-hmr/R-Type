@@ -1,21 +1,10 @@
-/*
-** EPITECH PROJECT, 2025
-** R-Type
-** File description:
-** DamageEvent
-*/
-
 #pragma once
 
-#include <cstdint>
-#include <map>
 #include <optional>
 #include <string>
-#include <utility>
 
 #include "ByteParser/ByteParser.hpp"
 #include "EventMacros.hpp"
-#include "ParserUtils.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"

@@ -332,6 +332,26 @@
             "y": 0.0
           }
         },
+        "inventory:Inventory": {
+          "max_items": 4,
+          "inventory": [
+            {
+              "item_name": "heal",
+              "nb": 2,
+              "item": {
+                "on_use": [
+                  {
+                    "HealEvent": {
+                      "entity": "@self",
+                      "amount": 10000000
+                    }
+                  }
+                ]
+              },
+              "artefact_template": "heal_item"
+            }
+          ]
+        },
         // "weapon:ChargeWeapon": {
         //   "bullet_type": "beam_segment",
         //   "magazine_size": 5,
@@ -346,7 +366,7 @@
         //   "charge_indicator": "beam_start"
         // },
         "weapon:BasicWeapon": {
-          "bullet_type": "bounce_bullet_spread_3",
+          "bullet_type": "bounce_3_multiple_bullet",
           "magazine_size": 6,
           "magazine_nb": 100,
           "reload_time": 2.0,

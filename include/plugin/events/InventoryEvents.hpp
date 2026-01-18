@@ -1,134 +1,95 @@
 #pragma once
 
+#include <optional>
 #include <utility>
 
 #include "ByteParser/ByteParser.hpp"
 #include "Json/JsonParser.hpp"
+#include "ecs/Entity.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Item.hpp"
-
-ByteArray item_to_byte(Item i)
-{
-  return pair_to_byte<std::string, JsonObject>(
-             i.object, string_to_byte, json_object_to_byte)
-      + type_to_byte(i.consumable) + type_to_byte(i.throwable);
-}
-
-Parser<Item> parseByteItem()
-{
-  return apply([](const std::pair<std::string, JsonObject>& p, bool c, bool t)
-               { return Item(p, c, t); },
-               parseBytePair(parseByteString(), parseByteJsonObject()),
-               parseByte<bool>(),
-               parseByte<bool>());
-}
+#include "plugin/events/EventMacros.hpp"
 
 struct PickUp
 {
-  Item item;
-  bool usable;
-  std::size_t nb_to_use;
-  Ecs::Entity consumer;
+  Ecs::Entity to_pick;
+  Ecs::Entity picker;
 
-  PickUp(Item item, bool usable, std::size_t nb_to_use, Ecs::Entity consumer)
-      : item(std::move(item))
-      , usable(usable)
-      , nb_to_use(nb_to_use)
-      , consumer(consumer)
+  PickUp(Ecs::Entity to_pick, Ecs::Entity picker)
+      : to_pick(to_pick)
+      , picker(picker)
   {
   }
 
   PickUp(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
-      : item(get_value_copy<Item>(r, e, "item", entity).value())
-      , usable(get_value_copy<bool>(r, e, "usable", entity).value())
-      , nb_to_use(
-            get_value_copy<std::size_t>(r, e, "nb_to_use", entity).value())
-      , consumer(static_cast<Ecs::Entity>(
-            get_value_copy<Ecs::Entity>(r, e, "consumer", entity).value()))
+      : to_pick(get_value_copy<Ecs::Entity>(r, e, "to_pick", entity).value())
+      , picker(get_value_copy<Ecs::Entity>(r, e, "picker", entity).value())
   {
   }
 
-  CHANGE_ENTITY_DEFAULT
+  CHANGE_ENTITY(result.to_pick = map.at(to_pick),
+                result.to_pick = map.at(to_pick))
 
-  DEFAULT_BYTE_CONSTRUCTOR(
-      PickUp,
-      ([](Item item, bool usable, std::size_t nb_to_use, Ecs::Entity consumer)
-       { return PickUp(std::move(item), usable, nb_to_use, consumer); }),
-      parseByteItem(),
-      parseByte<bool>(),
-      parseByte<std::size_t>(),
-      parseByte<Ecs::Entity>())
+  DEFAULT_BYTE_CONSTRUCTOR(PickUp,
+                           ([](Ecs::Entity to_pick, Ecs::Entity picker)
+                            { return PickUp(to_pick, picker); }),
+                           parseByte<Ecs::Entity>(),
+                           parseByte<Ecs::Entity>())
 
-  DEFAULT_SERIALIZE(item_to_byte(item),
-                    type_to_byte(usable),
-                    type_to_byte(nb_to_use),
-                    type_to_byte(consumer))
+  DEFAULT_SERIALIZE(type_to_byte(to_pick), type_to_byte(picker))
 };
 
 template<typename Type>
 struct ItemEvent
 {
-  std::uint8_t slot_item;
-  bool usable;
-  std::size_t nb_to_use;
   Ecs::Entity consumer;
+  std::uint8_t slot_item;
+  std::size_t nb_to_use;
 
-  ItemEvent(std::uint8_t slot_item,
-            bool usable,
-            std::size_t nb_to_use,
-            Ecs::Entity consumer)
-      : slot_item(slot_item)
-      , usable(usable)
+  ItemEvent(Ecs::Entity consumer, std::uint8_t slot_item, std::size_t nb_to_use)
+      : consumer(consumer)
+      , slot_item(slot_item)
       , nb_to_use(nb_to_use)
-      , consumer(consumer)
   {
   }
 
   ItemEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
-      : slot_item(
-            get_value_copy<std::uint8_t>(r, e, "slot_item", entity).value())
-      , usable(get_value_copy<bool>(r, e, "usable", entity).value())
-      , nb_to_use(
-            get_value_copy<std::size_t>(r, e, "nb_to_use", entity).value())
-      , consumer(static_cast<Ecs::Entity>(
+      : consumer(static_cast<Ecs::Entity>(
             get_value_copy<Ecs::Entity>(r, e, "consumer", entity).value()))
+      , slot_item(get_value_copy<int>(r, e, "slot_item", entity).value())
+      , nb_to_use(get_value_copy<int>(r, e, "nb_to_use", entity).value())
   {
   }
 
-  CHANGE_ENTITY_DEFAULT
+  CHANGE_ENTITY(result.consumer = map.at(consumer))
 
   DEFAULT_BYTE_CONSTRUCTOR(
       ItemEvent,
-      ([](std::uint8_t slot_item,
-          bool usable,
-          std::size_t nb_to_use,
-          Ecs::Entity consumer)
-       { return ItemEvent(slot_item, usable, nb_to_use, consumer); }),
+      ([](Ecs::Entity consumer, std::uint8_t slot_item, std::size_t nb_to_use)
+       { return ItemEvent(consumer, slot_item, nb_to_use); }),
+      parseByte<Ecs::Entity>(),
       parseByte<std::uint8_t>(),
-      parseByte<bool>(),
-      parseByte<std::size_t>(),
-      parseByte<Ecs::Entity>())
+      parseByte<std::size_t>())
 
-  DEFAULT_SERIALIZE(type_to_byte(slot_item),
-                    type_to_byte(usable),
-                    type_to_byte(nb_to_use),
-                    type_to_byte(consumer))
+  DEFAULT_SERIALIZE(type_to_byte(consumer),
+                    type_to_byte(slot_item),
+                    type_to_byte(nb_to_use))
 };
 
-struct ThrowItem
+struct Drop
 {
 };
 
-struct ConsumeItem
+struct Use
 {
 };
 
-struct RemoveItem
+struct Remove
 {
 };
 
-using Throw = ItemEvent<ThrowItem>;
-using Remove = ItemEvent<RemoveItem>;
-using Consume = ItemEvent<ConsumeItem>;
+using DropItem = ItemEvent<Drop>;
+using UseItem = ItemEvent<Use>;
+using RemoveItem = ItemEvent<Remove>;

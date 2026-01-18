@@ -1,29 +1,20 @@
-#include <iostream>
 #include <string>
 #include <unordered_map>
-#include <variant>
 
 #include "plugin/components/AnimatedSprite.hpp"
 
-#include "Json/JsonParser.hpp"
 #include "NetworkShared.hpp"
 #include "UI.hpp"
 #include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
-#include "ecs/Scenes.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Collidable.hpp"
 #include "plugin/components/Drawable.hpp"
-#include "plugin/components/Health.hpp"
-#include "plugin/components/Position.hpp"
 #include "plugin/components/Speed.hpp"
 #include "plugin/components/Text.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
-#include "plugin/events/LoggerEvent.hpp"
-
-static const double deux = 2.0;
 
 void AnimatedSprite::update_anim(
     Registry& /*r*/,

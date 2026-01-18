@@ -28,8 +28,11 @@ private:
   void init_interaction_zone(Ecs::Entity const& entity,
                              JsonObject const& obj);
 
+  void init_interaction_borders(Ecs::Entity const& entity,
+                                           JsonObject const& obj);
   void collision_system(Registry& r);
   void interaction_zone_system(Registry& r);
+  void interaction_borders_system(Registry& r);
   void on_collision(const CollisionEvent& c);
 
   std::unique_ptr<ICollisionAlgorithm> _collision_algo;
