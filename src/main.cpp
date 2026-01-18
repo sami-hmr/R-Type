@@ -17,6 +17,33 @@
 #include "plugin/events/ShutdownEvent.hpp"
 #include "plugin/libLoaders/ILibLoader.hpp"
 
+#ifdef _WIN32
+#  include <windows.h>
+#endif
+
+static std::string get_executable_dir()
+{
+#ifdef _WIN32
+  char path[MAX_PATH];
+  GetModuleFileNameA(NULL, path, MAX_PATH);
+  std::string exe_path(path);
+  size_t last_slash = exe_path.find_last_of("\\/");
+  return (last_slash != std::string::npos) ? exe_path.substr(0, last_slash + 1)
+                                           : "";
+#else
+  char path[1024];
+  ssize_t len = readlink("/proc/self/exe", path, sizeof(path) - 1);
+  if (len != -1) {
+    path[len] = '\0';
+    std::string exe_path(path);
+    size_t last_slash = exe_path.find_last_of('/');
+    return (last_slash != std::string::npos) ? exe_path.substr(0, last_slash + 1)
+                                             : "";
+  }
+  return "";
+#endif
+}
+
 // exists to take controle over destroying order of Registry and EntityLoader
 static int true_main(Registry& r,
                      EventManager& em,
@@ -133,9 +160,9 @@ int main(int argc, char* argv[])
   e.emplace(*r, *em);
 
 #ifdef RTYPE_EPITECH_CLIENT
-  int result = true_main(*r, *em, *e, {"client_config"});
+  int result = true_main(*r, *em, *e, {get_executable_dir() + "client_config"});
 #elif RTYPE_EPITECH_SERVER
-  int result = true_main(*r, *em, *e, {"server_config"});
+  int result = true_main(*r, *em, *e, {get_executable_dir() + "server_config"});
 #else
   int result =
       true_main(*r, *em, *e, std::vector<std::string>(argv + 1, argv + argc));
