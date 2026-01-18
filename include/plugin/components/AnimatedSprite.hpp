@@ -204,6 +204,14 @@ public:
                    EventManager& em,
                    std::chrono::high_resolution_clock::time_point now,
                    Ecs::Entity entity);
+
+  void update_size(Vector2D size)
+  {
+    for (auto& i : animations) {
+      i.second.sprite_size = size;
+    }
+  }
+
   static void on_death(Registry& r, EventManager& em, const DeathEvent& event);
   static void on_animation_end(Registry& r,
                                EventManager& em,

@@ -185,25 +185,12 @@
                   "params": {
                     "entity": "@self"
                   }
+                },
+                "released": {
+                  "name": "ReleaseChargeWeapon",
+                  "params": {}
                 }
               }
-              // ,
-              // {
-              //   "description": "charge shoot",
-              //   "key": "SPACE",
-              //   "pressed": {
-              //     "name": "StartChargeWeapon",
-              //     "params": {
-              //       "entity": "@self"
-              //     }
-              //   },
-              //   "released": {
-              //     "name": "ReleaseChargeWeapon",
-              //     "params": {
-              //       "entity": "@self"
-              //     }
-              //   }
-              // }
             ]
           }
         },

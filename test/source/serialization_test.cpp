@@ -462,6 +462,7 @@ TEST_CASE("Serialization - Text to_bytes", "[serialization]")
   Text text("assets/font.ttf",
             Vector2D {1.0, 1.0},
             "Hello",
+            "",
             WHITE,
             BLACK,
             true,
@@ -478,6 +479,7 @@ TEST_CASE("Serialization - Text round-trip", "[serialization]")
   Text original("assets/roboto.ttf",
                 Vector2D {2.0, 2.5},
                 "Test Message",
+                "",
                 WHITE,
                 BLACK,
                 false,
@@ -503,7 +505,7 @@ TEST_CASE("Serialization - Text round-trip", "[serialization]")
 
 TEST_CASE("Serialization - Text with empty strings", "[serialization]")
 {
-  Text original("", Vector2D {1.0, 1.0}, "", WHITE, BLACK, false, 1.0f);
+  Text original("", Vector2D {1.0, 1.0}, "", "", WHITE, BLACK, false, 1.0f);
   ByteArray bytes = original.to_bytes();
   Text deserialized(bytes);
 
@@ -525,7 +527,7 @@ TEST_CASE("Serialization - Text with long content", "[serialization]")
 {
   std::string long_text(1000, 'A');
   Text original(
-      "font.ttf", Vector2D {1.0, 1.0}, long_text, WHITE, BLACK, true, 1.0f);
+      "font.ttf", Vector2D {1.0, 1.0}, long_text, "", WHITE, BLACK, true, 1.0f);
   ByteArray bytes = original.to_bytes();
   Text deserialized(bytes);
 
@@ -548,6 +550,7 @@ TEST_CASE("Serialization - Text with special characters", "[serialization]")
   Text original("font.ttf",
                 Vector2D {1.0, 1.0},
                 "Hello\nWorld\t!",
+                "",
                 WHITE,
                 BLACK,
                 true,
@@ -574,6 +577,7 @@ TEST_CASE("Serialization - Text with unicode-like characters",
   Text original("font.ttf",
                 Vector2D {1.5, 1.5},
                 "Test: !@#$%^&*()",
+                "",
                 WHITE,
                 BLACK,
                 false,
@@ -596,8 +600,14 @@ TEST_CASE("Serialization - Text with unicode-like characters",
 
 TEST_CASE("Serialization - Text with only whitespace", "[serialization]")
 {
-  Text original(
-      "font.ttf", Vector2D {1.0, 1.0}, "   \t\n   ", WHITE, BLACK, true, 1.0f);
+  Text original("font.ttf",
+                Vector2D {1.0, 1.0},
+                "   \t\n   ",
+                "",
+                WHITE,
+                BLACK,
+                true,
+                1.0f);
   ByteArray bytes = original.to_bytes();
   Text deserialized(bytes);
 

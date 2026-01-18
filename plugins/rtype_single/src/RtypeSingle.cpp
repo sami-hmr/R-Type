@@ -75,6 +75,7 @@ RtypeSingle::RtypeSingle(Registry& r,
 
       LOGGER("rtype_single", LogLevel::INFO, "Transitioning to game scene");
       this->_event_manager.get().emit<SceneChangeEvent>("game", "", true);
+      this->_event_manager.get().emit<SceneChangeEvent>("level_1", "", false);
     } else {
       LOGGER("rtype_single",
              LogLevel::ERR,

@@ -30,9 +30,14 @@ struct Item
 
   Item(Registry& r, JsonObject const& e, Ecs::Entity entity)
   {
-    JsonArray const& on_use_array =
-        get_value_copy<JsonArray>(r, e, "on_use", entity).value_or({});
-    for (auto const& it : on_use_array) {
+    auto const& on_use_array =
+        get_value_copy<JsonArray>(r, e, "on_use", entity);
+    if (!on_use_array) {
+      LOGGER_EVTLESS(
+          "item", LogLevel::WARNING, "on_use invalid parsing json array");
+      return;
+    }
+    for (auto const& it : *on_use_array) {
       auto const* obj = std::get_if<JsonObject>(&it.value);
       if (obj == nullptr) {
         LOGGER_EVTLESS(
