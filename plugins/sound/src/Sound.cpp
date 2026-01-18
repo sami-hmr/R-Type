@@ -33,7 +33,11 @@ Sound::Sound(Registry& r, EventManager& em, EntityLoader& l)
                   { this->on_play_sound(this->_registry.get(), event); })
   SUBSCRIBE_EVENT(PlayMusicEvent,
                   { this->on_play_music(this->_registry.get(), event); })
+    SUBSCRIBE_EVENT(DeathEvent,
+                    { this->on_death(this->_registry.get(), this->_event_manager.get(), event); })
 }
+
+
 
 extern "C"
 {
