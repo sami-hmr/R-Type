@@ -29,12 +29,15 @@ InventoryPlugin::InventoryPlugin(Registry& r, EventManager& em, EntityLoader& l)
               r,
               em,
               l,
-              {"moving"},
+              {"moving", "life"},
               {COMP_INIT(Inventory, Inventory, init_inventory),
                COMP_INIT(Pickable, Pickable, init_pickable)})
 {
   REGISTER_COMPONENT(Inventory);
   REGISTER_COMPONENT(Pickable);
+
+  this->_registry.get().add_system([this](Registry&)
+                                   { this->update_ath_scenes(); });
 
   SUBSCRIBE_EVENT(DropItem, {
     if (!this->_registry.get().has_component<Inventory>(event.consumer)) {
@@ -97,6 +100,13 @@ InventoryPlugin::InventoryPlugin(Registry& r, EventManager& em, EntityLoader& l)
     {
       this->pick_item(inventory, pickable, event.to_pick);
     }
+  })
+
+  SUBSCRIBE_EVENT(GenerateInventoryScene, {
+    if (!this->_registry.get().has_component<Inventory>(event.entity)) {
+      return false;
+    }
+    this->generate_ath_scene(event);
   })
 }
 
@@ -165,6 +175,13 @@ void InventoryPlugin::init_inventory(Ecs::Entity const& entity,
   }
   this->_registry.get().emplace_component<Inventory>(
       entity, inventory_slots, *max_items);
+
+  auto const& show =
+      get_value<Inventory, bool>(this->_registry.get(), obj, entity, "show");
+  if (show && *show) {
+    this->_event_manager.get().emit<GenerateInventoryScene>(entity);
+    return;
+  }
 }
 
 void InventoryPlugin::init_pickable(Ecs::Entity const& entity,

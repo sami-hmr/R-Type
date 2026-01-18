@@ -333,7 +333,8 @@
           }
         },
         "inventory:Inventory": {
-          "max_items": 4,
+          "show": true,
+          "max_items": 10,
           "inventory": [
             {
               "item_name": "heal",

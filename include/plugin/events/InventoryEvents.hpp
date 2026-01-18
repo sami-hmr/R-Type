@@ -93,3 +93,29 @@ struct Remove
 using DropItem = ItemEvent<Drop>;
 using UseItem = ItemEvent<Use>;
 using RemoveItem = ItemEvent<Remove>;
+
+struct GenerateInventoryScene
+{
+  Ecs::Entity entity;
+
+  GenerateInventoryScene(Ecs::Entity entity)
+      : entity(entity)
+  {
+  }
+
+  GenerateInventoryScene(Registry& r,
+                         JsonObject const& e,
+                         std::optional<Ecs::Entity> entity)
+      : entity(get_value_copy<Ecs::Entity>(r, e, "entity", entity).value())
+  {
+  }
+
+  CHANGE_ENTITY(result.entity = map.at(entity))
+
+  DEFAULT_BYTE_CONSTRUCTOR(GenerateInventoryScene,
+                           ([](Ecs::Entity entity)
+                            { return GenerateInventoryScene(entity); }),
+                           parseByte<Ecs::Entity>())
+
+  DEFAULT_SERIALIZE(type_to_byte(entity))
+};

@@ -1,11 +1,15 @@
 #pragma once
 
+#include <unordered_map>
+#include <unordered_set>
+
 #include "Json/JsonParser.hpp"
 #include "ecs/Entity.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/components/Inventory.hpp"
 #include "plugin/components/Item.hpp"
+#include "plugin/events/InventoryEvents.hpp"
 
 class InventoryPlugin : public APlugin
 {
@@ -37,4 +41,9 @@ private:
                 std::uint8_t slot_item,
                 std::size_t nb_to_use);
   static const std::size_t pick_delta = 1000000000;
+
+  void generate_ath_scene(GenerateInventoryScene const&);
+  void delete_ath_scene(GenerateInventoryScene const&);
+  void update_ath_scenes();
+  std::unordered_set<Ecs::Entity> _active_ath;
 };
