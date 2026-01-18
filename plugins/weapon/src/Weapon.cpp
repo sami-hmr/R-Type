@@ -120,7 +120,8 @@ void Weapon::on_fire(Registry& r, const FireBullet& e)
 
     Position new_pos = pos;
     LoadEntityTemplate::Additional additional = {
-        {this->_registry.get().get_component_key<Position>(), new_pos.to_bytes()},
+        {this->_registry.get().get_component_key<Position>(),
+         new_pos.to_bytes()},
         {this->_registry.get().get_component_key<Direction>(),
          direction.to_bytes()},
         {this->_registry.get().get_component_key<Team>(), team.to_bytes()}};
@@ -404,14 +405,6 @@ void Weapon::charge_weapon_system(
       double scale_factor =
           0.1 + (weapon.current_charge_level * (weapon.max_scale - 0.1));
 
-      if (this->_registry.get().has_component<Position>(
-              weapon.charge_indicator_entity.value()))
-      {
-        auto& indicator_pos = *this->_registry.get().get_components<Position>()
-                                   [weapon.charge_indicator_entity.value()];
-        indicator_pos.pos = pos.pos;
-      }
-
       if (this->_registry.get().has_component<Sprite>(
               weapon.charge_indicator_entity.value()))
       {
@@ -420,6 +413,7 @@ void Weapon::charge_weapon_system(
         sprite.scale = weapon.charge_indicator_base_scale * scale_factor;
       }
 
+      Vector2D offset;
       if (this->_registry.get().has_component<AnimatedSprite>(
               weapon.charge_indicator_entity.value()))
       {
@@ -429,10 +423,18 @@ void Weapon::charge_weapon_system(
 
         animated_sprite.update_size(weapon.charge_indicator_base_scale
                                     * scale_factor);
+        offset += (weapon.charge_indicator_base_scale * scale_factor) / 2;
         this->_event_manager.get().emit<ComponentBuilder>(
             weapon.charge_indicator_entity.value(),
             this->_registry.get().get_component_key<AnimatedSprite>(),
             animated_sprite.to_bytes());
+      }
+      if (this->_registry.get().has_component<Position>(
+              weapon.charge_indicator_entity.value()))
+      {
+        auto& indicator_pos = *this->_registry.get().get_components<Position>()
+                                   [weapon.charge_indicator_entity.value()];
+        indicator_pos.pos = pos.pos + offset;
       }
     }
   }

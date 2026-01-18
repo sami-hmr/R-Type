@@ -159,7 +159,7 @@
     },
     {
       // player beam
-      "name": "player_beam",
+      "name": "player",
       "components": {
         "moving:Position": {
           "pos": {
@@ -181,13 +181,18 @@
             "y": 0.0
           }
         },
-        "weapon:BasicWeapon": {
-          "bullet_type": "basic_bullet",
-          "magazine_size": 1000,
-          "magazine_nb": 500,
-          "reload_time": 0.01,
-          "cooldown": 0.01,
-          "attack_animation": "attack"
+        "weapon:ChargeWeapon": {
+          "bullet_type": "beam_segment",
+          "magazine_size": 10,
+          "magazine_nb": 3,
+          "reload_time": 2.0,
+          "cooldown": 0.5,
+          "charge_time": 2.0,
+          "max_scale": 3.0,
+          "min_charge_threshold": 0.3,
+          "scale_damage": true,
+          "attack_animation": "attack",
+          "charge_indicator": "beam_start"
         },
         "ui:AnimatedSprite": {
           "animations": [
@@ -310,7 +315,7 @@
       }
     },
     {
-      "name": "player",
+      "name": "player_",
       "components": {
         "moving:Position": {
           "pos": {
@@ -462,3 +467,4 @@
     }
   ]
 }
+
