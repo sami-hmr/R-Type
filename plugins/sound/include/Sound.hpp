@@ -24,6 +24,10 @@ public:
   void sound_system(Registry& r);
   bool on_play_music(Registry& r, const PlayMusicEvent& event);
   void music_system(Registry& r);
+  void on_stop_sound(Registry& r, const StopSoundEvent& event);
+  void on_stop_all_sounds(Registry& r, const StopAllSoundsEvent& event);
+  void on_stop_music(Registry& r, const StopMusicEvent& event);
+  void on_stop_all_musics(Registry& r, const StopAllMusicsEvent& event);
 
-  void on_death(Registry& r, EventManager &em, const DeathEvent& event);
+  void on_death(Registry& r, EventManager& em, const DeathEvent& event);
 };

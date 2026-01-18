@@ -164,6 +164,17 @@
                     "loop": true
                   }
                 }
+              },
+              {
+                "description": "stop sound",
+                "key": "M",
+                "pressed": {
+                  "name": "StopAllSoundsEvent",
+                  "params": {
+                    "entity": "@self",
+                    "name": "fah"
+                  }
+                }
               }
             ]
           }
@@ -172,4 +183,3 @@
     }
   ]
 }
-
