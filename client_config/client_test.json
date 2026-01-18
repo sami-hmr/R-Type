@@ -192,7 +192,9 @@
                 },
                 "released": {
                   "name": "ReleaseChargeWeapon",
-                  "params": {}
+                  "params": {
+                    "entity": "@self"
+                  }
                 }
               }
             ]

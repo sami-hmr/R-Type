@@ -74,7 +74,8 @@
             }
           },
           "disable_scene": "level_2",
-          "enable_scene": "level_3"
+          "enable_scene": "level_3",
+          "music_name": "mario_desert"
         },
         "config": {
           "wave:Formation": {

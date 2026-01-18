@@ -11,7 +11,7 @@
       "components": {
         "template": "enemy",
         "parameters": {
-          "idle_texture": "assets/r-type/Arcade - R-Type - Enemies - Dobkeratops.png",
+          "idle_texture": "assets/R-type/Arcade - R-Type - Enemies - Dobkeratops.png",
           "idle_frame_size": { "x": 180.0, "y": 213.0 },
           "idle_frame_pos": { "x": 5.0, "y": 0.0 },
           "idle_direction": { "x": 0.0, "y": 1.0 },
@@ -57,6 +57,7 @@
           "ai:AttackBehavior": {
             "attack_type": "$attack_behavior_attack_type"
           },
+          // "score_points_to_give": 50,
           "sound:SoundManager": {
             "sound_effects": [
               {
@@ -65,6 +66,34 @@
                 "volume": 100.0,
                 "pitch": 1.0,
                 "loop": false
+              }
+            ]
+          },
+          "inventory:Inventory": {
+            "max_items": 1,
+            "inventory": [
+              {
+                "item_name": "basic_weapon",
+                "nb": 1,
+                "item": {
+                  "on_use": [
+                    {
+                      "WeaponSwitchEvent": {
+                        "entity": "@self",
+                        "weapon_type": "BasicWeapon",
+                        "params": {
+                          "bullet_type": "crossed_3_multiple_bullet",
+                          "magazine_size": 6,
+                          "magazine_nb": 4,
+                          "reload_time": 2.0,
+                          "cooldown": 0.2,
+                          "attack_animation": "attack"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "artefact_template": "basic_weapon_item"
               }
             ]
           }
@@ -105,6 +134,7 @@
           "collision_size": { "width": 0.7, "height": 0.25 },
           "collision_type": "push",
 
+          // "score_points_to_give": 50,
           "movement_behavior_params": { "radius": 1.0 },
           "movement_behavior_movement_type": "circle"
         },
@@ -128,6 +158,41 @@
                 "volume": 100.0,
                 "pitch": 1.0,
                 "loop": false
+              }
+            ]
+          },
+          "inventory:Inventory": {
+            "max_items": 1,
+            "inventory": [
+              {
+                "item_name": "charge_weapon",
+                "nb": 1,
+                "item": {
+                  "on_use": [
+                    {
+                      "WeaponSwitchEvent": {
+                        "entity": "@self",
+                        "weapon_type": "ChargeWeapon",
+                        "params": {
+                          "bullet_type": "beam_segment",
+                          "offset_x": 1.2,
+                          "offset_y": 0.0,
+                          "magazine_size": 10,
+                          "magazine_nb": 3,
+                          "reload_time": 2.0,
+                          "cooldown": 0.5,
+                          "charge_time": 2.0,
+                          "max_scale": 3.0,
+                          "min_charge_threshold": 0.3,
+                          "scale_damage": true,
+                          "attack_animation": "attack",
+                          "charge_indicator": "beam_start"
+                        }
+                      }
+                    }
+                  ]
+                },
+                "artefact_template": "charge_weapon_item"
               }
             ]
           }
