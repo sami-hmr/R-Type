@@ -329,8 +329,8 @@
         },
         "collision:Collidable": {
           "size": {
-            "x": 1.5,
-            "y": 0.08
+            "width": 1.5,
+            "height": 0.08
           },
           "collision_type": "trigger"
         }

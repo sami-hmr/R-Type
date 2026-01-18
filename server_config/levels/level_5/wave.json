@@ -54,7 +54,7 @@
           "mob:Spawner": {
             "entity_template": "wave_end_level_5",
             "spawn_interval": 30.0,
-            "max_spawns": 2
+            "max_spawns": 1
           }
         }
       ]

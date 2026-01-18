@@ -38,7 +38,7 @@
           "health_max": "$health_max",
           "damage_amount": 100,
 
-          "collision_size": { "x": 0.1, "y": 0.3 },
+          "collision_size": { "width": 0.1, "height": 0.3 },
           "collision_type": "solid",
 
           "movement_behavior_movement_type": "turret"
@@ -91,7 +91,7 @@
           "damage_amount": 1,
           "facing_plane": true,
 
-          "collision_size": { "x": 0.7, "y": 0.25 },
+          "collision_size": { "width": 0.7, "height": 0.25 },
           "collision_type": "push",
 
           "movement_behavior_params": {"radius": 1.0},
@@ -127,6 +127,7 @@
           "idle_frame_pos": { "x": 0.0, "y": 0.0 },
           "idle_direction": { "x": 1.0, "y": 0.0 },
           "idle_nb_frames": 5,
+          "idle_flip_v": true,
           "idle_sprite_size": { "width": "60.0%", "height": "60.0%" },
 
           "death_texture": "assets/explosion/enemy-death.png",
@@ -140,7 +141,7 @@
           "health_max": "$health_max",
           "damage_amount": 1,
 
-          "collision_size": { "x": 0.7, "y": 0.4 },
+          "collision_size": { "width": 0.7, "height": 0.4 },
           "collision_type": "push",
 
           "movement_behavior_movement_type": "turret"
