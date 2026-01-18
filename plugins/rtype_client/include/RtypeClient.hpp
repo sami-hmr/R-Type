@@ -6,6 +6,7 @@
 #include <asio/io_context.hpp>
 #include <asio/ip/udp.hpp>
 
+#include "ecs/Entity.hpp"
 #include "ecs/Registry.hpp"
 #include "network/client/BaseClient.hpp"
 #include "plugin/EntityLoader.hpp"
@@ -22,6 +23,7 @@ public:
 private:
   void handle_http();
 
+  Ecs::Entity _player;
   void alert(std::string const& message);
   void handle_server_fetched();
   std::string _current_server_fetch_scene;
