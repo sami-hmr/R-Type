@@ -96,8 +96,7 @@ void Weapon::on_fire(Registry& r, const FireBullet& e)
       }
     }
 
-    auto const& pos =
-        *this->_registry.get().get_components<Position>()[e.entity];
+    auto& pos = *this->_registry.get().get_components<Position>()[e.entity];
 
     auto const& vel_direction =
         (this->_registry.get().has_component<Direction>(e.entity))
@@ -119,18 +118,19 @@ void Weapon::on_fire(Registry& r, const FireBullet& e)
       return;
     }
 
+    Position new_pos = pos;
     LoadEntityTemplate::Additional additional = {
-        {this->_registry.get().get_component_key<Position>(), pos.to_bytes()},
+        {this->_registry.get().get_component_key<Position>(), new_pos.to_bytes()},
         {this->_registry.get().get_component_key<Direction>(),
          direction.to_bytes()},
         {this->_registry.get().get_component_key<Team>(), team.to_bytes()}};
 
     if (this->_registry.get().has_component<Scene>(e.entity)) {
-      additional.push_back({this->_registry.get().get_component_key<Scene>(),
-                            this->_registry.get()
-                                .get_components<Scene>()[e.entity]
-                                .value()
-                                .to_bytes()});
+      additional.emplace_back(this->_registry.get().get_component_key<Scene>(),
+                              this->_registry.get()
+                                  .get_components<Scene>()[e.entity]
+                                  .value()
+                                  .to_bytes());
     }
     this->_event_manager.get().emit<LoadEntityTemplate>(weapon.bullet_type,
                                                         additional);

@@ -38,5 +38,6 @@ struct Position
   Vector2D pos;
   Vector2D offset;
   int z;
+  bool applied_offset = false;
   HOOKABLE(Position, HOOK(pos), HOOK(offset), HOOK(z))
 };

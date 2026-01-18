@@ -573,6 +573,10 @@ void SFMLRenderer::render_animated_sprites(
       anim_data.frame_size.y = texture.getSize().y;
     }
 
+    if (pos.offset.x == 10) {
+      std::cout << "offset is " << pos.offset << "\n";
+      std::cout << "pos is " << pos.pos << "\n";
+    }
     float scale_x, scale_y = 0;
     sf::Vector2f uniform_scale;
 

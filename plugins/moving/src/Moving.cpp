@@ -77,8 +77,12 @@ void Moving::moving_system(Registry& reg)
 
 void Moving::add_offset(Registry& r)
 {
+  std::cout << "\nadding offset" << "\n";
   for (auto&& [e, pos] : ZipperIndex<Position>(r)) {
-    pos.pos += pos.offset;
+    if (!pos.applied_offset) {
+      pos.pos += pos.offset;
+      pos.applied_offset = true;
+    }
     this->_event_manager.get().emit<ComponentBuilder>(
         e, r.get_component_key<Position>(), pos.to_bytes());
   }
@@ -86,9 +90,12 @@ void Moving::add_offset(Registry& r)
 
 void Moving::remove_offset(Registry& r)
 {
-  std::cout << "removing offset\n";
+  std::cout << "removing offset\n\n";
   for (auto&& [e, pos] : ZipperIndex<Position>(r)) {
-    pos.pos -= pos.offset;
+    if (pos.applied_offset) {
+      pos.pos -= pos.offset;
+      pos.applied_offset = false;
+    }
     this->_event_manager.get().emit<ComponentBuilder>(
         e, r.get_component_key<Position>(), pos.to_bytes());
   }
