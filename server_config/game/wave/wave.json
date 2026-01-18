@@ -1,0 +1,45 @@
+{
+  "entities_template": [
+    {
+      "name": "wave_scene_event",
+      "default_parameters": {
+        "entity_template": "enemy_straight_1",
+        "count": 1,
+        "tracked": true,
+        "components_inheritance": ["scene"],
+        "pattern": {
+          "type": "point",
+          "origin": { "x": 0.0, "y": 0.0 }
+        },
+        "disable_scene": "level_1",
+        "enable_scene": "level_2"
+      },
+      "components": {
+        "wave:Wave": {
+          "entity_template": "$entity_template",
+          "count": "$count",
+          "tracked": "$tracked",
+          "components_inheritance": "$components_inheritance",
+          "pattern": "$pattern",
+          "on_end": [
+            {
+              "event_name": "DisableSceneEvent",
+              "params": {
+                "target_scene": "$disable_scene"
+              }
+            },
+            {
+              "event_name": "SceneChangeEvent",
+              "params": {
+                "target_scene": "$enable_scene",
+                "state": "active",
+                "reason": "Change scene in Wave event",
+                "force": false
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

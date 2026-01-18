@@ -1,9 +1,12 @@
 #include <algorithm>
 #include <cmath>
+#include <cstddef>
 #include <iostream>
+#include <string>
 
 #include "Moving.hpp"
 
+#include "EntityExpose.hpp"
 #include "Json/JsonParser.hpp"
 #include "NetworkShared.hpp"
 #include "ecs/EventManager.hpp"
@@ -31,13 +34,14 @@ Moving::Moving(Registry& r, EventManager& em, EntityLoader& l)
               {COMP_INIT(Position, Position, init_pos),
                COMP_INIT(Direction, Direction, init_direction),
                COMP_INIT(Speed, Speed, init_speed),
-               COMP_INIT(Facing, Facing, init_facing)})
+               COMP_INIT(Facing, Facing, init_facing),
+               COMP_INIT(IdStorage, IdStorage, init_id)})
 {
   REGISTER_COMPONENT(Position)
   REGISTER_COMPONENT(Direction)
   REGISTER_COMPONENT(Speed)
   REGISTER_COMPONENT(Facing)
-
+  REGISTER_COMPONENT(IdStorage)
   this->_registry.get().add_system(
       [this](Registry& r) { this->moving_system(r); }, 4);
 
@@ -123,7 +127,28 @@ void Moving::moving_system(Registry& reg)
   }
 }
 
-void Moving::init_pos(Registry::Entity const& entity, JsonObject& obj)
+void Moving::init_id(Ecs::Entity const& entity, JsonObject& obj)
+{
+  std::string ctx;
+  auto id = get_value<IdStorage, std::size_t>(
+      this->_registry.get(), obj, entity, "id");
+  if (obj.contains("context")) {
+    ctx = get_value<IdStorage, std::string>(
+              this->_registry.get(), obj, entity, "context")
+              .value();
+  }
+  auto& pos_opt = init_component<IdStorage>(this->_registry.get(),
+                                            this->_event_manager.get(),
+                                            entity,
+                                            id.value(),
+                                            ctx);
+  if (!pos_opt.has_value()) {
+    std::cerr << "Error creating IdStorage component\n";
+    return;
+  }
+}
+
+void Moving::init_pos(Ecs::Entity const& entity, JsonObject& obj)
 {
   auto values =
       get_value<Position, Vector2D>(this->_registry.get(), obj, entity, "pos");
@@ -155,7 +180,7 @@ void Moving::init_pos(Registry::Entity const& entity, JsonObject& obj)
   }
 }
 
-void Moving::init_direction(Registry::Entity const& entity, JsonObject& obj)
+void Moving::init_direction(Ecs::Entity const& entity, JsonObject& obj)
 {
   auto dir = get_value<Direction, Vector2D>(
       this->_registry.get(), obj, entity, "direction");
@@ -175,7 +200,7 @@ void Moving::init_direction(Registry::Entity const& entity, JsonObject& obj)
   }
 }
 
-void Moving::init_speed(Registry::Entity const& entity, JsonObject& obj)
+void Moving::init_speed(Ecs::Entity const& entity, JsonObject& obj)
 {
   auto speed =
       get_value<Speed, Vector2D>(this->_registry.get(), obj, entity, "speed");
@@ -195,7 +220,7 @@ void Moving::init_speed(Registry::Entity const& entity, JsonObject& obj)
   }
 }
 
-void Moving::init_facing(Registry::Entity const& entity, JsonObject& obj)
+void Moving::init_facing(Ecs::Entity const& entity, JsonObject& obj)
 {
   auto dir = get_value<Facing, Vector2D>(
       this->_registry.get(), obj, entity, "direction");
@@ -205,18 +230,24 @@ void Moving::init_facing(Registry::Entity const& entity, JsonObject& obj)
                  "in JsonObject\n";
     return;
   }
-  auto& facing_opt =
-      this->_registry.get().emplace_component<Facing>(entity, dir.value());
-
-  if (!facing_opt.has_value()) {
-    std::cerr << "Error creating Facing component\n";
-    return;
+  bool plane = false;
+  if (obj.contains("plane")) {
+    auto const& plane_value =
+        get_value<Facing, bool>(this->_registry.get(), obj, entity, "plane");
+    if (plane_value) {
+      plane = plane_value.value();
+    } else {
+      std::cerr << "Error loading Facing component: unexpected value type "
+                   "(expected plane: bool)\n";
+    }
   }
+  init_component<Facing>(
+      this->_registry.get(), this->_event_manager.get(), entity, dir.value(), plane);
 }
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
+PLUGIN_EXPORT void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
   return new Moving(r, em, e);
 }

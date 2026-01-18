@@ -1,7 +1,10 @@
 #ifndef CAMERAEVENTS_HPP_
 #define CAMERAEVENTS_HPP_
 
+#include <optional>
+
 #include "EventMacros.hpp"
+#include "ecs/Entity.hpp"
 #include "ecs/Registry.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/Byte.hpp"
@@ -9,25 +12,26 @@
 
 struct CamAggroEvent
 {
-  Registry::Entity target;
+  Ecs::Entity target;
 
   CHANGE_ENTITY(result.target = map.at(target))
 
-  CamAggroEvent(Registry::Entity t)
+  CamAggroEvent(Ecs::Entity t)
       : target(t)
   {
   }
 
-  CamAggroEvent(Registry& r, JsonObject const& e)
-      : target(static_cast<Registry::Entity>(
-            get_value_copy<double>(r, e, "entity").value()))
+  CamAggroEvent(Registry& r,
+                JsonObject const& e,
+                std::optional<Ecs::Entity> entity)
+      : target(static_cast<Ecs::Entity>(
+            get_value_copy<double>(r, e, "entity", entity).value()))
   {
   }
 
   DEFAULT_BYTE_CONSTRUCTOR(CamAggroEvent,
-                           ([](Registry::Entity e)
-                            { return CamAggroEvent(e); }),
-                           parseByte<Registry::Entity>())
+                           ([](Ecs::Entity e) { return CamAggroEvent(e); }),
+                           parseByte<Ecs::Entity>())
 
   DEFAULT_SERIALIZE(type_to_byte(this->target))
 };
@@ -41,8 +45,10 @@ struct CamMoveEvent
   {
   }
 
-  CamMoveEvent(Registry& r, JsonObject const& e)
-      : target(get_value_copy<Vector2D>(r, e, "target").value())
+  CamMoveEvent(Registry& r,
+               JsonObject const& e,
+               std::optional<Ecs::Entity> entity)
+      : target(get_value_copy<Vector2D>(r, e, "target", entity).value())
   {
   }
 
@@ -64,8 +70,10 @@ struct CamZoomEvent
   {
   }
 
-  CamZoomEvent(Registry& r, JsonObject const& e)
-      : next_size(get_value_copy<Vector2D>(r, e, "size").value())
+  CamZoomEvent(Registry& r,
+               JsonObject const& e,
+               std::optional<Ecs::Entity> entity)
+      : next_size(get_value_copy<Vector2D>(r, e, "size", entity).value())
   {
   }
 
@@ -88,9 +96,11 @@ struct CamRotateEvent
   {
   }
 
-  CamRotateEvent(Registry& r, JsonObject const& e)
-      : next_rotation(get_value_copy<double>(r, e, "rotation").value())
-      , speed(get_value_copy<double>(r, e, "speed").value())
+  CamRotateEvent(Registry& r,
+                 JsonObject const& e,
+                 std::optional<Ecs::Entity> entity)
+      : next_rotation(get_value_copy<double>(r, e, "rotation", entity).value())
+      , speed(get_value_copy<double>(r, e, "speed", entity).value())
   {
   }
 
@@ -114,8 +124,10 @@ struct CamSpeedEvent
   {
   }
 
-  CamSpeedEvent(Registry& r, JsonObject const& e)
-      : speed(get_value_copy<Vector2D>(r, e, "speed").value())
+  CamSpeedEvent(Registry& r,
+                JsonObject const& e,
+                std::optional<Ecs::Entity> entity)
+      : speed(get_value_copy<Vector2D>(r, e, "speed", entity).value())
   {
   }
 
@@ -126,6 +138,47 @@ struct CamSpeedEvent
                             { return CamSpeedEvent(speed); }),
                            parseVector2D())
   DEFAULT_SERIALIZE(vector2DToByte(this->speed))
+};
+
+struct CameraShakeEvent
+{
+  double trauma;
+  double angle;
+  double offset;
+  double duration;
+
+  CameraShakeEvent() = default;
+
+  CameraShakeEvent(double trauma, double duration, double angle, double offset)
+      : trauma(trauma)
+      , angle(angle)
+      , offset(offset)
+      , duration(duration)
+  {
+  }
+
+  CameraShakeEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity>)
+      : trauma(get_value_copy<double>(r, e, "trauma").value())
+      , angle(get_value_copy<double>(r, e, "angle").value())
+      , offset(get_value_copy<double>(r, e, "offset").value())
+      , duration(get_value_copy<double>(r, e, "duration").value())
+  {
+  }
+
+  CHANGE_ENTITY_DEFAULT
+
+  DEFAULT_BYTE_CONSTRUCTOR(
+      CameraShakeEvent,
+      ([](double trauma, double angle, double offset, double duration)
+       { return CameraShakeEvent(trauma, duration, angle, offset); }),
+      parseByte<double>(),
+      parseByte<double>(),
+      parseByte<double>(),
+      parseByte<double>())
+  DEFAULT_SERIALIZE(type_to_byte(this->trauma),
+                    type_to_byte(this->duration),
+                    type_to_byte(this->angle),
+                    type_to_byte(this->offset))
 };
 
 #endif /* !CAMERAEVENTS_HPP_ */

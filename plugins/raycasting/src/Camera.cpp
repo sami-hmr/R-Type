@@ -5,7 +5,7 @@
 #include "libs/Vector2D.hpp"
 #include "plugin/components/RaycastingCamera.hpp"
 
-void Raycasting::init_cam(Registry::Entity& e, const JsonObject& obj)
+void Raycasting::init_cam(Ecs::Entity& e, const JsonObject& obj)
 {
   double angle = 0.0;
 

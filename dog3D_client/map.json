@@ -17,11 +17,6 @@
         {
           "name": "wall",
           "components": {
-            "collision:Collidable": {
-              "collision_type": "Solid",
-              "height": 1.0,
-              "width": 1.0
-            },
             "life:Team": {
               "name": "wall"
             },
@@ -154,11 +149,6 @@
               "x": 1.0,
               "y": 0.0
             }
-          },
-          "collision:Collidable": {
-            "collision_type": "Solid",
-            "height": 1.0,
-            "width": 1.0
           },
           "moving:Speed": {
             "speed": {

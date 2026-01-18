@@ -1,0 +1,157 @@
+{
+  "entities_template": [
+    {
+      "name": "enemy_straight_1",
+      "components": {
+        "moving:Position": {
+          "hook": "enemy_straight_pos_1",
+          "pos": {
+            "x": 0.5,
+            "y": 0.8
+          }
+        },
+        "ui:Drawable": {},
+        "score:ScoreManager": {
+          "points_to_give": 1,
+          "score": 0
+        },
+        "ui:AnimatedSprite": {
+          "animations": [
+            {
+              "name": "idle",
+              "texture": "assets/backgrounds/assetpack/Bonus (enemies)/enemy_zig_zag-sheet.png",
+              "frame_size": {
+                "x": 362.0,
+                "y": 214.0
+              },
+              "frame_pos": {
+                "x": 0.0,
+                "y": 0.0
+              },
+              "direction": {
+                "x": 1.0,
+                "y": 0.0
+              },
+              "sprite_size": {
+                "width": "20.0%",
+                "height": "20.0%"
+              },
+              "framerate": 10.0,
+              "nb_frames": 4,
+              "loop": true,
+              "rollback": true,
+              "flip_h": true,
+              "flip_v": false
+            },
+            {
+              "name": "death",
+              "texture": "assets/explosion.png",
+              "frame_size": {
+                "x": 128.0,
+                "y": 128.0
+              },
+              "frame_pos": {
+                "x": 0.0,
+                "y": 0.0
+              },
+              "direction": {
+                "x": 1.0,
+                "y": 0.0
+              },
+              "sprite_size": {
+                "width": "20.0%",
+                "height": "20.0%"
+              },
+              "framerate": 10.0,
+              "nb_frames": 12,
+              "loop": false,
+              "rollback": false
+            }
+          ],
+          "default_animation": "idle"
+        },
+        "life:Health": {
+          "hook": "enemy_straight_health_1",
+          "current": 10.0,
+          "max": 10.0
+        },
+        "life:Damage": {
+          "amount": 1
+        },
+        "ath:Bar": {
+          "size": {
+            "x": "10.0%",
+            "y": "1.0%"
+          },
+          "max_value": "#self:enemy_straight_health_1:max",
+          "current_value": "#self:enemy_straight_health_1:current",
+          "offset": {
+            "x": 0.0,
+            "y": -0.12
+          },
+          "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255,
+            "a": 255
+          },
+          "outline": false,
+          "texture_path": "assets/backgrounds/background.png"
+        },
+        "collision:Collidable": {
+          "size": {
+            "width": 0.1,
+            "height": 0.1
+          },
+          "collision_type": "push"
+        },
+        "life:Team": {
+          "name": "enemy"
+        },
+        "moving:Speed": {
+          "speed": {
+            "x": 0.5,
+            "y": 0.5
+          }
+        },
+        "moving:Direction": {
+          "direction": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        },
+        "moving:Facing": {
+          "direction": {
+            "x": -1.0,
+            "y": 0.0
+          }
+        },
+        "weapon:BasicWeapon": {
+          "bullet_type": "basic_bullet",
+          "magazine_size": 6,
+          "magazine_nb": 3,
+          "reload_time": 2.0,
+          "cooldown": 2.0,
+          "attack_animation": "attack"
+        },
+        "ai:MovementBehavior": {
+          "movement_type": "straight"
+        },
+        "ai:AttackBehavior": {
+          "attack_type": "continuous"
+        },
+        "sound:SoundManager": {
+          "sound_effects": [
+            {
+              "name": "death",
+              "filepath": "assets/sounds/fah.mp3",
+              "volume": 100.0,
+              "pitch": 1.0,
+              "loop": false
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

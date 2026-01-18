@@ -23,7 +23,7 @@ struct CleanupEvent
 
   DEFAULT_BYTE_CONSTRUCTOR(CleanupEvent,
                            ([](std::string const& t)
-                            { return (CleanupEvent) {t}; }),
+                            { return CleanupEvent {t}; }),
                            parseByteString())
 
   DEFAULT_SERIALIZE(string_to_byte(this->trigger))
@@ -35,8 +35,10 @@ struct CleanupEvent
   {
   }
 
-  CleanupEvent(Registry& r, JsonObject const& e)
-      : trigger(get_value_copy<std::string>(r, e, "trigger").value())
+  CleanupEvent(Registry& r,
+               JsonObject const& e,
+               std::optional<Ecs::Entity> entity)
+      : trigger(get_value_copy<std::string>(r, e, "trigger", entity).value())
   {
   }
 };

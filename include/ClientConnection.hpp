@@ -32,9 +32,11 @@ struct ClientConnection
 
   CHANGE_ENTITY_DEFAULT
 
-  ClientConnection(Registry& r, JsonObject const& e)
-      : host(get_value_copy<std::string>(r, e, "host").value())
-      , port(get_value_copy<int>(r, e, "port").value())
+  ClientConnection(Registry& r,
+                   JsonObject const& e,
+                   std::optional<Ecs::Entity> entity)
+      : host(get_value_copy<std::string>(r, e, "host", entity).value())
+      , port(get_value_copy<int>(r, e, "port", entity).value())
   {
   }
 };

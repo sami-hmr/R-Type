@@ -10,10 +10,42 @@
 #include <SFML/System/Vector2.hpp>
 
 static const double deux = 2.0;
+static constexpr std::string placeholder_texture = "placeholder ";
 
-static void update(AnimatedSpriteDrawable& drawable)
+static sf::Texture& load_texture(
+    std::string const& path,
+    std::unordered_map<std::string, sf::Texture>& textures)
 {
-  drawable.sprite.get().setTexture(drawable.texture.get(), true);
+  if (textures.contains(path)) {
+    return textures.at(path);
+  }
+  sf::Texture texture;
+  if (!texture.loadFromFile(path)) {
+    return textures.at(placeholder_texture);
+  }
+  textures.insert_or_assign(path, std::move(texture));
+  return textures.at(path);
+}
+
+static sf::Font& load_font(std::string const& path,
+                           std::unordered_map<std::string, sf::Font>& fonts)
+{
+  if (fonts.contains(path)) {
+    return fonts.at(path);
+  }
+  sf::Font font;
+  if (!font.openFromFile(path)) {
+    throw std::runtime_error("Failed to load font: " + path);
+  }
+  fonts.insert_or_assign(path, std::move(font));
+  return fonts.at(path);
+}
+
+static void update(AnimatedSpriteDrawable& drawable,
+                   std::unordered_map<std::string, sf::Texture> &textures)
+{
+  sf::Texture& texture = load_texture(drawable.texture_name, textures);
+  drawable.sprite.get().setTexture(texture, true);
   drawable.sprite.get().setOrigin(
       sf::Vector2f(static_cast<float>(drawable.animdata.frame_size.x) / deux,
                    static_cast<float>(drawable.animdata.frame_size.y) / deux));
@@ -27,11 +59,13 @@ static void update(AnimatedSpriteDrawable& drawable)
   drawable.sprite.get().setPosition(drawable.pos);
 }
 
-static void update(SpriteDrawable& drawable)
+static void update(SpriteDrawable& drawable,
+                   std::unordered_map<std::string, sf::Texture> &textures)
 {
-  sf::Vector2u texture_size = drawable.texture.get().getSize();
+  sf::Texture& texture = load_texture(drawable.texture_name, textures);
+  sf::Vector2u texture_size = texture.getSize();
 
-  drawable.sprite.get().setTexture(drawable.texture.get(), true);
+  drawable.sprite.get().setTexture(texture, true);
   drawable.sprite.get().setOrigin(
       sf::Vector2f(static_cast<float>(texture_size.x) / deux,
                    static_cast<float>(texture_size.y) / deux));
@@ -40,12 +74,21 @@ static void update(SpriteDrawable& drawable)
   drawable.sprite.get().setPosition(drawable.pos);
 }
 
-static void update(TextDrawable& drawable)
+static void update(TextDrawable& drawable,
+                   std::unordered_map<std::string, sf::Font>& fonts)
 {
+  sf::Font& font = load_font(drawable.font_name, fonts);
   drawable.text.get().setString(drawable.text_str);
-  drawable.text.get().setFont(drawable.font.get());
+  drawable.text.get().setFont(font);
   drawable.text.get().setCharacterSize(drawable.size);
+  drawable.text.get().setString(abc);
+  sf::FloatRect y_text_rect = drawable.text.get().getLocalBounds();
+  drawable.text.get().setString(drawable.text_str);
   sf::FloatRect text_rect = drawable.text.get().getLocalBounds();
+  text_rect.position.y = y_text_rect.position.y;
+  text_rect.size.y = y_text_rect.size.y;
+
+
   drawable.text.get().setOrigin(
       {text_rect.position.x + (text_rect.size.x / 2.0f),
        text_rect.position.y + (text_rect.size.y / 2.0f)});
@@ -66,7 +109,9 @@ static void update(TextDrawable& drawable)
   drawable.text.get().setPosition(drawable.pos);
 }
 
-static void update(BarDrawable& drawable, sf::RenderWindow& window)
+static void update(BarDrawable& drawable,
+                   sf::RenderWindow& window,
+                   std::unordered_map<std::string, sf::Texture> &textures)
 {
   drawable.rectangle.get().setFillColor(sf::Color::Transparent);
   drawable.rectangle.get().setOutlineColor(sf::Color::Transparent);
@@ -84,9 +129,10 @@ static void update(BarDrawable& drawable, sf::RenderWindow& window)
     window.draw(drawable.rectangle.get());
   }
 
-  if (drawable.texture.has_value()) {
-    sf::Vector2u texture_size = drawable.texture.value().getSize();
-    drawable.rectangle.get().setTexture(&drawable.texture.value());
+  if (!drawable.texture_name.empty()) {
+    sf::Texture& texture = load_texture(drawable.texture_name, textures);
+    sf::Vector2u texture_size = texture.getSize();
+    drawable.rectangle.get().setTexture(&texture, true);
     drawable.rectangle.get().setTextureRect(sf::IntRect(
         {0, 0},
         {static_cast<int>(texture_size.x * drawable.fill_percentage),
@@ -125,24 +171,25 @@ static void update(SliderDrawable& drawable)
   drawable.circle.get().setPosition(drawable.circle_pos);
 }
 
-
-void DrawableItem::draw(sf::RenderWindow& window)
+void DrawableItem::draw(sf::RenderWindow& window,
+                        std::unordered_map<std::string, sf::Texture> &textures,
+                        std::unordered_map<std::string, sf::Font> &fonts)
 {
   std::visit(
-      [&window](auto&& d)
+      [&window, &textures, &fonts](auto&& d)
       {
         using T = std::decay_t<decltype(d)>;
 
         if constexpr (std::is_same_v<T, AnimatedSpriteDrawable>
                       || std::is_same_v<T, SpriteDrawable>)
         {
-          update(d);
+          update(d, textures);
           window.draw(d.sprite.get());
         } else if constexpr (std::is_same_v<T, TextDrawable>) {
-          update(d);
+          update(d, fonts);
           window.draw(d.text.get());
         } else if constexpr (std::is_same_v<T, BarDrawable>) {
-          update(d, window);
+          update(d, window, textures);
         } else if constexpr (std::is_same_v<T, SliderDrawable>) {
           update(d);
           window.draw(d.rectangle.get());

@@ -21,7 +21,7 @@
 struct AnimatedSpriteDrawable
 {
   std::reference_wrapper<sf::Sprite> sprite;
-  std::reference_wrapper<sf::Texture> texture;
+  std::string texture_name;
   sf::Vector2f pos;
   sf::Vector2f scale;
   AnimationData animdata;
@@ -29,14 +29,14 @@ struct AnimatedSpriteDrawable
   int z_index;
 
   AnimatedSpriteDrawable(std::reference_wrapper<sf::Sprite> spr,
-                         std::reference_wrapper<sf::Texture> tex,
+                         std::string texture_name,
                          sf::Vector2f p,
                          sf::Vector2f s,
                          AnimationData ad,
                          float rot,
                          int z)
       : sprite(spr)
-      , texture(tex)
+      , texture_name(std::move(texture_name))
       , pos(p)
       , scale(s)
       , animdata(std::move(ad))
@@ -49,20 +49,20 @@ struct AnimatedSpriteDrawable
 struct SpriteDrawable
 {
   std::reference_wrapper<sf::Sprite> sprite;
-  std::reference_wrapper<sf::Texture> texture;
+  std::string texture_name;
   sf::Vector2f pos;
   sf::Vector2f scale;
   float rotation = 0;
   int z_index;
 
   SpriteDrawable(std::reference_wrapper<sf::Sprite> spr,
-                 std::reference_wrapper<sf::Texture> tex,
+                 std::string texture_name,
                  sf::Vector2f p,
                  sf::Vector2f s,
                  float rot,
                  int z)
       : sprite(spr)
-      , texture(tex)
+      , texture_name(std::move(texture_name))
       , pos(p)
       , scale(s)
       , rotation(rot)
@@ -74,7 +74,7 @@ struct SpriteDrawable
 struct TextDrawable
 {
   std::reference_wrapper<sf::Text> text;
-  std::reference_wrapper<sf::Font> font;
+  std::string font_name;
   std::string text_str;
   sf::Vector2f pos;
   Color fill_color;
@@ -86,7 +86,7 @@ struct TextDrawable
   bool outline = false;
 
   TextDrawable(std::reference_wrapper<sf::Text> t,
-               std::reference_wrapper<sf::Font> f,
+               std::string font_name,
                std::string text_str,
                sf::Vector2f p,
                Color fill,
@@ -97,8 +97,8 @@ struct TextDrawable
                unsigned int s,
                bool outl)
       : text(t)
-      , font(f)
-      , text_str(text_str)
+      , font_name(std::move(font_name))
+      , text_str(std::move(text_str))
       , pos(p)
       , fill_color(fill)
       , outline_color(outline_col)
@@ -111,6 +111,9 @@ struct TextDrawable
   }
 };
 
+static const std::string abc =
+    "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
 struct BarDrawable
 {
   std::reference_wrapper<sf::RectangleShape> rectangle;
@@ -118,7 +121,7 @@ struct BarDrawable
   sf::Vector2f size;
   Color fill_color;
   float fill_percentage;
-  std::optional<sf::Texture> texture;
+  std::string texture_name;
   int z_index;
   bool outline;
 
@@ -127,7 +130,7 @@ struct BarDrawable
               sf::Vector2f size,
               Color fill_color,
               float fill_percentage,
-              std::optional<sf::Texture> texture,
+              std::string texture_name,
               int z_index,
               bool outline)
       : rectangle(rectangle)
@@ -135,7 +138,7 @@ struct BarDrawable
       , size(size)
       , fill_color(fill_color)
       , fill_percentage(fill_percentage)
-      , texture(std::move(texture))
+      , texture_name(std::move(texture_name))
       , z_index(z_index)
       , outline(outline)
   {
@@ -197,10 +200,10 @@ struct TriangleVerticesDrawable
 
 using DrawableVariant = std::variant<AnimatedSpriteDrawable,
                                      SpriteDrawable,
-                                     TextDrawable,
                                      BarDrawable,
                                      SliderDrawable,
-                                     TriangleVerticesDrawable>;
+                                     TriangleVerticesDrawable,
+                                     TextDrawable>;
 
 struct DrawableItem
 {
@@ -215,8 +218,11 @@ struct DrawableItem
 
   bool operator<(const DrawableItem& other) const
   {
-    return z_index < other.z_index;
+    return z_index == other.z_index ? drawable.index() < other.drawable.index()
+                                    : z_index < other.z_index;
   }
 
-  void draw(sf::RenderWindow& window);
+  void draw(sf::RenderWindow& window,
+            std::unordered_map<std::string, sf::Texture>& textures,
+            std::unordered_map<std::string, sf::Font>& fonts);
 };

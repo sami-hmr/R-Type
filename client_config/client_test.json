@@ -11,14 +11,6 @@
           }
         },
         {
-          "name": "rtype_client",
-          "config": {}
-        },
-        {
-          "name": "cli",
-          "config": {}
-        },
-        {
           "name": "controller",
           "config": {}
         },
@@ -33,23 +25,71 @@
       ],
       "entities": [
         {
+          "moving:Position": {
+            "pos": {
+              "x": 0.0,
+              "y": 0.0
+            }
+          },
+          "score:ScoreManager": {
+            "hook": "player_score",
+            "global_hook": true,
+            "points_to_give": 1,
+            "score": 0
+          },
+          "ui:Camera": {
+            "size": {
+              "width": 1.0,
+              "height": 1.0
+            },
+            "target": {
+              "x": 0.0,
+              "y": 0.0
+            },
+            "speed": {
+              "x": 0.1,
+              "y": 0.1
+            }
+          }
+        },
+        {
+          "moving:IdStorage": {
+            "id": "@self",
+            "hook": "player_id_client",
+            "global_hook": true
+          },
           "controller:Controllable": {
             "bindings": [
+              {
+                "description": "shake cam",
+                "key": "H",
+                "pressed": {
+                  "name": "CameraShakeEvent",
+                  "params": {
+                    "trauma": 0.1,
+                    "duration": 1.0,
+                    "angle": 15.0,
+                    "offset": 0.1
+                  }
+                }
+              },
               {
                 "description": "go up",
                 "key": "Z",
                 "pressed": {
                   "name": "UpdateDirection",
                   "params": {
-                      "x": 0.0,
-                      "y": -1.0
+                    "entity": "@self",
+                    "x": 0.0,
+                    "y": -1.0
                   }
                 },
                 "released": {
                   "name": "UpdateDirection",
                   "params": {
-                      "x": 0.0,
-                      "y": 1.0
+                    "entity": "@self",
+                    "x": 0.0,
+                    "y": 1.0
                   }
                 }
               },
@@ -59,15 +99,17 @@
                 "pressed": {
                   "name": "UpdateDirection",
                   "params": {
-                      "x": -1.0,
-                      "y": 0.0
+                    "entity": "@self",
+                    "x": -1.0,
+                    "y": 0.0
                   }
                 },
                 "released": {
                   "name": "UpdateDirection",
                   "params": {
-                      "x": 1.0,
-                      "y": 0.0
+                    "entity": "@self",
+                    "x": 1.0,
+                    "y": 0.0
                   }
                 }
               },
@@ -77,15 +119,17 @@
                 "pressed": {
                   "name": "UpdateDirection",
                   "params": {
-                      "x": 1.0,
-                      "y": 0.0
+                    "entity": "@self",
+                    "x": 1.0,
+                    "y": 0.0
                   }
                 },
                 "released": {
                   "name": "UpdateDirection",
                   "params": {
-                      "x": -1.0,
-                      "y": 0.0
+                    "entity": "@self",
+                    "x": -1.0,
+                    "y": 0.0
                   }
                 }
               },
@@ -95,15 +139,17 @@
                 "pressed": {
                   "name": "UpdateDirection",
                   "params": {
-                      "x": 0.0,
-                      "y": 1.0
+                    "entity": "@self",
+                    "x": 0.0,
+                    "y": 1.0
                   }
                 },
                 "released": {
                   "name": "UpdateDirection",
                   "params": {
-                      "x": 0.0,
-                      "y": -1.0
+                    "entity": "@self",
+                    "x": 0.0,
+                    "y": -1.0
                   }
                 }
               },
@@ -112,285 +158,69 @@
                 "key": "SPACE",
                 "pressed": {
                   "name": "FireBullet",
-                  "params": {}
+                  "params": {
+                    "entity": "@self"
+                  }
                 }
               }
-            ]
-          }
-        }
-      ]
-    },
-    {
-      "name": "preconnect",
-      "state": "active",
-      "plugins": [],
-      "entities": [
-        {
-          "ui:Drawable": {},
-          "moving:Position": {
-            "pos": {
-              "x": -0.0,
-              "y": -0.0
-            }
-          },
-          "ui:input": {
-            "hook": "my_input_buffer",
-            "buffer": "server address:",
-            "enabled": false
-          },
-          "collision:Collidable": {
-            "collision_type": "Trigger",
-            "height": 0.1,
-            "width": 0.3
-          },
-          "ui:Text": {
-            "font": "assets/fonts/roboto.ttf",
-            "size": {
-              "width": "60.0%",
-              "height": "30.0%"
-            },
-            "fill_color": {
-              "r": 255,
-              "g": 255,
-              "b": 255,
-              "a": 255
-            },
-            "outline_color": {
-              "r": 0,
-              "g": 0,
-              "b": 0,
-              "a": 255
-            },
-            "outline_thickness": 30.0,
-            "outline": true,
-            "text": "#my_input_buffer:buffer"
-          },
-          "ath:Clickable": {
-            "to_emit": [
-              {
-                "InputFocusEvent": {}
-              }
+              // ,
+              // {
+              //   "description": "charge shoot",
+              //   "key": "SPACE",
+              //   "pressed": {
+              //     "name": "StartChargeWeapon",
+              //     "params": {
+              //       "entity": "@self"
+              //     }
+              //   },
+              //   "released": {
+              //     "name": "ReleaseChargeWeapon",
+              //     "params": {
+              //       "entity": "@self"
+              //     }
+              //   }
+              // }
             ]
           }
         },
         {
-          "moving:Position": {
-            "pos": {
-              "x": 0.0,
-              "y": -0.35
-            }
-          },
-          "ui:Drawable": {},
-          "ui:Text": {
-            "font": "assets/fonts/roboto.ttf",
-            "size": {
-              "width": "60.0%",
-              "height": "30.0%"
-            },
-            "fill_color": {
-              "r": 255,
-              "g": 255,
-              "b": 255,
-              "a": 255
-            },
-            "outline_color": {
-              "r": 0,
-              "g": 0,
-              "b": 0,
-              "a": 255
-            },
-            "outline_thickness": 30.0,
-            "outline": true,
-            "text": "Desole Ilias, on a pas d'inputs..."
-          }
-        },
-        {
-          "moving:Position": {
-            "pos": {
-              "x": 0.0,
-              "y": -0.05
-            }
-          },
-          "ui:Drawable": {},
-          "ui:Text": {
-            "font": "assets/fonts/roboto.ttf",
-            "size": {
-              "width": "0.0%",
-              "height": "0.0%"
-            },
-            "fill_color": {
-              "r": 255,
-              "g": 255,
-              "b": 255,
-              "a": 255
-            },
-            "outline_color": {
-              "r": 0,
-              "g": 0,
-              "b": 0,
-              "a": 255
-            },
-            "outline_thickness": 30.0,
-            "outline": true,
-            "text": "#global:server_address_:buffer"
-          },
-
-          "ui:input": {
-            "hook": "server_address_",
-            "global_hook": true,
-            "buffer": "hook",
-            "enabled": true
-          }
-        },
-        {
-          "ui:AnimatedSprite": {
-            "animations": [
-              {
-                "name": "idle",
-                "texture": "assets/ui/buttons/start.png",
-                "frame_size": {
-                  "x": 410.0,
-                  "y": 121.0
-                },
-                "frame_pos": {
-                  "x": 0.0,
-                  "y": 0.0
-                },
-                "sprite_size": {
-                  "width": "30.0%",
-                  "height": "30.0%"
-                },
-                "direction": {
-                  "x": 0.0,
-                  "y": 0.0
-                },
-                "framerate": 1.0,
-                "nb_frames": 1,
-                "loop": true,
-                "rollback": false
-              },
-              {
-                "name": "hover",
-                "texture": "assets/ui/buttons/start_hover.png",
-                "frame_size": {
-                  "x": 410.0,
-                  "y": 121.0
-                },
-                "frame_pos": {
-                  "x": 0.0,
-                  "y": 0.0
-                },
-                "sprite_size": {
-                  "width": "28.0%",
-                  "height": "28.0%"
-                },
-                "direction": {
-                  "x": 0.0,
-                  "y": 0.0
-                },
-                "framerate": 1.0,
-                "nb_frames": 1,
-                "loop": false,
-                "rollback": false
-              },
-              {
-                "name": "pressed",
-                "texture": "assets/ui/buttons/start.png",
-                "frame_size": {
-                  "x": 410.0,
-                  "y": 121.0
-                },
-                "frame_pos": {
-                  "x": 0.0,
-                  "y": 0.0
-                },
-                "sprite_size": {
-                  "width": "30.0%",
-                  "height": "30.0%"
-                },
-                "direction": {
-                  "x": 0.0,
-                  "y": 0.0
-                },
-                "framerate": 1.0,
-                "nb_frames": 1,
-                "loop": true,
-                "rollback": false
+          "actions:ActionTrigger": {
+            "trigger": {
+              "type": "KeyPressed",
+              "params": {
+                "key": "ECHAP"
               }
-            ],
-            "default_animation": "idle"
-          },
-          "ui:Drawable": {},
-          "ath:Clickable": {
+            },
             "to_emit": [
               {
                 "SceneChangeEvent": {
-                  "target_scene": "connecting",
-                  "reason": "User clicked connect button",
-                  "force": false
-                }
-              },
-              {
-                "ClientConnection": {
-                  "host": "0.0.0.0",
-                  "port": 4242
+                  "target_scene": "pause",
+                  "reason": "",
+                  "force": false,
+                  "main": true
                 }
               }
+              // {
+              //   "description": "charge shoot",
+              //   "key": "SPACE",
+              //   "pressed": {
+              //     "name": "StartChargeWeapon",
+              //     "params": {}
+              //   },
+              //   "released": {
+              //     "name": "ReleaseChargeWeapon",
+              //     "params": {}
+              //   }
+              // }
             ]
-          },
-          "moving:Position": {
-            "pos": {
-              "x": 0.0,
-              "y": 0.5
-            }
-          },
-          "collision:Collidable": {
-            "width": 0.3,
-            "height": 0.15,
-            "collision_type": "solid"
-          },
-          "ath:Button": {
-            "hover": false,
-            "toggle": false,
-            "pressed": false
           }
-        }
-      ]
-    },
-    {
-      "name": "connecting",
-      "state": "disabled",
-      "plugins": [],
-      "entities": [
+        },
         {
-          "moving:Position": {
-            "pos": {
-              "x": 0.0,
-              "y": -0.5
-            }
-          },
-          "ui:Drawable": {},
-          "ui:Text": {
-            "font": "assets/fonts/roboto.ttf",
-            "size": {
-              "width": "60.0%",
-              "height": "30.0%"
-            },
-            "fill_color": {
-              "r": 255,
-              "g": 255,
-              "b": 255,
-              "a": 255
-            },
-            "outline_color": {
-              "r": 0,
-              "g": 0,
-              "b": 0,
-              "a": 255
-            },
-            "outline_thickness": 30.0,
-            "outline": true,
-            "text": "Connecting to server..."
+          "template": "text",
+          "parameters": {
+            "text_size": {},
+            "text": "#global:player_score:score_str",
+            "z": 90000
           }
         }
       ]

@@ -199,9 +199,11 @@
 #include <cstddef>
 #include <functional>
 #include <iostream>
+#include <list>
 #include <optional>
 #include <queue>
 #include <random>
+#include <stack>
 #include <stdexcept>
 #include <string>
 #include <typeindex>
@@ -215,11 +217,14 @@
 #include "SparseArray.hpp"
 #include "TwoWayMap.hpp"
 #include "ecs/ComponentState.hpp"
+#include "ecs/Entity.hpp"
 #include "ecs/Scenes.hpp"
 #include "ecs/Systems.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/HookConcept.hpp"
 #include "plugin/events/EventConcept.hpp"
+
+using Ecs::Entity;
 
 /**
  * @concept component
@@ -303,14 +308,6 @@ class Registry
 {
 public:
   /**
-   * @brief Type alias for an entity identifier.
-   *
-   * Entities are lightweight indices into component arrays. Valid entity IDs
-   * start at 0 and increment. Deleted entity IDs are recycled.
-   */
-  using Entity = std::size_t;
-
-  /**
    * @brief Registers a bytable component type with a string identifier.
    *
    * @tparam Component The type of the component to register (must satisfy
@@ -357,6 +354,17 @@ public:
             }
           }
           return r;
+        });
+    this->_component_bytes_getters.insert_or_assign(
+        string_id,
+        [&comp](Entity const& e)
+        {
+          std::optional<ByteArray> data;
+
+          if (e < comp.size() && comp[e].has_value()) {
+            data.emplace(comp[e]->to_bytes());
+          }
+          return data;
         });
     this->_component_getter.insert_or_assign(
         ti,
@@ -1052,7 +1060,7 @@ public:
    * @see Hooks.hpp for hook syntax details
    */
   template<component ComponentType, typename T>
-  void register_binding(Entity entity,
+  void register_binding(Entity entity,  // NOLINT
                         std::string const& field_name,
                         std::string const& source_hook)
   {
@@ -1099,9 +1107,13 @@ public:
             if (any_val.has_value()) {
               ref = std::any_cast<std::reference_wrapper<T>>(any_val.value());
             }
+          } else {
+            std::cerr << "Unknown global hook: " << comp_name
+                      << " the syntax is \"global_hook\": true" << "\n";
           }
         } else {
-          std::cerr << "Unknown scope: " << scope << "\n";
+          std::cerr << "Unknown scope: " << scope << " on comp name "
+                    << comp_name << " and value " << value_name << "\n";
           return;
         }
 
@@ -1574,6 +1586,8 @@ public:
    */
   std::vector<std::string> const& get_active_scenes() const;
 
+  bool is_in_main_scene(Entity);
+
   Clock& clock();
 
   const Clock& clock() const;
@@ -1876,6 +1890,10 @@ public:
   std::optional<std::reference_wrapper<T>> get_hooked_value(
       std::string const& comp, std::string const& value)
   {
+    if (!this->_hooked_components.contains(comp)) {
+      return std::nullopt;
+    }
+
     auto const& tmp = std::any_cast<std::optional<std::any>>(
         this->_hooked_components.at(comp)(value));
     if (!tmp.has_value()) {
@@ -1899,12 +1917,12 @@ public:
   std::optional<std::reference_wrapper<T>> get_global_hooked_value(
       std::string const& name, std::string const& value)
   {
-    auto it = this->_global_hooks.find(name);
-    if (it == this->_global_hooks.end()) {
+    if (!this->_global_hooks.contains(name)) {
       return std::nullopt;
     }
 
-    auto const& tmp = std::any_cast<std::optional<std::any>>(it->second(value));
+    auto const& tmp = std::any_cast<std::optional<std::any>>(
+        this->_global_hooks.at(name)(value));
     if (!tmp.has_value()) {
       return std::nullopt;
     }
@@ -1975,7 +1993,9 @@ public:
    * @see get_template() to retrieve template
    * @see EntityLoader::load_entity() to instantiate template
    */
-  void add_template(std::string const& name, JsonObject const& config);
+  void add_template(std::string const& name,
+                    JsonObject const& config,
+                    JsonObject const& default_parameters = {});
 
   /**
    * @brief Retrieve a registered entity template.
@@ -2021,7 +2041,8 @@ public:
    * @see add_template() to register templates
    * @see EntityLoader::load_entity() to instantiate entities
    */
-  JsonObject get_template(std::string const& name);
+  JsonObject get_template(std::string const& name,
+                          JsonObject const& params = {});
 
   bool is_in_current_cene(Entity e);
 
@@ -2108,6 +2129,16 @@ public:
   std::string get_component_key()
   {
     return this->_index_getter.at_first(typeid(Component));
+  }
+
+  std::optional<ByteArray> get_component_bytes(Entity entity,
+                                               std::string const& component_key)
+  {
+    auto it = this->_component_bytes_getters.find(component_key);
+    if (it == this->_component_bytes_getters.end()) {
+      return std::nullopt;
+    }
+    return it->second(entity);
   }
 
   /**
@@ -2225,6 +2256,9 @@ private:
       _emplace_functions;
   std::unordered_map<std::type_index, std::function<ComponentState()>>
       _state_getters;
+  std::unordered_map<std::string,
+                     std::function<std::optional<ByteArray>(Entity const&)>>
+      _component_bytes_getters;
   std::unordered_map<std::type_index,
                      std::function<std::optional<ByteArray>(Entity)>>
       _component_getter;
@@ -2245,6 +2279,7 @@ private:
   std::unordered_map<std::string, SceneState> _scenes;
   std::vector<std::string> _current_scene;
   std::unordered_set<std::string> _active_scenes_set;  // O(1) lookup for Zipper
+  std::list<std::string> _main_scene;
 
   std::unordered_map<std::string,
                      std::function<std::optional<std::any>(std::string const&)>>
@@ -2254,5 +2289,11 @@ private:
       _global_hooks;
   std::vector<Binding> _bindings;
 
-  std::unordered_map<std::string, JsonObject> _entities_templates;
+  struct TemplateDefinition
+  {
+    JsonObject obj;
+    JsonObject default_parameters;
+  };
+
+  std::unordered_map<std::string, TemplateDefinition> _entities_templates;
 };

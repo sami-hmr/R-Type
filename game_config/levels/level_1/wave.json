@@ -1,0 +1,64 @@
+{
+  "scenes": [
+    {
+      "name": "game",
+      "state": "disabled",
+      "plugins": [],
+      "entities": [
+        {
+          "moving:Position": {
+            "pos": {
+              "x": 3.0,
+              "y": 0.3
+            }
+          },
+          "mob:Spawner": {
+            "entity_template": "enemy_wave_1",
+            "spawn_interval": 3.0,
+            "max_spawns": 5
+          }
+        },
+        {
+          "moving:Position": {
+            "pos": {
+              "x": 3.0,
+              "y": -0.3
+            }
+          },
+          "mob:Spawner": {
+            "entity_template": "enemy_wave_1",
+            "spawn_interval": 3.5,
+            "max_spawns": 5
+          }
+        },
+        {
+          "wave:Wave": {
+            "entity_template": "enemy_straight_1",
+            "count": 4,
+            "tracked": true,
+            "components_inheritance": ["scene"],
+            "pattern": {
+              "type": "line",
+              "origin": { "x": 1.0, "y": 0.0 },
+              "params": {
+                "spacing": 0.7
+              }
+            },
+            "on_end": [{
+              "event_name": "SceneChangeEvent",
+              "params": {
+                "target_scene": "level_3",
+                "state": "active",
+                "reason": "User completed wave",
+                "force": false
+              }
+            }]
+          },
+          "wave:Formation": {
+            "strength": 0.1
+          }
+        }
+      ]
+    }
+  ]
+}

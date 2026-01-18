@@ -25,7 +25,7 @@ bool Inventory::usage_emit(const ItemEvent<T>& event, std::string area)
   if (!use_item || !entity) {
     LOGGER(
         "Inventory",
-        LogLevel::ERROR,
+        LogLevel::ERR,
         std::format("Missing {} field in item. No animation nor event played",
                     area));
     return false;
@@ -39,7 +39,7 @@ bool Inventory::usage_emit(const ItemEvent<T>& event, std::string area)
         get_value_copy<JsonObject>(this->_registry.get(), *evt_use, "params");
     if (!name || !params) {
       LOGGER("Inventory",
-             LogLevel::ERROR,
+             LogLevel::ERR,
              std::format("Invalid event field in item's {} configuration. No "
                          "animation nor even't played",
                          area));
@@ -83,7 +83,7 @@ Inventory::Inventory(Registry& r, EventManager& em, EntityLoader& l)
   SUBSCRIBE_EVENT(PickUp, { add_item(event.item, event.nb_to_use); })
 }
 
-void Inventory::init_item_vector(Registry::Entity const& entity,
+void Inventory::init_item_vector(Ecs::Entity const& entity,
                                  JsonArray& inventory)
 {
   for (auto& it : inventory) {
@@ -111,7 +111,7 @@ void Inventory::init_item_vector(Registry::Entity const& entity,
   }
 }
 
-void Inventory::init_inventory(Registry::Entity const& entity,
+void Inventory::init_inventory(Ecs::Entity const& entity,
                                JsonObject const& obj)
 {
   _max_items = std::get<int>(obj.at("max_items").value);
@@ -150,7 +150,7 @@ void Inventory::use_item(std::uint8_t slot, std::size_t nb)
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
+PLUGIN_EXPORT void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
   return new Inventory(r, em, e);
 }

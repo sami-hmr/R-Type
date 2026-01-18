@@ -10,7 +10,7 @@ struct FireBullet
 {
   FireBullet() = default;
 
-  FireBullet(Registry::Entity e)
+  FireBullet(Ecs::Entity e)
       : entity(e)
   {
   }
@@ -18,15 +18,72 @@ struct FireBullet
   CHANGE_ENTITY(result.entity = map.at(entity))
 
   DEFAULT_BYTE_CONSTRUCTOR(FireBullet,
-                           ([](Registry::Entity e) { return FireBullet(e); }),
-                           parseByte<Registry::Entity>())
+                           ([](Ecs::Entity e) { return FireBullet(e); }),
+                           parseByte<Ecs::Entity>())
 
   DEFAULT_SERIALIZE(type_to_byte(entity))
 
-  FireBullet(Registry& r, JsonObject const& conf)
-      : entity(*get_value_copy<int>(r, conf, "entity"))
+  FireBullet(Registry& r,
+             JsonObject const& conf,
+             std::optional<Ecs::Entity> entity)
+      : entity(*get_value_copy<int>(r, conf, "entity", entity))
   {
   }
 
-  Registry::Entity entity;
+  Ecs::Entity entity;
+};
+
+struct StartChargeWeapon
+{
+  StartChargeWeapon() = default;
+
+  StartChargeWeapon(Ecs::Entity e)
+      : entity(e)
+  {
+  }
+
+  CHANGE_ENTITY(result.entity = map.at(entity))
+
+  DEFAULT_BYTE_CONSTRUCTOR(StartChargeWeapon,
+                           ([](Ecs::Entity e) { return StartChargeWeapon(e); }),
+                           parseByte<Ecs::Entity>())
+
+  DEFAULT_SERIALIZE(type_to_byte(entity))
+
+  StartChargeWeapon(Registry& r,
+                    JsonObject const& conf,
+                    std::optional<Ecs::Entity> entity)
+      : entity(*get_value_copy<int>(r, conf, "entity", entity))
+  {
+  }
+
+  Ecs::Entity entity;
+};
+
+struct ReleaseChargeWeapon
+{
+  ReleaseChargeWeapon() = default;
+
+  ReleaseChargeWeapon(Ecs::Entity e)
+      : entity(e)
+  {
+  }
+
+  CHANGE_ENTITY(result.entity = map.at(entity))
+
+  DEFAULT_BYTE_CONSTRUCTOR(ReleaseChargeWeapon,
+                           ([](Ecs::Entity e)
+                            { return ReleaseChargeWeapon(e); }),
+                           parseByte<Ecs::Entity>())
+
+  DEFAULT_SERIALIZE(type_to_byte(entity))
+
+  ReleaseChargeWeapon(Registry& r,
+                      JsonObject const& conf,
+                      std::optional<Ecs::Entity> entity)
+      : entity(*get_value_copy<int>(r, conf, "entity", entity))
+  {
+  }
+
+  Ecs::Entity entity;
 };

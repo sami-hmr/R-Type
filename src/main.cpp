@@ -1,4 +1,6 @@
 #include <chrono>
+#include <cstdlib>
+#include <ctime>
 #include <iostream>
 #include <optional>
 #include <string>
@@ -10,6 +12,7 @@
 #include "ecs/Registry.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/events/ActionEvents.hpp"
+#include "plugin/events/LoadPluginEvent.hpp"
 #include "plugin/events/SceneChangeEvent.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
 #include "plugin/libLoaders/ILibLoader.hpp"
@@ -40,14 +43,38 @@ static int true_main(Registry& r,
                               r.deactivate_all_scenes();
                             }
                             r.activate_scene(event.target_scene);
+                            if (event.main) {
+                              r.set_main_scene(event.target_scene);
+                            }
                             return false;
                           });
+
+  em.on<DisableSceneEvent>("DisableSceneEvent",
+                           [&r](const DisableSceneEvent& event) -> bool
+                           {
+                             r.deactivate_scene(event.target_scene);
+                             return false;
+                           });
+
+  em.on<LoadPluginEvent>("LoadPluginEvent",
+                         [&e](const LoadPluginEvent& event) -> bool
+                         {
+                           e.load_plugin(event.path, event.params);
+                           return false;
+                         });
+
+  em.on<LoadConfigEvent>("LoadConfigEvent",
+                         [&e](const LoadConfigEvent& event) -> bool
+                         {
+                           e.load(event.path);
+                           return false;
+                         });
 
   em.on<SpawnEntityRequestEvent>(
       "SpawnEntity",
       [&r, &e](const SpawnEntityRequestEvent& event) -> bool
       {
-        Registry::Entity entity = r.spawn_entity();
+        Ecs::Entity entity = r.spawn_entity();
         JsonObject base = r.get_template(event.entity_template);
         e.load_components(entity, base);
         e.load_components(entity, event.params);
@@ -100,6 +127,7 @@ int main(int argc, char* argv[])
   std::optional<EventManager> em;
   std::optional<EntityLoader> e;
 
+  std::srand(std::time(nullptr));
   r.emplace();
   em.emplace();
   e.emplace(*r, *em);

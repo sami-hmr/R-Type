@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS "active_server" (
     "game_id" INTEGER NOT NULL,
    	"ip_address" TEXT NOT NULL,
 	"port" INTEGER,
+	UNIQUE(ip_address, port),
 	PRIMARY KEY("id")
 );
 

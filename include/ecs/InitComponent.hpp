@@ -42,14 +42,14 @@
 template<component Component>
 typename SparseArray<Component>::Ref init_component(Registry& r,
                                                     EventManager& em,
-                                                    Registry::Entity to,
+                                                    Ecs::Entity to,
                                                     Component comp)
 {
   try {
     em.emit<ComponentBuilder>(ComponentBuilder(
         to, r.get_component_key<Component>(), comp.to_bytes()));
   } catch (std::out_of_range const&) {
-    em.emit<LogEvent>("init", LogLevel::ERROR, "unknow component");
+    em.emit<LogEvent>("init", LogLevel::ERR, "unknow component");
   }
   return r.add_component<Component>(to, std::move(comp));
 }
@@ -77,14 +77,14 @@ typename SparseArray<Component>::Ref init_component(Registry& r,
 template<component Component, typename... Args>
 typename SparseArray<Component>::Ref init_component(Registry& r,
                                                     EventManager& em,
-                                                    Registry::Entity to,
+                                                    Ecs::Entity to,
                                                     Args... args)
 {
   try {
     em.emit<ComponentBuilder>(ComponentBuilder(
         to, r.get_component_key<Component>(), Component(args...).to_bytes()));
   } catch (std::out_of_range const&) {
-    em.emit<LogEvent>("init", LogLevel::ERROR, "unknow component");
+    em.emit<LogEvent>("init", LogLevel::ERR, "unknow component");
   }
   return r.emplace_component<Component>(to, std::forward<Args>(args)...);
 }
@@ -111,14 +111,14 @@ typename SparseArray<Component>::Ref init_component(Registry& r,
  */
 inline void init_component(Registry& r,
                            EventManager& em,
-                           Registry::Entity to,
+                           Ecs::Entity to,
                            std::string const& id,
                            ByteArray const& comp)
 {
   try {
     em.emit<ComponentBuilder>(ComponentBuilder(to, id, comp));
   } catch (std::out_of_range const&) {
-    em.emit<LogEvent>("init", LogLevel::ERROR, "unknow component");
+    em.emit<LogEvent>("init", LogLevel::ERR, "unknow component");
   }
   r.emplace_component(to, id, comp);
 }

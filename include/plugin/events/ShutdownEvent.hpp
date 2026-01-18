@@ -23,7 +23,7 @@ struct ShutdownEvent
 
   DEFAULT_BYTE_CONSTRUCTOR(ShutdownEvent,
                            ([](std::string const& r, int e)
-                            { return (ShutdownEvent) {r, e}; }),
+                            { return ShutdownEvent {r, e}; }),
                            parseByteString(),
                            parseByte<int>())
 
@@ -37,9 +37,11 @@ struct ShutdownEvent
   {
   }
 
-  ShutdownEvent(Registry& r, JsonObject const& e)
-      : reason(get_value_copy<std::string>(r, e, "reason").value())
-      , exit_code(get_value_copy<int>(r, e, "exit_code").value())
+  ShutdownEvent(Registry& r,
+                JsonObject const& e,
+                std::optional<Ecs::Entity> entity)
+      : reason(get_value_copy<std::string>(r, e, "reason", entity).value())
+      , exit_code(get_value_copy<int>(r, e, "exit_code", entity).value())
   {
   }
 };

@@ -122,7 +122,7 @@
  * Retrieves a value and optionally registers dynamic binding for auto-updates.
  *
  * @code
- * Registry::Entity entity = r.spawn_entity();
+ * Ecs::Entity entity = r.spawn_entity();
  *
  * // Static hook (no binding)
  * auto init_pos = get_value<Transform, Vector2D>(
@@ -259,7 +259,7 @@
  *   Vector2D target_pos;
  *   Vector2D offset;
  *
- *   Follower(Registry& r, JsonObject const& obj, Registry::Entity self)
+ *   Follower(Registry& r, JsonObject const& obj, Ecs::Entity self)
  *     : target_pos(get_value<Follower, Vector2D>(
  *         r, obj, self, "target_pos"
  *       ).value_or(Vector2D{0, 0}))
@@ -358,8 +358,9 @@
 #pragma once
 
 #include <any>
+#include <cstddef>
+#include <format>
 #include <functional>
-#include <iostream>
 #include <optional>
 #include <stdexcept>
 #include <string>
@@ -367,6 +368,7 @@
 #include <variant>
 
 #include "Json/JsonParser.hpp"
+#include "ecs/Entity.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/events/LogMacros.hpp"
 
@@ -476,46 +478,143 @@ std::optional<std::reference_wrapper<const T>> get_ref(Registry& r,
                                                        JsonObject const& object,
                                                        std::string const& key)
 {
-  auto it = object.find(key);
-  if (it == object.end()) {
+  if (!object.contains(key)) {
     return std::nullopt;
   }
 
-  auto const& value = it->second.value;
+  auto const& value = object.at(key).value;
 
-  try {
-    std::string hook = std::get<std::string>(value);
+  const auto* hook = std::get_if<std::string>(&value);
+  if (hook != nullptr) {
     try {
-      if (hook.starts_with('#')) {
-        std::string striped = hook.substr(1);
+      if (hook->starts_with('#')) {
+        std::string striped = hook->substr(1);
         std::string comp = striped.substr(0, striped.find(':'));
         std::string value = striped.substr(striped.find(':') + 1);
         return r.get_hooked_value<T>(comp, value);
       }
     } catch (std::bad_any_cast const&) {
       LOGGER_EVTLESS(
-          LogLevel::ERROR,
+          LogLevel::ERR,
           "Hooks",
           std::format(R"(Error geting hooked value "{}": Invalid type\n)",
-                      hook));
+                      *hook));
       return std::nullopt;
     } catch (std::out_of_range const&) {
       LOGGER_EVTLESS(
-          LogLevel::ERROR,
+          LogLevel::ERR,
           "Hooks",
           std::format(R"(Error geting hooked value "{}": Invalid hook\n)",
-                      hook));
+                      *hook));
       return std::nullopt;
     }
-  } catch (std::bad_variant_access const&) {  // NOLINT intentional fallthrought
   }
 
   if constexpr (is_in_json_variant_v<T>) {
-    try {
-      return std::reference_wrapper<const T>(std::get<T>(value));
-    } catch (std::bad_variant_access const&) {
-      return std::nullopt;
+    const auto* return_ref = std::get_if<T>(&value);
+    if (return_ref != nullptr) {
+      return std::reference_wrapper<const T>(*return_ref);
     }
+  }
+
+  return std::nullopt;
+}
+
+/**
+ * @brief Helper function to resolve scoped hooks (self/global)
+ *
+ * Parses and resolves hook strings with scope:component:field format.
+ * Supports both "self" (entity-specific) and "global" (singleton) scopes.
+ *
+ * @tparam T The expected type of the value
+ * @param r Registry instance for hook resolution
+ * @param value_str Hook string in format "scope:component:field"
+ * @param entity Entity ID for "self" scope resolution (optional for global)
+ *
+ * @return Optional containing the resolved value, or nullopt on failure
+ */
+template<typename T>
+std::optional<T> resolve_scoped_hook(Registry& r,
+                                     std::string const& value_str,
+                                     Ecs::Entity entity)
+{
+  size_t first_colon = value_str.find(':');
+  size_t second_colon = value_str.find(':', first_colon + 1);
+
+  if (first_colon == std::string::npos || second_colon == std::string::npos) {
+    LOGGER_EVTLESS(
+        LogLevel::ERR,
+        "Hooks",
+        std::format(
+            R"(Error parsing hook: Expected format "scope:component:field", got "{}")",
+            value_str));
+    return std::nullopt;
+  }
+
+  std::string scope = value_str.substr(0, first_colon);
+  std::string comp =
+      value_str.substr(first_colon + 1, second_colon - first_colon - 1);
+  std::string value = value_str.substr(second_colon + 1);
+
+  std::optional<std::reference_wrapper<T>> hooked_val;
+
+  if (scope == "self") {
+    std::string hook_key = comp + "{" + std::to_string(entity) + "}";
+    hooked_val = r.template get_hooked_value<T>(hook_key, value);
+  } else if (scope == "global") {
+    hooked_val = r.template get_global_hooked_value<T>(comp, value);
+  } else {
+    LOGGER_EVTLESS(
+        LogLevel::ERR,
+        "Hooks",
+        std::format(R"(Unknown scope "{}": Expected "self" or "global")",
+                    scope));
+    return std::nullopt;
+  }
+
+  if (hooked_val) {
+    return hooked_val->get();
+  }
+
+  return std::nullopt;
+}
+
+template<typename T>
+std::optional<T> resolve_scoped_hook(Registry& r, std::string const& value_str)
+{
+  size_t first_colon = value_str.find(':');
+  size_t second_colon = value_str.find(':', first_colon + 1);
+
+  if (first_colon == std::string::npos || second_colon == std::string::npos) {
+    LOGGER_EVTLESS(
+        LogLevel::ERR,
+        "Hooks",
+        std::format(
+            R"(Error parsing hook: Expected format "scope:component:field", got "{}")",
+            value_str));
+    return std::nullopt;
+  }
+
+  std::string scope = value_str.substr(0, first_colon);
+  std::string comp =
+      value_str.substr(first_colon + 1, second_colon - first_colon - 1);
+  std::string value = value_str.substr(second_colon + 1);
+
+  std::optional<std::reference_wrapper<T>> hooked_val;
+
+  if (scope == "global") {
+    hooked_val = r.template get_global_hooked_value<T>(comp, value);
+  } else {
+    LOGGER_EVTLESS(
+        LogLevel::ERR,
+        "Hooks",
+        std::format(R"(Unknown scope "{}": Expected "self" or "global")",
+                    scope));
+    return std::nullopt;
+  }
+
+  if (hooked_val) {
+    return hooked_val->get();
   }
 
   return std::nullopt;
@@ -526,7 +625,7 @@ std::optional<std::reference_wrapper<const T>> get_ref(Registry& r,
  *
  * Retrieves a value of type T from a JSON object, with support for:
  * - Direct JSON values (int, double, string, bool, object, array)
- * - Static hook references (% prefix)
+ * - Static hook references (% prefix with scope support)
  * - Dynamic hook references (# prefix) - reads value but doesn't bind
  * - JSON object construction (if T has JsonObject constructor)
  *
@@ -535,19 +634,25 @@ std::optional<std::reference_wrapper<const T>> get_ref(Registry& r,
  * @param r Registry instance for hook resolution
  * @param object JSON object containing the key
  * @param key Key name to lookup
+ * @param entity Optional entity for scoped hook resolution (self scope)
  * @param args Additional arguments passed to T's constructor (if needed)
  *
  * @return Optional containing a copy of the value, or nullopt on failure
  *
  * @details
  * Resolution priority:
- * 1. Try get_ref<T>() for direct value or hook
- * 2. If successful, return a copy of the referenced value
- * 3. If T is constructible from JsonObject, try JSON construction
- * 4. Return nullopt if all methods fail
+ * 1. Try scoped static hooks (%scope:component:field)
+ * 2. Try scoped dynamic hooks (#scope:component:field) - without binding
+ * 3. Try get_ref<T>() for direct value or old-style hook
+ * 4. If successful, return a copy of the referenced value
+ * 5. If T is constructible from JsonObject, try JSON construction
+ * 6. Return nullopt if all methods fail
+ *
+ * When entity is provided, it can resolve hooks with "self" scope.
+ * When entity is std::nullopt, only "global" scoped hooks can be resolved.
  *
  * @note Always returns a copy - caller owns the returned value
- * @note For static hooks only - dynamic binding requires get_value()
+ * @note For dynamic binding, use get_value() instead
  *
  * @code
  * JsonObject obj;
@@ -559,10 +664,18 @@ std::optional<std::reference_wrapper<const T>> get_ref(Registry& r,
  *
  * @code
  * JsonObject obj;
- * obj["speed"] = "%Config:playerSpeed";
+ * obj["speed"] = "%global:Config:playerSpeed";
  *
  * auto speed = get_value_copy<double>(r, obj, "speed");
  * // Reads Config::playerSpeed and returns a copy
+ * @endcode
+ *
+ * @code
+ * JsonObject obj;
+ * obj["health"] = "%self:Player:maxHealth";
+ *
+ * auto health = get_value_copy<int>(r, obj, "health", entity_id);
+ * // Reads maxHealth from Player component on entity_id
  * @endcode
  *
  * @code
@@ -581,30 +694,59 @@ std::optional<std::reference_wrapper<const T>> get_ref(Registry& r,
  * @endcode
  */
 template<typename T, typename... Args>
-std::optional<T> get_value_copy(Registry& r,
-                                JsonObject const& object,
-                                std::string const& key,
-                                Args&&... args)
+std::optional<T> get_value_copy(
+    Registry& r,
+    JsonObject const& object,
+    std::string const& key,
+    std::optional<Ecs::Entity> entity = std::nullopt,
+    Args&&... args)
 {
+  if (!object.contains(key)) {
+    return std::nullopt;
+  }
+
+  if (object.contains(key)) {
+    auto const* value_str = std::get_if<std::string>(&object.at(key).value);
+    if (value_str) {
+      if (value_str->starts_with('@')) {
+        if constexpr (std::is_same_v<T, std::size_t>) {
+          if (value_str->substr(1) == "self") {
+            return entity;
+          }
+        }
+      }
+      if (value_str->starts_with('%')) {
+        std::string stripped = value_str->substr(1);
+        if (entity.has_value()) {
+          auto result = resolve_scoped_hook<T>(r, stripped, entity.value());
+          if (result.has_value()) {
+            return result;
+          }
+        } else {
+          auto result = resolve_scoped_hook<T>(r, stripped);
+          if (result.has_value()) {
+            return result;
+          }
+        }
+      }
+    }
+  }
+  // self hook: @self
+
   auto tmp = get_ref<T>(r, object, key);
   if (tmp.has_value()) {
     return tmp.value().get();
   }
 
   if constexpr (std::is_constructible_v<T, JsonObject, Args...>) {
-    try {
-      const JsonObject& obj = std::get<JsonObject>(object.at(key).value);
-      return T(obj, std::forward<Args>(args)...);
-    } catch (std::bad_variant_access const&) {
-      LOGGER_EVTLESS(LogLevel::ERROR,
-                     "Hooks",
-                     "hooked value construction via jsonobject failed");
-    } catch (std::out_of_range const&) {
-      LOGGER_EVTLESS(
-          LogLevel::ERROR, "Hooks", "hooked value lookup in object failed");
+    if (!object.contains(key)) {
+      return std::nullopt;
+    }
+    const auto* obj = std::get_if<JsonObject>(&object.at(key).value);
+    if (obj != nullptr) {
+      return T(*obj, std::forward<Args>(args)...);
     }
   }
-
   return std::nullopt;
 }
 
@@ -653,7 +795,7 @@ std::optional<T> get_value_copy(Registry& r,
  * struct Follower {
  *   Vector2D target_pos;
  *
- *   Follower(Registry& r, JsonObject const& obj, Registry::Entity self) {
+ *   Follower(Registry& r, JsonObject const& obj, Ecs::Entity self) {
  *     // JSON: "target_pos": "#self:Position:pos"
  *     target_pos = get_value<Follower, Vector2D>(
  *       r, obj, self, "target_pos"
@@ -669,7 +811,7 @@ std::optional<T> get_value_copy(Registry& r,
  * struct HealthBar {
  *   int max_health;
  *
- *   HealthBar(Registry& r, JsonObject const& obj, Registry::Entity self) {
+ *   HealthBar(Registry& r, JsonObject const& obj, Ecs::Entity self) {
  *     // JSON: "max_health": "#global:GameConfig:maxHealth"
  *     max_health = get_value<HealthBar, int>(
  *       r, obj, self, "max_health"
@@ -685,7 +827,7 @@ std::optional<T> get_value_copy(Registry& r,
  * struct Enemy {
  *   int max_health;
  *
- *   Enemy(Registry& r, JsonObject const& obj, Registry::Entity self) {
+ *   Enemy(Registry& r, JsonObject const& obj, Ecs::Entity self) {
  *     // JSON: "max_health": "%global:EnemyDefaults:health"
  *     max_health = get_value<Enemy, int>(
  *       r, obj, self, "max_health"
@@ -699,123 +841,51 @@ std::optional<T> get_value_copy(Registry& r,
 template<typename ComponentType, typename T, typename... Args>
 std::optional<T> get_value(Registry& r,
                            JsonObject const& object,
-                           Registry::Entity entity,
+                           Ecs::Entity entity,
                            std::string const& field_name,
                            Args&&... args)
 {
-  try {
-    std::string value_str = std::get<std::string>(object.at(field_name).value);
+  if (object.contains(field_name)) {
+    const auto* value_str =
+        std::get_if<std::string>(&object.at(field_name).value);
 
-    // Dynamic hook: #scope:component:field
-    if (value_str.starts_with('#')) {
-      std::string stripped = value_str.substr(1);
+    if (value_str != nullptr) {
+      // self hook: @self
+      if (value_str->starts_with('@')) {
+        if constexpr (std::is_same_v<T, std::size_t>) {
+          if (value_str->substr(1) == "self") {
+            return entity;
+          }
+        }
+      }
+      // Dynamic hook: #scope:component:field
+      if (value_str->starts_with('#')) {
+        std::string stripped = value_str->substr(1);
 
-      // Register binding for auto-updates
-      r.template register_binding<ComponentType, T>(
-          entity, field_name, stripped);
+        r.template register_binding<ComponentType, T>(
+            entity, field_name, stripped);
 
-      // Parse scope:component:field
-      size_t first_colon = stripped.find(':');
-      size_t second_colon = stripped.find(':', first_colon + 1);
+        auto result = resolve_scoped_hook<T>(r, stripped, entity);
+        if (result.has_value()) {
+          return result;
+        }
 
-      if (first_colon == std::string::npos || second_colon == std::string::npos)
-      {
-        LOGGER_EVTLESS(
-            LogLevel::ERROR,
-            "Hooks",
-            std::format(
-                R"(Error parsing hook "{}": Expected format "scope:component:field")",
-                value_str));
         return T {};
       }
 
-      std::string scope = stripped.substr(0, first_colon);
-      std::string comp =
-          stripped.substr(first_colon + 1, second_colon - first_colon - 1);
-      std::string value = stripped.substr(second_colon + 1);
+      if (value_str->starts_with('%')) {
+        std::string stripped = value_str->substr(1);
 
-      try {
-        std::optional<std::reference_wrapper<T>> hooked_val;
-
-        if (scope == "self") {
-          // Same-entity hook: append entity ID
-          std::string hook_key = comp + "{" + std::to_string(entity) + "}";
-          hooked_val = r.template get_hooked_value<T>(hook_key, value);
-        } else if (scope == "global") {
-          // Global hook: use new method
-          hooked_val = r.template get_global_hooked_value<T>(comp, value);
-        } else {
-          LOGGER_EVTLESS(
-              LogLevel::ERROR,
-              "Hooks",
-              std::format(R"(Unknown scope "{}": Expected "self" or "global")",
-                          scope));
+        auto result = resolve_scoped_hook<T>(r, stripped, entity);
+        if (result.has_value()) {
+          return result;
         }
-
-        if (hooked_val) {
-          return hooked_val->get();
-        }
-      } catch (std::out_of_range const&) {
-        LOGGER_EVTLESS(
-            LogLevel::ERROR,
-            "Hooks",
-            std::format(
-                R"(Error getting hooked value "{}": couldn't find the hook)",
-                value_str));
-      }
-      return T {};
-    }
-
-    // Static hook: %scope:component:field
-    if (value_str.starts_with('%')) {
-      std::string stripped = value_str.substr(1);
-
-      // Parse scope:component:field
-      size_t first_colon = stripped.find(':');
-      size_t second_colon = stripped.find(':', first_colon + 1);
-
-      if (first_colon == std::string::npos || second_colon == std::string::npos)
-      {
-        LOGGER_EVTLESS(
-            LogLevel::ERROR,
-            "Hooks",
-            std::format(
-                R"(Error parsing hook "{}": Expected format "scope:component:field")",
-                value_str));
-        return std::nullopt;
-      }
-
-      std::string scope = stripped.substr(0, first_colon);
-      std::string comp =
-          stripped.substr(first_colon + 1, second_colon - first_colon - 1);
-      std::string value = stripped.substr(second_colon + 1);
-
-      std::optional<std::reference_wrapper<T>> hooked_val;
-
-      if (scope == "self") {
-        // Same-entity hook: append entity ID
-        std::string hook_key = comp + "{" + std::to_string(entity) + "}";
-        hooked_val = r.get_hooked_value<T>(hook_key, value);
-      } else if (scope == "global") {
-        // Global hook: use new method
-        hooked_val = r.template get_global_hooked_value<T>(comp, value);
-      } else {
-        LOGGER_EVTLESS(
-            LogLevel::ERROR,
-            "Hooks",
-            std::format(R"(Unknown scope "{}": Expected "self" or "global")",
-                        scope));
-      }
-
-      if (hooked_val) {
-        return hooked_val->get();
       }
     }
-
-  } catch (std::bad_variant_access const&) {  // NOLINT intentional fallthrough
   }
 
-  return get_value_copy<T>(r, object, field_name, std::forward<Args>(args)...);
+  return get_value_copy<T>(
+      r, object, field_name, entity, std::forward<Args>(args)...);
 }
 
 /**
@@ -846,14 +916,12 @@ std::optional<T> get_value(Registry& r,
  */
 inline bool is_hook(JsonObject const& object, std::string const& key)
 {
-  try {
-    std::string value = std::get<std::string>(object.at(key).value);
-    return value.starts_with('#');
-  } catch (std::bad_variant_access const&) {
-    // Value is not a string
-    return false;
-  } catch (std::out_of_range const&) {
-    // Key not found
+  if (!object.contains(key)) {
     return false;
   }
+  const auto* value = std::get_if<std::string>(&object.at(key).value);
+  if (value == nullptr) {
+    return false;
+  }
+  return value->starts_with('#');
 }

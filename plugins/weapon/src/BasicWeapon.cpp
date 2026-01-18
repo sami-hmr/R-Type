@@ -7,7 +7,7 @@
 #include "plugin/Hooks.hpp"
 #include "plugin/events/IoEvents.hpp"
 
-void Weapon::init_basic_weapon(Registry::Entity const& entity,
+void Weapon::init_basic_weapon(Ecs::Entity const& entity,
                                JsonObject const& obj)
 {
   auto const& bullet_type = get_value<BasicWeapon, std::string>(
@@ -48,6 +48,11 @@ void Weapon::init_basic_weapon(Registry::Entity const& entity,
     return;
   }
 
+  auto const& attack_animation = get_value<BasicWeapon, std::string>(
+      this->_registry.get(), obj, entity, "attack_animation");
+  std::string attack_anim_name =
+      attack_animation ? attack_animation.value() : "";
+
   init_component<BasicWeapon>(this->_registry.get(),
                               this->_event_manager.get(),
                               entity,
@@ -55,7 +60,8 @@ void Weapon::init_basic_weapon(Registry::Entity const& entity,
                               magazine_size.value(),
                               magazine_nb.value(),
                               reload_time.value(),
-                              cooldown.value());
+                              cooldown.value(),
+                              attack_anim_name);
 }
 
 bool BasicWeapon::update_basic_weapon(

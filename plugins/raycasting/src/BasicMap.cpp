@@ -10,7 +10,7 @@
 #include "plugin/components/Position.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
 
-void Raycasting::init_basic_map(Registry::Entity& e, const JsonObject& obj)
+void Raycasting::init_basic_map(Ecs::Entity& e, const JsonObject& obj)
 {
   Vector2D size;
   if (!obj.contains("size")) {

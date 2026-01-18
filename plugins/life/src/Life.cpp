@@ -7,6 +7,7 @@
 
 #include "Life.hpp"
 
+#include "EntityExpose.hpp"
 #include "Json/JsonParser.hpp"
 #include "Logger.hpp"
 #include "NetworkShared.hpp"
@@ -53,7 +54,7 @@ Life::Life(Registry& r, EventManager& em, EntityLoader& l)
   SUBSCRIBE_EVENT(CollisionEvent, { this->on_collision(event); })
 }
 
-void Life::init_health(Registry::Entity entity, JsonObject const& obj)
+void Life::init_health(Ecs::Entity entity, JsonObject const& obj)
 {
   auto const& current =
       get_value<Health, double>(this->_registry.get(), obj, entity, "current");
@@ -74,7 +75,7 @@ void Life::init_health(Registry::Entity entity, JsonObject const& obj)
                          damage_cooldown);
 }
 
-void Life::init_damage(Registry::Entity entity, JsonObject const& obj)
+void Life::init_damage(Ecs::Entity entity, JsonObject const& obj)
 {
   auto const& value =
       get_value<Damage, int>(this->_registry.get(), obj, entity, "amount");
@@ -88,7 +89,7 @@ void Life::init_damage(Registry::Entity entity, JsonObject const& obj)
       this->_registry.get(), this->_event_manager.get(), entity, value.value());
 }
 
-void Life::init_heal(Registry::Entity entity, JsonObject const& obj)
+void Life::init_heal(Ecs::Entity entity, JsonObject const& obj)
 {
   auto const& value =
       get_value<Heal, int>(this->_registry.get(), obj, entity, "amount");
@@ -102,7 +103,7 @@ void Life::init_heal(Registry::Entity entity, JsonObject const& obj)
       this->_registry.get(), this->_event_manager.get(), entity, value.value());
 }
 
-void Life::init_team(Registry::Entity const& entity, JsonObject const& obj)
+void Life::init_team(Ecs::Entity const& entity, JsonObject const& obj)
 {
   auto const& value =
       get_value<Team, std::string>(this->_registry.get(), obj, entity, "name");
@@ -190,11 +191,16 @@ void Life::on_damage(const DamageEvent& event)
   } else {
     return;
   }
+  Ecs::Entity killer = event.source;
+  if (this->_registry.get().has_component<IdStorage>(event.source)) {
+    auto& id_storages = this->_registry.get().get_components<IdStorage>();
+    killer = id_storages[event.source]->id_s;
+  }
 
   if (healths[event.target]->current <= 0
       && !this->_registry.get().is_entity_dying(event.target))
   {
-    this->_event_manager.get().emit<DeathEvent>(event.target);
+    this->_event_manager.get().emit<DeathEvent>(event.target, killer);
   }
 }
 
@@ -240,7 +246,7 @@ void Life::update_cooldowns(Registry& reg)
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
+PLUGIN_EXPORT void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
   return new Life(r, em, e);
 }

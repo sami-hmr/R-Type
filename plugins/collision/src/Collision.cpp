@@ -43,7 +43,7 @@ Collision::Collision(Registry& r, EventManager& em, EntityLoader& l)
   _collision_algo = std::make_unique<QuadTreeCollision>(2.0, 2.0);
 
   if (!_collision_algo) {
-    LOGGER("COLLISION", LogLevel::ERROR, "Error loading collision algorithm")
+    LOGGER("COLLISION", LogLevel::ERR, "Error loading collision algorithm")
   }
 
   _registry.get().add_system([this](Registry& r) { this->collision_system(r); },
@@ -59,17 +59,15 @@ void Collision::set_algorithm(std::unique_ptr<ICollisionAlgorithm> algo)
   _collision_algo = std::move(algo);
 }
 
-void Collision::init_collision(Registry::Entity const& entity,
+void Collision::init_collision(Ecs::Entity const& entity,
                                JsonObject const& obj)
 {
-  auto const& width = get_value<Collidable, double>(
-      this->_registry.get(), obj, entity, "width");
-  auto const& height = get_value<Collidable, double>(
-      this->_registry.get(), obj, entity, "height");
+  auto const& size = get_value<Collidable, Vector2D>(
+      this->_registry.get(), obj, entity, "size", "width", "height");
   auto const& type_str = get_value<Collidable, std::string>(
       this->_registry.get(), obj, entity, "collision_type");
 
-  if (!width || !height || !type_str) {
+  if (!size || !type_str) {
     std::cerr
         << "Error loading collision component: unexpected value type (expected "
            "width: double and height: double) or missing value in JsonObject\n";
@@ -94,13 +92,12 @@ void Collision::init_collision(Registry::Entity const& entity,
   init_component<Collidable>(this->_registry.get(),
                              this->_event_manager.get(),
                              entity,
-                             width.value(),
-                             height.value(),
+                             *size,
                              type,
                              true);
 }
 
-void Collision::init_interaction_zone(Registry::Entity const& entity,
+void Collision::init_interaction_zone(Ecs::Entity const& entity,
                                       JsonObject const& obj)
 {
   auto const& radius = get_value<Collidable, double>(
@@ -134,8 +131,8 @@ void Collision::collision_system(Registry& r)
         .entity_id = i,
         .bounds = Rect {.x = position.pos.x,
                         .y = position.pos.y,
-                        .width = collidable.width,
-                        .height = collidable.height}});
+                        .width = collidable.size.x,
+                        .height = collidable.size.y}});
   }
 
   _collision_algo->update(entities);
@@ -169,7 +166,7 @@ void Collision::interaction_zone_system(Registry& r)
 
     std::vector<ICollisionAlgorithm::CollisionEntity> candidates =
         _collision_algo->detect_range_collisions(range);
-    std::vector<Registry::Entity> detected_entities;
+    std::vector<Ecs::Entity> detected_entities;
     detected_entities.reserve(candidates.size());
 
     for (const auto& candidate : candidates) {
@@ -249,11 +246,32 @@ void Collision::on_collision(const CollisionEvent& c)
           this->_registry.get().get_component_key<Position>(),
           positions[c.b]->to_bytes());
     } else if (type_a == CollisionType::Solid) {
-      double dot_product = movement.dot(collision_normal);
+      double overlap_x =
+          ((collidables[c.a]->size.x + collidables[c.b]->size.x) / 2.0)
+          - std::abs(positions[c.a]->pos.x - positions[c.b]->pos.x);
+      double overlapY =
+          ((collidables[c.a]->size.y + collidables[c.b]->size.y) / 2.0)
+          - std::abs(positions[c.a]->pos.y - positions[c.b]->pos.y);
 
-      if (dot_product < 0) {
-        Vector2D perpendicular_vector = collision_normal * dot_product;
-        positions[c.a]->pos -= perpendicular_vector;
+      if (overlap_x > 0 && overlapY > 0) {
+        Vector2D clean_normal(0, 0);
+        double min_overlap = 0;
+        if (overlap_x < overlapY) {
+          clean_normal = {
+              (positions[c.a]->pos.x > positions[c.b]->pos.x) ? 1.0 : -1.0, 0};
+          min_overlap = overlap_x;
+        } else {
+          clean_normal = {
+              0, (positions[c.a]->pos.y > positions[c.b]->pos.y) ? 1.0 : -1.0};
+          min_overlap = overlapY;
+        }
+        double dot = movement.dot(clean_normal);
+        if (dot < -0.0001) {
+          Vector2D slide = movement - clean_normal * dot;
+          positions[c.a]->pos = (positions[c.a]->pos - movement) + slide;
+        }
+        double correction_amount = std::max(min_overlap - 0.1, 0.0);
+        positions[c.a]->pos += clean_normal * correction_amount;
       }
     } else if (type_a == CollisionType::Bounce) {
       double dot_product = directions[c.a]->direction.dot(collision_normal);
@@ -275,7 +293,7 @@ void Collision::on_collision(const CollisionEvent& c)
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
+PLUGIN_EXPORT void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
   return new Collision(r, em, e);
 }

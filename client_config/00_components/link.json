@@ -1,0 +1,59 @@
+{
+    "entities_template": [
+        {
+            "name": "link",
+            "default_parameters": {
+                "width": 0.5,
+                "height": 0.1,
+                "x": 0.0,
+                "y": 0.0,
+                "z": 1,
+                "font": "assets/fonts/roboto.ttf",
+                "fill_color": {
+                    "r": 255,
+                    "g": 255,
+                    "b": 255,
+                    "a": 255
+                },
+                "outline_color": {
+                    "r": 0,
+                    "g": 0,
+                    "b": 0,
+                    "a": 255
+                },
+                "outline_thickness": 30.0,
+                "outline": true,
+                "to_emit": []
+            },
+            "components": {
+                "template": "text",
+                "parameters": {
+                    "width": "$width",
+                    "height": "$height",
+                    "x": "$x",
+                    "y": "$y",
+                    "z": "$z",
+                    "font": "$font",
+                    "fill_color": "$fill_color",
+                    "outline_color": "$outline_color",
+                    "outline_thickness": "$outline_thickness",
+                    "outline": "$outline",
+                    "text": "$text"
+                },
+                "config": {
+                    "ui:Drawable": {
+                        "hook": "drawable_link"
+                    },
+                    "collision:Collidable": {
+                        "size": "#self:drawable_link:true_size",
+                        "collision_type": "Trigger"
+                    },
+                    "ath:Clickable": {
+                        "to_emit": "$to_emit"
+                    }
+                }
+            }
+        }
+    ],
+    "scenes": []
+}

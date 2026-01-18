@@ -1,0 +1,69 @@
+{
+    "scenes": [
+        {
+            "name": "register",
+            "state": "disabled",
+            "plugins": [],
+            "entities": [
+                {
+                    "template": "login_title",
+                    "parameters": {
+                        "text": "register"
+                    }
+                },
+                {
+                    "template": "input",
+                    "parameters": {
+                        "x": 0.0,
+                        "y": -0.15,
+                        "input_hook": "register_id_input",
+                        "text": "#global:register_id_input:buffer",
+                        "placeholder": "identifier"
+                    }
+                },
+                {
+                    "template": "input",
+                    "parameters": {
+                        "x": 0.0,
+                        "y": 0.15,
+                        "input_hook": "register_pswd_input",
+                        "text": "#global:register_pswd_input:buffer",
+                        "placeholder": "password"
+                    }
+                },
+                {
+                    "template": "switch_text",
+                    "parameters": {
+                        "text": "already registered ? login here",
+                        "width": 0.8,
+                        "target_scene": "login",
+                        "current_scene": "register"
+                    }
+                },
+                {
+                    "template": "action_button",
+                    "parameters": {
+                        "key_to_press": "ENTER",
+                        "y": 0.7,
+                        "width": 0.3,
+                        "height": 0.3,
+                        "on_click": [
+                            {
+                                "Register": {
+                                    "identifier": "%global:register_id_input:buffer",
+                                    "password": "%global:register_pswd_input:buffer"
+                                }
+                            }
+                        ],
+                        "text_size": {
+                            "width": 0.2,
+                            "height": 0.06
+                        },
+                        "text": "submit",
+                        "font": "assets/fonts/Starjedi.ttf"
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -34,7 +34,7 @@ Projectile::Projectile(Registry& r, EventManager& em, EntityLoader& l)
   SUBSCRIBE_EVENT(CollisionEvent, { this->on_collision(event); })
 }
 
-void Projectile::init_temporal(Registry::Entity entity, JsonObject const& obj)
+void Projectile::init_temporal(Ecs::Entity entity, JsonObject const& obj)
 {
   auto const& lifetime = get_value<Temporal, double>(
       this->_registry.get(), obj, entity, "lifetime");
@@ -51,7 +51,7 @@ void Projectile::init_temporal(Registry::Entity entity, JsonObject const& obj)
                            lifetime.value());
 }
 
-void Projectile::init_fragile(Registry::Entity entity, JsonObject const& obj)
+void Projectile::init_fragile(Ecs::Entity entity, JsonObject const& obj)
 {
   auto const& hits =
       get_value<Fragile, int>(this->_registry.get(), obj, entity, "hits");
@@ -82,7 +82,7 @@ void Projectile::temporal_system(Registry& reg)
           temporal.to_bytes());
 
       if (temporal.elapsed >= temporal.lifetime) {
-        this->_event_manager.get().emit<DeathEvent>(i);
+        this->_event_manager.get().emit<DeathEvent>(i, i);
       }
     }
   }
@@ -133,7 +133,7 @@ void Projectile::on_collision(const CollisionEvent& event)
     if (fragiles[event.a]->counter >= fragiles[event.a]->hits
         && !this->_registry.get().is_entity_dying(event.a))
     {
-      this->_event_manager.get().emit<DeathEvent>(event.a);
+      this->_event_manager.get().emit<DeathEvent>(event.a, event.a);
       return;
     }
     fragiles[event.a]->counter += 1;
@@ -147,7 +147,7 @@ void Projectile::on_collision(const CollisionEvent& event)
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
+PLUGIN_EXPORT void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
   return new Projectile(r, em, e);
 }

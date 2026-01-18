@@ -4,6 +4,36 @@
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
 
+struct HttpBadCodeEvent
+{
+  std::size_t code;
+  std::string message;
+
+  HttpBadCodeEvent(std::size_t code, std::string message)
+      : code(code)
+      , message(std::move(message))
+  {
+  }
+
+  HttpBadCodeEvent(Registry& r,
+                   JsonObject const& e,
+                   std::optional<Ecs::Entity> entity)
+      : code(get_value_copy<int>(r, e, "code", entity).value())
+      , message(get_value_copy<std::string>(r, e, "message", entity).value())
+  {
+  }
+
+  DEFAULT_BYTE_CONSTRUCTOR(HttpBadCodeEvent,
+                           ([](std::size_t code, std::string const& m)
+                            { return HttpBadCodeEvent(code, m); }),
+                           parseByte<std::size_t>(),
+                           parseByteString())
+
+  DEFAULT_SERIALIZE(type_to_byte(code), string_to_byte(message))
+
+  CHANGE_ENTITY_DEFAULT
+};
+
 struct FetchAvailableServers
 {
   FetchAvailableServers() = default;
@@ -13,9 +43,31 @@ struct FetchAvailableServers
 
   CHANGE_ENTITY_DEFAULT
 
-  FetchAvailableServers(Registry& /* */, JsonObject const& /* */) {}
+  FetchAvailableServers(Registry& /* */,
+                        JsonObject const& /* */,
+                        std::optional<Ecs::Entity>)
+  {
+  }
 
   HOOKABLE(FetchAvailableServers)
+};
+
+struct FetchAvailableServersSuccessfull
+{
+  FetchAvailableServersSuccessfull() = default;
+
+  EMPTY_BYTE_CONSTRUCTOR(FetchAvailableServersSuccessfull)
+  DEFAULT_SERIALIZE(ByteArray {})
+
+  CHANGE_ENTITY_DEFAULT
+
+  FetchAvailableServersSuccessfull(Registry& /* */,
+                                   JsonObject const& /* */,
+                                   std::optional<Ecs::Entity>)
+  {
+  }
+
+  HOOKABLE(FetchAvailableServersSuccessfull)
 };
 
 struct ExposeServer
@@ -27,8 +79,10 @@ struct ExposeServer
   {
   }
 
-  ExposeServer(Registry& r, JsonObject const& e)
-      : host(get_value_copy<std::string>(r, e, "host").value())
+  ExposeServer(Registry& r,
+               JsonObject const& e,
+               std::optional<Ecs::Entity> entity)
+      : host(get_value_copy<std::string>(r, e, "host", entity).value())
   {
   }
 
@@ -53,9 +107,10 @@ struct Register
   {
   }
 
-  Register(Registry& r, JsonObject const& e)
-      : identifier(get_value_copy<std::string>(r, e, "identifier").value())
-      , password(get_value_copy<std::string>(r, e, "password").value())
+  Register(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+      : identifier(
+            get_value_copy<std::string>(r, e, "identifier", entity).value())
+      , password(get_value_copy<std::string>(r, e, "password", entity).value())
   {
   }
 
@@ -66,6 +121,31 @@ struct Register
                            parseByteString())
 
   DEFAULT_SERIALIZE(string_to_byte(identifier), string_to_byte(password))
+
+  CHANGE_ENTITY_DEFAULT
+};
+
+struct LoginSuccessfull
+{
+  int user;
+
+  LoginSuccessfull(int u)
+      : user(u)
+  {
+  }
+
+  LoginSuccessfull(Registry& r,
+                   JsonObject const& e,
+                   std::optional<Ecs::Entity> entity)
+      : user(get_value_copy<int>(r, e, "user", entity).value())
+  {
+  }
+
+  DEFAULT_BYTE_CONSTRUCTOR(LoginSuccessfull,
+                           ([](int u) { return LoginSuccessfull(u); }),
+                           parseByte<int>())
+
+  DEFAULT_SERIALIZE(type_to_byte(user))
 
   CHANGE_ENTITY_DEFAULT
 };
@@ -81,9 +161,10 @@ struct Login
   {
   }
 
-  Login(Registry& r, JsonObject const& e)
-      : identifier(get_value_copy<std::string>(r, e, "identifier").value())
-      , password(get_value_copy<std::string>(r, e, "password").value())
+  Login(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
+      : identifier(
+            get_value_copy<std::string>(r, e, "identifier", entity).value())
+      , password(get_value_copy<std::string>(r, e, "password", entity).value())
   {
   }
 
@@ -98,6 +179,40 @@ struct Login
   CHANGE_ENTITY_DEFAULT
 };
 
+struct Logout
+{
+  Logout() = default;
+
+  EMPTY_BYTE_CONSTRUCTOR(Logout)
+  DEFAULT_SERIALIZE(ByteArray {})
+
+  CHANGE_ENTITY_DEFAULT
+
+  Logout(Registry& /* */, JsonObject const& /* */, std::optional<Ecs::Entity>)
+  {
+  }
+
+  HOOKABLE(Logout)
+};
+
+struct FailLogin
+{
+  FailLogin() = default;
+
+  EMPTY_BYTE_CONSTRUCTOR(FailLogin)
+  DEFAULT_SERIALIZE(ByteArray {})
+
+  CHANGE_ENTITY_DEFAULT
+
+  FailLogin(Registry& /* */,
+            JsonObject const& /* */,
+            std::optional<Ecs::Entity>)
+  {
+  }
+
+  HOOKABLE(FailLogin)
+};
+
 struct Save
 {
   Save() = default;
@@ -107,7 +222,7 @@ struct Save
 
   CHANGE_ENTITY_DEFAULT
 
-  Save(Registry& /* */, JsonObject const& /* */) {}
+  Save(Registry& /* */, JsonObject const& /* */, std::optional<Ecs::Entity>) {}
 
   HOOKABLE(Save)
 };
@@ -121,8 +236,10 @@ struct SavePlayer
   {
   }
 
-  SavePlayer(Registry& r, JsonObject const& e)
-      : user(get_value_copy<int>(r, e, "user").value())
+  SavePlayer(Registry& r,
+             JsonObject const& e,
+             std::optional<Ecs::Entity> entity)
+      : user(get_value_copy<int>(r, e, "user", entity).value())
   {
   }
 

@@ -16,8 +16,8 @@ public:
   bool on_update_direction(Registry &r, const UpdateDirection &event);
 
 
-  void init_basic_map(Registry::Entity& e, const JsonObject& obj);
-  void init_cam(Registry::Entity& e, const JsonObject& obj);
+  void init_basic_map(Ecs::Entity& e, const JsonObject& obj);
+  void init_cam(Ecs::Entity& e, const JsonObject& obj);
 
   bool changed_direction = false;
 };

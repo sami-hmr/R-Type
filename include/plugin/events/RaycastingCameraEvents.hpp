@@ -1,6 +1,7 @@
 #pragma once
 
 #include "EventMacros.hpp"
+#include "ecs/Entity.hpp"
 
 /**
  * @brief Event to rotate the raycasting camera
@@ -15,7 +16,7 @@ struct RaycastingCameraRotateEvent
   {
   }
 
-  RaycastingCameraRotateEvent(Registry& r, JsonObject const& e)
+  RaycastingCameraRotateEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> /*unused*/)
       : angle(get_value_copy<double>(r, e, "angle").value())
   {
   }

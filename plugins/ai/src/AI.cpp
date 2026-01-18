@@ -2,9 +2,16 @@
 
 #include "AI.hpp"
 
-#include "attack/AttackPatterns.hpp"
+#include "Json/JsonParser.hpp"
+#include "attack/ContinuousFirePattern.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
-#include "movement/MovementPatterns.hpp"
+#include "movement/CirclePattern.hpp"
+#include "movement/FollowTargetPattern.hpp"
+#include "movement/GluePattern.hpp"
+#include "movement/StraightPattern.hpp"
+#include "movement/TurretPattern.hpp"
+#include "movement/WavePattern.hpp"
+#include "movement/ZigzagPattern.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/AttackBehavior.hpp"
 #include "plugin/components/Direction.hpp"
@@ -17,7 +24,7 @@ AI::AI(Registry& r, EventManager& em, EntityLoader& l)
               r,
               em,
               l,
-              {"moving", "collision", "target"},
+              {"moving", "collision", "target", "mob"},
               {COMP_INIT(
                    MovementBehavior, MovementBehavior, init_movement_behavior),
                COMP_INIT(AttackBehavior, AttackBehavior, init_attack_behavior)})
@@ -31,6 +38,7 @@ AI::AI(Registry& r, EventManager& em, EntityLoader& l)
   _movement_patterns["circle"] = std::make_unique<CirclePattern>();
   _movement_patterns["turret"] = std::make_unique<TurretPattern>();
   _movement_patterns["follow_target"] = std::make_unique<FollowTargetPattern>();
+  _movement_patterns["glue"] = std::make_unique<GluePattern>();
 
   _attack_patterns["continuous"] = std::make_unique<ContinuousFirePattern>();
   // _attack_patterns["aimed"] = std::make_unique<AimedFirePattern>();
@@ -41,7 +49,7 @@ AI::AI(Registry& r, EventManager& em, EntityLoader& l)
                              2);
 }
 
-void AI::init_movement_behavior(Registry::Entity const& entity,
+void AI::init_movement_behavior(Ecs::Entity const& entity,
                                 JsonObject const& obj)
 {
   auto const& movement_type = get_value<MovementBehavior, std::string>(
@@ -52,26 +60,33 @@ void AI::init_movement_behavior(Registry::Entity const& entity,
     return;
   }
 
+  JsonObject params;
+  if (obj.contains("params")) {
+    params = std::get<JsonObject>(obj.at("params").value);
+  }
+
   this->_registry.get().emplace_component<MovementBehavior>(
-      entity, movement_type.value());
+      entity, movement_type.value(), params);
 }
 
-void AI::init_attack_behavior(Registry::Entity const& entity,
+void AI::init_attack_behavior(Ecs::Entity const& entity,
                               JsonObject const& obj)
 {
   auto const& attack_type = get_value<AttackBehavior, std::string>(
       this->_registry.get(), obj, entity, "attack_type");
-  auto const& attack_interval = get_value<AttackBehavior, double>(
-      this->_registry.get(), obj, entity, "attack_interval");
 
-  if (!attack_type || !attack_interval) {
-    std::cerr << "Error loading AttackBehavior: missing attack_type or "
-                 "attack_interval\n";
+  if (!attack_type) {
+    std::cerr << "Error loading AttackBehavior: missing attack_type\n";
     return;
   }
 
+  JsonObject params;
+  if (obj.contains("params")) {
+    params = std::get<JsonObject>(obj.at("params").value);
+  }
+
   this->_registry.get().emplace_component<AttackBehavior>(
-      entity, attack_type.value(), attack_interval.value());
+      entity, attack_type.value(), params);
 }
 
 void AI::movement_behavior_system(Registry& r)
@@ -142,7 +157,7 @@ void AI::attack_behavior_system(Registry& r)
 
 extern "C"
 {
-void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
+PLUGIN_EXPORT void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
   return new AI(r, em, e);
 }

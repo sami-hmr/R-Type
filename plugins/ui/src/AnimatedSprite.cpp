@@ -14,10 +14,12 @@
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/Hooks.hpp"
+#include "plugin/components/Collidable.hpp"
 #include "plugin/components/Drawable.hpp"
 #include "plugin/components/Health.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/components/Speed.hpp"
+#include "plugin/components/Text.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
 #include "plugin/events/LoggerEvent.hpp"
 
@@ -27,7 +29,7 @@ void AnimatedSprite::update_anim(
     Registry& /*r*/,
     EventManager& em,
     std::chrono::high_resolution_clock::time_point now,
-    Registry::Entity entity)
+    Ecs::Entity entity)
 {
   AnimationData& animation = this->animations.at(this->current_animation);
 
@@ -47,6 +49,11 @@ void AnimatedSprite::update_anim(
         animation.current_frame = animation.nb_frames - 1;
         animation.frame_pos -= animation.direction * animation.frame_size;
         this->last_update = now;
+        if (this->animations.contains("idle")) {
+          this->current_animation = "idle";
+          animation.current_frame = 0;
+          animation.frame_pos = animation.initial_frame_pos;
+        }
         return;
       }
       if (animation.rollback) {
@@ -83,6 +90,7 @@ void AnimatedSprite::on_death(Registry& r,
     em.emit<PlayAnimationEvent>(
         "death", event.entity, animdata.framerate, false, false);
     r.remove_component<Speed>(event.entity);
+    r.remove_component<Collidable>(event.entity);
   } else {
     em.emit<DeleteEntity>(event.entity);
   }
@@ -141,4 +149,159 @@ void UI::update_anim_system(Registry& r)
     //     r.get_component_key<AnimatedSprite>(),
     //     anim.to_bytes());
   }
+}
+
+
+std::optional<AnimationData> UI::parse_animation_data(JsonObject const& obj,
+                                                      Ecs::Entity const& e)
+{
+  AnimationData animdata;
+
+  auto const& texture_path = get_value<AnimatedSprite, std::string>(
+      this->_registry.get(), obj, e, "texture");
+  if (!texture_path) {
+    std::cerr << "Error parsing animation data: \"texture\" field not "
+                 "found or invalid"
+              << "\n";
+    return std::nullopt;
+  }
+  animdata.texture_path = texture_path.value();
+
+  animdata.frame_size = get_value<AnimatedSprite, Vector2D>(
+                            this->_registry.get(), obj, e, "frame_size")
+                            .value();
+
+  animdata.frame_pos = get_value<AnimatedSprite, Vector2D>(
+                           this->_registry.get(), obj, e, "frame_pos")
+                           .value();
+
+  auto const& framerate = get_value<AnimatedSprite, double>(
+      this->_registry.get(), obj, e, "framerate");
+  if (!framerate) {
+    std::cerr << "Error parsing animation data: \"framerate\" field not found "
+                 "or invalid"
+              << "\n";
+    return std::nullopt;
+  }
+  animdata.direction = get_value<AnimatedSprite, Vector2D>(
+                           this->_registry.get(), obj, e, "direction")
+                           .value();
+
+  animdata.framerate = framerate.value();
+  animdata.sprite_size =
+      get_value<Text, Vector2D>(
+          this->_registry.get(), obj, e, "sprite_size", "width", "height")
+          .value();
+
+  auto const& nb_frames = get_value<AnimatedSprite, int>(
+      this->_registry.get(), obj, e, "nb_frames");
+  if (!nb_frames) {
+    std::cerr << "Error parsing animation data: \"nb_frames\" field not found "
+                 "or invalid"
+              << "\n";
+    return std::nullopt;
+  }
+  animdata.nb_frames = nb_frames.value();
+  auto const& loop =
+      get_value<AnimatedSprite, bool>(this->_registry.get(), obj, e, "loop");
+  if (!loop) {
+    std::cerr
+        << "Error parsing animation data: \"loop\" field not found or invalid"
+        << "\n";
+    return std::nullopt;
+  }
+  animdata.loop = loop.value();
+  auto const& rollback = get_value<AnimatedSprite, bool>(
+      this->_registry.get(), obj, e, "rollback");
+  if (!rollback) {
+    std::cerr << "Error parsing animation data: \"rollback\" field not found "
+                 "or " "invalid"
+              << "\n";
+    return std::nullopt;
+  }
+  animdata.rollback = rollback.value();
+  if (obj.contains("flip_h")) {
+    auto const& flip_h = get_value<AnimatedSprite, bool>(
+        this->_registry.get(), obj, e, "flip_h");
+    if (!flip_h) {
+      std::cerr << "Error parsing animation data: \"flip_h\" field not found "
+                   "or invalid"
+                << "\n";
+    } else {
+      animdata.flip_h = flip_h.value();
+    }
+  }
+  if (obj.contains("flip_v")) {
+    auto const& flip_v = get_value<AnimatedSprite, bool>(
+        this->_registry.get(), obj, e, "flip_v");
+    if (!flip_v) {
+      std::cerr << "Error parsing animation data: \"flip_v\" field not found "
+                   "or invalid"
+                << "\n";
+    } else {
+      animdata.flip_v = flip_v.value();
+    }
+  }
+  
+  return animdata;
+}
+
+void UI::init_animated_sprite(Ecs::Entity const& entity,
+                              const JsonObject& obj)
+{
+  std::unordered_map<std::string, AnimationData> animations;
+
+  std::optional<JsonArray> animations_obj =
+      get_value<AnimatedSprite, JsonArray>(
+          this->_registry.get(), obj, entity, "animations");
+
+  if (!animations_obj) {
+    std::cerr << "AnimatedSprite component requires animations array"
+              << "\n";
+    return;
+  }
+  for (const JsonValue& animation_value : animations_obj.value()) {
+    std::optional<AnimationData> animdata;
+    std::string name;
+    JsonObject animdata_obj;
+    try {
+      animdata_obj = std::get<JsonObject>(animation_value.value);
+    } catch (std::bad_variant_access const&) {
+      std::cerr << "Error parsing animation data: not a JsonObject" << '\n';
+      return;
+    }
+    if (!animdata_obj.contains("name")) {
+      std::cerr << "Error parsing animation data: \"name\" field not found"
+                << '\n';
+      return;
+    }
+    try {
+      name = std::get<std::string>(animdata_obj.at("name").value);
+    } catch (std::bad_variant_access const&) {
+      std::cerr
+          << "Error parsing animation data: \"name\" field is not a string"
+          << '\n';
+      return;
+    }
+    animdata = parse_animation_data(animdata_obj, entity);
+
+    if (!animdata) {
+      std::cerr << "Error parsing animation data for animation: " << name
+                << '\n';
+      return;
+    }
+    animations.insert_or_assign(name, animdata.value());
+  }
+  std::string default_animation = animations.begin()->first;
+  auto const& default_animation_value = get_value<AnimatedSprite, std::string>(
+      this->_registry.get(), obj, entity, "default_animation");
+  if (default_animation_value) {
+    default_animation = default_animation_value.value();
+  }
+  init_component<AnimatedSprite>(this->_registry.get(),
+                                 this->_event_manager.get(),
+                                 entity,
+                                 std::move(animations),
+                                 default_animation,
+                                 default_animation);
 }

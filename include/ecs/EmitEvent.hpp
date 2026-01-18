@@ -1,6 +1,10 @@
 
+#include <cstdlib>
+#include <optional>
+
 #include "Json/JsonParser.hpp"
 #include "NetworkShared.hpp"
+#include "ecs/Entity.hpp"
 #include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/events/LoggerEvent.hpp"
@@ -36,15 +40,17 @@
 inline void emit_event(EventManager& em,
                        Registry& r,
                        std::string const& id,
-                       JsonObject const& params)
+                       JsonObject const& params,
+                       std::optional<Ecs::Entity> entity = std::nullopt)
 {
   try {
     em.emit<EventBuilder>(
-        EventBuilder(id, em.get_event_with_id(r, id, params)));
+        EventBuilder(id, em.get_event_with_id(r, id, params, entity)));
   } catch (std::out_of_range const&) {
-    em.emit<LogEvent>("Emit event", LogLevel::ERROR, "unknown event");
+    em.emit<LogEvent>(
+        "Emit event", LogLevel::ERR, "unknown event: \"" + id + "\"");
   }
-  em.emit(r, id, params);
+  em.emit(r, id, params, entity);
 }
 
 /**
@@ -71,9 +77,9 @@ template<event Event>
 void emit_event(EventManager& em, std::string const& id, Event event)
 {
   try {
-    em.emit<EventBuilder>(EventBuilder(id, event.to_bytes()));
+    em.emit<EventBuilder>(id, event.to_bytes());
   } catch (std::out_of_range const&) {
-    em.emit<LogEvent>("init", LogLevel::ERROR, "unknown event");
+    em.emit<LogEvent>("init", LogLevel::ERR, "unknown event: \"" + id + "\"");
   }
   em.emit(id, event.to_bytes());
 }
