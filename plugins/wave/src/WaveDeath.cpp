@@ -1,3 +1,4 @@
+#include <exception>
 #include <iostream>
 #include <optional>
 
@@ -15,6 +16,7 @@
 #include "plugin/components/Position.hpp"
 #include "plugin/components/WaveTag.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
+#include "plugin/events/LogMacros.hpp"
 #include "plugin/events/SceneChangeEvent.hpp"
 
 void WaveManager::wave_death_system(Registry& r)
@@ -37,11 +39,15 @@ void WaveManager::wave_death_system(Registry& r)
       for (auto const& event : wave.on_end) {
         this->_event_manager.get().emit(
             this->_registry, event.event_name, event.params, entity_opt);
-        this->_event_manager.get().emit<EventBuilderId>(
-            std::nullopt,
-            event.event_name,
-            this->_event_manager.get().get_event_with_id(
-                this->_registry.get(), event.event_name, event.params, entity_opt));
+        try {
+          this->_event_manager.get().emit<EventBuilderId>(
+              std::nullopt,
+              event.event_name,
+              this->_event_manager.get().get_event_with_id(
+                  this->_registry.get(), event.event_name, event.params, entity_opt));
+        } catch (std::exception const&) {
+           LOGGER_EVTLESS("wave", LogLevel::WARNING, "failed to emit envent to client");
+        }
       }
       this->_event_manager.get().emit<DeleteEntity>(wave_entity);
     }

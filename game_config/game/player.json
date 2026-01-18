@@ -354,6 +354,7 @@
         //   "charge_indicator": "beam_start"
         // },
         "inventory:Inventory": {
+          "show": true,
           "max_items": 4,
           "inventory": [
             {
