@@ -28,7 +28,8 @@ struct RaycastingCamera
 
   void rotate(double delta)
   {
-    angle = std::fmod(angle + (delta * std::numbers::pi / 180.0), 2 * std::numbers::pi);
+    angle = std::fmod(angle + (delta * std::numbers::pi / 180.0),
+                      2 * std::numbers::pi);
   }
 
   CHANGE_ENTITY_DEFAULT
