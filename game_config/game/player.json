@@ -333,8 +333,24 @@
           }
         },
         "inventory:Inventory": {
-          "max_items": 64,
-          "inventory": []
+          "max_items": 4,
+          "inventory": [
+            {
+              "item_name": "heal",
+              "nb": 2,
+              "item": {
+                "to_emit": [
+                  {
+                    "HealEvent": {
+                      "entity": "@self",
+                      "amount": 10000000
+                    }
+                  }
+                ]
+              },
+              "artefact_template": "heal_item"
+            }
+          ]
         },
         // "weapon:ChargeWeapon": {
         //   "bullet_type": "beam_segment",

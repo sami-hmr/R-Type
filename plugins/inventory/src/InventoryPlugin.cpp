@@ -123,27 +123,19 @@ void InventoryPlugin::init_inventory(Ecs::Entity const& entity,
 
           std::string item_name =
               get_value<Inventory, std::string>(
-
                   this->_registry.get(), slot_obj, entity, "item_name")
-
                   .value();
 
-          std::size_t nb = get_value<Inventory, std::size_t>(
-
+          std::size_t nb = get_value<Inventory, int>(
                                this->_registry.get(), slot_obj, entity, "nb")
-
                                .value();
 
           JsonObject item_obj =
               get_value<Inventory, JsonObject>(
-
                   this->_registry.get(), slot_obj, entity, "item")
-
                   .value();
 
-          Item item = Item(this->_registry.get(),
-                           item_obj,
-                           entity);  // Assuming Item has a from_json method
+          Item item = Item(this->_registry.get(), item_obj, entity);
 
           std::string artefact_template =
               get_value<Inventory, std::string>(

@@ -64,9 +64,6 @@
           "wave:Formation": {
             "strength": 0.1
           }
-        },
-        {
-          "template": "heal_item"
         }
       ]
     }
