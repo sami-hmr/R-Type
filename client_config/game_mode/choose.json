@@ -20,8 +20,14 @@
           "ui:Drawable": {},
           "moving:Position": {
             "pos": {
-              "x": -0.0,
+              "x": 0.0,
               "y": -0.5
+            }
+          },
+          "moving:Offset": {
+            "offset": {
+              "x": 0.0,
+              "y": 0.0
             }
           },
           "ui:Text": {
@@ -55,7 +61,7 @@
             "width": 0.4,
             "height": 0.2,
             "text_size": {
-              "height": 0.200,
+              "height": 0.2,
               "width": 0.15
             },
             "text": "SinglePlayer",
@@ -102,7 +108,7 @@
             "width": 0.4,
             "height": 0.2,
             "text_size": {
-              "height": 0.200,
+              "height": 0.2,
               "width": 0.15
             },
             "text": "Multiplayer",
@@ -156,6 +162,17 @@
                     "volume": 100.0,
                     "pitch": 0.7,
                     "loop": true
+                  }
+                }
+              },
+              {
+                "description": "stop sound",
+                "key": "M",
+                "pressed": {
+                  "name": "StopAllSoundsEvent",
+                  "params": {
+                    "entity": "@self",
+                    "name": "fah"
                   }
                 }
               }

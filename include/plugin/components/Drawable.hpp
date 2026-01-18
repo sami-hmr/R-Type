@@ -4,6 +4,7 @@
 #include "ParserUtils.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/Byte.hpp"
+#include "plugin/HookMacros.hpp"
 #include "plugin/Hooks.hpp"
 
 struct Drawable
@@ -32,5 +33,10 @@ struct Drawable
   bool stretch = false;
   Vector2D true_size;
 
-  HOOKABLE(Drawable, HOOK(enabled), HOOK(stretch), HOOK(true_size))
+  HOOKABLE(Drawable,
+           HOOK(enabled),
+           HOOK(stretch),
+           HOOK(true_size),
+           HOOK(true_size.y),
+           HOOK(true_size.x))
 };

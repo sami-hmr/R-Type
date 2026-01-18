@@ -1,0 +1,102 @@
+{
+  "entities_template": [
+    {
+      "name": "wave_1_level_7",
+      "components": {
+        "wave:Wave": {
+          "entity_template": "enemy_2_level_7",
+          "count": 7,
+          "tracked": false,
+          "components_inheritance": ["scene"],
+          "pattern": {
+            "type": "formation_v",
+            "origin": { "x": 2.5, "y": 0.0 },
+            "params": {
+              "spacing_x": 0.2,
+              "spacing_y": 0.2
+            }
+          },
+          "on_end": []
+        }
+      }
+    },
+    {
+      "name": "wave_2_level_7",
+      "components": {
+        "wave:Wave": {
+          "entity_template": "enemy_ship_1",
+          "count": 1,
+          "tracked": true,
+          "components_inheritance": ["scene"],
+          "pattern": {
+            "type": "point",
+            "origin": { "x": 0.5, "y": 1.0 }
+          },
+          "on_end": [
+            {
+              "event_name": "WaveSpawnEvent",
+              "params": {
+                "wave_templates": ["wave_3_level_7", "wave_end_level_7"]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "wave_3_level_7",
+      "components": {
+        "wave:Wave": {
+          "entity_template": "enemy_ghost_1",
+          "count": 8,
+          "tracked": false,
+          "components_inheritance": ["scene"],
+          "pattern": {
+              "type": "circle",
+              "origin": { "x": 0.8, "y": 0.0 },
+              "params": {
+                "radius": 0.7
+              }
+          },
+          "on_end": []
+        }
+      }
+    },
+    {
+      "name": "wave_end_level_7",
+      "components": {
+        "wave:Wave": {
+          "entity_template": "enemy_boss_3",
+          "count": 1,
+          "tracked": true,
+          "components_inheritance": ["scene"],
+          "pattern": {
+            "type": "point",
+            "origin": { "x": 0.8, "y": 0.0 }
+          },
+          "on_end": []
+        }
+      }
+    }
+    // {
+    //   "name": "wave_end_level_7",
+    //   "default_parameters": {},
+    //   "components": {
+    //     "template": "wave_scene_event",
+    //     "parameters": {
+    //       "entity_template": "enemy_boss_3",
+    //       "count": 1,
+    //       "tracked": true,
+    //       "components_inheritance": ["scene"],
+    //       "pattern": {
+    //         "type": "point",
+    //         "origin": { "x": 0.8, "y": 0.0 }
+    //       },
+    //       "disable_scene": "level_6",
+    //       "enable_scene": "level_7"
+    //     },
+    //     "config": {}
+    //   }
+    // }
+  ]
+}

@@ -13,6 +13,7 @@
 #include "Json/JsonParser.hpp"
 #include "ParserUtils.hpp"
 #include "TwoWayMap.hpp"
+#include "ecs/Entity.hpp"
 #include "ecs/Registry.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/Byte.hpp"
@@ -315,8 +316,8 @@ struct InputFocusEvent
   InputFocusEvent(Registry& r,
                   JsonObject const& obj,
                   std::optional<Ecs::Entity> entity)
-      : entity(static_cast<Ecs::Entity>(
-            get_value_copy<int>(r, obj, "entity", entity).value())) {};
+      : entity(
+            get_value_copy<Ecs::Entity>(r, obj, "entity", entity).value()) {};
 
   CHANGE_ENTITY(result.entity = map.at(entity);)
 
@@ -324,5 +325,5 @@ struct InputFocusEvent
                            ([](Ecs::Entity entity)
                             { return InputFocusEvent(entity); }),
                            parseByte<int>())
-  DEFAULT_SERIALIZE(type_to_byte(static_cast<int>(this->entity)))
+  DEFAULT_SERIALIZE(type_to_byte(this->entity))
 };

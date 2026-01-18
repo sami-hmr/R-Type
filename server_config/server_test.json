@@ -1,4 +1,7 @@
 {
+  "configs": [
+    "game_config"
+  ],
   "scenes": [
     {
       "name": "ready",

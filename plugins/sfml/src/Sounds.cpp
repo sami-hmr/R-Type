@@ -53,6 +53,20 @@ void SFMLRenderer::sounds_system(Registry& r)
 {
   for (auto&& [e, soundmanager] : ZipperIndex<SoundManager>(r)) {
     for (auto& [name, sound] : soundmanager._sound_effects) {
+      auto vol = static_cast<float>((_sfx_volume / 100.0 * sound.volume)
+                                    * (_master_volume / 100.0));
+      for (auto& [sound_opt, sound_effect] : this->_sounds) {
+        if (sound_opt && sound_effect.filepath == sound.filepath) {
+          sound_opt->setVolume(vol);
+          if (sound.stop) {
+            sound_effect.playing = false;
+            sound_effect.stop = false;
+            sound.playing = false;
+            sound.stop = false;
+            sound_opt->stop();
+          }
+        }
+      }
       sf::SoundBuffer& buffer = load_sound(sound.filepath);
       int sound_opt_idx = get_available_sound(buffer);
       if (sound_opt_idx == -1) {
@@ -72,14 +86,6 @@ void SFMLRenderer::sounds_system(Registry& r)
         sound.play = false;
         this->_sounds.at(sound_opt_idx).second = sound;
         this->_sounds.at(sound_opt_idx).first->play();
-      }
-      if ((sound.stop && sound.playing)
-          || this->_sounds.at(sound_opt_idx).first->getStatus()
-              == sf::Sound::Status::Stopped)
-      {
-        this->_sounds.at(sound_opt_idx).first->stop();
-        sound.playing = false;
-        sound.stop = false;
       }
     }
   }
@@ -123,16 +129,5 @@ void SFMLRenderer::volumes_system(Registry& r)
   }
   for (auto&& [s, music_volume] : Zipper<Scene, MusicVolume>(r)) {
     this->_music_volume = music_volume.value;
-  }
-  for (auto&& [e, soundmanager] : ZipperIndex<SoundManager>(r)) {
-    for (auto& [name, sound] : soundmanager._sound_effects) {
-      auto vol = static_cast<float>((_sfx_volume / 100.0 * sound.volume)
-                                    * (_master_volume / 100.0));
-      for (auto& [sound_opt, sound_effect] : this->_sounds) {
-        if (sound_opt && sound_effect.filepath == sound.filepath) {
-          sound_opt->setVolume(vol);
-        }
-      }
-    }
   }
 }

@@ -23,7 +23,7 @@ struct Facing
 
   DEFAULT_BYTE_CONSTRUCTOR(Facing,
                            ([](double dir_x, double dir_y, bool plane)
-                            { return (Facing) {dir_x, dir_y, plane}; }),
+                            { return Facing(dir_x, dir_y, plane); }),
                            parseByte<double>(),
                            parseByte<double>(),
                            parseByte<bool>())

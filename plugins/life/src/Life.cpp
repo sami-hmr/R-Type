@@ -142,7 +142,7 @@ void Life::heal_entity(const CollisionEvent& event,
   if (healths[event.a]->heal_delta >= heal_cooldown) {
     healths[event.a]->heal_delta = 0.0;
     this->_event_manager.get().emit<HealEvent>(
-        event.a, event.b, healers[event.b]->amount);
+        event.a, healers[event.b]->amount);
 
     this->_event_manager.get().emit<ComponentBuilder>(
         event.a,
@@ -212,7 +212,6 @@ void Life::on_heal(const HealEvent& event)
     return;
   }
   if (event.target < healths.size() && healths[event.target].has_value()) {
-    int old_health = healths[event.target]->current;
     healths[event.target]->current =
         std::min(healths[event.target]->current + event.amount,
                  healths[event.target]->max);
@@ -221,8 +220,6 @@ void Life::on_heal(const HealEvent& event)
         event.target,
         this->_registry.get().get_component_key<Health>(),
         healths[event.target]->to_bytes());
-
-    int actual_heal = healths[event.target]->current - old_health;
     return;
   }
 }

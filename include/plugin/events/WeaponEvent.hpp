@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ByteParser/ByteParser.hpp"
+#include "ecs/Entity.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
@@ -26,7 +27,7 @@ struct FireBullet
   FireBullet(Registry& r,
              JsonObject const& conf,
              std::optional<Ecs::Entity> entity)
-      : entity(*get_value_copy<int>(r, conf, "entity", entity))
+      : entity(get_value_copy<Ecs::Entity>(r, conf, "entity", entity).value())
   {
   }
 
@@ -81,7 +82,7 @@ struct ReleaseChargeWeapon
   ReleaseChargeWeapon(Registry& r,
                       JsonObject const& conf,
                       std::optional<Ecs::Entity> entity)
-      : entity(*get_value_copy<int>(r, conf, "entity", entity))
+      : entity(get_value_copy<Ecs::Entity>(r, conf, "entity", entity).value())
   {
   }
 

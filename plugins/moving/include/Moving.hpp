@@ -3,7 +3,6 @@
 #include "Json/JsonParser.hpp"
 #include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
-#include "ecs/SparseArray.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Position.hpp"
@@ -16,6 +15,7 @@ public:
 
 private:
   void init_pos(Ecs::Entity const& entity, JsonObject& obj);
+  void init_off(Ecs::Entity const& entity, JsonObject& obj);
   void init_direction(Ecs::Entity const& entity, JsonObject& obj);
   void init_speed(Ecs::Entity const& entity, JsonObject& obj);
   void init_facing(Ecs::Entity const& entity, JsonObject& obj);
@@ -24,4 +24,6 @@ private:
   void moving_system(Registry&);
 
   void on_set_direction(Registry& r, const SetDirectionEvent& event);
+  void add_offset(Registry& r);
+  void remove_offset(Registry& r);
 };

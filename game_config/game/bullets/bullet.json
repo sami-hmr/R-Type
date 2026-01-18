@@ -1,0 +1,429 @@
+{
+  "entities_template": [
+    {
+      "name": "bullet",
+      "default_parameters": {
+        "idle_texture": "assets/fire_bullet.png",
+        "idle_frame_size": { "x": 16.0, "y": 16.0 },
+        "idle_frame_pos": { "x": 384.0, "y": 0.0 },
+        "idle_direction": { "x": 1.0, "y": 0.0 },
+        "idle_sprite_size": { "width": "5.0%", "height": "5.0%" },
+        "idle_framerate": 10.0,
+        "idle_nb_frames": 5,
+        "idle_loop": true,
+        "idle_rollback": true,
+
+        "death_texture": "assets/fire_bullet.png",
+        "death_frame_size": { "x": 16.0, "y": 16.0 },
+        "death_frame_pos": { "x": 160.0, "y": 80.0 },
+        "death_direction": { "x": 1.0, "y": 0.0 },
+        "death_sprite_size": { "width": "5.0%", "height": "5.0%" },
+        "death_framerate": 10.0,
+        "death_nb_frames": 3,
+        "death_loop": false,
+        "death_rollback": false,
+
+        "damage_amount": 5,
+        "speed": { "x": 1.5, "y": 1.5 },
+
+        "collision_size": { "width": 0.15, "height": 0.15 },
+        "collision_type": "trigger",
+        "temporal_lifetime": 2.0,
+        "fragile_hits": 0
+      },
+      "components": {
+        "moving:Position": {
+          "hook": "bullet_pos_1",
+          "pos": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        },
+        "ui:Drawable": {},
+        "ui:AnimatedSprite": {
+          "animations": [
+            {
+              "name": "idle",
+              "texture": "$idle_texture",
+              "frame_size": "$idle_frame_size",
+              "frame_pos": "$idle_frame_pos",
+              "direction": "$idle_direction",
+              "sprite_size": "$idle_sprite_size",
+              "framerate": "$idle_framerate",
+              "nb_frames": "$idle_nb_frames",
+              "loop": "$idle_loop",
+              "rollback": "$idle_rollback"
+            },
+            {
+              "name": "death",
+              "texture": "$death_texture",
+              "frame_size": "$death_frame_size",
+              "frame_pos": "$death_frame_pos",
+              "direction": "$death_direction",
+              "sprite_size": "$death_sprite_size",
+              "framerate": "$death_framerate",
+              "nb_frames": "$death_nb_frames",
+              "loop": "$death_loop",
+              "rollback": "$death_rollback"
+            }
+          ],
+          "default_animation": "idle"
+        },
+        "life:Damage": {
+          "amount": "$damage_amount"
+        },
+        "collision:Collidable": {
+          "size": "$collision_size",
+          "collision_type": "$collision_type"
+        },
+        "life:Team": {
+          "name": ""
+        },
+        "moving:Speed": {
+          "speed": "$speed"
+        },
+        "moving:Direction": {
+          "direction": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        },
+        "projectile:Temporal": {
+          "lifetime": "$temporal_lifetime"
+        },
+        "projectile:Fragile": {
+          "hits": "$fragile_hits"
+        }
+      }
+    },
+    {
+      "name": "fire_bullet",
+      "default_parameters": {
+        "damage_amount": 5,
+        "speed": { "x": 1.5, "y": 1.5 }
+      },
+      "components": {
+        "template": "bullet",
+        "parameters": {
+            "idle_texture": "assets/fire_bullet.png",
+            "idle_frame_size": { "x": 16.0, "y": 16.0 },
+            "idle_frame_pos": { "x": 384.0, "y": 0.0 },
+            "idle_direction": { "x": 1.0, "y": 0.0 },
+            "idle_nb_frames": 5,
+
+            "death_texture": "assets/fire_bullet.png",
+            "death_frame_size": { "x": 16.0, "y": 16.0 },
+            "death_frame_pos": { "x": 160.0, "y": 80.0 },
+            "death_direction": { "x": 1.0, "y": 0.0 },
+            "death_nb_frames": 3,
+            "death_sprite_size": { "width": "5.0%", "height": "5.0%" },
+
+            "damage_amount": "$damage_amount",
+            "speed": "$speed"
+        },
+        "config": {}
+      }
+    },
+    {
+      "name": "bounce_bullet",
+      "default_parameters": {
+        "damage_amount": 5,
+        "speed": { "x": 1.5, "y": 1.5 }
+      },
+      "components": {
+        "template": "bullet",
+        "parameters": {
+            "idle_texture": "assets/fire_bullet.png",
+            "idle_frame_size": { "x": 16.0, "y": 16.0 },
+            "idle_frame_pos": { "x": 304.0, "y": 144.0 },
+            "idle_direction": { "x": 1.0, "y": 0.0 },
+            "idle_nb_frames": 4,
+
+            "death_texture": "assets/fire_bullet.png",
+            "death_frame_size": { "x": 16.0, "y": 16.0 },
+            "death_frame_pos": { "x": 160.0, "y": 80.0 },
+            "death_direction": { "x": 1.0, "y": 0.0 },
+            "death_nb_frames": 3,
+            "death_sprite_size": { "width": "5.0%", "height": "5.0%" },
+
+            "damage_amount": "$damage_amount",
+            "speed": "$speed",
+            "collision_type": "solid",
+            "temporal_lifetime": 4.0,
+            "fragile_hits": 4
+        },
+        "config": {}
+      }
+    },
+    {
+      "name": "waveform_bullet",
+      "default_parameters": {
+        "damage_amount": 5,
+        "speed": { "x": 1.5, "y": 1.5 }
+      },
+      "components": {
+        "template": "bullet",
+        "parameters": {
+            "idle_texture": "assets/bullets/waveform.png",
+            "idle_frame_size": { "x": 95.0, "y": 32.0 },
+            "idle_frame_pos": { "x": 0.0, "y": 0.0 },
+            "idle_direction": { "x": 1.0, "y": 0.0 },
+            "idle_nb_frames": 4,
+            "idle_sprite_size": { "width": "10.0%", "height": "10.0%" },
+
+            "death_texture": "assets/explosion/energy-smack.png",
+            "death_frame_size": { "x": 128.0, "y": 96.0 },
+            "death_frame_pos": { "x": 0.0, "y": 0.0 },
+            "death_direction": { "x": 1.0, "y": 0.0 },
+            "death_nb_frames": 6,
+            "death_sprite_size": { "width": "10.0%", "height": "10.0%" },
+            "death_framerate": 5.0,
+
+            "damage_amount": "$damage_amount",
+            "speed": "$speed"
+        },
+        "config": {}
+      }
+    },
+    {
+      "name": "pulse_bullet",
+      "default_parameters": {
+        "damage_amount": 5,
+        "speed": { "x": 1.5, "y": 1.5 }
+      },
+      "components": {
+        "template": "bullet",
+        "parameters": {
+            "idle_texture": "assets/bullets/pulse.png",
+            "idle_frame_size": { "x": 63.0, "y": 32.0 },
+            "idle_frame_pos": { "x": 0.0, "y": 0.0 },
+            "idle_direction": { "x": 1.0, "y": 0.0 },
+            "idle_nb_frames": 4,
+            "idle_sprite_size": { "width": "10.0%", "height": "10.0%" },
+
+            "death_texture": "assets/explosion/energy-smack.png",
+            "death_frame_size": { "x": 128.0, "y": 96.0 },
+            "death_frame_pos": { "x": 0.0, "y": 0.0 },
+            "death_direction": { "x": 1.0, "y": 0.0 },
+            "death_nb_frames": 6,
+            "death_sprite_size": { "width": "10.0%", "height": "10.0%" },
+            "death_framerate": 5.0,
+
+            "damage_amount": "$damage_amount",
+            "speed": "$speed"
+        },
+        "config": {}
+      }
+    },
+    {
+      "name": "crossed_bullet",
+      "default_parameters": {
+        "damage_amount": 50,
+        "speed": { "x": 1.5, "y": 1.5 }
+      },
+      "components": {
+        "template": "bullet",
+        "parameters": {
+            "idle_texture": "assets/bullets/crossed.png",
+            "idle_frame_size": { "x": 32.0, "y": 32.0 },
+            "idle_frame_pos": { "x": 0.0, "y": 0.0 },
+            "idle_direction": { "x": 1.0, "y": 0.0 },
+            "idle_nb_frames": 6,
+
+            "death_texture": "assets/explosion/slash-circular.png",
+            "death_frame_size": { "x": 52.0, "y": 48.0 },
+            "death_frame_pos": { "x": 0.0, "y": 0.0 },
+            "death_direction": { "x": 1.0, "y": 0.0 },
+            "death_nb_frames": 6,
+            "death_sprite_size": { "width": "10.0%", "height": "10.0%" },
+
+            "damage_amount": "$damage_amount",
+            "speed": "$speed"
+        },
+        "config": {}
+      }
+    },
+    {
+      "name": "charged_bullet",
+      "default_parameters": {
+        "damage_amount": 5,
+        "speed": { "x": 1.5, "y": 1.5 }
+      },
+      "components": {
+        "template": "bullet",
+        "parameters": {
+            "idle_texture": "assets/bullets/charged.png",
+            "idle_frame_size": { "x": 63.0, "y": 48.0 },
+            "idle_frame_pos": { "x": 0.0, "y": 0.0 },
+            "idle_direction": { "x": 1.0, "y": 0.0 },
+            "idle_nb_frames": 6,
+
+            "death_texture": "assets/explosion/slash-circular.png",
+            "death_frame_size": { "x": 52.0, "y": 48.0 },
+            "death_frame_pos": { "x": 0.0, "y": 0.0 },
+            "death_direction": { "x": 1.0, "y": 0.0 },
+            "death_nb_frames": 6,
+            "death_sprite_size": { "width": "10.0%", "height": "10.0%" },
+
+            "damage_amount": "$damage_amount",
+            "speed": "$speed"
+        },
+        "config": {}
+      }
+    },
+    {
+      "name": "bolt_bullet",
+      "default_parameters": {
+        "damage_amount": 5,
+        "speed": { "x": 1.5, "y": 1.5 }
+      },
+      "components": {
+        "template": "bullet",
+        "parameters": {
+            "idle_texture": "assets/bullets/bolt.png",
+            "idle_frame_size": { "x": 48.0, "y": 32.0 },
+            "idle_frame_pos": { "x": 0.0, "y": 0.0 },
+            "idle_direction": { "x": 1.0, "y": 0.0 },
+            "idle_nb_frames": 4,
+            "idle_sprite_size": { "width": "8.0%", "height": "8.0%" },
+
+            "death_texture": "assets/explosion/slash-circular.png",
+            "death_frame_size": { "x": 52.0, "y": 48.0 },
+            "death_frame_pos": { "x": 0.0, "y": 0.0 },
+            "death_direction": { "x": 1.0, "y": 0.0 },
+            "death_nb_frames": 6,
+            "death_sprite_size": { "width": "10.0%", "height": "10.0%" },
+
+            "damage_amount": "$damage_amount",
+            "speed": "$speed"
+        },
+        "config": {}
+      }
+    },
+    {
+      "name": "fire_ball_bullet",
+      "default_parameters": {
+        "damage_amount": 5,
+        "speed": { "x": 1.5, "y": 1.5 }
+      },
+      "components": {
+        "template": "bullet",
+        "parameters": {
+            "idle_texture": "assets/bullets/fire-ball.png",
+            "idle_frame_size": { "x": 52.0, "y": 29.0 },
+            "idle_frame_pos": { "x": 0.0, "y": 0.0 },
+            "idle_direction": { "x": 1.0, "y": 0.0 },
+            "idle_nb_frames": 3,
+            "idle_sprite_size": { "width": "10.0%", "height": "10.0%" },
+
+            "death_texture": "assets/fire_bullet.png",
+            "death_frame_size": { "x": 16.0, "y": 16.0 },
+            "death_frame_pos": { "x": 160.0, "y": 80.0 },
+            "death_direction": { "x": 1.0, "y": 0.0 },
+            "death_nb_frames": 3,
+            "death_sprite_size": { "width": "5.0%", "height": "5.0%" },
+
+            "damage_amount": "$damage_amount",
+            "speed": "$speed"
+        },
+        "config": {}
+      }
+    },
+    {
+      "name": "bolt_follow_bullet",
+      "default_parameters": {},
+      "components": {
+        "template": "bolt_bullet",
+        "parameters": {
+          "damage_amount": 5,
+          "speed": {"x": 1.0, "y": 1.0}
+        },
+        "config": {
+          "target:Follower": {},
+          "collision:InteractionZone": { "radius": 1.5 }
+        }
+      }
+    },
+    {
+      "name": "waveform_follow_bullet",
+      "default_parameters": {},
+      "components": {
+        "template": "waveform_bullet",
+        "parameters": {
+          "damage_amount": 5,
+          "speed": {"x": 1.0, "y": 1.0}
+        },
+        "config": {
+          "target:Follower": {},
+          "collision:InteractionZone": { "radius": 1.5 }
+        }
+      }
+    },
+    {
+      "name": "crossed_follow_bullet",
+      "default_parameters": {},
+      "components": {
+        "template": "crossed_bullet",
+        "parameters": {
+          "damage_amount": 5,
+          "speed": {"x": 1.0, "y": 1.0}
+        },
+        "config": {
+          "target:Follower": {},
+          "collision:InteractionZone": { "radius": 2.0 }
+        }
+      }
+    },
+    {
+      "name": "fire_ball_follow_bullet",
+      "default_parameters": {},
+      "components": {
+        "template": "fire_ball_bullet",
+        "parameters": {
+          "damage_amount": 5,
+          "speed": {"x": 1.0, "y": 1.0},
+          "temporal_lifetime": 6.0
+        },
+        "config": {
+          "target:Follower": {},
+          "collision:InteractionZone": { "radius": 2.5 }
+        }
+      }
+    },
+    {
+      "name": "rays_bullet",
+      "default_parameters": {
+        "damage_amount": 10,
+        "speed": { "x": 0.5, "y": 0.5 },
+        "zone_radius": 1.5
+      },
+      "components": {
+        "template": "bullet",
+        "parameters": {
+            "idle_texture": "assets/bullets/rays.png",
+            "idle_frame_size": { "x": 64.0, "y": 224.0 },
+            "idle_frame_pos": { "x": 0.0, "y": 0.0 },
+            "idle_direction": { "x": 1.0, "y": 0.0 },
+            "idle_nb_frames": 9,
+            "idle_sprite_size": { "width": "40.0%", "height": "40.0%" },
+
+            "death_texture": "assets/fire_bullet.png",
+            "death_frame_size": { "x": 16.0, "y": 16.0 },
+            "death_frame_pos": { "x": 160.0, "y": 80.0 },
+            "death_direction": { "x": 1.0, "y": 0.0 },
+            "death_nb_frames": 3,
+            "death_sprite_size": { "width": "5.0%", "height": "5.0%" },
+
+            "collision_size": { "width": 0.15, "height": 0.4 },
+            "damage_amount": "$damage_amount",
+            "speed": "$speed",
+            "temporal_lifetime": 5.0
+        },
+        "config": {
+          "target:Follower": {},
+          "collision:InteractionZone": { "radius": "$zone_radius" }
+        }
+      }
+    }
+  ]
+}

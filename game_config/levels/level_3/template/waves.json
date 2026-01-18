@@ -1,0 +1,127 @@
+{
+  "entities_template": [
+    {
+      "name": "wave_1_level_3",
+      "components": {
+        "wave:Wave": {
+          "entity_template": "enemy_follow_1",
+          "count": 8,
+          "tracked": true,
+          "components_inheritance": ["scene"],
+          "pattern": {
+            "type": "circle",
+            "origin": { "x": 1.6, "y": 0.0 },
+            "params": {
+              "radius": 0.5
+            }
+          },
+          "on_end": [
+            {
+              "event_name": "WaveSpawnEvent",
+              "params": {
+                "wave_templates": [
+                  "wave_2_level_3",
+                  "wave_3_level_3",
+                  "wave_4_level_3",
+                  "ally_force_1"
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "wave_2_level_3",
+      "components": {
+        "wave:Wave": {
+          "entity_template": "enemy_follow_1",
+          "count": 4,
+          "tracked": true,
+          "components_inheritance": ["scene"],
+          "pattern": {
+            "type": "line",
+            "origin": { "x": 0.5, "y": -1.0 },
+            "params": {
+              "spacing": 0.5
+            }
+          },
+          "on_end": []
+        },
+        "wave:Formation": {
+          "strength": 0.1
+        }
+      }
+    },
+    {
+      "name": "wave_3_level_3",
+      "components": {
+        "wave:Wave": {
+          "entity_template": "enemy_follow_1",
+          "count": 4,
+          "tracked": true,
+          "components_inheritance": ["scene"],
+          "pattern": {
+            "type": "line",
+            "origin": { "x": 0.5, "y": 1.0 },
+            "params": {
+              "spacing": 0.5
+            }
+          },
+          "on_end": []
+        },
+        "wave:Formation": {
+          "strength": 0.1
+        }
+      }
+    },
+    {
+      "name": "wave_4_level_3",
+      "components": {
+        "wave:Wave": {
+          "entity_template": "enemy_turret_1",
+          "count": 1,
+          "tracked": true,
+          "components_inheritance": ["scene"],
+          "pattern": {
+            "type": "line",
+            "origin": { "x": 0.8, "y": 0.0 }
+          },
+          "on_end": [
+            {
+              "event_name": "WaveSpawnEvent",
+              "params": {
+                "wave_templates": ["wave_end_level_3"]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "wave_end_level_3",
+      "default_parameters": {},
+      "components": {
+        "template": "wave_scene_event",
+        "parameters": {
+          "entity_template": "enemy_wave_1",
+          "count": 12,
+          "tracked": true,
+          "components_inheritance": ["scene"],
+          "pattern": {
+            "type": "grid",
+            "origin": { "x": 3.5, "y": -0.5 },
+            "params": {
+              "cols": 4,
+              "spacing_x": 0.5,
+              "spacing_y": 0.3
+            }
+          },
+          "disable_scene": "level_3",
+          "enable_scene": "level_4"
+        },
+        "config": {}
+      }
+    }
+  ]
+}

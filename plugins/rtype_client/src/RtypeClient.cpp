@@ -19,7 +19,10 @@
 #include "plugin/events/NetworkEvents.hpp"
 #include "plugin/events/SceneChangeEvent.hpp"
 
-RtypeClient::RtypeClient(Registry& r, EventManager& em, EntityLoader& l,  std::optional<JsonObject> const &config)
+RtypeClient::RtypeClient(Registry& r,
+                         EventManager& em,
+                         EntityLoader& l,
+                         std::optional<JsonObject> const& config)
     : BaseClient("rtype_client", "r-type", r, em, l, config)
 {
   SUBSCRIBE_EVENT(PlayerCreation, {
@@ -67,12 +70,16 @@ RtypeClient::RtypeClient(Registry& r, EventManager& em, EntityLoader& l,  std::o
 
   SUBSCRIBE_EVENT(Disconnection, {
     this->_event_manager.get().emit<DisableSceneEvent>("connecting_card");
+    this->_event_manager.get().emit<ResetClient>(0);
+    this->_event_manager.get().emit<SceneChangeEvent>(
+        "server_search", "Disconected", true);
     this->alert("Disconected");
   })
 
   SUBSCRIBE_EVENT(Logout, {
     this->_event_manager.get().emit<SceneChangeEvent>("login", "", true);
-    this->_event_manager.get().emit<SceneChangeEvent>("connection_background", "", false);
+    this->_event_manager.get().emit<SceneChangeEvent>(
+        "connection_background", "", false);
     this->_event_manager.get().emit<SceneChangeEvent>("game", "", false);
   })
   this->handle_http();
@@ -94,7 +101,10 @@ void RtypeClient::alert(std::string const& message)
 
 extern "C"
 {
-PLUGIN_EXPORT void* entry_point(Registry& r, EventManager& em, EntityLoader& e, std::optional<JsonObject> const &config)
+PLUGIN_EXPORT void* entry_point(Registry& r,
+                                EventManager& em,
+                                EntityLoader& e,
+                                std::optional<JsonObject> const& config)
 {
   return new RtypeClient(r, em, e, config);
 }
