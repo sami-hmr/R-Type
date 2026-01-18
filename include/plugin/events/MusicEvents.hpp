@@ -8,7 +8,53 @@
 #include "ecs/Registry.hpp"
 #include "plugin/Hooks.hpp"
 
+struct StopMusicEvent
+{
+  Ecs::Entity entity;
+  std::string name;
+
+  StopMusicEvent(Ecs::Entity entity, std::string name)
+      : entity(entity)
+      , name(std::move(name))
+  {
+  }
+
+  StopMusicEvent(Registry& r,
+                 JsonObject const& e,
+                 std::optional<Ecs::Entity> entity)
+      : entity(get_value_copy<Ecs::Entity>(r, e, "entity", entity).value())
+      , name(get_value_copy<std::string>(r, e, "name", entity).value())
+  {
+  }
+
+  CHANGE_ENTITY(result.entity = map.at(entity);)
+
+  DEFAULT_BYTE_CONSTRUCTOR(StopMusicEvent,
+                           ([](Ecs::Entity e, std::string n)
+                            { return StopMusicEvent(e, std::move(n)); }),
+                           parseByte<Ecs::Entity>(),
+                           parseByteString())
+
+  DEFAULT_SERIALIZE(type_to_byte(this->entity), string_to_byte(this->name))
+};
+
+struct StopAllMusicsEvent
+{
+  StopAllMusicsEvent() {};
+  StopAllMusicsEvent(Registry&,
+                     JsonObject const&,
+                     std::optional<Ecs::Entity>)
+  {
+  }
+  CHANGE_ENTITY_DEFAULT
+
+  EMPTY_BYTE_CONSTRUCTOR(StopAllMusicsEvent)
+
+  DEFAULT_SERIALIZE(ByteArray {})
+};
+
 struct PlayMusicEvent
+
 {
   Ecs::Entity entity;
   std::string name;
@@ -32,7 +78,7 @@ struct PlayMusicEvent
   PlayMusicEvent(Registry& r,
                  JsonObject const& e,
                  std::optional<Ecs::Entity> entity)
-      : entity(get_value_copy<int>(r, e, "entity", entity).value())
+      : entity(get_value_copy<Ecs::Entity>(r, e, "entity", entity).value())
       , name(get_value_copy<std::string>(r, e, "name", entity).value())
       , volume(get_value_copy<double>(r, e, "volume", entity).value())
       , pitch(get_value_copy<double>(r, e, "pitch", entity).value())
