@@ -2,12 +2,15 @@
   "entities_template": [
     {
       "name": "bullet_spread_3",
+      "default_parameters": {
+        "entity_template": "basic_bullet"
+      },
       "components": {
         "moving:IdStorage": {
           "id": "#global:player_id_client:id"
         },
         "wave:Wave": {
-          "entity_template": "bounce_bullet",
+          "entity_template": "$entity_template",
           "count": 3,
           "tracked": false,
           "components_inheritance": [
@@ -28,12 +31,15 @@
     },
     {
       "name": "bullet_circle_8",
+      "default_parameters": {
+        "entity_template": "basic_bullet"
+      },
       "components": {
         "moving:IdStorage": {
           "id": "#global:player_id_client:id"
         },
         "wave:Wave": {
-          "entity_template": "bounce_bullet",
+          "entity_template": "$entity_template",
           "count": 8,
           "tracked": false,
           "components_inheritance": [
@@ -54,35 +60,15 @@
     },
     {
       "name": "basic_bullet_1",
+      "default_parameters": {
+        "entity_template": "basic_bullet"
+      },
       "components": {
         "moving:IdStorage": {
           "id": "#global:player_id_client:id"
         },
         "wave:Wave": {
-          "entity_template": "basic_bullet",
-          "count": 1,
-          "tracked": false,
-          "components_inheritance": [
-            "scene",
-            "moving:Direction",
-            "life:Team",
-            "moving:Position"
-          ],
-          "pattern": {
-            "type": "point"
-          },
-          "on_end": []
-        }
-      }
-    },
-    {
-      "name": "bounce_bullet_1",
-      "components": {
-        "moving:IdStorage": {
-          "id": "#global:player_id_client:id"
-        },
-        "wave:Wave": {
-          "entity_template": "bounce_bullet",
+          "entity_template": "$entity_template",
           "count": 1,
           "tracked": false,
           "components_inheritance": [

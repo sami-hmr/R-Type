@@ -1,0 +1,31 @@
+{
+  "entities_template": [
+    {
+      "name": "wave_end_level_1",
+      "default_parameters": {},
+      "components": {
+        "template": "wave_scene_event",
+        "parameters": {
+            "entity_template": "enemy_straight_1",
+            "count": 4,
+            "tracked": true,
+            "components_inheritance": ["scene"],
+            "pattern": {
+              "type": "line",
+              "origin": { "x": 2.5, "y": 0.0 },
+              "params": {
+                "spacing": 0.7
+              }
+            },
+            "disable_scene": "level_1",
+            "enable_scene": "level_2"
+        },
+        "config": {
+          "wave:Formation": {
+            "strength": 0.1
+          }
+        }
+      }
+    }
+  ]
+}

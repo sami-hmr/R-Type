@@ -42,10 +42,8 @@ struct CollisionEvent
   CollisionEvent(Registry& r,
                  JsonObject const& e,
                  std::optional<Ecs::Entity> entity)
-      : a(static_cast<Ecs::Entity>(
-            get_value_copy<double>(r, e, "a", entity).value()))
-      , b(static_cast<Ecs::Entity>(
-            get_value_copy<double>(r, e, "b", entity).value()))
+      : a(get_value_copy<Ecs::Entity>(r, e, "a", entity).value())
+      , b(get_value_copy<Ecs::Entity>(r, e, "b", entity).value())
   {
   }
 };

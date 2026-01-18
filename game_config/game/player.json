@@ -346,11 +346,11 @@
         //   "charge_indicator": "beam_start"
         // },
         "weapon:BasicWeapon": {
-          "bullet_type": "basic_bullet",
-          "magazine_size": 6000,
-          "magazine_nb": 3000,
-          "reload_time": 0.1,
-          "cooldown": 0.01,
+          "bullet_type": "bounce_bullet_spread_3",
+          "magazine_size": 6,
+          "magazine_nb": 100,
+          "reload_time": 2.0,
+          "cooldown": 0.5,
           "attack_animation": "attack"
         },
         "ui:AnimatedSprite": {
