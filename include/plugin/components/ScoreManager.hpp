@@ -29,7 +29,5 @@ struct ScoreManager
 
   CHANGE_ENTITY_DEFAULT
 
-  HOOKABLE(ScoreManager,
-           HOOK(score),
-           HOOK(points_to_give))
+  HOOKABLE(ScoreManager, HOOK(score), HOOK(points_to_give))
 };
