@@ -1,0 +1,50 @@
+{
+  "scenes": [
+    {
+      "name": "level_1",
+      "state": "disabled",
+      "plugins": [],
+      "entities": [
+                {
+          "moving:Position": {
+            "pos": {
+              "x": 3.0,
+              "y": 0.4
+            }
+          },
+          "mob:Spawner": {
+            "entity_template": "enemy_wave_1",
+            "spawn_interval": 3.0,
+            "max_spawns": 5
+          }
+        },
+        {
+          "moving:Position": {
+            "pos": {
+              "x": 3.0,
+              "y": -0.4
+            }
+          },
+          "mob:Spawner": {
+            "entity_template": "enemy_wave_1",
+            "spawn_interval": 3.5,
+            "max_spawns": 5
+          }
+        },
+        {
+          "moving:Position": {
+            "pos": {
+              "x": 2.5,
+              "y": 0.0
+            }
+          },
+          "mob:Spawner": {
+            "entity_template": "wave_end_level_1",
+            "spawn_interval": 15.0,
+            "max_spawns": 1
+          }
+        }
+      ]
+    }
+  ]
+}

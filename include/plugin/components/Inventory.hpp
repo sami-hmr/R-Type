@@ -87,26 +87,24 @@ struct Pickable
 {
   Pickable() = default;
 
-  Pickable(std::string item_name,
-           std::string artefact_template,
-           JsonObject item)
+  Pickable(std::string item_name, std::string artefact_template, Item item)
       : item_name(std::move(item_name))
       , artefact_template(std::move(artefact_template))
       , item(std::move(item))
   {
   }
 
-  DEFAULT_BYTE_CONSTRUCTOR(
-      Pickable,
-      ([](std::string const& n, std::string const& a, JsonObject const& i)
-       { return Pickable(n, a, i); }),
-      parseByteString(),
-      parseByteString(),
-      parseByteJsonObject())
+  DEFAULT_BYTE_CONSTRUCTOR(Pickable,
+                           ([](std::string const& n,
+                               std::string const& a,
+                               Item const& i) { return Pickable(n, a, i); }),
+                           parseByteString(),
+                           parseByteString(),
+                           parse_byte_item())
 
   DEFAULT_SERIALIZE(string_to_byte(this->item_name),
                     string_to_byte(artefact_template),
-                    json_object_to_byte(this->item))
+                    this->item.to_bytes())
 
   CHANGE_ENTITY_DEFAULT
 
@@ -114,5 +112,5 @@ struct Pickable
 
   std::string item_name;
   std::string artefact_template;
-  JsonObject item;
+  Item item;
 };

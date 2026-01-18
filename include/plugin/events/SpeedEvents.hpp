@@ -1,6 +1,7 @@
 #pragma once
 
 #include "EventMacros.hpp"
+#include "ecs/Entity.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
@@ -33,11 +34,11 @@ struct SpeedModifierEvent
                     type_to_byte(this->source),
                     type_to_byte(this->multiplier))
 
-  SpeedModifierEvent(Registry& r, JsonObject const& e)
+  SpeedModifierEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
       : target(static_cast<Ecs::Entity>(
-            get_value_copy<double>(r, e, "entity").value()))
+            get_value_copy<double>(r, e, "entity", entity).value()))
       , source(static_cast<Ecs::Entity>(
-            get_value_copy<double>(r, e, "source").value()))
+            get_value_copy<double>(r, e, "source", entity).value()))
       , multiplier(get_value_copy<double>(r, e, "multiplier").value())
   {
   }
@@ -70,12 +71,12 @@ struct SpeedSwitcherEvent
                     type_to_byte(this->source),
                     type_to_byte(this->new_speed))
 
-  SpeedSwitcherEvent(Registry& r, JsonObject const& e)
+  SpeedSwitcherEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
       : target(static_cast<Ecs::Entity>(
-            get_value_copy<double>(r, e, "entity").value()))
+            get_value_copy<double>(r, e, "entity", entity).value()))
       , source(static_cast<Ecs::Entity>(
-            get_value_copy<double>(r, e, "source").value()))
-      , new_speed(get_value_copy<double>(r, e, "new_speed").value())
+            get_value_copy<double>(r, e, "source", entity).value()))
+      , new_speed(get_value_copy<double>(r, e, "new_speed", entity).value())
   {
   }
 };

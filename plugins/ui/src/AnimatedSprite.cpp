@@ -9,6 +9,8 @@
 #include "ecs/Registry.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "libs/Vector2D.hpp"
+#include "plugin/Hooks.hpp"
+#include "plugin/components/Collidable.hpp"
 #include "plugin/components/Drawable.hpp"
 #include "plugin/components/Speed.hpp"
 #include "plugin/components/Text.hpp"
@@ -79,6 +81,7 @@ void AnimatedSprite::on_death(Registry& r,
     em.emit<PlayAnimationEvent>(
         "death", event.entity, animdata.framerate, false, false);
     r.remove_component<Speed>(event.entity);
+    r.remove_component<Collidable>(event.entity);
   } else {
     em.emit<DeleteEntity>(event.entity);
   }
@@ -208,6 +211,29 @@ std::optional<AnimationData> UI::parse_animation_data(JsonObject const& obj,
     return std::nullopt;
   }
   animdata.rollback = rollback.value();
+  if (obj.contains("flip_h")) {
+    auto const& flip_h = get_value<AnimatedSprite, bool>(
+        this->_registry.get(), obj, e, "flip_h");
+    if (!flip_h) {
+      std::cerr << "Error parsing animation data: \"flip_h\" field not found "
+                   "or invalid"
+                << "\n";
+    } else {
+      animdata.flip_h = flip_h.value();
+    }
+  }
+  if (obj.contains("flip_v")) {
+    auto const& flip_v = get_value<AnimatedSprite, bool>(
+        this->_registry.get(), obj, e, "flip_v");
+    if (!flip_v) {
+      std::cerr << "Error parsing animation data: \"flip_v\" field not found "
+                   "or invalid"
+                << "\n";
+    } else {
+      animdata.flip_v = flip_v.value();
+    }
+  }
+  
   return animdata;
 }
 

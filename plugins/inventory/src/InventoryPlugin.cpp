@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <cstddef>
+#include <exception>
 #include <string>
 #include <utility>
 #include <variant>
@@ -14,6 +15,7 @@
 #include "ecs/Registry.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
+#include "plugin/Hooks.hpp"
 #include "plugin/components/Item.hpp"
 #include "plugin/components/Position.hpp"
 #include "plugin/events/DeathEvent.hpp"
@@ -26,10 +28,12 @@ InventoryPlugin::InventoryPlugin(Registry& r, EventManager& em, EntityLoader& l)
               r,
               em,
               l,
-              {"moving", "artefacts"},
-              {COMP_INIT(Inventory, Inventory, init_inventory)})
+              {"moving"},
+              {COMP_INIT(Inventory, Inventory, init_inventory),
+               COMP_INIT(Pickable, Pickable, init_pickable)})
 {
   REGISTER_COMPONENT(Inventory);
+  REGISTER_COMPONENT(Pickable);
 
   SUBSCRIBE_EVENT(DropItem, {
     if (!this->_registry.get().has_component<Inventory>(event.consumer)) {
@@ -100,7 +104,9 @@ void InventoryPlugin::init_inventory(Ecs::Entity const& entity,
   if (obj.contains("inventory")) {
     try {
       JsonArray inventory_array =
-          std::get<JsonArray>(obj.at("inventory").value);
+          get_value<Inventory, JsonArray>(
+              this->_registry.get(), obj, entity, "inventory")
+              .value();
 
       for (auto const& slot_value : inventory_array) {
         try {
@@ -158,6 +164,42 @@ void InventoryPlugin::init_inventory(Ecs::Entity const& entity,
       entity, inventory_slots, *max_items);
 }
 
+void InventoryPlugin::init_pickable(Ecs::Entity const& entity,
+                                    JsonObject const& obj)
+{
+  std::vector<JsonObject> on_use;
+
+  auto const& item_name = get_value<Pickable, std::string>(
+      this->_registry.get(), obj, entity, "item_name");
+  if (!item_name) {
+    LOGGER_EVTLESS("pickable", "error", "missing item name");
+    return;
+  }
+  auto const& artefact_template = get_value<Pickable, std::string>(
+      this->_registry.get(), obj, entity, "artefact_template");
+  if (!artefact_template) {
+    LOGGER_EVTLESS("pickable", "error", "missing artefact template");
+    return;
+  }
+
+  auto const& item = get_value<Inventory, JsonObject>(
+      this->_registry.get(), obj, entity, "item");
+  if (!item) {
+    LOGGER_EVTLESS("pickable", "error", "missing item");
+    return;
+  }
+
+  try {
+    this->_registry.get().emplace_component<Pickable>(
+        entity,
+        *item_name,
+        *artefact_template,
+        Item(this->_registry.get(), *item, entity));
+  } catch (std::exception const&) {
+    LOGGER_EVTLESS("pickable", "error", "failed to init item");
+  }
+}
+
 void InventoryPlugin::drop_item(Inventory& inventory,
                                 std::size_t consumer,
                                 std::uint8_t slot_item,
@@ -213,10 +255,7 @@ void InventoryPlugin::pick_item(Inventory& inventory,
       return;
     }
     inventory.inventory.emplace_back(
-        to_pick.item_name,
-        1,
-        Item(this->_registry.get(), to_pick.item, picked_entity),
-        to_pick.artefact_template);
+        to_pick.item_name, 1, to_pick.item, to_pick.artefact_template);
   } else {
     slot->nb += 1;
   }

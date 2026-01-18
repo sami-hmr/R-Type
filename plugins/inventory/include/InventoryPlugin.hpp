@@ -22,6 +22,7 @@ private:
       JsonArray& inventory);
 
   void init_inventory(Ecs::Entity const& entity, JsonObject const& obj);
+  void init_pickable(Ecs::Entity const& entity, JsonObject const& obj);
 
   void drop_item(Inventory& inventory,
                  std::size_t consumer,

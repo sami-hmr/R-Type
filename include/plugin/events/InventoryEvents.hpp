@@ -49,9 +49,9 @@ struct ItemEvent
   std::size_t nb_to_use;
 
   ItemEvent(Ecs::Entity consumer, std::uint8_t slot_item, std::size_t nb_to_use)
-      : slot_item(slot_item)
+      : consumer(consumer)
+      , slot_item(slot_item)
       , nb_to_use(nb_to_use)
-      , consumer(consumer)
   {
   }
 
