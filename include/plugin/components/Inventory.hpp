@@ -91,6 +91,9 @@ struct Pickable
       : item_name(std::move(item_name))
       , artefact_template(std::move(artefact_template))
       , item(std::move(item))
+      , delta(std::chrono::high_resolution_clock::now()
+                  .time_since_epoch()
+                  .count())
   {
   }
 
@@ -113,4 +116,5 @@ struct Pickable
   std::string item_name;
   std::string artefact_template;
   Item item;
+  std::size_t delta;
 };

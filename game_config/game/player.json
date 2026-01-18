@@ -332,6 +332,10 @@
             "y": 0.0
           }
         },
+        "inventory:Inventory": {
+          "max_items": 64,
+          "inventory": []
+        },
         // "weapon:ChargeWeapon": {
         //   "bullet_type": "beam_segment",
         //   "magazine_size": 5,
@@ -346,7 +350,7 @@
         //   "charge_indicator": "beam_start"
         // },
         "weapon:BasicWeapon": {
-          "bullet_type": "bounce_bullet_spread_3",
+          "bullet_type": "bounce_3_multiple_bullet",
           "magazine_size": 6,
           "magazine_nb": 100,
           "reload_time": 2.0,
@@ -470,39 +474,6 @@
             "a": 255
           },
           "outline": true
-        },
-        "inventory::inventory": {
-          "max_items": 64,
-          "items": [
-            {
-              "name": "oil",
-              "quantity": 5,
-              "throwable": false,
-              "consumable": true,
-              "config": {
-                "consume": {
-                  "name": "HealEvent",
-                  "params": {
-                    "amount": 5
-                  }
-                }
-              }
-            },
-            {
-              "name": "grenade",
-              "quantity": 1,
-              "throwable": true,
-              "consumable": false,
-              "config": {
-                "throw": {
-                  "name": "DamageEvent",
-                  "params": {
-                    "amount": 50
-                  }
-                }
-              }
-            }
-          ]
         }
       }
     }

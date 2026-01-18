@@ -202,6 +202,7 @@ void Life::on_heal(const HealEvent& event)
 {
   auto& healths = this->_registry.get().get_components<Health>();
 
+  std::cout << "prout salem\n";
   if (!this->_registry.get().has_component<Health>(event.target)) {
     return;
   }

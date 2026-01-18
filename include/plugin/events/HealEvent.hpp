@@ -8,6 +8,7 @@
 #pragma once
 
 #include "EventMacros.hpp"
+#include "ecs/Entity.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
@@ -36,7 +37,7 @@ struct HealEvent
 
   HealEvent(Registry& r, JsonObject const& e, std::optional<Ecs::Entity> entity)
       : target(static_cast<Ecs::Entity>(
-            get_value_copy<double>(r, e, "entity", entity).value()))
+            get_value_copy<Ecs::Entity>(r, e, "entity", entity).value()))
       , amount(get_value_copy<int>(r, e, "amount", entity).value())
   {
   }

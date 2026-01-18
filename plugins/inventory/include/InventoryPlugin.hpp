@@ -36,4 +36,5 @@ private:
                 std::size_t consumer,
                 std::uint8_t slot_item,
                 std::size_t nb_to_use);
+  static const std::size_t pick_delta = 1000000000;
 };

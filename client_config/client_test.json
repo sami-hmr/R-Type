@@ -55,6 +55,30 @@
           "controller:Controllable": {
             "bindings": [
               {
+                "description": "drop slot 0",
+                "key": "I",
+                "pressed": {
+                  "name": "DropItem",
+                  "params": {
+                    "consumer": "@self",
+                    "slot_item": 0,
+                    "nb_to_use": 1
+                  }
+                }
+              },
+                            {
+                "description": "drop slot 0",
+                "key": "O",
+                "pressed": {
+                  "name": "UseItem",
+                  "params": {
+                    "consumer": "@self",
+                    "slot_item": 0,
+                    "nb_to_use": 1
+                  }
+                }
+              },
+              {
                 "description": "shake cam",
                 "key": "H",
                 "pressed": {

@@ -18,6 +18,7 @@
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Item.hpp"
 #include "plugin/components/Position.hpp"
+#include "plugin/events/CollisionEvent.hpp"
 #include "plugin/events/DeathEvent.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
 #include "plugin/events/InventoryEvents.hpp"
@@ -74,6 +75,10 @@ InventoryPlugin::InventoryPlugin(Registry& r, EventManager& em, EntityLoader& l)
     this->use_item(inventory, event.consumer, event.slot_item, event.nb_to_use);
   })
 
+  SUBSCRIBE_EVENT(CollisionEvent, {
+    this->_event_manager.get().emit<PickUp>(event.a, event.b);
+  })
+
   SUBSCRIBE_EVENT(PickUp, {
     if (!this->_registry.get().has_component<Inventory>(event.picker)
         || !this->_registry.get().has_component<Pickable>(event.to_pick))
@@ -85,14 +90,18 @@ InventoryPlugin::InventoryPlugin(Registry& r, EventManager& em, EntityLoader& l)
     auto const& pickable =
         *_registry.get().get_components<Pickable>()[event.to_pick];
 
-    this->pick_item(inventory, pickable, event.to_pick);
+    if (pickable.delta + pick_delta
+        < std::chrono::high_resolution_clock::now().time_since_epoch().count())
+    {
+      this->pick_item(inventory, pickable, event.to_pick);
+    }
   })
 }
 
 void InventoryPlugin::init_inventory(Ecs::Entity const& entity,
                                      JsonObject const& obj)
 {
-  auto const& max_items = get_value<Inventory, std::size_t>(
+  auto const& max_items = get_value<Inventory, int>(
       this->_registry.get(), obj, entity, "max_items");
   if (!max_items) {
     LOGGER_EVTLESS("inventory", "error", "missing max_items");
@@ -167,8 +176,6 @@ void InventoryPlugin::init_inventory(Ecs::Entity const& entity,
 void InventoryPlugin::init_pickable(Ecs::Entity const& entity,
                                     JsonObject const& obj)
 {
-  std::vector<JsonObject> on_use;
-
   auto const& item_name = get_value<Pickable, std::string>(
       this->_registry.get(), obj, entity, "item_name");
   if (!item_name) {
@@ -182,7 +189,7 @@ void InventoryPlugin::init_pickable(Ecs::Entity const& entity,
     return;
   }
 
-  auto const& item = get_value<Inventory, JsonObject>(
+  auto const& item = get_value<Pickable, JsonObject>(
       this->_registry.get(), obj, entity, "item");
   if (!item) {
     LOGGER_EVTLESS("pickable", "error", "missing item");
@@ -209,6 +216,16 @@ void InventoryPlugin::drop_item(Inventory& inventory,
   if (this->_registry.get().has_component<Position>(consumer)) {
     pos = *this->_registry.get().get_components<Position>()[consumer];
   }
+  if (inventory.inventory.size() <= slot_item) {
+    LOGGER(
+        "inventory",
+        LogLevel::WARNING,
+        std::format(
+            "dropping out of range inventory item: inventory size: " "{}, " "tr" "yi" "n" "g " "to remove " "item {}",
+            inventory.inventory.size(),
+            slot_item))
+    return;
+  }
   nb_to_use = std::min(nb_to_use, inventory.inventory[slot_item].nb);
   for (std::size_t i = 0; i < nb_to_use; i++) {
     this->_event_manager.get().emit<LoadEntityTemplate>(
@@ -234,9 +251,12 @@ void InventoryPlugin::remove_item(Inventory& inventory,
             slot_item))
     return;
   }
+  std::cout << "salem ? " << inventory.inventory[slot_item].nb << "   "
+            << nb_to_use << "\n";
   if (inventory.inventory[slot_item].nb > nb_to_use) {
     inventory.inventory[slot_item].nb -= nb_to_use;
   } else {
+    std::cout << "allo salem " << slot_item << "\n";
     inventory.inventory.erase(inventory.inventory.begin() + slot_item);
   }
 }
@@ -251,7 +271,7 @@ void InventoryPlugin::pick_item(Inventory& inventory,
                    [name = to_pick.item_name](Inventory::ItemSlot const& it)
                    { return it.item_name == name; });
   if (slot == inventory.inventory.end()) {
-    if (inventory.max_items >= inventory.inventory.size()) {
+    if (inventory.max_items <= inventory.inventory.size()) {
       return;
     }
     inventory.inventory.emplace_back(
@@ -278,13 +298,18 @@ void InventoryPlugin::use_item(Inventory& inventory,
     return;
   }
   nb_to_use = std::min(nb_to_use, inventory.inventory[slot_item].nb);
+  std::cout << "nb to use" << nb_to_use << "\n";
   for (std::size_t i = 0; i < nb_to_use; i++) {
     for (auto const& it : inventory.inventory[slot_item].item.on_use) {
       for (auto const& [event, params] : it) {
         auto const* obj = std::get_if<JsonObject>(&params.value);
         if (obj != nullptr) {
+          std::cout << event << "\n";
           this->_event_manager.get().emit(
               this->_registry.get(), event, *obj, consumer);
+        } else {
+          LOGGER(
+              "inventory", LogLevel::WARNING, "invalid event confid: " + event);
         }
       }
     }

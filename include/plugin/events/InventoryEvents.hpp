@@ -59,9 +59,9 @@ struct ItemEvent
       : consumer(static_cast<Ecs::Entity>(
             get_value_copy<Ecs::Entity>(r, e, "consumer", entity).value()))
       , slot_item(
-            get_value_copy<std::uint8_t>(r, e, "slot_item", entity).value())
+            get_value_copy<int>(r, e, "slot_item", entity).value())
       , nb_to_use(
-            get_value_copy<std::size_t>(r, e, "nb_to_use", entity).value())
+            get_value_copy<int>(r, e, "nb_to_use", entity).value())
   {
   }
 

@@ -12,6 +12,7 @@
 #include "ecs/Registry.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
+#include "plugin/events/LogMacros.hpp"
 
 struct Item
 {
@@ -33,7 +34,9 @@ struct Item
         get_value_copy<JsonArray>(r, e, "on_use", entity).value_or({});
     for (auto const& it : on_use_array) {
       auto const* obj = std::get_if<JsonObject>(&it.value);
-      if (obj != nullptr) {
+      if (obj == nullptr) {
+        LOGGER_EVTLESS(
+            "item", LogLevel::WARNING, "failed to parse json object");
         continue;
       }
       this->on_use.push_back(*obj);
