@@ -42,8 +42,9 @@ void SFMLRenderer::gamepad_system(Registry& r)
   }
   for (auto&& [e, control] : ZipperIndex<Controllable>(r)) {
     for (auto& [key, trigger] : control.gamepad_event_map) {
-      if (!GAMEPAD_AXIS_MAP.contains(static_cast<GamePad::Keys>(key)) &&
-          !GAMEPAD_BUTTON_MAP.contains(static_cast<GamePad::Keys>(key))) {
+      if (!GAMEPAD_AXIS_MAP.contains(static_cast<GamePad::Keys>(key))
+          && !GAMEPAD_BUTTON_MAP.contains(static_cast<GamePad::Keys>(key)))
+      {
         continue;
       }
       _joysticks[0] = current_states[0];
@@ -67,11 +68,15 @@ void SFMLRenderer::gamepad_system(Registry& r)
             GAMEPAD_BUTTON_MAP.at(static_cast<GamePad::Keys>(key));
         bool is_pressed = current_states[0].buttons[button];
         if (is_pressed) {
-          emit_event(this->_event_manager.get(),
-                     r,
-                     trigger.first.first,
-                     trigger.second,
-                     e);
+          try {
+            emit_event(this->_event_manager.get(),
+                       r,
+                       trigger.first.first,
+                       trigger.second,
+                       e);
+          } catch (std::bad_optional_access) {
+            continue;
+          }
         }
         continue;
       }

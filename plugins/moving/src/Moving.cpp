@@ -31,7 +31,7 @@ Moving::Moving(Registry& r, EventManager& em, EntityLoader& l)
               r,
               em,
               l,
-              {},
+              {"raycasting"},
               {COMP_INIT(Position, Position, init_pos),
                COMP_INIT(Offset, Offset, init_off),
                COMP_INIT(Direction, Direction, init_direction),
