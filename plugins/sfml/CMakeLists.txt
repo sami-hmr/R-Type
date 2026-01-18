@@ -2,12 +2,17 @@ cmake_minimum_required(VERSION 3.14)
 
 set(LIB_NAME sfml)
 
-find_package(SFML 3 COMPONENTS Graphics Window REQUIRED)
+find_package(SFML 3 COMPONENTS Graphics Window Audio REQUIRED)
 
 add_library(${LIB_NAME} SHARED
     src/SFMLRenderer.cpp
     src/Camera.cpp
     src/Background.cpp
+    src/Drawable.cpp
+    src/SliderDrawing.cpp
+    src/BasicMap.cpp
+    src/Sounds.cpp
+    src/Gamepad.cpp
 )
 
 target_compile_features(${LIB_NAME} PRIVATE cxx_std_23)
@@ -22,6 +27,7 @@ target_include_directories(${LIB_NAME}
 target_link_libraries(${LIB_NAME} PRIVATE
     SFML::Graphics
     SFML::Window
+    SFML::Audio
     ${CORE_LIB}
     Vector2D
 )

@@ -1,0 +1,31 @@
+#pragma once
+
+#include <optional>
+#include <vector>
+
+#include <asio/io_context.hpp>
+#include <asio/ip/udp.hpp>
+
+#include "ecs/Entity.hpp"
+#include "ecs/Registry.hpp"
+#include "network/client/BaseClient.hpp"
+#include "plugin/EntityLoader.hpp"
+
+class RtypeClient : public BaseClient
+{
+public:
+  RtypeClient(Registry& r,
+              EventManager& em,
+              EntityLoader& l,
+              std::optional<JsonObject> const& config);
+  ~RtypeClient() override = default;
+
+private:
+  void handle_http();
+
+  Ecs::Entity _player;
+  void alert(std::string const& message);
+  void handle_server_fetched();
+  std::string _current_server_fetch_scene;
+  std::vector<std::size_t> _server_fetch_entities;
+};

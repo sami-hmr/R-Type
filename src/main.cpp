@@ -1,4 +1,6 @@
 #include <chrono>
+#include <cstdlib>
+#include <ctime>
 #include <iostream>
 #include <optional>
 #include <string>
@@ -6,47 +8,78 @@
 #include <vector>
 
 #include "Json/JsonParser.hpp"
+#include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/events/ActionEvents.hpp"
+#include "plugin/events/LoadPluginEvent.hpp"
 #include "plugin/events/SceneChangeEvent.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
 #include "plugin/libLoaders/ILibLoader.hpp"
 
+// exists to take controle over destroying order of Registry and EntityLoader
 static int true_main(Registry& r,
+                     EventManager& em,
                      EntityLoader& e,
                      const std::vector<std::string>& argv)
 {
   bool should_exit = false;
   int exit_code = 0;
 
-  r.on<ShutdownEvent>("ShutdownEvent",
-                      [&should_exit, &exit_code](const ShutdownEvent& event)
-                      {
-                        should_exit = true;
-                        exit_code = event.exit_code;
-                        std::cout << "Shutdown requested: " << event.reason
-                                  << "\n";
-                      });
+  em.on<ShutdownEvent>(
+      "ShutdownEvent",
+      [&should_exit, &exit_code](const ShutdownEvent& event) -> bool
+      {
+        should_exit = true;
+        exit_code = event.exit_code;
+        std::cout << "Shutdown requested: " << event.reason << "\n";
+        return false;
+      });
 
-  r.on<SceneChangeEvent>("SceneChangeEvent",
-                         [&r](const SceneChangeEvent& event)
+  em.on<SceneChangeEvent>("SceneChangeEvent",
+                          [&r](const SceneChangeEvent& event) -> bool
+                          {
+                            if (event.force) {
+                              r.deactivate_all_scenes();
+                            }
+                            r.activate_scene(event.target_scene);
+                            if (event.main) {
+                              r.set_main_scene(event.target_scene);
+                            }
+                            return false;
+                          });
+
+  em.on<DisableSceneEvent>("DisableSceneEvent",
+                           [&r](const DisableSceneEvent& event) -> bool
+                           {
+                             r.deactivate_scene(event.target_scene);
+                             return false;
+                           });
+
+  em.on<LoadPluginEvent>("LoadPluginEvent",
+                         [&e](const LoadPluginEvent& event) -> bool
                          {
-                           if (event.force) {
-                             r.remove_all_scenes();
-                           }
-                           r.set_current_scene(event.target_scene);
+                           e.load_plugin(event.path, event.params);
+                           return false;
                          });
 
-  r.on<SpawnEntityRequestEvent>("SpawnEntity",
-                                [&r, &e](const SpawnEntityRequestEvent& event)
-                                {
-                                  Registry::Entity entity = r.spawn_entity();
-                                  JsonObject base =
-                                      r.get_template(event.entity_template);
-                                  e.load_components(entity, base);
-                                  e.load_components(entity, event.params);
-                                });
+  em.on<LoadConfigEvent>("LoadConfigEvent",
+                         [&e](const LoadConfigEvent& event) -> bool
+                         {
+                           e.load(event.path);
+                           return false;
+                         });
+
+  em.on<SpawnEntityRequestEvent>(
+      "SpawnEntity",
+      [&r, &e](const SpawnEntityRequestEvent& event) -> bool
+      {
+        Ecs::Entity entity = r.spawn_entity();
+        JsonObject base = r.get_template(event.entity_template);
+        e.load_components(entity, base);
+        e.load_components(entity, event.params);
+        return false;
+      });
 
   r.init_scene_management();
 
@@ -56,17 +89,17 @@ static int true_main(Registry& r,
 
   r.setup_scene_systems();
 
-  const auto frame_duration =
+  auto frame_duration =
       std::chrono::microseconds(1000000 / 60);  // ~33333 microseconds
-  if (argv[1].contains("server")) {
-    const auto frame_duration =
-        std::chrono::microseconds(1000000 / 20);  // ~33333 microseconds
+  if (argv[0].contains("server")) {
+    frame_duration =
+        std::chrono::microseconds(1000000 / 40);  // ~33333 microseconds
   }
   auto next_frame_time = std::chrono::duration_cast<std::chrono::microseconds>(
       r.clock().now().time_since_epoch());
 
   while (!should_exit) {
-    r.run_systems();
+    r.run_systems(em);
 
     // Calculate when the next frame should start
     next_frame_time += frame_duration;
@@ -91,16 +124,26 @@ static int true_main(Registry& r,
 int main(int argc, char* argv[])
 {
   std::optional<Registry> r;
+  std::optional<EventManager> em;
+  std::optional<EntityLoader> e;
+
+  std::srand(std::time(nullptr));
   r.emplace();
-  EntityLoader e(*r);
+  em.emplace();
+  e.emplace(*r, *em);
+
 #ifdef RTYPE_EPITECH_CLIENT
-  int result = true_main(*r, e, {"client_config"});
+  int result = true_main(*r, *em, *e, {"client_config"});
 #elif RTYPE_EPITECH_SERVER
-  int result = true_main(*r, e, {"server_config"});
+  int result = true_main(*r, *em, *e, {"server_config"});
 #else
   int result =
-      true_main(*r, e, std::vector<std::string>(argv + 1, argv + argc));
+      true_main(*r, *em, *e, std::vector<std::string>(argv + 1, argv + argc));
 #endif
-  r.reset();
+
+  r.reset();  // Registry first (destroys systems while plugins still loaded)
+  e.reset();  // EntityLoader second (unloads plugins after systems destroyed)
+  em.reset();  // EventManager last (no plugin dependencies)
+
   return result;
 }

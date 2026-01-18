@@ -1,0 +1,146 @@
+{
+    "entities_template": [
+        {
+            "name": "server_card",
+            "parameters": {},
+            "components": {
+                "ui:Drawable": {},
+                "moving:Position": {
+                    "pos": {
+                        "x": 0.0,
+                        "y": 0.0
+                    }
+                },
+                "collision:Collidable": {
+                    "collision_type": "Trigger",
+                    "size": {
+                        "width": 0.9,
+                        "height": 0.1
+                    }
+                },
+                "ui:Text": {
+                    "font": "assets/fonts/roboto.ttf",
+                    "size": {
+                        "width": "80.0%",
+                        "height": "10.0%"
+                    },
+                    "fill_color": {
+                        "r": 255,
+                        "g": 255,
+                        "b": 255,
+                        "a": 255
+                    },
+                    "outline_color": {
+                        "r": 0,
+                        "g": 0,
+                        "b": 0,
+                        "a": 255
+                    },
+                    "outline_thickness": 30.0,
+                    "outline": true,
+                    "text": "what",
+                    "placeholder": ""
+                },
+                "ui:AnimatedSprite": {
+                    "animations": [
+                        {
+                            "name": "idle",
+                            "texture": "assets/ui/thin_card.png",
+                            "frame_size": {
+                                "x": 1080.0,
+                                "y": 143.0
+                            },
+                            "frame_pos": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "sprite_size": {
+                                "width": "90.0%",
+                                "height": "15.0%"
+                            },
+                            "direction": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "framerate": 1.0,
+                            "nb_frames": 1,
+                            "loop": true,
+                            "rollback": false
+                        },
+                        {
+                            "name": "hover",
+                            "texture": "assets/ui/thin_card_focus.png",
+                            "frame_size": {
+                                "x": 1080.0,
+                                "y": 143.0
+                            },
+                            "frame_pos": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "sprite_size": {
+                                "width": "90.0%",
+                                "height": "15.0%"
+                            },
+                            "direction": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "framerate": 1.0,
+                            "nb_frames": 1,
+                            "loop": false,
+                            "rollback": false
+                        },
+                        {
+                            "name": "pressed",
+                            "texture": "assets/ui/thin_card_focus.png",
+                            "frame_size": {
+                                "x": 1080.0,
+                                "y": 143.0
+                            },
+                            "frame_pos": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "sprite_size": {
+                                "width": "90.0%",
+                                "height": "15.0%"
+                            },
+                            "direction": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "framerate": 1.0,
+                            "nb_frames": 1,
+                            "loop": false,
+                            "rollback": false
+                        }
+                    ],
+                    "default_animation": "idle"
+                },
+                "ath:Button": {
+                    "hover": false,
+                    "toggle": false,
+                    "pressed": false
+                },
+                "ath:Clickable": {
+                    "to_emit": [
+                        {
+                            "SceneChangeEvent": {
+                                "target_scene": "$target_scene",
+                                "reason": "",
+                                "force": false
+                            }
+                        },
+                        {
+                            "DisableSceneEvent": {
+                                "target_scene": "$current_scene"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    ],
+    "scenes": []
+}

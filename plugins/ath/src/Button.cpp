@@ -5,7 +5,7 @@
 #include "ecs/zipper/Zipper.hpp"
 #include "plugin/Hooks.hpp"
 
-void ATH::init_button(Registry::Entity const& e, JsonObject const& obj)
+void ATH::init_button(Ecs::Entity const& e, JsonObject const& obj)
 {
   bool pressed = false;
   bool hovered = false;
@@ -22,5 +22,10 @@ void ATH::init_button(Registry::Entity const& e, JsonObject const& obj)
   if (obj.contains("toggle")) {
     toggle = get_value<Button, bool>(_registry.get(), obj, e, "toggle").value();
   }
-  init_component<Button>(this->_registry.get(), e, pressed, hovered, toggle);
+  init_component<Button>(this->_registry.get(),
+                         this->_event_manager.get(),
+                         e,
+                         pressed,
+                         hovered,
+                         toggle);
 }

@@ -1,0 +1,50 @@
+{
+    "scenes": [
+        {
+            "name": "alert",
+            "state": "disabled",
+            "plugins": [],
+            "entities": [
+                {
+                    "template": "card",
+                    "parameters": {
+                        "x": 0.0,
+                        "y": -0.1,
+                        "width": 0.9,
+                        "height": 0.4,
+                        "text_size": {
+                            "width": 0.6,
+                            "height": 0.3
+                        }
+                    },
+                    "config": {
+                        "life:Team": {
+                            "name": "message"
+                        }
+                    }
+                },
+                {
+                    "template": "action_button",
+                    "parameters": {
+                        "key_to_press": "ENTER",
+                        "y": 0.3,
+                        "width": 0.3,
+                        "height": 0.3,
+                        "on_click": [
+                            {
+                                "DisableSceneEvent": {
+                                    "target_scene": "alert"
+                                }
+                            }
+                        ],
+                        "text_size": {
+                            "width": 0.2,
+                            "height": 0.06
+                        },
+                        "text": "Ok"
+                    }
+                }
+            ]
+        }
+    ]
+}

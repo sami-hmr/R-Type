@@ -1,0 +1,153 @@
+{
+    "scenes": [
+        {
+            "name": "pause",
+            "state": "disabled",
+            "plugins": [],
+            "entities": [
+                {
+                    "template": "pause_bg"
+                },
+                {
+                    "template": "button",
+                    "parameters": {
+                        "y": -0.6,
+                        "z": 21,
+                        "width": 0.3,
+                        "height": 0.3,
+                        "on_click": [
+                            {
+                                "DisableSceneEvent": {
+                                    "target_scene": "pause"
+                                }
+                            }
+                        ],
+                        "text_size": {
+                            "width": 0.2,
+                            "height": 0.06
+                        },
+                        "text": "resume",
+                        "font": "assets/fonts/Starjedi.ttf"
+                    },
+                    "config": {
+                        "actions:ActionTrigger": {
+                            "trigger": {
+                                "type": "KeyPressed",
+                                "params": {
+                                    "key": "ECHAP"
+                                }
+                            },
+                            "to_emit": [
+                                {
+                                    "DisableSceneEvent": {
+                                        "target_scene": "pause"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "template": "button",
+                    "parameters": {
+                        "y": -0.3,
+                        "z": 21,
+                        "width": 0.3,
+                        "height": 0.3,
+                        "on_click": [
+                            {
+                                "DisableSceneEvent": {
+                                    "target_scene": "pause"
+                                }
+                            },
+                            {
+                                "SceneChangeEvent": {
+                                    "target_scene": "settings",
+                                    "reason": "",
+                                    "force": false,
+                                    "main": true
+                                }
+                            }
+                        ],
+                        "text_size": {
+                            "width": 0.2,
+                            "height": 0.06
+                        },
+                        "text": "settings",
+                        "font": "assets/fonts/Starjedi.ttf"
+                    }
+                },
+                {
+                    "template": "button",
+                    "parameters": {
+                        "y": 0.0,
+                        "z": 21,
+                        "width": 0.3,
+                        "height": 0.3,
+                        "on_click": [
+                            {
+                                "GenerateRebindingScene": {
+                                    "entity": "%global:player_id_client:id",
+                                    "background_template": "pause_bg",
+                                    "button_template": "button",
+                                    "text_template": "text",
+                                    "link_template": "link",
+                                    "card_template": "card",
+                                    "back_to_base_scene_template": "return_to_pause_custom",
+                                    "base_scene": "pause",
+                                    "is_base_scene_main": true
+                                }
+                            }
+                        ],
+                        "text_size": {
+                            "width": 0.2,
+                            "height": 0.06
+                        },
+                        "text": "bindings",
+                        "font": "assets/fonts/Starjedi.ttf"
+                    }
+                },
+                {
+                    "template": "button",
+                    "parameters": {
+                        "y": 0.3,
+                        "z": 21,
+                        "width": 0.3,
+                        "height": 0.3,
+                        "on_click": [
+                            {
+                                "Save": {}
+                            }
+                        ],
+                        "text_size": {
+                            "width": 0.2,
+                            "height": 0.06
+                        },
+                        "text": "save",
+                        "font": "assets/fonts/Starjedi.ttf"
+                    }
+                },
+                {
+                    "template": "button",
+                    "parameters": {
+                        "y": 0.6,
+                        "z": 21,
+                        "width": 0.3,
+                        "height": 0.3,
+                        "on_click": [
+                            {
+                                "Disconnection": {}
+                            }
+                        ],
+                        "text_size": {
+                            "width": 0.2,
+                            "height": 0.06
+                        },
+                        "text": "disconnect",
+                        "font": "assets/fonts/Starjedi.ttf"
+                    }
+                }
+            ]
+        }
+    ]
+}

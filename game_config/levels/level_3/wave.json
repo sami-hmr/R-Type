@@ -1,0 +1,24 @@
+{
+  "scenes": [
+    {
+      "name": "level_3",
+      "state": "disabled",
+      "plugins": [],
+      "entities": [
+        {
+          "moving:Position": {
+            "pos": {
+              "x": 1.6,
+              "y": 0.0
+            }
+          },
+          "mob:Spawner": {
+            "entity_template": "wave_1_level_3",
+            "spawn_interval": 5.0,
+            "max_spawns": 1
+          }
+        }
+      ]
+    }
+  ]
+}

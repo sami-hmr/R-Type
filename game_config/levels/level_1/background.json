@@ -1,0 +1,51 @@
+{
+  "scenes": [
+    {
+      "name": "level_1",
+      "state": "disabled",
+      "plugins": [],
+      "entities": [
+        {
+          "ui:Drawable": {},
+          "ui:Background": {
+            "layers": [
+              {
+                "path": "assets/backgrounds/assetpack/parallax/Iceberg/1-Sky.png"
+              },
+              {
+                "path": "assets/backgrounds/assetpack/parallax/Iceberg/0-water.png"
+              },
+              {
+                "path": "assets/backgrounds/assetpack/parallax/Iceberg/2-cloud.png"
+              },
+              {
+                "path": "assets/backgrounds/assetpack/parallax/Iceberg/3-mountains.png"
+              },
+              // {
+              //   "path": "assets/backgrounds/assetpack/parallax/Iceberg/5-iceberg.png"
+              // },
+              // {
+              //   "path": "assets/backgrounds/assetpack/parallax/Iceberg/4-icebergreflex.png"
+              // },
+              {
+                "path": "assets/backgrounds/assetpack/parallax/Iceberg/2-2-water reflex back.png"
+              },
+              {
+                "path": "assets/backgrounds/assetpack/parallax/Iceberg/2-1-water reflex.png"
+              }
+            ],
+            "render_type": "STRETCH",
+            "parallax": {
+              "active": true,
+              "speed": {
+                "x": -1000.0,
+                "y": 0.0
+              },
+              "framerate": 60.0
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

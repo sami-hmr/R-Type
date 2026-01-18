@@ -12,6 +12,7 @@
 #include "ClientConnection.hpp"
 #include "NetworkShared.hpp"
 #include "ServerLaunch.hpp"
+#include "ecs/EventManager.hpp"
 #include "ecs/Scenes.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/components/Drawable.hpp"
@@ -19,12 +20,16 @@
 #include "plugin/components/Sprite.hpp"
 #include "plugin/events/CleanupEvent.hpp"
 #include "plugin/events/CliEvents.hpp"
+#include "plugin/events/HttpEvents.hpp"
 #include "plugin/events/LoggerEvent.hpp"
 #include "plugin/events/NetworkEvents.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
 
-CLI::CLI(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config)
-    : APlugin("cli", r, l, {"logger"}, {}, config)
+CLI::CLI(Registry& r,
+         EventManager& em,
+         EntityLoader& l,
+         std::optional<JsonObject> const& config)
+    : APlugin("cli", r, em, l, {"logger"}, {}, config)
 {
   SUBSCRIBE_EVENT(ShutdownEvent, { _running = false; })
   SUBSCRIBE_EVENT(CleanupEvent, { _running = false; })
@@ -34,7 +39,7 @@ CLI::CLI(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config)
     }
   })
   SUBSCRIBE_EVENT(CliStop, { _running = false; })
-  _registry.get().emit<CliStart>();
+  _event_manager.get().emit<CliStart>();
 }
 
 CLI::~CLI()
@@ -54,12 +59,11 @@ void CLI::run_cli()
     std::cout << "> " << std::flush;
 
     if (!std::getline(std::cin, line)) {
-      // _registry.get().emit<ShutdownEvent>("Cli end", 0);
+      _event_manager.get().emit<ShutdownEvent>("Cli end", 0);
       break;
     }
 
     if (!_running) {
-      // _registry.get().emit<ShutdownEvent>("Error in cli", 0);
       break;
     }
 
@@ -69,7 +73,7 @@ void CLI::run_cli()
 
     process_command(line);
   }
-  exit(0);
+  // exit(0);
 }
 
 void CLI::process_command(const std::string& cmd)
@@ -109,7 +113,7 @@ void CLI::process_command(const std::string& cmd)
           if (!message.empty() && message[0] == ' ') {
             message = message.substr(1);
           }
-          _registry.get().emit<LogEvent>(
+          _event_manager.get().emit<LogEvent>(
               "cli",
               LogLevel::INFO,
               message.empty() ? "test message" : message);
@@ -128,7 +132,7 @@ void CLI::process_command(const std::string& cmd)
             return;
           }
 
-          _registry.get().emit<ServerLaunching>(port);
+          _event_manager.get().emit<ServerLaunching>(port);
           std::cout << "Starting server on "
                     << "0.0.0.0"
                     << ":" << port << "\n";
@@ -148,7 +152,7 @@ void CLI::process_command(const std::string& cmd)
             std::cout << "Example: connect 127.0.0.1 27015\n";
             return;
           }
-          _registry.get().emit<ClientConnection>(host, port);
+          _event_manager.get().emit<ClientConnection>(host, port);
           std::cout << "Connecting to " << host << ":" << port << "\n";
         }}},
       {"s",
@@ -158,10 +162,31 @@ void CLI::process_command(const std::string& cmd)
             [this](std::istringstream&)
         {
           uint16_t port = 4242;
-          _registry.get().emit<ServerLaunching>(port);
+          _event_manager.get().emit<ServerLaunching>(port);
           std::cout << "Starting server on "
                     << "0.0.0.0"
                     << ":" << port << "\n";
+        }}},
+      {"expose",
+       {.usage = "expose <host>",
+        .description = "expose server host",
+        .handler =
+            [this](std::istringstream& iss)
+        {
+          std::string host;
+
+          iss >> host;
+          _event_manager.get().emit<ExposeServer>(host);
+          std::cout << "exposing server on " << host << "\n";
+        }}},
+      {"e",
+       {.usage = "e",
+        .description = "commande de goat pour expose le server",
+        .handler =
+            [this](std::istringstream&)
+        {
+          _event_manager.get().emit<ExposeServer>("0.0.0.0");
+          std::cout << "exposing server on " << "0.0.0.0\n";
         }}},
       {"c",
        {.usage = "c",
@@ -176,14 +201,19 @@ void CLI::process_command(const std::string& cmd)
             std::cout << "Example: connect 127.0.0.1 27015\n";
             return;
           }
-          _registry.get().emit<ClientConnection>(host, port);
+          _event_manager.get().emit<ClientConnection>(host, port);
           std::cout << "Connecting to " << host << ":" << port << "\n";
         }}},
+      {"deco",
+       {.usage = "deco",
+        .description = "autre commande de goat pour deconnect le client",
+        .handler = [this](std::istringstream&)
+        { _event_manager.get().emit<Disconnection>(); }}},
       {"ready",
        {.usage = "ready",
         .description = "ready",
         .handler = [this](std::istringstream&)
-        { _registry.get().emit<WantReady>(); }}},
+        { _event_manager.get().emit<WantReady>(); }}},
       {"spawn",
        {.usage = "spawn",
         .description = "spawn entity with drawing at 0,0",
@@ -193,14 +223,14 @@ void CLI::process_command(const std::string& cmd)
           Drawable draw;
           Sprite sprite("assets/planet.png", {1, 1});
           Position pos(0, 0);
-          Scene scene("game", SceneState::ACTIVE);
-          this->_registry.get().emit<ComponentBuilder>(
+          Scene scene("game");
+          this->_event_manager.get().emit<ComponentBuilder>(
               42, "ui:Drawable", draw.to_bytes());
-          this->_registry.get().emit<ComponentBuilder>(
+          this->_event_manager.get().emit<ComponentBuilder>(
               42, "ui:Sprite", sprite.to_bytes());
-          this->_registry.get().emit<ComponentBuilder>(
+          this->_event_manager.get().emit<ComponentBuilder>(
               42, "moving:Position", pos.to_bytes());
-          this->_registry.get().emit<ComponentBuilder>(
+          this->_event_manager.get().emit<ComponentBuilder>(
               42, "scene", scene.to_bytes());
         }}},
 
@@ -211,7 +241,51 @@ void CLI::process_command(const std::string& cmd)
             [this](std::istringstream&)
         {
           std::cout << "Stopping CLI...\n";
-          _registry.get().emit<CliStop>();
+          _event_manager.get().emit<CliStop>();
+        }}},
+      {"save",
+       {.usage = "save",
+        .description = "save player",
+        .handler =
+            [this](std::istringstream&)
+        {
+          std::cout << "saving...\n";
+          _event_manager.get().emit<Save>();
+        }}},
+      {"fetch_available",
+       {.usage = "fetch_available",
+        .description = "fetcing available",
+        .handler =
+            [this](std::istringstream&)
+        {
+          std::cout << "fetching...\n";
+          _event_manager.get().emit<FetchAvailableServers>();
+        }}},
+      {"register",
+       {.usage = "register <identifier> <password>",
+        .description = "register",
+        .handler =
+            [this](std::istringstream& iss)
+        {
+          std::cout << "register\n";
+          std::string id;
+          std::string pass;
+
+          iss >> id >> pass;
+          _event_manager.get().emit<Register>(id, pass);
+        }}},
+      {"login",
+       {.usage = "login <identifier> <password>",
+        .description = "login",
+        .handler =
+            [this](std::istringstream& iss)
+        {
+          std::cout << "login\n";
+          std::string id;
+          std::string pass;
+
+          iss >> id >> pass;
+          _event_manager.get().emit<Login>(id, pass);
         }}},
       {"quit",
        {.usage = "quit [reason]",
@@ -224,7 +298,7 @@ void CLI::process_command(const std::string& cmd)
           if (!reason.empty() && reason[0] == ' ') {
             reason = reason.substr(1);
           }
-          _registry.get().emit<ShutdownEvent>(
+          _event_manager.get().emit<ShutdownEvent>(
               reason.empty() ? "CLI requested" : reason, 0);
         }}},
       {"cleanup",
@@ -237,7 +311,8 @@ void CLI::process_command(const std::string& cmd)
           if (!trigger.empty() && trigger[0] == ' ') {
             trigger = trigger.substr(1);
           }
-          _registry.get().emit<CleanupEvent>(trigger.empty() ? "CLI" : trigger);
+          _event_manager.get().emit<CleanupEvent>(trigger.empty() ? "CLI"
+                                                                  : trigger);
         }}}};
 
   auto it = COMMANDS.find(command);
@@ -251,10 +326,11 @@ void CLI::process_command(const std::string& cmd)
 
 extern "C"
 {
-void* entry_point(Registry& r,
+PLUGIN_EXPORT void* entry_point(Registry& r,
+                  EventManager& em,
                   EntityLoader& l,
                   std::optional<JsonObject> const& config)
 {
-  return new CLI(r, l, config);
+  return new CLI(r, em, l, config);
 }
 }

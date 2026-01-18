@@ -132,7 +132,7 @@
  *
  * @code
  * // Define scenes
- * registry.add_scene("Menu", SceneState::MAIN);
+ * registry.add_scene("Menu", SceneState::ACTIVE);
  * registry.add_scene("Game", SceneState::DISABLED);
  * registry.add_scene("HUD", SceneState::ACTIVE);
  *
@@ -199,9 +199,11 @@
 #include <cstddef>
 #include <functional>
 #include <iostream>
+#include <list>
 #include <optional>
 #include <queue>
 #include <random>
+#include <stack>
 #include <stdexcept>
 #include <string>
 #include <typeindex>
@@ -215,11 +217,14 @@
 #include "SparseArray.hpp"
 #include "TwoWayMap.hpp"
 #include "ecs/ComponentState.hpp"
+#include "ecs/Entity.hpp"
 #include "ecs/Scenes.hpp"
 #include "ecs/Systems.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/HookConcept.hpp"
 #include "plugin/events/EventConcept.hpp"
+
+using Ecs::Entity;
 
 /**
  * @concept component
@@ -259,52 +264,7 @@
 template<typename T>
 concept component = bytable<T> && entity_convertible<T>;
 
-/**
- * @concept event
- * @brief Requires a type to be a valid event with serialization and JSON
- * construction
- *
- * A valid event type must:
- * - Satisfy bytable (binary serialization)
- * - Satisfy entity_convertible (entity ID remapping)
- * - Satisfy json_buildable (construct from JSON for testing/network)
- *
- * @tparam T The type to check
- *
- * @details
- * Events extend component requirements with JSON construction for:
- * - Network event emission from JSON
- * - Test event creation
- * - Dynamic event building
- *
- * @code
- * struct DamageEvent {
- *   Registry::Entity target;
- *   int amount;
- *
- *   // Bytable
- *   DEFAULT_BYTE_CONSTRUCTOR(DamageEvent, ...)
- *   DEFAULT_SERIALIZE(...)
- *
- *   // Entity-convertible
- *   CHANGE_ENTITY(result.target = map.at(target);)
- *
- *   // Json-buildable
- *   DamageEvent(Registry& r, JsonObject const& obj)
- *     : target(get_value_copy<int>(r, obj, "target").value())
- *     , amount(get_value_copy<int>(r, obj, "amount").value())
- *   {}
- * };
- *
- * static_assert(event<DamageEvent>);
- * @endcode
- *
- * @see component concept
- * @see json_buildable in EventConcept.hpp
- */
-
-template<typename T>
-concept event = bytable<T> && entity_convertible<T> && json_buildable<T>;
+class EventManager;
 
 /**
  * @brief The Registry class is the core of the ECS (Entity-Component-System)
@@ -347,22 +307,6 @@ concept event = bytable<T> && entity_convertible<T> && json_buildable<T>;
 class Registry
 {
 public:
-  /**
-   * @brief Type alias for an entity identifier.
-   *
-   * Entities are lightweight indices into component arrays. Valid entity IDs
-   * start at 0 and increment. Deleted entity IDs are recycled.
-   */
-  using Entity = std::size_t;
-
-  /**
-   * @brief Type alias for event handler identifiers
-   *
-   * Handler IDs are unique UUIDs generated when registering event handlers.
-   * Used to unregister specific handlers via off().
-   */
-  using HandlerId = std::size_t;
-
   /**
    * @brief Registers a bytable component type with a string identifier.
    *
@@ -410,6 +354,26 @@ public:
             }
           }
           return r;
+        });
+    this->_component_bytes_getters.insert_or_assign(
+        string_id,
+        [&comp](Entity const& e)
+        {
+          std::optional<ByteArray> data;
+
+          if (e < comp.size() && comp[e].has_value()) {
+            data.emplace(comp[e]->to_bytes());
+          }
+          return data;
+        });
+    this->_component_getter.insert_or_assign(
+        ti,
+        [&comp](Entity entity) -> std::optional<ByteArray>
+        {
+          if (comp.size() <= entity || !comp[entity]) {
+            return std::nullopt;
+          }
+          return comp[entity]->to_bytes();
         });
     this->_index_getter.insert(ti, string_id);
     return comp;
@@ -853,6 +817,9 @@ public:
   template<typename Component>
   void remove_component(Entity const& from)
   {
+    if (!this->has_component<Component>(from)) {
+      return;
+    }
     this->get_components<Component>().erase(from);
   }
 
@@ -978,7 +945,7 @@ public:
    * @see Zipper for entity iteration
    * @see System class for wrapper details
    */
-  void run_systems();
+  void run_systems(EventManager&);
 
   /**
    * @brief Updates all registered dynamic bindings
@@ -1020,7 +987,7 @@ public:
    * @see run_systems() which calls this automatically
    * @see clear_bindings() to remove all bindings
    */
-  void update_bindings();
+  void update_bindings(EventManager&);
 
   /**
    * @brief Registers a dynamic binding between component fields
@@ -1033,7 +1000,10 @@ public:
    * @tparam T Type of the field being bound
    * @param entity Entity owning the target component
    * @param field_name Name of the target field (must be hookable)
-   * @param source_hook Source identifier in format "ComponentName:fieldName"
+   * @param source_hook Source identifier in format
+   * "scope:ComponentName:fieldName"
+   *                    - "self:ComponentName:fieldName" - same entity binding
+   *                    - "global:Name:fieldName" - global singleton binding
    *
    * @details
    * Creates a Binding struct containing:
@@ -1052,56 +1022,39 @@ public:
    *   Vector2D target_pos;
    *
    *   Follower(Registry& r, JsonObject const& obj, Entity self) {
-   *     // JSON: {"target_pos": "#Leader:pos"}
+   *     // JSON: {"target_pos": "#self:Position:pos"}
    *     target_pos = get_value<Follower, Vector2D>(
    *       r, obj, self, "target_pos"
    *     ).value_or(Vector2D{0, 0});
    *
    *     // register_binding called internally by get_value
-   *     // Creates: Follower.target_pos <- Leader.pos binding
+   *     // Creates: Follower.target_pos <- self.Position.pos binding
    *   }
    *
    *   HOOKABLE(Follower, HOOK(target_pos))
    * };
    *
    * // Every frame:
-   * // 1. Leader moves to new position
+   * // 1. Entity Position moves to new location
    * // 2. update_bindings() executes
-   * // 3. Follower.target_pos = Leader.pos (automatic!)
-   * @endcode
-   *
-   * @code
-   * struct Turret {
-   *   Vector2D aim_target;
-   *   float rotation;
-   *
-   *   HOOKABLE(Turret, HOOK(aim_target), HOOK(rotation))
-   * };
-   *
-   * // Bind turret aim to player position
-   * registry.register_binding<Turret, Vector2D>(
-   *   turret_entity,
-   *   "aim_target",
-   *   "Player:pos"
-   * );
-   *
-   * // Turret automatically aims at player position every frame
+   * // 3. Follower.target_pos = Position.pos (automatic!)
    * @endcode
    *
    * @code
    * struct HealthBar {
-   *   int current_value;
-   *   HOOKABLE(HealthBar, HOOK(current_value))
+   *   int max_value;
+   *
+   *   HOOKABLE(HealthBar, HOOK(max_value))
    * };
    *
-   * // Bind UI to player health
+   * // Bind UI to global game config
    * registry.register_binding<HealthBar, int>(
    *   health_bar_entity,
-   *   "current_value",
-   *   "Player:health.current"
+   *   "max_value",
+   *   "global:GameConfig:maxHealth"
    * );
    *
-   * // Health bar automatically reflects player damage
+   * // Health bar automatically reflects global config changes
    * @endcode
    *
    * @see update_bindings() which executes bindings
@@ -1110,19 +1063,62 @@ public:
    * @see Hooks.hpp for hook syntax details
    */
   template<component ComponentType, typename T>
-  void register_binding(Entity entity,
+  void register_binding(Entity entity,  // NOLINT
                         std::string const& field_name,
                         std::string const& source_hook)
   {
     std::type_index ti(typeid(ComponentType));
 
-    std::function<void()> updater = [this, entity, field_name, source_hook]()
+    // Parse hook reference: "scope:component:field"
+    std::string scope;
+    std::string comp_name;
+    std::string value_name;
+
+    size_t first_colon = source_hook.find(':');
+    size_t second_colon = source_hook.find(':', first_colon + 1);
+
+    if (first_colon != std::string::npos && second_colon != std::string::npos) {
+      scope = source_hook.substr(0, first_colon);
+      comp_name =
+          source_hook.substr(first_colon + 1, second_colon - first_colon - 1);
+      value_name = source_hook.substr(second_colon + 1);
+    } else {
+      scope = "self";
+      size_t colon_pos = source_hook.find(':');
+      if (colon_pos != std::string::npos) {
+        comp_name = source_hook.substr(0, colon_pos);
+        value_name = source_hook.substr(colon_pos + 1);
+      } else {
+        std::cerr << "Invalid hook format: " << source_hook << "\n";
+        return;
+      }
+    }
+
+    std::function<void()> updater =
+        [this, entity, field_name, scope, comp_name, value_name]()
     {
       try {
-        std::string comp = source_hook.substr(0, source_hook.find(':')) + "{"
-            + std::to_string(entity) + "}";
-        std::string value = source_hook.substr(source_hook.find(':') + 1);
-        auto ref = this->get_hooked_value<T>(comp, value);
+        std::optional<std::reference_wrapper<T>> ref;
+
+        if (scope == "self") {
+          std::string hook_key = comp_name + "{" + std::to_string(entity) + "}";
+          ref = this->get_hooked_value<T>(hook_key, value_name);
+        } else if (scope == "global") {
+          auto it = this->_global_hooks.find(comp_name);
+          if (it != this->_global_hooks.end()) {
+            auto any_val = it->second(value_name);
+            if (any_val.has_value()) {
+              ref = std::any_cast<std::reference_wrapper<T>>(any_val.value());
+            }
+          } else {
+            std::cerr << "Unknown global hook: " << comp_name
+                      << " the syntax is \"global_hook\": true" << "\n";
+          }
+        } else {
+          std::cerr << "Unknown scope: " << scope << " on comp name "
+                    << comp_name << " and value " << value_name << "\n";
+          return;
+        }
 
         if (ref.has_value()) {
           auto& components = this->get_components<ComponentType>();
@@ -1130,7 +1126,7 @@ public:
             auto& target_comp = components[entity].value();
 
             auto& hook_map = ComponentType::hook_map();
-            if (hook_map.contains(field_name)) {  // TODO: PROPER ERROR HANDLING
+            if (hook_map.contains(field_name)) {
               std::any field_any = hook_map.at(field_name)(target_comp);
               auto field_ref_wrapper =
                   std::any_cast<std::reference_wrapper<T>>(field_any);
@@ -1138,7 +1134,10 @@ public:
             }
           }
         }
-      } catch (...) {  // NOLINT  TODO: catch correctly
+      } catch (std::bad_any_cast const& e) {
+        // Type mismatch in hook binding - field type doesn't match hooked value
+      } catch (std::out_of_range const& e) {
+        // Hook field not found or invalid hook string format
       }
     };
 
@@ -1151,11 +1150,12 @@ public:
       return ByteArray {};
     };
 
-    std::function<void()> deleter = [this, entity, source_hook]()
+    std::function<void()> deleter = [this, entity, scope, comp_name]()
     {
-      std::string hook_name = source_hook.substr(0, source_hook.find(':')) + "{"
-          + std::to_string(entity) + "}";
-      this->_hooked_components.erase(hook_name);
+      if (scope == "self") {
+        std::string hook_name = comp_name + "{" + std::to_string(entity) + "}";
+        this->_hooked_components.erase(hook_name);
+      }
     };
 
     _bindings.emplace_back(entity,
@@ -1217,410 +1217,52 @@ public:
   void clear_bindings();
 
   // ============================================================================
-  // EVENT SYSTEM
-  // ============================================================================
-  //
-  // Provides type-safe event handling with multiple emission formats.
-  //
-  // Events are user-defined types that trigger registered handler functions.
-  // The system supports:
-  // - Type-safe handlers with automatic parameter binding
-  // - JSON-based event emission for network/config integration
-  // - Binary serialization for efficient network transmission
-  // - Handler registration/unregistration with unique IDs
-  //
-  // Handler Lifecycle:
-  // 1. Register handler with on() - returns unique ID
-  // 2. Handlers execute when emit() is called
-  // 3. Unregister with off() (specific) or off_all() (all handlers)
-  //
-  // Emission Formats:
-  // - emit(Event{...})           - Direct type-safe emission
-  // - emit<Event>(json)          - JSON deserialization
-  // - emit<Event>(bytes, length) - Binary deserialization
-  //
-  // Network Integration:
-  // Events can be serialized to JSON or binary format for network transmission,
-  // then deserialized and emitted on remote Registry instances.
-
-  /**
-   * @brief Register an event handler with unique identifier.
-   *
-   * Creates a callback that executes when the specified event type is emitted.
-   * Returns a unique string ID for later unregistration with off().
-   *
-   * The handler function receives the event object and Registry reference:
-   * @code
-   * void handler(const EventType& evt, Registry& reg) { ... }
-   * @endcode
-   *
-   * Multiple handlers can be registered for the same event type - they execute
-   * in registration order. Each handler gets a unique ID for selective removal.
-   *
-   * @tparam Event Event type (must satisfy event_type concept)
-   * @param handler Callback function taking (const Event&, Registry&)
-   * @return Unique string ID for unregistering this specific handler
-   *
-   * @note Handler is not invoked immediately - only when emit() is called
-   * @note ID must be stored if you need to unregister later
-   * @note Handlers persist across scenes unless explicitly removed
-   *
-   * @throws std::bad_alloc If handler registration fails
-   *
-   * @code
-   * struct PlayerDied {
-   *   std::size_t player_id;
-   *   std::string cause;
-   * };
-   *
-   * std::string handler_id = registry.on<PlayerDied>(
-   *   [](const PlayerDied& evt, Registry& r) {
-   *     std::cout << "Player " << evt.player_id
-   *               << " died: " << evt.cause << "\n";
-   *     // Spawn explosion effect, update score, etc.
-   *   }
-   * );
-   * @endcode
-   *
-   * @code
-   * // Audio system handler
-   * auto audio_id = registry.on<EnemyDestroyed>(
-   *   [](const EnemyDestroyed& e, Registry& r) {
-   *     play_sound("explosion.wav");
-   *   }
-   * );
-   *
-   * // Score system handler
-   * auto score_id = registry.on<EnemyDestroyed>(
-   *   [](const EnemyDestroyed& e, Registry& r) {
-   *     add_score(e.points);
-   *   }
-   * );
-   *
-   * // VFX system handler
-   * auto vfx_id = registry.on<EnemyDestroyed>(
-   *   [](const EnemyDestroyed& e, Registry& r) {
-   *     spawn_explosion_at(e.position);
-   *   }
-   * );
-   * // All three handlers execute when event is emitted
-   * @endcode
-   *
-   * @code
-   * auto id = registry.on<LevelComplete>(
-   *   [](const LevelComplete& evt, Registry& r) {
-   *     // Modify components
-   *     auto& players = r.get_components<Player>();
-   *     for (auto& player : players) {
-   *       if (player) player->level_up();
-   *     }
-   *
-   *     // Emit new events
-   *     r.emit(ShowLevelCompleteUI{evt.score});
-   *
-   *     // Change scenes
-   *     r.set_current_scene("victory_screen");
-   *   }
-   * );
-   * @endcode
-   *
-   * @see emit() to trigger handlers
-   * @see off() to unregister specific handler
-   * @see off_all() to remove all handlers for event type
-   */
-  template<event EventType>
-  HandlerId on(std::string const& name,
-               std::function<void(const EventType&)> handler)
-  {
-    std::type_index type_id(typeid(EventType));
-    _events_index_getter.insert(type_id, name);
-    if (!_event_entity_converters.contains(name)) {
-      _event_entity_converters.insert_or_assign(
-          name,
-          [](ByteArray const& b, std::unordered_map<Entity, Entity> const& map)
-          { return EventType(b).change_entity(map).to_bytes(); });
-    }
-
-    if (!_byte_event_emitter.contains(name)) {
-      _byte_event_emitter.insert_or_assign(
-          name,
-          [this](ByteArray const& data)
-          { return this->emit<EventType>(EventType(data)); });
-    }
-
-    this->add_event_builder<EventType>();
-
-    return this->on<EventType>(handler);
-  }
-
-  /**
-   * @brief Unregister a specific event handler by ID.
-   *
-   * Removes the handler that was registered with the given ID. The ID is
-   * returned by on() when registering the handler.
-   *
-   * After unregistration, the handler will not execute when the event is
-   * emitted. Other handlers for the same event type remain active.
-   *
-   * @tparam Event Event type (must satisfy event_type concept)
-   * @param id Handler ID returned by on()
-   *
-   * @note Safe to call with invalid/already-removed IDs (no-op)
-   * @note Does not affect other handlers for the same event type
-   *
-   * @code
-   * // Register handler for one-time use
-   * auto id = registry.on<GameStarted>(
-   *   [](const GameStarted& e, Registry& r) {
-   *     show_intro_cinematic();
-   *   }
-   * );
-   *
-   * // After cinematic plays, remove handler
-   * registry.off<GameStarted>(id);
-   * @endcode
-   *
-   * @code
-   * class DebugSystem {
-   *   std::string debug_handler_id;
-   *
-   * public:
-   *   void enable_debug_mode(Registry& r) {
-   *     debug_handler_id = r.on<EntitySpawned>(
-   *       [](const EntitySpawned& e, Registry& r) {
-   *         std::cout << "DEBUG: Entity " << e.id << " spawned\n";
-   *       }
-   *     );
-   *   }
-   *
-   *   void disable_debug_mode(Registry& r) {
-   *     r.off<EntitySpawned>(debug_handler_id);
-   *   }
-   * };
-   * @endcode
-   *
-   * @see on() to register handler
-   * @see off_all() to remove all handlers
-   */
-  template<typename EventType>
-  bool off(HandlerId handler_id)
-  {
-    std::type_index type_id(typeid(EventType));
-    if (!_event_handlers.contains(type_id)) {
-      return false;
-    }
-
-    auto& handlers = std::any_cast<
-        std::unordered_map<HandlerId, std::function<void(const EventType&)>>&>(
-        _event_handlers[type_id]);
-
-    if (!handlers.contains(handler_id)) {
-      return false;
-    }
-
-    handlers.erase(handler_id);
-    return true;
-  }
-
-  /**
-   * @brief Remove all event handlers for a specific event type.
-   *
-   * Unregisters every handler that was registered for the given event type.
-   * After this call, emitting the event will have no effect until new
-   * handlers are registered.
-   *
-   * @tparam Event Event type (must satisfy event_type concept)
-   *
-   * @note Safe to call even if no handlers are registered (no-op)
-   * @note Does not affect handlers for other event types
-   *
-   * @see on() to register handlers
-   * @see off() to remove specific handler
-   */
-  template<typename EventType>
-  void off_all()
-  {
-    std::type_index type_id(typeid(EventType));
-    _event_handlers.erase(type_id);
-  }
-
-  /**
-   * @brief Emit an event from JSON representation.
-   *
-   * Deserializes an event from JSON using Event::from_json(), then emits it
-   * to all registered handlers. This is the primary method for network-received
-   * events or configuration-driven events.
-   *
-   * The event type must provide:
-   * @code
-   * static Event from_json(const nlohmann::json& j);
-   * @endcode
-   *
-   * @tparam Event Event type (must satisfy event_type concept)
-   * @param j JSON object containing event data
-   *
-   * @throws std::exception If from_json() fails or JSON is malformed
-   *
-   * @note Internally calls emit(event) after deserialization
-   * @note JSON structure must match Event::from_json() expectations
-   *
-   * @code
-    // TODO: real example
-   * @endcode
-   *
-   * @see emit(const Event&) for direct type-safe emission
-   * @see emit<Event>(const byte*, std::size_t) for binary emission
-   */
-  void emit(std::string const& name, JsonObject const& args);
-
-  /**
-   * @brief Emit an event, invoking all registered handlers.
-   *
-   * Executes every handler registered via on() for this event type, in the
-   * order they were registered. Handlers receive the event object and a
-   * reference to this Registry.
-   *
-   * This is the type-safe emission method - the event is constructed directly
-   * in code and passed by reference. For JSON or binary emission, see the
-   * overloaded variants.
-   *
-   * @tparam Event Event type (must satisfy event_type concept)
-   * @param event Event object to pass to handlers
-   *
-   * @note Handlers execute immediately in registration order
-   * @note If a handler throws, subsequent handlers may not execute
-   * @note Handlers can emit new events (recursive emission supported)
-   *
-   * @code
-   * // Notify all handlers that player took damage
-   * registry.emit(PlayerDamaged{
-   *   .player_id = player_entity,
-   *   .damage = 25,
-   *   .damage_type = DamageType::Fire
-   * });
-   * @endcode
-   *
-   * @code
-   * registry.on<EnemyDestroyed>([](const EnemyDestroyed& e, Registry& r) {
-   *   // Handler can emit new events
-   *   r.emit(SpawnPickup{.position = e.position});
-   *   r.emit(AddScore{.points = e.points});
-   * });
-   *
-   * // This triggers a cascade
-   * registry.emit(EnemyDestroyed{...});
-   * @endcode
-   *
-   * @code
-   * void apply_damage(Registry& r, Entity target, int damage) {
-   *   auto& healths = r.get_components<Health>();
-   *   if (healths[target]) {
-   *     healths[target]->current -= damage;
-   *
-   *     if (healths[target]->current <= 0) {
-   *       r.emit(EntityDied{.entity = target});
-   *     }
-   *   }
-   * }
-   * @endcode
-   *
-   * @see on() to register handlers
-   * @see emit<Event>(const nlohmann::json&) for JSON emission
-   * @see emit<Event>(const byte*, std::size_t) for binary emission
-   */
-  template<typename EventType, typename... Args>
-  void emit(Args&&... args)
-  {
-    std::type_index type_id(typeid(EventType));
-    if (!_event_handlers.contains(type_id)) {
-      return;
-    }
-
-    EventType event(std::forward<Args>(args)...);
-
-    auto handlers_copy = std::any_cast<
-        std::unordered_map<HandlerId, std::function<void(const EventType&)>>>(
-        _event_handlers.at(type_id));
-
-    for (auto const& [id, handler] : handlers_copy) {
-      handler(event);
-    }
-  }
-
-  /**
-   * @brief Emit an event from binary representation.
-   *
-   * Deserializes an event from binary data using Event::from_bytes(), then
-   * emits it to all registered handlers. This is the most efficient method
-   * for network transmission.
-   *
-   * The event type must provide:
-   * @code
-   * static Event from_bytes(const byte* data, std::size_t length);
-   * @endcode
-   *
-   * @tparam Event Event type (must satisfy event_type concept)
-   * @param data Pointer to binary event data
-   * @param length Number of bytes in data
-   *
-   * @throws std::exception If from_bytes() fails or data is malformed
-   *
-   * @note Internally calls emit(event) after deserialization
-   * @note More efficient than JSON for network transmission
-   * @note Binary format must match Event::from_bytes() expectations
-   *
-   * @code
-    // TODO: real example
-   * @endcode
-   *
-   * @see emit(const Event&) for direct type-safe emission
-   * @see emit<Event>(const nlohmann::json&) for JSON emission
-   */
-  void emit(std::string const& name, ByteArray const& data);
-
-  // ============================================================================
   // SCENE MANAGEMENT
   // ============================================================================
   //
   // Multi-scene system for organizing entities into logical layers.
   //
   // Scenes allow you to organize entities into separate contexts (menu,
-  // gameplay, HUD, pause screen, etc.). Each scene has a state (MAIN, ACTIVE,
+  // gameplay, HUD, pause screen, etc.). Each scene has a state (ACTIVE,
   // DISABLED) that controls whether its entities are processed by systems.
   //
   // Scene States:
-  // - MAIN: Primary active scene (only one allowed, typically gameplay)
-  // - ACTIVE: Active but not primary (overlays, HUD, UI layers)
+  // - ACTIVE: Scene is active, entities are processed by systems
   // - DISABLED: Scene exists but entities are not processed
+  // - ACTIVE: Scene is active and entities are processed
+  // - MAIN: Primary active scene, always processed (highest priority)
   //
   // System Iteration:
   // The Zipper class automatically filters entities - systems only iterate over
-  // entities in MAIN and ACTIVE scenes. DISABLED scenes are skipped entirely.
+  // entities in ACTIVE and MAIN scenes by default. DISABLED scenes are skipped
+  // entirely.
   //
   // Common Patterns:
-  // - Gameplay + HUD: Set gameplay as MAIN, HUD as ACTIVE
-  // - Menu switching: Disable old MAIN, enable new scene as MAIN
-  // - Pause overlay: Set pause menu as ACTIVE over gameplay MAIN
+  // - Gameplay + HUD: Both scenes ACTIVE
+  // - Menu switching: Deactivate old scene, activate new scene
+  // - Pause overlay: Push pause scene on top of gameplay (both ACTIVE)
+  // - Scene stacking: Multiple ACTIVE scenes processed together
   //
   // Scene Lifecycle:
-  // 1. add_scene() - Register scene with initial state
-  // 2. set_current_scene() - Activate scene (sets to MAIN or ACTIVE)
-  // 3. remove_current_scene() - Deactivate specific scene
-  // 4. remove_all_scenes() - Clear all active scenes
+  // 1. add_scene() - Register scene with initial state (default DISABLED)
+  // 2. activate_scene() - Make scene active
+  // 3. deactivate_scene() - Make scene inactive
+  // 4. push_scene()/pop_scene() - Stack-based scene management
+  // 5. deactivate_all_scenes() - Clear all active scenes
 
   /**
    * @brief Register a scene with the given name and initial state.
    *
    * Creates a scene entry in the Registry's scene management system. The scene
-   * can later be activated/deactivated with set_current_scene() and
-   * remove_current_scene().
+   * can later be activated/deactivated with activate_scene() and
+   * deactivate_scene().
    *
    * This does NOT create entities - it only registers the scene metadata.
    * Entities are associated with scenes via the Scene component, typically
    * added during EntityLoader::load_entity().
    *
    * @param scene_name Unique identifier for the scene
-   * @param state Initial activation state (MAIN, ACTIVE, or DISABLED)
+   * @param state Initial activation state (default: DISABLED)
    *
    * @note If scene already exists, this updates its state
    * @note Scene names must be unique
@@ -1628,30 +1270,17 @@ public:
    *
    * @code
    * registry.init_scene_management();
-   * registry.add_scene("menu", SceneState::MAIN);
+   * registry.add_scene("menu", SceneState::ACTIVE);
    * registry.add_scene("hud", SceneState::ACTIVE);
-   * registry.add_scene("gameplay", SceneState::DISABLED);
-   * @endcode
-   *
-   * @code
-   * void load_level(Registry& r, const std::string& level_name) {
-   *   // Register level scene as disabled initially
-   *   r.add_scene(level_name, SceneState::DISABLED);
-   *
-   *   // Load level entities (they get Scene component automatically)
-   *   EntityLoader loader(r);
-   *   loader.load_entity("level_config.json");
-   *
-   *   // Activate when ready
-   *   r.set_current_scene(level_name);
-   * }
+   * registry.add_scene("gameplay");  // Defaults to DISABLED
    * @endcode
    *
    * @see init_scene_management() must be called first
-   * @see set_current_scene() to activate the scene
+   * @see activate_scene() to activate the scene
    * @see SceneState enum for state meanings
    */
-  void add_scene(std::string const& scene_name, SceneState state);
+  void add_scene(std::string const& scene_name,
+                 SceneState state = SceneState::DISABLED);
 
   /**
    * @brief Initialize the scene management system.
@@ -1665,7 +1294,7 @@ public:
    * @code
    * Registry registry;
    * registry.init_scene_management();  // Enable scenes
-   * registry.add_scene("menu", SceneState::MAIN);
+   * registry.add_scene("menu", SceneState::ACTIVE);
    * @endcode
    *
    * @see add_scene() to register scenes
@@ -1686,7 +1315,7 @@ public:
    * @code
    * registry.init_scene_management();
    * registry.setup_scene_systems();  // Enable automatic scene handling
-   * registry.add_scene("gameplay", SceneState::MAIN);
+   * registry.add_scene("gameplay", SceneState::ACTIVE);
    * @endcode
    *
    * @see init_scene_management() must be called first
@@ -1739,6 +1368,27 @@ public:
    * @see get_current_scene() to query active scenes
    */
   void set_current_scene(std::string const& scene_name);
+
+  /**
+   * @brief Set a scene as the MAIN scene.
+   *
+   * Sets the scene to MAIN state (highest priority). Entities in this scene
+   * will always be processed by systems.
+   *
+   * @param scene_name Name of the scene to set as MAIN
+   *
+   * @note Multiple scenes can be MAIN simultaneously
+   * @note Scene must be registered with add_scene() first
+   *
+   * @code
+   * registry.set_main_scene("gameplay");
+   * registry.set_current_scene("hud");  // ACTIVE overlay over MAIN gameplay
+   * @endcode
+   *
+   * @see set_current_scene() to set scene as ACTIVE
+   * @see add_scene() to register scenes
+   */
+  void set_main_scene(std::string const& scene_name);
 
   /**
    * @brief Deactivate a specific scene.
@@ -1834,6 +1484,112 @@ public:
    * @see is_in_current_scene() to check specific entity
    */
   std::vector<std::string> const& get_current_scene() const;
+
+  /**
+   * @brief Activate a scene.
+   *
+   * Sets the scene to ACTIVE state. Entities with this scene's Scene component
+   * will be processed by systems.
+   *
+   * @param scene_name Name of the scene to activate
+   *
+   * @note If scene doesn't exist, it will be auto-created as DISABLED then
+   * activated
+   * @note This supports dynamic scene creation from server/network
+   * @note If scene is already active, this is a no-op
+   * @note Multiple scenes can be active simultaneously
+   *
+   * @code
+   * registry.activate_scene("gameplay");
+   * registry.activate_scene("hud");  // Both active now
+   *
+   * // Auto-creates "lobby" scene if it doesn't exist
+   * registry.activate_scene("lobby");  // Server-sent scene
+   * @endcode
+   */
+  void activate_scene(std::string const& scene_name);
+
+  /**
+   * @brief Deactivate a scene.
+   *
+   * Sets the scene to DISABLED state. Entities in this scene will no longer
+   * be processed by systems until the scene is reactivated.
+   *
+   * @param scene_name Name of the scene to deactivate
+   *
+   * @note Safe to call with non-existent scene names (no-op)
+   * @note Scene can be reactivated later with activate_scene()
+   */
+  void deactivate_scene(std::string const& scene_name);
+
+  /**
+   * @brief Deactivate all scenes.
+   *
+   * Sets all scenes to DISABLED state. No entities will be processed by
+   * systems until scenes are reactivated.
+   */
+  void deactivate_all_scenes();
+
+  /**
+   * @brief Push a scene onto the active scene stack.
+   *
+   * Activates a scene and adds it to the top of the scene stack. This is
+   * useful for overlay scenes like pause menus or popups.
+   *
+   * @param scene_name Name of the scene to push
+   */
+  void push_scene(std::string const& scene_name);
+
+  /**
+   * @brief Pop a scene from the active scene stack.
+   *
+   * Deactivates a scene and removes it from the scene stack.
+   *
+   * @param scene_name Name of the scene to pop
+   */
+  void pop_scene(std::string const& scene_name);
+
+  /**
+   * @brief Check if a scene is currently active.
+   *
+   * @param scene_name Name of the scene to check
+   * @return true if the scene is active, false otherwise
+   */
+  bool is_scene_active(std::string const& scene_name) const;
+
+  /**
+   * @brief Get the state of a scene.
+   *
+   * @param scene_name Name of the scene
+   * @return The scene's state, or DISABLED if scene doesn't exist
+   */
+  SceneState get_scene_state(std::string const& scene_name) const;
+
+  /**
+   * @brief Get the set of active scene names for O(1) lookups.
+   *
+   * @return Unordered set of active scene names
+   * @note Used internally by Zipper for efficient filtering
+   */
+  std::unordered_set<std::string> const& get_active_scenes_set() const;
+
+  /**
+   * @brief Get the scene states map.
+   *
+   * @return Unordered map of scene names to their states
+   * @note Used internally by Zipper for scene level filtering
+   */
+  std::unordered_map<std::string, SceneState> const& get_scene_states() const;
+
+  /**
+   * @brief Get list of currently active scene names (ordered).
+   *
+   * @return Vector of active scene names in stack order
+   * @deprecated Use get_active_scenes_set() for most use cases
+   */
+  std::vector<std::string> const& get_active_scenes() const;
+
+  bool is_in_main_scene(Entity);
 
   Clock& clock();
 
@@ -1986,6 +1742,45 @@ public:
   }
 
   /**
+   * @brief Register a global hook for singleton components
+   *
+   * Registers a component hook accessible via the "global" scope in the new
+   * hook syntax. Global hooks are used for singleton components like
+   * GameConfig, LevelSettings, etc. that should be accessible from any entity.
+   *
+   * @tparam T Component type (must satisfy hookable concept)
+   * @param name Global hook identifier (e.g., "GameConfig")
+   * @param e Entity containing the singleton component
+   *
+   * @note Use this for singletons/global configuration components
+   * @note Accessible via #global:Name:field syntax
+   *
+   * @code
+   * // Register global game config
+   * Entity config = registry.spawn_entity();
+   * registry.add_component<GameConfig>(config);
+   * registry.register_global_hook<GameConfig>("GameConfig", config);
+   *
+   * // Now accessible from any entity:
+   * // {"speed": "#global:GameConfig:maxSpeed"}
+   * @endcode
+   */
+  template<hookable T>
+  void register_global_hook(std::string const& name, Entity const& e)
+  {
+    this->_global_hooks.insert_or_assign(
+        name,
+        [this, e](std::string const& key) -> std::optional<std::any>
+        {
+          auto& array = this->get_components<T>();
+          if (e >= array.size() || !array[e].has_value()) {
+            return std::nullopt;
+          }
+          return T::hook_map().at(key)(array[e].value());
+        });
+  }
+
+  /**
    * @brief Retrieve a reference to a hooked component field.
    *
    * Returns a reference to a specific field of a hooked component. The
@@ -2098,6 +1893,10 @@ public:
   std::optional<std::reference_wrapper<T>> get_hooked_value(
       std::string const& comp, std::string const& value)
   {
+    if (!this->_hooked_components.contains(comp)) {
+      return std::nullopt;
+    }
+
     auto const& tmp = std::any_cast<std::optional<std::any>>(
         this->_hooked_components.at(comp)(value));
     if (!tmp.has_value()) {
@@ -2106,133 +1905,32 @@ public:
     return std::any_cast<std::reference_wrapper<T>>(tmp.value());
   }
 
-  // ============================================================================
-  // EVENT BUILDERS & TEMPLATES
-  // ============================================================================
-
-  // Infrastructure for JSON-based event construction and entity templating.
-  //
-  // Event Builders:
-  // Event builders enable creating event objects from JSON. Each event type
-  // can register a builder function that constructs the event from JSON params.
-  // This is used for network events and configuration-driven events.
-  //
-  // Templates:
-  // Templates are JSON configurations for entity prefabs. Store reusable entity
-  // definitions and instantiate them multiple times. Common for enemy types,
-  // powerups, UI elements, etc.
-  //
-  // Event Builder Flow:
-  // 1. add_event_builder<Event>() - Register JSON->Event constructor
-  // 2. get_event_with_id("event_name", json) - Build event from JSON
-  // 3. Event is serialized to binary for network transmission
-  //
-  // Template Flow:
-  // 1. add_template("enemy_basic", json_config) - Register prefab
-  // 2. get_template("enemy_basic") - Retrieve config
-  // 3. EntityLoader::load_entity(config) - Instantiate entity
-  //
-  // Network Integration:
-  // Event builders are automatically registered by on() to enable JSON
-  // emission. The builder constructs events from network-received JSON
-  // payloads.
-
   /**
-   * @brief Register a JSON builder for an event type.
+   * @brief Retrieve a reference to a global hooked component field
    *
-   * Creates infrastructure for constructing events from JSON. This enables:
-   * - JSON-based event emission via emit<Event>(json)
-   * - Network event reception and deserialization
-   * - Configuration-driven event triggering
+   * Similar to get_hooked_value() but for global (singleton) components.
+   * Returns a reference to a field from a globally registered component.
    *
-   * The event type T must have a constructor accepting (Registry&, JsonObject).
-   * This constructor should parse JSON and initialize event fields.
-   *
-   * This method is typically called automatically by on() when registering
-   * event handlers. Manual calls are rarely needed.
-   *
-   * @tparam T Event type (must satisfy event concept)
-   *
-   * @note Event must have constructor: T(Registry&, JsonObject const&)
-   * @note Event must have to_bytes() method for serialization
-   * @note Usually called automatically by on() - manual use is advanced
-   *
-   * @see on() which calls this automatically
-   * @see get_event_with_id() to construct events from JSON
-   * @see emit<Event>(const nlohmann::json&) for JSON emission
+   * @tparam T Field type
+   * @param name Global hook name (from register_global_hook())
+   * @param value Field name
+   * @return Optional reference to the field, or std::nullopt if not found
    */
-  template<event T>
-  void add_event_builder()
+  template<typename T>
+  std::optional<std::reference_wrapper<T>> get_global_hooked_value(
+      std::string const& name, std::string const& value)
   {
-    std::type_index type_id(typeid(T));
+    if (!this->_global_hooks.contains(name)) {
+      return std::nullopt;
+    }
 
-    _event_builders.insert_or_assign(
-        type_id,
-        std::function<std::any(Registry&, JsonObject const&)>(
-            [](Registry& r, JsonObject const& e) -> std::any
-            { return T(r, e); }));
-
-    _event_invokers.insert_or_assign(
-        type_id,
-        [](const std::any& handlers_any, const std::any& event_any)
-        {
-          auto& handlers = std::any_cast<
-              const std::unordered_map<HandlerId,
-                                       std::function<void(const T&)>>&>(
-              handlers_any);
-          auto& event = std::any_cast<const T&>(event_any);
-          for (auto const& [id, handler] : handlers) {
-            handler(event);
-          }
-        });
-
-    _event_json_builder.insert_or_assign(type_id,
-                                         [this](JsonObject const& params) {
-                                           return T(*this, params).to_bytes();
-                                         });
+    auto const& tmp = std::any_cast<std::optional<std::any>>(
+        this->_global_hooks.at(name)(value));
+    if (!tmp.has_value()) {
+      return std::nullopt;
+    }
+    return std::any_cast<std::reference_wrapper<T>>(tmp.value());
   }
-
-  /**
-   * @brief Construct an event from JSON and serialize to binary.
-   *
-   * Builds an event object from JSON parameters using the registered event
-   * builder, then serializes it to binary format. The result can be transmitted
-   * over the network or stored.
-   *
-   * The event type must have been registered with add_event_builder() (which
-   * happens automatically when using on()).
-   *
-   * @param id Event type name (string identifier)
-   * @param params JSON object with event parameters
-   * @return Binary representation of the constructed event
-   *
-   * @throws std::out_of_range If event type not registered
-   * @throws std::exception If JSON is malformed or event construction fails
-   *
-   * @note Event type must be registered via add_event_builder()
-   * @note Returned bytes can be deserialized with Event::from_bytes()
-   *
-   * @code
-   * // Server builds event from JSON
-   * JsonObject json = {
-   *   {"player_id", 42},
-   *   {"position", {{"x", 100.0}, {"y", 200.0}}}
-   * };
-   *
-   * ByteArray event_data = registry.get_event_with_id("PlayerMoved", json);
-   *
-   * // Send over network
-   * send_to_clients(event_data);
-   *
-   * // Client receives and emits
-   * registry.emit<PlayerMoved>(event_data.data(), event_data.size());
-   * @endcode
-   *
-   * @see add_event_builder() to register event types
-   * @see emit<Event>(const byte*, std::size_t) to emit binary events
-   * @see on() which registers builders automatically
-   */
-  ByteArray get_event_with_id(std::string const&, JsonObject const&);
 
   /**
    * @brief Register an entity template for reuse.
@@ -2298,7 +1996,9 @@ public:
    * @see get_template() to retrieve template
    * @see EntityLoader::load_entity() to instantiate template
    */
-  void add_template(std::string const& name, JsonObject const& config);
+  void add_template(std::string const& name,
+                    JsonObject const& config,
+                    JsonObject const& default_parameters = {});
 
   /**
    * @brief Retrieve a registered entity template.
@@ -2344,7 +2044,8 @@ public:
    * @see add_template() to register templates
    * @see EntityLoader::load_entity() to instantiate entities
    */
-  JsonObject get_template(std::string const& name);
+  JsonObject get_template(std::string const& name,
+                          JsonObject const& params = {});
 
   bool is_in_current_cene(Entity e);
 
@@ -2403,9 +2104,6 @@ public:
    *
    * @note event type must have change_entity() method
    */
-  ByteArray convert_event_entity(std::string const& id,
-                                 ByteArray const& event,
-                                 std::unordered_map<Entity, Entity> const& map);
   /**
    * @brief Convert entity IDs in a serialized component using provided
    * mapping.
@@ -2430,16 +2128,20 @@ public:
                                 ByteArray const& comp,
                                 std::unordered_map<Entity, Entity> const& map);
 
-  template<event Event>
-  std::string get_event_key()
-  {
-    return this->_events_index_getter.at_first(typeid(Event));
-  }
-
   template<component Component>
   std::string get_component_key()
   {
     return this->_index_getter.at_first(typeid(Component));
+  }
+
+  std::optional<ByteArray> get_component_bytes(Entity entity,
+                                               std::string const& component_key)
+  {
+    auto it = this->_component_bytes_getters.find(component_key);
+    if (it == this->_component_bytes_getters.end()) {
+      return std::nullopt;
+    }
+    return it->second(entity);
   }
 
   /**
@@ -2497,40 +2199,22 @@ public:
    */
   std::vector<ComponentState> get_state();
 
+  ByteArray get_byte_entity(Entity entity);
+
 private:
-  template<typename EventType>
-  HandlerId on(std::function<void(const EventType&)> handler)
-  {
-    std::type_index type_id(typeid(EventType));
-
-    HandlerId handler_id = generate_uuid();
-
-    if (!_event_handlers.contains(type_id)) {
-      _event_handlers.insert_or_assign(
-          type_id,
-          std::unordered_map<HandlerId,
-                             std::function<void(const EventType&)>>());
-    }
-
-    auto& handlers = std::any_cast<
-        std::unordered_map<HandlerId, std::function<void(const EventType&)>>&>(
-        _event_handlers[type_id]);
-
-    handlers[handler_id] = std::move(handler);
-
-    return handler_id;
-  }
-
   struct Binding
   {
     Entity target_entity;  ///< Entity containing the target component
     std::type_index target_component;  ///< Type of the target component
     std::string target_field;  ///< Field name to update
-    std::string source_hook;  ///< Hook string (e.g., "player:position")
+    std::string source_hook;  ///< Hook string (e.g., "self:Position:x")
     std::function<void()> updater;  ///< Copies value from hook to field
     std::function<void()> deleter;  ///< Cleans up binding
     std::function<ByteArray()>
         serializer;  ///< Serializes component for network sync
+    ByteArray
+        last_serialized_value;  ///< Last serialized value for dirty tracking
+    bool is_dirty = true;  ///< Force first update
 
     Binding(Entity e,
             std::type_index ti,
@@ -2548,26 +2232,24 @@ private:
         , serializer(std::move(s))
     {
     }
-  };
 
-  /**
-   * @brief Generate unique handler ID using random number generator.
-   *
-   * Creates a random 64-bit unsigned integer to uniquely identify event
-   * handlers. Used internally by on() to generate handler IDs.
-   *
-   * Uses thread-safe static random number generator initialized from
-   * std::random_device.
-   *
-   * @return Unique handler ID
-   */
-  static HandlerId generate_uuid()
-  {
-    static std::random_device rd;
-    static std::mt19937_64 gen(rd());
-    static std::uniform_int_distribution<HandlerId> dis;
-    return dis(gen);
-  }
+    /**
+     * @brief Updates the binding and checks if the value changed
+     * @return true if value changed, false otherwise
+     */
+    bool update_and_check_dirty()
+    {
+      updater();
+      ByteArray new_value = serializer();
+
+      if (new_value != last_serialized_value || is_dirty) {
+        last_serialized_value = std::move(new_value);
+        is_dirty = false;
+        return true;
+      }
+      return false;
+    }
+  };
 
   std::unordered_map<std::type_index, std::any> _components;
   std::unordered_map<std::type_index, std::function<void(Entity const&)>>
@@ -2577,32 +2259,19 @@ private:
       _emplace_functions;
   std::unordered_map<std::type_index, std::function<ComponentState()>>
       _state_getters;
+  std::unordered_map<std::string,
+                     std::function<std::optional<ByteArray>(Entity const&)>>
+      _component_bytes_getters;
+  std::unordered_map<std::type_index,
+                     std::function<std::optional<ByteArray>(Entity)>>
+      _component_getter;
   TwoWayMap<std::type_index, std::string> _index_getter;
 
   std::unordered_map<
       std::string,
       std::function<ByteArray(ByteArray const&,
                               std::unordered_map<Entity, Entity> const&)>>
-      _event_entity_converters;
-
-  std::unordered_map<std::string, std::function<void(ByteArray const&)>>
-      _byte_event_emitter;
-
-  std::unordered_map<
-      std::string,
-      std::function<ByteArray(ByteArray const&,
-                              std::unordered_map<Entity, Entity> const&)>>
       _comp_entity_converters;
-
-  std::unordered_map<std::type_index, std::any> _event_handlers;
-  TwoWayMap<std::type_index, std::string> _events_index_getter;
-  std::unordered_map<std::type_index, std::any> _event_builders;
-  std::unordered_map<std::type_index,
-                     std::function<ByteArray(JsonObject const&)>>
-      _event_json_builder;
-  std::unordered_map<std::type_index,
-                     std::function<void(const std::any&, const std::any&)>>
-      _event_invokers;
 
   std::vector<System<>> _frequent_systems;
   std::queue<Entity> _dead_entities;
@@ -2612,11 +2281,22 @@ private:
 
   std::unordered_map<std::string, SceneState> _scenes;
   std::vector<std::string> _current_scene;
+  std::unordered_set<std::string> _active_scenes_set;  // O(1) lookup for Zipper
+  std::list<std::string> _main_scene;
 
   std::unordered_map<std::string,
                      std::function<std::optional<std::any>(std::string const&)>>
       _hooked_components;
+  std::unordered_map<std::string,
+                     std::function<std::optional<std::any>(std::string const&)>>
+      _global_hooks;
   std::vector<Binding> _bindings;
 
-  std::unordered_map<std::string, JsonObject> _entities_templates;
+  struct TemplateDefinition
+  {
+    JsonObject obj;
+    JsonObject default_parameters;
+  };
+
+  std::unordered_map<std::string, TemplateDefinition> _entities_templates;
 };

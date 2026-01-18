@@ -1,0 +1,90 @@
+{
+  "scenes": [
+    {
+      "name": "game",
+      "state": "disabled",
+      "plugins": [],
+      "entities": [
+        {
+          "collision:Collidable": {
+            "size": {
+              "width": 1.0,
+              "height": 100.0
+            },
+            "collision_type": "solid"
+          },
+          "moving:Position": {
+            "pos": {
+              "x": -2.5,
+              "y": 0.0
+            }
+          },
+          "life:Team": {
+            "name": "player"
+          },
+          "life:Damage": {
+            "amount": 100000
+          },
+          "moving:IdStorage": {
+            "id": "@self",
+            "hook": "wall_id",
+            "global_hook": true
+          },
+          "sound:MusicManager": {
+            "musics": [
+              {
+                "name": "shooting_stars",
+                "filepath": "assets/sounds/shooting_stars.mp3",
+                "volume": 100.0,
+                "pitch": 1.0,
+                "loop": true
+              },
+              {
+                "name": "mario_desert",
+                "filepath": "assets/sounds/mario_desert.mp3",
+                "volume": 100.0,
+                "pitch": 1.0,
+                "loop": true
+              },
+              {
+                "name": "around_the_world",
+                "filepath": "assets/sounds/around_the_world.mp3",
+                "volume": 100.0,
+                "pitch": 1.0,
+                "loop": true
+              },
+              {
+                "name": "emmenez_moi_soso_maness",
+                "filepath": "assets/sounds/emmenez_moi_soso_maness.mp3",
+                "volume": 100.0,
+                "pitch": 1.0,
+                "loop": true
+              },
+              {
+                "name": "aruaruan_dance",
+                "filepath": "assets/sounds/aruarian_dance.mp3",
+                "volume": 100.0,
+                "pitch": 1.0,
+                "loop": true
+              },
+              {
+                "name": "coconut_mall",
+                "filepath": "assets/sounds/coconut_mall.mp3",
+                "volume": 100.0,
+                "pitch": 1.0,
+                "loop": true
+              },
+              {
+                "name": "where_you_go_i_go",
+                "filepath": "assets/sounds/where_you_go_i_go.mp3",
+                "volume": 100.0,
+                "pitch": 1.0,
+                "loop": true
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -13,7 +13,10 @@
 class CLI : public APlugin
 {
 public:
-  CLI(Registry& r, EntityLoader& l, std::optional<JsonObject> const& config);
+  CLI(Registry& r,
+      EventManager& em,
+      EntityLoader& l,
+      std::optional<JsonObject> const& config);
   ~CLI();
 
 private:

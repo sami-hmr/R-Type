@@ -1,0 +1,26 @@
+{
+  "entities_template": [
+    {
+      "name": "enemy_1_level_7",
+      "default_parameters": {},
+      "components": {
+        "template": "enemy_ghost_1",
+        "parameters": {
+          "movement_behavior_movement_type": "wave"
+        },
+        "config": {}
+      }
+    },
+    {
+      "name": "enemy_2_level_7",
+      "default_parameters": {},
+      "components": {
+        "template": "enemy_circle_1",
+        "parameters": {
+          "movement_behavior_movement_type": "straight"
+        },
+        "config": {}
+      }
+    }
+  ]
+}

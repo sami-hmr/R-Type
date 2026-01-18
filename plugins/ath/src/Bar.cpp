@@ -8,7 +8,7 @@
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "plugin/Hooks.hpp"
 
-void ATH::init_bar(Registry::Entity& e, const JsonObject& obj)
+void ATH::init_bar(Ecs::Entity& e, const JsonObject& obj)
 {
   auto size = get_value<Bar, Vector2D>(this->_registry.get(), obj, e, "size");
   if (!size) {
@@ -62,12 +62,14 @@ void ATH::init_bar(Registry::Entity& e, const JsonObject& obj)
       outline = outline_opt.value();
     }
   }
-  init_component<Bar>(this->_registry.get(), e,
-                                               size.value(),
-                                               max_value.value(),
-                                               current_value.value(),
-                                               offset,
-                                               color,
-                                               texture_path,
-                                               outline);
+  init_component<Bar>(this->_registry.get(),
+                      this->_event_manager.get(),
+                      e,
+                      size.value(),
+                      max_value.value(),
+                      current_value.value(),
+                      offset,
+                      color,
+                      texture_path,
+                      outline);
 }

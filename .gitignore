@@ -40,3 +40,14 @@ aliases.fish
 Testing
 
 *.log
+gmon.out
+
+# Windows build artifacts
+*.dll
+*.exp
+*.pdb
+*.lib
+parser
+r-type_client
+r-type_server
+releases

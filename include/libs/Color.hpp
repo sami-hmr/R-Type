@@ -1,5 +1,25 @@
 #pragma once
 
+// Undefine potential Windows GDI macro conflicts
+#ifdef WHITE
+#  undef WHITE
+#endif
+#ifdef BLACK
+#  undef BLACK
+#endif
+#ifdef RED
+#  undef RED
+#endif
+#ifdef GREEN
+#  undef GREEN
+#endif
+#ifdef BLUE
+#  undef BLUE
+#endif
+#ifdef TRANSPARENT
+#  undef TRANSPARENT
+#endif
+
 #include "ByteParser/ByteParser.hpp"
 #include "Json/JsonParser.hpp"
 #include "plugin/Byte.hpp"
@@ -28,7 +48,7 @@
  */
 struct Color
 {
-  Color()
+  constexpr Color()
       : r(0)
       , g(0)
       , b(0)
@@ -39,7 +59,10 @@ struct Color
   /**
    * @brief Constructs a color with explicit RGBA values
    */
-  Color(unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+  constexpr Color(unsigned char r,
+                  unsigned char g,
+                  unsigned char b,
+                  unsigned char a)
       : r(r)
       , g(g)
       , b(b)
@@ -127,9 +150,20 @@ inline ByteArray colorToByte(const Color& c)  // NOLINT
                          type_to_byte<unsigned char>(c.a));
 }
 
-static const Color WHITE = Color(255, 255, 255, 255);
-static const Color BLACK = Color(0, 0, 0, 255);
-static const Color RED = Color(255, 0, 0, 255);
-static const Color GREEN = Color(0, 255, 0, 255);
-static const Color BLUE = Color(0, 0, 255, 255);
-static const Color TRANSPARENT = Color(0, 0, 0, 0);
+namespace ColorConstants
+{
+inline constexpr Color cWHITE {255, 255, 255, 255};
+inline constexpr Color cBLACK {0, 0, 0, 255};
+inline constexpr Color cRED {255, 0, 0, 255};
+inline constexpr Color cGREEN {0, 255, 0, 255};
+inline constexpr Color cBLUE {0, 0, 255, 255};
+inline constexpr Color cTRANSPARENT {0, 0, 0, 0};
+}  // namespace ColorConstants
+
+// Backward compatibility aliases (avoiding potential macro conflicts)
+inline constexpr Color const& WHITE = ColorConstants::cWHITE;
+inline constexpr Color const& BLACK = ColorConstants::cBLACK;
+inline constexpr Color const& RED = ColorConstants::cRED;
+inline constexpr Color const& GREEN = ColorConstants::cGREEN;
+inline constexpr Color const& BLUE = ColorConstants::cBLUE;
+inline constexpr Color const& TRANSPARENT = ColorConstants::cTRANSPARENT;

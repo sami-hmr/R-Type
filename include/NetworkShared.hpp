@@ -3,10 +3,12 @@
 #include <cstddef>
 #include <mutex>
 #include <optional>
+#include <ostream>
 #include <queue>
+#include <semaphore>
 #include <string>
-#include <tuple>
 #include <unordered_map>
+#include <vector>
 
 #include "ByteParser/ByteParser.hpp"
 #include "ParserUtils.hpp"
@@ -16,7 +18,7 @@
 
 struct ComponentBuilder
 {
-  std::size_t entity;
+  std::size_t entity = 0;
   std::string id;
   ByteArray data;
 
@@ -43,10 +45,12 @@ struct ComponentBuilder
 
   CHANGE_ENTITY_DEFAULT
 
-  ComponentBuilder(Registry& r, JsonObject const& e)
-      : entity(get_value_copy<std::size_t>(r, e, "entity").value())
-      , id(get_value_copy<std::string>(r, e, "id").value())
-      , data(get_value_copy<Byte>(r, e, "data").value())
+  ComponentBuilder(Registry& r,
+                   JsonObject const& e,
+                   std::optional<Ecs::Entity> entity)
+      : entity(get_value_copy<std::size_t>(r, e, "entity", entity).value())
+      , id(get_value_copy<std::string>(r, e, "id", entity).value())
+      , data(get_value_copy<Byte>(r, e, "data", entity).value())
   {
   }
 };
@@ -85,20 +89,22 @@ struct ComponentBuilderId
                            parseByteString(),
                            parseByte<Byte>().many())
 
-  DEFAULT_SERIALIZE(optional_to_byte<std::size_t>(
-                        client,
-                        std::function<ByteArray(std::size_t const&)>(
-                            [](std::size_t const& b)
-                            { return type_to_byte(b); })),
-                    component.to_bytes())
+  DEFAULT_SERIALIZE(
+      optional_to_byte<std::size_t>(
+          client,
+          std::function<ByteArray(std::size_t)>([](std::size_t const& b)
+                                                { return type_to_byte(b); })),
+      component.to_bytes())
 
   CHANGE_ENTITY_DEFAULT
 
-  ComponentBuilderId(Registry& r, JsonObject const& e)
-      : client(get_value_copy<std::size_t>(r, e, "client").value())
-      , component(get_value_copy<std::size_t>(r, e, "entity").value(),
-                  get_value_copy<std::string>(r, e, "event_id").value(),
-                  get_value_copy<ByteArray>(r, e, "data").value())
+  ComponentBuilderId(Registry& r,
+                     JsonObject const& e,
+                     std::optional<Ecs::Entity> entity)
+      : client(get_value_copy<std::size_t>(r, e, "client", entity))
+      , component(get_value_copy<std::size_t>(r, e, "entity", entity).value(),
+                  get_value_copy<std::string>(r, e, "event_id", entity).value(),
+                  get_value_copy<ByteArray>(r, e, "data", entity).value())
   {
   }
 };
@@ -107,7 +113,7 @@ inline Parser<ComponentBuilder> parse_component_builder()
 {
   return apply(
       [](std::size_t entity, std::string const& id, ByteArray const& data)
-      { return ComponentBuilder(entity, std::move(id), std::move(data)); },
+      { return ComponentBuilder(entity, id, data); },
       parseByte<std::size_t>(),
       parseByteString(),
       parseByte<Byte>().many());
@@ -136,9 +142,11 @@ struct EventBuilder
 
   CHANGE_ENTITY_DEFAULT
 
-  EventBuilder(Registry& r, JsonObject const& e)
-      : event_id(get_value_copy<std::string>(r, e, "event_id").value())
-      , data(get_value_copy<ByteArray>(r, e, "data").value())
+  EventBuilder(Registry& r,
+               JsonObject const& e,
+               std::optional<Ecs::Entity> entity)
+      : event_id(get_value_copy<std::string>(r, e, "event_id", entity).value())
+      , data(get_value_copy<ByteArray>(r, e, "data", entity).value())
   {
   }
 };
@@ -184,43 +192,52 @@ struct EventBuilderId
 
   CHANGE_ENTITY_DEFAULT
 
-  EventBuilderId(Registry& r, JsonObject const& e)
-      : client(get_value_copy<std::size_t>(r, e, "client").value())
-      , event(get_value_copy<std::string>(r, e, "event_id").value(),
-              get_value_copy<ByteArray>(r, e, "data").value())
+  EventBuilderId(Registry& r,
+                 JsonObject const& e,
+                 std::optional<Ecs::Entity> entity)
+      : client(get_value_copy<std::size_t>(r, e, "client", entity))
+      , event(get_value_copy<std::string>(r, e, "event_id", entity).value(),
+              get_value_copy<ByteArray>(r, e, "data", entity).value())
   {
   }
 };
 
-struct EntityCreation
+struct NewConnection
 {
-  std::size_t client;
+  std::size_t client = 0;
+  int user_id = 0;
 
-  EntityCreation() = default;
+  NewConnection() = default;
 
-  EntityCreation(std::size_t c)
+  NewConnection(std::size_t c, int u)
       : client(c)
+      , user_id(u)
   {
   }
 
-  DEFAULT_BYTE_CONSTRUCTOR(EntityCreation,
-                           ([](std::size_t c) { return EntityCreation(c); }),
-                           parseByte<std::size_t>())
+  DEFAULT_BYTE_CONSTRUCTOR(NewConnection,
+                           ([](std::size_t c, int u)
+                            { return NewConnection(c, u); }),
+                           parseByte<std::size_t>(),
+                           parseByte<int>())
 
-  DEFAULT_SERIALIZE(type_to_byte(client))
+  DEFAULT_SERIALIZE(type_to_byte(client), type_to_byte(user_id))
 
   CHANGE_ENTITY_DEFAULT
 
-  EntityCreation(Registry& r, JsonObject const& e)
-      : client(get_value_copy<std::size_t>(r, e, "client").value())
+  NewConnection(Registry& r,
+                JsonObject const& e,
+                std::optional<Ecs::Entity> entity)
+      : client(get_value_copy<std::size_t>(r, e, "client", entity).value())
+      , user_id(get_value_copy<int>(r, e, "user_id", entity).value())
   {
   }
 };
 
 struct PlayerCreated
 {
-  std::size_t server_index;
-  std::size_t client_id;
+  std::size_t server_index = 0;
+  std::size_t client_id = 0;
 
   PlayerCreated() = default;
 
@@ -240,8 +257,130 @@ struct PlayerCreated
 
   CHANGE_ENTITY_DEFAULT
 
-  PlayerCreated(Registry& r, JsonObject const& e)
-      : server_index(get_value_copy<std::size_t>(r, e, "server_index").value())
+  PlayerCreated(Registry& r,
+                JsonObject const& e,
+                std::optional<Ecs::Entity> entity)
+      : server_index(get_value_copy<Ecs::Entity>(r, e, "server_index", entity)
+                         .value_or(0))
+  {
+  }
+};
+
+struct NetworkStatus
+{
+  enum PacketLossLevel : std::uint8_t
+  {
+    NONE,
+    LOW,
+    MEDIUM,
+    HIGH,
+  };
+
+  std::size_t ping_in_millisecond = 0;
+  PacketLossLevel packet_loss = NONE;
+
+  NetworkStatus() = default;
+
+  NetworkStatus(std::size_t ping, PacketLossLevel pl)
+      : ping_in_millisecond(ping)
+      , packet_loss(pl)
+  {
+  }
+
+  DEFAULT_BYTE_CONSTRUCTOR(
+      NetworkStatus,
+      ([](std::size_t p, std::uint8_t pl)
+       { return NetworkStatus(p, static_cast<PacketLossLevel>(pl)); }),
+      parseByte<std::size_t>(),
+      parseByte<std::uint8_t>())
+
+  DEFAULT_SERIALIZE(type_to_byte(ping_in_millisecond),
+                    type_to_byte(packet_loss))
+
+  CHANGE_ENTITY_DEFAULT
+
+  NetworkStatus(Registry& r,
+                JsonObject const& e,
+                std::optional<Ecs::Entity> entity)
+      : ping_in_millisecond(get_value_copy<int>(r, e, "ping", entity).value())
+      , packet_loss(static_cast<PacketLossLevel>(
+            get_value_copy<int>(r, e, "packet_loss", entity).value()))
+  {
+  }
+};
+
+inline std::ostream& operator<<(std::ostream& os,
+                                NetworkStatus::PacketLossLevel level)
+{
+  switch (level) {
+    case NetworkStatus::NONE:
+      return os << "NONE";
+    case NetworkStatus::LOW:
+      return os << "LOW";
+    case NetworkStatus::MEDIUM:
+      return os << "MEDIUM";
+    case NetworkStatus::HIGH:
+      return os << "HIGH";
+  }
+  return os;
+}
+
+struct HearthBeat
+{
+  std::size_t send_timestamp = 0;
+  std::vector<std::size_t> lost_packages;
+
+  HearthBeat() = default;
+
+  HearthBeat(std::size_t send_timestamp,
+             std::vector<std::size_t> const& lost_packages)
+      : send_timestamp(send_timestamp)
+      , lost_packages(lost_packages)
+  {
+  }
+
+  DEFAULT_BYTE_CONSTRUCTOR(HearthBeat,
+                           ([](std::size_t st,
+                               std::vector<std::size_t> const& lp)
+                            { return HearthBeat(st, lp); }),
+                           parseByte<std::size_t>(),
+                           parseByteArray(parseByte<std::size_t>()))
+
+  DEFAULT_SERIALIZE(type_to_byte(send_timestamp),
+                    vector_to_byte(lost_packages, TTB_FUNCTION<std::size_t>()))
+
+  CHANGE_ENTITY_DEFAULT
+
+  HearthBeat(Registry& /*r*/,
+             JsonObject const& /*e*/,
+             std::optional<Ecs::Entity>)  // TODO
+  {
+  }
+};
+
+struct DisconnectClient
+{
+  std::size_t client = 0;
+
+  DisconnectClient() = default;
+
+  DisconnectClient(std::size_t c)
+      : client(c)
+  {
+  }
+
+  DEFAULT_BYTE_CONSTRUCTOR(DisconnectClient,
+                           ([](std::size_t c) { return DisconnectClient(c); }),
+                           parseByte<std::size_t>())
+
+  DEFAULT_SERIALIZE(type_to_byte(client))
+
+  CHANGE_ENTITY_DEFAULT
+
+  DisconnectClient(Registry& r,
+                   JsonObject const& e,
+                   std::optional<Ecs::Entity> entity)
+      : client(get_value_copy<std::size_t>(r, e, "client", entity).value())
   {
   }
 };
@@ -249,7 +388,44 @@ struct PlayerCreated
 template<typename T>
 struct SharedQueue
 {
+  SharedQueue()
+      : semaphore(0)
+  {
+  }
+
+  void push(T const& obj)
+  {
+    std::lock_guard<std::mutex> guard(this->lock);
+    this->queue.push(obj);
+    this->semaphore.release();
+  }
+
+  T pop()
+  {
+    std::lock_guard<std::mutex> guard(this->lock);
+    auto tmp = this->queue.front();
+    this->queue.pop();
+    return std::move(tmp);
+  }
+
+  std::vector<T> flush()
+  {
+    std::lock_guard<std::mutex> guard(this->lock);
+    std::vector<T> tmp;
+    tmp.reserve(this->queue.size());
+    while (!this->queue.empty()) {
+      tmp.push_back(this->queue.front());
+      this->queue.pop();
+    }
+    return std::move(tmp);
+  }
+
+  void wait() { this->semaphore.acquire(); }
+
+  void release() { this->semaphore.release(); }
+
   std::mutex lock;
+  std::counting_semaphore<> semaphore;
   std::queue<T> queue;
 };
 
@@ -262,8 +438,8 @@ struct SharedMap
 
 struct PlayerCreation
 {
-  std::size_t server_index;
-  std::size_t server_id;
+  std::size_t server_index = 0;
+  std::size_t server_id = 0;
 
   PlayerCreation() = default;
 
@@ -283,9 +459,13 @@ struct PlayerCreation
 
   CHANGE_ENTITY_DEFAULT
 
-  PlayerCreation(Registry& r, JsonObject const& e)
-      : server_index(get_value_copy<std::size_t>(r, e, "server_index").value())
-      , server_id(get_value_copy<std::size_t>(r, e, "server_id").value())
+  PlayerCreation(Registry& r,
+                 JsonObject const& e,
+                 std::optional<Ecs::Entity> entity)
+      : server_index(
+            get_value_copy<std::size_t>(r, e, "server_index", entity).value())
+      , server_id(
+            get_value_copy<std::size_t>(r, e, "server_id", entity).value())
   {
   }
 };

@@ -1,0 +1,127 @@
+{
+  "entities_template": [
+    {
+      "name": "input",
+      "default_parameters": {
+        "x": 0.0,
+        "y": 0.0,
+        "width": 0.9,
+        "height": 0.1,
+        "text_width": 0.65,
+        "text_height": 0.06,
+        "text": "",
+        "background": "assets/ui/thin_card.png",
+        "background_focus": "assets/ui/thin_card_focus.png",
+        "placeholder": "-"
+      },
+      "components": {
+        "ui:Drawable": {
+          "hook": "drawable"
+        },
+        "moving:Position": {
+          "pos": {
+            "x": "$x",
+            "y": "$y"
+          }
+        },
+        "ui:input": {
+          "hook": "$input_hook",
+          "global_hook": true,
+          "buffer": "",
+          "enabled": false
+        },
+        "collision:Collidable": {
+          "collision_type": "trigger",
+          "size": "#self:drawable:true_size"
+        },
+        "ui:Text": {
+          "font": "assets/fonts/roboto.ttf",
+          "size": {
+            "width": "$text_width",
+            "height": "$text_height"
+          },
+          "fill_color": {
+            "r": 255,
+            "g": 255,
+            "b": 255,
+            "a": 255
+          },
+          "outline_color": {
+            "r": 0,
+            "g": 0,
+            "b": 0,
+            "a": 255
+          },
+          "outline_thickness": 30.0,
+          "outline": true,
+          "text": "$text",
+          "placeholder": "$placeholder"
+        },
+        "ath:Clickable": {
+          "to_emit": [
+            {
+              "InputFocusEvent": {
+                "entity": "@self"
+              }
+            }
+          ]
+        },
+        "ui:AnimatedSprite": {
+          "animations": [
+            {
+              "name": "idle",
+              "texture": "$background",
+              "frame_size": {
+                "x": 1080.0,
+                "y": 143.0
+              },
+              "frame_pos": {
+                "x": 0.0,
+                "y": 0.0
+              },
+              "sprite_size": {
+                "width": "$width",
+                "height": "$height"
+              },
+              "direction": {
+                "x": 0.0,
+                "y": 0.0
+              },
+              "framerate": 1.0,
+              "nb_frames": 1,
+              "loop": true,
+              "rollback": false
+            },
+            {
+              "name": "input_focus",
+              "texture": "$background_focus",
+              "frame_size": {
+                "x": 1080.0,
+                "y": 143.0
+              },
+              "frame_pos": {
+                "x": 0.0,
+                "y": 0.0
+              },
+              "sprite_size": {
+                "width": "$width",
+                "height": "$height"
+              },
+              "direction": {
+                "x": 0.0,
+                "y": 0.0
+              },
+              "framerate": 1.0,
+              "nb_frames": 1,
+              "loop": false,
+              "rollback": false
+            }
+          ],
+          "default_animation": "idle"
+        }
+      }
+    }
+  ],
+  "scenes": []
+}
+

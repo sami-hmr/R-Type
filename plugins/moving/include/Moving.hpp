@@ -1,22 +1,29 @@
 #pragma once
 
 #include "Json/JsonParser.hpp"
+#include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
-#include "ecs/SparseArray.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/components/Position.hpp"
+#include "plugin/events/CollisionEvent.hpp"
 
 class Moving : public APlugin
 {
 public:
-  Moving(Registry& r, EntityLoader& l);
+  Moving(Registry& r, EventManager& em, EntityLoader& l);
 
 private:
-  void init_pos(Registry::Entity const& entity, JsonObject& obj);
-  void init_direction(Registry::Entity const& entity, JsonObject& obj);
-  void init_speed(Registry::Entity const& entity, JsonObject& obj);
-  void init_facing(Registry::Entity const& entity, JsonObject& obj);
+  void init_pos(Ecs::Entity const& entity, JsonObject& obj);
+  void init_off(Ecs::Entity const& entity, JsonObject& obj);
+  void init_direction(Ecs::Entity const& entity, JsonObject& obj);
+  void init_speed(Ecs::Entity const& entity, JsonObject& obj);
+  void init_facing(Ecs::Entity const& entity, JsonObject& obj);
 
+  void init_id(Ecs::Entity const& entity, JsonObject& obj);
   void moving_system(Registry&);
+
+  void on_set_direction(Registry& r, const SetDirectionEvent& event);
+  void add_offset(Registry& r);
+  void remove_offset(Registry& r);
 };

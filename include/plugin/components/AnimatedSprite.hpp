@@ -13,6 +13,7 @@
 
 #include "BaseTypes.hpp"
 #include "ByteParser/ByteParser.hpp"
+#include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/Byte.hpp"
@@ -33,6 +34,8 @@ struct AnimationData
                 double framerate,
                 int nb_frames,
                 int current_frame,
+                bool flip_h,
+                bool flip_v,
                 bool loop,
                 bool rollback)
       : texture_path(std::move(texture_path))
@@ -44,6 +47,8 @@ struct AnimationData
       , framerate(framerate)
       , nb_frames(nb_frames)
       , current_frame(current_frame)
+      , flip_h(flip_h)
+      , flip_v(flip_v)
       , loop(loop)
       , rollback(rollback)
   {
@@ -58,6 +63,8 @@ struct AnimationData
   double framerate = 0;
   int nb_frames = 0;
   int current_frame = 0;
+  bool flip_h = false;
+  bool flip_v = false;
   bool loop = false;
   bool rollback = false;
 
@@ -71,6 +78,8 @@ struct AnimationData
                                   double framerate,
                                   int nb_frames,
                                   int current_frame,
+                                  bool flip_h,
+                                  bool flip_v,
                                   bool loop,
                                   bool rollback)
                                {
@@ -82,6 +91,8 @@ struct AnimationData
                                                       framerate,
                                                       nb_frames,
                                                       current_frame,
+                                                      flip_h,
+                                                      flip_v,
                                                       loop,
                                                       rollback);
                                }),
@@ -94,6 +105,8 @@ struct AnimationData
                            parseByte<int>(),
                            parseByte<int>(),
                            parseByte<bool>(),
+                           parseByte<bool>(),
+                           parseByte<bool>(),
                            parseByte<bool>())
 
   DEFAULT_SERIALIZE(string_to_byte(this->texture_path),
@@ -104,6 +117,8 @@ struct AnimationData
                     type_to_byte(this->framerate),
                     type_to_byte(this->nb_frames),
                     type_to_byte(this->current_frame),
+                    type_to_byte(this->flip_h),
+                    type_to_byte(this->flip_v),
                     type_to_byte(this->loop),
                     type_to_byte(this->rollback))
 
@@ -131,6 +146,8 @@ inline Parser<AnimationData> parseAnimationData()
          double framerate,
          int nb_frames,
          int current_frame,
+         bool flip_h,
+         bool flip_v,
          bool loop,
          bool rollback)
       {
@@ -143,6 +160,8 @@ inline Parser<AnimationData> parseAnimationData()
             framerate,
             nb_frames,
             current_frame,
+            flip_h,
+            flip_v,
             loop,
             rollback);
       },
@@ -154,6 +173,8 @@ inline Parser<AnimationData> parseAnimationData()
       parseByte<double>(),
       parseByte<int>(),
       parseByte<int>(),
+      parseByte<bool>(),
+      parseByte<bool>(),
       parseByte<bool>(),
       parseByte<bool>());
 }
@@ -180,11 +201,24 @@ public:
   std::chrono::high_resolution_clock::time_point last_update;
 
   void update_anim(Registry& r,
+                   EventManager& em,
                    std::chrono::high_resolution_clock::time_point now,
-                   int entity);
-  static void on_death(Registry& r, const DeathEvent& event);
-  static void on_animation_end(Registry& r, const AnimationEndEvent& event);
-  static void on_play_animation(Registry& r, const PlayAnimationEvent& event);
+                   Ecs::Entity entity);
+
+  void update_size(Vector2D size)
+  {
+    for (auto& i : animations) {
+      i.second.sprite_size = size;
+    }
+  }
+
+  static void on_death(Registry& r, EventManager& em, const DeathEvent& event);
+  static void on_animation_end(Registry& r,
+                               EventManager& em,
+                               const AnimationEndEvent& event);
+  static void on_play_animation(Registry& r,
+                                EventManager& em,
+                                const PlayAnimationEvent& event);
 
   DEFAULT_BYTE_CONSTRUCTOR(
       AnimatedSprite,
@@ -207,7 +241,7 @@ public:
       map_to_byte<std::string, AnimationData>(
           this->animations,
           std::function<ByteArray(std::string const&)>(string_to_byte),
-          std::function<ByteArray(AnimationData)>([](AnimationData data)
+          std::function<ByteArray(AnimationData)>([](const AnimationData& data)
                                                   { return data.to_bytes(); })),
       string_to_byte(this->current_animation),
       string_to_byte(this->default_animation))

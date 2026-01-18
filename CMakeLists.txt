@@ -2,6 +2,17 @@ cmake_minimum_required(VERSION 3.14)
 
 include(cmake/prelude.cmake)
 
+# Auto-detect vcpkg triplet based on platform if not explicitly set
+if(NOT DEFINED VCPKG_TARGET_TRIPLET)
+    if(WIN32)
+        set(VCPKG_TARGET_TRIPLET "x64-windows" CACHE STRING "")
+    elseif(APPLE)
+        set(VCPKG_TARGET_TRIPLET "x64-osx" CACHE STRING "")
+    else()
+        set(VCPKG_TARGET_TRIPLET "x64-linux" CACHE STRING "")
+    endif()
+endif()
+
 project(
     r-type
     VERSION 0.1.0
@@ -10,16 +21,35 @@ project(
     LANGUAGES CXX
 )
 
+# Compiler-specific flags
+if(MSVC)
+    # Windows 10+ required for cpp-httplib, prevent Windows macro pollution
+    add_compile_definitions(_WIN32_WINNT=0x0A00 NOMINMAX WIN32_LEAN_AND_MEAN)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /W4 /O2")
+else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -fPIC -O3")
+endif()
+
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -fPIC -O3")
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 set(CMAKE_SHARED_LIBRARY_PREFIX "")
+
+# Set executable output directory to build/ for all configurations
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+foreach(CONFIG ${CMAKE_CONFIGURATION_TYPES})
+    string(TOUPPER ${CONFIG} CONFIG_UPPER)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CONFIG_UPPER} ${CMAKE_BINARY_DIR})
+endforeach()
 
 # Use vcpkg toolchain if available
 if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
     set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
         CACHE STRING "Vcpkg toolchain file")
 endif()
+
+# add_compile_options(-fno-consteval)
 
 # ---- Developer mode variable ----
 
@@ -42,6 +72,8 @@ add_library(${CORE_LIB} STATIC
     src/plugins/EntityLoader.cpp
     src/plugins/Byte.cpp
     src/Registry.cpp
+    src/EventManager.cpp
+    src/JsonTemplateUtils.cpp
 )
 
 target_include_directories(${CORE_LIB}
@@ -50,7 +82,85 @@ target_include_directories(${CORE_LIB}
         ${parser_SOURCE_DIR}/include
 )
 
+target_compile_definitions(${CORE_LIB} PRIVATE
+    PLUGIN_DIR="${CMAKE_BINARY_DIR}/plugins/"
+)
+
 target_link_libraries(${CORE_LIB} PRIVATE parser)
+
+find_package(asio CONFIG REQUIRED)
+find_package(ZLIB REQUIRED)
+
+set(NETWORK_COMMON_LIB r-type_network_common)
+
+add_library(${NETWORK_COMMON_LIB} STATIC
+    src/network/AcknowledgeManager.cpp
+    src/network/PacketCompresser.cpp
+    src/network/HttpClient.cpp
+)
+
+target_include_directories(${NETWORK_COMMON_LIB}
+    PUBLIC
+        include
+        ${parser_SOURCE_DIR}/include
+)
+
+target_link_libraries(${NETWORK_COMMON_LIB} PUBLIC
+    ZLIB::ZLIB
+)
+
+set(SERVER_LIB r-type_server_lib)
+
+add_library(${SERVER_LIB} STATIC
+    src/network/server/true_server/ClientManagement.cpp
+    src/network/server/true_server/CommandParsing.cpp
+    src/network/server/true_server/Connected.cpp
+    src/network/server/true_server/Connectionless.cpp
+    src/network/server/true_server/DataTransfer.cpp
+    src/network/server/true_server/Server.cpp
+    src/network/server/plugin_base/BaseServer.cpp
+    src/network/server/plugin_base/HttpRequests.cpp
+)
+
+target_include_directories(${SERVER_LIB}
+    PUBLIC
+        include
+        ${parser_SOURCE_DIR}/include
+)
+
+target_link_libraries(${SERVER_LIB} PUBLIC
+    parser
+    ${CORE_LIB}
+    asio::asio
+    ${NETWORK_COMMON_LIB}
+)
+
+set(CLIENT_LIB r-type_client_lib)
+
+add_library(${CLIENT_LIB} STATIC
+    src/network/client/true_client/CommandParsing.cpp
+    src/network/client/true_client/Connected.cpp
+    src/network/client/true_client/Connectionless.cpp
+    src/network/client/true_client/DataTransfer.cpp
+    src/network/client/true_client/Client.cpp
+    src/network/client/plugin_base/BaseClient.cpp
+    src/network/client/plugin_base/HttpRequests.cpp
+)
+
+target_include_directories(${CLIENT_LIB}
+    PUBLIC
+        include
+        ${parser_SOURCE_DIR}/include
+)
+
+target_link_libraries(${CLIENT_LIB} PUBLIC
+    parser
+    ${CORE_LIB}
+    asio::asio
+    ${NETWORK_COMMON_LIB}
+)
+
+
 
 if(BUILD_EPITECH_BINARIES)
     add_executable(r-type_client

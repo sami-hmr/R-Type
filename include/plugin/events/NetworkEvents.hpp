@@ -25,8 +25,11 @@ struct StateTransfer
 
   DEFAULT_SERIALIZE(type_to_byte(client_id))
 
-  StateTransfer(Registry& r, JsonObject const& e)
-      : client_id(get_value_copy<std::size_t>(r, e, "client_id").value())
+  StateTransfer(Registry& r,
+                JsonObject const& e,
+                std::optional<Ecs::Entity> entity)
+      : client_id(
+            get_value_copy<std::size_t>(r, e, "client_id", entity).value())
   {
   }
 
@@ -50,8 +53,11 @@ struct PlayerReady
 
   DEFAULT_SERIALIZE(type_to_byte(client_id))
 
-  PlayerReady(Registry& r, JsonObject const& e)
-      : client_id(get_value_copy<std::size_t>(r, e, "client_id").value())
+  PlayerReady(Registry& r,
+              JsonObject const& e,
+              std::optional<Ecs::Entity> entity)
+      : client_id(
+            get_value_copy<std::size_t>(r, e, "client_id", entity).value())
   {
   }
 
@@ -67,7 +73,43 @@ struct WantReady
 
   CHANGE_ENTITY_DEFAULT
 
-  WantReady(Registry&, JsonObject const&) {}
+  WantReady(Registry&, JsonObject const&, std::optional<Ecs::Entity>) {}
 
   HOOKABLE(WantReady)
+};
+
+struct Disconnection
+{
+  Disconnection() = default;
+
+  EMPTY_BYTE_CONSTRUCTOR(Disconnection)
+  DEFAULT_SERIALIZE(ByteArray {})
+
+  CHANGE_ENTITY_DEFAULT
+
+  Disconnection(Registry&, JsonObject const&, std::optional<Ecs::Entity>) {}
+
+  HOOKABLE(Disconnection)
+};
+
+struct ResetClient
+{
+  ResetClient(std::size_t sequence)
+      : sequence(sequence)
+  {
+  }
+
+  DEFAULT_BYTE_CONSTRUCTOR(
+      ResetClient,
+      [](std::size_t s) { return ResetClient(s); },
+      parseByte<std::size_t>())
+  DEFAULT_SERIALIZE(type_to_byte(this->sequence))
+
+  CHANGE_ENTITY_DEFAULT
+
+  ResetClient(Registry&, JsonObject const&, std::optional<Ecs::Entity>) {}
+
+  HOOKABLE(ResetClient)
+
+  std::size_t sequence;
 };

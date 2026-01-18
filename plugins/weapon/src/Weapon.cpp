@@ -2,98 +2,149 @@
 
 #include "Weapon.hpp"
 
-#include "NetworkShared.hpp"
+#include "WeaponHelpers.hpp"
 #include "ecs/EmitEvent.hpp"
+#include "ecs/EventManager.hpp"
+#include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/Scenes.hpp"
 #include "ecs/zipper/Zipper.hpp"
+#include "ecs/zipper/ZipperIndex.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
+#include "plugin/components/AnimatedSprite.hpp"
 #include "plugin/components/BasicWeapon.hpp"
+#include "plugin/components/ChargeWeapon.hpp"
+#include "plugin/components/Damage.hpp"
+#include "plugin/components/DelayedWeapon.hpp"
+#include "plugin/components/Direction.hpp"
 #include "plugin/components/Facing.hpp"
 #include "plugin/components/Position.hpp"
+#include "plugin/components/ScaleModifier.hpp"
+#include "plugin/components/Sprite.hpp"
 #include "plugin/components/Team.hpp"
-#include "plugin/components/Direction.hpp"
+#include "plugin/events/AnimationEvents.hpp"
 #include "plugin/events/EntityManagementEvent.hpp"
-#include "plugin/events/IoEvents.hpp"
 #include "plugin/events/WeaponEvent.hpp"
+#include "plugin/events/WeaponSwitchEvent.hpp"
 
-Weapon::Weapon(Registry& r, EntityLoader& l)
+Weapon::Weapon(Registry& r, EventManager& em, EntityLoader& l)
     : APlugin("weapon",
               r,
+              em,
               l,
               {"moving", "life"},
-              {COMP_INIT(BasicWeapon, BasicWeapon, init_basic_weapon)})
+              {COMP_INIT(BasicWeapon, BasicWeapon, init_basic_weapon),
+               COMP_INIT(ChargeWeapon, ChargeWeapon, init_charge_weapon),
+               COMP_INIT(DelayedWeapon, DelayedWeapon, init_delayed_weapon)})
     , entity_loader(l)
 {
   REGISTER_COMPONENT(BasicWeapon)
-  SUBSCRIBE_EVENT(FireBullet, { this->on_fire(this->_registry.get(), event); })
+  REGISTER_COMPONENT(ChargeWeapon)
+  REGISTER_COMPONENT(DelayedWeapon)
+  REGISTER_COMPONENT(ScaleModifier)
+  SUBSCRIBE_EVENT(FireBullet, {
+    if (this->_registry.get().has_component<ChargeWeapon>(event.entity)) {
+      emit_event<StartChargeWeapon>(
+          this->_event_manager.get(), "StartChargeWeapon", event.entity);
+    } else {
+      this->on_fire(this->_registry.get(), event);
+    }
+  })
+  SUBSCRIBE_EVENT(StartChargeWeapon,
+                  { this->on_charge_start(this->_registry.get(), event); })
+  SUBSCRIBE_EVENT(ReleaseChargeWeapon,
+                  { this->on_charge_release(this->_registry.get(), event); })
+
+  SUBSCRIBE_EVENT(WeaponSwitchEvent, {
+    if (this->_registry.get().has_component<BasicWeapon>(event.entity)) {
+      this->_registry.get().remove_component<BasicWeapon>(event.entity);
+    }
+    if (this->_registry.get().has_component<ChargeWeapon>(event.entity)) {
+      this->_registry.get().remove_component<ChargeWeapon>(event.entity);
+    }
+    if (this->_registry.get().has_component<DelayedWeapon>(event.entity)) {
+      this->_registry.get().remove_component<DelayedWeapon>(event.entity);
+    }
+    if (event.weapon_type == "ChargeWeapon") {
+      init_charge_weapon(event.entity, event.params);
+    } else if (event.weapon_type == "BasicWeapon") {
+      init_basic_weapon(event.entity, event.params);
+    } else if (event.weapon_type == "DelayedWeapon") {
+      init_delayed_weapon(event.entity, event.params);
+    }
+  })
+
   _registry.get().add_system([this](Registry& r)
                              { this->basic_weapon_system(r.clock().now()); });
-}
-
-void Weapon::on_fire(Registry& r, const FireBullet& e)
-{
-  auto now = r.clock().now();
-  if (!this->_registry.get().has_component<BasicWeapon, Position, Scene>(
-          e.entity))
-  {
-    return;
-  }
-
-  auto& weapon = *this->_registry.get().get_components<BasicWeapon>()[e.entity];
-  auto const& pos = *this->_registry.get().get_components<Position>()[e.entity];
-  auto const& scene = *this->_registry.get().get_components<Scene>()[e.entity];
-
-  auto const& vel_direction =
-      (this->_registry.get().has_component<Direction>(e.entity))
-      ? this->_registry.get().get_components<Direction>()[e.entity]->direction
-      : Vector2D(0,0);
-
-  auto const& fire_direction =
-      (this->_registry.get().has_component<Facing>(e.entity))
-      ? this->_registry.get().get_components<Facing>()[e.entity]->direction
-      : vel_direction;
-
-  auto direction = Direction(fire_direction);
-
-  auto const& team = (this->_registry.get().has_component<Team>(e.entity))
-      ? *this->_registry.get().get_components<Team>()[e.entity]
-      : std::string("");
-
-  if (!weapon.update_basic_weapon(now)) {
-    return;
-  }
-  this->_registry.get().emit<LoadEntityTemplate>(
-      weapon.bullet_type,
-      LoadEntityTemplate::Additional {
-          {this->_registry.get().get_component_key<Position>(), pos.to_bytes()},
-          {this->_registry.get().get_component_key<Scene>(), scene.to_bytes()},
-          {this->_registry.get().get_component_key<Direction>(),
-           direction.to_bytes()},
-          {this->_registry.get().get_component_key<Team>(), team.to_bytes()}});
+  _registry.get().add_system([this](Registry& r)
+                             { this->charge_weapon_system(r.clock().now()); });
+  _registry.get().add_system([this](Registry& r)
+                             { this->delayed_weapon_system(r.clock().now()); });
+  _registry.get().add_system([this](Registry&)
+                             { this->apply_scale_modifiers(); });
 }
 
 void Weapon::basic_weapon_system(
     std::chrono::high_resolution_clock::time_point now)
 {
-  for (auto&& [weapon] : Zipper<BasicWeapon>(_registry.get())) {
-    if (weapon.reloading && weapon.remaining_magazine > 0) {
-      double elapsed_time =
-          std::chrono::duration<double>(now - weapon.last_reload_time).count();
-      if (elapsed_time >= weapon.reload_time) {
-        weapon.reloading = false;
-        weapon.remaining_ammo = weapon.magazine_size;
-        weapon.remaining_magazine -= 1;
+  handle_reload_system<BasicWeapon>(now);
+}
+
+void Weapon::on_fire(Registry& r, const FireBullet& e)
+{
+  fire_basic(r, e);
+  fire_delayed(r, e);
+}
+
+void Weapon::apply_scale_modifiers()
+{
+  for (auto&& [entity, modifier, sprite] :
+       ZipperIndex<ScaleModifier, Sprite>(this->_registry.get()))
+  {
+    if (!modifier.applied) {
+      sprite.scale = sprite.scale * modifier.scale_multiplier;
+
+      if (modifier.scale_damage
+          && this->_registry.get().has_component<Damage>(entity))
+      {
+        auto& damage = *this->_registry.get().get_components<Damage>()[entity];
+        damage.amount =
+            static_cast<int>(damage.amount * modifier.scale_multiplier);
       }
+
+      modifier.applied = true;
+    }
+  }
+
+  for (auto&& [entity, modifier, animated_sprite] :
+       ZipperIndex<ScaleModifier, AnimatedSprite>(this->_registry.get()))
+  {
+    if (!modifier.applied) {
+      auto anim_it =
+          animated_sprite.animations.find(animated_sprite.current_animation);
+      if (anim_it != animated_sprite.animations.end()) {
+        anim_it->second.sprite_size =
+            anim_it->second.sprite_size * modifier.scale_multiplier;
+      }
+
+      if (modifier.scale_damage
+          && this->_registry.get().has_component<Damage>(entity))
+      {
+        auto& damage = *this->_registry.get().get_components<Damage>()[entity];
+        damage.amount =
+            static_cast<int>(damage.amount * modifier.scale_multiplier);
+      }
+
+      modifier.applied = true;
     }
   }
 }
 
 extern "C"
 {
-void* entry_point(Registry& r, EntityLoader& l)
+PLUGIN_EXPORT void* entry_point(Registry& r, EventManager& em, EntityLoader& l)
 {
-  return new Weapon(r, l);
+  return new Weapon(r, em, l);
 }
 }

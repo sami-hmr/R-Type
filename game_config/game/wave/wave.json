@@ -1,0 +1,70 @@
+{
+  "entities_template": [
+    {
+      "name": "wave_scene_event",
+      "default_parameters": {
+        "entity_template": "enemy_straight_1",
+        "count": 1,
+        "tracked": true,
+        "components_inheritance": ["scene"],
+        "pattern": {
+          "type": "point",
+          "origin": { "x": 0.0, "y": 0.0 }
+        },
+        "disable_scene": "level_1",
+        "enable_scene": "level_2",
+        "shake_event": {
+          "event_name": "CameraShakeEvent",
+          "params": {
+            "trauma": 0.1,
+            "duration": 1.0,
+            "angle": 15.0,
+            "offset": 0.1
+          }
+        },
+        "music_name": "shooting_stars"
+      },
+      "components": {
+        "wave:Wave": {
+          "entity_template": "$entity_template",
+          "count": "$count",
+          "tracked": "$tracked",
+          "components_inheritance": "$components_inheritance",
+          "pattern": "$pattern",
+          "on_end": [
+            {
+              "event_name": "DisableSceneEvent",
+              "params": {
+                "target_scene": "$disable_scene"
+              }
+            },
+            {
+              "event_name": "SceneChangeEvent",
+              "params": {
+                "target_scene": "$enable_scene",
+                "state": "active",
+                "reason": "Change scene in Wave event",
+                "force": false
+              }
+            },
+            "$shake_event",
+            {
+              "event_name": "StopAllMusicsEvent",
+              "params": {}
+            },
+            {
+              "event_name": "PlayMusicEvent",
+              "params": {
+                "name": "$music_name",
+                "entity": "%global:wall_id:id",
+                "volume": 100.0,
+                "pitch": 1.0,
+                "loop": true
+              }
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

@@ -10,14 +10,16 @@
 struct Package
 {
   ByteArray magic;
+  bool hearthbeat;
   ByteArray real_package;
 };
 
 inline Parser<Package> parse_pkg()
 {
-  return apply([](ByteArray magic, ByteArray r)
-               { return Package(std::move(magic), std::move(r)); },
+  return apply([](ByteArray magic, bool hb, ByteArray r)
+               { return Package(std::move(magic), hb, std::move(r)); },
                parseByte<Byte>() * 4,  // magic sequence is 4 bytes
+               parseByte<bool>(),
                parseByte<Byte>().many());
 }
 
@@ -45,7 +47,7 @@ inline Parser<ConnectCommand> parse_connect_cmd()
 {
   return apply([](std::uint32_t c, std::string name)
                { return ConnectCommand(c, std::move(name)); },
-               parseByte<u_int32_t>(),
+               parseByte<std::uint32_t>(),
                parseByteString());
 }
 
@@ -76,20 +78,31 @@ inline Parser<ChallengeResponse> parse_challenge_rsp()
 
 struct ConnectedPackage
 {
-  std::uint32_t sequence_number;
-  std::uint32_t acknowledge;
+  std::size_t sequence_number;
+  std::size_t acknowledge;
   bool end_of_content;
+  bool prioritary;
   ByteArray real_package;
+
+  ByteArray to_bytes() const
+  {
+    return type_to_byte<std::size_t>(this->sequence_number)
+        + type_to_byte<std::size_t>(this->acknowledge)
+        + type_to_byte<bool>(this->end_of_content)
+        + type_to_byte<bool>(this->prioritary) + real_package;
+  }
 };
 
 inline Parser<ConnectedPackage> parse_connected()
 {
-  return apply([](std::uint32_t sn, std::uint32_t a, bool eoc, ByteArray r)
-               { return ConnectedPackage(sn, a, eoc, std::move(r)); },
-               parseByte<std::uint32_t>(),
-               parseByte<std::uint32_t>(),
-               parseByte<bool>(),
-               parseByte<Byte>().many());
+  return apply(
+      [](std::size_t sn, std::size_t a, bool eoc, bool prioritary, ByteArray r)
+      { return ConnectedPackage(sn, a, eoc, prioritary, std::move(r)); },
+      parseByte<std::size_t>(),
+      parseByte<std::size_t>(),
+      parseByte<bool>(),
+      parseByte<bool>(),
+      parseByte<Byte>().many());
 }
 
 struct ConnectedCommand

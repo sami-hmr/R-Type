@@ -7,6 +7,7 @@
 #include "EntityLoader.hpp"
 #include "IPlugin.hpp"
 #include "Json/JsonParser.hpp"
+#include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
 #include "plugin/IPlugin.hpp"
 
@@ -21,8 +22,25 @@
           try { \
             std::string hook_name = \
                 std::get<std::string>(obj.at("hook").value); \
-            this->_registry.get().register_hook<comp_type>(hook_name, entity); \
-          } catch (...) { \
+            bool is_global = false; \
+            if (obj.contains("global_hook")) { \
+              try { \
+                is_global = std::get<bool>(obj.at("global_hook").value); \
+              } catch (std::bad_variant_access const&) { \
+                /* global_hook value is not a bool, default to false */ \
+              } \
+            } \
+            if (is_global) { \
+              this->_registry.get().register_global_hook<comp_type>(hook_name, \
+                                                                    entity); \
+            } else { \
+              this->_registry.get().register_hook<comp_type>(hook_name, \
+                                                             entity); \
+            } \
+          } catch (std::bad_variant_access const&) { \
+            /* Hook value is not a string */ \
+          } catch (std::out_of_range const&) { \
+            /* Hook key not found (shouldn't happen due to contains check) */ \
           } \
         } \
       } catch (std::bad_variant_access const&) { \
@@ -37,9 +55,15 @@
   this->_registry.get().register_component<comp>( \
       std::format("{}:{}", this->name, #comp));
 
+#define SUBSCRIBE_EVENT_PRIORITY(event_name, function, priority) \
+  this->_event_manager.get().on<event_name>( \
+      #event_name, \
+      [this]([[maybe_unused]] event_name const& event) -> bool \
+      { function return false; }, \
+      priority);
+
 #define SUBSCRIBE_EVENT(event_name, function) \
-  this->_registry.get().on<event_name>( \
-      #event_name, [this]([[maybe_unused]] event_name const& event) function);
+  SUBSCRIBE_EVENT_PRIORITY(event_name, function, 1)
 
 class APlugin : public IPlugin
 {
@@ -47,24 +71,25 @@ public:
   APlugin(
       std::string name,
       Registry& registry,
+      EventManager& event_manager,
       EntityLoader& loader,
       std::vector<std::string> const& depends_on,
-      std::unordered_map<
-          std::string,
-          std::function<void(Registry::Entity, JsonVariant const&)>> components,
+      std::unordered_map<std::string,
+                         std::function<void(Ecs::Entity, JsonVariant const&)>>
+          components,
       std::optional<JsonObject> const& config = std::nullopt);
 
-  void set_component(Registry::Entity entity,
+  void set_component(Ecs::Entity entity,
                      std::string const& key,
                      JsonVariant const& config) override;
 
 protected:
   const std::string name;
-  const std::unordered_map<
-      std::string,
-      std::function<void(Registry::Entity, JsonVariant const&)>>
+  const std::unordered_map<std::string,
+                           std::function<void(Ecs::Entity, JsonVariant const&)>>
       components;
   std::reference_wrapper<Registry> _registry;
+  std::reference_wrapper<EventManager> _event_manager;
   std::reference_wrapper<EntityLoader> _loader;
   std::optional<JsonObject> _config;
 };

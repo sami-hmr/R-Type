@@ -1,6 +1,7 @@
 #include <cctype>
 #include <iostream>
 #include <string>
+#include <unordered_set>
 #include <vector>
 
 #include "Collision.hpp"
@@ -8,6 +9,7 @@
 #include "Json/JsonParser.hpp"
 #include "NetworkShared.hpp"
 #include "algorithm/QuadTreeCollision.hpp"
+#include "ecs/EventManager.hpp"
 #include "ecs/InitComponent.hpp"
 #include "ecs/Registry.hpp"
 #include "ecs/zipper/ZipperIndex.hpp"
@@ -16,37 +18,46 @@
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
 #include "plugin/components/Collidable.hpp"
+#include "plugin/components/Direction.hpp"
+#include "plugin/components/InteractionBorders.hpp"
 #include "plugin/components/InteractionZone.hpp"
 #include "plugin/components/Position.hpp"
-#include "plugin/components/Team.hpp"
+#include "plugin/components/RaycastingCamera.hpp"
 #include "plugin/components/Speed.hpp"
-#include "plugin/components/Direction.hpp"
+#include "plugin/components/Team.hpp"
 #include "plugin/events/CollisionEvent.hpp"
+#include "plugin/events/InteractionBordersEvents.hpp"
 #include "plugin/events/InteractionZoneEvent.hpp"
-#include "plugin/events/LoggerEvent.hpp"
 
-Collision::Collision(Registry& r, EntityLoader& l)
+Collision::Collision(Registry& r, EventManager& em, EntityLoader& l)
     : APlugin(
           "collision",
           r,
+          em,
           l,
           {"moving"},
           {COMP_INIT(Collidable, Collidable, init_collision),
-           COMP_INIT(InteractionZone, InteractionZone, init_interaction_zone)})
+           COMP_INIT(InteractionZone, InteractionZone, init_interaction_zone),
+           COMP_INIT(InteractionBorders,
+                     InteractionBorders,
+                     init_interaction_borders)})
 {
   REGISTER_COMPONENT(Collidable)
   REGISTER_COMPONENT(InteractionZone)
+  REGISTER_COMPONENT(InteractionBorders)
 
   _collision_algo = std::make_unique<QuadTreeCollision>(2.0, 2.0);
 
   if (!_collision_algo) {
-    LOGGER("COLLISION", LogLevel::ERROR, "Error loading collision algorithm")
+    LOGGER("COLLISION", LogLevel::ERR, "Error loading collision algorithm")
   }
 
   _registry.get().add_system([this](Registry& r) { this->collision_system(r); },
                              3);
   _registry.get().add_system(
       [this](Registry& r) { this->interaction_zone_system(r); }, 3);
+  _registry.get().add_system(
+      [this](Registry& r) { this->interaction_borders_system(r); }, 3);
 
   SUBSCRIBE_EVENT(CollisionEvent, { this->on_collision(event); })
 }
@@ -56,17 +67,14 @@ void Collision::set_algorithm(std::unique_ptr<ICollisionAlgorithm> algo)
   _collision_algo = std::move(algo);
 }
 
-void Collision::init_collision(Registry::Entity const& entity,
-                               JsonObject const& obj)
+void Collision::init_collision(Ecs::Entity const& entity, JsonObject const& obj)
 {
-  auto const& width = get_value<Collidable, double>(
-      this->_registry.get(), obj, entity, "width");
-  auto const& height = get_value<Collidable, double>(
-      this->_registry.get(), obj, entity, "height");
+  auto const& size = get_value<Collidable, Vector2D>(
+      this->_registry.get(), obj, entity, "size", "width", "height");
   auto const& type_str = get_value<Collidable, std::string>(
       this->_registry.get(), obj, entity, "collision_type");
 
-  if (!width || !height || !type_str) {
+  if (!size || !type_str) {
     std::cerr
         << "Error loading collision component: unexpected value type (expected "
            "width: double and height: double) or missing value in JsonObject\n";
@@ -88,11 +96,32 @@ void Collision::init_collision(Registry::Entity const& entity,
     type = CollisionType::Bounce;
   }
 
-  init_component<Collidable>(
-      this->_registry.get(), entity, width.value(), height.value(), type, true);
+  init_component<Collidable>(this->_registry.get(),
+                             this->_event_manager.get(),
+                             entity,
+                             *size,
+                             type,
+                             true);
 }
 
-void Collision::init_interaction_zone(Registry::Entity const& entity,
+void Collision::init_interaction_borders(Ecs::Entity const& entity,
+                                         JsonObject const& obj)
+{
+  auto const& radius = get_value<Collidable, double>(
+      this->_registry.get(), obj, entity, "radius");
+
+  if (!radius) {
+    std::cerr << "Error loading InteractionBorders: missing radius\n";
+    return;
+  }
+
+  init_component<InteractionZone>(this->_registry.get(),
+                                  this->_event_manager.get(),
+                                  entity,
+                                  radius.value());
+}
+
+void Collision::init_interaction_zone(Ecs::Entity const& entity,
                                       JsonObject const& obj)
 {
   auto const& radius = get_value<Collidable, double>(
@@ -103,8 +132,10 @@ void Collision::init_interaction_zone(Registry::Entity const& entity,
     return;
   }
 
-  init_component<InteractionZone>(
-      this->_registry.get(), entity, radius.value());
+  init_component<InteractionZone>(this->_registry.get(),
+                                  this->_event_manager.get(),
+                                  entity,
+                                  radius.value());
 }
 
 void Collision::collision_system(Registry& r)
@@ -124,8 +155,8 @@ void Collision::collision_system(Registry& r)
         .entity_id = i,
         .bounds = Rect {.x = position.pos.x,
                         .y = position.pos.y,
-                        .width = collidable.width,
-                        .height = collidable.height}});
+                        .width = collidable.size.x,
+                        .height = collidable.size.y}});
   }
 
   _collision_algo->update(entities);
@@ -135,8 +166,65 @@ void Collision::collision_system(Registry& r)
     std::size_t entity_a = collision.entity_a;
     std::size_t entity_b = collision.entity_b;
 
-    this->_registry.get().emit<CollisionEvent>(entity_a, entity_b);
-    this->_registry.get().emit<CollisionEvent>(entity_b, entity_a);
+    this->_event_manager.get().emit<CollisionEvent>(entity_a, entity_b);
+    this->_event_manager.get().emit<CollisionEvent>(entity_b, entity_a);
+  }
+}
+
+void Collision::interaction_borders_system(Registry& r)
+{
+  if (!_collision_algo) {
+    return;
+  }
+
+  auto const& positions = r.get_components<Position>();
+  for (auto&& [i, position, zone] :
+       ZipperIndex<Position, InteractionBorders>(r))
+  {
+    if (!zone.enabled) {
+      continue;
+    }
+
+    Rect range {.x = position.pos.x,
+                .y = position.pos.y,
+                .width = zone.radius * 2,
+                .height = zone.radius * 2};
+
+    std::vector<ICollisionAlgorithm::CollisionEntity> candidates =
+        _collision_algo->detect_range_collisions(range);
+    std::vector<Ecs::Entity> detected_entities;
+    detected_entities.reserve(candidates.size());
+
+    for (const auto& candidate : candidates) {
+      if (candidate.entity_id == i) {
+        continue;
+      }
+      Vector2D distance = positions[candidate.entity_id]->pos - position.pos;
+
+      if (distance.length() <= zone.radius) {
+        detected_entities.push_back(candidate.entity_id);
+      }
+    }
+    std::vector<Ecs::Entity> entity_bfr =
+        std::vector(zone.in_zone.begin(), zone.in_zone.end());
+    std::vector<Ecs::Entity> entity_now = detected_entities;
+    for (auto eb : entity_bfr) {
+      for (auto en : entity_now) {
+        if (eb == en) {
+          entity_bfr.erase(std::find(entity_now.begin(), entity_now.end(), eb));
+          entity_now.erase(std::find(entity_now.begin(), entity_now.end(), en));
+          break;
+        }
+      }
+    }
+    for (auto entity : entity_bfr) {
+      this->_event_manager.get().emit<LeftZone>(i, entity);
+    }
+    for (auto entity : entity_now) {
+      this->_event_manager.get().emit<EnteredZone>(i, entity);
+    }
+    zone.in_zone = std::unordered_set<Ecs::Entity>(
+        detected_entities.begin(), detected_entities.end());
   }
 }
 
@@ -159,7 +247,7 @@ void Collision::interaction_zone_system(Registry& r)
 
     std::vector<ICollisionAlgorithm::CollisionEntity> candidates =
         _collision_algo->detect_range_collisions(range);
-    std::vector<Registry::Entity> detected_entities;
+    std::vector<Ecs::Entity> detected_entities;
     detected_entities.reserve(candidates.size());
 
     for (const auto& candidate : candidates) {
@@ -173,7 +261,7 @@ void Collision::interaction_zone_system(Registry& r)
       }
     }
     if (!detected_entities.empty()) {
-      this->_registry.get().emit<InteractionZoneEvent>(
+      this->_event_manager.get().emit<InteractionZoneEvent>(
           i, zone.radius, detected_entities);
     }
   }
@@ -184,6 +272,7 @@ void Collision::on_collision(const CollisionEvent& c)
   auto& directions = this->_registry.get().get_components<Direction>();
   auto& speeds = this->_registry.get().get_components<Speed>();
   auto& positions = this->_registry.get().get_components<Position>();
+  auto& raycasting_cameras = this->_registry.get().get_components<RaycastingCamera>();
   auto const& teams = this->_registry.get().get_components<Team>();
   auto const& collidables = this->_registry.get().get_components<Collidable>();
 
@@ -214,27 +303,56 @@ void Collision::on_collision(const CollisionEvent& c)
   }
   double dt = this->_registry.get().clock().delta_seconds();
 
-  if (this->_registry.get().has_component<Direction>(c.a) && this->_registry.get().has_component<Speed>(c.a)) {
+  if (this->_registry.get().has_component<Direction>(c.a)
+      && this->_registry.get().has_component<Speed>(c.a))
+  {
+    Vector2D real_direction = directions[c.a]->direction;
+    if (this->_registry.get().has_component<RaycastingCamera>(c.a)) {
+      double cam_angle = raycasting_cameras[c.a]->angle;
+      real_direction.rotate_radians(cam_angle);
+    }
     Vector2D movement =
-        (directions[c.a]->direction).normalize() * speeds[c.a]->speed * dt;
+        (real_direction).normalize() * speeds[c.a]->speed * dt;
     Vector2D collision_normal =
         (positions[c.a]->pos - positions[c.b]->pos).normalize();
 
-    if (this->_registry.get().has_component<Direction>(c.b) && this->_registry.get().has_component<Speed>(c.b)
+    if (this->_registry.get().has_component<Direction>(c.b)
+        && this->_registry.get().has_component<Speed>(c.b)
         && type_a == CollisionType::Push)
     {
       positions[c.a]->pos -= movement;
       positions[c.b]->pos += movement;
-      this->_registry.get().emit<ComponentBuilder>(
+      this->_event_manager.get().emit<ComponentBuilder>(
           c.b,
           this->_registry.get().get_component_key<Position>(),
           positions[c.b]->to_bytes());
     } else if (type_a == CollisionType::Solid) {
-      double dot_product = movement.dot(collision_normal);
+      double overlap_x =
+          ((collidables[c.a]->size.x + collidables[c.b]->size.x) / 2.0)
+          - std::abs(positions[c.a]->pos.x - positions[c.b]->pos.x);
+      double overlapY =
+          ((collidables[c.a]->size.y + collidables[c.b]->size.y) / 2.0)
+          - std::abs(positions[c.a]->pos.y - positions[c.b]->pos.y);
 
-      if (dot_product < 0) {
-        Vector2D perpendicular_vector = collision_normal * dot_product;
-        positions[c.a]->pos -= perpendicular_vector;
+      if (overlap_x > 0 && overlapY > 0) {
+        Vector2D clean_normal(0, 0);
+        double min_overlap = 0;
+        if (overlap_x < overlapY) {
+          clean_normal = {
+              (positions[c.a]->pos.x > positions[c.b]->pos.x) ? 1.0 : -1.0, 0};
+          min_overlap = overlap_x;
+        } else {
+          clean_normal = {
+              0, (positions[c.a]->pos.y > positions[c.b]->pos.y) ? 1.0 : -1.0};
+          min_overlap = overlapY;
+        }
+        double dot = movement.dot(clean_normal);
+        if (dot < -0.0001) {
+          Vector2D slide = movement - clean_normal * dot;
+          positions[c.a]->pos = (positions[c.a]->pos - movement) + slide;
+        }
+        double correction_amount = std::max(min_overlap - 0.1, 0.0);
+        positions[c.a]->pos += clean_normal * correction_amount;
       }
     } else if (type_a == CollisionType::Bounce) {
       double dot_product = directions[c.a]->direction.dot(collision_normal);
@@ -247,7 +365,7 @@ void Collision::on_collision(const CollisionEvent& c)
       positions[c.a]->pos -= movement;
     }
 
-    this->_registry.get().emit<ComponentBuilder>(
+    this->_event_manager.get().emit<ComponentBuilder>(
         c.a,
         this->_registry.get().get_component_key<Position>(),
         positions[c.a]->to_bytes());
@@ -256,8 +374,8 @@ void Collision::on_collision(const CollisionEvent& c)
 
 extern "C"
 {
-void* entry_point(Registry& r, EntityLoader& e)
+PLUGIN_EXPORT void* entry_point(Registry& r, EventManager& em, EntityLoader& e)
 {
-  return new Collision(r, e);
+  return new Collision(r, em, e);
 }
 }

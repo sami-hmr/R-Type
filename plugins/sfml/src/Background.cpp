@@ -1,24 +1,19 @@
 #include <cmath>
-#include <iostream>
 
 #include "plugin/components/Background.hpp"
 
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Vector2.hpp>
 
-#include "Json/JsonParser.hpp"
 #include "SFMLRenderer.hpp"
 #include "ecs/Registry.hpp"
-#include "ecs/Scenes.hpp"
 #include "ecs/zipper/Zipper.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/components/Drawable.hpp"
 
 void SFMLRenderer::background_system(Registry& r)
 {
-  for (const auto&& [draw, background] :
-       Zipper<Drawable, Background>(r))
-  {
+  for (const auto&& [draw, background] : Zipper<Drawable, Background>(r)) {
     if (!draw.enabled) {
       continue;
     }

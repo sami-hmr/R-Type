@@ -1,10 +1,10 @@
 #pragma once
 
 #include "ByteParser/ByteParser.hpp"
-#include "ParserUtils.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/Byte.hpp"
-#include "plugin/Hooks.hpp"
+#include "plugin/HookMacros.hpp"
+#include "plugin/events/EventMacros.hpp"
 
 struct Speed
 {
@@ -22,7 +22,7 @@ struct Speed
 
   DEFAULT_BYTE_CONSTRUCTOR(Speed,
                            ([](double speed_x, double speed_y)
-                            { return (Speed) {speed_x, speed_y}; }),
+                            { return Speed(speed_x, speed_y); }),
                            parseByte<double>(),
                            parseByte<double>())
   DEFAULT_SERIALIZE(type_to_byte(this->speed.x), type_to_byte(this->speed.y))

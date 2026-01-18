@@ -1,0 +1,633 @@
+{
+  "entities_template": [
+    {
+      "name": "enemy",
+      "default_parameters": {
+        "idle_texture": "assets/backgrounds/assetpack/Bonus (enemies)/kamikaze-sheet.png",
+        "idle_frame_size": { "x": 226.0, "y": 103.0 },
+        "idle_frame_pos": { "x": 0.0, "y": 0.0 },
+        "idle_direction": { "x": 1.0, "y": 0.0 },
+        "idle_nb_frames": 4,
+        "idle_sprite_size": { "width": "15.0%", "height": "15.0%" },
+        "idle_flip_h": false,
+        "idle_flip_v": false,
+        "idle_framerate": 10.0,
+
+        "death_texture": "assets/explosion.png",
+        "death_frame_size": { "x": 128.0, "y": 128.0 },
+        "death_frame_pos": { "x": 0.0, "y": 0.0 },
+        "death_direction": { "x": 1.0, "y": 0.0 },
+        "death_nb_frames": 12,
+        "death_sprite_size": { "width": "15.0%", "height": "15.0%" },
+        "death_flip_h": false,
+        "death_flip_v": false,
+        "death_framerate": 10.0,
+
+        "health_current": 10.0,
+        "health_max": 10.0,
+        "damage_amount": 1,
+        "speed": { "x": 0.3, "y": 0.3 },
+        "team_name": "enemy",
+        "facing_direction": { "x": -1.0, "y": 0.0 },
+        "facing_plane": true,
+
+        "collision_size": { "width": 0.15, "height": 0.1 },
+        "collision_type": "push",
+
+        "score_points_to_give": 5,
+        "movement_behavior_params": {},
+        "movement_behavior_movement_type": "turret"
+      },
+      "components": {
+        "moving:Position": {
+          "hook": "enemy_pos_1",
+          "pos": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        },
+        "ui:Drawable": {},
+        "ui:AnimatedSprite": {
+          "animations": [
+            {
+              "name": "idle",
+              "texture": "$idle_texture",
+              "frame_size": "$idle_frame_size",
+              "frame_pos": "$idle_frame_pos",
+              "direction": "$idle_direction",
+              "sprite_size": "$idle_sprite_size",
+              "framerate": "$idle_framerate",
+              "nb_frames": "$idle_nb_frames",
+              "flip_h": "$idle_flip_h",
+              "flip_v": "$idle_flip_v",
+              "loop": true,
+              "rollback": true
+            },
+            {
+              "name": "death",
+              "texture": "$death_texture",
+              "frame_size": "$death_frame_size",
+              "frame_pos": "$death_frame_pos",
+              "direction": "$death_direction",
+              "sprite_size": "$death_sprite_size",
+              "framerate": "$death_framerate",
+              "nb_frames": "$death_nb_frames",
+              "flip_h": "$death_flip_h",
+              "flip_v": "$death_flip_v",
+              "loop": false,
+              "rollback": false
+            }
+          ],
+          "default_animation": "idle"
+        },
+        "life:Health": {
+          "hook": "enemy_health_1",
+          "current": "$health_current",
+          "max": "$health_max"
+        },
+        "life:Damage": {
+          "amount": "$damage_amount"
+        },
+        "ath:Bar": {
+          "size": {
+            "x": "10.0%",
+            "y": "1.0%"
+          },
+          "max_value": "#self:enemy_health_1:max",
+          "current_value": "#self:enemy_health_1:current",
+          "offset": {
+            "x": 0.0,
+            "y": -0.12
+          },
+          "color": {
+            "r": 255,
+            "g": 255,
+            "b": 255,
+            "a": 255
+          },
+          "outline": false,
+          "texture_path": "assets/backgrounds/background.png"
+        },
+        "collision:Collidable": {
+          "size": "$collision_size",
+          "collision_type": "$collision_type"
+        },
+        "life:Team": {
+          "name": "$team_name"
+        },
+        "moving:Speed": {
+          "speed": "$speed"
+        },
+        "moving:Direction": {
+          "direction": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        },
+        "moving:Facing": {
+          "direction": "$facing_direction",
+          "plane": "$facing_plane"
+        },
+        "ai:MovementBehavior": {
+          "movement_type": "$movement_behavior_movement_type",
+          "params": "$movement_behavior_params"
+        },
+        // "score:ScoreManager": {
+        //   "points_to_give": "$score_points_to_give",
+        //   "score": 0
+        // },
+        "inventory:Inventory": {
+          "max_items": 1,
+          "inventory": [
+            {
+              "item_name": "heal",
+              "nb": 2,
+              "item": {
+                "on_use": [
+                  {
+                    "HealEvent": {
+                      "entity": "@self",
+                      "amount": 10000000
+                    }
+                  }
+                ]
+              },
+              "artefact_template": "heal_item"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "enemy_turret_1",
+      "default_parameters": {
+        "health_max": 10.0,
+        "bullet_type": "fire_ball_bullet",
+        "zone_radius": 1.5,
+        "attack_behavior_attack_type": "continuous"
+      },
+      "components": {
+        "template": "enemy",
+        "parameters": {
+          "idle_texture": "assets/backgrounds/assetpack/Bonus (enemies)/enemytower.png",
+          "idle_frame_size": { "x": 155.0, "y": 240.0 },
+          "idle_frame_pos": { "x": 0.0, "y": 0.0 },
+          "idle_direction": { "x": 1.0, "y": 0.0 },
+          "idle_nb_frames": 1,
+
+          "death_texture": "assets/explosion.png",
+          "death_frame_size": { "x": 128.0, "y": 128.0 },
+          "death_frame_pos": { "x": 0.0, "y": 0.0 },
+          "death_direction": { "x": 1.0, "y": 0.0 },
+          "death_nb_frames": 12,
+          "death_sprite_size": { "width": "20.0%", "height": "20.0%" },
+
+          "health_current": "$health_max",
+          "health_max": "$health_max",
+
+          "collision_size": { "width": 0.25, "height": 0.25 },
+          "collision_type": "solid",
+
+          "movement_behavior_movement_type": "turret"
+        },
+        "config": {
+          "target:Follower": {},
+          "collision:InteractionZone": { "radius": "$zone_radius" },
+          "weapon:BasicWeapon": {
+            "bullet_type": "$bullet_type",
+            "magazine_size": 6,
+            "magazine_nb": 3,
+            "reload_time": 2.0,
+            "cooldown": 2.0,
+            "attack_animation": "attack"
+          },
+          "ai:AttackBehavior": {
+            "attack_type": "$attack_behavior_attack_type"
+          }
+        }
+      }
+    },
+    {
+      "name": "enemy_follow_1",
+      "default_parameters": {
+        "health_max": 10.0
+      },
+      "components": {
+        "template": "enemy",
+        "parameters": {
+          "idle_texture": "assets/backgrounds/assetpack/Bonus (enemies)/kamikaze-sheet.png",
+          "idle_frame_size": { "x": 226.0, "y": 103.0 },
+          "idle_frame_pos": { "x": 0.0, "y": 0.0 },
+          "idle_direction": { "x": 1.0, "y": 0.0 },
+          "idle_nb_frames": 4,
+          "idle_flip_v": true,
+          "idle_flip_h": true,
+
+          "death_texture": "assets/explosion.png",
+          "death_frame_size": { "x": 128.0, "y": 128.0 },
+          "death_frame_pos": { "x": 0.0, "y": 0.0 },
+          "death_direction": { "x": 1.0, "y": 0.0 },
+          "death_nb_frames": 12,
+          "death_sprite_size": { "width": "20.0%", "height": "20.0%" },
+
+          "health_current": "$health_max",
+          "health_max": "$health_max",
+          "damage_amount": 1,
+          "speed": { "x": 0.5, "y": 0.5 },
+
+          "collision_type": "push",
+
+          "movement_behavior_movement_type": "follow_target"
+        },
+        "config": {}
+      }
+    },
+    {
+      "name": "enemy_circle_1",
+      "default_parameters": {
+        "health_max": 10.0,
+        "bullet_type": "fire_ball_bullet",
+        "movement_behavior_movement_type": "circle",
+        "attack_behavior_attack_type": "continuous"
+      },
+      "components": {
+        "template": "enemy",
+        "parameters": {
+          "idle_texture": "assets/backgrounds/assetpack/Bonus (enemies)/enemy_circle-sheet.png",
+          "idle_frame_size": { "x": 353.0, "y": 168.0 },
+          "idle_frame_pos": { "x": 0.0, "y": 0.0 },
+          "idle_direction": { "x": 1.0, "y": 0.0 },
+          "idle_nb_frames": 4,
+          "idle_flip_v": true,
+          "idle_flip_h": true,
+
+          "death_texture": "assets/explosion.png",
+          "death_frame_size": { "x": 128.0, "y": 128.0 },
+          "death_frame_pos": { "x": 0.0, "y": 0.0 },
+          "death_direction": { "x": 1.0, "y": 0.0 },
+          "death_nb_frames": 12,
+          "death_sprite_size": { "width": "20.0%", "height": "20.0%" },
+
+          "health_current": "$health_max",
+          "health_max": "$health_max",
+          "damage_amount": 1,
+
+          "collision_type": "push",
+
+          "movement_behavior_movement_type": "$movement_behavior_movement_type"
+        },
+        "config": {
+          "weapon:BasicWeapon": {
+            "bullet_type": "$bullet_type",
+            "magazine_size": 6,
+            "magazine_nb": 3,
+            "reload_time": 2.0,
+            "cooldown": 2.0,
+            "attack_animation": "attack"
+          },
+          "ai:AttackBehavior": {
+            "attack_type": "$attack_behavior_attack_type"
+          }
+        }
+      }
+    },
+    {
+      "name": "enemy_wave_1",
+      "default_parameters": {
+        "health_max": 10.0
+      },
+      "components": {
+        "template": "enemy",
+        "parameters": {
+          "idle_texture": "assets/backgrounds/assetpack/Bonus (enemies)/random_shooter-sheet.png",
+          "idle_frame_size": { "x": 635.0, "y": 218.0 },
+          "idle_frame_pos": { "x": 0.0, "y": 0.0 },
+          "idle_direction": { "x": 1.0, "y": 0.0 },
+          "idle_nb_frames": 4,
+          "idle_flip_v": true,
+          "idle_flip_h": true,
+
+          "death_texture": "assets/explosion.png",
+          "death_frame_size": { "x": 128.0, "y": 128.0 },
+          "death_frame_pos": { "x": 0.0, "y": 0.0 },
+          "death_direction": { "x": 1.0, "y": 0.0 },
+          "death_nb_frames": 12,
+          "death_sprite_size": { "width": "20.0%", "height": "20.0%" },
+
+          "health_current": "$health_max",
+          "health_max": "$health_max",
+          "damage_amount": 1,
+
+          "collision_type": "push",
+
+          "movement_behavior_movement_type": "wave"
+        },
+        "config": {}
+      }
+    },
+    {
+      "name": "enemy_zigzag_1",
+      "default_parameters": {
+        "health_max": 10.0,
+        "bullet_type": "waveform_follow_bullet",
+        "attack_behavior_attack_type": "continuous"
+      },
+      "components": {
+        "template": "enemy",
+        "parameters": {
+          "idle_texture": "assets/ship/spritesheet_4.png",
+          "idle_frame_size": { "x": 106.0, "y": 77.0 },
+          "idle_frame_pos": { "x": 0.0, "y": 0.0 },
+          "idle_direction": { "x": 1.0, "y": 0.0 },
+          "idle_nb_frames": 8,
+          "idle_sprite_size": { "width": "10.0%", "height": "10.0%" },
+          "idle_flip_v": true,
+          "idle_flip_h": true,
+
+          "death_texture": "assets/explosion.png",
+          "death_frame_size": { "x": 128.0, "y": 128.0 },
+          "death_frame_pos": { "x": 0.0, "y": 0.0 },
+          "death_direction": { "x": 1.0, "y": 0.0 },
+          "death_nb_frames": 12,
+          "death_sprite_size": { "width": "20.0%", "height": "20.0%" },
+
+          "health_current": "$health_max",
+          "health_max": "$health_max",
+          "damage_amount": 1,
+
+          "collision_type": "push",
+
+          "movement_behavior_movement_type": "zigzag"
+        },
+        "config": {
+          "weapon:BasicWeapon": {
+            "bullet_type": "$bullet_type",
+            "magazine_size": 6,
+            "magazine_nb": 3,
+            "reload_time": 2.0,
+            "cooldown": 2.0,
+            "attack_animation": "attack"
+          },
+          "ai:AttackBehavior": {
+            "attack_type": "$attack_behavior_attack_type"
+          }
+        }
+      }
+    },
+    {
+      "name": "enemy_straight_1",
+      "default_parameters": {
+        "health_max": 10.0,
+        "bullet_type": "bolt_bullet",
+        "attack_behavior_attack_type": "continuous"
+      },
+      "components": {
+        "template": "enemy",
+        "parameters": {
+          "idle_texture": "assets/backgrounds/assetpack/Bonus (enemies)/enemy_zig_zag-sheet.png",
+          "idle_frame_size": { "x": 362.0, "y": 214.0 },
+          "idle_frame_pos": { "x": 0.0, "y": 0.0 },
+          "idle_direction": { "x": 1.0, "y": 0.0 },
+          "idle_nb_frames": 4,
+          "idle_flip_h": true,
+          "idle_flip_v": true,
+
+          "death_texture": "assets/explosion.png",
+          "death_frame_size": { "x": 128.0, "y": 128.0 },
+          "death_frame_pos": { "x": 0.0, "y": 0.0 },
+          "death_direction": { "x": 1.0, "y": 0.0 },
+          "death_nb_frames": 12,
+          "death_sprite_size": { "width": "20.0%", "height": "20.0%" },
+
+          "health_current": "$health_max",
+          "health_max": "$health_max",
+          "damage_amount": 1,
+
+          "collision_type": "push",
+
+          "movement_behavior_movement_type": "straight"
+        },
+        "config": {
+          "weapon:BasicWeapon": {
+            "bullet_type": "$bullet_type",
+            "magazine_size": 6,
+            "magazine_nb": 3,
+            "reload_time": 2.0,
+            "cooldown": 2.0,
+            "attack_animation": "attack"
+          },
+          "ai:AttackBehavior": {
+            "attack_type": "$attack_behavior_attack_type"
+          }
+        }
+      }
+    },
+    {
+      "name": "enemy_parasite_1",
+      "default_parameters": {
+        "health_max": 10.0,
+        "bullet_type": "pulse_bullet",
+        "attack_behavior_attack_type": "continuous",
+        "zone_radius": 0.5
+      },
+      "components": {
+        "template": "enemy",
+        "parameters": {
+          "idle_texture": "assets/R-type/SNES - Super R-Type - Player - Force _ Pit _ Beam.png",
+          "idle_frame_size": { "x": 22.0, "y": 17.0 },
+          "idle_frame_pos": { "x": 10.0, "y": 190.0 },
+          "idle_direction": { "x": 1.0, "y": 0.0 },
+          "idle_nb_frames": 6,
+          "idle_sprite_size": { "width": "5.0%", "height": "5.0%" },
+
+          "death_texture": "assets/explosion/spritesheet.png",
+          "death_frame_size": { "x": 48.0, "y": 48.0 },
+          "death_frame_pos": { "x": 0.0, "y": 0.0 },
+          "death_direction": { "x": 1.0, "y": 0.0 },
+          "death_nb_frames": 7,
+          "death_sprite_size": { "width": "10.0%", "height": "10.0%" },
+
+          "health_current": "$health_max",
+          "health_max": "$health_max",
+          "damage_amount": 1,
+
+          "collision_size": { "width": 0.05, "height": 0.05 },
+          "collision_type": "push",
+
+          "movement_behavior_params": {
+            "parasite_behavior": "circle",
+            "zone_radius": "$zone_radius",
+            "radius": 0.4,
+            "angular_speed": 2.5
+          },
+          "movement_behavior_movement_type": "glue"
+        },
+        "config": {
+          "collision:InteractionZone": { "radius": "$zone_radius" },
+          "weapon:BasicWeapon": {
+            "bullet_type": "$bullet_type",
+            "magazine_size": 6,
+            "magazine_nb": 3,
+            "reload_time": 2.0,
+            "cooldown": 2.0,
+            "attack_animation": "attack"
+          },
+          "ai:AttackBehavior": {
+            "attack_type": "$attack_behavior_attack_type"
+          }
+        }
+      }
+    },
+    {
+      "name": "enemy_ghost_1",
+      "default_parameters": {
+        "health_max": 10.0,
+        "movement_behavior_movement_type": "turret",
+        "bullet_type": "charged_bullet",
+        "attack_behavior_attack_type": "continuous"
+      },
+      "components": {
+        "template": "enemy",
+        "parameters": {
+          "idle_texture": "assets/boss/particles.png",
+          "idle_frame_size": { "x": 64.0, "y": 64.0 },
+          "idle_frame_pos": { "x": 0.0, "y": 0.0 },
+          "idle_direction": { "x": 1.0, "y": 0.0 },
+          "idle_nb_frames": 6,
+          "idle_flip_v": true,
+          "idle_sprite_size": { "width": "10.0%", "height": "10.0%" },
+
+          "death_texture": "assets/explosion/enemy-death.png",
+          "death_frame_size": { "x": 64.0, "y": 64.0 },
+          "death_frame_pos": { "x": 0.0, "y": 0.0 },
+          "death_direction": { "x": 1.0, "y": 0.0 },
+          "death_nb_frames": 7,
+          "death_sprite_size": { "width": "10.0%", "height": "10.0%" },
+
+          "health_current": "$health_max",
+          "health_max": "$health_max",
+          "damage_amount": 1,
+
+          "collision_size": { "width": 0.05, "height": 0.05 },
+          "collision_type": "push",
+
+          "movement_behavior_movement_type": "$movement_behavior_movement_type"
+        },
+        "config": {
+          "weapon:BasicWeapon": {
+            "bullet_type": "$bullet_type",
+            "magazine_size": 6,
+            "magazine_nb": 3,
+            "reload_time": 2.0,
+            "cooldown": 2.0,
+            "attack_animation": "attack"
+          },
+          "ai:AttackBehavior": {
+            "attack_type": "$attack_behavior_attack_type"
+          }
+        }
+      }
+    },
+    {
+      "name": "enemy_ship_1",
+      "default_parameters": {
+        "health_max": 50.0,
+        "bullet_type": "crossed_follow_bullet",
+        "attack_behavior_attack_type": "continuous"
+      },
+      "components": {
+        "template": "enemy",
+        "parameters": {
+          "idle_texture": "assets/ship/spritesheet.png",
+          "idle_frame_size": { "x": 329.0, "y": 160.0 },
+          "idle_frame_pos": { "x": 0.0, "y": 0.0 },
+          "idle_direction": { "x": 1.0, "y": 0.0 },
+          "idle_nb_frames": 3,
+          "idle_flip_v": true,
+          "idle_sprite_size": { "width": "50.0%", "height": "50.0%" },
+
+          "death_texture": "assets/explosion/explosion-animation.png",
+          "death_frame_size": { "x": 112.0, "y": 128.0 },
+          "death_frame_pos": { "x": 0.0, "y": 0.0 },
+          "death_direction": { "x": 1.0, "y": 0.0 },
+          "death_nb_frames": 9,
+          "death_sprite_size": { "width": "50.0%", "height": "50.0%" },
+
+          "health_current": "$health_max",
+          "health_max": "$health_max",
+          "damage_amount": 1,
+
+          "speed": { "x": 0.1, "y": 0.1 },
+          "collision_size": { "width": 0.7, "height": 0.25 },
+          "collision_type": "push",
+
+          "movement_behavior_movement_type": "straight"
+        },
+        "config": {
+          "weapon:BasicWeapon": {
+            "bullet_type": "$bullet_type",
+            "magazine_size": 6,
+            "magazine_nb": 3,
+            "reload_time": 2.0,
+            "cooldown": 2.0,
+            "attack_animation": "attack"
+          },
+          "ai:AttackBehavior": {
+            "attack_type": "$attack_behavior_attack_type"
+          }
+        }
+      }
+    },
+    {
+      "name": "enemy_ground_1",
+      "default_parameters": {
+        "health_max": 10.0,
+        "bullet_type": "fire_ball_follow_bullet",
+        "attack_behavior_attack_type": "continuous"
+      },
+      "components": {
+        "template": "enemy",
+        "parameters": {
+          "idle_texture": "assets/ship/spritesheet_5.png",
+          "idle_frame_size": { "x": 80.0, "y": 64.0 },
+          "idle_frame_pos": { "x": 0.0, "y": 0.0 },
+          "idle_direction": { "x": 1.0, "y": 0.0 },
+          "idle_nb_frames": 7,
+          "idle_flip_v": true,
+          "idle_framerate": 10.0,
+          "idle_sprite_size": { "width": "15.0%", "height": "15.0%" },
+
+          "death_texture": "assets/explosion/Sprites.png",
+          "death_frame_size": { "x": 48.0, "y": 48.0 },
+          "death_frame_pos": { "x": 0.0, "y": 0.0 },
+          "death_direction": { "x": 1.0, "y": 0.0 },
+          "death_nb_frames": 8,
+          "death_sprite_size": { "width": "10.0%", "height": "10.0%" },
+
+          "health_current": "$health_max",
+          "health_max": "$health_max",
+          "damage_amount": 1,
+
+          "speed": { "x": 0.2, "y": 0.2 },
+          "collision_size": { "width": 0.1, "height": 0.2 },
+          "collision_type": "push",
+
+          "movement_behavior_movement_type": "straight"
+        },
+        "config": {
+          "weapon:BasicWeapon": {
+            "bullet_type": "$bullet_type",
+            "magazine_size": 6,
+            "magazine_nb": 3,
+            "reload_time": 2.0,
+            "cooldown": 2.0,
+            "attack_animation": "attack"
+          },
+          "ai:AttackBehavior": {
+            "attack_type": "$attack_behavior_attack_type"
+          }
+        }
+      }
+    }
+  ]
+}
