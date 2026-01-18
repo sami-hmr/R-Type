@@ -93,7 +93,7 @@ target_include_directories(${CORE_LIB}
 )
 
 target_compile_definitions(${CORE_LIB} PRIVATE
-    PLUGIN_DIR="$<IF:$<BOOL:${BUILD_EPITECH_BINARIES}>,${CMAKE_SOURCE_DIR}/plugin_release/,${CMAKE_BINARY_DIR}/plugins/>"
+    PLUGIN_DIR="$<IF:$<BOOL:${BUILD_EPITECH_BINARIES}>,plugin_release/,${CMAKE_BINARY_DIR}/plugins/>"
 )
 
 target_link_libraries(${CORE_LIB} PRIVATE parser)
