@@ -66,7 +66,7 @@ void UI::cam_shake_event(const CameraShakeEvent& e)
   }
 }
 
-void UI::init_cam(Registry::Entity const& entity, JsonObject const& obj)
+void UI::init_cam(Ecs::Entity const& entity, JsonObject const& obj)
 {
   Vector2D size(0.5, 0.5);
   Vector2D target(0.0, 0.0);

@@ -42,7 +42,7 @@
 template<component Component>
 typename SparseArray<Component>::Ref init_component(Registry& r,
                                                     EventManager& em,
-                                                    Registry::Entity to,
+                                                    Ecs::Entity to,
                                                     Component comp)
 {
   try {
@@ -77,7 +77,7 @@ typename SparseArray<Component>::Ref init_component(Registry& r,
 template<component Component, typename... Args>
 typename SparseArray<Component>::Ref init_component(Registry& r,
                                                     EventManager& em,
-                                                    Registry::Entity to,
+                                                    Ecs::Entity to,
                                                     Args... args)
 {
   try {
@@ -111,7 +111,7 @@ typename SparseArray<Component>::Ref init_component(Registry& r,
  */
 inline void init_component(Registry& r,
                            EventManager& em,
-                           Registry::Entity to,
+                           Ecs::Entity to,
                            std::string const& id,
                            ByteArray const& comp)
 {

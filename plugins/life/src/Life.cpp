@@ -53,7 +53,7 @@ Life::Life(Registry& r, EventManager& em, EntityLoader& l)
   SUBSCRIBE_EVENT(CollisionEvent, { this->on_collision(event); })
 }
 
-void Life::init_health(Registry::Entity entity, JsonObject const& obj)
+void Life::init_health(Ecs::Entity entity, JsonObject const& obj)
 {
   auto const& current =
       get_value<Health, double>(this->_registry.get(), obj, entity, "current");
@@ -74,7 +74,7 @@ void Life::init_health(Registry::Entity entity, JsonObject const& obj)
                          damage_cooldown);
 }
 
-void Life::init_damage(Registry::Entity entity, JsonObject const& obj)
+void Life::init_damage(Ecs::Entity entity, JsonObject const& obj)
 {
   auto const& value =
       get_value<Damage, int>(this->_registry.get(), obj, entity, "amount");
@@ -88,7 +88,7 @@ void Life::init_damage(Registry::Entity entity, JsonObject const& obj)
       this->_registry.get(), this->_event_manager.get(), entity, value.value());
 }
 
-void Life::init_heal(Registry::Entity entity, JsonObject const& obj)
+void Life::init_heal(Ecs::Entity entity, JsonObject const& obj)
 {
   auto const& value =
       get_value<Heal, int>(this->_registry.get(), obj, entity, "amount");
@@ -102,7 +102,7 @@ void Life::init_heal(Registry::Entity entity, JsonObject const& obj)
       this->_registry.get(), this->_event_manager.get(), entity, value.value());
 }
 
-void Life::init_team(Registry::Entity const& entity, JsonObject const& obj)
+void Life::init_team(Ecs::Entity const& entity, JsonObject const& obj)
 {
   auto const& value =
       get_value<Team, std::string>(this->_registry.get(), obj, entity, "name");

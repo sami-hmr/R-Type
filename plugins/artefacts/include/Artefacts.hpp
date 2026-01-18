@@ -15,7 +15,7 @@ public:
   EntityLoader& entity_loader;
 
 private:
-  void init_pickable_artefacts(Registry::Entity const& entity,
+  void init_pickable_artefacts(Ecs::Entity const& entity,
                                JsonObject const& obj);
 
   static Item artefact_to_item(PickableTool artefact);

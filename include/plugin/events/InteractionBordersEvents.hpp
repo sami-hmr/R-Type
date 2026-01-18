@@ -8,27 +8,27 @@
 template<typename Type>
 struct ReachBorders
 {
-  Registry::Entity zone;
-  Registry::Entity player;
+  Ecs::Entity zone;
+  Ecs::Entity player;
 
-  ReachBorders(Registry::Entity zone, Registry::Entity player)
+  ReachBorders(Ecs::Entity zone, Ecs::Entity player)
       : zone(zone)
       , player(player)
   {
   }
 
   ReachBorders(Registry& r, JsonObject const& e)
-      : zone(static_cast<Registry::Entity>(
+      : zone(static_cast<Ecs::Entity>(
             get_value_copy<double>(r, e, "zone").value()))
-      , player(static_cast<Registry::Entity>(
+      , player(static_cast<Ecs::Entity>(
             get_value_copy<double>(r, e, "player").value()))
   {
   }
   DEFAULT_BYTE_CONSTRUCTOR(ReachBorders,
-                           ([](Registry::Entity zone, Registry::Entity player)
+                           ([](Ecs::Entity zone, Ecs::Entity player)
                             { return ReachBorders(zone, player); }),
-                           parseByte<Registry::Entity>(),
-                           parseByte<Registry::Entity>())
+                           parseByte<Ecs::Entity>(),
+                           parseByte<Ecs::Entity>())
 
   DEFAULT_SERIALIZE(type_to_byte(zone), type_to_byte(player))
 };

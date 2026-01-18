@@ -5,6 +5,7 @@
 
 #include "ByteParser/ByteParser.hpp"
 #include "EventMacros.hpp"
+#include "ecs/Entity.hpp"
 #include "plugin/Byte.hpp"
 #include "plugin/Hooks.hpp"
 
@@ -45,7 +46,7 @@ struct CreateEntity
                     }));
           })))
 
-  CreateEntity(Registry& r, JsonObject const& e) {}
+  CreateEntity(Registry&, JsonObject const&, std::optional<Ecs::Entity>) {}
 
   Additional additionals;
 };

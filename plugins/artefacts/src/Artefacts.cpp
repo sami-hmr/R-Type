@@ -29,7 +29,7 @@ Artefacts::Artefacts(Registry& r, EventManager& em, EntityLoader& l)
   SUBSCRIBE_EVENT(CollisionEvent, { on_pickable_interaction(event); })
 }
 
-void Artefacts::init_pickable_artefacts(Registry::Entity const& entity,
+void Artefacts::init_pickable_artefacts(Ecs::Entity const& entity,
                                         JsonObject const& obj)
 {
   auto const& on_consumption = get_value<PickableTool, JsonObject>(

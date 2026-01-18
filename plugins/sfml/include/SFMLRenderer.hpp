@@ -41,6 +41,7 @@
 #include "plugin/components/Camera.hpp"
 #include "plugin/components/Drawable.hpp"
 #include "plugin/components/Position.hpp"
+#include "plugin/components/SoundManager.hpp"
 #include "plugin/components/Sprite.hpp"
 #include "plugin/components/Text.hpp"
 #include "plugin/events/CameraEvents.hpp"
@@ -66,8 +67,7 @@ private:
   sf::Font& load_font(std::string const& path);
   sf::SoundBuffer& load_sound(std::string const& path);
   sf::Music& load_music(std::string const& path);
-  std::optional<std::reference_wrapper<sf::Sound>> get_available_sound(
-      sf::SoundBuffer& buffer);
+  int get_available_sound(sf::SoundBuffer& buffer);
 
   void handle_events();
   void mouse_events(const sf::Event& events);
@@ -80,6 +80,7 @@ private:
   void slider_system(Registry& r) const;
   void sounds_system(Registry& r);
   void musics_system(Registry& r);
+  void volumes_system(Registry& r);
   void hover_system(Registry& r);
   void display();
 
@@ -126,8 +127,12 @@ private:
   sf::CircleShape _circle;
 
   std::unordered_map<std::string, sf::SoundBuffer> _sound_buffers;
-  std::array<std::optional<sf::Sound>, MAX_NB_SOUNDS> _sounds;
+  std::array<std::pair<std::optional<sf::Sound>, SoundEffect>, MAX_NB_SOUNDS>
+      _sounds;
   std::map<std::string, sf::Music> _musics;
+  double _master_volume = 100.0;
+  double _sfx_volume = 100.0;
+  double _music_volume = 100.0;
 
   sf::View _view;
   bool _camera_initialized = false;

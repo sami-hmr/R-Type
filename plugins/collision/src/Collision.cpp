@@ -66,11 +66,10 @@ void Collision::set_algorithm(std::unique_ptr<ICollisionAlgorithm> algo)
   _collision_algo = std::move(algo);
 }
 
-void Collision::init_collision(Registry::Entity const& entity,
-                               JsonObject const& obj)
+void Collision::init_collision(Ecs::Entity const& entity, JsonObject const& obj)
 {
   auto const& size = get_value<Collidable, Vector2D>(
-      this->_registry.get(), obj, entity, "size");
+      this->_registry.get(), obj, entity, "size", "width", "height");
   auto const& type_str = get_value<Collidable, std::string>(
       this->_registry.get(), obj, entity, "collision_type");
 
@@ -104,7 +103,7 @@ void Collision::init_collision(Registry::Entity const& entity,
                              true);
 }
 
-void Collision::init_interaction_borders(Registry::Entity const& entity,
+void Collision::init_interaction_borders(Ecs::Entity const& entity,
                                          JsonObject const& obj)
 {
   auto const& radius = get_value<Collidable, double>(
@@ -121,7 +120,7 @@ void Collision::init_interaction_borders(Registry::Entity const& entity,
                                   radius.value());
 }
 
-void Collision::init_interaction_zone(Registry::Entity const& entity,
+void Collision::init_interaction_zone(Ecs::Entity const& entity,
                                       JsonObject const& obj)
 {
   auto const& radius = get_value<Collidable, double>(
@@ -192,7 +191,7 @@ void Collision::interaction_borders_system(Registry& r)
 
     std::vector<ICollisionAlgorithm::CollisionEntity> candidates =
         _collision_algo->detect_range_collisions(range);
-    std::vector<Registry::Entity> detected_entities;
+    std::vector<Ecs::Entity> detected_entities;
     detected_entities.reserve(candidates.size());
 
     for (const auto& candidate : candidates) {
@@ -205,9 +204,9 @@ void Collision::interaction_borders_system(Registry& r)
         detected_entities.push_back(candidate.entity_id);
       }
     }
-    std::vector<Registry::Entity> entity_bfr =
+    std::vector<Ecs::Entity> entity_bfr =
         std::vector(zone.in_zone.begin(), zone.in_zone.end());
-    std::vector<Registry::Entity> entity_now = detected_entities;
+    std::vector<Ecs::Entity> entity_now = detected_entities;
     for (auto eb : entity_bfr) {
       for (auto en : entity_now) {
         if (eb == en) {
@@ -223,7 +222,8 @@ void Collision::interaction_borders_system(Registry& r)
     for (auto entity : entity_now) {
       this->_event_manager.get().emit<EnteredZone>(i, entity);
     }
-    zone.in_zone = std::unordered_set<Registry::Entity>(detected_entities.begin(), detected_entities.end());
+    zone.in_zone = std::unordered_set<Ecs::Entity>(
+        detected_entities.begin(), detected_entities.end());
   }
 }
 
@@ -246,7 +246,7 @@ void Collision::interaction_zone_system(Registry& r)
 
     std::vector<ICollisionAlgorithm::CollisionEntity> candidates =
         _collision_algo->detect_range_collisions(range);
-    std::vector<Registry::Entity> detected_entities;
+    std::vector<Ecs::Entity> detected_entities;
     detected_entities.reserve(candidates.size());
 
     for (const auto& candidate : candidates) {

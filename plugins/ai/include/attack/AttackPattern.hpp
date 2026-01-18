@@ -12,7 +12,7 @@ class AttackPattern
 public:
   virtual ~AttackPattern() = default;
 
-  virtual void execute(Registry::Entity entity,
+  virtual void execute(Ecs::Entity entity,
                        Registry& registry,
                        EventManager& em,
                        AttackBehavior& behavior,

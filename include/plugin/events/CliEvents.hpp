@@ -12,7 +12,7 @@ struct CliStart
 
   CHANGE_ENTITY_DEFAULT
 
-  CliStart(Registry&, JsonObject const&) {}
+  CliStart(Registry&, JsonObject const&, std::optional<Ecs::Entity>) {}
 };
 
 struct CliStop
@@ -23,7 +23,7 @@ struct CliStop
 
   CHANGE_ENTITY_DEFAULT
 
-  CliStop(Registry&, JsonObject const&) {}
+  CliStop(Registry&, JsonObject const&, std::optional<Ecs::Entity>) {}
 };
 
 struct CliComp

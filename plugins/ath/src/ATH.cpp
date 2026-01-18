@@ -37,10 +37,10 @@ static void on_click(Registry& r,
       for (auto&& [name, obj] : clickable.to_emit) {
         std::cout << "Clickable: entity " << e << " clicked, emitting '" << name
                   << "'\n";
-        obj.insert_or_assign("entity", JsonVariant(static_cast<int>(e)));
+        //  obj.insert_or_assign("entity", JsonVariant(static_cast<int>(e)));
         // Capture name and obj by value to avoid dangling references
-        to_emit.emplace_back([&em, &r, name, obj]()
-                             { emit_event(em, r, name, obj); });
+        to_emit.emplace_back([&em, &r, name, obj, e]()
+                             { emit_event(em, r, name, obj, e); });
         std::cout << "Clickable: emitted event '" << name << "'\n";
       }
     }
@@ -89,9 +89,9 @@ ATH::ATH(Registry& r,
 extern "C"
 {
 PLUGIN_EXPORT void* entry_point(Registry& r,
-                  EventManager& em,
-                  EntityLoader& e,
-                  std::optional<JsonObject> const& config)
+                                EventManager& em,
+                                EntityLoader& e,
+                                std::optional<JsonObject> const& config)
 {
   return new ATH(r, em, e, config);
 }

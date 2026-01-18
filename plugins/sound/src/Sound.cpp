@@ -4,6 +4,7 @@
 #include "plugin/APlugin.hpp"
 #include "plugin/components/MusicManager.hpp"
 #include "plugin/components/SoundManager.hpp"
+#include "plugin/components/Volume.hpp"
 #include "plugin/events/SoundEvents.hpp"
 
 Sound::Sound(Registry& r, EventManager& em, EntityLoader& l)
@@ -13,11 +14,16 @@ Sound::Sound(Registry& r, EventManager& em, EntityLoader& l)
               l,
               {},
               {COMP_INIT(SoundManager, SoundManager, init_sound_manager),
-               COMP_INIT(MusicManager, MusicManager, init_music_manager)})
+               COMP_INIT(MusicManager, MusicManager, init_music_manager),
+               COMP_INIT(MasterVolume, MasterVolume, init_master_volume),
+               COMP_INIT(SFXVolume, SFXVolume, init_sfx_volume),
+               COMP_INIT(MusicVolume, MusicVolume, init_music_volume)})
 {
   REGISTER_COMPONENT(SoundManager)
   REGISTER_COMPONENT(MusicManager)
-
+  REGISTER_COMPONENT(MasterVolume)
+  REGISTER_COMPONENT(SFXVolume)
+  REGISTER_COMPONENT(MusicVolume)
   this->_registry.get().add_system(
       [this](Registry& r) { this->sound_system(r); }, 1000);
   this->_registry.get().add_system(

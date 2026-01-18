@@ -45,10 +45,12 @@ struct ComponentBuilder
 
   CHANGE_ENTITY_DEFAULT
 
-  ComponentBuilder(Registry& r, JsonObject const& e)
-      : entity(get_value_copy<std::size_t>(r, e, "entity").value())
-      , id(get_value_copy<std::string>(r, e, "id").value())
-      , data(get_value_copy<Byte>(r, e, "data").value())
+  ComponentBuilder(Registry& r,
+                   JsonObject const& e,
+                   std::optional<Ecs::Entity> entity)
+      : entity(get_value_copy<std::size_t>(r, e, "entity", entity).value())
+      , id(get_value_copy<std::string>(r, e, "id", entity).value())
+      , data(get_value_copy<Byte>(r, e, "data", entity).value())
   {
   }
 };
@@ -96,11 +98,13 @@ struct ComponentBuilderId
 
   CHANGE_ENTITY_DEFAULT
 
-  ComponentBuilderId(Registry& r, JsonObject const& e)
-      : client(get_value_copy<std::size_t>(r, e, "client"))
-      , component(get_value_copy<std::size_t>(r, e, "entity").value(),
-                  get_value_copy<std::string>(r, e, "event_id").value(),
-                  get_value_copy<ByteArray>(r, e, "data").value())
+  ComponentBuilderId(Registry& r,
+                     JsonObject const& e,
+                     std::optional<Ecs::Entity> entity)
+      : client(get_value_copy<std::size_t>(r, e, "client", entity))
+      , component(get_value_copy<std::size_t>(r, e, "entity", entity).value(),
+                  get_value_copy<std::string>(r, e, "event_id", entity).value(),
+                  get_value_copy<ByteArray>(r, e, "data", entity).value())
   {
   }
 };
@@ -138,9 +142,11 @@ struct EventBuilder
 
   CHANGE_ENTITY_DEFAULT
 
-  EventBuilder(Registry& r, JsonObject const& e)
-      : event_id(get_value_copy<std::string>(r, e, "event_id").value())
-      , data(get_value_copy<ByteArray>(r, e, "data").value())
+  EventBuilder(Registry& r,
+               JsonObject const& e,
+               std::optional<Ecs::Entity> entity)
+      : event_id(get_value_copy<std::string>(r, e, "event_id", entity).value())
+      , data(get_value_copy<ByteArray>(r, e, "data", entity).value())
   {
   }
 };
@@ -186,10 +192,12 @@ struct EventBuilderId
 
   CHANGE_ENTITY_DEFAULT
 
-  EventBuilderId(Registry& r, JsonObject const& e)
-      : client(get_value_copy<std::size_t>(r, e, "client"))
-      , event(get_value_copy<std::string>(r, e, "event_id").value(),
-              get_value_copy<ByteArray>(r, e, "data").value())
+  EventBuilderId(Registry& r,
+                 JsonObject const& e,
+                 std::optional<Ecs::Entity> entity)
+      : client(get_value_copy<std::size_t>(r, e, "client", entity))
+      , event(get_value_copy<std::string>(r, e, "event_id", entity).value(),
+              get_value_copy<ByteArray>(r, e, "data", entity).value())
   {
   }
 };
@@ -217,9 +225,11 @@ struct NewConnection
 
   CHANGE_ENTITY_DEFAULT
 
-  NewConnection(Registry& r, JsonObject const& e)
-      : client(get_value_copy<std::size_t>(r, e, "client").value())
-      , user_id(get_value_copy<int>(r, e, "user_id").value())
+  NewConnection(Registry& r,
+                JsonObject const& e,
+                std::optional<Ecs::Entity> entity)
+      : client(get_value_copy<std::size_t>(r, e, "client", entity).value())
+      , user_id(get_value_copy<int>(r, e, "user_id", entity).value())
   {
   }
 };
@@ -247,9 +257,11 @@ struct PlayerCreated
 
   CHANGE_ENTITY_DEFAULT
 
-  PlayerCreated(Registry& r, JsonObject const& e)
-      : server_index(
-            get_value_copy<Registry::Entity>(r, e, "server_index").value_or(0))
+  PlayerCreated(Registry& r,
+                JsonObject const& e,
+                std::optional<Ecs::Entity> entity)
+      : server_index(get_value_copy<Ecs::Entity>(r, e, "server_index", entity)
+                         .value_or(0))
   {
   }
 };
@@ -287,10 +299,12 @@ struct NetworkStatus
 
   CHANGE_ENTITY_DEFAULT
 
-  NetworkStatus(Registry& r, JsonObject const& e)
-      : ping_in_millisecond(get_value_copy<int>(r, e, "ping").value())
+  NetworkStatus(Registry& r,
+                JsonObject const& e,
+                std::optional<Ecs::Entity> entity)
+      : ping_in_millisecond(get_value_copy<int>(r, e, "ping", entity).value())
       , packet_loss(static_cast<PacketLossLevel>(
-            get_value_copy<int>(r, e, "packet_loss").value()))
+            get_value_copy<int>(r, e, "packet_loss", entity).value()))
   {
   }
 };
@@ -337,7 +351,9 @@ struct HearthBeat
 
   CHANGE_ENTITY_DEFAULT
 
-  HearthBeat(Registry& /*r*/, JsonObject const& /*e*/)  // TODO
+  HearthBeat(Registry& /*r*/,
+             JsonObject const& /*e*/,
+             std::optional<Ecs::Entity>)  // TODO
   {
   }
 };
@@ -361,8 +377,10 @@ struct DisconnectClient
 
   CHANGE_ENTITY_DEFAULT
 
-  DisconnectClient(Registry& r, JsonObject const& e)
-      : client(get_value_copy<std::size_t>(r, e, "client").value())
+  DisconnectClient(Registry& r,
+                   JsonObject const& e,
+                   std::optional<Ecs::Entity> entity)
+      : client(get_value_copy<std::size_t>(r, e, "client", entity).value())
   {
   }
 };
@@ -441,9 +459,13 @@ struct PlayerCreation
 
   CHANGE_ENTITY_DEFAULT
 
-  PlayerCreation(Registry& r, JsonObject const& e)
-      : server_index(get_value_copy<std::size_t>(r, e, "server_index").value())
-      , server_id(get_value_copy<std::size_t>(r, e, "server_id").value())
+  PlayerCreation(Registry& r,
+                 JsonObject const& e,
+                 std::optional<Ecs::Entity> entity)
+      : server_index(
+            get_value_copy<std::size_t>(r, e, "server_index", entity).value())
+      , server_id(
+            get_value_copy<std::size_t>(r, e, "server_id", entity).value())
   {
   }
 };

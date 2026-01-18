@@ -11,5 +11,5 @@ public:
   Actions(Registry& r, EventManager& em, EntityLoader& l);
 
 private:
-  void init_action_trigger(Registry::Entity const& entity, JsonObject& obj);
+  void init_action_trigger(Ecs::Entity const& entity, JsonObject& obj);
 };
