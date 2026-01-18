@@ -36,6 +36,9 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(CMAKE_SHARED_LIBRARY_PREFIX "")
 
+# Option to build EPITECH binaries (for release-tek target)
+option(BUILD_EPITECH_BINARIES "Build binaries for EPITECH release" OFF)
+
 # Set executable output directory
 # For release-tek builds, place executables at the root of the project
 # For other builds, place them in the build directory
