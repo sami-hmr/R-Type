@@ -408,10 +408,6 @@ void SFMLRenderer::render_texts(Registry& r,
       fill_color.a /= 2;
     }
 
-    if (pos.offset.x > 0) {
-      std::cout << "offset ici la par pitié pos = " << pos.pos
-                << " offset = " << pos.offset << "\n";
-    }
     sf::Font& font = load_font(txt.font_path);
     if (!_text.has_value()) {
       _text = sf::Text(font);
@@ -575,10 +571,6 @@ void SFMLRenderer::render_animated_sprites(
       anim_data.frame_size.y = texture.getSize().y;
     }
 
-    if (pos.offset.x == 10) {
-      std::cout << "offset is " << pos.offset << "\n";
-      std::cout << "pos is " << pos.pos << "\n";
-    }
     float scale_x, scale_y = 0;
     sf::Vector2f uniform_scale;
 
@@ -628,13 +620,15 @@ void SFMLRenderer::render_animated_sprites(
     if (draw.stretch) {
       draw.true_size = anim_data.sprite_size;
     } else {
-      draw.true_size = Vector2D(
-          std::max(static_cast<double>(anim_data.frame_size.x * std::abs(uniform_scale.x))
-                       / min_dimension,
-                   draw.true_size.x),
-          std::max(static_cast<double>(anim_data.frame_size.y * std::abs(uniform_scale.y))
-                       / min_dimension,
-                   draw.true_size.y));
+      draw.true_size =
+          Vector2D(std::max(static_cast<double>(anim_data.frame_size.x
+                                                * std::abs(uniform_scale.x))
+                                / min_dimension,
+                            draw.true_size.x),
+                   std::max(static_cast<double>(anim_data.frame_size.y
+                                                * std::abs(uniform_scale.y))
+                                / min_dimension,
+                            draw.true_size.y));
     }
 
     AnimatedSpriteDrawable anim_drawable(std::ref(*this->_sprite),
@@ -659,7 +653,6 @@ void SFMLRenderer::unified_render_system(Registry& r)
   float min_dimension =
       static_cast<float>(std::min(window_size.x, window_size.y));
 
-  std::cout << "rendering system\n";
   render_sprites(
       r, all_drawables, min_dimension, window_size, view_size, view_pos);
   render_bars(r, all_drawables, min_dimension, window_size);

@@ -271,9 +271,9 @@
           "animations": [
             {
               "name": "idle",
-              "texture": "assets/beam.png",
+              "texture": "assets/beam_real.png",
               "frame_size": {
-                "x": 142.0,
+                "x": 318.0,
                 "y": 142.0
               },
               "frame_pos": {
@@ -285,8 +285,8 @@
                 "y": 0.0
               },
               "sprite_size": {
-                "width": "150.0%",
-                "height": "8.0%"
+                "width": "25.0%",
+                "height": "10.0%"
               },
               "framerate": 15.0,
               "nb_frames": 12,
@@ -300,12 +300,15 @@
           "pos": {
             "x": 0.0,
             "y": 0.0
-          },
+          }
+        },
+        "moving:Offset": {
           "offset": {
-            "x": 5.0,
+            "x": 0.0,
             "y": 0.0
           }
         },
+
         "moving:Speed": {
           "speed": {
             "x": 0.002,
@@ -319,10 +322,10 @@
           }
         },
         "life:Team": {
-          "name": "test1"
+          "name": "player"
         },
         "life:Damage": {
-          "amount": 1
+          "amount": 4
         },
         "projectile:Temporal": {
           "lifetime": 0.9
@@ -341,10 +344,10 @@
           "animations": [
             {
               "name": "idle",
-              "texture": "assets/beam_start.png",
+              "texture": "assets/energy.png",
               "frame_size": {
-                "x": 142.0,
-                "y": 142.0
+                "x": 300.0,
+                "y": 300.0
               },
               "frame_pos": {
                 "x": 0.0,
@@ -359,7 +362,7 @@
                 "height": "10.0%"
               },
               "framerate": 30.0,
-              "nb_frames": 12,
+              "nb_frames": 50,
               "loop": true,
               "rollback": false
             }
@@ -370,9 +373,11 @@
           "pos": {
             "x": 0.0,
             "y": 0.0
-          },
+          }
+        },
+        "moving:Offset": {
           "offset": {
-            "x": 5.0,
+            "x": 0.1,
             "y": 0.0
           }
         }

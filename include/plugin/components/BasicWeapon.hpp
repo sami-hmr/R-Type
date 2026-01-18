@@ -21,12 +21,16 @@ struct BasicWeapon : public BaseWeapon
               int magazine_nb,
               double reload_time,
               double cooldown,
+              double offset_x = 0.0,
+              double offset_y = 0.0,
               std::string attack_animation = "")
       : BaseWeapon(std::move(bullet_type),
                    magazine_size,
                    magazine_nb,
                    reload_time,
                    cooldown,
+                   offset_x,
+                   offset_y,
                    std::move(attack_animation))
   {
   }
@@ -38,6 +42,8 @@ struct BasicWeapon : public BaseWeapon
                                   int mag_nb,
                                   double reload_time,
                                   double cooldown,
+                                  double offset_x,
+                                  double offset_y,
                                   std::string attack_animation)
                                {
                                  return BasicWeapon(bullet_type,
@@ -45,11 +51,15 @@ struct BasicWeapon : public BaseWeapon
                                                     mag_nb,
                                                     reload_time,
                                                     cooldown,
+                                                    offset_x,
+                                                    offset_y,
                                                     attack_animation);
                                }),
                            parseByteString(),
                            parseByte<int>(),
                            parseByte<int>(),
+                           parseByte<double>(),
+                           parseByte<double>(),
                            parseByte<double>(),
                            parseByte<double>(),
                            parseByteString())
@@ -58,6 +68,8 @@ struct BasicWeapon : public BaseWeapon
                     type_to_byte(this->magazine_nb),
                     type_to_byte(this->reload_time),
                     type_to_byte(this->cooldown),
+                    type_to_byte(this->offset_x),
+                    type_to_byte(this->offset_y),
                     string_to_byte(this->attack_animation))
   CHANGE_ENTITY_DEFAULT
 
@@ -71,6 +83,8 @@ struct BasicWeapon : public BaseWeapon
            HOOK(reloading),
            HOOK(last_reload_time),
            HOOK(cooldown),
+           HOOK(offset_x),
+           HOOK(offset_y),
            HOOK(attack_animation))
 
   /**

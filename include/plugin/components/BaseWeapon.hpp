@@ -15,6 +15,8 @@ struct BaseWeapon
   int remaining_magazine;
   double reload_time;
   double cooldown;
+  double offset_y;
+  double offset_x;
   std::string attack_animation;
   bool reloading = false;
   std::chrono::high_resolution_clock::time_point last_shot_time;
@@ -53,6 +55,8 @@ protected:
              int magazine_nb,
              double reload_time,
              double cooldown,
+             double offset_x,
+             double offset_y,
              std::string attack_animation)
       : bullet_type(std::move(bullet_type))
       , magazine_size(magazine_size)
@@ -61,6 +65,8 @@ protected:
       , remaining_magazine(magazine_nb)
       , reload_time(reload_time)
       , cooldown(cooldown)
+      , offset_y(offset_y)
+      , offset_x(offset_x)
       , attack_animation(std::move(attack_animation))
   {
   }

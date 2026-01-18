@@ -29,12 +29,14 @@ Moving::Moving(Registry& r, EventManager& em, EntityLoader& l)
               l,
               {},
               {COMP_INIT(Position, Position, init_pos),
+               COMP_INIT(Offset, Offset, init_off),
                COMP_INIT(Direction, Direction, init_direction),
                COMP_INIT(Speed, Speed, init_speed),
                COMP_INIT(Facing, Facing, init_facing),
                COMP_INIT(IdStorage, IdStorage, init_id)})
 {
   REGISTER_COMPONENT(Position)
+  REGISTER_COMPONENT(Offset)
   REGISTER_COMPONENT(Direction)
   REGISTER_COMPONENT(Speed)
   REGISTER_COMPONENT(Facing)
@@ -77,10 +79,10 @@ void Moving::moving_system(Registry& reg)
 
 void Moving::add_offset(Registry& r)
 {
-  std::cout << "\nadding offset" << "\n";
-  for (auto&& [e, pos] : ZipperIndex<Position>(r)) {
+  for (auto&& [e, pos, offset] : ZipperIndex<Position, Offset>(r)) {
+    std::cout << offset.offset << "for e: " << e << "\n";
     if (!pos.applied_offset) {
-      pos.pos += pos.offset;
+      pos.pos += offset.offset;
       pos.applied_offset = true;
     }
     this->_event_manager.get().emit<ComponentBuilder>(
@@ -90,10 +92,9 @@ void Moving::add_offset(Registry& r)
 
 void Moving::remove_offset(Registry& r)
 {
-  std::cout << "removing offset\n\n";
-  for (auto&& [e, pos] : ZipperIndex<Position>(r)) {
+  for (auto&& [e, pos, off] : ZipperIndex<Position, Offset>(r)) {
     if (pos.applied_offset) {
-      pos.pos -= pos.offset;
+      pos.pos -= off.offset;
       pos.applied_offset = false;
     }
     this->_event_manager.get().emit<ComponentBuilder>(
@@ -131,17 +132,6 @@ void Moving::init_pos(Ecs::Entity const& entity, JsonObject& obj)
     std::cerr << "Error creating Position component\n";
     return;
   }
-  Vector2D offset = {0.0, 0.0};
-  if (obj.contains("offset")) {
-    auto const& offset_value = get_value<Position, Vector2D>(
-        this->_registry.get(), obj, entity, "offset");
-    if (offset_value) {
-      offset = offset_value.value();
-    } else {
-      std::cerr << "Error loading Position component: unexpected value type "
-                   "(expected offset: Vector2D)\n";
-    }
-  }
 
   int z = 1;
   if (obj.contains("z")) {
@@ -158,15 +148,39 @@ void Moving::init_pos(Ecs::Entity const& entity, JsonObject& obj)
                                            this->_event_manager.get(),
                                            entity,
                                            pos.value(),
-                                           offset,
                                            z);
 
   if (!pos_opt.has_value()) {
     std::cerr << "Error creating Position component\n";
     return;
   }
-  std::cout << "init_pos parsed: pos = " << pos.value()
-            << " offset = " << offset << " for entity " << entity << "\n";
+  std::cout << "init_pos parsed: pos = " << pos.value() << " for entity "
+            << entity << "\n";
+}
+
+void Moving::init_off(Ecs::Entity const& entity, JsonObject& obj)
+{
+  Vector2D offset = {0.0, 0.0};
+  if (obj.contains("offset")) {
+    auto const& offset_value = get_value<Offset, Vector2D>(
+        this->_registry.get(), obj, entity, "offset");
+    if (offset_value) {
+      offset = offset_value.value();
+    } else {
+      std::cerr << "Error loading Position component: unexpected value type "
+                   "(expected offset: Vector2D)\n";
+    }
+  }
+
+  auto& pos_opt = init_component<Offset>(
+      this->_registry.get(), this->_event_manager.get(), entity, offset);
+
+  if (!pos_opt.has_value()) {
+    std::cerr << "Error creating Offset component\n";
+    return;
+  }
+  std::cout << "init_off parsed: off = " << offset << " for entity " << entity
+            << "\n";
 }
 
 void Moving::init_direction(Ecs::Entity const& entity, JsonObject& obj)

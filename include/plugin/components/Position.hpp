@@ -15,29 +15,49 @@ struct Position
   {
   }
 
-  Position(Vector2D pos, Vector2D offset = {0.0, 0.0}, int z = 1)
+  Position(Vector2D pos, int z = 1)
       : pos(pos)
-      , offset(offset)
       , z(z)
   {
   }
 
-  DEFAULT_BYTE_CONSTRUCTOR(
-      Position,
-      ([](Vector2D pos, Vector2D offset = {0.0, 0.0}, int z = 1)
-       { return Position {pos, offset, z}; }),
-      parseVector2D(),
-      parseVector2D(),
-      parseByte<int>())
-  DEFAULT_SERIALIZE(vector2DToByte(this->pos),
-                    vector2DToByte(this->offset),
-                    type_to_byte(this->z))
+  DEFAULT_BYTE_CONSTRUCTOR(Position,
+                           ([](Vector2D pos, int z = 1)
+                            { return Position {pos, z}; }),
+                           parseVector2D(),
+                           parseByte<int>())
+  DEFAULT_SERIALIZE(vector2DToByte(this->pos), type_to_byte(this->z))
 
   CHANGE_ENTITY_DEFAULT
 
   Vector2D pos;
-  Vector2D offset;
   int z;
   bool applied_offset = false;
-  HOOKABLE(Position, HOOK(pos), HOOK(offset), HOOK(z))
+  HOOKABLE(Position, HOOK(pos), HOOK(pos.x), HOOK(pos.y), HOOK(z))
+};
+
+struct Offset
+{
+  Offset() = default;
+
+  Offset(double x, double y)
+      : offset(x, y)
+  {
+  }
+
+  Offset(Vector2D offset)
+      : offset(offset)
+  {
+  }
+
+  DEFAULT_BYTE_CONSTRUCTOR(Offset,
+                           ([](Vector2D offset) { return Offset {offset}; }),
+                           parseVector2D())
+
+  DEFAULT_SERIALIZE(vector2DToByte(this->offset))
+
+  CHANGE_ENTITY_DEFAULT
+
+  Vector2D offset;
+  HOOKABLE(Offset, HOOK(offset))
 };

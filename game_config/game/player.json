@@ -25,6 +25,8 @@
         },
         "weapon:ChargeWeapon": {
           "bullet_type": "beam_segment",
+          "offset_x": 1.2,
+          "offset_y": 0.0,
           "magazine_size": 10,
           "magazine_nb": 3,
           "reload_time": 2.0,

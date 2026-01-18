@@ -14,6 +14,7 @@
 #include "ecs/zipper/ZipperIndex.hpp"
 #include "libs/Vector2D.hpp"
 #include "plugin/APlugin.hpp"
+#include "plugin/Hooks.hpp"
 #include "plugin/components/AnimatedSprite.hpp"
 #include "plugin/components/BasicWeapon.hpp"
 #include "plugin/components/ChargeWeapon.hpp"
@@ -119,6 +120,8 @@ void Weapon::on_fire(Registry& r, const FireBullet& e)
     }
 
     Position new_pos = pos;
+    new_pos.pos.x += weapon.offset_x;
+    new_pos.pos.y += weapon.offset_y;
     LoadEntityTemplate::Additional additional = {
         {this->_registry.get().get_component_key<Position>(),
          new_pos.to_bytes()},
@@ -126,7 +129,7 @@ void Weapon::on_fire(Registry& r, const FireBullet& e)
          direction.to_bytes()},
         {this->_registry.get().get_component_key<Team>(), team.to_bytes()},
         {this->_registry.get().get_component_key<Facing>(),
-           Facing(direction.direction, /*plane=*/true).to_bytes()}};
+         Facing(direction.direction, /*plane=*/true).to_bytes()}};
 
     if (this->_registry.get().has_component<Scene>(e.entity)) {
       additional.emplace_back(this->_registry.get().get_component_key<Scene>(),
@@ -272,7 +275,8 @@ void Weapon::on_charge_release(Registry& r, const ReleaseChargeWeapon& e)
     }
   }
 
-  auto const& pos = *this->_registry.get().get_components<Position>()[e.entity];
+  auto const& pos =
+      this->_registry.get().get_components<Position>()[e.entity].value();
 
   auto const& vel_direction =
       (this->_registry.get().has_component<Direction>(e.entity))
@@ -293,8 +297,10 @@ void Weapon::on_charge_release(Registry& r, const ReleaseChargeWeapon& e)
   double scale_multiplier =
       1.0 + (weapon.current_charge_level * (weapon.max_scale - 1.0));
 
+  Offset offset(weapon.offset_x, weapon.offset_y);
   LoadEntityTemplate::Additional additional = {
       {this->_registry.get().get_component_key<Position>(), pos.to_bytes()},
+      {this->_registry.get().get_component_key<Offset>(), offset.to_bytes()},
       {this->_registry.get().get_component_key<Direction>(),
        direction.to_bytes()},
       {this->_registry.get().get_component_key<Team>(), team.to_bytes()}};
@@ -425,7 +431,14 @@ void Weapon::charge_weapon_system(
 
         animated_sprite.update_size(weapon.charge_indicator_base_scale
                                     * scale_factor);
-        offset += (weapon.charge_indicator_base_scale * scale_factor) / 2;
+        offset.x += (weapon.charge_indicator_base_scale.x * scale_factor) / 2;
+        if (this->_registry.get().has_component<AnimatedSprite>(entity)) {
+          auto const& ship_annim =
+              this->_registry.get().get_components<AnimatedSprite>()[entity];
+          offset.x += ship_annim->animations.at(ship_annim->current_animation)
+                          .sprite_size.x
+              / 2;
+        }
         this->_event_manager.get().emit<ComponentBuilder>(
             weapon.charge_indicator_entity.value(),
             this->_registry.get().get_component_key<AnimatedSprite>(),
@@ -484,8 +497,12 @@ void Weapon::delayed_weapon_system(
           ? *this->_registry.get().get_components<Team>()[entity]
           : std::string("");
 
+      Position bullet_pos = pos;
+      bullet_pos.pos.x += weapon.offset_x;
+      bullet_pos.pos.y += weapon.offset_y;
       LoadEntityTemplate::Additional additional = {
-          {this->_registry.get().get_component_key<Position>(), pos.to_bytes()},
+          {this->_registry.get().get_component_key<Position>(),
+           bullet_pos.to_bytes()},
           {this->_registry.get().get_component_key<Direction>(),
            direction.to_bytes()},
           {this->_registry.get().get_component_key<Team>(), team.to_bytes()}};

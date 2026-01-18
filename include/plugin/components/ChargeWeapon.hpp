@@ -37,6 +37,8 @@ struct ChargeWeapon : public BaseWeapon
                double max_scale,
                double min_charge_threshold,
                bool scale_damage,
+               double offset_x = 0.0,
+               double offset_y = 0.0,
                std::string attack_animation = "",
                std::string charge_indicator = "")
       : BaseWeapon(std::move(bullet_type),
@@ -44,6 +46,8 @@ struct ChargeWeapon : public BaseWeapon
                    magazine_nb,
                    reload_time,
                    cooldown,
+                   offset_x,
+                   offset_y,
                    std::move(attack_animation))
       , charge_time(charge_time)
       , max_scale(max_scale)
@@ -61,6 +65,8 @@ struct ChargeWeapon : public BaseWeapon
              int mag_nb,
              double reload_time,
              double cooldown,
+             double offset_x,
+             double offset_y,
              double charge_time,
              double max_scale,
              double min_charge_threshold,
@@ -84,6 +90,8 @@ struct ChargeWeapon : public BaseWeapon
                                 max_scale,
                                 min_charge_threshold,
                                 scale_damage,
+                                offset_x,
+                                offset_y,
                                 attack_animation,
                                 charge_indicator);
             weapon.remaining_ammo = remaining_ammo;
@@ -98,6 +106,8 @@ struct ChargeWeapon : public BaseWeapon
       parseByteString(),
       parseByte<int>(),
       parseByte<int>(),
+      parseByte<double>(),
+      parseByte<double>(),
       parseByte<double>(),
       parseByte<double>(),
       parseByte<double>(),
@@ -119,6 +129,8 @@ struct ChargeWeapon : public BaseWeapon
                     type_to_byte(this->magazine_nb),
                     type_to_byte(this->reload_time),
                     type_to_byte(this->cooldown),
+                    type_to_byte(this->offset_x),
+                    type_to_byte(this->offset_y),
                     type_to_byte(this->charge_time),
                     type_to_byte(this->max_scale),
                     type_to_byte(this->min_charge_threshold),
@@ -152,6 +164,8 @@ struct ChargeWeapon : public BaseWeapon
            HOOK(reloading),
            HOOK(last_reload_time),
            HOOK(cooldown),
+           HOOK(offset_x),
+           HOOK(offset_y),
            HOOK(charge_time),
            HOOK(max_scale),
            HOOK(min_charge_threshold),

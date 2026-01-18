@@ -90,6 +90,14 @@ void Weapon::init_charge_weapon(Ecs::Entity const& entity,
   std::string charge_indicator_name =
       charge_indicator ? charge_indicator.value() : "";
 
+  auto const& offset_x = get_value<ChargeWeapon, double>(
+      this->_registry.get(), obj, entity, "offset_x");
+  double offset_x_value = offset_x ? offset_x.value() : 0.0;
+
+  auto const& offset_y = get_value<ChargeWeapon, double>(
+      this->_registry.get(), obj, entity, "offset_y");
+  double offset_y_value = offset_y ? offset_y.value() : 0.0;
+
   init_component<ChargeWeapon>(this->_registry.get(),
                                this->_event_manager.get(),
                                entity,
@@ -102,6 +110,8 @@ void Weapon::init_charge_weapon(Ecs::Entity const& entity,
                                max_scale.value(),
                                min_charge_threshold.value(),
                                scale_damage.value(),
+                               offset_x_value,
+                               offset_y_value,
                                attack_anim_name,
                                charge_indicator_name);
 }

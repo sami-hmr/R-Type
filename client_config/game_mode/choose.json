@@ -22,7 +22,9 @@
             "pos": {
               "x": 0.0,
               "y": -0.5
-            },
+            }
+          },
+          "moving:Offset": {
             "offset": {
               "x": 0.0,
               "y": 0.0
@@ -59,7 +61,7 @@
             "width": 0.4,
             "height": 0.2,
             "text_size": {
-              "height": 0.200,
+              "height": 0.2,
               "width": 0.15
             },
             "text": "SinglePlayer",
@@ -106,7 +108,7 @@
             "width": 0.4,
             "height": 0.2,
             "text_size": {
-              "height": 0.200,
+              "height": 0.2,
               "width": 0.15
             },
             "text": "Multiplayer",
@@ -170,3 +172,4 @@
     }
   ]
 }
+
