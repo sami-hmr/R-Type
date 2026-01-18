@@ -36,12 +36,22 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 set(CMAKE_SHARED_LIBRARY_PREFIX "")
 
-# Set executable output directory to build/ for all configurations
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
-foreach(CONFIG ${CMAKE_CONFIGURATION_TYPES})
-    string(TOUPPER ${CONFIG} CONFIG_UPPER)
-    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CONFIG_UPPER} ${CMAKE_BINARY_DIR})
-endforeach()
+# Set executable output directory
+# For release-tek builds, place executables at the root of the project
+# For other builds, place them in the build directory
+if(BUILD_EPITECH_BINARIES)
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
+    foreach(CONFIG ${CMAKE_CONFIGURATION_TYPES})
+        string(TOUPPER ${CONFIG} CONFIG_UPPER)
+        set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CONFIG_UPPER} ${CMAKE_SOURCE_DIR})
+    endforeach()
+else()
+    set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
+    foreach(CONFIG ${CMAKE_CONFIGURATION_TYPES})
+        string(TOUPPER ${CONFIG} CONFIG_UPPER)
+        set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_${CONFIG_UPPER} ${CMAKE_BINARY_DIR})
+    endforeach()
+endif()
 
 # Use vcpkg toolchain if available
 if(DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
@@ -83,7 +93,7 @@ target_include_directories(${CORE_LIB}
 )
 
 target_compile_definitions(${CORE_LIB} PRIVATE
-    PLUGIN_DIR="${CMAKE_BINARY_DIR}/plugins/"
+    PLUGIN_DIR="$<IF:$<BOOL:${BUILD_EPITECH_BINARIES}>,${CMAKE_SOURCE_DIR}/plugin_release/,${CMAKE_BINARY_DIR}/plugins/>"
 )
 
 target_link_libraries(${CORE_LIB} PRIVATE parser)
