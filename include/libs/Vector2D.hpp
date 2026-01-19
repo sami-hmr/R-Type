@@ -10,6 +10,7 @@
 
 #include <cmath>
 #include <iostream>
+#include <numbers>
 #include <ostream>
 
 #include "ByteParser/ByteParser.hpp"
