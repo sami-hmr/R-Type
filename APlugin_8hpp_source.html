@@ -90,86 +90,119 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;<a class="code" href="EntityLoader_8hpp.html">EntityLoader.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &quot;<a class="code" href="IPlugin_8hpp.html">IPlugin.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &quot;Json/JsonParser.hpp&quot;</span></div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &quot;<a class="code" href="Registry_8hpp.html">ecs/Registry.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &quot;<a class="code" href="IPlugin_8hpp.html">plugin/IPlugin.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="foldopen" id="foldopen00013" data-start="" data-end="">
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno"><a class="line" href="APlugin_8hpp.html#a04f19a5414618f47890540ba624d5949">   13</a></span><span class="preprocessor">#define COMP_INIT(comp_name, comp_type, method_name) \</span></div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">  {#comp_name, \</span></div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">   [this](size_t entity, const JsonVariant&amp; config) \</span></div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">   { \</span></div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">     try { \</span></div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">       JsonObject obj = std::get&lt;JsonObject&gt;(config); \</span></div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="preprocessor">       this-&gt;method_name(entity, obj); \</span></div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">       if (obj.contains(&quot;hook&quot;)) { \</span></div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="preprocessor">         try { \</span></div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="preprocessor">           std::string hook_name = \</span></div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="preprocessor">               std::get&lt;std::string&gt;(obj.at(&quot;hook&quot;).value); \</span></div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="preprocessor">           this-&gt;_registry.get().register_hook&lt;comp_type&gt;(hook_name, entity); \</span></div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="preprocessor">         } catch (...) { \</span></div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="preprocessor">         } \</span></div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="preprocessor">       } \</span></div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="preprocessor">     } catch (std::bad_variant_access const&amp;) { \</span></div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="preprocessor">       std::cout &lt;&lt; &quot;Error initializing component \&quot;&quot; &lt;&lt; #comp_name \</span></div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="preprocessor">                 &lt;&lt; &quot;\&quot;: only JsonObjects are supported\n&quot;; \</span></div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="preprocessor">       return; \</span></div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="preprocessor">     } \</span></div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="preprocessor">   }}</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &quot;<a class="code" href="EventManager_8hpp.html">ecs/EventManager.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &quot;<a class="code" href="Registry_8hpp.html">ecs/Registry.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &quot;<a class="code" href="IPlugin_8hpp.html">plugin/IPlugin.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
+<div class="foldopen" id="foldopen00014" data-start="" data-end="">
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno"><a class="line" href="APlugin_8hpp.html#a04f19a5414618f47890540ba624d5949">   14</a></span><span class="preprocessor">#define COMP_INIT(comp_name, comp_type, method_name) \</span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">  { \</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">    #comp_name, [this](size_t entity, const JsonVariant&amp; config) \</span></div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">    { \</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">      try { \</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="preprocessor">        JsonObject obj = std::get&lt;JsonObject&gt;(config); \</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">        this-&gt;method_name(entity, obj); \</span></div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="preprocessor">        if (obj.contains(&quot;hook&quot;)) { \</span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="preprocessor">          try { \</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="preprocessor">            std::string hook_name = \</span></div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="preprocessor">                std::get&lt;std::string&gt;(obj.at(&quot;hook&quot;).value); \</span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="preprocessor">            bool is_global = false; \</span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="preprocessor">            if (obj.contains(&quot;global_hook&quot;)) { \</span></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="preprocessor">              try { \</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="preprocessor">                is_global = std::get&lt;bool&gt;(obj.at(&quot;global_hook&quot;).value); \</span></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="preprocessor">              } catch (std::bad_variant_access const&amp;) { \</span></div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="preprocessor">                </span><span class="comment">/* global_hook value is not a bool, default to false */</span><span class="preprocessor"> \</span></div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="preprocessor">              } \</span></div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="preprocessor">            } \</span></div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span><span class="preprocessor">            if (is_global) { \</span></div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span><span class="preprocessor">              this-&gt;_registry.get().register_global_hook&lt;comp_type&gt;(hook_name, \</span></div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span><span class="preprocessor">                                                                    entity); \</span></div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="preprocessor">            } else { \</span></div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="preprocessor">              this-&gt;_registry.get().register_hook&lt;comp_type&gt;(hook_name, \</span></div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="preprocessor">                                                             entity); \</span></div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="preprocessor">            } \</span></div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="preprocessor">          } catch (std::bad_variant_access const&amp;) { \</span></div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="preprocessor">            </span><span class="comment">/* Hook value is not a string */</span><span class="preprocessor"> \</span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="preprocessor">          } catch (std::out_of_range const&amp;) { \</span></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="preprocessor">            </span><span class="comment">/* Hook key not found (shouldn&#39;t happen due to contains check) */</span><span class="preprocessor"> \</span></div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="preprocessor">          } \</span></div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span><span class="preprocessor">        } \</span></div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span><span class="preprocessor">      } catch (std::bad_variant_access const&amp;) { \</span></div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span><span class="preprocessor">        std::cout &lt;&lt; &quot;Error initializing component \&quot;&quot; &lt;&lt; #comp_name \</span></div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span><span class="preprocessor">                  &lt;&lt; &quot;\&quot;: only JsonObjects are supported\n&quot;; \</span></div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span><span class="preprocessor">        return; \</span></div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span><span class="preprocessor">      } \</span></div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><span class="preprocessor">    } \</span></div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="preprocessor">  }</span></div>
 </div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span> </div>
-<div class="foldopen" id="foldopen00035" data-start="" data-end="">
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno"><a class="line" href="APlugin_8hpp.html#a84485819a678fe68f3deddaf7cb19bb4">   35</a></span><span class="preprocessor">#define REGISTER_COMPONENT(comp) \</span></div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="preprocessor">    this-&gt;_registry.get().register_component&lt;comp&gt;(std::format(&quot;{}:{}&quot;, this-&gt;name, #comp));</span></div>
-</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
-<div class="foldopen" id="foldopen00038" data-start="" data-end="">
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="APlugin_8hpp.html#ad01721c36192ce20478e18ac80604d56">   38</a></span><span class="preprocessor">#define SUBSCRIBE_EVENT(event_name, function) \</span></div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="preprocessor">    this-&gt;_registry.get().on&lt;event_name&gt;(#event_name, [this]([[maybe_unused]] event_name const&amp; event) function);</span></div>
-</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
-<div class="foldopen" id="foldopen00041" data-start="{" data-end="};">
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno"><a class="line" href="classAPlugin.html">   41</a></span><span class="keyword">class </span><a class="code hl_class" href="classAPlugin.html">APlugin</a> : <span class="keyword">public</span> <a class="code hl_class" href="classIPlugin.html">IPlugin</a></div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>{</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>  <a class="code hl_class" href="classAPlugin.html">APlugin</a>(</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>      std::string <a class="code hl_variable" href="classAPlugin.html#aaa5dd664f5415a3c1e6e646f24f0b9b9">name</a>,</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>      <a class="code hl_class" href="classRegistry.html">Registry</a>&amp; registry,</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>      <a class="code hl_class" href="classEntityLoader.html">EntityLoader</a>&amp; loader,</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>      std::vector&lt;std::string&gt; <span class="keyword">const</span>&amp; depends_on,</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>      std::unordered_map&lt;</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>          std::string,</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>          std::function&lt;<span class="keywordtype">void</span>(<a class="code hl_typedef" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a>, JsonVariant <span class="keyword">const</span>&amp;)&gt;&gt; <a class="code hl_variable" href="classAPlugin.html#a7b6c1389e597e1161afc325c7102c0be">components</a>,</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>      std::optional&lt;JsonObject&gt; <span class="keyword">const</span>&amp; config = std::nullopt);</div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>  <span class="keywordtype">void</span> <a class="code hl_function" href="classAPlugin.html#a0dc03be300d00218d79e6e2b2d8b88f8">set_component</a>(<a class="code hl_typedef" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a> entity,</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>                     std::string <span class="keyword">const</span>&amp; key,</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>                     JsonVariant <span class="keyword">const</span>&amp; config) <span class="keyword">override</span>;</div>
+<div class="foldopen" id="foldopen00054" data-start="" data-end="">
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno"><a class="line" href="APlugin_8hpp.html#a84485819a678fe68f3deddaf7cb19bb4">   54</a></span><span class="preprocessor">#define REGISTER_COMPONENT(comp) \</span></div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span><span class="preprocessor">  this-&gt;_registry.get().register_component&lt;comp&gt;( \</span></div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="preprocessor">      std::format(&quot;{}:{}&quot;, this-&gt;name, #comp));</span></div>
+</div>
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span><span class="keyword">protected</span>:</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno"><a class="line" href="classAPlugin.html#aaa5dd664f5415a3c1e6e646f24f0b9b9">   59</a></span>  <span class="keyword">const</span> std::string <a class="code hl_variable" href="classAPlugin.html#aaa5dd664f5415a3c1e6e646f24f0b9b9">name</a>;</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>  <span class="keyword">const</span> std::unordered_map&lt;</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>      std::string,</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>      std::function&lt;void(<a class="code hl_typedef" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a>, JsonVariant <span class="keyword">const</span>&amp;)&gt;&gt;</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno"><a class="line" href="classAPlugin.html#a7b6c1389e597e1161afc325c7102c0be">   63</a></span>      <a class="code hl_variable" href="classAPlugin.html#a7b6c1389e597e1161afc325c7102c0be">components</a>;</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno"><a class="line" href="classAPlugin.html#af2e88a72f7518593dd05e57c2607de86">   64</a></span>  std::reference_wrapper&lt;Registry&gt; <a class="code hl_variable" href="classAPlugin.html#af2e88a72f7518593dd05e57c2607de86">_registry</a>;</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno"><a class="line" href="classAPlugin.html#a74554e7b223c691ea9a331e7e31b0a4d">   65</a></span>  std::reference_wrapper&lt;EntityLoader&gt; <a class="code hl_variable" href="classAPlugin.html#a74554e7b223c691ea9a331e7e31b0a4d">_loader</a>;</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno"><a class="line" href="classAPlugin.html#a9a329db7d6611f2c178d986a39c8c1a7">   66</a></span>  std::optional&lt;JsonObject&gt; <a class="code hl_variable" href="classAPlugin.html#a9a329db7d6611f2c178d986a39c8c1a7">_config</a>;</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>};</div>
+<div class="foldopen" id="foldopen00058" data-start="" data-end="">
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno"><a class="line" href="APlugin_8hpp.html#a32b95321e5a410f7714bee6092f4f7a7">   58</a></span><span class="preprocessor">#define SUBSCRIBE_EVENT_PRIORITY(event_name, function, priority) \</span></div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span><span class="preprocessor">  this-&gt;_event_manager.get().on&lt;event_name&gt;( \</span></div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span><span class="preprocessor">      #event_name, \</span></div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span><span class="preprocessor">      [this]([[maybe_unused]] event_name const&amp; event) -&gt; bool \</span></div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="preprocessor">      { function return false; }, \</span></div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="preprocessor">      priority);</span></div>
+</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
+<div class="foldopen" id="foldopen00065" data-start="" data-end="">
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno"><a class="line" href="APlugin_8hpp.html#ad01721c36192ce20478e18ac80604d56">   65</a></span><span class="preprocessor">#define SUBSCRIBE_EVENT(event_name, function) \</span></div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span><span class="preprocessor">  SUBSCRIBE_EVENT_PRIORITY(event_name, function, 1)</span></div>
+</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
+<div class="foldopen" id="foldopen00068" data-start="{" data-end="};">
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno"><a class="line" href="classAPlugin.html">   68</a></span><span class="keyword">class </span><a class="code hl_class" href="classAPlugin.html">APlugin</a> : <span class="keyword">public</span> <a class="code hl_class" href="classIPlugin.html">IPlugin</a></div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>{</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>  <a class="code hl_class" href="classAPlugin.html">APlugin</a>(</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>      std::string <a class="code hl_variable" href="classAPlugin.html#aaa5dd664f5415a3c1e6e646f24f0b9b9">name</a>,</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>      <a class="code hl_class" href="classRegistry.html">Registry</a>&amp; registry,</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>      <a class="code hl_class" href="classEventManager.html">EventManager</a>&amp; event_manager,</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>      <a class="code hl_class" href="classEntityLoader.html">EntityLoader</a>&amp; loader,</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>      std::vector&lt;std::string&gt; <span class="keyword">const</span>&amp; depends_on,</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>      std::unordered_map&lt;std::string,</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>                         std::function&lt;<span class="keywordtype">void</span>(<a class="code hl_typedef" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a>, JsonVariant <span class="keyword">const</span>&amp;)&gt;&gt;</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>          <a class="code hl_variable" href="classAPlugin.html#a903e38e8ed36daecdd29b6f8ad42422b">components</a>,</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>      std::optional&lt;JsonObject&gt; <span class="keyword">const</span>&amp; config = std::nullopt);</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span> </div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>  <span class="keywordtype">void</span> <a class="code hl_function" href="classAPlugin.html#af67e7791c26306a61fb7fcc76b93ffb2">set_component</a>(<a class="code hl_typedef" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> entity,</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>                     std::string <span class="keyword">const</span>&amp; key,</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>                     JsonVariant <span class="keyword">const</span>&amp; config) <span class="keyword">override</span>;</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span> </div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span><span class="keyword">protected</span>:</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno"><a class="line" href="classAPlugin.html#aaa5dd664f5415a3c1e6e646f24f0b9b9">   87</a></span>  <span class="keyword">const</span> std::string <a class="code hl_variable" href="classAPlugin.html#aaa5dd664f5415a3c1e6e646f24f0b9b9">name</a>;</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>  <span class="keyword">const</span> std::unordered_map&lt;std::string,</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>                           std::function&lt;void(<a class="code hl_typedef" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a>, JsonVariant <span class="keyword">const</span>&amp;)&gt;&gt;</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno"><a class="line" href="classAPlugin.html#a903e38e8ed36daecdd29b6f8ad42422b">   90</a></span>      <a class="code hl_variable" href="classAPlugin.html#a903e38e8ed36daecdd29b6f8ad42422b">components</a>;</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno"><a class="line" href="classAPlugin.html#af2e88a72f7518593dd05e57c2607de86">   91</a></span>  std::reference_wrapper&lt;Registry&gt; <a class="code hl_variable" href="classAPlugin.html#af2e88a72f7518593dd05e57c2607de86">_registry</a>;</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno"><a class="line" href="classAPlugin.html#aaa56faaee56a9ec9709a006dd7aebfa4">   92</a></span>  std::reference_wrapper&lt;EventManager&gt; <a class="code hl_variable" href="classAPlugin.html#aaa56faaee56a9ec9709a006dd7aebfa4">_event_manager</a>;</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno"><a class="line" href="classAPlugin.html#a74554e7b223c691ea9a331e7e31b0a4d">   93</a></span>  std::reference_wrapper&lt;EntityLoader&gt; <a class="code hl_variable" href="classAPlugin.html#a74554e7b223c691ea9a331e7e31b0a4d">_loader</a>;</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno"><a class="line" href="classAPlugin.html#a9a329db7d6611f2c178d986a39c8c1a7">   94</a></span>  std::optional&lt;JsonObject&gt; <a class="code hl_variable" href="classAPlugin.html#a9a329db7d6611f2c178d986a39c8c1a7">_config</a>;</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>};</div>
 </div>
 <div class="ttc" id="aEntityLoader_8hpp_html"><div class="ttname"><a href="EntityLoader_8hpp.html">EntityLoader.hpp</a></div></div>
+<div class="ttc" id="aEventManager_8hpp_html"><div class="ttname"><a href="EventManager_8hpp.html">EventManager.hpp</a></div></div>
 <div class="ttc" id="aIPlugin_8hpp_html"><div class="ttname"><a href="IPlugin_8hpp.html">IPlugin.hpp</a></div></div>
 <div class="ttc" id="aRegistry_8hpp_html"><div class="ttname"><a href="Registry_8hpp.html">Registry.hpp</a></div><div class="ttdoc">Central hub of the ECS architecture managing entities, components, systems, and events.</div></div>
-<div class="ttc" id="aclassAPlugin_html"><div class="ttname"><a href="classAPlugin.html">APlugin</a></div><div class="ttdef"><b>Definition</b> APlugin.hpp:42</div></div>
-<div class="ttc" id="aclassAPlugin_html_a0dc03be300d00218d79e6e2b2d8b88f8"><div class="ttname"><a href="classAPlugin.html#a0dc03be300d00218d79e6e2b2d8b88f8">APlugin::set_component</a></div><div class="ttdeci">void set_component(Registry::Entity entity, std::string const &amp;key, JsonVariant const &amp;config) override</div><div class="ttdef"><b>Definition</b> APlugin.cpp:28</div></div>
-<div class="ttc" id="aclassAPlugin_html_a74554e7b223c691ea9a331e7e31b0a4d"><div class="ttname"><a href="classAPlugin.html#a74554e7b223c691ea9a331e7e31b0a4d">APlugin::_loader</a></div><div class="ttdeci">std::reference_wrapper&lt; EntityLoader &gt; _loader</div><div class="ttdef"><b>Definition</b> APlugin.hpp:65</div></div>
-<div class="ttc" id="aclassAPlugin_html_a7b6c1389e597e1161afc325c7102c0be"><div class="ttname"><a href="classAPlugin.html#a7b6c1389e597e1161afc325c7102c0be">APlugin::components</a></div><div class="ttdeci">const std::unordered_map&lt; std::string, std::function&lt; void(Registry::Entity, JsonVariant const  &amp;)&gt; &gt; components</div><div class="ttdef"><b>Definition</b> APlugin.hpp:63</div></div>
-<div class="ttc" id="aclassAPlugin_html_a9a329db7d6611f2c178d986a39c8c1a7"><div class="ttname"><a href="classAPlugin.html#a9a329db7d6611f2c178d986a39c8c1a7">APlugin::_config</a></div><div class="ttdeci">std::optional&lt; JsonObject &gt; _config</div><div class="ttdef"><b>Definition</b> APlugin.hpp:66</div></div>
-<div class="ttc" id="aclassAPlugin_html_aaa5dd664f5415a3c1e6e646f24f0b9b9"><div class="ttname"><a href="classAPlugin.html#aaa5dd664f5415a3c1e6e646f24f0b9b9">APlugin::name</a></div><div class="ttdeci">const std::string name</div><div class="ttdef"><b>Definition</b> APlugin.hpp:59</div></div>
-<div class="ttc" id="aclassAPlugin_html_af2e88a72f7518593dd05e57c2607de86"><div class="ttname"><a href="classAPlugin.html#af2e88a72f7518593dd05e57c2607de86">APlugin::_registry</a></div><div class="ttdeci">std::reference_wrapper&lt; Registry &gt; _registry</div><div class="ttdef"><b>Definition</b> APlugin.hpp:64</div></div>
-<div class="ttc" id="aclassEntityLoader_html"><div class="ttname"><a href="classEntityLoader.html">EntityLoader</a></div><div class="ttdef"><b>Definition</b> EntityLoader.hpp:17</div></div>
-<div class="ttc" id="aclassIPlugin_html"><div class="ttname"><a href="classIPlugin.html">IPlugin</a></div><div class="ttdef"><b>Definition</b> IPlugin.hpp:9</div></div>
-<div class="ttc" id="aclassRegistry_html"><div class="ttname"><a href="classRegistry.html">Registry</a></div><div class="ttdoc">The Registry class is the core of the ECS (Entity-Component-System) architecture.</div><div class="ttdef"><b>Definition</b> Registry.hpp:348</div></div>
-<div class="ttc" id="aclassRegistry_html_a0f7878e7be2d225f4f7ca38b85911110"><div class="ttname"><a href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a></div><div class="ttdeci">std::size_t Entity</div><div class="ttdoc">Type alias for an entity identifier.</div><div class="ttdef"><b>Definition</b> Registry.hpp:356</div></div>
+<div class="ttc" id="aclassAPlugin_html"><div class="ttname"><a href="classAPlugin.html">APlugin</a></div><div class="ttdef"><b>Definition</b> APlugin.hpp:69</div></div>
+<div class="ttc" id="aclassAPlugin_html_a74554e7b223c691ea9a331e7e31b0a4d"><div class="ttname"><a href="classAPlugin.html#a74554e7b223c691ea9a331e7e31b0a4d">APlugin::_loader</a></div><div class="ttdeci">std::reference_wrapper&lt; EntityLoader &gt; _loader</div><div class="ttdef"><b>Definition</b> APlugin.hpp:93</div></div>
+<div class="ttc" id="aclassAPlugin_html_a903e38e8ed36daecdd29b6f8ad42422b"><div class="ttname"><a href="classAPlugin.html#a903e38e8ed36daecdd29b6f8ad42422b">APlugin::components</a></div><div class="ttdeci">const std::unordered_map&lt; std::string, std::function&lt; void(Ecs::Entity, JsonVariant const  &amp;)&gt; &gt; components</div><div class="ttdef"><b>Definition</b> APlugin.hpp:90</div></div>
+<div class="ttc" id="aclassAPlugin_html_a9a329db7d6611f2c178d986a39c8c1a7"><div class="ttname"><a href="classAPlugin.html#a9a329db7d6611f2c178d986a39c8c1a7">APlugin::_config</a></div><div class="ttdeci">std::optional&lt; JsonObject &gt; _config</div><div class="ttdef"><b>Definition</b> APlugin.hpp:94</div></div>
+<div class="ttc" id="aclassAPlugin_html_aaa56faaee56a9ec9709a006dd7aebfa4"><div class="ttname"><a href="classAPlugin.html#aaa56faaee56a9ec9709a006dd7aebfa4">APlugin::_event_manager</a></div><div class="ttdeci">std::reference_wrapper&lt; EventManager &gt; _event_manager</div><div class="ttdef"><b>Definition</b> APlugin.hpp:92</div></div>
+<div class="ttc" id="aclassAPlugin_html_aaa5dd664f5415a3c1e6e646f24f0b9b9"><div class="ttname"><a href="classAPlugin.html#aaa5dd664f5415a3c1e6e646f24f0b9b9">APlugin::name</a></div><div class="ttdeci">const std::string name</div><div class="ttdef"><b>Definition</b> APlugin.hpp:87</div></div>
+<div class="ttc" id="aclassAPlugin_html_af2e88a72f7518593dd05e57c2607de86"><div class="ttname"><a href="classAPlugin.html#af2e88a72f7518593dd05e57c2607de86">APlugin::_registry</a></div><div class="ttdeci">std::reference_wrapper&lt; Registry &gt; _registry</div><div class="ttdef"><b>Definition</b> APlugin.hpp:91</div></div>
+<div class="ttc" id="aclassAPlugin_html_af67e7791c26306a61fb7fcc76b93ffb2"><div class="ttname"><a href="classAPlugin.html#af67e7791c26306a61fb7fcc76b93ffb2">APlugin::set_component</a></div><div class="ttdeci">void set_component(Ecs::Entity entity, std::string const &amp;key, JsonVariant const &amp;config) override</div><div class="ttdef"><b>Definition</b> APlugin.cpp:30</div></div>
+<div class="ttc" id="aclassEntityLoader_html"><div class="ttname"><a href="classEntityLoader.html">EntityLoader</a></div><div class="ttdef"><b>Definition</b> EntityLoader.hpp:20</div></div>
+<div class="ttc" id="aclassEventManager_html"><div class="ttname"><a href="classEventManager.html">EventManager</a></div><div class="ttdef"><b>Definition</b> EventManager.hpp:62</div></div>
+<div class="ttc" id="aclassIPlugin_html"><div class="ttname"><a href="classIPlugin.html">IPlugin</a></div><div class="ttdef"><b>Definition</b> IPlugin.hpp:15</div></div>
+<div class="ttc" id="aclassRegistry_html"><div class="ttname"><a href="classRegistry.html">Registry</a></div><div class="ttdoc">The Registry class is the core of the ECS (Entity-Component-System) architecture.</div><div class="ttdef"><b>Definition</b> Registry.hpp:308</div></div>
+<div class="ttc" id="anamespaceEcs_html_a17fcea5750c1db2eea6f26c520f9235b"><div class="ttname"><a href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a></div><div class="ttdeci">std::size_t Entity</div><div class="ttdef"><b>Definition</b> Entity.hpp:7</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

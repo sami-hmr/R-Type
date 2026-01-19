@@ -86,11 +86,11 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span> </div>
 <div class="foldopen" id="foldopen00153" data-start="" data-end="">
 <div class="line"><a id="l00153" name="l00153"></a><span class="lineno"><a class="line" href="HookMacros_8hpp.html#a8bbce773ce13c61b2cb949332d6d2ec4">  153</a></span><span class="preprocessor">#define HOOK_CUSTOM(key, var) \</span></div>
-<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span><span class="preprocessor">  {#key, \</span></div>
-<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span><span class="preprocessor">   [](Component&amp; self) -&gt; std::any \</span></div>
-<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span><span class="preprocessor">   { return std::reference_wrapper(self.var); }}</span></div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span><span class="preprocessor">  { \</span></div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span><span class="preprocessor">    #key, [](Component&amp; self) -&gt; std::any \</span></div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span><span class="preprocessor">    { return std::reference_wrapper(self.var); } \</span></div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span><span class="preprocessor">  }</span></div>
 </div>
-<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span> </div>
 <div class="line"><a id="l00179" name="l00179"></a><span class="lineno"><a class="line" href="HookMacros_8hpp.html#a64db554aa76425e63b60d0fd6ccb1e26">  179</a></span><span class="preprocessor">#define HOOK(var) HOOK_CUSTOM(var, var)</span></div>
 <div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span> </div>
 <div class="foldopen" id="foldopen00233" data-start="" data-end="">

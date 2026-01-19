@@ -71,12 +71,13 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="classContinuousFirePattern-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">ContinuousFirePattern Class Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p><code>#include &lt;<a class="el" href="AttackPatterns_8hpp_source.html">AttackPatterns.hpp</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="ContinuousFirePattern_8hpp_source.html">ContinuousFirePattern.hpp</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for ContinuousFirePattern:</div>
 <div class="dyncontent">
@@ -90,15 +91,20 @@ Collaboration diagram for ContinuousFirePattern:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ae3416a1f6ae8d5ab2cf1bf90afd29ac5" id="r_ae3416a1f6ae8d5ab2cf1bf90afd29ac5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classContinuousFirePattern.html#ae3416a1f6ae8d5ab2cf1bf90afd29ac5">execute</a> (<a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a> entity, <a class="el" href="classRegistry.html">Registry</a> &amp;registry, <a class="el" href="structAttackBehavior.html">AttackBehavior</a> &amp;behavior, <a class="el" href="structPosition.html">Position</a> &amp;pos, <a class="el" href="structVelocity.html">Velocity</a> &amp;vel, double dt) override</td></tr>
-<tr class="separator:ae3416a1f6ae8d5ab2cf1bf90afd29ac5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a441700fdcc9fe524700b71bb7f09d558" id="r_a441700fdcc9fe524700b71bb7f09d558"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classContinuousFirePattern.html#a441700fdcc9fe524700b71bb7f09d558">execute</a> (<a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> entity, <a class="el" href="classRegistry.html">Registry</a> &amp;registry, <a class="el" href="classEventManager.html">EventManager</a> &amp;em, <a class="el" href="structAttackBehavior.html">AttackBehavior</a> &amp;behavior, <a class="el" href="structPosition.html">Position</a> &amp;, <a class="el" href="structDirection.html">Direction</a> &amp;, <a class="el" href="structSpeed.html">Speed</a> &amp;, double dt) override</td></tr>
+<tr class="separator:a441700fdcc9fe524700b71bb7f09d558"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classAttackPattern"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classAttackPattern')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classAttackPattern.html">AttackPattern</a></td></tr>
 <tr class="memitem:aa16f255bc1aa7e248f2adc45b0200133 inherit pub_methods_classAttackPattern" id="r_aa16f255bc1aa7e248f2adc45b0200133"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAttackPattern.html#aa16f255bc1aa7e248f2adc45b0200133">~AttackPattern</a> ()=default</td></tr>
 <tr class="separator:aa16f255bc1aa7e248f2adc45b0200133 inherit pub_methods_classAttackPattern"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:a46f4dafadbb20595fc4b543d9c93a948" id="r_a46f4dafadbb20595fc4b543d9c93a948"><td class="memItemLeft" align="right" valign="top">static constexpr double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classContinuousFirePattern.html#a46f4dafadbb20595fc4b543d9c93a948">DEFAULT_INTERVAL</a> = 2.0</td></tr>
+<tr class="separator:a46f4dafadbb20595fc4b543d9c93a948"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ae3416a1f6ae8d5ab2cf1bf90afd29ac5" name="ae3416a1f6ae8d5ab2cf1bf90afd29ac5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae3416a1f6ae8d5ab2cf1bf90afd29ac5">&#9670;&#160;</a></span>execute()</h2>
+<a id="a441700fdcc9fe524700b71bb7f09d558" name="a441700fdcc9fe524700b71bb7f09d558"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a441700fdcc9fe524700b71bb7f09d558">&#9670;&#160;</a></span>execute()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -109,7 +115,7 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">void ContinuousFirePattern::execute </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a>&#160;</td>
           <td class="paramname"><em>entity</em>, </td>
         </tr>
         <tr>
@@ -121,6 +127,12 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="classEventManager.html">EventManager</a> &amp;&#160;</td>
+          <td class="paramname"><em>em</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype"><a class="el" href="structAttackBehavior.html">AttackBehavior</a> &amp;&#160;</td>
           <td class="paramname"><em>behavior</em>, </td>
         </tr>
@@ -128,13 +140,19 @@ Public Member Functions</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="structPosition.html">Position</a> &amp;&#160;</td>
-          <td class="paramname"><em>pos</em>, </td>
+          <td class="paramname">, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structVelocity.html">Velocity</a> &amp;&#160;</td>
-          <td class="paramname"><em>vel</em>, </td>
+          <td class="paramtype"><a class="el" href="structDirection.html">Direction</a> &amp;&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structSpeed.html">Speed</a> &amp;&#160;</td>
+          <td class="paramname">, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -155,12 +173,35 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="classAttackPattern.html#aa5337357c19722db0f016c070b194c94">AttackPattern</a>.</p>
+<p>Implements <a class="el" href="classAttackPattern.html#a260de3e418a193f62e11bab288497f47">AttackPattern</a>.</p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="a46f4dafadbb20595fc4b543d9c93a948" name="a46f4dafadbb20595fc4b543d9c93a948"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a46f4dafadbb20595fc4b543d9c93a948">&#9670;&#160;</a></span>DEFAULT_INTERVAL</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr double ContinuousFirePattern::DEFAULT_INTERVAL = 2.0</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>plugins/ai/include/attack/<a class="el" href="AttackPatterns_8hpp_source.html">AttackPatterns.hpp</a></li>
+<li>plugins/ai/include/attack/<a class="el" href="ContinuousFirePattern_8hpp_source.html">ContinuousFirePattern.hpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

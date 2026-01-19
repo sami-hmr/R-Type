@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>r-type: plugins/client_network/include/Client.hpp File Reference</title>
+<title>r-type: include/network/client/Client.hpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -69,7 +69,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_38c8d24aef3972a7f87b834274e76e31.html">plugins</a></li><li class="navelem"><a class="el" href="dir_250c9f82d1a3cad353da8914ba8560bd.html">client_network</a></li><li class="navelem"><a class="el" href="dir_9e78d523b0befbe12dba6c49f19337b7.html">include</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_dafb25a37831a87d2e2e8b780f24e872.html">network</a></li><li class="navelem"><a class="el" href="dir_d46005d8d76287db4e045fe36322aaf6.html">client</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -81,19 +81,20 @@ $(function() {
 <div class="textblock"><code>#include &lt;atomic&gt;</code><br />
 <code>#include &lt;cstdint&gt;</code><br />
 <code>#include &lt;functional&gt;</code><br />
-<code>#include &lt;queue&gt;</code><br />
-<code>#include &lt;semaphore&gt;</code><br />
+<code>#include &lt;mutex&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
 <code>#include &lt;thread&gt;</code><br />
 <code>#include &lt;unordered_map&gt;</code><br />
+<code>#include &lt;vector&gt;</code><br />
 <code>#include &lt;asio/io_context.hpp&gt;</code><br />
 <code>#include &lt;asio/ip/udp.hpp&gt;</code><br />
 <code>#include &quot;<a class="el" href="ClientConnection_8hpp_source.html">ClientConnection.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="NetworkCommun_8hpp_source.html">NetworkCommun.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="NetworkShared_8hpp_source.html">NetworkShared.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="ServerCommands_8hpp_source.html">ServerCommands.hpp</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="ServerLaunch_8hpp_source.html">ServerLaunch.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="AcknowledgeManager_8hpp_source.html">network/AcknowledgeManager.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Byte_8hpp_source.html">plugin/Byte.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="NetworkEvents_8hpp_source.html">plugin/events/NetworkEvents.hpp</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for Client.hpp:</div>
 <div class="dyncontent">

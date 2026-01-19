@@ -75,6 +75,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#enum-members">Enumerations</a>  </div>
   <div class="headertitle"><div class="title">IoEvents.hpp File Reference</div></div>
 </div><!--header-->
@@ -91,6 +92,7 @@ $(function() {
 <code>#include &quot;Json/JsonParser.hpp&quot;</code><br />
 <code>#include &quot;ParserUtils.hpp&quot;</code><br />
 <code>#include &quot;<a class="el" href="TwoWayMap_8hpp_source.html">TwoWayMap.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="Entity_8hpp_source.html">ecs/Entity.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Registry_8hpp_source.html">ecs/Registry.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Vector2D_8hpp_source.html">libs/Vector2D.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Byte_8hpp_source.html">plugin/Byte.hpp</a>&quot;</code><br />
@@ -119,6 +121,13 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structMousePressedEvent.html">MousePressedEvent</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structMouseReleasedEvent.html">MouseReleasedEvent</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structInputFocusEvent.html">InputFocusEvent</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespaceGamePad" id="r_namespaceGamePad"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceGamePad.html">GamePad</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
@@ -188,6 +197,26 @@ Enumerations</h2></td></tr>
 <br />
  }</td></tr>
 <tr class="separator:a9479d299e1852e6140dcca1f405868ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7e643f4c23eaac4c86cc705ccd4d60ef" id="r_a7e643f4c23eaac4c86cc705ccd4d60ef"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespaceGamePad.html#a7e643f4c23eaac4c86cc705ccd4d60ef">GamePad::Keys</a> : int { <br />
+&#160;&#160;<a class="el" href="namespaceGamePad.html#a7e643f4c23eaac4c86cc705ccd4d60efa97d1e530523e04e0e5a18684768b2144">GamePad::Unknown</a> = -1
+, <a class="el" href="namespaceGamePad.html#a7e643f4c23eaac4c86cc705ccd4d60efac9c4a89bc81ccb099c1fa5a92c8db817">GamePad::LeftJoyStick</a>
+, <a class="el" href="namespaceGamePad.html#a7e643f4c23eaac4c86cc705ccd4d60efa5b57d3cc0770dac29203ebaca6d9ec13">GamePad::RightJoyStick</a>
+, <a class="el" href="namespaceGamePad.html#a7e643f4c23eaac4c86cc705ccd4d60efa730f8429e8c8499d44af9b3dbf74752e">GamePad::A</a>
+, <br />
+&#160;&#160;<a class="el" href="namespaceGamePad.html#a7e643f4c23eaac4c86cc705ccd4d60efa544a9fabdb5ddd31d0ef567e699a9115">GamePad::B</a>
+, <a class="el" href="namespaceGamePad.html#a7e643f4c23eaac4c86cc705ccd4d60efab0a139f542110f2eba895bef680aca7f">GamePad::X</a>
+, <a class="el" href="namespaceGamePad.html#a7e643f4c23eaac4c86cc705ccd4d60efa9977ec6623ca91491b7b20ae9a9c1d99">GamePad::Y</a>
+, <a class="el" href="namespaceGamePad.html#a7e643f4c23eaac4c86cc705ccd4d60efaf27c61da9513bdeb59169d4b2a1a7c78">GamePad::LB</a>
+, <br />
+&#160;&#160;<a class="el" href="namespaceGamePad.html#a7e643f4c23eaac4c86cc705ccd4d60efad746c6c46517db75a3e608a5a6bd153b">GamePad::RB</a>
+, <a class="el" href="namespaceGamePad.html#a7e643f4c23eaac4c86cc705ccd4d60efa305801ac763e40c27fa71c2984771128">GamePad::Back</a>
+, <a class="el" href="namespaceGamePad.html#a7e643f4c23eaac4c86cc705ccd4d60efaa2a2a12f36ffc1cef6eb0c0ca6114924">GamePad::Start</a>
+, <a class="el" href="namespaceGamePad.html#a7e643f4c23eaac4c86cc705ccd4d60efaf7b8507df445f005bf13fd88c65e5bd0">GamePad::LeftJoyPress</a>
+, <br />
+&#160;&#160;<a class="el" href="namespaceGamePad.html#a7e643f4c23eaac4c86cc705ccd4d60efaa518b30a792ec234b80d4a5f10977713">GamePad::RightJoyPress</a>
+<br />
+ }</td></tr>
+<tr class="separator:a7e643f4c23eaac4c86cc705ccd4d60ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af5fb1c855e4857f45b94220718c66b63" id="r_af5fb1c855e4857f45b94220718c66b63"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="IoEvents_8hpp.html#af5fb1c855e4857f45b94220718c66b63">MouseButton</a> : uint8_t { <a class="el" href="IoEvents_8hpp.html#af5fb1c855e4857f45b94220718c66b63a24ce05a962bc369778a1d0afbf94f987">MOUSELEFT</a> = 0
 , <a class="el" href="IoEvents_8hpp.html#af5fb1c855e4857f45b94220718c66b63a067d444a6448c51c9df7f5e0f1bc3b6c">MOUSERIGHT</a>
 , <a class="el" href="IoEvents_8hpp.html#af5fb1c855e4857f45b94220718c66b63a489ba90aeba7bdae750f3077318df7e6">MOUSEMIDDLE</a>

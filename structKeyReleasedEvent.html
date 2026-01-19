@@ -85,8 +85,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a41f538332576546fd46fc92adbac53fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2b3997f7b030197a462a0434747b66db" id="r_a2b3997f7b030197a462a0434747b66db"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKeyReleasedEvent.html#a2b3997f7b030197a462a0434747b66db">KeyReleasedEvent</a> (std::unordered_map&lt; <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868ab">Key</a>, <a class="el" href="structKeyReleasedEvent.html#ac6a67cf9aef2daa3fecc90237e6845d8">bool</a> &gt; kr, std::optional&lt; std::string &gt; ku)</td></tr>
 <tr class="separator:a2b3997f7b030197a462a0434747b66db"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abe5e788db24783ee39bc6b3ce9545987" id="r_abe5e788db24783ee39bc6b3ce9545987"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKeyReleasedEvent.html#abe5e788db24783ee39bc6b3ce9545987">KeyReleasedEvent</a> (<a class="el" href="classRegistry.html">Registry</a> &amp;r, JsonObject const &amp;e)</td></tr>
-<tr class="separator:abe5e788db24783ee39bc6b3ce9545987"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c5289ce86317d84bb12f31b8e55cd4c" id="r_a6c5289ce86317d84bb12f31b8e55cd4c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKeyReleasedEvent.html#a6c5289ce86317d84bb12f31b8e55cd4c">KeyReleasedEvent</a> (<a class="el" href="classRegistry.html">Registry</a> &amp;r, JsonObject const &amp;e, std::optional&lt; <a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> &gt; entity)</td></tr>
+<tr class="separator:a6c5289ce86317d84bb12f31b8e55cd4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afeca07cbcba2c9109680c7b7c32a4f61" id="r_afeca07cbcba2c9109680c7b7c32a4f61"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKeyReleasedEvent.html#afeca07cbcba2c9109680c7b7c32a4f61">DEFAULT_BYTE_CONSTRUCTOR</a> (<a class="el" href="structKeyReleasedEvent.html">KeyReleasedEvent</a>,([](std::unordered_map&lt; <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868ab">Key</a>, <a class="el" href="structKeyReleasedEvent.html#ac6a67cf9aef2daa3fecc90237e6845d8">bool</a> &gt; const &amp;kp, std::optional&lt; std::string &gt; const &amp;ku) { return <a class="el" href="structKeyReleasedEvent.html">KeyReleasedEvent</a>(kp, ku);}), parseByteMap&lt; <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868ab">Key</a>, <a class="el" href="structKeyReleasedEvent.html#ac6a67cf9aef2daa3fecc90237e6845d8">bool</a> &gt;(parseByte&lt; <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868ab">Key</a> &gt;(), parseByte&lt; <a class="el" href="structKeyReleasedEvent.html#ac6a67cf9aef2daa3fecc90237e6845d8">bool</a> &gt;()), parseByteOptional(parseByteString())) <a class="el" href="Byte_8hpp.html#ac2fb474e60f46281e11bf3824e6f4517">DEFAULT_SERIALIZE</a>(<a class="el" href="Byte_8hpp.html#a75ce52fe3b86e913acb413babb53cf14">map_to_byte</a>&lt; <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868ab">Key</a></td></tr>
 <tr class="separator:afeca07cbcba2c9109680c7b7c32a4f61"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac6a67cf9aef2daa3fecc90237e6845d8" id="r_ac6a67cf9aef2daa3fecc90237e6845d8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKeyReleasedEvent.html#ac6a67cf9aef2daa3fecc90237e6845d8">bool</a> (this-&gt;<a class="el" href="structKeyReleasedEvent.html#a7ca7e03647a57deba2de77d52bcd1c0f">key_released</a>, std::function&lt; <a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a>(<a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868ab">Key</a>)&gt;([](<a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868ab">Key</a> k) { return <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(k);}), std::function&lt; <a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a>(bool)&gt;([](bool b) { return <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(b);}))</td></tr>
@@ -161,8 +161,8 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="abe5e788db24783ee39bc6b3ce9545987" name="abe5e788db24783ee39bc6b3ce9545987"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abe5e788db24783ee39bc6b3ce9545987">&#9670;&#160;</a></span>KeyReleasedEvent() <span class="overload">[3/3]</span></h2>
+<a id="a6c5289ce86317d84bb12f31b8e55cd4c" name="a6c5289ce86317d84bb12f31b8e55cd4c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6c5289ce86317d84bb12f31b8e55cd4c">&#9670;&#160;</a></span>KeyReleasedEvent() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -180,7 +180,13 @@ Public Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">JsonObject const &amp;&#160;</td>
-          <td class="paramname"><em>e</em>&#160;</td>
+          <td class="paramname"><em>e</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::optional&lt; <a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> &gt;&#160;</td>
+          <td class="paramname"><em>entity</em>&#160;</td>
         </tr>
         <tr>
           <td></td>

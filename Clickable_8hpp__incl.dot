@@ -36,11 +36,19 @@ digraph "include/plugin/components/Clickable.hpp"
   Node14 [id="Node000014",label="CustomException.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$CustomException_8hpp.html",tooltip=" "];
   Node14 -> Node15 [id="edge16_Node000014_Node000015",color="steelblue1",style="solid",tooltip=" "];
   Node15 [id="Node000015",label="exception",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
-  Node14 -> Node2 [id="edge17_Node000014_Node000002",color="steelblue1",style="solid",tooltip=" "];
-  Node14 -> Node3 [id="edge18_Node000014_Node000003",color="steelblue1",style="solid",tooltip=" "];
-  Node7 -> Node6 [id="edge19_Node000007_Node000006",color="steelblue1",style="solid",tooltip=" "];
-  Node1 -> Node16 [id="edge20_Node000001_Node000016",color="steelblue1",style="solid",tooltip=" "];
-  Node16 [id="Node000016",label="plugin/HookMacros.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$HookMacros_8hpp.html",tooltip="Hook registration macros for component introspection."];
-  Node1 -> Node17 [id="edge21_Node000001_Node000017",color="steelblue1",style="solid",tooltip=" "];
-  Node17 [id="Node000017",label="plugin/events/EventMacros.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$EventMacros_8hpp.html",tooltip=" "];
+  Node14 -> Node16 [id="edge17_Node000014_Node000016",color="steelblue1",style="solid",tooltip=" "];
+  Node16 [id="Node000016",label="format",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node14 -> Node17 [id="edge18_Node000014_Node000017",color="steelblue1",style="solid",tooltip=" "];
+  Node17 [id="Node000017",label="optional",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node14 -> Node18 [id="edge19_Node000014_Node000018",color="steelblue1",style="solid",tooltip=" "];
+  Node18 [id="Node000018",label="sstream",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node14 -> Node2 [id="edge20_Node000014_Node000002",color="steelblue1",style="solid",tooltip=" "];
+  Node14 -> Node19 [id="edge21_Node000014_Node000019",color="steelblue1",style="solid",tooltip=" "];
+  Node19 [id="Node000019",label="unordered_map",height=0.2,width=0.4,color="grey60", fillcolor="#E0E0E0", style="filled",tooltip=" "];
+  Node14 -> Node3 [id="edge22_Node000014_Node000003",color="steelblue1",style="solid",tooltip=" "];
+  Node7 -> Node6 [id="edge23_Node000007_Node000006",color="steelblue1",style="solid",tooltip=" "];
+  Node1 -> Node20 [id="edge24_Node000001_Node000020",color="steelblue1",style="solid",tooltip=" "];
+  Node20 [id="Node000020",label="plugin/HookMacros.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$HookMacros_8hpp.html",tooltip="Hook registration macros for component introspection."];
+  Node1 -> Node21 [id="edge25_Node000001_Node000021",color="steelblue1",style="solid",tooltip=" "];
+  Node21 [id="Node000021",label="plugin/events/EventMacros.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$EventMacros_8hpp.html",tooltip=" "];
 }

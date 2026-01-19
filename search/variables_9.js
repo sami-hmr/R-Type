@@ -1,7 +1,22 @@
 var searchData=
 [
-  ['id_0',['id',['../structComponentState.html#a994fa4db9043fd49c780e12f098af193',1,'ComponentState::id'],['../structComponentBuilder.html#a034997db8fb46b5aac81aadc81bae0d0',1,'ComponentBuilder::id'],['../structFragmentedPackage.html#aaa470dfbd14bb7dc8a006bf2e39f4df9',1,'FragmentedPackage::id']]],
-  ['initial_5fframe_5fpos_1',['initial_frame_pos',['../structAnimationData.html#a5e177aae357de1f87c60b8d5f1030e99',1,'AnimationData']]],
-  ['is_5factive_2',['is_active',['../structCollidable.html#a746f1e7212f9b43ca4bd592991150f1d',1,'Collidable']]],
-  ['is_5fin_5fjson_5fvariant_5fv_3',['is_in_json_variant_v',['../Hooks_8hpp.html#aba47387628b78f33fcb6471473b636d2',1,'Hooks.hpp']]]
+  ['id_0',['id',['../structBaseClient_1_1AvailableServer.html#a231bbcb3182e60ed84cd672c02bc251f',1,'BaseClient::AvailableServer::id'],['../structComponentBuilder.html#a034997db8fb46b5aac81aadc81bae0d0',1,'ComponentBuilder::id'],['../structFragmentedPackage.html#aaa470dfbd14bb7dc8a006bf2e39f4df9',1,'FragmentedPackage::id'],['../structWaveTag.html#a7a1621af8dc4f890a9386535b4ab5bf6',1,'WaveTag::id'],['../structComponentState.html#a994fa4db9043fd49c780e12f098af193',1,'ComponentState::id']]],
+  ['identifier_1',['identifier',['../structRegister.html#af5a2b1183ba5a911c8d0830013e147ac',1,'Register::identifier'],['../structLogin.html#a4a6ed40ef2abde5d211f39ca1ae708cf',1,'Login::identifier']]],
+  ['idle_5finterval_5fsec_5f_2',['idle_interval_sec_',['../classhttplib_1_1Server.html#a5a100e3e30db5c877c093c035b434a0e',1,'httplib::Server']]],
+  ['idle_5finterval_5fusec_5f_3',['idle_interval_usec_',['../classhttplib_1_1Server.html#a29c76072511d044af75f81140e7ae34e',1,'httplib::Server']]],
+  ['in_5fzone_4',['in_zone',['../structInteractionBorders.html#ae08f0afa369bec501357de2ab74325e3',1,'InteractionBorders']]],
+  ['inherit_5',['inherit',['../structWave.html#a043c984338f3418aefef1e7f3d83365e',1,'Wave']]],
+  ['initial_5fframe_5fpos_6',['initial_frame_pos',['../structAnimationData.html#a5e177aae357de1f87c60b8d5f1030e99',1,'AnimationData']]],
+  ['interface_5f_7',['interface_',['../classhttplib_1_1ClientImpl.html#a8e8b99a68512b46c46aa99307f8978d7',1,'httplib::ClientImpl']]],
+  ['inventory_8',['inventory',['../structInventory.html#a2ea0f8efe84bd045bca72301126de159',1,'Inventory']]],
+  ['ipv6_5fv6only_5f_9',['ipv6_v6only_',['../classhttplib_1_1ClientImpl.html#aa3e79070655286a96c2e094c4b3bb652',1,'httplib::ClientImpl']]],
+  ['is_5factive_10',['is_active',['../structCollidable.html#a746f1e7212f9b43ca4bd592991150f1d',1,'Collidable']]],
+  ['is_5fbase_5fscene_5fmain_11',['is_base_scene_main',['../structGenerateRebindingScene.html#ab850f3de5f01ec4ba50597d81b4a190d',1,'GenerateRebindingScene']]],
+  ['is_5fcharging_12',['is_charging',['../structChargeWeapon.html#af5e89180f71bc51169a2d5b35c57b7dd',1,'ChargeWeapon']]],
+  ['is_5fchunked_5fcontent_5fprovider_5f_13',['is_chunked_content_provider_',['../structhttplib_1_1Request.html#ac8229da221a0786bdb6c1ad10d126e84',1,'httplib::Request::is_chunked_content_provider_'],['../structhttplib_1_1Response.html#a1061c4c1c6848c58cc3d66c0f595760d',1,'httplib::Response::is_chunked_content_provider_']]],
+  ['is_5fconnection_5fclosed_14',['is_connection_closed',['../structhttplib_1_1Request.html#acb1c088454bc7dc2256badfa90937092',1,'httplib::Request']]],
+  ['is_5fin_5fjson_5fvariant_5fv_15',['is_in_json_variant_v',['../Hooks_8hpp.html#aba47387628b78f33fcb6471473b636d2',1,'Hooks.hpp']]],
+  ['is_5fwritable_16',['is_writable',['../classhttplib_1_1DataSink.html#ac5459d89772abb4593d3f5af52319704',1,'httplib::DataSink']]],
+  ['item_17',['item',['../structInventory_1_1ItemSlot.html#a7a68040748188f5532ba91997e0eb917',1,'Inventory::ItemSlot::item'],['../structPickable.html#a9a7c450f060d8077be03d9ae3cac44fe',1,'Pickable::item']]],
+  ['item_5fname_18',['item_name',['../structInventory_1_1ItemSlot.html#a558f0b0df607d8fa65cc19225450bc9f',1,'Inventory::ItemSlot']]]
 ];

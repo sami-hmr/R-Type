@@ -147,7 +147,7 @@ Automatic Satisfaction</h2>
 <div class="ttc" id="aHookMacros_8hpp_html"><div class="ttname"><a href="HookMacros_8hpp.html">HookMacros.hpp</a></div><div class="ttdoc">Hook registration macros for component introspection.</div></div>
 <div class="ttc" id="aHookMacros_8hpp_html_a64db554aa76425e63b60d0fd6ccb1e26"><div class="ttname"><a href="HookMacros_8hpp.html#a64db554aa76425e63b60d0fd6ccb1e26">HOOK</a></div><div class="ttdeci">#define HOOK(var)</div><div class="ttdoc">Registers a component field using its variable name as the hook key.</div><div class="ttdef"><b>Definition</b> HookMacros.hpp:179</div></div>
 <div class="ttc" id="aHookMacros_8hpp_html_a8f0cb5d5dff2b9cbbd63e1e50cc30e6a"><div class="ttname"><a href="HookMacros_8hpp.html#a8f0cb5d5dff2b9cbbd63e1e50cc30e6a">HOOKABLE</a></div><div class="ttdeci">#define HOOKABLE(type,...)</div><div class="ttdoc">Makes a component type hookable by generating a static hook map.</div><div class="ttdef"><b>Definition</b> HookMacros.hpp:233</div></div>
-<div class="ttc" id="aclassVector2D_html"><div class="ttname"><a href="classVector2D.html">Vector2D</a></div><div class="ttdoc">Two-dimensional vector with mathematical operations.</div><div class="ttdef"><b>Definition</b> Vector2D.hpp:43</div></div>
+<div class="ttc" id="aclassVector2D_html"><div class="ttname"><a href="classVector2D.html">Vector2D</a></div><div class="ttdoc">Two-dimensional vector with mathematical operations.</div><div class="ttdef"><b>Definition</b> Vector2D.hpp:44</div></div>
 <div class="ttc" id="aconcepthookable_html"><div class="ttname"><a href="concepthookable.html">hookable</a></div><div class="ttdoc">Requires a type to provide a static hook_map() method.</div><div class="ttdef"><b>Definition</b> HookConcept.hpp:280</div></div>
 </div><!-- fragment --><h2><a class="anchor" id="hook_manual"></a>
 Manual Implementation</h2>
@@ -178,7 +178,7 @@ Manual Implementation</h2>
 <div class="ttc" id="aHookConcept_8hpp_html"><div class="ttname"><a href="HookConcept_8hpp.html">HookConcept.hpp</a></div><div class="ttdoc">Concept definition for hookable component types.</div></div>
 </div><!-- fragment --><h2><a class="anchor" id="hook_constraint"></a>
 Template Constraints</h2>
-<p>Use hookable to constrain template parameters:</p>
+<p><a class="el" href="structUse.html">Use</a> hookable to constrain template parameters:</p>
 <div class="fragment"><div class="line"><span class="comment">// Only accept hookable types</span></div>
 <div class="line"><span class="keyword">template</span>&lt;hookable T&gt;</div>
 <div class="line"><span class="keywordtype">void</span> register_component(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <span class="keyword">const</span> std::string&amp; name) {</div>
@@ -194,9 +194,9 @@ Template Constraints</h2>
 <div class="line"><span class="keyword">class </span>ComponentWrapper {</div>
 <div class="line">  <span class="comment">// Implementation can assume T has hook_map()</span></div>
 <div class="line">};</div>
-<div class="ttc" id="aIoEvents_8hpp_html_a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce"><div class="ttname"><a href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a></div><div class="ttdeci">@ T</div><div class="ttdef"><b>Definition</b> IoEvents.hpp:53</div></div>
-<div class="ttc" id="aclassRegistry_html"><div class="ttname"><a href="classRegistry.html">Registry</a></div><div class="ttdoc">The Registry class is the core of the ECS (Entity-Component-System) architecture.</div><div class="ttdef"><b>Definition</b> Registry.hpp:348</div></div>
-<div class="ttc" id="aclassRegistry_html_a988dbbf41e2d34202090c4b47a17d4f7"><div class="ttname"><a href="classRegistry.html#a988dbbf41e2d34202090c4b47a17d4f7">Registry::register_hook</a></div><div class="ttdeci">void register_hook(std::string name, Entity const &amp;e)</div><div class="ttdoc">Register component hooks for runtime field access.</div><div class="ttdef"><b>Definition</b> Registry.hpp:1964</div></div>
+<div class="ttc" id="aIoEvents_8hpp_html_a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce"><div class="ttname"><a href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a></div><div class="ttdeci">@ T</div><div class="ttdef"><b>Definition</b> IoEvents.hpp:54</div></div>
+<div class="ttc" id="aclassRegistry_html"><div class="ttname"><a href="classRegistry.html">Registry</a></div><div class="ttdoc">The Registry class is the core of the ECS (Entity-Component-System) architecture.</div><div class="ttdef"><b>Definition</b> Registry.hpp:308</div></div>
+<div class="ttc" id="aclassRegistry_html_a988dbbf41e2d34202090c4b47a17d4f7"><div class="ttname"><a href="classRegistry.html#a988dbbf41e2d34202090c4b47a17d4f7">Registry::register_hook</a></div><div class="ttdeci">void register_hook(std::string name, Entity const &amp;e)</div><div class="ttdoc">Register component hooks for runtime field access.</div><div class="ttdef"><b>Definition</b> Registry.hpp:1729</div></div>
 </div><!-- fragment --><h2><a class="anchor" id="hook_detection"></a>
 Compile-Time Detection</h2>
 <div class="fragment"><div class="line"><span class="keyword">struct </span>Unhookable {</div>
@@ -223,7 +223,7 @@ Compile-Time Detection</h2>
 <div class="line">    std::cout &lt;&lt; <span class="stringliteral">&quot;Not hookable\n&quot;</span>;</div>
 <div class="line">  }</div>
 <div class="line">}</div>
-<div class="ttc" id="aconceptcomponent_html"><div class="ttname"><a href="conceptcomponent.html">component</a></div><div class="ttdoc">Requires a type to be serializable and entity-convertible for network sync.</div><div class="ttdef"><b>Definition</b> Registry.hpp:260</div></div>
+<div class="ttc" id="aconceptcomponent_html"><div class="ttname"><a href="conceptcomponent.html">component</a></div><div class="ttdoc">Requires a type to be serializable and entity-convertible for network sync.</div><div class="ttdef"><b>Definition</b> Registry.hpp:265</div></div>
 </div><!-- fragment --><h1><a class="anchor" id="hook_implementation"></a>
 Implementation Details</h1>
 <p>The concept uses C++20 requires expression to check:</p><ul>
@@ -266,7 +266,7 @@ Registry Integration</h1>
 <div class="line">    <span class="keywordflow">return</span> std::nullopt;</div>
 <div class="line">  }</div>
 <div class="line">};</div>
-<div class="ttc" id="aclassRegistry_html_a3c5b1d39982cf8c8a5159f048478faf9"><div class="ttname"><a href="classRegistry.html#a3c5b1d39982cf8c8a5159f048478faf9">Registry::get_hooked_value</a></div><div class="ttdeci">std::optional&lt; std::reference_wrapper&lt; T &gt; &gt; get_hooked_value(std::string const &amp;comp, std::string const &amp;value)</div><div class="ttdoc">Retrieve a reference to a hooked component field.</div><div class="ttdef"><b>Definition</b> Registry.hpp:2089</div></div>
+<div class="ttc" id="aclassRegistry_html_a3c5b1d39982cf8c8a5159f048478faf9"><div class="ttname"><a href="classRegistry.html#a3c5b1d39982cf8c8a5159f048478faf9">Registry::get_hooked_value</a></div><div class="ttdeci">std::optional&lt; std::reference_wrapper&lt; T &gt; &gt; get_hooked_value(std::string const &amp;comp, std::string const &amp;value)</div><div class="ttdoc">Retrieve a reference to a hooked component field.</div><div class="ttdef"><b>Definition</b> Registry.hpp:1893</div></div>
 </div><!-- fragment --><h1><a class="anchor" id="hook_examples"></a>
 Common Patterns</h1>
 <h2><a class="anchor" id="hook_empty"></a>
@@ -300,7 +300,7 @@ Nested Structures</h2>
 <div class="line"><span class="keyword">static_assert</span>(<a class="code hl_concept" href="concepthookable.html">hookable&lt;Outer&gt;</a>);</div>
 </div><!-- fragment --><dl class="section see"><dt>See also</dt><dd><a class="el" href="HookMacros_8hpp.html" title="Hook registration macros for component introspection.">HookMacros.hpp</a> for <a class="el" href="HookMacros_8hpp.html#a8f0cb5d5dff2b9cbbd63e1e50cc30e6a" title="Makes a component type hookable by generating a static hook map.">HOOKABLE()</a>, <a class="el" href="HookMacros_8hpp.html#a64db554aa76425e63b60d0fd6ccb1e26" title="Registers a component field using its variable name as the hook key.">HOOK()</a>, and <a class="el" href="HookMacros_8hpp.html#a8bbce773ce13c61b2cb949332d6d2ec4" title="Registers a component field with a custom hook name.">HOOK_CUSTOM()</a> macros </dd>
 <dd>
-<a class="el" href="Hooks_8hpp.html" title="Hook resolution and JSON value extraction functions.">Hooks.hpp</a> for <a class="el" href="Hooks_8hpp.html#a978c2837387286f95b5dd502a61a74e3" title="Retrieves a const reference to a value from JSON, resolving hooks.">get_ref()</a> and <a class="el" href="Hooks_8hpp.html#ac691828d534a0e4dd453f2419b40c4bf" title="Gets a value and registers a dynamic binding for auto-updates.">get_value()</a> helper functions </dd>
+<a class="el" href="Hooks_8hpp.html" title="Hook resolution and JSON value extraction functions.">Hooks.hpp</a> for <a class="el" href="Hooks_8hpp.html#a978c2837387286f95b5dd502a61a74e3" title="Retrieves a const reference to a value from JSON, resolving hooks.">get_ref()</a> and <a class="el" href="Hooks_8hpp.html#a9eab5392562ddc7b99520a786e6b230b" title="Gets a value and registers a dynamic binding for auto-updates.">get_value()</a> helper functions </dd>
 <dd>
 <a class="el" href="classRegistry.html#a3c5b1d39982cf8c8a5159f048478faf9" title="Retrieve a reference to a hooked component field.">Registry::get_hooked_value()</a> for runtime hook access </dd></dl>
 </div></div><!-- contents -->

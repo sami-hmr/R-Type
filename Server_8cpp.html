@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>r-type: plugins/server_network/src/Server.cpp File Reference</title>
+<title>r-type: src/network/server/true_server/Server.cpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -69,7 +69,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_38c8d24aef3972a7f87b834274e76e31.html">plugins</a></li><li class="navelem"><a class="el" href="dir_a32884d8f97ca68d718c21c5009e0102.html">server_network</a></li><li class="navelem"><a class="el" href="dir_73ff295bbd7c3a7c8b710c68bf989bf1.html">src</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_fc4c7f03e1a69a98c370fae55a743828.html">network</a></li><li class="navelem"><a class="el" href="dir_21ef85b25881797e3319f488ee6b4d6a.html">server</a></li><li class="navelem"><a class="el" href="dir_07185314f10e11b405e949de16117a12.html">true_server</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -77,15 +77,20 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;atomic&gt;</code><br />
-<code>#include &lt;queue&gt;</code><br />
-<code>#include &lt;semaphore&gt;</code><br />
+<code>#include &lt;chrono&gt;</code><br />
+<code>#include &lt;cstdio&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
-<code>#include &quot;<a class="el" href="Server_8hpp_source.html">Server.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="Server_8hpp_source.html">network/server/Server.hpp</a>&quot;</code><br />
+<code>#include &lt;asio/registered_buffer.hpp&gt;</code><br />
+<code>#include &lt;asio/socket_base.hpp&gt;</code><br />
 <code>#include &lt;asio/system_error.hpp&gt;</code><br />
-<code>#include &quot;Network.hpp&quot;</code><br />
+<code>#include &quot;<a class="el" href="CustomException_8hpp_source.html">CustomException.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="NetworkCommun_8hpp_source.html">NetworkCommun.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="NetworkShared_8hpp_source.html">NetworkShared.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="ServerCommands_8hpp_source.html">ServerCommands.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="PacketCompresser_8hpp_source.html">network/PacketCompresser.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Byte_8hpp_source.html">plugin/Byte.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="CircularBuffer_8hpp_source.html">plugin/CircularBuffer.hpp</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for Server.cpp:</div>
 <div class="dyncontent">

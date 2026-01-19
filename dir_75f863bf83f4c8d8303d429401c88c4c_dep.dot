@@ -1,0 +1,17 @@
+digraph "plugins/score/src"
+{
+ // INTERACTIVE_SVG=YES
+ // LATEX_PDF_SIZE
+  bgcolor="transparent";
+  edge [fontname=Helvetica,fontsize=10,labelfontname=Helvetica,labelfontsize=10];
+  node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
+  compound=true
+  subgraph clusterdir_c809fc7b1de0e691f3198d483a84b138 {
+    graph [ bgcolor="#edf0f7", pencolor="grey50", label="score", fontname=Helvetica,fontsize=10 style="filled,dashed", URL="dir_c809fc7b1de0e691f3198d483a84b138.html",tooltip=""]
+  dir_d2ba6d945ad7881e14b735df4a52fb6b [label="include", fillcolor="#a2b4d6", color="grey25", style="filled", URL="dir_d2ba6d945ad7881e14b735df4a52fb6b.html",tooltip=""];
+  dir_75f863bf83f4c8d8303d429401c88c4c [label="src", fillcolor="#edf0f7", color="grey25", style="filled,bold", URL="dir_75f863bf83f4c8d8303d429401c88c4c.html",tooltip=""];
+  }
+  dir_d44c64559bbebec7f509842c48db8b23 [label="include", fillcolor="#edf0f7", color="red", style="filled", URL="dir_d44c64559bbebec7f509842c48db8b23.html",tooltip=""];
+  dir_75f863bf83f4c8d8303d429401c88c4c->dir_d2ba6d945ad7881e14b735df4a52fb6b [headlabel="1", labeldistance=1.5 headhref="dir_000082_000032.html" href="dir_000082_000032.html" color="steelblue1" fontcolor="steelblue1"];
+  dir_75f863bf83f4c8d8303d429401c88c4c->dir_d44c64559bbebec7f509842c48db8b23 [headlabel="7", labeldistance=1.5 headhref="dir_000082_000015.html" href="dir_000082_000015.html" color="steelblue1" fontcolor="steelblue1"];
+}

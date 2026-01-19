@@ -75,9 +75,11 @@ $(function() {
 
 <p>This is the complete list of members for <a class="el" href="structDrawable.html">Drawable</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="structDrawable.html#a1ea108941201ee6a4ec249d6e58ea13c">DEFAULT_BYTE_CONSTRUCTOR</a>(Drawable,([](bool e) {return Drawable(e);}), parseByte&lt; bool &gt;()) CHANGE_ENTITY_DEFAULT bool enabled</td><td class="entry"><a class="el" href="structDrawable.html">Drawable</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="structDrawable.html#a1a94d70e8956e807ec2a80820165e342">DEFAULT_BYTE_CONSTRUCTOR</a>(Drawable,([](bool e, bool s, Vector2D const &amp;v) { return Drawable(e, s, v);}), parseByte&lt; bool &gt;(), parseByte&lt; bool &gt;(), parseVector2D()) DEFAULT_SERIALIZE(type_to_byte&lt; bool &gt;(this -&gt; enabled), type_to_byte&lt; bool &gt;(this-&gt;stretch), vector2DToByte(true_size)) CHANGE_ENTITY_DEFAULT bool enabled=true</td><td class="entry"><a class="el" href="structDrawable.html">Drawable</a></td><td class="entry"></td></tr>
   <tr class="odd"><td class="entry"><a class="el" href="structDrawable.html#a611d8615c65f4c7422db5f50941cd545">Drawable</a>()=default</td><td class="entry"><a class="el" href="structDrawable.html">Drawable</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="structDrawable.html#a33d41b953862c68a6996b29d9cc73af9">Drawable</a>(bool enabled)</td><td class="entry"><a class="el" href="structDrawable.html">Drawable</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="structDrawable.html#a9ddfa8d8da733555b5999c2147c0d2da">Drawable</a>(bool enabled, bool stretch=false, Vector2D const &amp;v={0, 0})</td><td class="entry"><a class="el" href="structDrawable.html">Drawable</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="structDrawable.html#acb4188a13deb0e7b853b45c55d6c7197">stretch</a></td><td class="entry"><a class="el" href="structDrawable.html">Drawable</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="structDrawable.html#a8b230a57d4024fa6006a77c353fd6a09">true_size</a></td><td class="entry"><a class="el" href="structDrawable.html">Drawable</a></td><td class="entry"></td></tr>
 </table></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -71,6 +71,8 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
+<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="classMovementPattern-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">MovementPattern Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div></div>
 </div><!--header-->
@@ -87,8 +89,22 @@ Inheritance diagram for MovementPattern:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a0d5d3e89e35d2bd4ee90f348acbb7db0" id="r_a0d5d3e89e35d2bd4ee90f348acbb7db0"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMovementPattern.html#a0d5d3e89e35d2bd4ee90f348acbb7db0">~MovementPattern</a> ()=default</td></tr>
 <tr class="separator:a0d5d3e89e35d2bd4ee90f348acbb7db0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac0aa89eb7ab86f917a6ba2bdccd75148" id="r_ac0aa89eb7ab86f917a6ba2bdccd75148"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMovementPattern.html#ac0aa89eb7ab86f917a6ba2bdccd75148">update</a> (<a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a> entity, <a class="el" href="classRegistry.html">Registry</a> &amp;registry, <a class="el" href="structMovementBehavior.html">MovementBehavior</a> &amp;behavior, <a class="el" href="structPosition.html">Position</a> &amp;pos, <a class="el" href="structVelocity.html">Velocity</a> &amp;vel, double dt)=0</td></tr>
-<tr class="separator:ac0aa89eb7ab86f917a6ba2bdccd75148"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b537e3b4c83b8a15d17dd31a410e9ff" id="r_a6b537e3b4c83b8a15d17dd31a410e9ff"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMovementPattern.html#a6b537e3b4c83b8a15d17dd31a410e9ff">update</a> (<a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> entity, <a class="el" href="classRegistry.html">Registry</a> &amp;registry, <a class="el" href="classEventManager.html">EventManager</a> &amp;em, <a class="el" href="structMovementBehavior.html">MovementBehavior</a> &amp;behavior, <a class="el" href="structPosition.html">Position</a> &amp;pos, <a class="el" href="structDirection.html">Direction</a> &amp;dir, <a class="el" href="structSpeed.html">Speed</a> &amp;speed, double dt)=0</td></tr>
+<tr class="separator:a6b537e3b4c83b8a15d17dd31a410e9ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:ac14cc1fde3b37a355852bf32a277ece9" id="r_ac14cc1fde3b37a355852bf32a277ece9"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classVector2D.html">Vector2D</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMovementPattern.html#ac14cc1fde3b37a355852bf32a277ece9">get_origin</a> (<a class="el" href="classRegistry.html">Registry</a> &amp;registry, <a class="el" href="structMovementBehavior.html">MovementBehavior</a> &amp;behavior)</td></tr>
+<tr class="separator:ac14cc1fde3b37a355852bf32a277ece9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a327f7e21214240ff7b38ec5eee7a16" id="r_a5a327f7e21214240ff7b38ec5eee7a16"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMovementPattern.html#a5a327f7e21214240ff7b38ec5eee7a16">update_delta</a> (<a class="el" href="classRegistry.html">Registry</a> &amp;registry, <a class="el" href="classEventManager.html">EventManager</a> &amp;em, <a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> const &amp;entity, <a class="el" href="structMovementBehavior.html">MovementBehavior</a> &amp;behavior, double const &amp;dt)</td></tr>
+<tr class="separator:a5a327f7e21214240ff7b38ec5eee7a16"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:a9010ac043672da7e0ffc40d5f489b2f8" id="r_a9010ac043672da7e0ffc40d5f489b2f8"><td class="memItemLeft" align="right" valign="top">static constexpr double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMovementPattern.html#a9010ac043672da7e0ffc40d5f489b2f8">DIRECTION_TOLERANCE</a> = 0.1</td></tr>
+<tr class="separator:a9010ac043672da7e0ffc40d5f489b2f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8bff4b527c8262dcfd05af4e939a6cc1" id="r_a8bff4b527c8262dcfd05af4e939a6cc1"><td class="memItemLeft" align="right" valign="top">static constexpr double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classMovementPattern.html#a8bff4b527c8262dcfd05af4e939a6cc1">DELTA_TOLERANCE</a> = 0.5</td></tr>
+<tr class="separator:a8bff4b527c8262dcfd05af4e939a6cc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a0d5d3e89e35d2bd4ee90f348acbb7db0" name="a0d5d3e89e35d2bd4ee90f348acbb7db0"></a>
@@ -117,8 +133,44 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ac0aa89eb7ab86f917a6ba2bdccd75148" name="ac0aa89eb7ab86f917a6ba2bdccd75148"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac0aa89eb7ab86f917a6ba2bdccd75148">&#9670;&#160;</a></span>update()</h2>
+<a id="ac14cc1fde3b37a355852bf32a277ece9" name="ac14cc1fde3b37a355852bf32a277ece9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac14cc1fde3b37a355852bf32a277ece9">&#9670;&#160;</a></span>get_origin()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="classVector2D.html">Vector2D</a> MovementPattern::get_origin </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classRegistry.html">Registry</a> &amp;&#160;</td>
+          <td class="paramname"><em>registry</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structMovementBehavior.html">MovementBehavior</a> &amp;&#160;</td>
+          <td class="paramname"><em>behavior</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a6b537e3b4c83b8a15d17dd31a410e9ff" name="a6b537e3b4c83b8a15d17dd31a410e9ff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6b537e3b4c83b8a15d17dd31a410e9ff">&#9670;&#160;</a></span>update()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -129,7 +181,7 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">virtual void MovementPattern::update </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a>&#160;</td>
           <td class="paramname"><em>entity</em>, </td>
         </tr>
         <tr>
@@ -137,6 +189,12 @@ Public Member Functions</h2></td></tr>
           <td></td>
           <td class="paramtype"><a class="el" href="classRegistry.html">Registry</a> &amp;&#160;</td>
           <td class="paramname"><em>registry</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classEventManager.html">EventManager</a> &amp;&#160;</td>
+          <td class="paramname"><em>em</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -153,8 +211,14 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structVelocity.html">Velocity</a> &amp;&#160;</td>
-          <td class="paramname"><em>vel</em>, </td>
+          <td class="paramtype"><a class="el" href="structDirection.html">Direction</a> &amp;&#160;</td>
+          <td class="paramname"><em>dir</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structSpeed.html">Speed</a> &amp;&#160;</td>
+          <td class="paramname"><em>speed</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -175,7 +239,106 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="classStraightPattern.html#a18c73df2b5877a04f818a95c5152249b">StraightPattern</a>, <a class="el" href="classTurretPattern.html#adc08e15fd6e440587be10213ac15ef7e">TurretPattern</a>, <a class="el" href="classFollowTargetPattern.html#a11f806f90b6ddcc081ed1978187419b3">FollowTargetPattern</a>, <a class="el" href="classWavePattern.html#ac9bbdc553340cbb5a69325bcfcca01a0">WavePattern</a>, <a class="el" href="classZigzagPattern.html#ab022eeb554d172546fa562d20ec36133">ZigzagPattern</a>, and <a class="el" href="classCirclePattern.html#af045d23f719358962bdc4187b3e4f504">CirclePattern</a>.</p>
+<p>Implemented in <a class="el" href="classStraightPattern.html#a2fc2a31b0e8d1224665df1b83b4ace73">StraightPattern</a>, <a class="el" href="classTurretPattern.html#a4b9ae4e2d2a29a5fa49ebc34ed43bbce">TurretPattern</a>, <a class="el" href="structWavePattern.html#a95c7fa7647ac753c967e66a93804ca16">WavePattern</a>, <a class="el" href="classZigzagPattern.html#a65ef36fe30073d4bdc6abfa8aceb0fc1">ZigzagPattern</a>, <a class="el" href="classFollowTargetPattern.html#aa48b5e5c6656f0a8be49a0a039d7df8f">FollowTargetPattern</a>, <a class="el" href="classGluePattern.html#a900eb79a41a38bb7298869f4c9b71346">GluePattern</a>, and <a class="el" href="classCirclePattern.html#a69dd1c4941ac043870c6f7f3f3c55303">CirclePattern</a>.</p>
+
+</div>
+</div>
+<a id="a5a327f7e21214240ff7b38ec5eee7a16" name="a5a327f7e21214240ff7b38ec5eee7a16"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5a327f7e21214240ff7b38ec5eee7a16">&#9670;&#160;</a></span>update_delta()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static void MovementPattern::update_delta </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classRegistry.html">Registry</a> &amp;&#160;</td>
+          <td class="paramname"><em>registry</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classEventManager.html">EventManager</a> &amp;&#160;</td>
+          <td class="paramname"><em>em</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> const &amp;&#160;</td>
+          <td class="paramname"><em>entity</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structMovementBehavior.html">MovementBehavior</a> &amp;&#160;</td>
+          <td class="paramname"><em>behavior</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double const &amp;&#160;</td>
+          <td class="paramname"><em>dt</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="a8bff4b527c8262dcfd05af4e939a6cc1" name="a8bff4b527c8262dcfd05af4e939a6cc1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8bff4b527c8262dcfd05af4e939a6cc1">&#9670;&#160;</a></span>DELTA_TOLERANCE</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr double MovementPattern::DELTA_TOLERANCE = 0.5</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a9010ac043672da7e0ffc40d5f489b2f8" name="a9010ac043672da7e0ffc40d5f489b2f8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9010ac043672da7e0ffc40d5f489b2f8">&#9670;&#160;</a></span>DIRECTION_TOLERANCE</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr double MovementPattern::DIRECTION_TOLERANCE = 0.1</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
 
 </div>
 </div>

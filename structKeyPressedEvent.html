@@ -85,8 +85,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ae0dcef2ede2a60867f6f978ba08c6c24"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a131575b51306c2adef441355d64bbc7b" id="r_a131575b51306c2adef441355d64bbc7b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKeyPressedEvent.html#a131575b51306c2adef441355d64bbc7b">KeyPressedEvent</a> (std::unordered_map&lt; <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868ab">Key</a>, <a class="el" href="structKeyPressedEvent.html#a2b53173054223f0a7553ee962e206bc9">bool</a> &gt; kp, std::optional&lt; std::string &gt; ku)</td></tr>
 <tr class="separator:a131575b51306c2adef441355d64bbc7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac20f130f0bf1f54f8c7ce91f070078fe" id="r_ac20f130f0bf1f54f8c7ce91f070078fe"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKeyPressedEvent.html#ac20f130f0bf1f54f8c7ce91f070078fe">KeyPressedEvent</a> (<a class="el" href="classRegistry.html">Registry</a> &amp;r, JsonObject const &amp;e)</td></tr>
-<tr class="separator:ac20f130f0bf1f54f8c7ce91f070078fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aacd91fd0b0d772dfea0e09ac00cbf75a" id="r_aacd91fd0b0d772dfea0e09ac00cbf75a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKeyPressedEvent.html#aacd91fd0b0d772dfea0e09ac00cbf75a">KeyPressedEvent</a> (<a class="el" href="classRegistry.html">Registry</a> &amp;r, JsonObject const &amp;e, std::optional&lt; <a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> &gt; entity)</td></tr>
+<tr class="separator:aacd91fd0b0d772dfea0e09ac00cbf75a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af646d4dc62db0d94735d0aa97236aff2" id="r_af646d4dc62db0d94735d0aa97236aff2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKeyPressedEvent.html#af646d4dc62db0d94735d0aa97236aff2">DEFAULT_BYTE_CONSTRUCTOR</a> (<a class="el" href="structKeyPressedEvent.html">KeyPressedEvent</a>,([](std::unordered_map&lt; <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868ab">Key</a>, <a class="el" href="structKeyPressedEvent.html#a2b53173054223f0a7553ee962e206bc9">bool</a> &gt; const &amp;kp, std::optional&lt; std::string &gt; const &amp;ku) { return <a class="el" href="structKeyPressedEvent.html">KeyPressedEvent</a>(kp, ku);}), parseByteMap&lt; <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868ab">Key</a>, <a class="el" href="structKeyPressedEvent.html#a2b53173054223f0a7553ee962e206bc9">bool</a> &gt;(parseByte&lt; <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868ab">Key</a> &gt;(), parseByte&lt; <a class="el" href="structKeyPressedEvent.html#a2b53173054223f0a7553ee962e206bc9">bool</a> &gt;()), parseByteOptional(parseByteString())) <a class="el" href="Byte_8hpp.html#ac2fb474e60f46281e11bf3824e6f4517">DEFAULT_SERIALIZE</a>(<a class="el" href="Byte_8hpp.html#a75ce52fe3b86e913acb413babb53cf14">map_to_byte</a>&lt; <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868ab">Key</a></td></tr>
 <tr class="separator:af646d4dc62db0d94735d0aa97236aff2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2b53173054223f0a7553ee962e206bc9" id="r_a2b53173054223f0a7553ee962e206bc9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structKeyPressedEvent.html#a2b53173054223f0a7553ee962e206bc9">bool</a> (this-&gt;<a class="el" href="structKeyPressedEvent.html#a0a777242e8cab5aab560000fe7041906">key_pressed</a>, std::function&lt; <a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a>(<a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868ab">Key</a>)&gt;([](<a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868ab">Key</a> k) { return <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(k);}), std::function&lt; <a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a>(bool)&gt;([](bool b) { return <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(b);}))</td></tr>
@@ -161,8 +161,8 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="ac20f130f0bf1f54f8c7ce91f070078fe" name="ac20f130f0bf1f54f8c7ce91f070078fe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac20f130f0bf1f54f8c7ce91f070078fe">&#9670;&#160;</a></span>KeyPressedEvent() <span class="overload">[3/3]</span></h2>
+<a id="aacd91fd0b0d772dfea0e09ac00cbf75a" name="aacd91fd0b0d772dfea0e09ac00cbf75a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aacd91fd0b0d772dfea0e09ac00cbf75a">&#9670;&#160;</a></span>KeyPressedEvent() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -180,7 +180,13 @@ Public Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">JsonObject const &amp;&#160;</td>
-          <td class="paramname"><em>e</em>&#160;</td>
+          <td class="paramname"><em>e</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::optional&lt; <a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> &gt;&#160;</td>
+          <td class="paramname"><em>entity</em>&#160;</td>
         </tr>
         <tr>
           <td></td>

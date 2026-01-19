@@ -9,7 +9,7 @@ digraph "include/plugin/events/CleanupEvent.hpp"
   Node1 -> Node2 [id="edge1_Node000001_Node000002",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node2 [id="Node000002",label="plugins/cli/src/CLI.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$CLI_8cpp.html",tooltip=" "];
   Node1 -> Node3 [id="edge2_Node000001_Node000003",dir="back",color="steelblue1",style="solid",tooltip=" "];
-  Node3 [id="Node000003",label="plugins/client_network\l/src/Network.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$client__network_2src_2Network_8cpp.html",tooltip=" "];
+  Node3 [id="Node000003",label="src/network/client\l/plugin_base/BaseClient.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$BaseClient_8cpp.html",tooltip=" "];
   Node1 -> Node4 [id="edge3_Node000001_Node000004",dir="back",color="steelblue1",style="solid",tooltip=" "];
-  Node4 [id="Node000004",label="plugins/server_network\l/src/Network.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$server__network_2src_2Network_8cpp.html",tooltip=" "];
+  Node4 [id="Node000004",label="src/network/server\l/plugin_base/BaseServer.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$BaseServer_8cpp.html",tooltip=" "];
 }

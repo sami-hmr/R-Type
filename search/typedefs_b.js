@@ -1,6 +1,10 @@
 var searchData=
 [
-  ['value_0',['value',['../classSparseArray.html#a4d8db17e3bd63f101c62589c9f2b8c06',1,'SparseArray::Value'],['../classZipperIterator.html#adb2b45f9f46f426dce30d793603d4465',1,'ZipperIterator::Value'],['../classZipperIndexIterator.html#a0a084bdfa1bee5af916d8dcbe2ac9b2e',1,'ZipperIndexIterator::Value']]],
-  ['valuetype_1',['valuetype',['../classZipperIterator.html#a44738fb111b449a9e5daf2c1f7ef7e7c',1,'ZipperIterator::ValueType'],['../classZipperIndexIterator.html#a59ba088b4eba5af7f939ceff608dbd4c',1,'ZipperIndexIterator::ValueType']]],
-  ['vtype_2',['Vtype',['../classSparseArray.html#a83e06e582692abedf04357e5c63830b9',1,'SparseArray']]]
+  ['range_0',['Range',['../namespacehttplib.html#a47159528bf61f6bd74065b3fcec21697',1,'httplib']]],
+  ['ranges_1',['Ranges',['../namespacehttplib.html#a3395bd4008ea82b092537f3084dddf5e',1,'httplib']]],
+  ['reader_2',['Reader',['../classhttplib_1_1ContentReader.html#abc8da0da3f914be4fb5cc3bb67d8c443',1,'httplib::ContentReader']]],
+  ['ref_3',['Ref',['../classSparseArray.html#afcb68b007a0a116f234324bcc5a27ffc',1,'SparseArray']]],
+  ['reference_4',['Reference',['../classZipperIterator.html#ae1366b50479f0eefa7956825fe47e9c6',1,'ZipperIterator']]],
+  ['removeitem_5',['RemoveItem',['../InventoryEvents_8hpp.html#a6126a8a64b00d56ae1afc808c354e425',1,'InventoryEvents.hpp']]],
+  ['responsehandler_6',['ResponseHandler',['../namespacehttplib.html#aa1d3a4ccf77a52e2e755ca0e07541315',1,'httplib']]]
 ];

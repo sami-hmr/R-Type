@@ -11,5 +11,7 @@ digraph "include/plugin/components/Clickable.hpp"
   Node1 -> Node3 [id="edge2_Node000001_Node000003",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node3 [id="Node000003",label="plugins/ath/src/Clickable.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Clickable_8cpp.html",tooltip=" "];
   Node1 -> Node4 [id="edge3_Node000001_Node000004",dir="back",color="steelblue1",style="solid",tooltip=" "];
-  Node4 [id="Node000004",label="plugins/sfml/src/SFMLRenderer.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$SFMLRenderer_8cpp.html",tooltip=" "];
+  Node4 [id="Node000004",label="plugins/rtype_client\l/src/HttpRequests.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$plugins_2rtype__client_2src_2HttpRequests_8cpp.html",tooltip=" "];
+  Node1 -> Node5 [id="edge4_Node000001_Node000005",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node5 [id="Node000005",label="plugins/sfml/src/SFMLRenderer.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$SFMLRenderer_8cpp.html",tooltip=" "];
 }

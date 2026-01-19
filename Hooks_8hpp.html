@@ -84,15 +84,18 @@ $(function() {
 <p>Hook resolution and JSON value extraction functions.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;any&gt;</code><br />
+<code>#include &lt;cstddef&gt;</code><br />
+<code>#include &lt;format&gt;</code><br />
 <code>#include &lt;functional&gt;</code><br />
-<code>#include &lt;iostream&gt;</code><br />
 <code>#include &lt;optional&gt;</code><br />
 <code>#include &lt;stdexcept&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
 <code>#include &lt;type_traits&gt;</code><br />
 <code>#include &lt;variant&gt;</code><br />
 <code>#include &quot;Json/JsonParser.hpp&quot;</code><br />
+<code>#include &quot;<a class="el" href="Entity_8hpp_source.html">ecs/Entity.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Registry_8hpp_source.html">ecs/Registry.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="LogMacros_8hpp_source.html">plugin/events/LogMacros.hpp</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for Hooks.hpp:</div>
 <div class="dyncontent">
@@ -118,14 +121,21 @@ Functions</h2></td></tr>
 <tr class="memitem:a978c2837387286f95b5dd502a61a74e3"><td class="memTemplItemLeft" align="right" valign="top">std::optional&lt; std::reference_wrapper&lt; const <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="Hooks_8hpp.html#a978c2837387286f95b5dd502a61a74e3">get_ref</a> (<a class="el" href="classRegistry.html">Registry</a> &amp;r, JsonObject const &amp;object, std::string const &amp;key)</td></tr>
 <tr class="memdesc:a978c2837387286f95b5dd502a61a74e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves a const reference to a value from JSON, resolving hooks.  <br /></td></tr>
 <tr class="separator:a978c2837387286f95b5dd502a61a74e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adb9a223334bc754df5bf32b6f41e5b31" id="r_adb9a223334bc754df5bf32b6f41e5b31"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> , typename... Args&gt; </td></tr>
-<tr class="memitem:adb9a223334bc754df5bf32b6f41e5b31"><td class="memTemplItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="Hooks_8hpp.html#adb9a223334bc754df5bf32b6f41e5b31">get_value_copy</a> (<a class="el" href="classRegistry.html">Registry</a> &amp;r, JsonObject const &amp;object, std::string const &amp;key, Args &amp;&amp;... args)</td></tr>
-<tr class="memdesc:adb9a223334bc754df5bf32b6f41e5b31"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a copy of a value from JSON, supporting hooks and construction.  <br /></td></tr>
-<tr class="separator:adb9a223334bc754df5bf32b6f41e5b31"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac691828d534a0e4dd453f2419b40c4bf" id="r_ac691828d534a0e4dd453f2419b40c4bf"><td class="memTemplParams" colspan="2">template&lt;typename ComponentType , typename <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> , typename... Args&gt; </td></tr>
-<tr class="memitem:ac691828d534a0e4dd453f2419b40c4bf"><td class="memTemplItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="Hooks_8hpp.html#ac691828d534a0e4dd453f2419b40c4bf">get_value</a> (<a class="el" href="classRegistry.html">Registry</a> &amp;r, JsonObject const &amp;object, <a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a> entity, std::string const &amp;field_name, Args &amp;&amp;... args)</td></tr>
-<tr class="memdesc:ac691828d534a0e4dd453f2419b40c4bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a value and registers a dynamic binding for auto-updates.  <br /></td></tr>
-<tr class="separator:ac691828d534a0e4dd453f2419b40c4bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aba440cb8f46f25d2056efd4f1320212f" id="r_aba440cb8f46f25d2056efd4f1320212f"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt; </td></tr>
+<tr class="memitem:aba440cb8f46f25d2056efd4f1320212f"><td class="memTemplItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="Hooks_8hpp.html#aba440cb8f46f25d2056efd4f1320212f">resolve_scoped_hook</a> (<a class="el" href="classRegistry.html">Registry</a> &amp;r, std::string const &amp;value_str, <a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> entity)</td></tr>
+<tr class="memdesc:aba440cb8f46f25d2056efd4f1320212f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper function to resolve scoped hooks (self/global)  <br /></td></tr>
+<tr class="separator:aba440cb8f46f25d2056efd4f1320212f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a07f26f5bb978cebb5be99573aa4a4a9b" id="r_a07f26f5bb978cebb5be99573aa4a4a9b"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt; </td></tr>
+<tr class="memitem:a07f26f5bb978cebb5be99573aa4a4a9b"><td class="memTemplItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="Hooks_8hpp.html#a07f26f5bb978cebb5be99573aa4a4a9b">resolve_scoped_hook</a> (<a class="el" href="classRegistry.html">Registry</a> &amp;r, std::string const &amp;value_str)</td></tr>
+<tr class="separator:a07f26f5bb978cebb5be99573aa4a4a9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5112703434c874d9180da439f07e4422" id="r_a5112703434c874d9180da439f07e4422"><td class="memTemplParams" colspan="2">template&lt;typename <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> , typename... Args&gt; </td></tr>
+<tr class="memitem:a5112703434c874d9180da439f07e4422"><td class="memTemplItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="Hooks_8hpp.html#a5112703434c874d9180da439f07e4422">get_value_copy</a> (<a class="el" href="classRegistry.html">Registry</a> &amp;r, JsonObject const &amp;object, std::string const &amp;key, std::optional&lt; <a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> &gt; entity=std::nullopt, Args &amp;&amp;... args)</td></tr>
+<tr class="memdesc:a5112703434c874d9180da439f07e4422"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a copy of a value from JSON, supporting hooks and construction.  <br /></td></tr>
+<tr class="separator:a5112703434c874d9180da439f07e4422"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9eab5392562ddc7b99520a786e6b230b" id="r_a9eab5392562ddc7b99520a786e6b230b"><td class="memTemplParams" colspan="2">template&lt;typename ComponentType , typename <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> , typename... Args&gt; </td></tr>
+<tr class="memitem:a9eab5392562ddc7b99520a786e6b230b"><td class="memTemplItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="Hooks_8hpp.html#a9eab5392562ddc7b99520a786e6b230b">get_value</a> (<a class="el" href="classRegistry.html">Registry</a> &amp;r, JsonObject const &amp;object, <a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> entity, std::string const &amp;field_name, Args &amp;&amp;... args)</td></tr>
+<tr class="memdesc:a9eab5392562ddc7b99520a786e6b230b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets a value and registers a dynamic binding for auto-updates.  <br /></td></tr>
+<tr class="separator:a9eab5392562ddc7b99520a786e6b230b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7f31f364a4ef0cbffcdb592482c79562" id="r_a7f31f364a4ef0cbffcdb592482c79562"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Hooks_8hpp.html#a7f31f364a4ef0cbffcdb592482c79562">is_hook</a> (JsonObject const &amp;object, std::string const &amp;key)</td></tr>
 <tr class="memdesc:a7f31f364a4ef0cbffcdb592482c79562"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if a JSON value is a dynamic hook reference.  <br /></td></tr>
 <tr class="separator:a7f31f364a4ef0cbffcdb592482c79562"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -156,7 +166,7 @@ Static Hooks (%)</h2>
 <ul>
 <li>Prefix: % indicates static hook</li>
 <li>Resolution: Read value once during initialization</li>
-<li>Use case: Global configuration, template values</li>
+<li><a class="el" href="structUse.html">Use</a> case: Global configuration, template values</li>
 <li>Binding: No dynamic binding registered</li>
 </ul>
 <div class="fragment"><div class="line">{</div>
@@ -174,7 +184,7 @@ Dynamic Hooks (#)</h2>
 <ul>
 <li>Prefix: # indicates dynamic hook</li>
 <li>Resolution: Read initial value and register binding</li>
-<li>Use case: Data binding between components</li>
+<li><a class="el" href="structUse.html">Use</a> case: Data binding between components</li>
 <li>Binding: Auto-updates when source changes</li>
 </ul>
 <div class="fragment"><div class="line">{</div>
@@ -216,7 +226,7 @@ get_ref&lt;T&gt;()</h2>
 <div class="line"><span class="comment">// Get hooked value</span></div>
 <div class="line"><span class="keyword">auto</span> pos_ref = get_ref&lt;Vector2D&gt;(r, config, <span class="stringliteral">&quot;position&quot;</span>);</div>
 <div class="line"><span class="comment">// If config[&quot;position&quot;] = &quot;#Player:pos&quot;, returns ref to Player::pos</span></div>
-<div class="ttc" id="aclassRegistry_html"><div class="ttname"><a href="classRegistry.html">Registry</a></div><div class="ttdoc">The Registry class is the core of the ECS (Entity-Component-System) architecture.</div><div class="ttdef"><b>Definition</b> Registry.hpp:348</div></div>
+<div class="ttc" id="aclassRegistry_html"><div class="ttname"><a href="classRegistry.html">Registry</a></div><div class="ttdoc">The Registry class is the core of the ECS (Entity-Component-System) architecture.</div><div class="ttdef"><b>Definition</b> Registry.hpp:308</div></div>
 </div><!-- fragment --><h2><a class="anchor" id="hooks_getvaluecopy"></a>
 get_value_copy&lt;T&gt;()</h2>
 <p>Retrieves a copy of a value, supporting hooks and JSON construction.</p>
@@ -235,7 +245,7 @@ get_value_copy&lt;T&gt;()</h2>
 </div><!-- fragment --><h2><a class="anchor" id="hooks_getvalue"></a>
 get_value&lt;ComponentType, T&gt;()</h2>
 <p>Retrieves a value and optionally registers dynamic binding for auto-updates.</p>
-<div class="fragment"><div class="line"><a class="code hl_typedef" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a> entity = r.<a class="code hl_function" href="classRegistry.html#a3afa81d52e66afd192bfb44f191c1510">spawn_entity</a>();</div>
+<div class="fragment"><div class="line"><a class="code hl_typedef" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> entity = r.<a class="code hl_function" href="classRegistry.html#a2e982e5c9b7207dce933e2210b4cce4b">spawn_entity</a>();</div>
 <div class="line"> </div>
 <div class="line"><span class="comment">// Static hook (no binding)</span></div>
 <div class="line"><span class="keyword">auto</span> init_pos = get_value&lt;Transform, Vector2D&gt;(</div>
@@ -249,8 +259,8 @@ get_value&lt;ComponentType, T&gt;()</h2>
 <div class="line"><span class="comment">// If config[&quot;target_pos&quot;] = &quot;#Leader:pos&quot;</span></div>
 <div class="line"><span class="comment">// Registers binding: Follower.target_pos &lt;- Leader.pos</span></div>
 <div class="line"><span class="comment">// Follower&#39;s target_pos updates when Leader moves</span></div>
-<div class="ttc" id="aclassRegistry_html_a0f7878e7be2d225f4f7ca38b85911110"><div class="ttname"><a href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a></div><div class="ttdeci">std::size_t Entity</div><div class="ttdoc">Type alias for an entity identifier.</div><div class="ttdef"><b>Definition</b> Registry.hpp:356</div></div>
-<div class="ttc" id="aclassRegistry_html_a3afa81d52e66afd192bfb44f191c1510"><div class="ttname"><a href="classRegistry.html#a3afa81d52e66afd192bfb44f191c1510">Registry::spawn_entity</a></div><div class="ttdeci">Entity spawn_entity()</div><div class="ttdoc">Spawns a new entity.</div><div class="ttdef"><b>Definition</b> Registry.cpp:11</div></div>
+<div class="ttc" id="aclassRegistry_html_a2e982e5c9b7207dce933e2210b4cce4b"><div class="ttname"><a href="classRegistry.html#a2e982e5c9b7207dce933e2210b4cce4b">Registry::spawn_entity</a></div><div class="ttdeci">Entity spawn_entity()</div><div class="ttdoc">Spawns a new entity.</div><div class="ttdef"><b>Definition</b> Registry.cpp:18</div></div>
+<div class="ttc" id="anamespaceEcs_html_a17fcea5750c1db2eea6f26c520f9235b"><div class="ttname"><a href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a></div><div class="ttdeci">std::size_t Entity</div><div class="ttdef"><b>Definition</b> Entity.hpp:7</div></div>
 </div><!-- fragment --><h2><a class="anchor" id="hooks_ishook"></a>
 is_hook()</h2>
 <p>Checks if a JSON key contains a dynamic hook reference.</p>
@@ -260,7 +270,7 @@ is_hook()</h2>
 <div class="line"> </div>
 <div class="line"><a class="code hl_function" href="Hooks_8hpp.html#a7f31f364a4ef0cbffcdb592482c79562">is_hook</a>(obj, <span class="stringliteral">&quot;speed&quot;</span>);   <span class="comment">// false - literal value</span></div>
 <div class="line"><a class="code hl_function" href="Hooks_8hpp.html#a7f31f364a4ef0cbffcdb592482c79562">is_hook</a>(obj, <span class="stringliteral">&quot;target&quot;</span>);  <span class="comment">// true - starts with #</span></div>
-<div class="ttc" id="aHooks_8hpp_html_a7f31f364a4ef0cbffcdb592482c79562"><div class="ttname"><a href="Hooks_8hpp.html#a7f31f364a4ef0cbffcdb592482c79562">is_hook</a></div><div class="ttdeci">bool is_hook(JsonObject const &amp;object, std::string const &amp;key)</div><div class="ttdoc">Checks if a JSON value is a dynamic hook reference.</div><div class="ttdef"><b>Definition</b> Hooks.hpp:746</div></div>
+<div class="ttc" id="aHooks_8hpp_html_a7f31f364a4ef0cbffcdb592482c79562"><div class="ttname"><a href="Hooks_8hpp.html#a7f31f364a4ef0cbffcdb592482c79562">is_hook</a></div><div class="ttdeci">bool is_hook(JsonObject const &amp;object, std::string const &amp;key)</div><div class="ttdoc">Checks if a JSON value is a dynamic hook reference.</div><div class="ttdef"><b>Definition</b> Hooks.hpp:917</div></div>
 </div><!-- fragment --><h1><a class="anchor" id="hooks_types"></a>
 Type Support</h1>
 <h2><a class="anchor" id="hooks_json"></a>
@@ -355,11 +365,11 @@ Follower AI</h2>
 <div class="line">  <a class="code hl_class" href="classVector2D.html">Vector2D</a> target_pos;</div>
 <div class="line">  <a class="code hl_class" href="classVector2D.html">Vector2D</a> offset;</div>
 <div class="line"> </div>
-<div class="line">  <a class="code hl_function" href="structFollower.html#a68835e20b12cfe44a4c544536da7d659">Follower</a>(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, JsonObject <span class="keyword">const</span>&amp; obj, <a class="code hl_typedef" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a> self)</div>
-<div class="line">    : target_pos(<a class="code hl_function" href="Hooks_8hpp.html#ac691828d534a0e4dd453f2419b40c4bf">get_value</a>&lt;<a class="code hl_struct" href="structFollower.html">Follower</a>, <a class="code hl_class" href="classVector2D.html">Vector2D</a>&gt;(</div>
+<div class="line">  <a class="code hl_function" href="structFollower.html#a68835e20b12cfe44a4c544536da7d659">Follower</a>(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, JsonObject <span class="keyword">const</span>&amp; obj, <a class="code hl_typedef" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> self)</div>
+<div class="line">    : target_pos(<a class="code hl_function" href="Hooks_8hpp.html#a9eab5392562ddc7b99520a786e6b230b">get_value</a>&lt;<a class="code hl_struct" href="structFollower.html">Follower</a>, <a class="code hl_class" href="classVector2D.html">Vector2D</a>&gt;(</div>
 <div class="line">        r, obj, self, <span class="stringliteral">&quot;target_pos&quot;</span></div>
 <div class="line">      ).value_or(<a class="code hl_class" href="classVector2D.html">Vector2D</a>{0, 0}))</div>
-<div class="line">    , offset(<a class="code hl_function" href="Hooks_8hpp.html#adb9a223334bc754df5bf32b6f41e5b31">get_value_copy</a>&lt;<a class="code hl_class" href="classVector2D.html">Vector2D</a>&gt;(r, obj, <span class="stringliteral">&quot;offset&quot;</span>)</div>
+<div class="line">    , offset(<a class="code hl_function" href="Hooks_8hpp.html#a5112703434c874d9180da439f07e4422">get_value_copy</a>&lt;<a class="code hl_class" href="classVector2D.html">Vector2D</a>&gt;(r, obj, <span class="stringliteral">&quot;offset&quot;</span>)</div>
 <div class="line">      .value_or(<a class="code hl_class" href="classVector2D.html">Vector2D</a>{0, 0}))</div>
 <div class="line">  {}</div>
 <div class="line">};</div>
@@ -368,9 +378,9 @@ Follower AI</h2>
 <div class="line"><span class="comment">// - Companion&#39;s target_pos initially set to Player&#39;s position</span></div>
 <div class="line"><span class="comment">// - Binding registered: Follower.target_pos &lt;- Player.pos</span></div>
 <div class="line"><span class="comment">// - When Player moves, Companion&#39;s target_pos auto-updates</span></div>
-<div class="ttc" id="aHooks_8hpp_html_ac691828d534a0e4dd453f2419b40c4bf"><div class="ttname"><a href="Hooks_8hpp.html#ac691828d534a0e4dd453f2419b40c4bf">get_value</a></div><div class="ttdeci">std::optional&lt; T &gt; get_value(Registry &amp;r, JsonObject const &amp;object, Registry::Entity entity, std::string const &amp;field_name, Args &amp;&amp;... args)</div><div class="ttdoc">Gets a value and registers a dynamic binding for auto-updates.</div><div class="ttdef"><b>Definition</b> Hooks.hpp:682</div></div>
-<div class="ttc" id="aHooks_8hpp_html_adb9a223334bc754df5bf32b6f41e5b31"><div class="ttname"><a href="Hooks_8hpp.html#adb9a223334bc754df5bf32b6f41e5b31">get_value_copy</a></div><div class="ttdeci">std::optional&lt; T &gt; get_value_copy(Registry &amp;r, JsonObject const &amp;object, std::string const &amp;key, Args &amp;&amp;... args)</div><div class="ttdoc">Gets a copy of a value from JSON, supporting hooks and construction.</div><div class="ttdef"><b>Definition</b> Hooks.hpp:577</div></div>
-<div class="ttc" id="aclassVector2D_html"><div class="ttname"><a href="classVector2D.html">Vector2D</a></div><div class="ttdoc">Two-dimensional vector with mathematical operations.</div><div class="ttdef"><b>Definition</b> Vector2D.hpp:43</div></div>
+<div class="ttc" id="aHooks_8hpp_html_a5112703434c874d9180da439f07e4422"><div class="ttname"><a href="Hooks_8hpp.html#a5112703434c874d9180da439f07e4422">get_value_copy</a></div><div class="ttdeci">std::optional&lt; T &gt; get_value_copy(Registry &amp;r, JsonObject const &amp;object, std::string const &amp;key, std::optional&lt; Ecs::Entity &gt; entity=std::nullopt, Args &amp;&amp;... args)</div><div class="ttdoc">Gets a copy of a value from JSON, supporting hooks and construction.</div><div class="ttdef"><b>Definition</b> Hooks.hpp:697</div></div>
+<div class="ttc" id="aHooks_8hpp_html_a9eab5392562ddc7b99520a786e6b230b"><div class="ttname"><a href="Hooks_8hpp.html#a9eab5392562ddc7b99520a786e6b230b">get_value</a></div><div class="ttdeci">std::optional&lt; T &gt; get_value(Registry &amp;r, JsonObject const &amp;object, Ecs::Entity entity, std::string const &amp;field_name, Args &amp;&amp;... args)</div><div class="ttdoc">Gets a value and registers a dynamic binding for auto-updates.</div><div class="ttdef"><b>Definition</b> Hooks.hpp:842</div></div>
+<div class="ttc" id="aclassVector2D_html"><div class="ttname"><a href="classVector2D.html">Vector2D</a></div><div class="ttdoc">Two-dimensional vector with mathematical operations.</div><div class="ttdef"><b>Definition</b> Vector2D.hpp:44</div></div>
 <div class="ttc" id="astructFollower_html"><div class="ttname"><a href="structFollower.html">Follower</a></div><div class="ttdef"><b>Definition</b> Follower.hpp:11</div></div>
 <div class="ttc" id="astructFollower_html_a68835e20b12cfe44a4c544536da7d659"><div class="ttname"><a href="structFollower.html#a68835e20b12cfe44a4c544536da7d659">Follower::Follower</a></div><div class="ttdeci">Follower()</div><div class="ttdef"><b>Definition</b> Follower.hpp:12</div></div>
 </div><!-- fragment --><h2><a class="anchor" id="hooks_weapon"></a>
@@ -415,7 +425,7 @@ Resolution Process</h2>
 <li>Returns std::optional&lt;std::reference_wrapper&lt;const T&gt;&gt;</li>
 </ul>
 </li>
-<li><b>Register binding</b> (dynamic hooks only):<ul>
+<li><b><a class="el" href="structRegister.html">Register</a> binding</b> (dynamic hooks only):<ul>
 <li>Call Registry::register_binding&lt;ComponentType, T&gt;(entity, field, hook)</li>
 <li>Creates live connection between source and target</li>
 </ul>
@@ -545,8 +555,8 @@ For direct values, reference points to JSON storage (immutable)</dd></dl>
 </div><!-- fragment --> 
 </div>
 </div>
-<a id="ac691828d534a0e4dd453f2419b40c4bf" name="ac691828d534a0e4dd453f2419b40c4bf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac691828d534a0e4dd453f2419b40c4bf">&#9670;&#160;</a></span>get_value()</h2>
+<a id="a9eab5392562ddc7b99520a786e6b230b" name="a9eab5392562ddc7b99520a786e6b230b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9eab5392562ddc7b99520a786e6b230b">&#9670;&#160;</a></span>get_value()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -568,7 +578,7 @@ template&lt;typename ComponentType , typename <a class="el" href="IoEvents_8hpp.
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a>&#160;</td>
           <td class="paramname"><em>entity</em>, </td>
         </tr>
         <tr>
@@ -612,39 +622,54 @@ template&lt;typename ComponentType , typename <a class="el" href="IoEvents_8hpp.
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Optional containing the value, or nullopt on failure</dd></dl>
-<p>Hook types:</p><ul>
-<li>**# prefix**: Dynamic hook - registers binding for auto-updates</li>
-<li><b>% prefix</b>: Static hook - reads value once, no binding</li>
+<p>Hook formats:</p><ul>
+<li>**#self:Component:field**: Dynamic hook - same entity binding</li>
+<li>**#global:Name:field**: Dynamic hook - global singleton binding</li>
+<li><b>self:Component:field</b>: Static hook - read once from same entity</li>
+<li><b>global:Name:field</b>: Static hook - read once from global</li>
 <li><b>No prefix</b>: Direct value or JSON construction</li>
 </ul>
 <p>Binding registration (# hooks only): </p><div class="fragment"><div class="line">r.register_binding&lt;ComponentType, <a class="code hl_enumvalue" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a>&gt;(</div>
 <div class="line">  entity,</div>
 <div class="line">  field_name,</div>
-<div class="line">  <span class="stringliteral">&quot;SourceComponent:sourceField&quot;</span></div>
+<div class="line">  <span class="stringliteral">&quot;scope:Component:field&quot;</span></div>
 <div class="line">);</div>
-<div class="ttc" id="aIoEvents_8hpp_html_a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce"><div class="ttname"><a href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a></div><div class="ttdeci">@ T</div><div class="ttdef"><b>Definition</b> IoEvents.hpp:53</div></div>
+<div class="ttc" id="aIoEvents_8hpp_html_a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce"><div class="ttname"><a href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a></div><div class="ttdeci">@ T</div><div class="ttdef"><b>Definition</b> IoEvents.hpp:54</div></div>
 </div><!-- fragment --><dl class="section warning"><dt>Warning</dt><dd>This function should be called from component constructors </dd></dl>
-<dl class="section note"><dt>Note</dt><dd>Use <a class="el" href="Hooks_8hpp.html#adb9a223334bc754df5bf32b6f41e5b31" title="Gets a copy of a value from JSON, supporting hooks and construction.">get_value_copy()</a> if dynamic binding is not needed </dd>
+<dl class="section note"><dt>Note</dt><dd><a class="el" href="structUse.html">Use</a> <a class="el" href="Hooks_8hpp.html#a5112703434c874d9180da439f07e4422" title="Gets a copy of a value from JSON, supporting hooks and construction.">get_value_copy()</a> if dynamic binding is not needed </dd>
 <dd>
 Empty T{} returned if hook exists but no mapped entities found</dd></dl>
 <div class="fragment"><div class="line"><span class="keyword">struct </span><a class="code hl_struct" href="structFollower.html">Follower</a> {</div>
 <div class="line">  <a class="code hl_class" href="classVector2D.html">Vector2D</a> target_pos;</div>
 <div class="line"> </div>
-<div class="line">  <a class="code hl_function" href="structFollower.html#a68835e20b12cfe44a4c544536da7d659">Follower</a>(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, JsonObject <span class="keyword">const</span>&amp; obj, <a class="code hl_typedef" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a> self) {</div>
-<div class="line">    <span class="comment">// JSON: &quot;target_pos&quot;: &quot;#Leader:pos&quot;</span></div>
+<div class="line">  <a class="code hl_function" href="structFollower.html#a68835e20b12cfe44a4c544536da7d659">Follower</a>(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, JsonObject <span class="keyword">const</span>&amp; obj, <a class="code hl_typedef" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> self) {</div>
+<div class="line">    <span class="comment">// JSON: &quot;target_pos&quot;: &quot;#self:Position:pos&quot;</span></div>
 <div class="line">    target_pos = get_value&lt;Follower, Vector2D&gt;(</div>
 <div class="line">      r, obj, self, <span class="stringliteral">&quot;target_pos&quot;</span></div>
 <div class="line">    ).value_or(<a class="code hl_class" href="classVector2D.html">Vector2D</a>{0, 0});</div>
 <div class="line"> </div>
-<div class="line">    <span class="comment">// Binding registered: Follower.target_pos &lt;- Leader.pos</span></div>
-<div class="line">    <span class="comment">// target_pos will auto-update when Leader moves</span></div>
+<div class="line">    <span class="comment">// Binding registered: Follower.target_pos &lt;- self.Position.pos</span></div>
+<div class="line">    <span class="comment">// target_pos will auto-update when Position changes</span></div>
+<div class="line">  }</div>
+<div class="line">};</div>
+</div><!-- fragment --><div class="fragment"><div class="line"><span class="keyword">struct </span>HealthBar {</div>
+<div class="line">  <span class="keywordtype">int</span> max_health;</div>
+<div class="line"> </div>
+<div class="line">  HealthBar(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, JsonObject <span class="keyword">const</span>&amp; obj, <a class="code hl_typedef" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> self) {</div>
+<div class="line">    <span class="comment">// JSON: &quot;max_health&quot;: &quot;#global:GameConfig:maxHealth&quot;</span></div>
+<div class="line">    max_health = get_value&lt;HealthBar, int&gt;(</div>
+<div class="line">      r, obj, self, <span class="stringliteral">&quot;max_health&quot;</span></div>
+<div class="line">    ).value_or(100);</div>
+<div class="line"> </div>
+<div class="line">    <span class="comment">// Binding registered: HealthBar.max_health &lt;-</span></div>
+<div class="line">global.GameConfig.maxHealth</div>
 <div class="line">  }</div>
 <div class="line">};</div>
 </div><!-- fragment --><div class="fragment"><div class="line"><span class="keyword">struct </span>Enemy {</div>
 <div class="line">  <span class="keywordtype">int</span> max_health;</div>
 <div class="line"> </div>
-<div class="line">  Enemy(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, JsonObject <span class="keyword">const</span>&amp; obj, <a class="code hl_typedef" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a> self) {</div>
-<div class="line">    <span class="comment">// JSON: &quot;max_health&quot;: &quot;%EnemyDefaults:health&quot;</span></div>
+<div class="line">  Enemy(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, JsonObject <span class="keyword">const</span>&amp; obj, <a class="code hl_typedef" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> self) {</div>
+<div class="line">    <span class="comment">// JSON: &quot;max_health&quot;: &quot;%global:EnemyDefaults:health&quot;</span></div>
 <div class="line">    max_health = get_value&lt;Enemy, int&gt;(</div>
 <div class="line">      r, obj, self, <span class="stringliteral">&quot;max_health&quot;</span></div>
 <div class="line">    ).value_or(100);</div>
@@ -652,22 +677,11 @@ Empty T{} returned if hook exists but no mapped entities found</dd></dl>
 <div class="line">    <span class="comment">// No binding registered - value read once</span></div>
 <div class="line">  }</div>
 <div class="line">};</div>
-</div><!-- fragment --><div class="fragment"><div class="line"><span class="keyword">struct </span><a class="code hl_class" href="classProjectile.html">Projectile</a> {</div>
-<div class="line">  <span class="keywordtype">int</span> damage;</div>
-<div class="line"> </div>
-<div class="line">  <a class="code hl_class" href="classProjectile.html">Projectile</a>(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, JsonObject <span class="keyword">const</span>&amp; obj, <a class="code hl_typedef" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a> self) {</div>
-<div class="line">    <span class="comment">// JSON: &quot;damage&quot;: 25</span></div>
-<div class="line">    damage = get_value&lt;Projectile, int&gt;(</div>
-<div class="line">      r, obj, self, <span class="stringliteral">&quot;damage&quot;</span></div>
-<div class="line">    ).value_or(10);</div>
-<div class="line">  }</div>
-<div class="line">};</div>
-<div class="ttc" id="aclassProjectile_html"><div class="ttname"><a href="classProjectile.html">Projectile</a></div><div class="ttdef"><b>Definition</b> Projectile.hpp:10</div></div>
 </div><!-- fragment --> 
 </div>
 </div>
-<a id="adb9a223334bc754df5bf32b6f41e5b31" name="adb9a223334bc754df5bf32b6f41e5b31"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adb9a223334bc754df5bf32b6f41e5b31">&#9670;&#160;</a></span>get_value_copy()</h2>
+<a id="a5112703434c874d9180da439f07e4422" name="a5112703434c874d9180da439f07e4422"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5112703434c874d9180da439f07e4422">&#9670;&#160;</a></span>get_value_copy()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -695,6 +709,12 @@ template&lt;typename <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140d
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">std::optional&lt; <a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> &gt;&#160;</td>
+          <td class="paramname"><em>entity</em> = <code>std::nullopt</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">Args &amp;&amp;...&#160;</td>
           <td class="paramname"><em>args</em>&#160;</td>
         </tr>
@@ -709,7 +729,7 @@ template&lt;typename <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140d
 <p>Gets a copy of a value from JSON, supporting hooks and construction. </p>
 <p>Retrieves a value of type T from a JSON object, with support for:</p><ul>
 <li>Direct JSON values (int, double, string, bool, object, array)</li>
-<li>Static hook references (% prefix)</li>
+<li>Static hook references (% prefix with scope support)</li>
 <li>Dynamic hook references (# prefix) - reads value but doesn't bind</li>
 <li>JSON object construction (if T has JsonObject constructor)</li>
 </ul>
@@ -725,30 +745,39 @@ template&lt;typename <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140d
     <tr><td class="paramname">r</td><td><a class="el" href="classRegistry.html" title="The Registry class is the core of the ECS (Entity-Component-System) architecture.">Registry</a> instance for hook resolution </td></tr>
     <tr><td class="paramname">object</td><td>JSON object containing the key </td></tr>
     <tr><td class="paramname">key</td><td>Key name to lookup </td></tr>
+    <tr><td class="paramname">entity</td><td>Optional entity for scoped hook resolution (self scope) </td></tr>
     <tr><td class="paramname">args</td><td>Additional arguments passed to T's constructor (if needed)</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Optional containing a copy of the value, or nullopt on failure</dd></dl>
 <p>Resolution priority:</p><ol type="1">
-<li>Try <a class="el" href="Hooks_8hpp.html#a978c2837387286f95b5dd502a61a74e3" title="Retrieves a const reference to a value from JSON, resolving hooks.">get_ref&lt;T&gt;()</a> for direct value or hook</li>
+<li>Try scoped static hooks (scope:component:field)</li>
+<li>Try scoped dynamic hooks (#scope:component:field) - without binding</li>
+<li>Try <a class="el" href="Hooks_8hpp.html#a978c2837387286f95b5dd502a61a74e3" title="Retrieves a const reference to a value from JSON, resolving hooks.">get_ref&lt;T&gt;()</a> for direct value or old-style hook</li>
 <li>If successful, return a copy of the referenced value</li>
 <li>If T is constructible from JsonObject, try JSON construction</li>
 <li>Return nullopt if all methods fail</li>
 </ol>
+<p>When entity is provided, it can resolve hooks with "self" scope. When entity is std::nullopt, only "global" scoped hooks can be resolved.</p>
 <dl class="section note"><dt>Note</dt><dd>Always returns a copy - caller owns the returned value </dd>
 <dd>
-For static hooks only - dynamic binding requires <a class="el" href="Hooks_8hpp.html#ac691828d534a0e4dd453f2419b40c4bf" title="Gets a value and registers a dynamic binding for auto-updates.">get_value()</a></dd></dl>
+For dynamic binding, use <a class="el" href="Hooks_8hpp.html#a9eab5392562ddc7b99520a786e6b230b" title="Gets a value and registers a dynamic binding for auto-updates.">get_value()</a> instead</dd></dl>
 <div class="fragment"><div class="line">JsonObject obj;</div>
 <div class="line">obj[<span class="stringliteral">&quot;damage&quot;</span>] = 50;</div>
 <div class="line"> </div>
 <div class="line"><span class="keyword">auto</span> damage = get_value_copy&lt;int&gt;(r, obj, <span class="stringliteral">&quot;damage&quot;</span>);</div>
 <div class="line"><span class="comment">// damage == optional&lt;int&gt;(50)</span></div>
 </div><!-- fragment --><div class="fragment"><div class="line">JsonObject obj;</div>
-<div class="line">obj[<span class="stringliteral">&quot;speed&quot;</span>] = <span class="stringliteral">&quot;%Config:playerSpeed&quot;</span>;</div>
+<div class="line">obj[<span class="stringliteral">&quot;speed&quot;</span>] = <span class="stringliteral">&quot;%global:Config:playerSpeed&quot;</span>;</div>
 <div class="line"> </div>
 <div class="line"><span class="keyword">auto</span> speed = get_value_copy&lt;double&gt;(r, obj, <span class="stringliteral">&quot;speed&quot;</span>);</div>
 <div class="line"><span class="comment">// Reads Config::playerSpeed and returns a copy</span></div>
+</div><!-- fragment --><div class="fragment"><div class="line">JsonObject obj;</div>
+<div class="line">obj[<span class="stringliteral">&quot;health&quot;</span>] = <span class="stringliteral">&quot;%self:Player:maxHealth&quot;</span>;</div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">auto</span> health = get_value_copy&lt;int&gt;(r, obj, <span class="stringliteral">&quot;health&quot;</span>, entity_id);</div>
+<div class="line"><span class="comment">// Reads maxHealth from Player component on entity_id</span></div>
 </div><!-- fragment --><div class="fragment"><div class="line">JsonObject obj;</div>
 <div class="line">obj[<span class="stringliteral">&quot;rect&quot;</span>] = JsonObject{</div>
 <div class="line">  {<span class="stringliteral">&quot;x&quot;</span>, 10}, {<span class="stringliteral">&quot;y&quot;</span>, 20}, {<span class="stringliteral">&quot;w&quot;</span>, 100}, {<span class="stringliteral">&quot;h&quot;</span>, 50}</div>
@@ -818,6 +847,90 @@ Returns false for non-string values or missing keys</dd></dl>
 <div class="line"><a class="code hl_function" href="Hooks_8hpp.html#a7f31f364a4ef0cbffcdb592482c79562">is_hook</a>(obj, <span class="stringliteral">&quot;dynamic&quot;</span>);  <span class="comment">// true - # prefix</span></div>
 <div class="line"><a class="code hl_function" href="Hooks_8hpp.html#a7f31f364a4ef0cbffcdb592482c79562">is_hook</a>(obj, <span class="stringliteral">&quot;missing&quot;</span>);  <span class="comment">// false - key doesn&#39;t exist</span></div>
 </div><!-- fragment --> 
+</div>
+</div>
+<a id="a07f26f5bb978cebb5be99573aa4a4a9b" name="a07f26f5bb978cebb5be99573aa4a4a9b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a07f26f5bb978cebb5be99573aa4a4a9b">&#9670;&#160;</a></span>resolve_scoped_hook() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt; <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt; resolve_scoped_hook </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classRegistry.html">Registry</a> &amp;&#160;</td>
+          <td class="paramname"><em>r</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string const &amp;&#160;</td>
+          <td class="paramname"><em>value_str</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aba440cb8f46f25d2056efd4f1320212f" name="aba440cb8f46f25d2056efd4f1320212f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aba440cb8f46f25d2056efd4f1320212f">&#9670;&#160;</a></span>resolve_scoped_hook() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt; <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt; resolve_scoped_hook </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classRegistry.html">Registry</a> &amp;&#160;</td>
+          <td class="paramname"><em>r</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string const &amp;&#160;</td>
+          <td class="paramname"><em>value_str</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a>&#160;</td>
+          <td class="paramname"><em>entity</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Helper function to resolve scoped hooks (self/global) </p>
+<p>Parses and resolves hook strings with scope:component:field format. Supports both "self" (entity-specific) and "global" (singleton) scopes.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>The expected type of the value </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">r</td><td><a class="el" href="classRegistry.html" title="The Registry class is the core of the ECS (Entity-Component-System) architecture.">Registry</a> instance for hook resolution </td></tr>
+    <tr><td class="paramname">value_str</td><td>Hook string in format "scope:component:field" </td></tr>
+    <tr><td class="paramname">entity</td><td>Entity ID for "self" scope resolution (optional for global)</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Optional containing the resolved value, or nullopt on failure </dd></dl>
+
 </div>
 </div>
 <h2 class="groupheader">Variable Documentation</h2>

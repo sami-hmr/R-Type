@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['rect_0',['Rect',['../structRect.html',1,'']]],
-  ['registry_1',['Registry',['../classRegistry.html',1,'']]]
+  ['offset_0',['Offset',['../structOffset.html',1,'']]],
+  ['onendevent_1',['OnEndEvent',['../structOnEndEvent.html',1,'']]],
+  ['overloads_2',['Overloads',['../structOverloads.html',1,'']]]
 ];

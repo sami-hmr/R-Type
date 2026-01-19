@@ -83,21 +83,21 @@ $(function() {
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a5ce5ca318d7dffc5d4e089ef098636fe" id="r_a5ce5ca318d7dffc5d4e089ef098636fe"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSceneChangeEvent.html#a5ce5ca318d7dffc5d4e089ef098636fe">SceneChangeEvent</a> ()=default</td></tr>
 <tr class="separator:a5ce5ca318d7dffc5d4e089ef098636fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af2422ff57a97afa759d4063127e97efe" id="r_af2422ff57a97afa759d4063127e97efe"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSceneChangeEvent.html#af2422ff57a97afa759d4063127e97efe">SceneChangeEvent</a> (std::string t, std::string r, bool f)</td></tr>
-<tr class="separator:af2422ff57a97afa759d4063127e97efe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8dee688de9ddb1786d93c0a6c8a4f65f" id="r_a8dee688de9ddb1786d93c0a6c8a4f65f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSceneChangeEvent.html#a8dee688de9ddb1786d93c0a6c8a4f65f">DEFAULT_BYTE_CONSTRUCTOR</a> (<a class="el" href="structSceneChangeEvent.html">SceneChangeEvent</a>,([](std::string const &amp;t, std::string const &amp;r, bool f) { return(<a class="el" href="structSceneChangeEvent.html">SceneChangeEvent</a>) {t, r, f};}), parseByteString(), parseByteString(), parseByte&lt; bool &gt;()) <a class="el" href="Byte_8hpp.html#ac2fb474e60f46281e11bf3824e6f4517">DEFAULT_SERIALIZE</a>(<a class="el" href="Byte_8hpp.html#a20d43856fdb8ef111a9b55ceeb1f96f8">string_to_byte</a>(this -&gt; <a class="el" href="structSceneChangeEvent.html#ab40fbb0b3ed23505fe824186dd0adff3">target_scene</a>), <a class="el" href="Byte_8hpp.html#a20d43856fdb8ef111a9b55ceeb1f96f8">string_to_byte</a>(this-&gt;<a class="el" href="structSceneChangeEvent.html#ae94e5c8dcfcf9e5595169a8d6675469c">reason</a>), <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(this-&gt;<a class="el" href="structSceneChangeEvent.html#a060ed6174d4bf9a4295b1ce31601bdf1">force</a>)) <a class="el" href="structSceneChangeEvent.html">SceneChangeEvent</a>(<a class="el" href="classRegistry.html">Registry</a> &amp;r, JsonObject const &amp;e) :<a class="el" href="structSceneChangeEvent.html#ab40fbb0b3ed23505fe824186dd0adff3">target_scene</a>(<a class="el" href="Hooks_8hpp.html#adb9a223334bc754df5bf32b6f41e5b31">get_value_copy</a>&lt; std::string &gt;(r, e, &quot;target_scene&quot;).value_or(&quot;&quot;)), <a class="el" href="structSceneChangeEvent.html#a3fb2ce34346537dbc69468bc8e70a9ed">state</a>(<a class="el" href="Hooks_8hpp.html#adb9a223334bc754df5bf32b6f41e5b31">get_value_copy</a>&lt; std::string &gt;(r, e, &quot;state&quot;).value_or(&quot;&quot;)), <a class="el" href="structSceneChangeEvent.html#ae94e5c8dcfcf9e5595169a8d6675469c">reason</a>(<a class="el" href="Hooks_8hpp.html#adb9a223334bc754df5bf32b6f41e5b31">get_value_copy</a>&lt; std::string &gt;(r, e, &quot;reason&quot;).value_or(&quot;&quot;)), <a class="el" href="structSceneChangeEvent.html#a060ed6174d4bf9a4295b1ce31601bdf1">force</a>(<a class="el" href="Hooks_8hpp.html#adb9a223334bc754df5bf32b6f41e5b31">get_value_copy</a>&lt; bool &gt;(r, e, &quot;force&quot;).value_or(false))</td></tr>
-<tr class="separator:a8dee688de9ddb1786d93c0a6c8a4f65f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abdac8af67f706685d3835fa33a40195a" id="r_abdac8af67f706685d3835fa33a40195a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSceneChangeEvent.html#abdac8af67f706685d3835fa33a40195a">SceneChangeEvent</a> (std::string t, std::string r, bool f, bool <a class="el" href="structSceneChangeEvent.html#ae2af3d97ab52bf770370a5f4a6cd667d">main</a>=false)</td></tr>
+<tr class="separator:abdac8af67f706685d3835fa33a40195a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa10e2726128753f8cca836e36641105e" id="r_aa10e2726128753f8cca836e36641105e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSceneChangeEvent.html#aa10e2726128753f8cca836e36641105e">DEFAULT_BYTE_CONSTRUCTOR</a> (<a class="el" href="structSceneChangeEvent.html">SceneChangeEvent</a>,([](std::string const &amp;t, std::string const &amp;r, bool f, bool m=false) { return <a class="el" href="structSceneChangeEvent.html">SceneChangeEvent</a>(t, r, f, m);}), parseByteString(), parseByteString(), parseByte&lt; bool &gt;(), parseByte&lt; bool &gt;()) <a class="el" href="Byte_8hpp.html#ac2fb474e60f46281e11bf3824e6f4517">DEFAULT_SERIALIZE</a>(<a class="el" href="Byte_8hpp.html#a20d43856fdb8ef111a9b55ceeb1f96f8">string_to_byte</a>(this -&gt; <a class="el" href="structSceneChangeEvent.html#ab40fbb0b3ed23505fe824186dd0adff3">target_scene</a>), <a class="el" href="Byte_8hpp.html#a20d43856fdb8ef111a9b55ceeb1f96f8">string_to_byte</a>(this-&gt;<a class="el" href="structSceneChangeEvent.html#ae94e5c8dcfcf9e5595169a8d6675469c">reason</a>), <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(this-&gt;<a class="el" href="structSceneChangeEvent.html#a060ed6174d4bf9a4295b1ce31601bdf1">force</a>), <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(<a class="el" href="structSceneChangeEvent.html#ae2af3d97ab52bf770370a5f4a6cd667d">main</a>)) <a class="el" href="structSceneChangeEvent.html">SceneChangeEvent</a>(<a class="el" href="classRegistry.html">Registry</a> &amp;r, JsonObject const &amp;e, std::optional&lt; <a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> &gt; entity) :<a class="el" href="structSceneChangeEvent.html#ab40fbb0b3ed23505fe824186dd0adff3">target_scene</a>(<a class="el" href="Hooks_8hpp.html#a5112703434c874d9180da439f07e4422">get_value_copy</a>&lt; std::string &gt;(r, e, &quot;target_scene&quot;, entity) .value_or(&quot;&quot;)), <a class="el" href="structSceneChangeEvent.html#ae94e5c8dcfcf9e5595169a8d6675469c">reason</a>(<a class="el" href="Hooks_8hpp.html#a5112703434c874d9180da439f07e4422">get_value_copy</a>&lt; std::string &gt;(r, e, &quot;reason&quot;, entity).value_or(&quot;&quot;)), <a class="el" href="structSceneChangeEvent.html#a060ed6174d4bf9a4295b1ce31601bdf1">force</a>(<a class="el" href="Hooks_8hpp.html#a5112703434c874d9180da439f07e4422">get_value_copy</a>&lt; bool &gt;(r, e, &quot;force&quot;, entity).value_or(false)), <a class="el" href="structSceneChangeEvent.html#ae2af3d97ab52bf770370a5f4a6cd667d">main</a>(<a class="el" href="Hooks_8hpp.html#a5112703434c874d9180da439f07e4422">get_value_copy</a>&lt; bool &gt;(r, e, &quot;main&quot;, entity).value_or(false))</td></tr>
+<tr class="separator:aa10e2726128753f8cca836e36641105e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:ab40fbb0b3ed23505fe824186dd0adff3" id="r_ab40fbb0b3ed23505fe824186dd0adff3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="EventMacros_8hpp.html#a762cd3630f6f73bfa82bbc45f3563a2d">CHANGE_ENTITY_DEFAULT</a> std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSceneChangeEvent.html#ab40fbb0b3ed23505fe824186dd0adff3">target_scene</a></td></tr>
 <tr class="separator:ab40fbb0b3ed23505fe824186dd0adff3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3fb2ce34346537dbc69468bc8e70a9ed" id="r_a3fb2ce34346537dbc69468bc8e70a9ed"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSceneChangeEvent.html#a3fb2ce34346537dbc69468bc8e70a9ed">state</a></td></tr>
-<tr class="separator:a3fb2ce34346537dbc69468bc8e70a9ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae94e5c8dcfcf9e5595169a8d6675469c" id="r_ae94e5c8dcfcf9e5595169a8d6675469c"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSceneChangeEvent.html#ae94e5c8dcfcf9e5595169a8d6675469c">reason</a></td></tr>
 <tr class="separator:ae94e5c8dcfcf9e5595169a8d6675469c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a060ed6174d4bf9a4295b1ce31601bdf1" id="r_a060ed6174d4bf9a4295b1ce31601bdf1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSceneChangeEvent.html#a060ed6174d4bf9a4295b1ce31601bdf1">force</a></td></tr>
 <tr class="separator:a060ed6174d4bf9a4295b1ce31601bdf1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2af3d97ab52bf770370a5f4a6cd667d" id="r_ae2af3d97ab52bf770370a5f4a6cd667d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSceneChangeEvent.html#ae2af3d97ab52bf770370a5f4a6cd667d">main</a></td></tr>
+<tr class="separator:ae2af3d97ab52bf770370a5f4a6cd667d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a5ce5ca318d7dffc5d4e089ef098636fe" name="a5ce5ca318d7dffc5d4e089ef098636fe"></a>
@@ -125,8 +125,8 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="af2422ff57a97afa759d4063127e97efe" name="af2422ff57a97afa759d4063127e97efe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af2422ff57a97afa759d4063127e97efe">&#9670;&#160;</a></span>SceneChangeEvent() <span class="overload">[2/2]</span></h2>
+<a id="abdac8af67f706685d3835fa33a40195a" name="abdac8af67f706685d3835fa33a40195a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abdac8af67f706685d3835fa33a40195a">&#9670;&#160;</a></span>SceneChangeEvent() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -150,7 +150,13 @@ Public Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>f</em>&#160;</td>
+          <td class="paramname"><em>f</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>main</em> = <code>false</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -168,8 +174,8 @@ Public Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a8dee688de9ddb1786d93c0a6c8a4f65f" name="a8dee688de9ddb1786d93c0a6c8a4f65f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8dee688de9ddb1786d93c0a6c8a4f65f">&#9670;&#160;</a></span>DEFAULT_BYTE_CONSTRUCTOR()</h2>
+<a id="aa10e2726128753f8cca836e36641105e" name="aa10e2726128753f8cca836e36641105e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa10e2726128753f8cca836e36641105e">&#9670;&#160;</a></span>DEFAULT_BYTE_CONSTRUCTOR()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -186,7 +192,7 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">([](std::string const  &amp;t, std::string const  &amp;r, bool f) { return(<a class="el" href="structSceneChangeEvent.html">SceneChangeEvent</a>) {t, r, f};})&#160;</td>
+          <td class="paramtype">([](std::string const  &amp;t, std::string const  &amp;r, bool f, bool m=false) { return <a class="el" href="structSceneChangeEvent.html">SceneChangeEvent</a>(t, r, f, m);})&#160;</td>
           <td class="paramname">, </td>
         </tr>
         <tr>
@@ -205,6 +211,12 @@ Public Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">parseByte&lt; bool &gt;&#160;</td>
+          <td class="paramname">(), </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">parseByte&lt; bool &gt;&#160;</td>
           <td class="paramname">()&#160;</td>
         </tr>
         <tr>
@@ -212,13 +224,17 @@ Public Attributes</h2></td></tr>
           <td>)</td>
           <td></td><td> -&gt; <a class="el" href="structSceneChangeEvent.html#ab40fbb0b3ed23505fe824186dd0adff3">target_scene</a>),
                     <a class="el" href="Byte_8hpp.html#a20d43856fdb8ef111a9b55ceeb1f96f8">string_to_byte</a>(this-&gt;<a class="el" href="structSceneChangeEvent.html#ae94e5c8dcfcf9e5595169a8d6675469c">reason</a>),
-                    <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(this-&gt;<a class="el" href="structSceneChangeEvent.html#a060ed6174d4bf9a4295b1ce31601bdf1">force</a>))
+                    <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(this-&gt;<a class="el" href="structSceneChangeEvent.html#a060ed6174d4bf9a4295b1ce31601bdf1">force</a>),
+                    <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(<a class="el" href="structSceneChangeEvent.html#ae2af3d97ab52bf770370a5f4a6cd667d">main</a>))
 
-  <a class="el" href="structSceneChangeEvent.html">SceneChangeEvent</a>(<a class="el" href="classRegistry.html">Registry</a>&amp; r, JsonObject const&amp; e)
-      : <a class="el" href="structSceneChangeEvent.html#ab40fbb0b3ed23505fe824186dd0adff3">target_scene</a>(<a class="el" href="Hooks_8hpp.html#adb9a223334bc754df5bf32b6f41e5b31">get_value_copy</a>&lt;std::string&gt;(r, e, &quot;target_scene&quot;).value_or(&quot;&quot;))
-      , <a class="el" href="structSceneChangeEvent.html#a3fb2ce34346537dbc69468bc8e70a9ed">state</a>(<a class="el" href="Hooks_8hpp.html#adb9a223334bc754df5bf32b6f41e5b31">get_value_copy</a>&lt;std::string&gt;(r, e, &quot;state&quot;).value_or(&quot;&quot;))
-      , <a class="el" href="structSceneChangeEvent.html#ae94e5c8dcfcf9e5595169a8d6675469c">reason</a>(<a class="el" href="Hooks_8hpp.html#adb9a223334bc754df5bf32b6f41e5b31">get_value_copy</a>&lt;std::string&gt;(r, e, &quot;reason&quot;).value_or(&quot;&quot;))
-      , <a class="el" href="structSceneChangeEvent.html#a060ed6174d4bf9a4295b1ce31601bdf1">force</a>(<a class="el" href="Hooks_8hpp.html#adb9a223334bc754df5bf32b6f41e5b31">get_value_copy</a>&lt;bool&gt;(r, e, &quot;force&quot;).value_or(false))
+  <a class="el" href="structSceneChangeEvent.html">SceneChangeEvent</a>(<a class="el" href="classRegistry.html">Registry</a>&amp; r,
+                   JsonObject const&amp; e,
+                   std::optional&lt;<a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a>&gt; entity)
+      : <a class="el" href="structSceneChangeEvent.html#ab40fbb0b3ed23505fe824186dd0adff3">target_scene</a>(<a class="el" href="Hooks_8hpp.html#a5112703434c874d9180da439f07e4422">get_value_copy</a>&lt;std::string&gt;(r, e, &quot;target_scene&quot;, entity)
+                         .value_or(&quot;&quot;))
+      , <a class="el" href="structSceneChangeEvent.html#ae94e5c8dcfcf9e5595169a8d6675469c">reason</a>(<a class="el" href="Hooks_8hpp.html#a5112703434c874d9180da439f07e4422">get_value_copy</a>&lt;std::string&gt;(r, e, &quot;reason&quot;, entity).value_or(&quot;&quot;))
+      , <a class="el" href="structSceneChangeEvent.html#a060ed6174d4bf9a4295b1ce31601bdf1">force</a>(<a class="el" href="Hooks_8hpp.html#a5112703434c874d9180da439f07e4422">get_value_copy</a>&lt;bool&gt;(r, e, &quot;force&quot;, entity).value_or(false))
+      , <a class="el" href="structSceneChangeEvent.html#ae2af3d97ab52bf770370a5f4a6cd667d">main</a>(<a class="el" href="Hooks_8hpp.html#a5112703434c874d9180da439f07e4422">get_value_copy</a>&lt;bool&gt;(r, e, &quot;main&quot;, entity).value_or(false))
   </td>
         </tr>
       </table>
@@ -246,6 +262,20 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="ae2af3d97ab52bf770370a5f4a6cd667d" name="ae2af3d97ab52bf770370a5f4a6cd667d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae2af3d97ab52bf770370a5f4a6cd667d">&#9670;&#160;</a></span>main</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool SceneChangeEvent::main</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="ae94e5c8dcfcf9e5595169a8d6675469c" name="ae94e5c8dcfcf9e5595169a8d6675469c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae94e5c8dcfcf9e5595169a8d6675469c">&#9670;&#160;</a></span>reason</h2>
 
@@ -254,20 +284,6 @@ Public Attributes</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">std::string SceneChangeEvent::reason</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a3fb2ce34346537dbc69468bc8e70a9ed" name="a3fb2ce34346537dbc69468bc8e70a9ed"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3fb2ce34346537dbc69468bc8e70a9ed">&#9670;&#160;</a></span>state</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string SceneChangeEvent::state</td>
         </tr>
       </table>
 </div><div class="memdoc">

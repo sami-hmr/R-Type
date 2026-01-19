@@ -87,9 +87,11 @@ $(function() {
 <code>#include &lt;cstddef&gt;</code><br />
 <code>#include &lt;functional&gt;</code><br />
 <code>#include &lt;iostream&gt;</code><br />
+<code>#include &lt;list&gt;</code><br />
 <code>#include &lt;optional&gt;</code><br />
 <code>#include &lt;queue&gt;</code><br />
 <code>#include &lt;random&gt;</code><br />
+<code>#include &lt;stack&gt;</code><br />
 <code>#include &lt;stdexcept&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
 <code>#include &lt;typeindex&gt;</code><br />
@@ -102,6 +104,7 @@ $(function() {
 <code>#include &quot;<a class="el" href="SparseArray_8hpp_source.html">SparseArray.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="TwoWayMap_8hpp_source.html">TwoWayMap.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="ComponentState_8hpp_source.html">ecs/ComponentState.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="Entity_8hpp_source.html">ecs/Entity.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Scenes_8hpp_source.html">ecs/Scenes.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Systems_8hpp_source.html">ecs/Systems.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Byte_8hpp_source.html">plugin/Byte.hpp</a>&quot;</code><br />
@@ -111,11 +114,6 @@ $(function() {
 Include dependency graph for Registry.hpp:</div>
 <div class="dyncontent">
 <div class="center"><!-- SVG 0 --></div>
-</div>
-</div><div class="textblock"><div class="dynheader">
-This graph shows which files directly or indirectly include this file:</div>
-<div class="dyncontent">
-<div class="center"><!-- SVG 1 --></div>
 </div>
 </div>
 <p><a href="Registry_8hpp_source.html">Go to the source code of this file.</a></p>
@@ -130,9 +128,6 @@ Classes</h2></td></tr>
 Concepts</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">concept &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="conceptcomponent.html">component</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Requires a type to be serializable and entity-convertible for network sync. <br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">concept &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="conceptevent.html">event</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Requires a type to be a valid event with serialization and JSON construction. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -180,13 +175,13 @@ Component Storage</h2>
 <div class="line">_state_getters:     <span class="keyword">typeid</span> -&gt; lambda to serialize state</div>
 <div class="line">_index_getter:      <span class="keyword">typeid</span> &lt;-&gt; <span class="stringliteral">&quot;Position&quot;</span> <span class="keywordtype">string</span> lookup</div>
 <div class="ttc" id="aclassSparseArray_html"><div class="ttname"><a href="classSparseArray.html">SparseArray</a></div><div class="ttdoc">A sparse array implementation that stores components in an optional vector.</div><div class="ttdef"><b>Definition</b> SparseArray.hpp:16</div></div>
-<div class="ttc" id="aconceptcomponent_html"><div class="ttname"><a href="conceptcomponent.html">component</a></div><div class="ttdoc">Requires a type to be serializable and entity-convertible for network sync.</div><div class="ttdef"><b>Definition</b> Registry.hpp:260</div></div>
+<div class="ttc" id="aconceptcomponent_html"><div class="ttname"><a href="conceptcomponent.html">component</a></div><div class="ttdoc">Requires a type to be serializable and entity-convertible for network sync.</div><div class="ttdef"><b>Definition</b> Registry.hpp:265</div></div>
 <div class="ttc" id="astructPosition_html"><div class="ttname"><a href="structPosition.html">Position</a></div><div class="ttdef"><b>Definition</b> Position.hpp:9</div></div>
 </div><!-- fragment --><h2><a class="anchor" id="reg_systems"></a>
 System Execution</h2>
 <p>Systems are priority-ordered functions that process components:</p>
 <div class="fragment"><div class="line"><span class="comment">// High priority runs first</span></div>
-<div class="line">registry.add_system&lt;<a class="code hl_struct" href="structPosition.html">Position</a>, <a class="code hl_struct" href="structVelocity.html">Velocity</a>&gt;(</div>
+<div class="line">registry.add_system&lt;<a class="code hl_struct" href="structPosition.html">Position</a>, Velocity&gt;(</div>
 <div class="line">  [](<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <span class="keyword">auto</span>&amp; pos, <span class="keyword">auto</span>&amp; vel) {</div>
 <div class="line">    <span class="comment">// Move entities</span></div>
 <div class="line">  },</div>
@@ -203,9 +198,8 @@ System Execution</h2>
 <div class="line"> </div>
 <div class="line"><span class="comment">// Execution order maintained in _frequent_systems vector</span></div>
 <div class="line">registry.run_systems(); <span class="comment">// Calls in priority order</span></div>
-<div class="ttc" id="aclassRegistry_html"><div class="ttname"><a href="classRegistry.html">Registry</a></div><div class="ttdoc">The Registry class is the core of the ECS (Entity-Component-System) architecture.</div><div class="ttdef"><b>Definition</b> Registry.hpp:348</div></div>
-<div class="ttc" id="astructSprite_html"><div class="ttname"><a href="structSprite.html">Sprite</a></div><div class="ttdef"><b>Definition</b> Sprite.hpp:13</div></div>
-<div class="ttc" id="astructVelocity_html"><div class="ttname"><a href="structVelocity.html">Velocity</a></div><div class="ttdef"><b>Definition</b> Velocity.hpp:10</div></div>
+<div class="ttc" id="aclassRegistry_html"><div class="ttname"><a href="classRegistry.html">Registry</a></div><div class="ttdoc">The Registry class is the core of the ECS (Entity-Component-System) architecture.</div><div class="ttdef"><b>Definition</b> Registry.hpp:308</div></div>
+<div class="ttc" id="astructSprite_html"><div class="ttname"><a href="structSprite.html">Sprite</a></div><div class="ttdef"><b>Definition</b> Sprite.hpp:12</div></div>
 </div><!-- fragment --><h2><a class="anchor" id="reg_events"></a>
 Event System</h2>
 <p>Type-safe event emission and handling with network support:</p>
@@ -228,7 +222,7 @@ Event System</h2>
 <div class="line"> </div>
 <div class="line"><span class="comment">// Unregister</span></div>
 <div class="line">registry.off&lt;<a class="code hl_struct" href="structCollisionEvent.html">CollisionEvent</a>&gt;(id);</div>
-<div class="ttc" id="astructCollisionEvent_html"><div class="ttname"><a href="structCollisionEvent.html">CollisionEvent</a></div><div class="ttdef"><b>Definition</b> CollisionEvent.hpp:22</div></div>
+<div class="ttc" id="astructCollisionEvent_html"><div class="ttname"><a href="structCollisionEvent.html">CollisionEvent</a></div><div class="ttdef"><b>Definition</b> CollisionEvent.hpp:23</div></div>
 </div><!-- fragment --><h2><a class="anchor" id="reg_bindings"></a>
 Dynamic Bindings</h2>
 <p>Automatic field synchronization between components:</p>
@@ -248,13 +242,13 @@ Dynamic Bindings</h2>
 <div class="line"> </div>
 <div class="line"><span class="comment">// Every frame:</span></div>
 <div class="line">registry.update_bindings(); <span class="comment">// Follower.target_pos = Leader.pos</span></div>
-<div class="ttc" id="aclassVector2D_html"><div class="ttname"><a href="classVector2D.html">Vector2D</a></div><div class="ttdoc">Two-dimensional vector with mathematical operations.</div><div class="ttdef"><b>Definition</b> Vector2D.hpp:43</div></div>
+<div class="ttc" id="aclassVector2D_html"><div class="ttname"><a href="classVector2D.html">Vector2D</a></div><div class="ttdoc">Two-dimensional vector with mathematical operations.</div><div class="ttdef"><b>Definition</b> Vector2D.hpp:44</div></div>
 <div class="ttc" id="astructFollower_html"><div class="ttname"><a href="structFollower.html">Follower</a></div><div class="ttdef"><b>Definition</b> Follower.hpp:11</div></div>
 </div><!-- fragment --><h2><a class="anchor" id="reg_scenes"></a>
 Scene Management</h2>
 <p>Multi-scene support for menus, gameplay, overlays:</p>
 <div class="fragment"><div class="line"><span class="comment">// Define scenes</span></div>
-<div class="line">registry.add_scene(<span class="stringliteral">&quot;Menu&quot;</span>, <a class="code hl_enumvalue" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19a186495f7da296bf880df3a22a492b378">SceneState::MAIN</a>);</div>
+<div class="line">registry.add_scene(<span class="stringliteral">&quot;Menu&quot;</span>, <a class="code hl_enumvalue" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19a18ff74f43da410c5529f7d6fca84f115">SceneState::ACTIVE</a>);</div>
 <div class="line">registry.add_scene(<span class="stringliteral">&quot;Game&quot;</span>, <a class="code hl_enumvalue" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19a055c1a591abb0e8cd86dc969727bcc0b">SceneState::DISABLED</a>);</div>
 <div class="line">registry.add_scene(<span class="stringliteral">&quot;HUD&quot;</span>, <a class="code hl_enumvalue" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19a18ff74f43da410c5529f7d6fca84f115">SceneState::ACTIVE</a>);</div>
 <div class="line"> </div>
@@ -268,9 +262,8 @@ Scene Management</h2>
 <div class="line"> </div>
 <div class="line"><span class="comment">// Entities belong to scenes via Scene component</span></div>
 <div class="line"><span class="comment">// Zipper filters systems by active scenes</span></div>
-<div class="ttc" id="aScenes_8hpp_html_ab0d98f61608665befb0dc9afa0419e19a055c1a591abb0e8cd86dc969727bcc0b"><div class="ttname"><a href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19a055c1a591abb0e8cd86dc969727bcc0b">SceneState::DISABLED</a></div><div class="ttdeci">@ DISABLED</div><div class="ttdoc">Scene is disabled.</div></div>
-<div class="ttc" id="aScenes_8hpp_html_ab0d98f61608665befb0dc9afa0419e19a186495f7da296bf880df3a22a492b378"><div class="ttname"><a href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19a186495f7da296bf880df3a22a492b378">SceneState::MAIN</a></div><div class="ttdeci">@ MAIN</div><div class="ttdoc">Primary active scene.</div></div>
-<div class="ttc" id="aScenes_8hpp_html_ab0d98f61608665befb0dc9afa0419e19a18ff74f43da410c5529f7d6fca84f115"><div class="ttname"><a href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19a18ff74f43da410c5529f7d6fca84f115">SceneState::ACTIVE</a></div><div class="ttdeci">@ ACTIVE</div><div class="ttdoc">Scene is active but not primary.</div></div>
+<div class="ttc" id="aScenes_8hpp_html_ab0d98f61608665befb0dc9afa0419e19a055c1a591abb0e8cd86dc969727bcc0b"><div class="ttname"><a href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19a055c1a591abb0e8cd86dc969727bcc0b">SceneState::DISABLED</a></div><div class="ttdeci">@ DISABLED</div><div class="ttdoc">Scene is disabled, entities are not processed.</div></div>
+<div class="ttc" id="aScenes_8hpp_html_ab0d98f61608665befb0dc9afa0419e19a18ff74f43da410c5529f7d6fca84f115"><div class="ttname"><a href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19a18ff74f43da410c5529f7d6fca84f115">SceneState::ACTIVE</a></div><div class="ttdeci">@ ACTIVE</div><div class="ttdoc">Scene is active, entities are processed.</div></div>
 </div><!-- fragment --><h2><a class="anchor" id="reg_hooks"></a>
 Hook System</h2>
 <p>Runtime component field access by string name:</p>

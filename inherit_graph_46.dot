@@ -6,5 +6,5 @@ digraph "Graphical Class Hierarchy"
   edge [fontname=Helvetica,fontsize=10,labelfontname=Helvetica,labelfontsize=10];
   node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
   rankdir="LR";
-  Node0 [id="Node000000",label="Drawable",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$structDrawable.html",tooltip=" "];
+  Node0 [id="Node000000",label="Controller::RebindingScene\l::Rebinder",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$structController_1_1RebindingScene_1_1Rebinder.html",tooltip=" "];
 }

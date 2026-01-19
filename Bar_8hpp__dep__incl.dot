@@ -23,7 +23,15 @@ digraph "include/plugin/components/Bar.hpp"
   Node7 -> Node8 [id="edge9_Node000007_Node000008",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node8 [id="Node000008",label="plugins/sfml/src/Background.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Background_8cpp.html",tooltip=" "];
   Node7 -> Node9 [id="edge10_Node000007_Node000009",dir="back",color="steelblue1",style="solid",tooltip=" "];
-  Node9 [id="Node000009",label="plugins/sfml/src/Camera.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Camera_8cpp.html",tooltip=" "];
+  Node9 [id="Node000009",label="plugins/sfml/src/BasicMap.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$sfml_2src_2BasicMap_8cpp.html",tooltip=" "];
   Node7 -> Node10 [id="edge11_Node000007_Node000010",dir="back",color="steelblue1",style="solid",tooltip=" "];
-  Node10 [id="Node000010",label="plugins/sfml/src/SFMLRenderer.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$SFMLRenderer_8cpp.html",tooltip=" "];
+  Node10 [id="Node000010",label="plugins/sfml/src/Camera.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$sfml_2src_2Camera_8cpp.html",tooltip=" "];
+  Node7 -> Node11 [id="edge12_Node000007_Node000011",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node11 [id="Node000011",label="plugins/sfml/src/Gamepad.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Gamepad_8cpp.html",tooltip=" "];
+  Node7 -> Node12 [id="edge13_Node000007_Node000012",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node12 [id="Node000012",label="plugins/sfml/src/SFMLRenderer.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$SFMLRenderer_8cpp.html",tooltip=" "];
+  Node7 -> Node13 [id="edge14_Node000007_Node000013",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node13 [id="Node000013",label="plugins/sfml/src/SliderDrawing.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$SliderDrawing_8cpp.html",tooltip=" "];
+  Node7 -> Node14 [id="edge15_Node000007_Node000014",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node14 [id="Node000014",label="plugins/sfml/src/Sounds.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Sounds_8cpp.html",tooltip=" "];
 }

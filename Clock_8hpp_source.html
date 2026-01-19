@@ -117,16 +117,26 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="classClock.html#a11879a2e5ccf0b5424ad52d488a9351b">   28</a></span>  <a class="code hl_typedef" href="classClock.html#ab0fbd53be1ad747f5cc2ff38fbfb6461">TimePoint</a> <a class="code hl_function" href="classClock.html#a11879a2e5ccf0b5424ad52d488a9351b">now</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _now; }</div>
 <div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>  <a class="code hl_typedef" href="classClock.html#ab0fbd53be1ad747f5cc2ff38fbfb6461">TimePoint</a> _now;</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>  TimePoint::duration _delta;</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>};</div>
+<div class="foldopen" id="foldopen00030" data-start="{" data-end="}">
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno"><a class="line" href="classClock.html#ad461d25fe66ce5c480c0a2c6bdfbad4d">   30</a></span>  std::size_t <a class="code hl_function" href="classClock.html#ad461d25fe66ce5c480c0a2c6bdfbad4d">millisecond_now</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="keyword">  </span>{</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>    <span class="keywordflow">return</span> std::chrono::duration_cast&lt;std::chrono::milliseconds&gt;(</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>               this-&gt;<a class="code hl_function" href="classClock.html#a11879a2e5ccf0b5424ad52d488a9351b">now</a>().time_since_epoch())</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>        .count();</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>  }</div>
+</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span> </div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>  <a class="code hl_typedef" href="classClock.html#ab0fbd53be1ad747f5cc2ff38fbfb6461">TimePoint</a> _now;</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>  TimePoint::duration _delta;</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>};</div>
 </div>
 <div class="ttc" id="aclassClock_html"><div class="ttname"><a href="classClock.html">Clock</a></div><div class="ttdef"><b>Definition</b> Clock.hpp:6</div></div>
 <div class="ttc" id="aclassClock_html_a116757f0e1575348549b1f2fc346d492"><div class="ttname"><a href="classClock.html#a116757f0e1575348549b1f2fc346d492">Clock::tick</a></div><div class="ttdeci">void tick()</div><div class="ttdef"><b>Definition</b> Clock.hpp:16</div></div>
 <div class="ttc" id="aclassClock_html_a11879a2e5ccf0b5424ad52d488a9351b"><div class="ttname"><a href="classClock.html#a11879a2e5ccf0b5424ad52d488a9351b">Clock::now</a></div><div class="ttdeci">TimePoint now() const</div><div class="ttdef"><b>Definition</b> Clock.hpp:28</div></div>
 <div class="ttc" id="aclassClock_html_a7e97dba3856d8202c89fac012984ad27"><div class="ttname"><a href="classClock.html#a7e97dba3856d8202c89fac012984ad27">Clock::delta_seconds</a></div><div class="ttdeci">double delta_seconds() const</div><div class="ttdef"><b>Definition</b> Clock.hpp:23</div></div>
 <div class="ttc" id="aclassClock_html_ab0fbd53be1ad747f5cc2ff38fbfb6461"><div class="ttname"><a href="classClock.html#ab0fbd53be1ad747f5cc2ff38fbfb6461">Clock::TimePoint</a></div><div class="ttdeci">std::chrono::time_point&lt; std::chrono::high_resolution_clock &gt; TimePoint</div><div class="ttdef"><b>Definition</b> Clock.hpp:8</div></div>
+<div class="ttc" id="aclassClock_html_ad461d25fe66ce5c480c0a2c6bdfbad4d"><div class="ttname"><a href="classClock.html#ad461d25fe66ce5c480c0a2c6bdfbad4d">Clock::millisecond_now</a></div><div class="ttdeci">std::size_t millisecond_now() const</div><div class="ttdef"><b>Definition</b> Clock.hpp:30</div></div>
 <div class="ttc" id="aclassClock_html_adbc370eb6b5f8d01645cf440188160a8"><div class="ttname"><a href="classClock.html#adbc370eb6b5f8d01645cf440188160a8">Clock::Clock</a></div><div class="ttdeci">Clock()</div><div class="ttdef"><b>Definition</b> Clock.hpp:10</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

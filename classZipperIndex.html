@@ -93,9 +93,9 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ac1ee106e82b0cb84e13dc173d6382dfd" id="r_ac1ee106e82b0cb84e13dc173d6382dfd"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classZipperIndex.html#ac1ee106e82b0cb84e13dc173d6382dfd">ZipperIndex</a> (<a class="el" href="classRegistry.html">Registry</a> &amp;r)</td></tr>
-<tr class="memdesc:ac1ee106e82b0cb84e13dc173d6382dfd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs an indexed zipper from multiple container references.  <br /></td></tr>
-<tr class="separator:ac1ee106e82b0cb84e13dc173d6382dfd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa61ec575898c7970dfbd875911671bc2" id="r_aa61ec575898c7970dfbd875911671bc2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classZipperIndex.html#aa61ec575898c7970dfbd875911671bc2">ZipperIndex</a> (<a class="el" href="classRegistry.html">Registry</a> &amp;r, <a class="el" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19">SceneState</a> min_scene_level=<a class="el" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19a18ff74f43da410c5529f7d6fca84f115">SceneState::ACTIVE</a>)</td></tr>
+<tr class="memdesc:aa61ec575898c7970dfbd875911671bc2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs an indexed zipper from multiple container references.  <br /></td></tr>
+<tr class="separator:aa61ec575898c7970dfbd875911671bc2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3fa7cd8bda1b55ddf883058e075ce7a6" id="r_a3fa7cd8bda1b55ddf883058e075ce7a6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classZipperIndex.html#ab19ce959ed663da5fc2d93117d9326d2">Iterator</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classZipperIndex.html#a3fa7cd8bda1b55ddf883058e075ce7a6">begin</a> ()</td></tr>
 <tr class="memdesc:a3fa7cd8bda1b55ddf883058e075ce7a6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns an iterator to the beginning of the indexed zipped range.  <br /></td></tr>
 <tr class="separator:a3fa7cd8bda1b55ddf883058e075ce7a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -163,8 +163,8 @@ template&lt;class... Comps&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ac1ee106e82b0cb84e13dc173d6382dfd" name="ac1ee106e82b0cb84e13dc173d6382dfd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac1ee106e82b0cb84e13dc173d6382dfd">&#9670;&#160;</a></span>ZipperIndex()</h2>
+<a id="aa61ec575898c7970dfbd875911671bc2" name="aa61ec575898c7970dfbd875911671bc2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa61ec575898c7970dfbd875911671bc2">&#9670;&#160;</a></span>ZipperIndex()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -178,8 +178,18 @@ template&lt;class... Comps&gt; </div>
           <td class="memname"><a class="el" href="classZipperIndex.html">ZipperIndex</a>&lt; Comps &gt;<a class="el" href="classZipperIndex.html">::ZipperIndex</a> </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classRegistry.html">Registry</a> &amp;&#160;</td>
-          <td class="paramname"><em>r</em></td><td>)</td>
+          <td class="paramname"><em>r</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19">SceneState</a>&#160;</td>
+          <td class="paramname"><em>min_scene_level</em> = <code><a class="el" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19a18ff74f43da410c5529f7d6fca84f115">SceneState::ACTIVE</a></code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -192,11 +202,17 @@ template&lt;class... Comps&gt; </div>
 <p>Constructs an indexed zipper from multiple container references. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">cs</td><td>Variadic pack of container references to zip together.</td></tr>
+    <tr><td class="paramname">r</td><td><a class="el" href="classRegistry.html" title="The Registry class is the core of the ECS (Entity-Component-System) architecture.">Registry</a> reference containing all components and scene data </td></tr>
+    <tr><td class="paramname">min_scene_level</td><td>Minimum scene state level to include (default: ACTIVE)</td></tr>
   </table>
   </dd>
 </dl>
-<p>Computes the minimum size among all Comps and creates begin/end iterator tuples. The zipper will iterate up to the size of the smallest container, yielding tuples that include the iteration index. </p>
+<p>Computes the minimum size among all Comps and creates begin/end iterator tuples. The zipper will iterate up to the size of the smallest container, yielding tuples that include the iteration index.</p>
+<p>The min_scene_level parameter controls which scenes are included:</p><ul>
+<li><a class="el" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19a055c1a591abb0e8cd86dc969727bcc0b" title="Scene is disabled, entities are not processed.">SceneState::DISABLED</a>: Include all scenes (no filtering)</li>
+<li><a class="el" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19a18ff74f43da410c5529f7d6fca84f115" title="Scene is active, entities are processed.">SceneState::ACTIVE</a>: Include ACTIVE and MAIN scenes (default)</li>
+<li><a class="el" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19a186495f7da296bf880df3a22a492b378" title="Primary active scene, entities always processed.">SceneState::MAIN</a>: Include only MAIN scenes </li>
+</ul>
 
 </div>
 </div>

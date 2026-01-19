@@ -1,11 +1,22 @@
 var searchData=
 [
   ['c_0',['C',['../IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba739ce3f516592d245d16fd8a3893472c',1,'IoEvents.hpp']]],
-  ['challengeresponse_1',['CHALLENGERESPONSE',['../NetworkCommun_8hpp.html#a9bc08caac5b75b8fd75990fe4156cda5aec385c606fd0f176fe6731f814502e0f',1,'NetworkCommun.hpp']]],
-  ['challenging_2',['challenging',['../NetworkCommun_8hpp.html#a30be4f2769c13472a6f0c507002d40c4affd9c172afaf77093fad93303ffa4bb8',1,'CHALLENGING:&#160;NetworkCommun.hpp'],['../NetworkCommun_8hpp.html#a8d11fccf68fc584febc08603fe348ae6affd9c172afaf77093fad93303ffa4bb8',1,'CHALLENGING:&#160;NetworkCommun.hpp']]],
-  ['connect_3',['CONNECT',['../NetworkCommun_8hpp.html#a9bc08caac5b75b8fd75990fe4156cda5a20391dd2915a0e64343d24c2f2e40b95',1,'NetworkCommun.hpp']]],
-  ['connected_4',['connected',['../NetworkCommun_8hpp.html#a30be4f2769c13472a6f0c507002d40c4aa5afd6edd5336d91316964e493936858',1,'CONNECTED:&#160;NetworkCommun.hpp'],['../NetworkCommun_8hpp.html#a8d11fccf68fc584febc08603fe348ae6aa5afd6edd5336d91316964e493936858',1,'CONNECTED:&#160;NetworkCommun.hpp']]],
-  ['connecting_5',['CONNECTING',['../NetworkCommun_8hpp.html#a30be4f2769c13472a6f0c507002d40c4a9a14f95e151eec641316e7c784ce832d',1,'NetworkCommun.hpp']]],
-  ['connectresponse_6',['CONNECTRESPONSE',['../NetworkCommun_8hpp.html#a9bc08caac5b75b8fd75990fe4156cda5a8998df4509250e0e9d2a2bfdd7165a0f',1,'NetworkCommun.hpp']]],
-  ['ctrl_7',['CTRL',['../IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba5ea73cf9a3f5928257b1e6bc796d8490',1,'IoEvents.hpp']]]
+  ['canceled_1',['Canceled',['../namespacehttplib.html#a46ff5da925971ebebf2c5693e367f24aa0e22fe7d45f8e5632a4abf369b24e29c',1,'httplib']]],
+  ['certificateaccepted_2',['CertificateAccepted',['../namespacehttplib.html#a91beb2e6870464f254c39fd91aea9a8ba172169ca3b1b0243f7ea5bac36801d48',1,'httplib']]],
+  ['certificaterejected_3',['CertificateRejected',['../namespacehttplib.html#a91beb2e6870464f254c39fd91aea9a8ba3352fdd732be7e30905d91829a482c9e',1,'httplib']]],
+  ['challengeresponse_4',['CHALLENGERESPONSE',['../NetworkCommun_8hpp.html#a9bc08caac5b75b8fd75990fe4156cda5aec385c606fd0f176fe6731f814502e0f',1,'NetworkCommun.hpp']]],
+  ['challenging_5',['challenging',['../NetworkCommun_8hpp.html#a30be4f2769c13472a6f0c507002d40c4affd9c172afaf77093fad93303ffa4bb8',1,'CHALLENGING:&#160;NetworkCommun.hpp'],['../NetworkCommun_8hpp.html#a8d11fccf68fc584febc08603fe348ae6affd9c172afaf77093fad93303ffa4bb8',1,'CHALLENGING:&#160;NetworkCommun.hpp']]],
+  ['circle_6',['CIRCLE',['../Wave_8hpp.html#a4cceb563d78bab6f60bcdb2cdf643f5caa79c827759ea48f0735386c4b1188911',1,'Wave.hpp']]],
+  ['compression_7',['Compression',['../namespacehttplib.html#a46ff5da925971ebebf2c5693e367f24aa82af841589057aa8922b1ac3bb4a28a4',1,'httplib']]],
+  ['conflict_5f409_8',['Conflict_409',['../namespacehttplib.html#ade1f5845ce6b8d8fdb3a56676db48fbaa0089139c752c6f3aa4febcbf4e3f0dbf',1,'httplib']]],
+  ['connect_9',['CONNECT',['../NetworkCommun_8hpp.html#a9bc08caac5b75b8fd75990fe4156cda5a20391dd2915a0e64343d24c2f2e40b95',1,'NetworkCommun.hpp']]],
+  ['connected_10',['connected',['../NetworkCommun_8hpp.html#a30be4f2769c13472a6f0c507002d40c4aa5afd6edd5336d91316964e493936858',1,'CONNECTED:&#160;NetworkCommun.hpp'],['../NetworkCommun_8hpp.html#a8d11fccf68fc584febc08603fe348ae6aa5afd6edd5336d91316964e493936858',1,'CONNECTED:&#160;NetworkCommun.hpp']]],
+  ['connecting_11',['CONNECTING',['../NetworkCommun_8hpp.html#a30be4f2769c13472a6f0c507002d40c4a9a14f95e151eec641316e7c784ce832d',1,'NetworkCommun.hpp']]],
+  ['connection_12',['Connection',['../namespacehttplib.html#a46ff5da925971ebebf2c5693e367f24aac2cc7082a89c1ad6631a2f66af5f00c0',1,'httplib']]],
+  ['connectionclosed_13',['ConnectionClosed',['../namespacehttplib.html#a46ff5da925971ebebf2c5693e367f24aa318ec526e76502a583acd94f49817cf2',1,'httplib']]],
+  ['connectiontimeout_14',['ConnectionTimeout',['../namespacehttplib.html#a46ff5da925971ebebf2c5693e367f24aa10682640c96d005f79a5662874e893b7',1,'httplib']]],
+  ['connectresponse_15',['CONNECTRESPONSE',['../NetworkCommun_8hpp.html#a9bc08caac5b75b8fd75990fe4156cda5a8998df4509250e0e9d2a2bfdd7165a0f',1,'NetworkCommun.hpp']]],
+  ['continue_5f100_16',['Continue_100',['../namespacehttplib.html#ade1f5845ce6b8d8fdb3a56676db48fbaaee254b57c51bc5a8554e1de61668f946',1,'httplib']]],
+  ['created_5f201_17',['Created_201',['../namespacehttplib.html#ade1f5845ce6b8d8fdb3a56676db48fbaa941cc48b3260cc48d27260442a4c4761',1,'httplib']]],
+  ['ctrl_18',['CTRL',['../IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba5ea73cf9a3f5928257b1e6bc796d8490',1,'IoEvents.hpp']]]
 ];

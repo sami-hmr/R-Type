@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>r-type: r-type</title>
+<title>r-type: R-Type</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -69,69 +69,243 @@ $(function() {
 </div>
 
 <div><div class="header">
-  <div class="headertitle"><div class="title">r-type </div></div>
+  <div class="headertitle"><div class="title">R-Type </div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><p><a class="anchor" id="md_README"></a> An ECS (Entity Component <a class="el" href="classSystem.html" title="Encapsulates a system function with priority-based execution ordering.">System</a>) game engine implementation.</p>
+<div class="textblock"><p><a class="anchor" id="md_README"></a> A modern, plugin-based game engine built with Entity Component <a class="el" href="classSystem.html" title="Encapsulates a system function with priority-based execution ordering.">System</a> (ECS) architecture. Originally inspired by the classic R-Type shoot 'em up game, this engine provides a flexible, high-performance foundation for building networked multiplayer games.</p>
 <h1><a class="anchor" id="autotoc_md1"></a>
-Building the Project</h1>
-<h2><a class="anchor" id="autotoc_md2"></a>
-Quick Start</h2>
-<div class="fragment"><div class="line">cmake --preset=dev</div>
-<div class="line">cmake --build build</div>
-<div class="line">./r-type</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md3"></a>
-Available Presets</h2>
+Features</h1>
 <ul>
-<li><code>dev</code> - Development build with tests and coverage enabled</li>
-<li><code>docs</code> - Generate documentation</li>
-<li><code>release</code> - Optimized release build</li>
-<li><code>clang-tidy</code> - Development build with static analysis</li>
+<li><b>ECS Architecture</b>: Pure Entity Component <a class="el" href="classSystem.html" title="Encapsulates a system function with priority-based execution ordering.">System</a> design for maximum flexibility and performance</li>
+<li><b>Plugin <a class="el" href="classSystem.html" title="Encapsulates a system function with priority-based execution ordering.">System</a></b>: Modular plugin architecture for easy extensibility</li>
+<li><b>Networked Multiplayer</b>: Built-in client-server networking with ASIO</li>
+<li><b>JSON Configuration</b>: Define entities, components, and game logic via JSON templates</li>
+<li><b>SFML Integration</b>: Graphics and audio rendering through SFML 3.0</li>
+<li><b><a class="el" href="classEvent.html">Event</a> <a class="el" href="classSystem.html" title="Encapsulates a system function with priority-based execution ordering.">System</a></b>: Robust event-driven architecture for decoupled game logic</li>
+<li><b>Cross-Platform</b>: Supports Linux, and Windows</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md2"></a>
+Getting Started</h1>
+<h2><a class="anchor" id="autotoc_md3"></a>
+Prerequisites</h2>
+<p>Before building the project, ensure you have the following installed:</p>
+<ul>
+<li><b>CMake</b> 3.14 or higher</li>
+<li><b>C++23 compatible compiler</b>:<ul>
+<li>GCC 12+ (Linux)</li>
+<li>Clang 15+ (macOS)</li>
+<li>MSVC 2022+ (Windows)</li>
+</ul>
+</li>
+<li><b>Git</b></li>
+<li><b>vcpkg</b> (for dependency management)</li>
 </ul>
 <h2><a class="anchor" id="autotoc_md4"></a>
-Building Specific Targets</h2>
-<div class="fragment"><div class="line"># Build only the executable</div>
-<div class="line">cmake --build build --target r-type_exe</div>
+Quick Start</h2>
+<ol type="1">
+<li><b>Clone the repository</b>: <div class="fragment"><div class="line">git clone https://github.com/sami-hmr/R-Type.git</div>
+<div class="line">cd rtype</div>
+</div><!-- fragment --></li>
+<li><b>Set up vcpkg</b> (if not already installed): <div class="fragment"><div class="line"># Using the provided alias after sourcing aliases.sh</div>
+<div class="line">source aliases.sh</div>
+<div class="line">vcpkg-init</div>
 <div class="line"> </div>
-<div class="line"># Check code formatting</div>
-<div class="line">cmake --build build --target format-check</div>
+<div class="line"># Or manually:</div>
+<div class="line">git clone https://github.com/microsoft/vcpkg.git</div>
+<div class="line">cd vcpkg</div>
+<div class="line">./bootstrap-vcpkg.sh  # On Windows: .\bootstrap-vcpkg.bat</div>
+<div class="line">cd ..</div>
+</div><!-- fragment --></li>
+<li><b>Build and run</b>: <div class="fragment"><div class="line">cmake --preset=release</div>
+<div class="line">cmake --build build/release --preset=release-build</div>
 <div class="line"> </div>
-<div class="line"># Fix code formatting</div>
-<div class="line">cmake --build build --target format-fix</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md5"></a>
-Running Tests</h1>
-<div class="fragment"><div class="line">ctest --test-dir build --output-on-failure</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md6"></a>
-Generating Documentation</h1>
-<div class="fragment"><div class="line">cmake --preset=docs</div>
-<div class="line">cmake --build build --target docs</div>
+<div class="line"># Run with a configuration directory</div>
+<div class="line">./build/release/r-type client_config</div>
+</div><!-- fragment --></li>
+</ol>
+<h2><a class="anchor" id="autotoc_md5"></a>
+Running the Game</h2>
+<p>The R-Type binary loads JSON configuration directories that define scenes, plugins, entities, and game logic.</p>
+<p><b>Using Configuration Directories</b>: </p><div class="fragment"><div class="line"># Run client configuration</div>
+<div class="line">./build/release/r-type client_config</div>
+<div class="line"> </div>
+<div class="line"># Run server configuration  </div>
+<div class="line">./build/release/r-type server_config</div>
+<div class="line"> </div>
+<div class="line"># You can also load multiple config directories</div>
+<div class="line">./build/release/r-type client_config game_config</div>
+</div><!-- fragment --><p><b>Available Configurations</b>:</p><ul>
+<li><code>client_config/</code> - Client-side game scenes (menus, gameplay <a class="el" href="classUI.html">UI</a>, controls)</li>
+<li><code>server_config/</code> - Server-side game logic and networking</li>
+<li><code>game_config/</code> - Shared game content (entities, levels, templates)</li>
+</ul>
+<p>Each configuration directory contains JSON files that define:</p><ul>
+<li><b>Scenes</b>: Game states (menus, gameplay, etc.)</li>
+<li><b>Plugins</b>: Which systems to load (rendering, physics, networking, etc.)</li>
+<li><b>Entities</b>: Game objects with their components</li>
+<li><b>Templates</b>: Reusable entity definitions</li>
+</ul>
+<p><b>EPITECH Release Binaries</b>:</p>
+<p>For the EPITECH release, separate binaries are built that automatically load the correct configuration:</p><ul>
+<li><code>r-type_client</code> - Automatically loads <code>client_config/</code></li>
+<li><code>r-type_server</code> - Automatically loads <code>server_config/</code></li>
+</ul>
+<h2><a class="anchor" id="autotoc_md6"></a>
+Development Build</h2>
+<p>For active development with debug symbols and additional tooling:</p>
+<div class="fragment"><div class="line"># Load convenient build aliases</div>
+<div class="line">source aliases.sh</div>
+<div class="line"> </div>
+<div class="line"># Build everything in development mode</div>
+<div class="line">dev-all</div>
+<div class="line"> </div>
+<div class="line"># Run with development build</div>
+<div class="line">./build/r-type client_config</div>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md7"></a>
+Available Aliases</h3>
+<p>After sourcing <code>aliases.sh</code>, you have access to these shortcuts:</p>
+<p><b>Development</b>:</p><ul>
+<li><code>dev-config</code> - Configure development build</li>
+<li><code>dev-build</code> - Build development target</li>
+<li><code>dev-all</code> - Configure and build development</li>
+</ul>
+<p><b>Release</b>:</p><ul>
+<li><code>rel-config</code> - Configure release build</li>
+<li><code>rel-build</code> - Build release target</li>
+<li><code>rel-all</code> - Configure and build release</li>
+</ul>
+<p><b>Testing</b>:</p><ul>
+<li><code>tests-config</code> - Configure tests</li>
+<li><code>tests-build</code> - Build tests</li>
+<li><code>tests-run</code> - Run test suite</li>
+<li><code>tests-all</code> - Configure, build, and run tests</li>
+<li><code>coverage</code> - Generate coverage report and open in browser</li>
+</ul>
+<p><b>Documentation</b>:</p><ul>
+<li><code>docs-config</code> - Configure documentation</li>
+<li><code>docs-build</code> - Build documentation</li>
+<li><code>docs-run</code> - Open documentation in browser</li>
+<li><code>docs-all</code> - Configure, build, and open docs</li>
+<li><code>docs-coverage</code> - Generate documentation coverage</li>
+<li><code>docs-coverage-html</code> - Generate HTML documentation coverage report</li>
+</ul>
+<p><b>Code Quality</b>:</p><ul>
+<li><code>format-check</code> - Check code formatting</li>
+<li><code>format-fix</code> - Auto-fix code formatting</li>
+<li><code>tidy-fix</code> - Run clang-tidy with auto-fix</li>
+</ul>
+<p><b>Setup</b>:</p><ul>
+<li><code>vcpkg-init</code> - Clone and bootstrap vcpkg</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md8"></a>
+Building</h1>
+<p>See BUILDING.md for comprehensive build instructions, including:</p><ul>
+<li>Platform-specific setup</li>
+<li>Build configurations (dev, release, tests, docs)</li>
+<li>Code formatting and linting</li>
+<li>Coverage reports</li>
+<li>Documentation generation</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md9"></a>
+Documentation</h1>
+<ul>
+<li><b>Plugin Development Guide</b>: Step-by-step guide to creating plugins</li>
+<li><b>Component Reference</b>: All available ECS components</li>
+<li><b>Entity Templates</b>: JSON entity configuration guide</li>
+<li><b>Event System</b>: <a class="el" href="classEvent.html">Event</a> handling and custom events</li>
+<li><b>Network Protocol</b>: Client-server communication protocol</li>
+<li><b>Hooks System</b>: Advanced component interaction patterns</li>
+</ul>
+<p>Generate API documentation: </p><div class="fragment"><div class="line">cmake --preset=docs</div>
+<div class="line">cmake --build build/docs --target docs</div>
 <div class="line"># Open build/docs/html/index.html</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md7"></a>
-Documentation Coverage</h1>
-<p>Check how much of your code is documented:</p>
-<div class="fragment"><div class="line">cmake --preset=docs</div>
-<div class="line">cmake --build build --target docs-coverage</div>
-</div><!-- fragment --><p>Or generate an HTML report:</p>
-<div class="fragment"><div class="line">cmake --preset=docs</div>
-<div class="line">cmake --build build --target docs-coverage-html</div>
-<div class="line"># Open build/doc-coverage/index.html</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md8"></a>
-Coverage Reports</h1>
-<div class="fragment"><div class="line">cmake --preset=dev</div>
-<div class="line">cmake --build build</div>
-<div class="line">ctest --test-dir build</div>
-<div class="line">cmake --build build --target coverage</div>
-<div class="line"># Open build/coverage_html/index.html</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md9"></a>
-Development Environment</h1>
-<p>Source the activate.sh script for convenient aliases:</p>
-<div class="fragment"><div class="line">source activate.sh</div>
-<div class="line">show-aliases  # Display available commands</div>
-</div><!-- fragment --><p>For detailed build instructions, see BUILDING.md.</p>
-<p>For development guidelines, see HACKING.md.</p>
-<h1><a class="anchor" id="autotoc_md10"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md10"></a>
+Testing</h1>
+<p>Run the test suite: </p><div class="fragment"><div class="line">cmake --preset=tests</div>
+<div class="line">cmake --build build/tests --preset=tests-build</div>
+<div class="line">ctest --preset=dev-test</div>
+</div><!-- fragment --><p>Generate coverage report: </p><div class="fragment"><div class="line">cmake --build build/tests --target coverage</div>
+<div class="line"># Open build/tests/coverage_html/index.html</div>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md11"></a>
+Contributing</h1>
+<p>We welcome contributions! Please read CONTRIBUTING.md for:</p><ul>
+<li>Code style guidelines</li>
+<li>Development workflow</li>
+<li>Pull request process</li>
+<li>Code of conduct</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md12"></a>
+Plugin Development</h1>
+<p>The engine uses a plugin system for extensibility. Each plugin can register:</p><ul>
+<li>Custom components</li>
+<li>Systems (game logic)</li>
+<li><a class="el" href="classEvent.html">Event</a> handlers</li>
+<li>Entity templates</li>
+</ul>
+<p>See the <b>Plugin Development Guide</b> for a complete walkthrough of creating your own plugins.</p>
+<p>Quick example: </p><div class="fragment"><div class="line"><span class="keyword">class </span>MyPlugin : <span class="keyword">public</span> <a class="code hl_class" href="classAPlugin.html">APlugin</a> {</div>
+<div class="line"><span class="keyword">public</span>:</div>
+<div class="line">    MyPlugin(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <a class="code hl_class" href="classEventManager.html">EventManager</a>&amp; em, <a class="code hl_class" href="classEntityLoader.html">EntityLoader</a>&amp; l)</div>
+<div class="line">        : <a class="code hl_class" href="classAPlugin.html">APlugin</a>(<span class="stringliteral">&quot;myplugin&quot;</span>, r, em, l, {}, </div>
+<div class="line">                  {<a class="code hl_define" href="APlugin_8hpp.html#a04f19a5414618f47890540ba624d5949">COMP_INIT</a>(MyComponent, MyComponent, init_my_component)})</div>
+<div class="line">    {</div>
+<div class="line">        <a class="code hl_define" href="APlugin_8hpp.html#a84485819a678fe68f3deddaf7cb19bb4">REGISTER_COMPONENT</a>(MyComponent)</div>
+<div class="line">        </div>
+<div class="line">        <span class="comment">// Add system</span></div>
+<div class="line">        r.add_system([<span class="keyword">this</span>](<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r) { this-&gt;my_system(r); }, 4);</div>
+<div class="line">        </div>
+<div class="line">        <span class="comment">// Subscribe to events</span></div>
+<div class="line">        <a class="code hl_define" href="APlugin_8hpp.html#ad01721c36192ce20478e18ac80604d56">SUBSCRIBE_EVENT</a>(MyEvent, {</div>
+<div class="line">            <span class="comment">// Handle event</span></div>
+<div class="line">        })</div>
+<div class="line">    }</div>
+<div class="line">};</div>
+<div class="ttc" id="aAPlugin_8hpp_html_a04f19a5414618f47890540ba624d5949"><div class="ttname"><a href="APlugin_8hpp.html#a04f19a5414618f47890540ba624d5949">COMP_INIT</a></div><div class="ttdeci">#define COMP_INIT(comp_name, comp_type, method_name)</div><div class="ttdef"><b>Definition</b> APlugin.hpp:14</div></div>
+<div class="ttc" id="aAPlugin_8hpp_html_a84485819a678fe68f3deddaf7cb19bb4"><div class="ttname"><a href="APlugin_8hpp.html#a84485819a678fe68f3deddaf7cb19bb4">REGISTER_COMPONENT</a></div><div class="ttdeci">#define REGISTER_COMPONENT(comp)</div><div class="ttdef"><b>Definition</b> APlugin.hpp:54</div></div>
+<div class="ttc" id="aAPlugin_8hpp_html_ad01721c36192ce20478e18ac80604d56"><div class="ttname"><a href="APlugin_8hpp.html#ad01721c36192ce20478e18ac80604d56">SUBSCRIBE_EVENT</a></div><div class="ttdeci">#define SUBSCRIBE_EVENT(event_name, function)</div><div class="ttdef"><b>Definition</b> APlugin.hpp:65</div></div>
+<div class="ttc" id="aclassAPlugin_html"><div class="ttname"><a href="classAPlugin.html">APlugin</a></div><div class="ttdef"><b>Definition</b> APlugin.hpp:69</div></div>
+<div class="ttc" id="aclassEntityLoader_html"><div class="ttname"><a href="classEntityLoader.html">EntityLoader</a></div><div class="ttdef"><b>Definition</b> EntityLoader.hpp:20</div></div>
+<div class="ttc" id="aclassEventManager_html"><div class="ttname"><a href="classEventManager.html">EventManager</a></div><div class="ttdef"><b>Definition</b> EventManager.hpp:62</div></div>
+<div class="ttc" id="aclassRegistry_html"><div class="ttname"><a href="classRegistry.html">Registry</a></div><div class="ttdoc">The Registry class is the core of the ECS (Entity-Component-System) architecture.</div><div class="ttdef"><b>Definition</b> Registry.hpp:308</div></div>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md13"></a>
+Architecture</h1>
+<p>The engine follows a strict ECS pattern:</p><ul>
+<li><b>Entities</b>: Unique identifiers (just integers)</li>
+<li><b>Components</b>: Pure data structures</li>
+<li><b>Systems</b>: Logic that operates on components</li>
+<li><b>Plugins</b>: Encapsulate related components and systems</li>
+</ul>
+<p>This architecture ensures:</p><ul>
+<li>High performance through cache-friendly memory layout</li>
+<li>Easy parallel processing</li>
+<li>Clear separation of concerns</li>
+<li>Hot-reloadable plugins (planned)</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md14"></a>
+Dependencies</h1>
+<p>Managed automatically via vcpkg:</p><ul>
+<li><b>SFML 3.0+</b>: Graphics and audio</li>
+<li><b>ASIO 1.32+</b>: Asynchronous networking</li>
+<li><b>fmt 11.0+</b>: String formatting</li>
+<li><b>Catch2 3.7+</b>: Testing framework (dev only)</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md15"></a>
 License</h1>
-<p>[MIT License](LICENSE) </p>
+<p>This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.</p>
+<h1><a class="anchor" id="autotoc_md16"></a>
+Acknowledgments</h1>
+<ul>
+<li>Inspired by the classic R-Type arcade game by Irem</li>
+<li>Built with modern C++23 features</li>
+<li>ECS architecture inspired by EnTT and Flecs</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md17"></a>
+Support</h1>
+<p>For questions and support:</p><ul>
+<li>Check the <a href="docs/">documentation</a></li>
+<li>Open an <a href="https://github.com/yourusername/rtype/issues">issue</a></li>
+<li>Join our community discussions </li>
+</ul>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->
 <!-- start footer part -->

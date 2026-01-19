@@ -73,7 +73,7 @@ $(function() {
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="structCollidable-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">Collidable Struct Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div></div>
+  <div class="headertitle"><div class="title">Collidable Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
@@ -83,17 +83,15 @@ $(function() {
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a1c6737d3d9052e07edc74dc20115f97d" id="r_a1c6737d3d9052e07edc74dc20115f97d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCollidable.html#a1c6737d3d9052e07edc74dc20115f97d">Collidable</a> ()=default</td></tr>
 <tr class="separator:a1c6737d3d9052e07edc74dc20115f97d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a46c67e3211bc2a0601d98bcbd2610aed" id="r_a46c67e3211bc2a0601d98bcbd2610aed"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCollidable.html#a46c67e3211bc2a0601d98bcbd2610aed">Collidable</a> (double w, double h, <a class="el" href="Collidable_8hpp.html#a283986bca662219e0644bc0e72b315c8">CollisionType</a> type=<a class="el" href="Collidable_8hpp.html#a283986bca662219e0644bc0e72b315c8ae41480b6bbfbf7407974a88d3d34f4fa">CollisionType::Solid</a>, bool active=true)</td></tr>
-<tr class="separator:a46c67e3211bc2a0601d98bcbd2610aed"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6bfb7c0dffc9dede69bed612d051a055" id="r_a6bfb7c0dffc9dede69bed612d051a055"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCollidable.html#a6bfb7c0dffc9dede69bed612d051a055">Collidable</a> (double w, double h, <a class="el" href="Collidable_8hpp.html#a283986bca662219e0644bc0e72b315c8">CollisionType</a> type, bool active, const std::vector&lt; std::string &gt; &amp;exclude)</td></tr>
-<tr class="separator:a6bfb7c0dffc9dede69bed612d051a055"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a428aa12f953845d6bd817172beed072d" id="r_a428aa12f953845d6bd817172beed072d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCollidable.html#a428aa12f953845d6bd817172beed072d">DEFAULT_BYTE_CONSTRUCTOR</a> (<a class="el" href="structCollidable.html">Collidable</a>,([](double x, double y, <a class="el" href="Collidable_8hpp.html#a283986bca662219e0644bc0e72b315c8">CollisionType</a> <a class="el" href="structCollidable.html#abaa0340742ac3cf684c49d1d81186910">collision_type</a>, bool active, std::vector&lt; std::vector&lt; char &gt; &gt; const &amp;excludes) { std::vector&lt; std::string &gt; r;r.reserve(excludes.size());for(auto const &amp;it :excludes) { r.emplace_back(it.begin(), it.end());} return <a class="el" href="structCollidable.html">Collidable</a>(x, y, <a class="el" href="structCollidable.html#abaa0340742ac3cf684c49d1d81186910">collision_type</a>, active, r);}), parseByte&lt; double &gt;(), parseByte&lt; double &gt;(), parseByte&lt; <a class="el" href="Collidable_8hpp.html#a283986bca662219e0644bc0e72b315c8">CollisionType</a> &gt;(), parseByte&lt; bool &gt;(), parseByteArray(parseByteArray(parseAnyChar()))) <a class="el" href="Byte_8hpp.html#ac2fb474e60f46281e11bf3824e6f4517">DEFAULT_SERIALIZE</a>(<a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(this -&gt; width), <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(this-&gt;<a class="el" href="structCollidable.html#aab855c062916106e48428a8b0eddbc17">height</a>), <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(this-&gt;<a class="el" href="structCollidable.html#abaa0340742ac3cf684c49d1d81186910">collision_type</a>), <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(this-&gt;<a class="el" href="structCollidable.html#a746f1e7212f9b43ca4bd592991150f1d">is_active</a>), <a class="el" href="Byte_8hpp.html#a332d3b756f3dd04c03bd59e82dd15f85">vector_to_byte</a>&lt; std::string &gt;(this-&gt;<a class="el" href="structCollidable.html#a024108275e3f8ca1bbc72f1bb5315e57">exclude_entities</a>, <a class="el" href="Byte_8hpp.html#a20d43856fdb8ef111a9b55ceeb1f96f8">string_to_byte</a>)) <a class="el" href="EventMacros_8hpp.html#a762cd3630f6f73bfa82bbc45f3563a2d">CHANGE_ENTITY_DEFAULT</a> double width=0.0</td></tr>
-<tr class="separator:a428aa12f953845d6bd817172beed072d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a45e67c3d3a853c38f21a35baa6c54b6f" id="r_a45e67c3d3a853c38f21a35baa6c54b6f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCollidable.html#a45e67c3d3a853c38f21a35baa6c54b6f">Collidable</a> (<a class="el" href="classVector2D.html">Vector2D</a> const &amp;size, <a class="el" href="Collidable_8hpp.html#a283986bca662219e0644bc0e72b315c8">CollisionType</a> type=<a class="el" href="Collidable_8hpp.html#a283986bca662219e0644bc0e72b315c8ae41480b6bbfbf7407974a88d3d34f4fa">CollisionType::Solid</a>, bool active=true)</td></tr>
+<tr class="separator:a45e67c3d3a853c38f21a35baa6c54b6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa130d2e311b1e79932e5d9890f385754" id="r_aa130d2e311b1e79932e5d9890f385754"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCollidable.html#aa130d2e311b1e79932e5d9890f385754">Collidable</a> (<a class="el" href="classVector2D.html">Vector2D</a> const &amp;size, <a class="el" href="Collidable_8hpp.html#a283986bca662219e0644bc0e72b315c8">CollisionType</a> type, bool active, const std::vector&lt; std::string &gt; &amp;exclude)</td></tr>
+<tr class="separator:aa130d2e311b1e79932e5d9890f385754"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f3e1009553703ff5b16814d3f51ce67" id="r_a5f3e1009553703ff5b16814d3f51ce67"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCollidable.html#a5f3e1009553703ff5b16814d3f51ce67">DEFAULT_BYTE_CONSTRUCTOR</a> (<a class="el" href="structCollidable.html">Collidable</a>,([](<a class="el" href="classVector2D.html">Vector2D</a> const &amp;vector, <a class="el" href="Collidable_8hpp.html#a283986bca662219e0644bc0e72b315c8">CollisionType</a> <a class="el" href="structCollidable.html#abaa0340742ac3cf684c49d1d81186910">collision_type</a>, bool active, std::vector&lt; std::vector&lt; char &gt; &gt; const &amp;excludes) { std::vector&lt; std::string &gt; r;r.reserve(excludes.size());for(auto const &amp;it :excludes) { r.emplace_back(it.begin(), it.end());} return <a class="el" href="structCollidable.html">Collidable</a>(vector, <a class="el" href="structCollidable.html#abaa0340742ac3cf684c49d1d81186910">collision_type</a>, active, r);}), <a class="el" href="Vector2D_8hpp.html#a63443b1d9aba2b51dbe45a498bb346c9">parseVector2D</a>(), parseByte&lt; <a class="el" href="Collidable_8hpp.html#a283986bca662219e0644bc0e72b315c8">CollisionType</a> &gt;(), parseByte&lt; bool &gt;(), parseByteArray(parseByteArray(parseAnyChar()))) <a class="el" href="Byte_8hpp.html#ac2fb474e60f46281e11bf3824e6f4517">DEFAULT_SERIALIZE</a>(<a class="el" href="Vector2D_8hpp.html#a889ebca628d3ef16a582581c5d45cf63">vector2DToByte</a>(this -&gt; size), <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(this-&gt;<a class="el" href="structCollidable.html#abaa0340742ac3cf684c49d1d81186910">collision_type</a>), <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(this-&gt;<a class="el" href="structCollidable.html#a746f1e7212f9b43ca4bd592991150f1d">is_active</a>), <a class="el" href="Byte_8hpp.html#a332d3b756f3dd04c03bd59e82dd15f85">vector_to_byte</a>&lt; std::string &gt;(this-&gt;<a class="el" href="structCollidable.html#a024108275e3f8ca1bbc72f1bb5315e57">exclude_entities</a>, <a class="el" href="Byte_8hpp.html#a20d43856fdb8ef111a9b55ceeb1f96f8">string_to_byte</a>)) <a class="el" href="EventMacros_8hpp.html#a762cd3630f6f73bfa82bbc45f3563a2d">CHANGE_ENTITY_DEFAULT</a> <a class="el" href="classVector2D.html">Vector2D</a> size</td></tr>
+<tr class="separator:a5f3e1009553703ff5b16814d3f51ce67"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:aab855c062916106e48428a8b0eddbc17" id="r_aab855c062916106e48428a8b0eddbc17"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCollidable.html#aab855c062916106e48428a8b0eddbc17">height</a> = 0.0</td></tr>
-<tr class="separator:aab855c062916106e48428a8b0eddbc17"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abaa0340742ac3cf684c49d1d81186910" id="r_abaa0340742ac3cf684c49d1d81186910"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Collidable_8hpp.html#a283986bca662219e0644bc0e72b315c8">CollisionType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCollidable.html#abaa0340742ac3cf684c49d1d81186910">collision_type</a> = <a class="el" href="Collidable_8hpp.html#a283986bca662219e0644bc0e72b315c8ae41480b6bbfbf7407974a88d3d34f4fa">CollisionType::Solid</a></td></tr>
 <tr class="separator:abaa0340742ac3cf684c49d1d81186910"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a746f1e7212f9b43ca4bd592991150f1d" id="r_a746f1e7212f9b43ca4bd592991150f1d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCollidable.html#a746f1e7212f9b43ca4bd592991150f1d">is_active</a> = true</td></tr>
@@ -127,8 +125,8 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a46c67e3211bc2a0601d98bcbd2610aed" name="a46c67e3211bc2a0601d98bcbd2610aed"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a46c67e3211bc2a0601d98bcbd2610aed">&#9670;&#160;</a></span>Collidable() <span class="overload">[2/3]</span></h2>
+<a id="a45e67c3d3a853c38f21a35baa6c54b6f" name="a45e67c3d3a853c38f21a35baa6c54b6f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a45e67c3d3a853c38f21a35baa6c54b6f">&#9670;&#160;</a></span>Collidable() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -139,14 +137,8 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="memname">Collidable::Collidable </td>
           <td>(</td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>w</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>h</em>, </td>
+          <td class="paramtype"><a class="el" href="classVector2D.html">Vector2D</a> const &amp;&#160;</td>
+          <td class="paramname"><em>size</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -175,8 +167,8 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a6bfb7c0dffc9dede69bed612d051a055" name="a6bfb7c0dffc9dede69bed612d051a055"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6bfb7c0dffc9dede69bed612d051a055">&#9670;&#160;</a></span>Collidable() <span class="overload">[3/3]</span></h2>
+<a id="aa130d2e311b1e79932e5d9890f385754" name="aa130d2e311b1e79932e5d9890f385754"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa130d2e311b1e79932e5d9890f385754">&#9670;&#160;</a></span>Collidable() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -187,14 +179,8 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="memname">Collidable::Collidable </td>
           <td>(</td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>w</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>h</em>, </td>
+          <td class="paramtype"><a class="el" href="classVector2D.html">Vector2D</a> const &amp;&#160;</td>
+          <td class="paramname"><em>size</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -230,14 +216,11 @@ Public Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a428aa12f953845d6bd817172beed072d" name="a428aa12f953845d6bd817172beed072d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a428aa12f953845d6bd817172beed072d">&#9670;&#160;</a></span>DEFAULT_BYTE_CONSTRUCTOR()</h2>
+<a id="a5f3e1009553703ff5b16814d3f51ce67" name="a5f3e1009553703ff5b16814d3f51ce67"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5f3e1009553703ff5b16814d3f51ce67">&#9670;&#160;</a></span>DEFAULT_BYTE_CONSTRUCTOR()</h2>
 
 <div class="memitem">
 <div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">Collidable::DEFAULT_BYTE_CONSTRUCTOR </td>
@@ -248,20 +231,14 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">([](double x, double y, <a class="el" href="Collidable_8hpp.html#a283986bca662219e0644bc0e72b315c8">CollisionType</a> <a class="el" href="structCollidable.html#abaa0340742ac3cf684c49d1d81186910">collision_type</a>, bool active, std::vector&lt; std::vector&lt; char &gt; &gt; const &amp;excludes) { std::vector&lt; std::string &gt; r;r.reserve(excludes.size());for(auto const &amp;it :excludes) { r.emplace_back(it.begin(), it.end());} return <a class="el" href="structCollidable.html">Collidable</a>(x, y, <a class="el" href="structCollidable.html#abaa0340742ac3cf684c49d1d81186910">collision_type</a>, active, r);})&#160;</td>
+          <td class="paramtype">([](<a class="el" href="classVector2D.html">Vector2D</a> const &amp;vector, <a class="el" href="Collidable_8hpp.html#a283986bca662219e0644bc0e72b315c8">CollisionType</a> <a class="el" href="structCollidable.html#abaa0340742ac3cf684c49d1d81186910">collision_type</a>, bool active, std::vector&lt; std::vector&lt; char &gt; &gt; const &amp;excludes) { std::vector&lt; std::string &gt; r;r.reserve(excludes.size());for(auto const &amp;it :excludes) { r.emplace_back(it.begin(), it.end());} return <a class="el" href="structCollidable.html">Collidable</a>(vector, <a class="el" href="structCollidable.html#abaa0340742ac3cf684c49d1d81186910">collision_type</a>, active, r);})&#160;</td>
           <td class="paramname">, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">parseByte&lt; double &gt;&#160;</td>
-          <td class="paramname">(), </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">parseByte&lt; double &gt;&#160;</td>
-          <td class="paramname">(), </td>
+          <td class="paramtype"><a class="el" href="Vector2D_8hpp.html#a63443b1d9aba2b51dbe45a498bb346c9">parseVector2D</a>()&#160;</td>
+          <td class="paramname">, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -284,14 +261,9 @@ Public Attributes</h2></td></tr>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td> -&gt;  width), <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(this-&gt;<a class="el" href="structCollidable.html#aab855c062916106e48428a8b0eddbc17">height</a>), <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(this-&gt;<a class="el" href="structCollidable.html#abaa0340742ac3cf684c49d1d81186910">collision_type</a>), <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(this-&gt;<a class="el" href="structCollidable.html#a746f1e7212f9b43ca4bd592991150f1d">is_active</a>), <a class="el" href="Byte_8hpp.html#a332d3b756f3dd04c03bd59e82dd15f85">vector_to_byte</a>&lt; std::string &gt;(this-&gt;<a class="el" href="structCollidable.html#a024108275e3f8ca1bbc72f1bb5315e57">exclude_entities</a>, <a class="el" href="Byte_8hpp.html#a20d43856fdb8ef111a9b55ceeb1f96f8">string_to_byte</a>)) <a class="el" href="EventMacros_8hpp.html#a762cd3630f6f73bfa82bbc45f3563a2d">CHANGE_ENTITY_DEFAULT</a> double width</td>
+          <td></td><td> -&gt;  size), <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(this-&gt;<a class="el" href="structCollidable.html#abaa0340742ac3cf684c49d1d81186910">collision_type</a>), <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(this-&gt;<a class="el" href="structCollidable.html#a746f1e7212f9b43ca4bd592991150f1d">is_active</a>), <a class="el" href="Byte_8hpp.html#a332d3b756f3dd04c03bd59e82dd15f85">vector_to_byte</a>&lt; std::string &gt;(this-&gt;<a class="el" href="structCollidable.html#a024108275e3f8ca1bbc72f1bb5315e57">exclude_entities</a>, <a class="el" href="Byte_8hpp.html#a20d43856fdb8ef111a9b55ceeb1f96f8">string_to_byte</a>)) <a class="el" href="EventMacros_8hpp.html#a762cd3630f6f73bfa82bbc45f3563a2d">CHANGE_ENTITY_DEFAULT</a> <a class="el" href="classVector2D.html">Vector2D</a> size</td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>
@@ -319,20 +291,6 @@ Public Attributes</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">std::vector&lt;std::string&gt; Collidable::exclude_entities</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="aab855c062916106e48428a8b0eddbc17" name="aab855c062916106e48428a8b0eddbc17"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aab855c062916106e48428a8b0eddbc17">&#9670;&#160;</a></span>height</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">double Collidable::height = 0.0</td>
         </tr>
       </table>
 </div><div class="memdoc">

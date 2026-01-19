@@ -94,158 +94,176 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno"><a class="line" href="structPackage.html">   10</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structPackage.html">Package</a></div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span>{</div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno"><a class="line" href="structPackage.html#afeeb023b13bb33e5bcab3fdec9c052ea">   12</a></span>  <a class="code hl_typedef" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> <a class="code hl_variable" href="structPackage.html#afeeb023b13bb33e5bcab3fdec9c052ea">magic</a>;</div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno"><a class="line" href="structPackage.html#a78bd5a10059fe11a212be8c4443b6146">   13</a></span>  <a class="code hl_typedef" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> <a class="code hl_variable" href="structPackage.html#a78bd5a10059fe11a212be8c4443b6146">real_package</a>;</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>};</div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno"><a class="line" href="structPackage.html#aaa80f26c2d7a21a5f2697a44ae98e8e1">   13</a></span>  <span class="keywordtype">bool</span> <a class="code hl_variable" href="structPackage.html#aaa80f26c2d7a21a5f2697a44ae98e8e1">hearthbeat</a>;</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno"><a class="line" href="structPackage.html#a78bd5a10059fe11a212be8c4443b6146">   14</a></span>  <a class="code hl_typedef" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> <a class="code hl_variable" href="structPackage.html#a78bd5a10059fe11a212be8c4443b6146">real_package</a>;</div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>};</div>
 </div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
-<div class="foldopen" id="foldopen00016" data-start="{" data-end="}">
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno"><a class="line" href="ServerCommands_8hpp.html#a84b8af1b3e22ddc13ca1f2437671c805">   16</a></span><span class="keyword">inline</span> Parser&lt;Package&gt; <a class="code hl_function" href="ServerCommands_8hpp.html#a84b8af1b3e22ddc13ca1f2437671c805">parse_pkg</a>()</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>{</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>  <span class="keywordflow">return</span> apply([](<a class="code hl_typedef" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> magic, <a class="code hl_typedef" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> r)</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>               { <span class="keywordflow">return</span> <a class="code hl_struct" href="structPackage.html">Package</a>(std::move(magic), std::move(r)); },</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>               parseByte&lt;Byte&gt;() * 4,  <span class="comment">// magic sequence is 4 bytes</span></div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>               parseByte&lt;Byte&gt;().many());</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>}</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
+<div class="foldopen" id="foldopen00017" data-start="{" data-end="}">
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno"><a class="line" href="ServerCommands_8hpp.html#a84b8af1b3e22ddc13ca1f2437671c805">   17</a></span><span class="keyword">inline</span> Parser&lt;Package&gt; <a class="code hl_function" href="ServerCommands_8hpp.html#a84b8af1b3e22ddc13ca1f2437671c805">parse_pkg</a>()</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>{</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>  <span class="keywordflow">return</span> apply([](<a class="code hl_typedef" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> magic, <span class="keywordtype">bool</span> hb, <a class="code hl_typedef" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> r)</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>               { <span class="keywordflow">return</span> <a class="code hl_struct" href="structPackage.html">Package</a>(std::move(magic), hb, std::move(r)); },</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>               parseByte&lt;Byte&gt;() * 4,  <span class="comment">// magic sequence is 4 bytes</span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>               parseByte&lt;bool&gt;(),</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>               parseByte&lt;Byte&gt;().many());</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>}</div>
 </div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
-<div class="foldopen" id="foldopen00024" data-start="{" data-end="};">
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno"><a class="line" href="structConnectionlessCommand.html">   24</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structConnectionlessCommand.html">ConnectionlessCommand</a></div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>{</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno"><a class="line" href="structConnectionlessCommand.html#a490c833b2468d613df098632769a93a0">   26</a></span>  std::uint8_t <a class="code hl_variable" href="structConnectionlessCommand.html#a490c833b2468d613df098632769a93a0">command_code</a>;</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="structConnectionlessCommand.html#ac3b53b9c63ca0c01389826bcd9657026">   27</a></span>  <a class="code hl_typedef" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> <a class="code hl_variable" href="structConnectionlessCommand.html#ac3b53b9c63ca0c01389826bcd9657026">command</a>;</div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>};</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> </div>
+<div class="foldopen" id="foldopen00026" data-start="{" data-end="};">
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno"><a class="line" href="structConnectionlessCommand.html">   26</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structConnectionlessCommand.html">ConnectionlessCommand</a></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>{</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="structConnectionlessCommand.html#a490c833b2468d613df098632769a93a0">   28</a></span>  std::uint8_t <a class="code hl_variable" href="structConnectionlessCommand.html#a490c833b2468d613df098632769a93a0">command_code</a>;</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="structConnectionlessCommand.html#ac3b53b9c63ca0c01389826bcd9657026">   29</a></span>  <a class="code hl_typedef" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> <a class="code hl_variable" href="structConnectionlessCommand.html#ac3b53b9c63ca0c01389826bcd9657026">command</a>;</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>};</div>
 </div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
-<div class="foldopen" id="foldopen00030" data-start="{" data-end="}">
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno"><a class="line" href="ServerCommands_8hpp.html#aac6071ea1b609d993d37411647e28657">   30</a></span><span class="keyword">inline</span> Parser&lt;ConnectionlessCommand&gt; <a class="code hl_function" href="ServerCommands_8hpp.html#aac6071ea1b609d993d37411647e28657">parse_connectionless</a>()</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>{</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>  <span class="keywordflow">return</span> apply([](std::uint8_t code, <a class="code hl_typedef" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> c)</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>               { <span class="keywordflow">return</span> <a class="code hl_struct" href="structConnectionlessCommand.html">ConnectionlessCommand</a>(code, std::move(c)); },</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>               parseByte&lt;std::uint8_t&gt;(),</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>               parseByte&lt;Byte&gt;().many());</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>}</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
+<div class="foldopen" id="foldopen00032" data-start="{" data-end="}">
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno"><a class="line" href="ServerCommands_8hpp.html#aac6071ea1b609d993d37411647e28657">   32</a></span><span class="keyword">inline</span> Parser&lt;ConnectionlessCommand&gt; <a class="code hl_function" href="ServerCommands_8hpp.html#aac6071ea1b609d993d37411647e28657">parse_connectionless</a>()</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>{</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>  <span class="keywordflow">return</span> apply([](std::uint8_t code, <a class="code hl_typedef" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> c)</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>               { <span class="keywordflow">return</span> <a class="code hl_struct" href="structConnectionlessCommand.html">ConnectionlessCommand</a>(code, std::move(c)); },</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>               parseByte&lt;std::uint8_t&gt;(),</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>               parseByte&lt;Byte&gt;().many());</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>}</div>
 </div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
-<div class="foldopen" id="foldopen00038" data-start="{" data-end="};">
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="structConnectCommand.html">   38</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structConnectCommand.html">ConnectCommand</a></div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>{</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno"><a class="line" href="structConnectCommand.html#a61bbb4918706ba98530d9123beabc6a1">   40</a></span>  std::uint32_t <a class="code hl_variable" href="structConnectCommand.html#a61bbb4918706ba98530d9123beabc6a1">challenge</a>;</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno"><a class="line" href="structConnectCommand.html#a7466098e5f939671a5889cac76798782">   41</a></span>  std::string <a class="code hl_variable" href="structConnectCommand.html#a7466098e5f939671a5889cac76798782">player_name</a>;</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>};</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span> </div>
+<div class="foldopen" id="foldopen00040" data-start="{" data-end="};">
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno"><a class="line" href="structConnectCommand.html">   40</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structConnectCommand.html">ConnectCommand</a></div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>{</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno"><a class="line" href="structConnectCommand.html#a61bbb4918706ba98530d9123beabc6a1">   42</a></span>  std::uint32_t <a class="code hl_variable" href="structConnectCommand.html#a61bbb4918706ba98530d9123beabc6a1">challenge</a>;</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno"><a class="line" href="structConnectCommand.html#a7466098e5f939671a5889cac76798782">   43</a></span>  std::string <a class="code hl_variable" href="structConnectCommand.html#a7466098e5f939671a5889cac76798782">player_name</a>;</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>};</div>
 </div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
-<div class="foldopen" id="foldopen00044" data-start="{" data-end="}">
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno"><a class="line" href="ServerCommands_8hpp.html#a041c60a3f681bc3e92e3cbd4aa6e2690">   44</a></span><span class="keyword">inline</span> Parser&lt;ConnectCommand&gt; <a class="code hl_function" href="ServerCommands_8hpp.html#a041c60a3f681bc3e92e3cbd4aa6e2690">parse_connect_cmd</a>()</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>{</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>  <span class="keywordflow">return</span> apply([](std::uint32_t c, std::string name)</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>               { <span class="keywordflow">return</span> <a class="code hl_struct" href="structConnectCommand.html">ConnectCommand</a>(c, std::move(name)); },</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>               parseByte&lt;u_int32_t&gt;(),</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>               parseByteString());</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>}</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
+<div class="foldopen" id="foldopen00046" data-start="{" data-end="}">
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno"><a class="line" href="ServerCommands_8hpp.html#a041c60a3f681bc3e92e3cbd4aa6e2690">   46</a></span><span class="keyword">inline</span> Parser&lt;ConnectCommand&gt; <a class="code hl_function" href="ServerCommands_8hpp.html#a041c60a3f681bc3e92e3cbd4aa6e2690">parse_connect_cmd</a>()</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>{</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>  <span class="keywordflow">return</span> apply([](std::uint32_t c, std::string name)</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>               { <span class="keywordflow">return</span> <a class="code hl_struct" href="structConnectCommand.html">ConnectCommand</a>(c, std::move(name)); },</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>               parseByte&lt;std::uint32_t&gt;(),</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>               parseByteString());</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>}</div>
 </div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
-<div class="foldopen" id="foldopen00052" data-start="{" data-end="};">
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno"><a class="line" href="structConnectResponse.html">   52</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structConnectResponse.html">ConnectResponse</a></div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>{</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno"><a class="line" href="structConnectResponse.html#a7cdd218a4ab508659485931ec68408ae">   54</a></span>  std::uint8_t <a class="code hl_variable" href="structConnectResponse.html#a7cdd218a4ab508659485931ec68408ae">client_id</a>;</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno"><a class="line" href="structConnectResponse.html#aa22694371383b345c484890934a85cec">   55</a></span>  std::uint32_t <a class="code hl_variable" href="structConnectResponse.html#aa22694371383b345c484890934a85cec">server_id</a>;</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>};</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span> </div>
+<div class="foldopen" id="foldopen00054" data-start="{" data-end="};">
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno"><a class="line" href="structConnectResponse.html">   54</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structConnectResponse.html">ConnectResponse</a></div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>{</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno"><a class="line" href="structConnectResponse.html#a7cdd218a4ab508659485931ec68408ae">   56</a></span>  std::uint8_t <a class="code hl_variable" href="structConnectResponse.html#a7cdd218a4ab508659485931ec68408ae">client_id</a>;</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno"><a class="line" href="structConnectResponse.html#aa22694371383b345c484890934a85cec">   57</a></span>  std::uint32_t <a class="code hl_variable" href="structConnectResponse.html#aa22694371383b345c484890934a85cec">server_id</a>;</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>};</div>
 </div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
-<div class="foldopen" id="foldopen00058" data-start="{" data-end="}">
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno"><a class="line" href="ServerCommands_8hpp.html#af711ec9178f0cc8b07164c9aa26e4582">   58</a></span><span class="keyword">inline</span> Parser&lt;ConnectResponse&gt; <a class="code hl_function" href="ServerCommands_8hpp.html#af711ec9178f0cc8b07164c9aa26e4582">parse_connect_rsp</a>()</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>{</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>  <span class="keywordflow">return</span> apply([](std::uint8_t c_id, std::uint32_t s_id)</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>               { <span class="keywordflow">return</span> <a class="code hl_struct" href="structConnectResponse.html">ConnectResponse</a>(c_id, s_id); },</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>               parseByte&lt;std::uint8_t&gt;(),</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>               parseByte&lt;std::uint32_t&gt;());</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>}</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
+<div class="foldopen" id="foldopen00060" data-start="{" data-end="}">
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno"><a class="line" href="ServerCommands_8hpp.html#af711ec9178f0cc8b07164c9aa26e4582">   60</a></span><span class="keyword">inline</span> Parser&lt;ConnectResponse&gt; <a class="code hl_function" href="ServerCommands_8hpp.html#af711ec9178f0cc8b07164c9aa26e4582">parse_connect_rsp</a>()</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>{</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>  <span class="keywordflow">return</span> apply([](std::uint8_t c_id, std::uint32_t s_id)</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>               { <span class="keywordflow">return</span> <a class="code hl_struct" href="structConnectResponse.html">ConnectResponse</a>(c_id, s_id); },</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>               parseByte&lt;std::uint8_t&gt;(),</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>               parseByte&lt;std::uint32_t&gt;());</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>}</div>
 </div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
-<div class="foldopen" id="foldopen00066" data-start="{" data-end="};">
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno"><a class="line" href="structChallengeResponse.html">   66</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structChallengeResponse.html">ChallengeResponse</a></div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>{</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno"><a class="line" href="structChallengeResponse.html#aac4f505d06582ca6183e9d9e0fb7f344">   68</a></span>  std::uint32_t <a class="code hl_variable" href="structChallengeResponse.html#aac4f505d06582ca6183e9d9e0fb7f344">challenge</a>;</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>};</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
+<div class="foldopen" id="foldopen00068" data-start="{" data-end="};">
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno"><a class="line" href="structChallengeResponse.html">   68</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structChallengeResponse.html">ChallengeResponse</a></div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>{</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno"><a class="line" href="structChallengeResponse.html#aac4f505d06582ca6183e9d9e0fb7f344">   70</a></span>  std::uint32_t <a class="code hl_variable" href="structChallengeResponse.html#aac4f505d06582ca6183e9d9e0fb7f344">challenge</a>;</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>};</div>
 </div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span> </div>
-<div class="foldopen" id="foldopen00071" data-start="{" data-end="}">
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno"><a class="line" href="ServerCommands_8hpp.html#aca66278b299a1d70a592316e344a2fc9">   71</a></span><span class="keyword">inline</span> Parser&lt;ChallengeResponse&gt; <a class="code hl_function" href="ServerCommands_8hpp.html#aca66278b299a1d70a592316e344a2fc9">parse_challenge_rsp</a>()</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>{</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>  <span class="keywordflow">return</span> apply([](std::uint32_t c) { <span class="keywordflow">return</span> <a class="code hl_struct" href="structChallengeResponse.html">ChallengeResponse</a>(c); },</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>               parseByte&lt;std::uint32_t&gt;());</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>}</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span> </div>
+<div class="foldopen" id="foldopen00073" data-start="{" data-end="}">
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno"><a class="line" href="ServerCommands_8hpp.html#aca66278b299a1d70a592316e344a2fc9">   73</a></span><span class="keyword">inline</span> Parser&lt;ChallengeResponse&gt; <a class="code hl_function" href="ServerCommands_8hpp.html#aca66278b299a1d70a592316e344a2fc9">parse_challenge_rsp</a>()</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>{</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>  <span class="keywordflow">return</span> apply([](std::uint32_t c) { <span class="keywordflow">return</span> <a class="code hl_struct" href="structChallengeResponse.html">ChallengeResponse</a>(c); },</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>               parseByte&lt;std::uint32_t&gt;());</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>}</div>
 </div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
-<div class="foldopen" id="foldopen00077" data-start="{" data-end="};">
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno"><a class="line" href="structConnectedPackage.html">   77</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structConnectedPackage.html">ConnectedPackage</a></div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>{</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno"><a class="line" href="structConnectedPackage.html#a82b89f562fcc5766b694ec73bf20049a">   79</a></span>  std::uint32_t <a class="code hl_variable" href="structConnectedPackage.html#a82b89f562fcc5766b694ec73bf20049a">sequence_number</a>;</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno"><a class="line" href="structConnectedPackage.html#a918fc739d1b89432049f8940bda3d4a4">   80</a></span>  std::uint32_t <a class="code hl_variable" href="structConnectedPackage.html#a918fc739d1b89432049f8940bda3d4a4">acknowledge</a>;</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno"><a class="line" href="structConnectedPackage.html#aecdfb679659b7735c1617155d515d60b">   81</a></span>  <span class="keywordtype">bool</span> <a class="code hl_variable" href="structConnectedPackage.html#aecdfb679659b7735c1617155d515d60b">end_of_content</a>;</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno"><a class="line" href="structConnectedPackage.html#a8078f11674c1d91dfcd73ef7875835b0">   82</a></span>  <a class="code hl_typedef" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> <a class="code hl_variable" href="structConnectedPackage.html#a8078f11674c1d91dfcd73ef7875835b0">real_package</a>;</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>};</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span> </div>
+<div class="foldopen" id="foldopen00079" data-start="{" data-end="};">
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno"><a class="line" href="structConnectedPackage.html">   79</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structConnectedPackage.html">ConnectedPackage</a></div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>{</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno"><a class="line" href="structConnectedPackage.html#a066d4e1e92c76bdb8950b2bd7db23329">   81</a></span>  std::size_t <a class="code hl_variable" href="structConnectedPackage.html#a066d4e1e92c76bdb8950b2bd7db23329">sequence_number</a>;</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno"><a class="line" href="structConnectedPackage.html#a5dbea981473d094f863936a89c9d2e43">   82</a></span>  std::size_t <a class="code hl_variable" href="structConnectedPackage.html#a5dbea981473d094f863936a89c9d2e43">acknowledge</a>;</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno"><a class="line" href="structConnectedPackage.html#aecdfb679659b7735c1617155d515d60b">   83</a></span>  <span class="keywordtype">bool</span> <a class="code hl_variable" href="structConnectedPackage.html#aecdfb679659b7735c1617155d515d60b">end_of_content</a>;</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno"><a class="line" href="structConnectedPackage.html#ad3b21d4bc0ba709afb98d92040a954d1">   84</a></span>  <span class="keywordtype">bool</span> <a class="code hl_variable" href="structConnectedPackage.html#ad3b21d4bc0ba709afb98d92040a954d1">prioritary</a>;</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno"><a class="line" href="structConnectedPackage.html#a8078f11674c1d91dfcd73ef7875835b0">   85</a></span>  <a class="code hl_typedef" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> <a class="code hl_variable" href="structConnectedPackage.html#a8078f11674c1d91dfcd73ef7875835b0">real_package</a>;</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span> </div>
+<div class="foldopen" id="foldopen00087" data-start="{" data-end="}">
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno"><a class="line" href="structConnectedPackage.html#ad5e5ecd303ca759f973496c2132c7c0f">   87</a></span>  <a class="code hl_typedef" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> <a class="code hl_function" href="structConnectedPackage.html#ad5e5ecd303ca759f973496c2132c7c0f">to_bytes</a>()<span class="keyword"> const</span></div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span><span class="keyword">  </span>{</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    <span class="keywordflow">return</span> type_to_byte&lt;std::size_t&gt;(this-&gt;sequence_number)</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>        + type_to_byte&lt;std::size_t&gt;(this-&gt;acknowledge)</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>        + type_to_byte&lt;bool&gt;(this-&gt;end_of_content)</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>        + type_to_byte&lt;bool&gt;(this-&gt;prioritary) + <a class="code hl_variable" href="structConnectedPackage.html#a8078f11674c1d91dfcd73ef7875835b0">real_package</a>;</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>  }</div>
 </div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span> </div>
-<div class="foldopen" id="foldopen00085" data-start="{" data-end="}">
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno"><a class="line" href="ServerCommands_8hpp.html#a2c784ce4a1f732161bfb4ccd3d8e7f8f">   85</a></span><span class="keyword">inline</span> Parser&lt;ConnectedPackage&gt; <a class="code hl_function" href="ServerCommands_8hpp.html#a2c784ce4a1f732161bfb4ccd3d8e7f8f">parse_connected</a>()</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>{</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>  <span class="keywordflow">return</span> apply([](std::uint32_t sn, std::uint32_t a, <span class="keywordtype">bool</span> eoc, <a class="code hl_typedef" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> r)</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>               { <span class="keywordflow">return</span> <a class="code hl_struct" href="structConnectedPackage.html">ConnectedPackage</a>(sn, a, eoc, std::move(r)); },</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>               parseByte&lt;std::uint32_t&gt;(),</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>               parseByte&lt;std::uint32_t&gt;(),</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>               parseByte&lt;bool&gt;(),</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>               parseByte&lt;Byte&gt;().many());</div>
-<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>}</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>};</div>
 </div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
-<div class="foldopen" id="foldopen00095" data-start="{" data-end="};">
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno"><a class="line" href="structConnectedCommand.html">   95</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structConnectedCommand.html">ConnectedCommand</a></div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>{</div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno"><a class="line" href="structConnectedCommand.html#a8737ab78d7c890272d48675b88c8a166">   97</a></span>  std::uint8_t <a class="code hl_variable" href="structConnectedCommand.html#a8737ab78d7c890272d48675b88c8a166">opcode</a>;</div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno"><a class="line" href="structConnectedCommand.html#aada9493627f73e2dfc94aeeb12951509">   98</a></span>  <a class="code hl_typedef" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> <a class="code hl_variable" href="structConnectedCommand.html#aada9493627f73e2dfc94aeeb12951509">real_package</a>;</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>};</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span> </div>
+<div class="foldopen" id="foldopen00096" data-start="{" data-end="}">
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno"><a class="line" href="ServerCommands_8hpp.html#a2c784ce4a1f732161bfb4ccd3d8e7f8f">   96</a></span><span class="keyword">inline</span> Parser&lt;ConnectedPackage&gt; <a class="code hl_function" href="ServerCommands_8hpp.html#a2c784ce4a1f732161bfb4ccd3d8e7f8f">parse_connected</a>()</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>{</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>  <span class="keywordflow">return</span> apply(</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>      [](std::size_t sn, std::size_t a, <span class="keywordtype">bool</span> eoc, <span class="keywordtype">bool</span> prioritary, <a class="code hl_typedef" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> r)</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>      { <span class="keywordflow">return</span> <a class="code hl_struct" href="structConnectedPackage.html">ConnectedPackage</a>(sn, a, eoc, prioritary, std::move(r)); },</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>      parseByte&lt;std::size_t&gt;(),</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>      parseByte&lt;std::size_t&gt;(),</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>      parseByte&lt;bool&gt;(),</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>      parseByte&lt;bool&gt;(),</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>      parseByte&lt;Byte&gt;().many());</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>}</div>
 </div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span> </div>
-<div class="foldopen" id="foldopen00101" data-start="{" data-end="}">
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno"><a class="line" href="ServerCommands_8hpp.html#ab7e3707ff531138e23569f50d5d118f7">  101</a></span><span class="keyword">inline</span> Parser&lt;ConnectedCommand&gt; <a class="code hl_function" href="ServerCommands_8hpp.html#ab7e3707ff531138e23569f50d5d118f7">parse_connected_cmd</a>()</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>{</div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>  <span class="keywordflow">return</span> apply([](std::uint8_t op, <a class="code hl_typedef" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> r)</div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>               { <span class="keywordflow">return</span> <a class="code hl_struct" href="structConnectedCommand.html">ConnectedCommand</a>(op, std::move(r)); },</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>               parseByte&lt;std::uint8_t&gt;(),</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>               parseByte&lt;Byte&gt;().many());</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>}</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span> </div>
+<div class="foldopen" id="foldopen00108" data-start="{" data-end="};">
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno"><a class="line" href="structConnectedCommand.html">  108</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structConnectedCommand.html">ConnectedCommand</a></div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>{</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno"><a class="line" href="structConnectedCommand.html#a8737ab78d7c890272d48675b88c8a166">  110</a></span>  std::uint8_t <a class="code hl_variable" href="structConnectedCommand.html#a8737ab78d7c890272d48675b88c8a166">opcode</a>;</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno"><a class="line" href="structConnectedCommand.html#aada9493627f73e2dfc94aeeb12951509">  111</a></span>  <a class="code hl_typedef" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> <a class="code hl_variable" href="structConnectedCommand.html#aada9493627f73e2dfc94aeeb12951509">real_package</a>;</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>};</div>
+</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span> </div>
+<div class="foldopen" id="foldopen00114" data-start="{" data-end="}">
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno"><a class="line" href="ServerCommands_8hpp.html#ab7e3707ff531138e23569f50d5d118f7">  114</a></span><span class="keyword">inline</span> Parser&lt;ConnectedCommand&gt; <a class="code hl_function" href="ServerCommands_8hpp.html#ab7e3707ff531138e23569f50d5d118f7">parse_connected_cmd</a>()</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>{</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>  <span class="keywordflow">return</span> apply([](std::uint8_t op, <a class="code hl_typedef" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> r)</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>               { <span class="keywordflow">return</span> <a class="code hl_struct" href="structConnectedCommand.html">ConnectedCommand</a>(op, std::move(r)); },</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>               parseByte&lt;std::uint8_t&gt;(),</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>               parseByte&lt;Byte&gt;().many());</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>}</div>
 </div>
 <div class="ttc" id="aByte_8hpp_html"><div class="ttname"><a href="Byte_8hpp.html">Byte.hpp</a></div><div class="ttdoc">Binary serialization system for network communication and persistence.</div></div>
 <div class="ttc" id="aByte_8hpp_html_ae5dac5ad63f62fe37b5a8cfd8f269493"><div class="ttname"><a href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a></div><div class="ttdeci">std::vector&lt; Byte &gt; ByteArray</div><div class="ttdef"><b>Definition</b> Byte.hpp:27</div></div>
-<div class="ttc" id="aServerCommands_8hpp_html_a041c60a3f681bc3e92e3cbd4aa6e2690"><div class="ttname"><a href="ServerCommands_8hpp.html#a041c60a3f681bc3e92e3cbd4aa6e2690">parse_connect_cmd</a></div><div class="ttdeci">Parser&lt; ConnectCommand &gt; parse_connect_cmd()</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:44</div></div>
-<div class="ttc" id="aServerCommands_8hpp_html_a2c784ce4a1f732161bfb4ccd3d8e7f8f"><div class="ttname"><a href="ServerCommands_8hpp.html#a2c784ce4a1f732161bfb4ccd3d8e7f8f">parse_connected</a></div><div class="ttdeci">Parser&lt; ConnectedPackage &gt; parse_connected()</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:85</div></div>
-<div class="ttc" id="aServerCommands_8hpp_html_a84b8af1b3e22ddc13ca1f2437671c805"><div class="ttname"><a href="ServerCommands_8hpp.html#a84b8af1b3e22ddc13ca1f2437671c805">parse_pkg</a></div><div class="ttdeci">Parser&lt; Package &gt; parse_pkg()</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:16</div></div>
-<div class="ttc" id="aServerCommands_8hpp_html_aac6071ea1b609d993d37411647e28657"><div class="ttname"><a href="ServerCommands_8hpp.html#aac6071ea1b609d993d37411647e28657">parse_connectionless</a></div><div class="ttdeci">Parser&lt; ConnectionlessCommand &gt; parse_connectionless()</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:30</div></div>
-<div class="ttc" id="aServerCommands_8hpp_html_ab7e3707ff531138e23569f50d5d118f7"><div class="ttname"><a href="ServerCommands_8hpp.html#ab7e3707ff531138e23569f50d5d118f7">parse_connected_cmd</a></div><div class="ttdeci">Parser&lt; ConnectedCommand &gt; parse_connected_cmd()</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:101</div></div>
-<div class="ttc" id="aServerCommands_8hpp_html_aca66278b299a1d70a592316e344a2fc9"><div class="ttname"><a href="ServerCommands_8hpp.html#aca66278b299a1d70a592316e344a2fc9">parse_challenge_rsp</a></div><div class="ttdeci">Parser&lt; ChallengeResponse &gt; parse_challenge_rsp()</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:71</div></div>
-<div class="ttc" id="aServerCommands_8hpp_html_af711ec9178f0cc8b07164c9aa26e4582"><div class="ttname"><a href="ServerCommands_8hpp.html#af711ec9178f0cc8b07164c9aa26e4582">parse_connect_rsp</a></div><div class="ttdeci">Parser&lt; ConnectResponse &gt; parse_connect_rsp()</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:58</div></div>
-<div class="ttc" id="astructChallengeResponse_html"><div class="ttname"><a href="structChallengeResponse.html">ChallengeResponse</a></div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:67</div></div>
-<div class="ttc" id="astructChallengeResponse_html_aac4f505d06582ca6183e9d9e0fb7f344"><div class="ttname"><a href="structChallengeResponse.html#aac4f505d06582ca6183e9d9e0fb7f344">ChallengeResponse::challenge</a></div><div class="ttdeci">std::uint32_t challenge</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:68</div></div>
-<div class="ttc" id="astructConnectCommand_html"><div class="ttname"><a href="structConnectCommand.html">ConnectCommand</a></div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:39</div></div>
-<div class="ttc" id="astructConnectCommand_html_a61bbb4918706ba98530d9123beabc6a1"><div class="ttname"><a href="structConnectCommand.html#a61bbb4918706ba98530d9123beabc6a1">ConnectCommand::challenge</a></div><div class="ttdeci">std::uint32_t challenge</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:40</div></div>
-<div class="ttc" id="astructConnectCommand_html_a7466098e5f939671a5889cac76798782"><div class="ttname"><a href="structConnectCommand.html#a7466098e5f939671a5889cac76798782">ConnectCommand::player_name</a></div><div class="ttdeci">std::string player_name</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:41</div></div>
-<div class="ttc" id="astructConnectResponse_html"><div class="ttname"><a href="structConnectResponse.html">ConnectResponse</a></div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:53</div></div>
-<div class="ttc" id="astructConnectResponse_html_a7cdd218a4ab508659485931ec68408ae"><div class="ttname"><a href="structConnectResponse.html#a7cdd218a4ab508659485931ec68408ae">ConnectResponse::client_id</a></div><div class="ttdeci">std::uint8_t client_id</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:54</div></div>
-<div class="ttc" id="astructConnectResponse_html_aa22694371383b345c484890934a85cec"><div class="ttname"><a href="structConnectResponse.html#aa22694371383b345c484890934a85cec">ConnectResponse::server_id</a></div><div class="ttdeci">std::uint32_t server_id</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:55</div></div>
-<div class="ttc" id="astructConnectedCommand_html"><div class="ttname"><a href="structConnectedCommand.html">ConnectedCommand</a></div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:96</div></div>
-<div class="ttc" id="astructConnectedCommand_html_a8737ab78d7c890272d48675b88c8a166"><div class="ttname"><a href="structConnectedCommand.html#a8737ab78d7c890272d48675b88c8a166">ConnectedCommand::opcode</a></div><div class="ttdeci">std::uint8_t opcode</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:97</div></div>
-<div class="ttc" id="astructConnectedCommand_html_aada9493627f73e2dfc94aeeb12951509"><div class="ttname"><a href="structConnectedCommand.html#aada9493627f73e2dfc94aeeb12951509">ConnectedCommand::real_package</a></div><div class="ttdeci">ByteArray real_package</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:98</div></div>
-<div class="ttc" id="astructConnectedPackage_html"><div class="ttname"><a href="structConnectedPackage.html">ConnectedPackage</a></div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:78</div></div>
-<div class="ttc" id="astructConnectedPackage_html_a8078f11674c1d91dfcd73ef7875835b0"><div class="ttname"><a href="structConnectedPackage.html#a8078f11674c1d91dfcd73ef7875835b0">ConnectedPackage::real_package</a></div><div class="ttdeci">ByteArray real_package</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:82</div></div>
-<div class="ttc" id="astructConnectedPackage_html_a82b89f562fcc5766b694ec73bf20049a"><div class="ttname"><a href="structConnectedPackage.html#a82b89f562fcc5766b694ec73bf20049a">ConnectedPackage::sequence_number</a></div><div class="ttdeci">std::uint32_t sequence_number</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:79</div></div>
-<div class="ttc" id="astructConnectedPackage_html_a918fc739d1b89432049f8940bda3d4a4"><div class="ttname"><a href="structConnectedPackage.html#a918fc739d1b89432049f8940bda3d4a4">ConnectedPackage::acknowledge</a></div><div class="ttdeci">std::uint32_t acknowledge</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:80</div></div>
-<div class="ttc" id="astructConnectedPackage_html_aecdfb679659b7735c1617155d515d60b"><div class="ttname"><a href="structConnectedPackage.html#aecdfb679659b7735c1617155d515d60b">ConnectedPackage::end_of_content</a></div><div class="ttdeci">bool end_of_content</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:81</div></div>
-<div class="ttc" id="astructConnectionlessCommand_html"><div class="ttname"><a href="structConnectionlessCommand.html">ConnectionlessCommand</a></div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:25</div></div>
-<div class="ttc" id="astructConnectionlessCommand_html_a490c833b2468d613df098632769a93a0"><div class="ttname"><a href="structConnectionlessCommand.html#a490c833b2468d613df098632769a93a0">ConnectionlessCommand::command_code</a></div><div class="ttdeci">std::uint8_t command_code</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:26</div></div>
-<div class="ttc" id="astructConnectionlessCommand_html_ac3b53b9c63ca0c01389826bcd9657026"><div class="ttname"><a href="structConnectionlessCommand.html#ac3b53b9c63ca0c01389826bcd9657026">ConnectionlessCommand::command</a></div><div class="ttdeci">ByteArray command</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:27</div></div>
+<div class="ttc" id="aServerCommands_8hpp_html_a041c60a3f681bc3e92e3cbd4aa6e2690"><div class="ttname"><a href="ServerCommands_8hpp.html#a041c60a3f681bc3e92e3cbd4aa6e2690">parse_connect_cmd</a></div><div class="ttdeci">Parser&lt; ConnectCommand &gt; parse_connect_cmd()</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:46</div></div>
+<div class="ttc" id="aServerCommands_8hpp_html_a2c784ce4a1f732161bfb4ccd3d8e7f8f"><div class="ttname"><a href="ServerCommands_8hpp.html#a2c784ce4a1f732161bfb4ccd3d8e7f8f">parse_connected</a></div><div class="ttdeci">Parser&lt; ConnectedPackage &gt; parse_connected()</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:96</div></div>
+<div class="ttc" id="aServerCommands_8hpp_html_a84b8af1b3e22ddc13ca1f2437671c805"><div class="ttname"><a href="ServerCommands_8hpp.html#a84b8af1b3e22ddc13ca1f2437671c805">parse_pkg</a></div><div class="ttdeci">Parser&lt; Package &gt; parse_pkg()</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:17</div></div>
+<div class="ttc" id="aServerCommands_8hpp_html_aac6071ea1b609d993d37411647e28657"><div class="ttname"><a href="ServerCommands_8hpp.html#aac6071ea1b609d993d37411647e28657">parse_connectionless</a></div><div class="ttdeci">Parser&lt; ConnectionlessCommand &gt; parse_connectionless()</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:32</div></div>
+<div class="ttc" id="aServerCommands_8hpp_html_ab7e3707ff531138e23569f50d5d118f7"><div class="ttname"><a href="ServerCommands_8hpp.html#ab7e3707ff531138e23569f50d5d118f7">parse_connected_cmd</a></div><div class="ttdeci">Parser&lt; ConnectedCommand &gt; parse_connected_cmd()</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:114</div></div>
+<div class="ttc" id="aServerCommands_8hpp_html_aca66278b299a1d70a592316e344a2fc9"><div class="ttname"><a href="ServerCommands_8hpp.html#aca66278b299a1d70a592316e344a2fc9">parse_challenge_rsp</a></div><div class="ttdeci">Parser&lt; ChallengeResponse &gt; parse_challenge_rsp()</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:73</div></div>
+<div class="ttc" id="aServerCommands_8hpp_html_af711ec9178f0cc8b07164c9aa26e4582"><div class="ttname"><a href="ServerCommands_8hpp.html#af711ec9178f0cc8b07164c9aa26e4582">parse_connect_rsp</a></div><div class="ttdeci">Parser&lt; ConnectResponse &gt; parse_connect_rsp()</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:60</div></div>
+<div class="ttc" id="astructChallengeResponse_html"><div class="ttname"><a href="structChallengeResponse.html">ChallengeResponse</a></div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:69</div></div>
+<div class="ttc" id="astructChallengeResponse_html_aac4f505d06582ca6183e9d9e0fb7f344"><div class="ttname"><a href="structChallengeResponse.html#aac4f505d06582ca6183e9d9e0fb7f344">ChallengeResponse::challenge</a></div><div class="ttdeci">std::uint32_t challenge</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:70</div></div>
+<div class="ttc" id="astructConnectCommand_html"><div class="ttname"><a href="structConnectCommand.html">ConnectCommand</a></div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:41</div></div>
+<div class="ttc" id="astructConnectCommand_html_a61bbb4918706ba98530d9123beabc6a1"><div class="ttname"><a href="structConnectCommand.html#a61bbb4918706ba98530d9123beabc6a1">ConnectCommand::challenge</a></div><div class="ttdeci">std::uint32_t challenge</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:42</div></div>
+<div class="ttc" id="astructConnectCommand_html_a7466098e5f939671a5889cac76798782"><div class="ttname"><a href="structConnectCommand.html#a7466098e5f939671a5889cac76798782">ConnectCommand::player_name</a></div><div class="ttdeci">std::string player_name</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:43</div></div>
+<div class="ttc" id="astructConnectResponse_html"><div class="ttname"><a href="structConnectResponse.html">ConnectResponse</a></div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:55</div></div>
+<div class="ttc" id="astructConnectResponse_html_a7cdd218a4ab508659485931ec68408ae"><div class="ttname"><a href="structConnectResponse.html#a7cdd218a4ab508659485931ec68408ae">ConnectResponse::client_id</a></div><div class="ttdeci">std::uint8_t client_id</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:56</div></div>
+<div class="ttc" id="astructConnectResponse_html_aa22694371383b345c484890934a85cec"><div class="ttname"><a href="structConnectResponse.html#aa22694371383b345c484890934a85cec">ConnectResponse::server_id</a></div><div class="ttdeci">std::uint32_t server_id</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:57</div></div>
+<div class="ttc" id="astructConnectedCommand_html"><div class="ttname"><a href="structConnectedCommand.html">ConnectedCommand</a></div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:109</div></div>
+<div class="ttc" id="astructConnectedCommand_html_a8737ab78d7c890272d48675b88c8a166"><div class="ttname"><a href="structConnectedCommand.html#a8737ab78d7c890272d48675b88c8a166">ConnectedCommand::opcode</a></div><div class="ttdeci">std::uint8_t opcode</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:110</div></div>
+<div class="ttc" id="astructConnectedCommand_html_aada9493627f73e2dfc94aeeb12951509"><div class="ttname"><a href="structConnectedCommand.html#aada9493627f73e2dfc94aeeb12951509">ConnectedCommand::real_package</a></div><div class="ttdeci">ByteArray real_package</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:111</div></div>
+<div class="ttc" id="astructConnectedPackage_html"><div class="ttname"><a href="structConnectedPackage.html">ConnectedPackage</a></div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:80</div></div>
+<div class="ttc" id="astructConnectedPackage_html_a066d4e1e92c76bdb8950b2bd7db23329"><div class="ttname"><a href="structConnectedPackage.html#a066d4e1e92c76bdb8950b2bd7db23329">ConnectedPackage::sequence_number</a></div><div class="ttdeci">std::size_t sequence_number</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:81</div></div>
+<div class="ttc" id="astructConnectedPackage_html_a5dbea981473d094f863936a89c9d2e43"><div class="ttname"><a href="structConnectedPackage.html#a5dbea981473d094f863936a89c9d2e43">ConnectedPackage::acknowledge</a></div><div class="ttdeci">std::size_t acknowledge</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:82</div></div>
+<div class="ttc" id="astructConnectedPackage_html_a8078f11674c1d91dfcd73ef7875835b0"><div class="ttname"><a href="structConnectedPackage.html#a8078f11674c1d91dfcd73ef7875835b0">ConnectedPackage::real_package</a></div><div class="ttdeci">ByteArray real_package</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:85</div></div>
+<div class="ttc" id="astructConnectedPackage_html_ad3b21d4bc0ba709afb98d92040a954d1"><div class="ttname"><a href="structConnectedPackage.html#ad3b21d4bc0ba709afb98d92040a954d1">ConnectedPackage::prioritary</a></div><div class="ttdeci">bool prioritary</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:84</div></div>
+<div class="ttc" id="astructConnectedPackage_html_ad5e5ecd303ca759f973496c2132c7c0f"><div class="ttname"><a href="structConnectedPackage.html#ad5e5ecd303ca759f973496c2132c7c0f">ConnectedPackage::to_bytes</a></div><div class="ttdeci">ByteArray to_bytes() const</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:87</div></div>
+<div class="ttc" id="astructConnectedPackage_html_aecdfb679659b7735c1617155d515d60b"><div class="ttname"><a href="structConnectedPackage.html#aecdfb679659b7735c1617155d515d60b">ConnectedPackage::end_of_content</a></div><div class="ttdeci">bool end_of_content</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:83</div></div>
+<div class="ttc" id="astructConnectionlessCommand_html"><div class="ttname"><a href="structConnectionlessCommand.html">ConnectionlessCommand</a></div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:27</div></div>
+<div class="ttc" id="astructConnectionlessCommand_html_a490c833b2468d613df098632769a93a0"><div class="ttname"><a href="structConnectionlessCommand.html#a490c833b2468d613df098632769a93a0">ConnectionlessCommand::command_code</a></div><div class="ttdeci">std::uint8_t command_code</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:28</div></div>
+<div class="ttc" id="astructConnectionlessCommand_html_ac3b53b9c63ca0c01389826bcd9657026"><div class="ttname"><a href="structConnectionlessCommand.html#ac3b53b9c63ca0c01389826bcd9657026">ConnectionlessCommand::command</a></div><div class="ttdeci">ByteArray command</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:29</div></div>
 <div class="ttc" id="astructPackage_html"><div class="ttname"><a href="structPackage.html">Package</a></div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:11</div></div>
-<div class="ttc" id="astructPackage_html_a78bd5a10059fe11a212be8c4443b6146"><div class="ttname"><a href="structPackage.html#a78bd5a10059fe11a212be8c4443b6146">Package::real_package</a></div><div class="ttdeci">ByteArray real_package</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:13</div></div>
+<div class="ttc" id="astructPackage_html_a78bd5a10059fe11a212be8c4443b6146"><div class="ttname"><a href="structPackage.html#a78bd5a10059fe11a212be8c4443b6146">Package::real_package</a></div><div class="ttdeci">ByteArray real_package</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:14</div></div>
+<div class="ttc" id="astructPackage_html_aaa80f26c2d7a21a5f2697a44ae98e8e1"><div class="ttname"><a href="structPackage.html#aaa80f26c2d7a21a5f2697a44ae98e8e1">Package::hearthbeat</a></div><div class="ttdeci">bool hearthbeat</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:13</div></div>
 <div class="ttc" id="astructPackage_html_afeeb023b13bb33e5bcab3fdec9c052ea"><div class="ttname"><a href="structPackage.html#afeeb023b13bb33e5bcab3fdec9c052ea">Package::magic</a></div><div class="ttdeci">ByteArray magic</div><div class="ttdef"><b>Definition</b> ServerCommands.hpp:12</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

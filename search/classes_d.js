@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['quadtreecollision_0',['QuadTreeCollision',['../classQuadTreeCollision.html',1,'']]],
-  ['quadtreenode_1',['QuadTreeNode',['../classQuadTreeNode.html',1,'']]]
+  ['networkstatus_0',['NetworkStatus',['../structNetworkStatus.html',1,'']]],
+  ['newconnection_1',['NewConnection',['../structNewConnection.html',1,'']]]
 ];

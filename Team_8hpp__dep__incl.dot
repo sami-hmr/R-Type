@@ -9,13 +9,21 @@ digraph "include/plugin/components/Team.hpp"
   Node1 -> Node2 [id="edge1_Node000001_Node000002",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node2 [id="Node000002",label="plugins/collision/src\l/Collision.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Collision_8cpp.html",tooltip=" "];
   Node1 -> Node3 [id="edge2_Node000001_Node000003",dir="back",color="steelblue1",style="solid",tooltip=" "];
-  Node3 [id="Node000003",label="plugins/life/src/Life.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Life_8cpp.html",tooltip=" "];
+  Node3 [id="Node000003",label="plugins/inventory/src\l/InventoryScene.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$InventoryScene_8cpp.html",tooltip=" "];
   Node1 -> Node4 [id="edge3_Node000001_Node000004",dir="back",color="steelblue1",style="solid",tooltip=" "];
-  Node4 [id="Node000004",label="plugins/projectile\l/src/Projectile.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Projectile_8cpp.html",tooltip=" "];
+  Node4 [id="Node000004",label="plugins/life/src/Life.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Life_8cpp.html",tooltip=" "];
   Node1 -> Node5 [id="edge4_Node000001_Node000005",dir="back",color="steelblue1",style="solid",tooltip=" "];
-  Node5 [id="Node000005",label="plugins/server_network\l/src/Network.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$server__network_2src_2Network_8cpp.html",tooltip=" "];
+  Node5 [id="Node000005",label="plugins/projectile\l/src/Projectile.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Projectile_8cpp.html",tooltip=" "];
   Node1 -> Node6 [id="edge5_Node000001_Node000006",dir="back",color="steelblue1",style="solid",tooltip=" "];
-  Node6 [id="Node000006",label="plugins/target/src\l/Target.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Target_8cpp.html",tooltip=" "];
+  Node6 [id="Node000006",label="plugins/rtype_client\l/src/RtypeClient.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$RtypeClient_8cpp.html",tooltip=" "];
   Node1 -> Node7 [id="edge6_Node000001_Node000007",dir="back",color="steelblue1",style="solid",tooltip=" "];
-  Node7 [id="Node000007",label="plugins/weapon/src\l/Weapon.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Weapon_8cpp.html",tooltip=" "];
+  Node7 [id="Node000007",label="plugins/target/src\l/Target.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Target_8cpp.html",tooltip=" "];
+  Node1 -> Node8 [id="edge7_Node000001_Node000008",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node8 [id="Node000008",label="plugins/weapon/src\l/BasicWeapon.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$BasicWeapon_8cpp.html",tooltip=" "];
+  Node1 -> Node9 [id="edge8_Node000001_Node000009",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node9 [id="Node000009",label="plugins/weapon/src\l/ChargeWeapon.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$ChargeWeapon_8cpp.html",tooltip=" "];
+  Node1 -> Node10 [id="edge9_Node000001_Node000010",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node10 [id="Node000010",label="plugins/weapon/src\l/DelayedWeapon.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$DelayedWeapon_8cpp.html",tooltip=" "];
+  Node1 -> Node11 [id="edge10_Node000001_Node000011",dir="back",color="steelblue1",style="solid",tooltip=" "];
+  Node11 [id="Node000011",label="plugins/weapon/src\l/Weapon.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$Weapon_8cpp.html",tooltip=" "];
 }

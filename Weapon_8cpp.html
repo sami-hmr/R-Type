@@ -78,23 +78,34 @@ $(function() {
   <div class="headertitle"><div class="title">Weapon.cpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;vector&gt;</code><br />
+<div class="textblock"><code>#include &lt;iostream&gt;</code><br />
+<code>#include &lt;vector&gt;</code><br />
 <code>#include &quot;<a class="el" href="Weapon_8hpp_source.html">Weapon.hpp</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="NetworkShared_8hpp_source.html">NetworkShared.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="WeaponHelpers_8hpp_source.html">WeaponHelpers.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="EmitEvent_8hpp_source.html">ecs/EmitEvent.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="EventManager_8hpp_source.html">ecs/EventManager.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="InitComponent_8hpp_source.html">ecs/InitComponent.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Registry_8hpp_source.html">ecs/Registry.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Scenes_8hpp_source.html">ecs/Scenes.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Zipper_8hpp_source.html">ecs/zipper/Zipper.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="ZipperIndex_8hpp_source.html">ecs/zipper/ZipperIndex.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Vector2D_8hpp_source.html">libs/Vector2D.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="APlugin_8hpp_source.html">plugin/APlugin.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="AnimatedSprite_8hpp_source.html">plugin/components/AnimatedSprite.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="BasicWeapon_8hpp_source.html">plugin/components/BasicWeapon.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="ChargeWeapon_8hpp_source.html">plugin/components/ChargeWeapon.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="Damage_8hpp_source.html">plugin/components/Damage.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="DelayedWeapon_8hpp_source.html">plugin/components/DelayedWeapon.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="Direction_8hpp_source.html">plugin/components/Direction.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Facing_8hpp_source.html">plugin/components/Facing.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Position_8hpp_source.html">plugin/components/Position.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="ScaleModifier_8hpp_source.html">plugin/components/ScaleModifier.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="Sprite_8hpp_source.html">plugin/components/Sprite.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Team_8hpp_source.html">plugin/components/Team.hpp</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="Velocity_8hpp_source.html">plugin/components/Velocity.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="AnimationEvents_8hpp_source.html">plugin/events/AnimationEvents.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="EntityManagementEvent_8hpp_source.html">plugin/events/EntityManagementEvent.hpp</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="IoEvents_8hpp_source.html">plugin/events/IoEvents.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="WeaponEvent_8hpp_source.html">plugin/events/WeaponEvent.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="WeaponSwitchEvent_8hpp_source.html">plugin/events/WeaponSwitchEvent.hpp</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for Weapon.cpp:</div>
 <div class="dyncontent">
@@ -103,21 +114,27 @@ Include dependency graph for Weapon.cpp:</div>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ae5f603e87865852e13b8a5c786ad0ed1" id="r_ae5f603e87865852e13b8a5c786ad0ed1"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Weapon_8cpp.html#ae5f603e87865852e13b8a5c786ad0ed1">entry_point</a> (<a class="el" href="classRegistry.html">Registry</a> &amp;r, <a class="el" href="classEntityLoader.html">EntityLoader</a> &amp;l)</td></tr>
-<tr class="separator:ae5f603e87865852e13b8a5c786ad0ed1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6fea3a0bf2333329d2a14ad11cc3e624" id="r_a6fea3a0bf2333329d2a14ad11cc3e624"><td class="memItemLeft" align="right" valign="top"><a class="el" href="IPlugin_8hpp.html#a89cec5a0cc184865c34c13ae6a0481fb">PLUGIN_EXPORT</a> void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Weapon_8cpp.html#a6fea3a0bf2333329d2a14ad11cc3e624">entry_point</a> (<a class="el" href="classRegistry.html">Registry</a> &amp;r, <a class="el" href="classEventManager.html">EventManager</a> &amp;em, <a class="el" href="classEntityLoader.html">EntityLoader</a> &amp;l)</td></tr>
+<tr class="separator:a6fea3a0bf2333329d2a14ad11cc3e624"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="ae5f603e87865852e13b8a5c786ad0ed1" name="ae5f603e87865852e13b8a5c786ad0ed1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae5f603e87865852e13b8a5c786ad0ed1">&#9670;&#160;</a></span>entry_point()</h2>
+<a id="a6fea3a0bf2333329d2a14ad11cc3e624" name="a6fea3a0bf2333329d2a14ad11cc3e624"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6fea3a0bf2333329d2a14ad11cc3e624">&#9670;&#160;</a></span>entry_point()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void * entry_point </td>
+          <td class="memname"><a class="el" href="IPlugin_8hpp.html#a89cec5a0cc184865c34c13ae6a0481fb">PLUGIN_EXPORT</a> void * entry_point </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classRegistry.html">Registry</a> &amp;&#160;</td>
           <td class="paramname"><em>r</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classEventManager.html">EventManager</a> &amp;&#160;</td>
+          <td class="paramname"><em>em</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>

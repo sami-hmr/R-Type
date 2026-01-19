@@ -78,22 +78,36 @@ $(function() {
   <div class="headertitle"><div class="title">SFMLRenderer.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;memory&gt;</code><br />
+<div class="textblock"><code>#include &lt;array&gt;</code><br />
+<code>#include &lt;memory&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
+<code>#include &lt;unordered_map&gt;</code><br />
 <code>#include &lt;utility&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
+<code>#include &lt;SFML/Audio/Music.hpp&gt;</code><br />
+<code>#include &lt;SFML/Audio/Sound.hpp&gt;</code><br />
+<code>#include &lt;SFML/Audio/SoundBuffer.hpp&gt;</code><br />
+<code>#include &lt;SFML/Graphics/CircleShape.hpp&gt;</code><br />
 <code>#include &lt;SFML/Graphics/Drawable.hpp&gt;</code><br />
 <code>#include &lt;SFML/Graphics/Font.hpp&gt;</code><br />
+<code>#include &lt;SFML/Graphics/PrimitiveType.hpp&gt;</code><br />
 <code>#include &lt;SFML/Graphics/RectangleShape.hpp&gt;</code><br />
+<code>#include &lt;SFML/Graphics/RenderTarget.hpp&gt;</code><br />
 <code>#include &lt;SFML/Graphics/RenderWindow.hpp&gt;</code><br />
 <code>#include &lt;SFML/Graphics/Sprite.hpp&gt;</code><br />
 <code>#include &lt;SFML/Graphics/Text.hpp&gt;</code><br />
 <code>#include &lt;SFML/Graphics/Texture.hpp&gt;</code><br />
+<code>#include &lt;SFML/Graphics/VertexArray.hpp&gt;</code><br />
+<code>#include &lt;SFML/Graphics/VertexBuffer.hpp&gt;</code><br />
 <code>#include &lt;SFML/Graphics/View.hpp&gt;</code><br />
 <code>#include &lt;SFML/System/Clock.hpp&gt;</code><br />
 <code>#include &lt;SFML/System/Vector2.hpp&gt;</code><br />
 <code>#include &lt;SFML/Window.hpp&gt;</code><br />
+<code>#include &lt;SFML/Window/Cursor.hpp&gt;</code><br />
+<code>#include &lt;SFML/Window/Joystick.hpp&gt;</code><br />
+<code>#include &quot;<a class="el" href="plugins_2sfml_2include_2Drawable_8hpp_source.html">Drawable.hpp</a>&quot;</code><br />
 <code>#include &quot;Json/JsonParser.hpp&quot;</code><br />
+<code>#include &quot;<a class="el" href="EventManager_8hpp_source.html">ecs/EventManager.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Registry_8hpp_source.html">ecs/Registry.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="SparseArray_8hpp_source.html">ecs/SparseArray.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Vector2D_8hpp_source.html">libs/Vector2D.hpp</a>&quot;</code><br />
@@ -102,9 +116,12 @@ $(function() {
 <code>#include &quot;<a class="el" href="AnimatedSprite_8hpp_source.html">plugin/components/AnimatedSprite.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Background_8hpp_source.html">plugin/components/Background.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Bar_8hpp_source.html">plugin/components/Bar.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="BasicMap_8hpp_source.html">plugin/components/BasicMap.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Camera_8hpp_source.html">plugin/components/Camera.hpp</a>&quot;</code><br />
-<code>#include &quot;<a class="el" href="Drawable_8hpp_source.html">plugin/components/Drawable.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="include_2plugin_2components_2Drawable_8hpp_source.html">plugin/components/Drawable.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Position_8hpp_source.html">plugin/components/Position.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="RaycastingCamera_8hpp_source.html">plugin/components/RaycastingCamera.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="SoundManager_8hpp_source.html">plugin/components/SoundManager.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Sprite_8hpp_source.html">plugin/components/Sprite.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Text_8hpp_source.html">plugin/components/Text.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="CameraEvents_8hpp_source.html">plugin/events/CameraEvents.hpp</a>&quot;</code><br />
@@ -124,6 +141,8 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structJoystickState.html">JoystickState</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classSFMLRenderer.html">SFMLRenderer</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>

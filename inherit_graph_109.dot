@@ -6,5 +6,5 @@ digraph "Graphical Class Hierarchy"
   edge [fontname=Helvetica,fontsize=10,labelfontname=Helvetica,labelfontsize=10];
   node [fontname=Helvetica,fontsize=10,shape=box,height=0.2,width=0.4];
   rankdir="LR";
-  Node0 [id="Node000000",label="System\< Args \>",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$classSystem.html",tooltip="Encapsulates a system function with priority-based execution ordering."];
+  Node0 [id="Node000000",label="httplib::UploadFormData",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$structhttplib_1_1UploadFormData.html",tooltip=" "];
 }

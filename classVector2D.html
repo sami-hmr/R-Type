@@ -146,6 +146,11 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:af0f3f79d4b747c996923b403c4260c7b" id="r_af0f3f79d4b747c996923b403c4260c7b"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVector2D.html#af0f3f79d4b747c996923b403c4260c7b">distanceTo</a> (const <a class="el" href="classVector2D.html">Vector2D</a> &amp;other) const</td></tr>
 <tr class="memdesc:af0f3f79d4b747c996923b403c4260c7b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates Euclidean distance to another vector.  <br /></td></tr>
 <tr class="separator:af0f3f79d4b747c996923b403c4260c7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3faf0b1936d6d16606a3c62b1f6e8682" id="r_a3faf0b1936d6d16606a3c62b1f6e8682"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVector2D.html#a3faf0b1936d6d16606a3c62b1f6e8682">rotate_degrees</a> (double angle)</td></tr>
+<tr class="memdesc:a3faf0b1936d6d16606a3c62b1f6e8682"><td class="mdescLeft">&#160;</td><td class="mdescRight">Rotates the vector by angle in degrees.  <br /></td></tr>
+<tr class="separator:a3faf0b1936d6d16606a3c62b1f6e8682"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a79e8e8a151d878eb9589c465da89f6ae" id="r_a79e8e8a151d878eb9589c465da89f6ae"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVector2D.html#a79e8e8a151d878eb9589c465da89f6ae">rotate_radians</a> (double angle)</td></tr>
+<tr class="separator:a79e8e8a151d878eb9589c465da89f6ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aedca2e0def2c047e2c6ee15572e63780" id="r_aedca2e0def2c047e2c6ee15572e63780"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classVector2D.html#aedca2e0def2c047e2c6ee15572e63780">dot</a> (const <a class="el" href="classVector2D.html">Vector2D</a> &amp;other) const</td></tr>
 <tr class="memdesc:aedca2e0def2c047e2c6ee15572e63780"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculates dot product with another vector.  <br /></td></tr>
 <tr class="separator:aedca2e0def2c047e2c6ee15572e63780"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -169,7 +174,7 @@ Public Attributes</h2></td></tr>
 </ul>
 <p>Widely used throughout the engine for positions, velocities, directions, scales, and any 2D spatial data.</p>
 <dl class="section note"><dt>Note</dt><dd>Component-wise comparison operators (&lt;, &gt;, &lt;=, &gt;=) check both x and y </dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="structPosition.html">Position</a>, <a class="el" href="structVelocity.html">Velocity</a> components </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="structPosition.html">Position</a>, Velocity components </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="aa666ef9e6d697c5090f193baefe16f66" name="aa666ef9e6d697c5090f193baefe16f66"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa666ef9e6d697c5090f193baefe16f66">&#9670;&#160;</a></span>Vector2D() <span class="overload">[1/6]</span></h2>
@@ -983,6 +988,66 @@ Public Attributes</h2></td></tr>
           <td class="paramtype">const <a class="el" href="classVector2D.html">Vector2D</a> &amp;&#160;</td>
           <td class="paramname"><em>other</em></td><td>)</td>
           <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a3faf0b1936d6d16606a3c62b1f6e8682" name="a3faf0b1936d6d16606a3c62b1f6e8682"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3faf0b1936d6d16606a3c62b1f6e8682">&#9670;&#160;</a></span>rotate_degrees()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Vector2D::rotate_degrees </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>angle</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Rotates the vector by angle in degrees. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">angle</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a79e8e8a151d878eb9589c465da89f6ae" name="a79e8e8a151d878eb9589c465da89f6ae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a79e8e8a151d878eb9589c465da89f6ae">&#9670;&#160;</a></span>rotate_radians()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Vector2D::rotate_radians </td>
+          <td>(</td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>angle</em></td><td>)</td>
+          <td></td>
         </tr>
       </table>
   </td>

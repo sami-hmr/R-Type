@@ -82,6 +82,7 @@ $(function() {
 <code>#include &lt;format&gt;</code><br />
 <code>#include &lt;iostream&gt;</code><br />
 <code>#include &quot;<a class="el" href="Logger_8hpp_source.html">Logger.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="EventManager_8hpp_source.html">ecs/EventManager.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Registry_8hpp_source.html">ecs/Registry.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="APlugin_8hpp_source.html">plugin/APlugin.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="EntityLoader_8hpp_source.html">plugin/EntityLoader.hpp</a>&quot;</code><br />
@@ -95,21 +96,27 @@ Include dependency graph for Logger.cpp:</div>
 </div><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a9345de28332c0b5c3b11abf3c8574b29" id="r_a9345de28332c0b5c3b11abf3c8574b29"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Logger_8cpp.html#a9345de28332c0b5c3b11abf3c8574b29">entry_point</a> (<a class="el" href="classRegistry.html">Registry</a> &amp;r, <a class="el" href="classEntityLoader.html">EntityLoader</a> &amp;e, std::optional&lt; JsonObject &gt; const &amp;config)</td></tr>
-<tr class="separator:a9345de28332c0b5c3b11abf3c8574b29"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae97bf53e65207ccec786e680d152db2b" id="r_ae97bf53e65207ccec786e680d152db2b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="IPlugin_8hpp.html#a89cec5a0cc184865c34c13ae6a0481fb">PLUGIN_EXPORT</a> void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Logger_8cpp.html#ae97bf53e65207ccec786e680d152db2b">entry_point</a> (<a class="el" href="classRegistry.html">Registry</a> &amp;r, <a class="el" href="classEventManager.html">EventManager</a> &amp;em, <a class="el" href="classEntityLoader.html">EntityLoader</a> &amp;e, std::optional&lt; JsonObject &gt; const &amp;config)</td></tr>
+<tr class="separator:ae97bf53e65207ccec786e680d152db2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
-<a id="a9345de28332c0b5c3b11abf3c8574b29" name="a9345de28332c0b5c3b11abf3c8574b29"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9345de28332c0b5c3b11abf3c8574b29">&#9670;&#160;</a></span>entry_point()</h2>
+<a id="ae97bf53e65207ccec786e680d152db2b" name="ae97bf53e65207ccec786e680d152db2b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae97bf53e65207ccec786e680d152db2b">&#9670;&#160;</a></span>entry_point()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void * entry_point </td>
+          <td class="memname"><a class="el" href="IPlugin_8hpp.html#a89cec5a0cc184865c34c13ae6a0481fb">PLUGIN_EXPORT</a> void * entry_point </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="classRegistry.html">Registry</a> &amp;&#160;</td>
           <td class="paramname"><em>r</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classEventManager.html">EventManager</a> &amp;&#160;</td>
+          <td class="paramname"><em>em</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>

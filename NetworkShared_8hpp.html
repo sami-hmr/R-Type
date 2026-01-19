@@ -82,10 +82,12 @@ $(function() {
 <div class="textblock"><code>#include &lt;cstddef&gt;</code><br />
 <code>#include &lt;mutex&gt;</code><br />
 <code>#include &lt;optional&gt;</code><br />
+<code>#include &lt;ostream&gt;</code><br />
 <code>#include &lt;queue&gt;</code><br />
+<code>#include &lt;semaphore&gt;</code><br />
 <code>#include &lt;string&gt;</code><br />
-<code>#include &lt;tuple&gt;</code><br />
 <code>#include &lt;unordered_map&gt;</code><br />
+<code>#include &lt;vector&gt;</code><br />
 <code>#include &quot;ByteParser/ByteParser.hpp&quot;</code><br />
 <code>#include &quot;ParserUtils.hpp&quot;</code><br />
 <code>#include &quot;<a class="el" href="Byte_8hpp_source.html">plugin/Byte.hpp</a>&quot;</code><br />
@@ -114,9 +116,15 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structEventBuilderId.html">EventBuilderId</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structEntityCreation.html">EntityCreation</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structNewConnection.html">NewConnection</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structPlayerCreated.html">PlayerCreated</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structNetworkStatus.html">NetworkStatus</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structHearthBeat.html">HearthBeat</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structDisconnectClient.html">DisconnectClient</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSharedQueue.html">SharedQueue&lt; T &gt;</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -131,8 +139,46 @@ Functions</h2></td></tr>
 <tr class="separator:aa3c97426b8daf7b0782e98228a5acbd1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a832249c566830687659a260986f8e2b4" id="r_a832249c566830687659a260986f8e2b4"><td class="memItemLeft" align="right" valign="top">Parser&lt; <a class="el" href="structEventBuilder.html">EventBuilder</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="NetworkShared_8hpp.html#a832249c566830687659a260986f8e2b4">parse_event_builder</a> ()</td></tr>
 <tr class="separator:a832249c566830687659a260986f8e2b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab0bf6587f4d01575873daadf0aaf50b4" id="r_ab0bf6587f4d01575873daadf0aaf50b4"><td class="memItemLeft" align="right" valign="top">std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="NetworkShared_8hpp.html#ab0bf6587f4d01575873daadf0aaf50b4">operator&lt;&lt;</a> (std::ostream &amp;os, <a class="el" href="structNetworkStatus.html#aa60a1b1eed8804b132e62f1fac787156">NetworkStatus::PacketLossLevel</a> level)</td></tr>
+<tr class="separator:ab0bf6587f4d01575873daadf0aaf50b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
+<a id="ab0bf6587f4d01575873daadf0aaf50b4" name="ab0bf6587f4d01575873daadf0aaf50b4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab0bf6587f4d01575873daadf0aaf50b4">&#9670;&#160;</a></span>operator&lt;&lt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::ostream &amp; operator&lt;&lt; </td>
+          <td>(</td>
+          <td class="paramtype">std::ostream &amp;&#160;</td>
+          <td class="paramname"><em>os</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structNetworkStatus.html#aa60a1b1eed8804b132e62f1fac787156">NetworkStatus::PacketLossLevel</a>&#160;</td>
+          <td class="paramname"><em>level</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="aa3c97426b8daf7b0782e98228a5acbd1" name="aa3c97426b8daf7b0782e98228a5acbd1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aa3c97426b8daf7b0782e98228a5acbd1">&#9670;&#160;</a></span>parse_component_builder()</h2>
 

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['type_0',['r-type',['../index.html',1,'']]]
+  ['list_0',['Deprecated List',['../deprecated.html',1,'']]]
 ];

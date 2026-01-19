@@ -81,16 +81,16 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a9ab348fb891fa0888210ac9277000564" id="r_a9ab348fb891fa0888210ac9277000564"><td class="memItemLeft" align="right" valign="top"><a class="el" href="EventMacros_8hpp.html#a762cd3630f6f73bfa82bbc45f3563a2d">CHANGE_ENTITY_DEFAULT</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structLogEvent.html#a9ab348fb891fa0888210ac9277000564">LogEvent</a> (std::string n, <a class="el" href="LoggerEvent_8hpp.html#a4ad2f3fcf504e54f0d7835fa6a4a5cd4">LogLevel</a> l, std::string m)</td></tr>
+<tr class="memitem:a9ab348fb891fa0888210ac9277000564" id="r_a9ab348fb891fa0888210ac9277000564"><td class="memItemLeft" align="right" valign="top"><a class="el" href="EventMacros_8hpp.html#a762cd3630f6f73bfa82bbc45f3563a2d">CHANGE_ENTITY_DEFAULT</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structLogEvent.html#a9ab348fb891fa0888210ac9277000564">LogEvent</a> (std::string n, <a class="el" href="LogMacros_8hpp.html#a4ad2f3fcf504e54f0d7835fa6a4a5cd4">LogLevel</a> l, std::string m)</td></tr>
 <tr class="separator:a9ab348fb891fa0888210ac9277000564"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5beaf0f84fa361b78136097ce71b1c2b" id="r_a5beaf0f84fa361b78136097ce71b1c2b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structLogEvent.html#a5beaf0f84fa361b78136097ce71b1c2b">DEFAULT_BYTE_CONSTRUCTOR</a> (<a class="el" href="structLogEvent.html">LogEvent</a>,([](std::string const &amp;n, <a class="el" href="LoggerEvent_8hpp.html#a4ad2f3fcf504e54f0d7835fa6a4a5cd4">LogLevel</a> l, std::string const &amp;m) { return(<a class="el" href="structLogEvent.html">LogEvent</a>) {n, l, m};}), parseByteString(), parseByte&lt; <a class="el" href="LoggerEvent_8hpp.html#a4ad2f3fcf504e54f0d7835fa6a4a5cd4">LogLevel</a> &gt;(), parseByteString()) <a class="el" href="Byte_8hpp.html#ac2fb474e60f46281e11bf3824e6f4517">DEFAULT_SERIALIZE</a>(<a class="el" href="Byte_8hpp.html#a20d43856fdb8ef111a9b55ceeb1f96f8">string_to_byte</a>(this -&gt; <a class="el" href="structLogEvent.html#a0d416f135530269a18ccfdade88892b2">name</a>), <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(this-&gt;<a class="el" href="structLogEvent.html#a0ef73ef6b3ce9a613c6d9e3bdd46afb5">level</a>), <a class="el" href="Byte_8hpp.html#a20d43856fdb8ef111a9b55ceeb1f96f8">string_to_byte</a>(this-&gt;<a class="el" href="structLogEvent.html#a0130b731bc7d1b46f3b1fcf682a5315f">message</a>)) <a class="el" href="structLogEvent.html">LogEvent</a>(<a class="el" href="classRegistry.html">Registry</a> &amp;r, JsonObject const &amp;e) :<a class="el" href="structLogEvent.html#a0d416f135530269a18ccfdade88892b2">name</a>(<a class="el" href="Hooks_8hpp.html#adb9a223334bc754df5bf32b6f41e5b31">get_value_copy</a>&lt; std::string &gt;(r, e, &quot;name&quot;).value()), <a class="el" href="structLogEvent.html#a0ef73ef6b3ce9a613c6d9e3bdd46afb5">level</a>(static_cast&lt; <a class="el" href="LoggerEvent_8hpp.html#a4ad2f3fcf504e54f0d7835fa6a4a5cd4">LogLevel</a> &gt;(LOG_LEVEL_STR.at_first(<a class="el" href="Hooks_8hpp.html#adb9a223334bc754df5bf32b6f41e5b31">get_value_copy</a>&lt; std::string &gt;(r, e, &quot;level&quot;).value()))), <a class="el" href="structLogEvent.html#a0130b731bc7d1b46f3b1fcf682a5315f">message</a>(<a class="el" href="Hooks_8hpp.html#adb9a223334bc754df5bf32b6f41e5b31">get_value_copy</a>&lt; std::string &gt;(r, e, &quot;message&quot;).value())</td></tr>
-<tr class="separator:a5beaf0f84fa361b78136097ce71b1c2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ea5fede5689cdf6a4d158d655c0488b" id="r_a0ea5fede5689cdf6a4d158d655c0488b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structLogEvent.html#a0ea5fede5689cdf6a4d158d655c0488b">DEFAULT_BYTE_CONSTRUCTOR</a> (<a class="el" href="structLogEvent.html">LogEvent</a>,([](std::string const &amp;n, <a class="el" href="LogMacros_8hpp.html#a4ad2f3fcf504e54f0d7835fa6a4a5cd4">LogLevel</a> l, std::string const &amp;m) { return <a class="el" href="structLogEvent.html">LogEvent</a>(n, l, m);}), parseByteString(), parseByte&lt; <a class="el" href="LogMacros_8hpp.html#a4ad2f3fcf504e54f0d7835fa6a4a5cd4">LogLevel</a> &gt;(), parseByteString()) <a class="el" href="Byte_8hpp.html#ac2fb474e60f46281e11bf3824e6f4517">DEFAULT_SERIALIZE</a>(<a class="el" href="Byte_8hpp.html#a20d43856fdb8ef111a9b55ceeb1f96f8">string_to_byte</a>(this -&gt; <a class="el" href="structLogEvent.html#a0d416f135530269a18ccfdade88892b2">name</a>), <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(this-&gt;<a class="el" href="structLogEvent.html#a0ef73ef6b3ce9a613c6d9e3bdd46afb5">level</a>), <a class="el" href="Byte_8hpp.html#a20d43856fdb8ef111a9b55ceeb1f96f8">string_to_byte</a>(this-&gt;<a class="el" href="structLogEvent.html#a0130b731bc7d1b46f3b1fcf682a5315f">message</a>)) <a class="el" href="structLogEvent.html">LogEvent</a>(<a class="el" href="classRegistry.html">Registry</a> &amp;r, JsonObject const &amp;e, std::optional&lt; <a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> &gt; entity) :<a class="el" href="structLogEvent.html#a0d416f135530269a18ccfdade88892b2">name</a>(<a class="el" href="Hooks_8hpp.html#a5112703434c874d9180da439f07e4422">get_value_copy</a>&lt; std::string &gt;(r, e, &quot;name&quot;, entity).value()), <a class="el" href="structLogEvent.html#a0ef73ef6b3ce9a613c6d9e3bdd46afb5">level</a>(static_cast&lt; <a class="el" href="LogMacros_8hpp.html#a4ad2f3fcf504e54f0d7835fa6a4a5cd4">LogLevel</a> &gt;(LOG_LEVEL_STR.at_first(<a class="el" href="Hooks_8hpp.html#a5112703434c874d9180da439f07e4422">get_value_copy</a>&lt; std::string &gt;(r, e, &quot;level&quot;, entity).value()))), <a class="el" href="structLogEvent.html#a0130b731bc7d1b46f3b1fcf682a5315f">message</a>(<a class="el" href="Hooks_8hpp.html#a5112703434c874d9180da439f07e4422">get_value_copy</a>&lt; std::string &gt;(r, e, &quot;message&quot;, entity).value())</td></tr>
+<tr class="separator:a0ea5fede5689cdf6a4d158d655c0488b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a0d416f135530269a18ccfdade88892b2" id="r_a0d416f135530269a18ccfdade88892b2"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structLogEvent.html#a0d416f135530269a18ccfdade88892b2">name</a></td></tr>
 <tr class="separator:a0d416f135530269a18ccfdade88892b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ef73ef6b3ce9a613c6d9e3bdd46afb5" id="r_a0ef73ef6b3ce9a613c6d9e3bdd46afb5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="LoggerEvent_8hpp.html#a4ad2f3fcf504e54f0d7835fa6a4a5cd4">LogLevel</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structLogEvent.html#a0ef73ef6b3ce9a613c6d9e3bdd46afb5">level</a></td></tr>
+<tr class="memitem:a0ef73ef6b3ce9a613c6d9e3bdd46afb5" id="r_a0ef73ef6b3ce9a613c6d9e3bdd46afb5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="LogMacros_8hpp.html#a4ad2f3fcf504e54f0d7835fa6a4a5cd4">LogLevel</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structLogEvent.html#a0ef73ef6b3ce9a613c6d9e3bdd46afb5">level</a></td></tr>
 <tr class="separator:a0ef73ef6b3ce9a613c6d9e3bdd46afb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0130b731bc7d1b46f3b1fcf682a5315f" id="r_a0130b731bc7d1b46f3b1fcf682a5315f"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structLogEvent.html#a0130b731bc7d1b46f3b1fcf682a5315f">message</a></td></tr>
 <tr class="separator:a0130b731bc7d1b46f3b1fcf682a5315f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -114,7 +114,7 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="LoggerEvent_8hpp.html#a4ad2f3fcf504e54f0d7835fa6a4a5cd4">LogLevel</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="LogMacros_8hpp.html#a4ad2f3fcf504e54f0d7835fa6a4a5cd4">LogLevel</a>&#160;</td>
           <td class="paramname"><em>l</em>, </td>
         </tr>
         <tr>
@@ -139,8 +139,8 @@ Public Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a5beaf0f84fa361b78136097ce71b1c2b" name="a5beaf0f84fa361b78136097ce71b1c2b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5beaf0f84fa361b78136097ce71b1c2b">&#9670;&#160;</a></span>DEFAULT_BYTE_CONSTRUCTOR()</h2>
+<a id="a0ea5fede5689cdf6a4d158d655c0488b" name="a0ea5fede5689cdf6a4d158d655c0488b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0ea5fede5689cdf6a4d158d655c0488b">&#9670;&#160;</a></span>DEFAULT_BYTE_CONSTRUCTOR()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -157,7 +157,7 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">([](std::string const  &amp;n, <a class="el" href="LoggerEvent_8hpp.html#a4ad2f3fcf504e54f0d7835fa6a4a5cd4">LogLevel</a> l, std::string const  &amp;m) { return(<a class="el" href="structLogEvent.html">LogEvent</a>) {n, l, m};})&#160;</td>
+          <td class="paramtype">([](std::string const  &amp;n, <a class="el" href="LogMacros_8hpp.html#a4ad2f3fcf504e54f0d7835fa6a4a5cd4">LogLevel</a> l, std::string const  &amp;m) { return <a class="el" href="structLogEvent.html">LogEvent</a>(n, l, m);})&#160;</td>
           <td class="paramname">, </td>
         </tr>
         <tr>
@@ -169,7 +169,7 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">parseByte&lt; <a class="el" href="LoggerEvent_8hpp.html#a4ad2f3fcf504e54f0d7835fa6a4a5cd4">LogLevel</a> &gt;&#160;</td>
+          <td class="paramtype">parseByte&lt; <a class="el" href="LogMacros_8hpp.html#a4ad2f3fcf504e54f0d7835fa6a4a5cd4">LogLevel</a> &gt;&#160;</td>
           <td class="paramname">(), </td>
         </tr>
         <tr>
@@ -181,14 +181,15 @@ Public Attributes</h2></td></tr>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td> -&gt; <a class="el" href="structLogEvent.html#a0d416f135530269a18ccfdade88892b2">name</a>), <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(this-&gt;<a class="el" href="structLogEvent.html#a0ef73ef6b3ce9a613c6d9e3bdd46afb5">level</a>), <a class="el" href="Byte_8hpp.html#a20d43856fdb8ef111a9b55ceeb1f96f8">string_to_byte</a>(this-&gt;<a class="el" href="structLogEvent.html#a0130b731bc7d1b46f3b1fcf682a5315f">message</a>))
+          <td></td><td> -&gt; <a class="el" href="structLogEvent.html#a0d416f135530269a18ccfdade88892b2">name</a>),
+                    <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(this-&gt;<a class="el" href="structLogEvent.html#a0ef73ef6b3ce9a613c6d9e3bdd46afb5">level</a>),
+                    <a class="el" href="Byte_8hpp.html#a20d43856fdb8ef111a9b55ceeb1f96f8">string_to_byte</a>(this-&gt;<a class="el" href="structLogEvent.html#a0130b731bc7d1b46f3b1fcf682a5315f">message</a>))
 
-
-  <a class="el" href="structLogEvent.html">LogEvent</a>(<a class="el" href="classRegistry.html">Registry</a>&amp; r, JsonObject const&amp; e)
-      : <a class="el" href="structLogEvent.html#a0d416f135530269a18ccfdade88892b2">name</a>(<a class="el" href="Hooks_8hpp.html#adb9a223334bc754df5bf32b6f41e5b31">get_value_copy</a>&lt;std::string&gt;(r, e, &quot;name&quot;).value())
-      , <a class="el" href="structLogEvent.html#a0ef73ef6b3ce9a613c6d9e3bdd46afb5">level</a>(static_cast&lt;<a class="el" href="LoggerEvent_8hpp.html#a4ad2f3fcf504e54f0d7835fa6a4a5cd4">LogLevel</a>&gt;(LOG_LEVEL_STR.at_first(
-            <a class="el" href="Hooks_8hpp.html#adb9a223334bc754df5bf32b6f41e5b31">get_value_copy</a>&lt;std::string&gt;(r, e, &quot;level&quot;).value())))
-      , <a class="el" href="structLogEvent.html#a0130b731bc7d1b46f3b1fcf682a5315f">message</a>(<a class="el" href="Hooks_8hpp.html#adb9a223334bc754df5bf32b6f41e5b31">get_value_copy</a>&lt;std::string&gt;(r, e, &quot;message&quot;).value())
+  <a class="el" href="structLogEvent.html">LogEvent</a>(<a class="el" href="classRegistry.html">Registry</a>&amp; r, JsonObject const&amp; e, std::optional&lt;<a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a>&gt; entity)
+      : <a class="el" href="structLogEvent.html#a0d416f135530269a18ccfdade88892b2">name</a>(<a class="el" href="Hooks_8hpp.html#a5112703434c874d9180da439f07e4422">get_value_copy</a>&lt;std::string&gt;(r, e, &quot;name&quot;, entity).value())
+      , <a class="el" href="structLogEvent.html#a0ef73ef6b3ce9a613c6d9e3bdd46afb5">level</a>(static_cast&lt;<a class="el" href="LogMacros_8hpp.html#a4ad2f3fcf504e54f0d7835fa6a4a5cd4">LogLevel</a>&gt;(LOG_LEVEL_STR.at_first(
+            <a class="el" href="Hooks_8hpp.html#a5112703434c874d9180da439f07e4422">get_value_copy</a>&lt;std::string&gt;(r, e, &quot;level&quot;, entity).value())))
+      , <a class="el" href="structLogEvent.html#a0130b731bc7d1b46f3b1fcf682a5315f">message</a>(<a class="el" href="Hooks_8hpp.html#a5112703434c874d9180da439f07e4422">get_value_copy</a>&lt;std::string&gt;(r, e, &quot;message&quot;, entity).value())
   </td>
         </tr>
       </table>
@@ -209,7 +210,7 @@ Public Attributes</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="LoggerEvent_8hpp.html#a4ad2f3fcf504e54f0d7835fa6a4a5cd4">LogLevel</a> LogEvent::level</td>
+          <td class="memname"><a class="el" href="LogMacros_8hpp.html#a4ad2f3fcf504e54f0d7835fa6a4a5cd4">LogLevel</a> LogEvent::level</td>
         </tr>
       </table>
 </div><div class="memdoc">

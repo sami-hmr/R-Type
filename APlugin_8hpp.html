@@ -85,6 +85,7 @@ $(function() {
 <code>#include &quot;<a class="el" href="EntityLoader_8hpp_source.html">EntityLoader.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="IPlugin_8hpp_source.html">IPlugin.hpp</a>&quot;</code><br />
 <code>#include &quot;Json/JsonParser.hpp&quot;</code><br />
+<code>#include &quot;<a class="el" href="EventManager_8hpp_source.html">ecs/EventManager.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Registry_8hpp_source.html">ecs/Registry.hpp</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for APlugin.hpp:</div>
@@ -108,9 +109,11 @@ Classes</h2></td></tr>
 Macros</h2></td></tr>
 <tr class="memitem:a04f19a5414618f47890540ba624d5949" id="r_a04f19a5414618f47890540ba624d5949"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="APlugin_8hpp.html#a04f19a5414618f47890540ba624d5949">COMP_INIT</a>(comp_name,  comp_type,  method_name)</td></tr>
 <tr class="separator:a04f19a5414618f47890540ba624d5949"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a84485819a678fe68f3deddaf7cb19bb4" id="r_a84485819a678fe68f3deddaf7cb19bb4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="APlugin_8hpp.html#a84485819a678fe68f3deddaf7cb19bb4">REGISTER_COMPONENT</a>(comp)&#160;&#160;&#160;    this-&gt;_registry.get().register_component&lt;comp&gt;(std::format(&quot;{}:{}&quot;, this-&gt;name, #comp));</td></tr>
+<tr class="memitem:a84485819a678fe68f3deddaf7cb19bb4" id="r_a84485819a678fe68f3deddaf7cb19bb4"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="APlugin_8hpp.html#a84485819a678fe68f3deddaf7cb19bb4">REGISTER_COMPONENT</a>(comp)</td></tr>
 <tr class="separator:a84485819a678fe68f3deddaf7cb19bb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad01721c36192ce20478e18ac80604d56" id="r_ad01721c36192ce20478e18ac80604d56"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="APlugin_8hpp.html#ad01721c36192ce20478e18ac80604d56">SUBSCRIBE_EVENT</a>(event_name,  function)&#160;&#160;&#160;    this-&gt;_registry.get().on&lt;event_name&gt;(#event_name, [this]([[maybe_unused]] event_name const&amp; <a class="el" href="conceptevent.html">event</a>) function);</td></tr>
+<tr class="memitem:a32b95321e5a410f7714bee6092f4f7a7" id="r_a32b95321e5a410f7714bee6092f4f7a7"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="APlugin_8hpp.html#a32b95321e5a410f7714bee6092f4f7a7">SUBSCRIBE_EVENT_PRIORITY</a>(event_name,  function,  priority)</td></tr>
+<tr class="separator:a32b95321e5a410f7714bee6092f4f7a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad01721c36192ce20478e18ac80604d56" id="r_ad01721c36192ce20478e18ac80604d56"><td class="memItemLeft" align="right" valign="top">#define&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="APlugin_8hpp.html#ad01721c36192ce20478e18ac80604d56">SUBSCRIBE_EVENT</a>(event_name,  function)&#160;&#160;&#160;  <a class="el" href="APlugin_8hpp.html#a32b95321e5a410f7714bee6092f4f7a7">SUBSCRIBE_EVENT_PRIORITY</a>(event_name, function, 1)</td></tr>
 <tr class="separator:ad01721c36192ce20478e18ac80604d56"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Macro Definition Documentation</h2>
@@ -145,27 +148,7 @@ Macros</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<b>Value:</b><div class="fragment"><div class="line">  {#comp_name, \</div>
-<div class="line">   [<span class="keyword">this</span>](<span class="keywordtype">size_t</span> entity, <span class="keyword">const</span> JsonVariant&amp; config) \</div>
-<div class="line">   { \</div>
-<div class="line">     <span class="keywordflow">try</span> { \</div>
-<div class="line">       JsonObject obj = std::get&lt;JsonObject&gt;(config); \</div>
-<div class="line">       this-&gt;method_name(entity, obj); \</div>
-<div class="line">       if (obj.contains(<span class="stringliteral">&quot;hook&quot;</span>)) { \</div>
-<div class="line">         <span class="keywordflow">try</span> { \</div>
-<div class="line">           std::string hook_name = \</div>
-<div class="line">               std::get&lt;std::string&gt;(obj.at(<span class="stringliteral">&quot;hook&quot;</span>).value); \</div>
-<div class="line">           this-&gt;_registry.get().register_hook&lt;comp_type&gt;(hook_name, entity); \</div>
-<div class="line">         } <span class="keywordflow">catch</span> (...) { \</div>
-<div class="line">         } \</div>
-<div class="line">       } \</div>
-<div class="line">     } <span class="keywordflow">catch</span> (std::bad_variant_access <span class="keyword">const</span>&amp;) { \</div>
-<div class="line">       std::cout &lt;&lt; <span class="stringliteral">&quot;Error initializing component \&quot;&quot;</span> &lt;&lt; #comp_name \</div>
-<div class="line">                 &lt;&lt; <span class="stringliteral">&quot;\&quot;: only JsonObjects are supported\n&quot;</span>; \</div>
-<div class="line">       <span class="keywordflow">return</span>; \</div>
-<div class="line">     } \</div>
-<div class="line">   }}</div>
-</div><!-- fragment -->
+
 </div>
 </div>
 <a id="a84485819a678fe68f3deddaf7cb19bb4" name="a84485819a678fe68f3deddaf7cb19bb4"></a>
@@ -179,11 +162,13 @@ Macros</h2></td></tr>
           <td>(</td>
           <td class="paramtype">&#160;</td>
           <td class="paramname">comp</td><td>)</td>
-          <td>&#160;&#160;&#160;    this-&gt;_registry.get().register_component&lt;comp&gt;(std::format(&quot;{}:{}&quot;, this-&gt;name, #comp));</td>
+          <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-
+<b>Value:</b><div class="fragment"><div class="line">  this-&gt;_registry.get().register_component&lt;comp&gt;( \</div>
+<div class="line">      std::format(<span class="stringliteral">&quot;{}:{}&quot;</span>, this-&gt;name, #comp));</div>
+</div><!-- fragment -->
 </div>
 </div>
 <a id="ad01721c36192ce20478e18ac80604d56" name="ad01721c36192ce20478e18ac80604d56"></a>
@@ -207,11 +192,50 @@ Macros</h2></td></tr>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td>&#160;&#160;&#160;    this-&gt;_registry.get().on&lt;event_name&gt;(#event_name, [this]([[maybe_unused]] event_name const&amp; <a class="el" href="conceptevent.html">event</a>) function);</td>
+          <td></td><td>&#160;&#160;&#160;  <a class="el" href="APlugin_8hpp.html#a32b95321e5a410f7714bee6092f4f7a7">SUBSCRIBE_EVENT_PRIORITY</a>(event_name, function, 1)</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
+</div>
+</div>
+<a id="a32b95321e5a410f7714bee6092f4f7a7" name="a32b95321e5a410f7714bee6092f4f7a7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a32b95321e5a410f7714bee6092f4f7a7">&#9670;&#160;</a></span>SUBSCRIBE_EVENT_PRIORITY</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">#define SUBSCRIBE_EVENT_PRIORITY</td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">event_name, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">function, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname">priority&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<b>Value:</b><div class="fragment"><div class="line">  this-&gt;_event_manager.get().on&lt;event_name&gt;( \</div>
+<div class="line"><span class="preprocessor">      #event_name, \</span></div>
+<div class="line"><span class="preprocessor">      [this]([[maybe_unused]] event_name const&amp; event) -&gt; bool \</span></div>
+<div class="line"><span class="preprocessor">      { function return false; }, \</span></div>
+<div class="line"><span class="preprocessor">      priority);</span></div>
+</div><!-- fragment -->
 </div>
 </div>
 </div><!-- contents -->

@@ -87,10 +87,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:abcf47805063dc90f3744065f450eb264"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a29289d39db00c074f27391d84acb44bc" id="r_a29289d39db00c074f27391d84acb44bc"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structEventBuilder.html#a29289d39db00c074f27391d84acb44bc">DEFAULT_BYTE_CONSTRUCTOR</a> (<a class="el" href="structEventBuilder.html">EventBuilder</a>,([](std::string const &amp;i, <a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> const &amp;d) { return <a class="el" href="structEventBuilder.html">EventBuilder</a>(i, d);}), parseByteString(), parseByte&lt; <a class="el" href="Byte_8hpp.html#a4598833cddd0ea684d351ebd793b5bb7">Byte</a> &gt;().many()) <a class="el" href="EventMacros_8hpp.html#a762cd3630f6f73bfa82bbc45f3563a2d">CHANGE_ENTITY_DEFAULT</a> <a class="el" href="structEventBuilder.html">EventBuilder</a>(<a class="el" href="classRegistry.html">Registry</a> &amp;r</td></tr>
 <tr class="separator:a29289d39db00c074f27391d84acb44bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad8b082d0b1110c25fd140fede16e19b4" id="r_ad8b082d0b1110c25fd140fede16e19b4"><td class="memItemLeft" align="right" valign="top">JsonObject const <a class="el" href="structEventBuilder.html#a9be24298ec3c049d090880e95d373c81">event_id</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structEventBuilder.html#ad8b082d0b1110c25fd140fede16e19b4">value</a> ())</td></tr>
-<tr class="separator:ad8b082d0b1110c25fd140fede16e19b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aea03802f4b1bd281cc14f4c3f63cbf22" id="r_aea03802f4b1bd281cc14f4c3f63cbf22"><td class="memItemLeft" align="right" valign="top">JsonObject const <a class="el" href="structEventBuilder.html#a9be24298ec3c049d090880e95d373c81">event_id</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structEventBuilder.html#aea03802f4b1bd281cc14f4c3f63cbf22">data</a> (<a class="el" href="Hooks_8hpp.html#adb9a223334bc754df5bf32b6f41e5b31">get_value_copy</a>&lt; <a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> &gt;(r, <a class="el" href="structEventBuilder.html#af7393833d36bfa6277175bdfafdb9f4a">e</a>, &quot;data&quot;).<a class="el" href="structEventBuilder.html#ad8b082d0b1110c25fd140fede16e19b4">value</a>())</td></tr>
-<tr class="separator:aea03802f4b1bd281cc14f4c3f63cbf22"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afdb85a53e98f5670bd10f4661d74ce90" id="r_afdb85a53e98f5670bd10f4661d74ce90"><td class="memItemLeft" align="right" valign="top">JsonObject const std::optional&lt; <a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> &gt; <a class="el" href="structEventBuilder.html#a5721aca9f58659bf9051a7834798878c">entity</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structEventBuilder.html#afdb85a53e98f5670bd10f4661d74ce90">value</a> ())</td></tr>
+<tr class="separator:afdb85a53e98f5670bd10f4661d74ce90"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acda138e54ed2ce157ff5e22eee02f050" id="r_acda138e54ed2ce157ff5e22eee02f050"><td class="memItemLeft" align="right" valign="top">JsonObject const std::optional&lt; <a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> &gt; <a class="el" href="structEventBuilder.html#a5721aca9f58659bf9051a7834798878c">entity</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structEventBuilder.html#acda138e54ed2ce157ff5e22eee02f050">data</a> (<a class="el" href="Hooks_8hpp.html#a5112703434c874d9180da439f07e4422">get_value_copy</a>&lt; <a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> &gt;(r, <a class="el" href="structEventBuilder.html#af7393833d36bfa6277175bdfafdb9f4a">e</a>, &quot;data&quot;, <a class="el" href="structEventBuilder.html#a5721aca9f58659bf9051a7834798878c">entity</a>).<a class="el" href="structEventBuilder.html#afdb85a53e98f5670bd10f4661d74ce90">value</a>())</td></tr>
+<tr class="separator:acda138e54ed2ce157ff5e22eee02f050"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -98,10 +98,14 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a9be24298ec3c049d090880e95d373c81"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1d8168b339baf7a13ffdc99efd363a86" id="r_a1d8168b339baf7a13ffdc99efd363a86"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structEventBuilder.html#a1d8168b339baf7a13ffdc99efd363a86">data</a></td></tr>
 <tr class="separator:a1d8168b339baf7a13ffdc99efd363a86"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af7393833d36bfa6277175bdfafdb9f4a" id="r_af7393833d36bfa6277175bdfafdb9f4a"><td class="memItemLeft" align="right" valign="top">JsonObject const  &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structEventBuilder.html#af7393833d36bfa6277175bdfafdb9f4a">e</a>: <a class="el" href="structEventBuilder.html#a9be24298ec3c049d090880e95d373c81">event_id</a>(<a class="el" href="Hooks_8hpp.html#adb9a223334bc754df5bf32b6f41e5b31">get_value_copy</a>&lt;std::string&gt;(r</td></tr>
+<tr class="memitem:af7393833d36bfa6277175bdfafdb9f4a" id="r_af7393833d36bfa6277175bdfafdb9f4a"><td class="memItemLeft" align="right" valign="top">JsonObject const  &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structEventBuilder.html#af7393833d36bfa6277175bdfafdb9f4a">e</a></td></tr>
 <tr class="separator:af7393833d36bfa6277175bdfafdb9f4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd05707e0a065ac317b8f75643b3d2a5" id="r_acd05707e0a065ac317b8f75643b3d2a5"><td class="memItemLeft" align="right" valign="top">JsonObject const&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structEventBuilder.html#acd05707e0a065ac317b8f75643b3d2a5">e</a></td></tr>
-<tr class="separator:acd05707e0a065ac317b8f75643b3d2a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5721aca9f58659bf9051a7834798878c" id="r_a5721aca9f58659bf9051a7834798878c"><td class="memItemLeft" align="right" valign="top">JsonObject const std::optional&lt; <a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structEventBuilder.html#a5721aca9f58659bf9051a7834798878c">entity</a>: <a class="el" href="structEventBuilder.html#a9be24298ec3c049d090880e95d373c81">event_id</a>(<a class="el" href="Hooks_8hpp.html#a5112703434c874d9180da439f07e4422">get_value_copy</a>&lt;std::string&gt;(r</td></tr>
+<tr class="separator:a5721aca9f58659bf9051a7834798878c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab30fac8f62adb394fa5ff6e197a6e47e" id="r_ab30fac8f62adb394fa5ff6e197a6e47e"><td class="memItemLeft" align="right" valign="top">JsonObject const std::optional&lt; <a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structEventBuilder.html#ab30fac8f62adb394fa5ff6e197a6e47e">e</a></td></tr>
+<tr class="separator:ab30fac8f62adb394fa5ff6e197a6e47e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a91468ed116da5083fe4dd0c15d10467f" id="r_a91468ed116da5083fe4dd0c15d10467f"><td class="memItemLeft" align="right" valign="top">JsonObject const std::optional&lt; <a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structEventBuilder.html#a91468ed116da5083fe4dd0c15d10467f">event_id</a></td></tr>
+<tr class="separator:a91468ed116da5083fe4dd0c15d10467f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a09324a59108915a960e148a9ca2e0829" name="a09324a59108915a960e148a9ca2e0829"></a>
@@ -166,8 +170,8 @@ Public Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="aea03802f4b1bd281cc14f4c3f63cbf22" name="aea03802f4b1bd281cc14f4c3f63cbf22"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aea03802f4b1bd281cc14f4c3f63cbf22">&#9670;&#160;</a></span>data()</h2>
+<a id="acda138e54ed2ce157ff5e22eee02f050" name="acda138e54ed2ce157ff5e22eee02f050"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acda138e54ed2ce157ff5e22eee02f050">&#9670;&#160;</a></span>data()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -176,10 +180,10 @@ Public Attributes</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">JsonObject const <a class="el" href="structEventBuilder.html#a9be24298ec3c049d090880e95d373c81">event_id</a> EventBuilder::data </td>
+          <td class="memname">JsonObject const std::optional&lt; <a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> &gt; <a class="el" href="structEventBuilder.html#a5721aca9f58659bf9051a7834798878c">entity</a> EventBuilder::data </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="Hooks_8hpp.html#adb9a223334bc754df5bf32b6f41e5b31">get_value_copy</a>&lt; <a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> &gt;&#160;</td>
-          <td class="paramname">r, e, &quot;data&quot;).value(</td><td>)</td>
+          <td class="paramtype"><a class="el" href="Hooks_8hpp.html#a5112703434c874d9180da439f07e4422">get_value_copy</a>&lt; <a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> &gt;&#160;</td>
+          <td class="paramname">r, e, &quot;data&quot;, entity).value(</td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -232,14 +236,14 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="ad8b082d0b1110c25fd140fede16e19b4" name="ad8b082d0b1110c25fd140fede16e19b4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad8b082d0b1110c25fd140fede16e19b4">&#9670;&#160;</a></span>value()</h2>
+<a id="afdb85a53e98f5670bd10f4661d74ce90" name="afdb85a53e98f5670bd10f4661d74ce90"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afdb85a53e98f5670bd10f4661d74ce90">&#9670;&#160;</a></span>value()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">JsonObject const <a class="el" href="structEventBuilder.html#a9be24298ec3c049d090880e95d373c81">event_id</a> EventBuilder::value </td>
+          <td class="memname">JsonObject const std::optional&lt; <a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> &gt; <a class="el" href="structEventBuilder.html#a5721aca9f58659bf9051a7834798878c">entity</a> EventBuilder::value </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -278,14 +282,28 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="acd05707e0a065ac317b8f75643b3d2a5" name="acd05707e0a065ac317b8f75643b3d2a5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acd05707e0a065ac317b8f75643b3d2a5">&#9670;&#160;</a></span>e <span class="overload">[2/2]</span></h2>
+<a id="ab30fac8f62adb394fa5ff6e197a6e47e" name="ab30fac8f62adb394fa5ff6e197a6e47e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab30fac8f62adb394fa5ff6e197a6e47e">&#9670;&#160;</a></span>e <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">JsonObject const EventBuilder::e</td>
+          <td class="memname">JsonObject const std::optional&lt;<a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a>&gt; EventBuilder::e</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a5721aca9f58659bf9051a7834798878c" name="a5721aca9f58659bf9051a7834798878c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5721aca9f58659bf9051a7834798878c">&#9670;&#160;</a></span>entity</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">JsonObject const std::optional&lt;<a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a>&gt; EventBuilder::entity</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -293,13 +311,27 @@ Public Attributes</h2></td></tr>
 </div>
 </div>
 <a id="a9be24298ec3c049d090880e95d373c81" name="a9be24298ec3c049d090880e95d373c81"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9be24298ec3c049d090880e95d373c81">&#9670;&#160;</a></span>event_id</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a9be24298ec3c049d090880e95d373c81">&#9670;&#160;</a></span>event_id <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
           <td class="memname">std::string EventBuilder::event_id</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a91468ed116da5083fe4dd0c15d10467f" name="a91468ed116da5083fe4dd0c15d10467f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a91468ed116da5083fe4dd0c15d10467f">&#9670;&#160;</a></span>event_id <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">JsonObject const std::optional&lt;<a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a>&gt; EventBuilder::event_id</td>
         </tr>
       </table>
 </div><div class="memdoc">

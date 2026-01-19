@@ -87,8 +87,8 @@ Inheritance diagram for LibLoader&lt; Module &gt;:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:af2ffd747bf00c84d8e58b9872db7f322" id="r_af2ffd747bf00c84d8e58b9872db7f322"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLibLoader.html#af2ffd747bf00c84d8e58b9872db7f322">~LibLoader</a> ()=default</td></tr>
 <tr class="separator:af2ffd747bf00c84d8e58b9872db7f322"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae2524dd36a6f458a29e48daa3566be3d" id="r_ae2524dd36a6f458a29e48daa3566be3d"><td class="memItemLeft" align="right" valign="top">virtual std::unique_ptr&lt; Module &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLibLoader.html#ae2524dd36a6f458a29e48daa3566be3d">get_instance</a> (const std::string &amp;<a class="el" href="Actions_8cpp.html#a406a8336546a14dcc2a63034ab37e132">entry_point</a>, <a class="el" href="classRegistry.html">Registry</a> &amp;r, <a class="el" href="classEntityLoader.html">EntityLoader</a> &amp;e, std::optional&lt; JsonObject &gt; const &amp;config)=0</td></tr>
-<tr class="separator:ae2524dd36a6f458a29e48daa3566be3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2e29ee3ceebc76788a7876af1d07fa34" id="r_a2e29ee3ceebc76788a7876af1d07fa34"><td class="memItemLeft" align="right" valign="top">virtual std::unique_ptr&lt; Module &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLibLoader.html#a2e29ee3ceebc76788a7876af1d07fa34">get_instance</a> (const std::string &amp;<a class="el" href="Actions_8cpp.html#a2546c0e84d170a6b611475ff6917501b">entry_point</a>, <a class="el" href="classRegistry.html">Registry</a> &amp;r, <a class="el" href="classEventManager.html">EventManager</a> &amp;em, <a class="el" href="classEntityLoader.html">EntityLoader</a> &amp;e, std::optional&lt; JsonObject &gt; const &amp;config)=0</td></tr>
+<tr class="separator:a2e29ee3ceebc76788a7876af1d07fa34"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="af2ffd747bf00c84d8e58b9872db7f322" name="af2ffd747bf00c84d8e58b9872db7f322"></a>
@@ -119,8 +119,8 @@ template&lt;<a class="el" href="conceptlib.html">lib</a> Module&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ae2524dd36a6f458a29e48daa3566be3d" name="ae2524dd36a6f458a29e48daa3566be3d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae2524dd36a6f458a29e48daa3566be3d">&#9670;&#160;</a></span>get_instance()</h2>
+<a id="a2e29ee3ceebc76788a7876af1d07fa34" name="a2e29ee3ceebc76788a7876af1d07fa34"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2e29ee3ceebc76788a7876af1d07fa34">&#9670;&#160;</a></span>get_instance()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -141,6 +141,12 @@ template&lt;<a class="el" href="conceptlib.html">lib</a> Module&gt; </div>
           <td></td>
           <td class="paramtype"><a class="el" href="classRegistry.html">Registry</a> &amp;&#160;</td>
           <td class="paramname"><em>r</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classEventManager.html">EventManager</a> &amp;&#160;</td>
+          <td class="paramname"><em>em</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -167,7 +173,7 @@ template&lt;<a class="el" href="conceptlib.html">lib</a> Module&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="classDlLoader.html#a0fa48dcb11acb752ded0216f8785a4c8">DlLoader&lt; Module &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classDlLoader.html#ac804e1394e5a05ed4c3a56ed12e27b2b">DlLoader&lt; Module &gt;</a>.</p>
 
 </div>
 </div>

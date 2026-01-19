@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>r-type: plugins/client_network/src/Client.cpp File Reference</title>
+<title>r-type: src/network/client/true_client/Client.cpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -69,15 +69,17 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_38c8d24aef3972a7f87b834274e76e31.html">plugins</a></li><li class="navelem"><a class="el" href="dir_250c9f82d1a3cad353da8914ba8560bd.html">client_network</a></li><li class="navelem"><a class="el" href="dir_0e53abf8c7fbd477679e1a2969c2a7db.html">src</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_68267d1309a1af8e8297ef4c3efbcdba.html">src</a></li><li class="navelem"><a class="el" href="dir_fc4c7f03e1a69a98c370fae55a743828.html">network</a></li><li class="navelem"><a class="el" href="dir_c5193101768cab4386942e588725c3c5.html">client</a></li><li class="navelem"><a class="el" href="dir_75fd3cd89f55c3451fc6fd1058cdc1a0.html">true_client</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="headertitle"><div class="title">Client.cpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &lt;semaphore&gt;</code><br />
-<code>#include &quot;<a class="el" href="Client_8hpp_source.html">Client.hpp</a>&quot;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="Client_8hpp_source.html">network/client/Client.hpp</a>&quot;</code><br />
+<code>#include &lt;asio/ip/address.hpp&gt;</code><br />
+<code>#include &lt;asio/ip/udp.hpp&gt;</code><br />
+<code>#include &lt;asio/registered_buffer.hpp&gt;</code><br />
 <code>#include &quot;<a class="el" href="NetworkCommun_8hpp_source.html">NetworkCommun.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="NetworkShared_8hpp_source.html">NetworkShared.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="CircularBuffer_8hpp_source.html">plugin/CircularBuffer.hpp</a>&quot;</code><br />

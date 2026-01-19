@@ -87,8 +87,8 @@ Inheritance diagram for AttackPattern:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:aa16f255bc1aa7e248f2adc45b0200133" id="r_aa16f255bc1aa7e248f2adc45b0200133"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAttackPattern.html#aa16f255bc1aa7e248f2adc45b0200133">~AttackPattern</a> ()=default</td></tr>
 <tr class="separator:aa16f255bc1aa7e248f2adc45b0200133"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa5337357c19722db0f016c070b194c94" id="r_aa5337357c19722db0f016c070b194c94"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAttackPattern.html#aa5337357c19722db0f016c070b194c94">execute</a> (<a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a> entity, <a class="el" href="classRegistry.html">Registry</a> &amp;registry, <a class="el" href="structAttackBehavior.html">AttackBehavior</a> &amp;behavior, <a class="el" href="structPosition.html">Position</a> &amp;pos, <a class="el" href="structVelocity.html">Velocity</a> &amp;vel, double dt)=0</td></tr>
-<tr class="separator:aa5337357c19722db0f016c070b194c94"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a260de3e418a193f62e11bab288497f47" id="r_a260de3e418a193f62e11bab288497f47"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classAttackPattern.html#a260de3e418a193f62e11bab288497f47">execute</a> (<a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> entity, <a class="el" href="classRegistry.html">Registry</a> &amp;registry, <a class="el" href="classEventManager.html">EventManager</a> &amp;em, <a class="el" href="structAttackBehavior.html">AttackBehavior</a> &amp;behavior, <a class="el" href="structPosition.html">Position</a> &amp;pos, <a class="el" href="structDirection.html">Direction</a> &amp;dir, <a class="el" href="structSpeed.html">Speed</a> &amp;speed, double dt)=0</td></tr>
+<tr class="separator:a260de3e418a193f62e11bab288497f47"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="aa16f255bc1aa7e248f2adc45b0200133" name="aa16f255bc1aa7e248f2adc45b0200133"></a>
@@ -117,8 +117,8 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="aa5337357c19722db0f016c070b194c94" name="aa5337357c19722db0f016c070b194c94"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa5337357c19722db0f016c070b194c94">&#9670;&#160;</a></span>execute()</h2>
+<a id="a260de3e418a193f62e11bab288497f47" name="a260de3e418a193f62e11bab288497f47"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a260de3e418a193f62e11bab288497f47">&#9670;&#160;</a></span>execute()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -129,7 +129,7 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">virtual void AttackPattern::execute </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a>&#160;</td>
           <td class="paramname"><em>entity</em>, </td>
         </tr>
         <tr>
@@ -137,6 +137,12 @@ Public Member Functions</h2></td></tr>
           <td></td>
           <td class="paramtype"><a class="el" href="classRegistry.html">Registry</a> &amp;&#160;</td>
           <td class="paramname"><em>registry</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classEventManager.html">EventManager</a> &amp;&#160;</td>
+          <td class="paramname"><em>em</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -153,8 +159,14 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="structVelocity.html">Velocity</a> &amp;&#160;</td>
-          <td class="paramname"><em>vel</em>, </td>
+          <td class="paramtype"><a class="el" href="structDirection.html">Direction</a> &amp;&#160;</td>
+          <td class="paramname"><em>dir</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structSpeed.html">Speed</a> &amp;&#160;</td>
+          <td class="paramname"><em>speed</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -175,7 +187,7 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Implemented in <a class="el" href="classContinuousFirePattern.html#ae3416a1f6ae8d5ab2cf1bf90afd29ac5">ContinuousFirePattern</a>.</p>
+<p>Implemented in <a class="el" href="classContinuousFirePattern.html#a441700fdcc9fe524700b71bb7f09d558">ContinuousFirePattern</a>.</p>
 
 </div>
 </div>

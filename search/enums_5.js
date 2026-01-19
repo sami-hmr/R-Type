@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['rendertype_0',['RenderType',['../structBackground.html#a710a983578243df49c32ccfbe94a9613',1,'Background']]]
+  ['loglevel_0',['LogLevel',['../LogMacros_8hpp.html#a4ad2f3fcf504e54f0d7835fa6a4a5cd4',1,'LogMacros.hpp']]]
 ];

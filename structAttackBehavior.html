@@ -83,21 +83,23 @@ $(function() {
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a02a16c32834851d306d757be82145128" id="r_a02a16c32834851d306d757be82145128"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structAttackBehavior.html#a02a16c32834851d306d757be82145128">AttackBehavior</a> ()</td></tr>
 <tr class="separator:a02a16c32834851d306d757be82145128"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a75bdc208d3c7e5fc97d8b973d26f6782" id="r_a75bdc208d3c7e5fc97d8b973d26f6782"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structAttackBehavior.html#a75bdc208d3c7e5fc97d8b973d26f6782">AttackBehavior</a> (std::string type, double interval)</td></tr>
-<tr class="separator:a75bdc208d3c7e5fc97d8b973d26f6782"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a940655cb85816e85627460eca12ab09e" id="r_a940655cb85816e85627460eca12ab09e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structAttackBehavior.html#a940655cb85816e85627460eca12ab09e">AttackBehavior</a> (std::string type, double <a class="el" href="structAttackBehavior.html#ac7b20b67490fb6495178a4e1a1bed880">attack_delta</a>, double interval, bool <a class="el" href="structAttackBehavior.html#ad0d766f4483f438ee6984a97e7f7c8c0">active</a>)</td></tr>
-<tr class="separator:a940655cb85816e85627460eca12ab09e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4ae963161d64bf79f97ec423113d1632" id="r_a4ae963161d64bf79f97ec423113d1632"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structAttackBehavior.html#a4ae963161d64bf79f97ec423113d1632">DEFAULT_BYTE_CONSTRUCTOR</a> (<a class="el" href="structAttackBehavior.html">AttackBehavior</a>,([](std::string attack_type, double interval) { return <a class="el" href="structAttackBehavior.html">AttackBehavior</a>(std::string(attack_type.begin(), attack_type.end()), interval);}), parseByteString(), parseByte&lt; double &gt;()) <a class="el" href="Byte_8hpp.html#ac2fb474e60f46281e11bf3824e6f4517">DEFAULT_SERIALIZE</a>(<a class="el" href="Byte_8hpp.html#a20d43856fdb8ef111a9b55ceeb1f96f8">string_to_byte</a>(this -&gt; attack_type), <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(this-&gt;<a class="el" href="structAttackBehavior.html#ac7b20b67490fb6495178a4e1a1bed880">attack_delta</a>), <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(this-&gt;<a class="el" href="structAttackBehavior.html#a4b3829616fa7f3fa9623b7688e895b0c">attack_interval</a>), <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(this-&gt;<a class="el" href="structAttackBehavior.html#ad0d766f4483f438ee6984a97e7f7c8c0">active</a>)) <a class="el" href="EventMacros_8hpp.html#a762cd3630f6f73bfa82bbc45f3563a2d">CHANGE_ENTITY_DEFAULT</a> std::string attack_type</td></tr>
-<tr class="separator:a4ae963161d64bf79f97ec423113d1632"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1a186ddd9162d0593e930634c48e968a" id="r_a1a186ddd9162d0593e930634c48e968a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structAttackBehavior.html#a1a186ddd9162d0593e930634c48e968a">AttackBehavior</a> (std::string type, JsonObject <a class="el" href="structAttackBehavior.html#a255bf566a23a84aa1092371e163c40cc">params</a>)</td></tr>
+<tr class="separator:a1a186ddd9162d0593e930634c48e968a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adcfbaf0cf22874c086c1d45b988df95b" id="r_adcfbaf0cf22874c086c1d45b988df95b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structAttackBehavior.html#adcfbaf0cf22874c086c1d45b988df95b">AttackBehavior</a> (std::string type, double <a class="el" href="structAttackBehavior.html#ac7b20b67490fb6495178a4e1a1bed880">attack_delta</a>, double <a class="el" href="structAttackBehavior.html#abe411a146a8021b33aedffecca53211d">last_update</a>, bool <a class="el" href="structAttackBehavior.html#ad0d766f4483f438ee6984a97e7f7c8c0">active</a>, JsonObject <a class="el" href="structAttackBehavior.html#a255bf566a23a84aa1092371e163c40cc">params</a>)</td></tr>
+<tr class="separator:adcfbaf0cf22874c086c1d45b988df95b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a843c9cd851aec3afb28d3675987a3bdc" id="r_a843c9cd851aec3afb28d3675987a3bdc"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structAttackBehavior.html#a843c9cd851aec3afb28d3675987a3bdc">DEFAULT_BYTE_CONSTRUCTOR</a> (<a class="el" href="structAttackBehavior.html">AttackBehavior</a>,([](std::string attack_type, double <a class="el" href="structAttackBehavior.html#ac7b20b67490fb6495178a4e1a1bed880">attack_delta</a>, double <a class="el" href="structAttackBehavior.html#abe411a146a8021b33aedffecca53211d">last_update</a>, bool <a class="el" href="structAttackBehavior.html#ad0d766f4483f438ee6984a97e7f7c8c0">active</a>, JsonObject <a class="el" href="structAttackBehavior.html#a255bf566a23a84aa1092371e163c40cc">params</a>) { return <a class="el" href="structAttackBehavior.html">AttackBehavior</a>(std::move(attack_type), <a class="el" href="structAttackBehavior.html#ac7b20b67490fb6495178a4e1a1bed880">attack_delta</a>, <a class="el" href="structAttackBehavior.html#abe411a146a8021b33aedffecca53211d">last_update</a>, <a class="el" href="structAttackBehavior.html#ad0d766f4483f438ee6984a97e7f7c8c0">active</a>, std::move(<a class="el" href="structAttackBehavior.html#a255bf566a23a84aa1092371e163c40cc">params</a>));}), parseByteString(), parseByte&lt; double &gt;(), parseByte&lt; double &gt;(), parseByte&lt; bool &gt;(), parseByteJsonObject()) <a class="el" href="Byte_8hpp.html#ac2fb474e60f46281e11bf3824e6f4517">DEFAULT_SERIALIZE</a>(<a class="el" href="Byte_8hpp.html#a20d43856fdb8ef111a9b55ceeb1f96f8">string_to_byte</a>(this -&gt; attack_type), <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(this-&gt;<a class="el" href="structAttackBehavior.html#ac7b20b67490fb6495178a4e1a1bed880">attack_delta</a>), <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(this-&gt;<a class="el" href="structAttackBehavior.html#abe411a146a8021b33aedffecca53211d">last_update</a>), <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(this-&gt;<a class="el" href="structAttackBehavior.html#ad0d766f4483f438ee6984a97e7f7c8c0">active</a>), <a class="el" href="Byte_8hpp.html#a51f08e914416ea5c05e36a83e11efb0d">json_object_to_byte</a>(this-&gt;<a class="el" href="structAttackBehavior.html#a255bf566a23a84aa1092371e163c40cc">params</a>)) <a class="el" href="EventMacros_8hpp.html#a762cd3630f6f73bfa82bbc45f3563a2d">CHANGE_ENTITY_DEFAULT</a> std::string attack_type</td></tr>
+<tr class="separator:a843c9cd851aec3afb28d3675987a3bdc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:ac7b20b67490fb6495178a4e1a1bed880" id="r_ac7b20b67490fb6495178a4e1a1bed880"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structAttackBehavior.html#ac7b20b67490fb6495178a4e1a1bed880">attack_delta</a></td></tr>
+<tr class="memitem:ac7b20b67490fb6495178a4e1a1bed880" id="r_ac7b20b67490fb6495178a4e1a1bed880"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structAttackBehavior.html#ac7b20b67490fb6495178a4e1a1bed880">attack_delta</a> = 0.0</td></tr>
 <tr class="separator:ac7b20b67490fb6495178a4e1a1bed880"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4b3829616fa7f3fa9623b7688e895b0c" id="r_a4b3829616fa7f3fa9623b7688e895b0c"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structAttackBehavior.html#a4b3829616fa7f3fa9623b7688e895b0c">attack_interval</a></td></tr>
-<tr class="separator:a4b3829616fa7f3fa9623b7688e895b0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad0d766f4483f438ee6984a97e7f7c8c0" id="r_ad0d766f4483f438ee6984a97e7f7c8c0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structAttackBehavior.html#ad0d766f4483f438ee6984a97e7f7c8c0">active</a></td></tr>
+<tr class="memitem:abe411a146a8021b33aedffecca53211d" id="r_abe411a146a8021b33aedffecca53211d"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structAttackBehavior.html#abe411a146a8021b33aedffecca53211d">last_update</a> = 0.0</td></tr>
+<tr class="separator:abe411a146a8021b33aedffecca53211d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad0d766f4483f438ee6984a97e7f7c8c0" id="r_ad0d766f4483f438ee6984a97e7f7c8c0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structAttackBehavior.html#ad0d766f4483f438ee6984a97e7f7c8c0">active</a> = true</td></tr>
 <tr class="separator:ad0d766f4483f438ee6984a97e7f7c8c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a255bf566a23a84aa1092371e163c40cc" id="r_a255bf566a23a84aa1092371e163c40cc"><td class="memItemLeft" align="right" valign="top">JsonObject&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structAttackBehavior.html#a255bf566a23a84aa1092371e163c40cc">params</a></td></tr>
+<tr class="separator:a255bf566a23a84aa1092371e163c40cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a02a16c32834851d306d757be82145128" name="a02a16c32834851d306d757be82145128"></a>
@@ -125,8 +127,8 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a75bdc208d3c7e5fc97d8b973d26f6782" name="a75bdc208d3c7e5fc97d8b973d26f6782"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a75bdc208d3c7e5fc97d8b973d26f6782">&#9670;&#160;</a></span>AttackBehavior() <span class="overload">[2/3]</span></h2>
+<a id="a1a186ddd9162d0593e930634c48e968a" name="a1a186ddd9162d0593e930634c48e968a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1a186ddd9162d0593e930634c48e968a">&#9670;&#160;</a></span>AttackBehavior() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -143,8 +145,8 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>interval</em>&#160;</td>
+          <td class="paramtype">JsonObject&#160;</td>
+          <td class="paramname"><em>params</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -161,8 +163,8 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a940655cb85816e85627460eca12ab09e" name="a940655cb85816e85627460eca12ab09e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a940655cb85816e85627460eca12ab09e">&#9670;&#160;</a></span>AttackBehavior() <span class="overload">[3/3]</span></h2>
+<a id="adcfbaf0cf22874c086c1d45b988df95b" name="adcfbaf0cf22874c086c1d45b988df95b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adcfbaf0cf22874c086c1d45b988df95b">&#9670;&#160;</a></span>AttackBehavior() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -186,13 +188,19 @@ Public Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>interval</em>, </td>
+          <td class="paramname"><em>last_update</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>active</em>&#160;</td>
+          <td class="paramname"><em>active</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">JsonObject&#160;</td>
+          <td class="paramname"><em>params</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -210,8 +218,8 @@ Public Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a4ae963161d64bf79f97ec423113d1632" name="a4ae963161d64bf79f97ec423113d1632"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4ae963161d64bf79f97ec423113d1632">&#9670;&#160;</a></span>DEFAULT_BYTE_CONSTRUCTOR()</h2>
+<a id="a843c9cd851aec3afb28d3675987a3bdc" name="a843c9cd851aec3afb28d3675987a3bdc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a843c9cd851aec3afb28d3675987a3bdc">&#9670;&#160;</a></span>DEFAULT_BYTE_CONSTRUCTOR()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -225,7 +233,7 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">([](std::string attack_type, double interval) { return <a class="el" href="structAttackBehavior.html">AttackBehavior</a>(std::string(attack_type.begin(), attack_type.end()), interval);})&#160;</td>
+          <td class="paramtype">([](std::string attack_type, double <a class="el" href="structAttackBehavior.html#ac7b20b67490fb6495178a4e1a1bed880">attack_delta</a>, double <a class="el" href="structAttackBehavior.html#abe411a146a8021b33aedffecca53211d">last_update</a>, bool <a class="el" href="structAttackBehavior.html#ad0d766f4483f438ee6984a97e7f7c8c0">active</a>, JsonObject <a class="el" href="structAttackBehavior.html#a255bf566a23a84aa1092371e163c40cc">params</a>) { return <a class="el" href="structAttackBehavior.html">AttackBehavior</a>(std::move(attack_type), <a class="el" href="structAttackBehavior.html#ac7b20b67490fb6495178a4e1a1bed880">attack_delta</a>, <a class="el" href="structAttackBehavior.html#abe411a146a8021b33aedffecca53211d">last_update</a>, <a class="el" href="structAttackBehavior.html#ad0d766f4483f438ee6984a97e7f7c8c0">active</a>, std::move(<a class="el" href="structAttackBehavior.html#a255bf566a23a84aa1092371e163c40cc">params</a>));})&#160;</td>
           <td class="paramname">, </td>
         </tr>
         <tr>
@@ -238,12 +246,30 @@ Public Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">parseByte&lt; double &gt;&#160;</td>
-          <td class="paramname">()&#160;</td>
+          <td class="paramname">(), </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">parseByte&lt; double &gt;&#160;</td>
+          <td class="paramname">(), </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">parseByte&lt; bool &gt;&#160;</td>
+          <td class="paramname">(), </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">parseByteJsonObject()&#160;</td>
+          <td class="paramname">&#160;</td>
         </tr>
         <tr>
           <td></td>
           <td>)</td>
-          <td></td><td> -&gt;  attack_type), <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(this-&gt;<a class="el" href="structAttackBehavior.html#ac7b20b67490fb6495178a4e1a1bed880">attack_delta</a>), <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(this-&gt;<a class="el" href="structAttackBehavior.html#a4b3829616fa7f3fa9623b7688e895b0c">attack_interval</a>), <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(this-&gt;<a class="el" href="structAttackBehavior.html#ad0d766f4483f438ee6984a97e7f7c8c0">active</a>)) <a class="el" href="EventMacros_8hpp.html#a762cd3630f6f73bfa82bbc45f3563a2d">CHANGE_ENTITY_DEFAULT</a> std::string attack_type</td>
+          <td></td><td> -&gt;  attack_type), <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(this-&gt;<a class="el" href="structAttackBehavior.html#ac7b20b67490fb6495178a4e1a1bed880">attack_delta</a>), <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(this-&gt;<a class="el" href="structAttackBehavior.html#abe411a146a8021b33aedffecca53211d">last_update</a>), <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>(this-&gt;<a class="el" href="structAttackBehavior.html#ad0d766f4483f438ee6984a97e7f7c8c0">active</a>), <a class="el" href="Byte_8hpp.html#a51f08e914416ea5c05e36a83e11efb0d">json_object_to_byte</a>(this-&gt;<a class="el" href="structAttackBehavior.html#a255bf566a23a84aa1092371e163c40cc">params</a>)) <a class="el" href="EventMacros_8hpp.html#a762cd3630f6f73bfa82bbc45f3563a2d">CHANGE_ENTITY_DEFAULT</a> std::string attack_type</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -258,7 +284,7 @@ Public Attributes</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool AttackBehavior::active</td>
+          <td class="memname">bool AttackBehavior::active = true</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -272,21 +298,35 @@ Public Attributes</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">double AttackBehavior::attack_delta</td>
+          <td class="memname">double AttackBehavior::attack_delta = 0.0</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a4b3829616fa7f3fa9623b7688e895b0c" name="a4b3829616fa7f3fa9623b7688e895b0c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4b3829616fa7f3fa9623b7688e895b0c">&#9670;&#160;</a></span>attack_interval</h2>
+<a id="abe411a146a8021b33aedffecca53211d" name="abe411a146a8021b33aedffecca53211d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abe411a146a8021b33aedffecca53211d">&#9670;&#160;</a></span>last_update</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">double AttackBehavior::attack_interval</td>
+          <td class="memname">double AttackBehavior::last_update = 0.0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a255bf566a23a84aa1092371e163c40cc" name="a255bf566a23a84aa1092371e163c40cc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a255bf566a23a84aa1092371e163c40cc">&#9670;&#160;</a></span>params</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">JsonObject AttackBehavior::params</td>
         </tr>
       </table>
 </div><div class="memdoc">

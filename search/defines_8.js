@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['map_5fentity_5fvector_0',['MAP_ENTITY_VECTOR',['../EventMacros_8hpp.html#a53098b45a961ee04eae5e4956d6279c9',1,'EventMacros.hpp']]],
-  ['mapname_5flength_1',['MAPNAME_LENGTH',['../NetworkCommun_8hpp.html#aa54c17fdf6986420ec9822387bc321d1',1,'NetworkCommun.hpp']]],
-  ['max_5fplayers_2',['MAX_PLAYERS',['../NetworkCommun_8hpp.html#a1c346c944e8204fd06dc057393c7c96d',1,'NetworkCommun.hpp']]]
+  ['logger_0',['LOGGER',['../LogMacros_8hpp.html#a05ccfe64060e78cbfb05f6515d0ac3d8',1,'LogMacros.hpp']]],
+  ['logger_5fevtless_1',['LOGGER_EVTLESS',['../LogMacros_8hpp.html#a176eef691d8b478cc8f2dc1646b715ec',1,'LogMacros.hpp']]]
 ];

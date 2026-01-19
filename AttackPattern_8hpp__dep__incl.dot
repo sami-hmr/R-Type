@@ -11,6 +11,6 @@ digraph "plugins/ai/include/attack/AttackPattern.hpp"
   Node2 -> Node3 [id="edge2_Node000002_Node000003",dir="back",color="steelblue1",style="solid",tooltip=" "];
   Node3 [id="Node000003",label="plugins/ai/src/AI.cpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$AI_8cpp.html",tooltip=" "];
   Node1 -> Node4 [id="edge3_Node000001_Node000004",dir="back",color="steelblue1",style="solid",tooltip=" "];
-  Node4 [id="Node000004",label="plugins/ai/include\l/attack/AttackPatterns.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$AttackPatterns_8hpp.html",tooltip=" "];
+  Node4 [id="Node000004",label="plugins/ai/include\l/attack/ContinuousFirePattern.hpp",height=0.2,width=0.4,color="grey40", fillcolor="white", style="filled",URL="$ContinuousFirePattern_8hpp.html",tooltip=" "];
   Node4 -> Node3 [id="edge4_Node000004_Node000003",dir="back",color="steelblue1",style="solid",tooltip=" "];
 }

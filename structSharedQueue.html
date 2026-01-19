@@ -70,6 +70,7 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="structSharedQueue-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">SharedQueue&lt; T &gt; Struct Template Reference</div></div>
@@ -83,13 +84,195 @@ Inheritance diagram for SharedQueue&lt; T &gt;:</div>
 <div class="center"><!-- SVG 0 --></div>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a465696600a2b5880cfd71d0179d0a214" id="r_a465696600a2b5880cfd71d0179d0a214"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSharedQueue.html#a465696600a2b5880cfd71d0179d0a214">SharedQueue</a> ()</td></tr>
+<tr class="separator:a465696600a2b5880cfd71d0179d0a214"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa71a676cec25327aac32ae8847419a2d" id="r_aa71a676cec25327aac32ae8847419a2d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSharedQueue.html#aa71a676cec25327aac32ae8847419a2d">push</a> (<a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> const &amp;obj)</td></tr>
+<tr class="separator:aa71a676cec25327aac32ae8847419a2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad5e26a04004ddd054e8e2c11b87f1391" id="r_ad5e26a04004ddd054e8e2c11b87f1391"><td class="memItemLeft" align="right" valign="top"><a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSharedQueue.html#ad5e26a04004ddd054e8e2c11b87f1391">pop</a> ()</td></tr>
+<tr class="separator:ad5e26a04004ddd054e8e2c11b87f1391"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ffc0736f33a72d5343f39dbe8794942" id="r_a6ffc0736f33a72d5343f39dbe8794942"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSharedQueue.html#a6ffc0736f33a72d5343f39dbe8794942">flush</a> ()</td></tr>
+<tr class="separator:a6ffc0736f33a72d5343f39dbe8794942"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae05313681c21605e946dcfdf3d13192c" id="r_ae05313681c21605e946dcfdf3d13192c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSharedQueue.html#ae05313681c21605e946dcfdf3d13192c">wait</a> ()</td></tr>
+<tr class="separator:ae05313681c21605e946dcfdf3d13192c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2a8fcf95de4536414bebff6b05c6c490" id="r_a2a8fcf95de4536414bebff6b05c6c490"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSharedQueue.html#a2a8fcf95de4536414bebff6b05c6c490">release</a> ()</td></tr>
+<tr class="separator:a2a8fcf95de4536414bebff6b05c6c490"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a2996e7167a49ac5a3ad118e57a79001a" id="r_a2996e7167a49ac5a3ad118e57a79001a"><td class="memItemLeft" align="right" valign="top">std::mutex&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSharedQueue.html#a2996e7167a49ac5a3ad118e57a79001a">lock</a></td></tr>
 <tr class="separator:a2996e7167a49ac5a3ad118e57a79001a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abad2e503efa7e22563a3fd9cdd6895ed" id="r_abad2e503efa7e22563a3fd9cdd6895ed"><td class="memItemLeft" align="right" valign="top">std::counting_semaphore&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSharedQueue.html#abad2e503efa7e22563a3fd9cdd6895ed">semaphore</a></td></tr>
+<tr class="separator:abad2e503efa7e22563a3fd9cdd6895ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af67e87c3c12fc76a055eaebdadb85c87" id="r_af67e87c3c12fc76a055eaebdadb85c87"><td class="memItemLeft" align="right" valign="top">std::queue&lt; <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structSharedQueue.html#af67e87c3c12fc76a055eaebdadb85c87">queue</a></td></tr>
 <tr class="separator:af67e87c3c12fc76a055eaebdadb85c87"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a465696600a2b5880cfd71d0179d0a214" name="a465696600a2b5880cfd71d0179d0a214"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a465696600a2b5880cfd71d0179d0a214">&#9670;&#160;</a></span>SharedQueue()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structSharedQueue.html">SharedQueue</a>&lt; <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt;<a class="el" href="structSharedQueue.html">::SharedQueue</a> </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a6ffc0736f33a72d5343f39dbe8794942" name="a6ffc0736f33a72d5343f39dbe8794942"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6ffc0736f33a72d5343f39dbe8794942">&#9670;&#160;</a></span>flush()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt; <a class="el" href="structSharedQueue.html">SharedQueue</a>&lt; <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt;::flush </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ad5e26a04004ddd054e8e2c11b87f1391" name="ad5e26a04004ddd054e8e2c11b87f1391"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad5e26a04004ddd054e8e2c11b87f1391">&#9670;&#160;</a></span>pop()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> <a class="el" href="structSharedQueue.html">SharedQueue</a>&lt; <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt;::pop </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aa71a676cec25327aac32ae8847419a2d" name="aa71a676cec25327aac32ae8847419a2d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa71a676cec25327aac32ae8847419a2d">&#9670;&#160;</a></span>push()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="structSharedQueue.html">SharedQueue</a>&lt; <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt;::push </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> const &amp;&#160;</td>
+          <td class="paramname"><em>obj</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a2a8fcf95de4536414bebff6b05c6c490" name="a2a8fcf95de4536414bebff6b05c6c490"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2a8fcf95de4536414bebff6b05c6c490">&#9670;&#160;</a></span>release()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="structSharedQueue.html">SharedQueue</a>&lt; <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt;::release </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ae05313681c21605e946dcfdf3d13192c" name="ae05313681c21605e946dcfdf3d13192c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae05313681c21605e946dcfdf3d13192c">&#9670;&#160;</a></span>wait()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="structSharedQueue.html">SharedQueue</a>&lt; <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt;::wait </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <h2 class="groupheader">Member Data Documentation</h2>
 <a id="a2996e7167a49ac5a3ad118e57a79001a" name="a2996e7167a49ac5a3ad118e57a79001a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a2996e7167a49ac5a3ad118e57a79001a">&#9670;&#160;</a></span>lock</h2>
@@ -117,6 +300,22 @@ template&lt;typename <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140d
       <table class="memname">
         <tr>
           <td class="memname">std::queue&lt;<a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a>&gt; <a class="el" href="structSharedQueue.html">SharedQueue</a>&lt; <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt;::queue</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="abad2e503efa7e22563a3fd9cdd6895ed" name="abad2e503efa7e22563a3fd9cdd6895ed"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abad2e503efa7e22563a3fd9cdd6895ed">&#9670;&#160;</a></span>semaphore</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::counting_semaphore <a class="el" href="structSharedQueue.html">SharedQueue</a>&lt; <a class="el" href="IoEvents_8hpp.html#a9479d299e1852e6140dcca1f405868aba21f40778b7db9343a6ca75ec2c41ccce">T</a> &gt;::semaphore</td>
         </tr>
       </table>
 </div><div class="memdoc">

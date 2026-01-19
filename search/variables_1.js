@@ -1,11 +1,25 @@
 var searchData=
 [
-  ['a_0',['a',['../structColor.html#a39bb1f3f9a514ac1a581ca27fddebebc',1,'Color::a'],['../structCollisionEvent.html#a2c341b26c8c12b7a85d3aaf1ff5e1fcc',1,'CollisionEvent::a'],['../structDamageEvent.html#a678a63011967c6aae284673d6862cf5e',1,'DamageEvent::a']]],
-  ['acknowledge_1',['acknowledge',['../structConnectedPackage.html#a918fc739d1b89432049f8940bda3d4a4',1,'ConnectedPackage']]],
-  ['active_2',['active',['../structAttackBehavior.html#ad0d766f4483f438ee6984a97e7f7c8c0',1,'AttackBehavior::active'],['../structParallax.html#ab886ea7bfb72d0c63b284caa18c0d17b',1,'Parallax::active'],['../structSpawner.html#a81c837cf9b561ae939dc9f0dd0dabbd8',1,'Spawner::active'],['../structSpawner.html#abc3b958063351062fbc18ab7c5213658',1,'Spawner::active']]],
-  ['aditionals_3',['aditionals',['../structLoadEntityTemplate.html#a974d7b690076a395a3714543669ad084',1,'LoadEntityTemplate']]],
-  ['amount_4',['amount',['../structDamageEvent.html#ad89c33685f71316e32dc3414fa0a03ca',1,'DamageEvent::amount'],['../structHealEvent.html#a25a05d545a6a1e6ade157d7cfef57a9e',1,'HealEvent::amount']]],
-  ['animations_5',['animations',['../classAnimatedSprite.html#a9f498e228dcf2aac2f64707835a80b91',1,'AnimatedSprite']]],
-  ['attack_5fdelta_6',['attack_delta',['../structAttackBehavior.html#ac7b20b67490fb6495178a4e1a1bed880',1,'AttackBehavior']]],
-  ['attack_5finterval_7',['attack_interval',['../structAttackBehavior.html#a4b3829616fa7f3fa9623b7688e895b0c',1,'AttackBehavior']]]
+  ['a_0',['a',['../structCollisionEvent.html#ac5d89116dae8b531558659e7c655612b',1,'CollisionEvent::a'],['../structColor.html#a39bb1f3f9a514ac1a581ca27fddebebc',1,'Color::a'],['../structDamageEvent.html#a11061084f34674ceef9bd9cb5adfc77d',1,'DamageEvent::a']]],
+  ['accept_5fcontent_5ftypes_1',['accept_content_types',['../structhttplib_1_1Request.html#a23c0f12a72fd68110a617395fe22b3bc',1,'httplib::Request']]],
+  ['acknowledge_2',['acknowledge',['../structConnectedPackage.html#a5dbea981473d094f863936a89c9d2e43',1,'ConnectedPackage']]],
+  ['acknowledge_5fmanager_3',['acknowledge_manager',['../structClientInfo.html#a15f3e376d8ea8a00460255d87967fee0',1,'ClientInfo']]],
+  ['act_4',['act',['../structFormation.html#af7414c17bc58895d4be3fc5b70e6d0e1',1,'Formation']]],
+  ['active_5',['active',['../structAttackBehavior.html#ad0d766f4483f438ee6984a97e7f7c8c0',1,'AttackBehavior::active'],['../structParallax.html#ab886ea7bfb72d0c63b284caa18c0d17b',1,'Parallax::active'],['../structFormation.html#a2a18af5eb28cfb119f330f5f2091c4d9',1,'Formation::active'],['../structSpawner.html#a81c837cf9b561ae939dc9f0dd0dabbd8',1,'Spawner::active'],['../structSpawner.html#abc3b958063351062fbc18ab7c5213658',1,'Spawner::active']]],
+  ['addr_5fmap_5f_6',['addr_map_',['../classhttplib_1_1ClientImpl.html#ac02f0e3fed7fa37cfa8b3f577c689fbf',1,'httplib::ClientImpl']]],
+  ['address_7',['address',['../structBaseClient_1_1AvailableServer.html#a16866d4d44d7fb289436f2c4bd97c7cd',1,'BaseClient::AvailableServer']]],
+  ['address_5ffamily_5f_8',['address_family_',['../classhttplib_1_1ClientImpl.html#a805436a7b63850ca3b6c7f0258bb273e',1,'httplib::ClientImpl']]],
+  ['aditionals_9',['aditionals',['../structLoadEntityTemplate.html#a974d7b690076a395a3714543669ad084',1,'LoadEntityTemplate']]],
+  ['amount_10',['amount',['../structDamageEvent.html#ad89c33685f71316e32dc3414fa0a03ca',1,'DamageEvent::amount'],['../structHealEvent.html#a25a05d545a6a1e6ade157d7cfef57a9e',1,'HealEvent::amount']]],
+  ['angle_11',['angle',['../structRaycastingCamera.html#aaea936388b240da1b9b5b630f2faa61f',1,'RaycastingCamera::angle'],['../structCameraShakeEvent.html#a9db30e94f43c1f1094b2e6b69bc0268f',1,'CameraShakeEvent::angle'],['../structRaycastingCameraRotateEvent.html#af515e03c39e13888560d4b70c5223e31',1,'RaycastingCameraRotateEvent::angle']]],
+  ['angle_5fstep_12',['angle_step',['../structRaycastingData.html#a065b75bbfa4196bbf2fed0889dea4739',1,'RaycastingData']]],
+  ['animations_13',['animations',['../classAnimatedSprite.html#a9f498e228dcf2aac2f64707835a80b91',1,'AnimatedSprite']]],
+  ['animdata_14',['animdata',['../structAnimatedSpriteDrawable.html#a4ac15be40deea5e2dab78f4b23d9b645',1,'AnimatedSpriteDrawable']]],
+  ['applied_15',['applied',['../structScaleModifier.html#a740ba864a6fbaf7b9388c3bde6de11bb',1,'ScaleModifier']]],
+  ['applied_5foffset_16',['applied_offset',['../structPosition.html#a83385511d4eda21ed14e87ca4e4dd0f5',1,'Position']]],
+  ['artefact_5ftemplate_17',['artefact_template',['../structInventory_1_1ItemSlot.html#a6eba109f631265d5b60ce77dcfc9ef07',1,'Inventory::ItemSlot::artefact_template'],['../structPickable.html#aa76ca9d90ed61994a4362506a17e0359',1,'Pickable::artefact_template']]],
+  ['attack_5fanimation_18',['attack_animation',['../structBaseWeapon.html#a8306f5e699f02b0b0617ed879b9096ed',1,'BaseWeapon']]],
+  ['attack_5fdelta_19',['attack_delta',['../structAttackBehavior.html#ac7b20b67490fb6495178a4e1a1bed880',1,'AttackBehavior']]],
+  ['authorization_5fcount_5f_20',['authorization_count_',['../structhttplib_1_1Request.html#a95cf89390e33a408559331ff6aad2a53',1,'httplib::Request']]],
+  ['axes_21',['axes',['../structJoystickState.html#a70e4a2fc75d815d583db316ba6013ef7',1,'JoystickState']]]
 ];

@@ -88,22 +88,28 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;Json/JsonParser.hpp&quot;</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="Registry_8hpp.html">ecs/Registry.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
-<div class="foldopen" id="foldopen00008" data-start="{" data-end="};">
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno"><a class="line" href="classIPlugin.html">    8</a></span><span class="keyword">class </span><a class="code hl_class" href="classIPlugin.html">IPlugin</a></div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span>{</div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno"><a class="line" href="classIPlugin.html#a47e41e0790e8da744a21e4fdc28afba3">   11</a></span>  <span class="keyword">virtual</span> <a class="code hl_function" href="classIPlugin.html#a47e41e0790e8da744a21e4fdc28afba3">~IPlugin</a>() = <span class="keywordflow">default</span>;</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno"><a class="line" href="classIPlugin.html#a533909c503a22fd403016b43a845280d">   13</a></span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code hl_function" href="classIPlugin.html#a533909c503a22fd403016b43a845280d">set_component</a>(<a class="code hl_typedef" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a> entity,</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>                             std::string <span class="keyword">const</span>&amp; key,</div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>                             JsonVariant <span class="keyword">const</span>&amp;) = 0;</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>};</div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#ifdef _WIN32</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#  define PLUGIN_EXPORT __declspec(dllexport)</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#else</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno"><a class="line" href="IPlugin_8hpp.html#a89cec5a0cc184865c34c13ae6a0481fb">   11</a></span><span class="preprocessor">#  define PLUGIN_EXPORT</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
+<div class="foldopen" id="foldopen00014" data-start="{" data-end="};">
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno"><a class="line" href="classIPlugin.html">   14</a></span><span class="keyword">class </span><a class="code hl_class" href="classIPlugin.html">IPlugin</a></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span>{</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno"><a class="line" href="classIPlugin.html#a47e41e0790e8da744a21e4fdc28afba3">   17</a></span>  <span class="keyword">virtual</span> <a class="code hl_function" href="classIPlugin.html#a47e41e0790e8da744a21e4fdc28afba3">~IPlugin</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno"><a class="line" href="classIPlugin.html#aec9a78b8b52b3f3b9f64597587af1242">   19</a></span>  <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code hl_function" href="classIPlugin.html#aec9a78b8b52b3f3b9f64597587af1242">set_component</a>(<a class="code hl_typedef" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> entity,</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>                             std::string <span class="keyword">const</span>&amp; key,</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>                             JsonVariant <span class="keyword">const</span>&amp;) = 0;</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>};</div>
 </div>
 <div class="ttc" id="aRegistry_8hpp_html"><div class="ttname"><a href="Registry_8hpp.html">Registry.hpp</a></div><div class="ttdoc">Central hub of the ECS architecture managing entities, components, systems, and events.</div></div>
-<div class="ttc" id="aclassIPlugin_html"><div class="ttname"><a href="classIPlugin.html">IPlugin</a></div><div class="ttdef"><b>Definition</b> IPlugin.hpp:9</div></div>
+<div class="ttc" id="aclassIPlugin_html"><div class="ttname"><a href="classIPlugin.html">IPlugin</a></div><div class="ttdef"><b>Definition</b> IPlugin.hpp:15</div></div>
 <div class="ttc" id="aclassIPlugin_html_a47e41e0790e8da744a21e4fdc28afba3"><div class="ttname"><a href="classIPlugin.html#a47e41e0790e8da744a21e4fdc28afba3">IPlugin::~IPlugin</a></div><div class="ttdeci">virtual ~IPlugin()=default</div></div>
-<div class="ttc" id="aclassIPlugin_html_a533909c503a22fd403016b43a845280d"><div class="ttname"><a href="classIPlugin.html#a533909c503a22fd403016b43a845280d">IPlugin::set_component</a></div><div class="ttdeci">virtual void set_component(Registry::Entity entity, std::string const &amp;key, JsonVariant const &amp;)=0</div></div>
-<div class="ttc" id="aclassRegistry_html_a0f7878e7be2d225f4f7ca38b85911110"><div class="ttname"><a href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a></div><div class="ttdeci">std::size_t Entity</div><div class="ttdoc">Type alias for an entity identifier.</div><div class="ttdef"><b>Definition</b> Registry.hpp:356</div></div>
+<div class="ttc" id="aclassIPlugin_html_aec9a78b8b52b3f3b9f64597587af1242"><div class="ttname"><a href="classIPlugin.html#aec9a78b8b52b3f3b9f64597587af1242">IPlugin::set_component</a></div><div class="ttdeci">virtual void set_component(Ecs::Entity entity, std::string const &amp;key, JsonVariant const &amp;)=0</div></div>
+<div class="ttc" id="anamespaceEcs_html_a17fcea5750c1db2eea6f26c520f9235b"><div class="ttname"><a href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a></div><div class="ttdeci">std::size_t Entity</div><div class="ttdef"><b>Definition</b> Entity.hpp:7</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

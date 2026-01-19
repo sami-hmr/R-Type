@@ -110,9 +110,9 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:ab0d98f61608665befb0dc9afa0419e19" id="r_ab0d98f61608665befb0dc9afa0419e19"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19">SceneState</a> : std::uint8_t { <a class="el" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19a18ff74f43da410c5529f7d6fca84f115">ACTIVE</a>
-, <a class="el" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19a186495f7da296bf880df3a22a492b378">MAIN</a>
-, <a class="el" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19a055c1a591abb0e8cd86dc969727bcc0b">DISABLED</a>
+<tr class="memitem:ab0d98f61608665befb0dc9afa0419e19" id="r_ab0d98f61608665befb0dc9afa0419e19"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19">SceneState</a> : std::uint8_t { <a class="el" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19a055c1a591abb0e8cd86dc969727bcc0b">DISABLED</a> = 0
+, <a class="el" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19a18ff74f43da410c5529f7d6fca84f115">ACTIVE</a> = 1
+, <a class="el" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19a186495f7da296bf880df3a22a492b378">MAIN</a> = 2
  }</td></tr>
 <tr class="memdesc:ab0d98f61608665befb0dc9afa0419e19"><td class="mdescLeft">&#160;</td><td class="mdescRight">Defines the activation state of a scene.  <a href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19">More...</a><br /></td></tr>
 <tr class="separator:ab0d98f61608665befb0dc9afa0419e19"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -142,16 +142,20 @@ Enumerations</h2></td></tr>
 
 <p>Defines the activation state of a scene. </p>
 <p>Scenes can be in different states controlling their visibility and update behavior:</p><ul>
-<li>ACTIVE: <a class="el" href="structScene.html" title="Component that associates an entity with a specific scene.">Scene</a> is active but not the main scene (overlay, <a class="el" href="classUI.html">UI</a> layer, etc.)</li>
-<li>MAIN: Primary active scene (typically the gameplay scene)</li>
-<li>DISABLED: <a class="el" href="structScene.html" title="Component that associates an entity with a specific scene.">Scene</a> exists but is not processed or rendered </li>
+<li>DISABLED: <a class="el" href="structScene.html" title="Component that associates an entity with a specific scene.">Scene</a> exists but is not processed or rendered</li>
+<li>ACTIVE: <a class="el" href="structScene.html" title="Component that associates an entity with a specific scene.">Scene</a> is active and entities are processed by systems</li>
+<li>MAIN: Primary active scene (highest priority, always processed)</li>
+</ul>
+<p>The hierarchy is: DISABLED &lt; ACTIVE &lt; MAIN When filtering scenes, you can specify a minimum level. For example:</p><ul>
+<li>Minimum ACTIVE: includes ACTIVE and MAIN scenes (excludes DISABLED)</li>
+<li>Minimum MAIN: includes only MAIN scenes </li>
 </ul>
 <table class="fieldtable">
-<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ab0d98f61608665befb0dc9afa0419e19a18ff74f43da410c5529f7d6fca84f115" name="ab0d98f61608665befb0dc9afa0419e19a18ff74f43da410c5529f7d6fca84f115"></a>ACTIVE&#160;</td><td class="fielddoc"><p><a class="el" href="structScene.html" title="Component that associates an entity with a specific scene.">Scene</a> is active but not primary. </p>
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="ab0d98f61608665befb0dc9afa0419e19a055c1a591abb0e8cd86dc969727bcc0b" name="ab0d98f61608665befb0dc9afa0419e19a055c1a591abb0e8cd86dc969727bcc0b"></a>DISABLED&#160;</td><td class="fielddoc"><p><a class="el" href="structScene.html" title="Component that associates an entity with a specific scene.">Scene</a> is disabled, entities are not processed. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="ab0d98f61608665befb0dc9afa0419e19a186495f7da296bf880df3a22a492b378" name="ab0d98f61608665befb0dc9afa0419e19a186495f7da296bf880df3a22a492b378"></a>MAIN&#160;</td><td class="fielddoc"><p>Primary active scene. </p>
+<tr><td class="fieldname"><a id="ab0d98f61608665befb0dc9afa0419e19a18ff74f43da410c5529f7d6fca84f115" name="ab0d98f61608665befb0dc9afa0419e19a18ff74f43da410c5529f7d6fca84f115"></a>ACTIVE&#160;</td><td class="fielddoc"><p><a class="el" href="structScene.html" title="Component that associates an entity with a specific scene.">Scene</a> is active, entities are processed. </p>
 </td></tr>
-<tr><td class="fieldname"><a id="ab0d98f61608665befb0dc9afa0419e19a055c1a591abb0e8cd86dc969727bcc0b" name="ab0d98f61608665befb0dc9afa0419e19a055c1a591abb0e8cd86dc969727bcc0b"></a>DISABLED&#160;</td><td class="fielddoc"><p><a class="el" href="structScene.html" title="Component that associates an entity with a specific scene.">Scene</a> is disabled. </p>
+<tr><td class="fieldname"><a id="ab0d98f61608665befb0dc9afa0419e19a186495f7da296bf880df3a22a492b378" name="ab0d98f61608665befb0dc9afa0419e19a186495f7da296bf880df3a22a492b378"></a>MAIN&#160;</td><td class="fielddoc"><p>Primary active scene, entities always processed. </p>
 </td></tr>
 </table>
 

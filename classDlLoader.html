@@ -102,8 +102,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:af0ffa64e5b1db8ead503bc26e6053a0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a71b5a7a04d390d6852000e549c632319" id="r_a71b5a7a04d390d6852000e549c632319"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDlLoader.html#a71b5a7a04d390d6852000e549c632319">~DlLoader</a> () override</td></tr>
 <tr class="separator:a71b5a7a04d390d6852000e549c632319"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0fa48dcb11acb752ded0216f8785a4c8" id="r_a0fa48dcb11acb752ded0216f8785a4c8"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; Module &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDlLoader.html#a0fa48dcb11acb752ded0216f8785a4c8">get_instance</a> (const std::string &amp;<a class="el" href="Actions_8cpp.html#a406a8336546a14dcc2a63034ab37e132">entry_point</a>, <a class="el" href="classRegistry.html">Registry</a> &amp;r, <a class="el" href="classEntityLoader.html">EntityLoader</a> &amp;e, std::optional&lt; JsonObject &gt; const &amp;config) override</td></tr>
-<tr class="separator:a0fa48dcb11acb752ded0216f8785a4c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac804e1394e5a05ed4c3a56ed12e27b2b" id="r_ac804e1394e5a05ed4c3a56ed12e27b2b"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; Module &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classDlLoader.html#ac804e1394e5a05ed4c3a56ed12e27b2b">get_instance</a> (const std::string &amp;<a class="el" href="Actions_8cpp.html#a2546c0e84d170a6b611475ff6917501b">entry_point</a>, <a class="el" href="classRegistry.html">Registry</a> &amp;r, <a class="el" href="classEventManager.html">EventManager</a> &amp;em, <a class="el" href="classEntityLoader.html">EntityLoader</a> &amp;e, std::optional&lt; JsonObject &gt; const &amp;config) override</td></tr>
+<tr class="separator:ac804e1394e5a05ed4c3a56ed12e27b2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classLibLoader"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classLibLoader')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classLibLoader.html">LibLoader&lt; Module &gt;</a></td></tr>
 <tr class="memitem:af2ffd747bf00c84d8e58b9872db7f322 inherit pub_methods_classLibLoader" id="r_af2ffd747bf00c84d8e58b9872db7f322"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classLibLoader.html#af2ffd747bf00c84d8e58b9872db7f322">~LibLoader</a> ()=default</td></tr>
 <tr class="separator:af2ffd747bf00c84d8e58b9872db7f322 inherit pub_methods_classLibLoader"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -221,8 +221,8 @@ template&lt;<a class="el" href="conceptlib.html">lib</a> Module&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a0fa48dcb11acb752ded0216f8785a4c8" name="a0fa48dcb11acb752ded0216f8785a4c8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0fa48dcb11acb752ded0216f8785a4c8">&#9670;&#160;</a></span>get_instance()</h2>
+<a id="ac804e1394e5a05ed4c3a56ed12e27b2b" name="ac804e1394e5a05ed4c3a56ed12e27b2b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac804e1394e5a05ed4c3a56ed12e27b2b">&#9670;&#160;</a></span>get_instance()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -243,6 +243,12 @@ template&lt;<a class="el" href="conceptlib.html">lib</a> Module&gt; </div>
           <td></td>
           <td class="paramtype"><a class="el" href="classRegistry.html">Registry</a> &amp;&#160;</td>
           <td class="paramname"><em>r</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classEventManager.html">EventManager</a> &amp;&#160;</td>
+          <td class="paramname"><em>em</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -269,7 +275,7 @@ template&lt;<a class="el" href="conceptlib.html">lib</a> Module&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Implements <a class="el" href="classLibLoader.html#ae2524dd36a6f458a29e48daa3566be3d">LibLoader&lt; Module &gt;</a>.</p>
+<p>Implements <a class="el" href="classLibLoader.html#a2e29ee3ceebc76788a7876af1d07fa34">LibLoader&lt; Module &gt;</a>.</p>
 
 </div>
 </div>

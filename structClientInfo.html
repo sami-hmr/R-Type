@@ -77,6 +77,11 @@ $(function() {
 <div class="contents">
 
 <p><code>#include &lt;<a class="el" href="NetworkCommun_8hpp_source.html">NetworkCommun.hpp</a>&gt;</code></p>
+<div class="dynheader">
+Collaboration diagram for ClientInfo:</div>
+<div class="dyncontent">
+<div class="center"><!-- SVG 0 --></div>
+<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -86,18 +91,40 @@ Public Attributes</h2></td></tr>
 <tr class="separator:a0a65bd0bed1bcc86060250f880767512"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7eadb6d26d57462dbba8cdfddfc56992" id="r_a7eadb6d26d57462dbba8cdfddfc56992"><td class="memItemLeft" align="right" valign="top"><a class="el" href="NetworkCommun_8hpp.html#a8d11fccf68fc584febc08603fe348ae6">ClientState</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structClientInfo.html#a7eadb6d26d57462dbba8cdfddfc56992">state</a> = <a class="el" href="NetworkCommun_8hpp.html#a8d11fccf68fc584febc08603fe348ae6a99c8ce56e7ab246445d3b134724428f3">ClientState::DISCONNECTED</a></td></tr>
 <tr class="separator:a7eadb6d26d57462dbba8cdfddfc56992"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a71953ff59699b0b08a929662e3a8cf3b" id="r_a71953ff59699b0b08a929662e3a8cf3b"><td class="memItemLeft" align="right" valign="top">std::uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structClientInfo.html#a71953ff59699b0b08a929662e3a8cf3b">last_sequence</a> = 0</td></tr>
-<tr class="separator:a71953ff59699b0b08a929662e3a8cf3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa53fe17184f2789cb61bf47935dcceed" id="r_aa53fe17184f2789cb61bf47935dcceed"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structClientInfo.html#aa53fe17184f2789cb61bf47935dcceed">next_send_sequence</a> = 1</td></tr>
+<tr class="separator:aa53fe17184f2789cb61bf47935dcceed"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a15f3e376d8ea8a00460255d87967fee0" id="r_a15f3e376d8ea8a00460255d87967fee0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classAcknowledgeManager.html">AcknowledgeManager</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structClientInfo.html#a15f3e376d8ea8a00460255d87967fee0">acknowledge_manager</a></td></tr>
+<tr class="separator:a15f3e376d8ea8a00460255d87967fee0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aafac490f04eda3c326c0960fb00c93c7" id="r_aafac490f04eda3c326c0960fb00c93c7"><td class="memItemLeft" align="right" valign="top">std::uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structClientInfo.html#aafac490f04eda3c326c0960fb00c93c7">challenge</a> = 0</td></tr>
 <tr class="separator:aafac490f04eda3c326c0960fb00c93c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a563e2351bad9f14f596840c51206d5ea" id="r_a563e2351bad9f14f596840c51206d5ea"><td class="memItemLeft" align="right" valign="top">std::uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structClientInfo.html#a563e2351bad9f14f596840c51206d5ea">client_id</a> = 0</td></tr>
 <tr class="separator:a563e2351bad9f14f596840c51206d5ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae31ecddf0df0b8449f77d84bff43ec3b" id="r_ae31ecddf0df0b8449f77d84bff43ec3b"><td class="memItemLeft" align="right" valign="top">std::uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structClientInfo.html#ae31ecddf0df0b8449f77d84bff43ec3b">score</a> = 0</td></tr>
-<tr class="separator:ae31ecddf0df0b8449f77d84bff43ec3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a55a14eb6a847ae9fcdad288f0d063dc5" id="r_a55a14eb6a847ae9fcdad288f0d063dc5"><td class="memItemLeft" align="right" valign="top">std::uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structClientInfo.html#a55a14eb6a847ae9fcdad288f0d063dc5">ping</a> = 0</td></tr>
-<tr class="separator:a55a14eb6a847ae9fcdad288f0d063dc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac3b93b511b71ae4f122783687d72c35d" id="r_ac3b93b511b71ae4f122783687d72c35d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structClientInfo.html#ac3b93b511b71ae4f122783687d72c35d">user_id</a></td></tr>
+<tr class="separator:ac3b93b511b71ae4f122783687d72c35d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a30f0775f11a15559a0e1c6b0545621a9" id="r_a30f0775f11a15559a0e1c6b0545621a9"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structClientInfo.html#a30f0775f11a15559a0e1c6b0545621a9">last_ping</a></td></tr>
+<tr class="separator:a30f0775f11a15559a0e1c6b0545621a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af59e58ec17471ce276ce5cd83b228987" id="r_af59e58ec17471ce276ce5cd83b228987"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structClientInfo.html#af59e58ec17471ce276ce5cd83b228987">last_reset</a></td></tr>
+<tr class="separator:af59e58ec17471ce276ce5cd83b228987"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f53d5c033b5bc313799334e667e90dc" id="r_a6f53d5c033b5bc313799334e667e90dc"><td class="memItemLeft" align="right" valign="top">std::uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structClientInfo.html#a6f53d5c033b5bc313799334e667e90dc">reset_count</a></td></tr>
+<tr class="separator:a6f53d5c033b5bc313799334e667e90dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a49188136284b678eeaed76e91e4bdba6" id="r_a49188136284b678eeaed76e91e4bdba6"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structClientInfo.html#a49188136284b678eeaed76e91e4bdba6">frag_buffer</a></td></tr>
+<tr class="separator:a49188136284b678eeaed76e91e4bdba6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Data Documentation</h2>
+<a id="a15f3e376d8ea8a00460255d87967fee0" name="a15f3e376d8ea8a00460255d87967fee0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a15f3e376d8ea8a00460255d87967fee0">&#9670;&#160;</a></span>acknowledge_manager</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classAcknowledgeManager.html">AcknowledgeManager</a> ClientInfo::acknowledge_manager</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="aafac490f04eda3c326c0960fb00c93c7" name="aafac490f04eda3c326c0960fb00c93c7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aafac490f04eda3c326c0960fb00c93c7">&#9670;&#160;</a></span>challenge</h2>
 
@@ -140,28 +167,56 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a71953ff59699b0b08a929662e3a8cf3b" name="a71953ff59699b0b08a929662e3a8cf3b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a71953ff59699b0b08a929662e3a8cf3b">&#9670;&#160;</a></span>last_sequence</h2>
+<a id="a49188136284b678eeaed76e91e4bdba6" name="a49188136284b678eeaed76e91e4bdba6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a49188136284b678eeaed76e91e4bdba6">&#9670;&#160;</a></span>frag_buffer</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::uint32_t ClientInfo::last_sequence = 0</td>
+          <td class="memname"><a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> ClientInfo::frag_buffer</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a55a14eb6a847ae9fcdad288f0d063dc5" name="a55a14eb6a847ae9fcdad288f0d063dc5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a55a14eb6a847ae9fcdad288f0d063dc5">&#9670;&#160;</a></span>ping</h2>
+<a id="a30f0775f11a15559a0e1c6b0545621a9" name="a30f0775f11a15559a0e1c6b0545621a9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a30f0775f11a15559a0e1c6b0545621a9">&#9670;&#160;</a></span>last_ping</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::uint8_t ClientInfo::ping = 0</td>
+          <td class="memname">std::size_t ClientInfo::last_ping</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="af59e58ec17471ce276ce5cd83b228987" name="af59e58ec17471ce276ce5cd83b228987"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af59e58ec17471ce276ce5cd83b228987">&#9670;&#160;</a></span>last_reset</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::size_t ClientInfo::last_reset</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aa53fe17184f2789cb61bf47935dcceed" name="aa53fe17184f2789cb61bf47935dcceed"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa53fe17184f2789cb61bf47935dcceed">&#9670;&#160;</a></span>next_send_sequence</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::size_t ClientInfo::next_send_sequence = 1</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -182,14 +237,14 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="ae31ecddf0df0b8449f77d84bff43ec3b" name="ae31ecddf0df0b8449f77d84bff43ec3b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae31ecddf0df0b8449f77d84bff43ec3b">&#9670;&#160;</a></span>score</h2>
+<a id="a6f53d5c033b5bc313799334e667e90dc" name="a6f53d5c033b5bc313799334e667e90dc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6f53d5c033b5bc313799334e667e90dc">&#9670;&#160;</a></span>reset_count</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::uint32_t ClientInfo::score = 0</td>
+          <td class="memname">std::uint8_t ClientInfo::reset_count</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -204,6 +259,20 @@ Public Attributes</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname"><a class="el" href="NetworkCommun_8hpp.html#a8d11fccf68fc584febc08603fe348ae6">ClientState</a> ClientInfo::state = <a class="el" href="NetworkCommun_8hpp.html#a8d11fccf68fc584febc08603fe348ae6a99c8ce56e7ab246445d3b134724428f3">ClientState::DISCONNECTED</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="ac3b93b511b71ae4f122783687d72c35d" name="ac3b93b511b71ae4f122783687d72c35d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac3b93b511b71ae4f122783687d72c35d">&#9670;&#160;</a></span>user_id</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int ClientInfo::user_id</td>
         </tr>
       </table>
 </div><div class="memdoc">

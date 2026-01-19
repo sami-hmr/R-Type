@@ -125,9 +125,9 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a89529f14aa0088a2afa2ad6022fb2a67" id="r_a89529f14aa0088a2afa2ad6022fb2a67"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#a89529f14aa0088a2afa2ad6022fb2a67">ZipperIterator</a> (<a class="el" href="classZipperIterator.html#a97b46d631ff01b6dc08d3ccef120ce6f">IteratorTuple</a> const &amp;it_tuple, <a class="el" href="classSparseArray.html">SparseArray</a>&lt; <a class="el" href="structScene.html">Scene</a> &gt; &amp;scene_array, std::vector&lt; std::string &gt; const &amp;active_scenes, std::size_t max, std::size_t index=0)</td></tr>
-<tr class="memdesc:a89529f14aa0088a2afa2ad6022fb2a67"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a zipper iterator from a tuple of Comp iterators.  <br /></td></tr>
-<tr class="separator:a89529f14aa0088a2afa2ad6022fb2a67"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa1ecef407511e308e0be9fbce9d3d7bf" id="r_aa1ecef407511e308e0be9fbce9d3d7bf"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#aa1ecef407511e308e0be9fbce9d3d7bf">ZipperIterator</a> (<a class="el" href="classZipperIterator.html#a97b46d631ff01b6dc08d3ccef120ce6f">IteratorTuple</a> const &amp;it_tuple, <a class="el" href="classSparseArray.html">SparseArray</a>&lt; <a class="el" href="structScene.html">Scene</a> &gt; &amp;scene_array, std::unordered_set&lt; std::string &gt; const &amp;active_scenes, std::unordered_map&lt; std::string, <a class="el" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19">SceneState</a> &gt; const &amp;scene_states, std::size_t max, std::size_t index=0, <a class="el" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19">SceneState</a> min_scene_level=<a class="el" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19a18ff74f43da410c5529f7d6fca84f115">SceneState::ACTIVE</a>)</td></tr>
+<tr class="memdesc:aa1ecef407511e308e0be9fbce9d3d7bf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a zipper iterator from a tuple of Comp iterators.  <br /></td></tr>
+<tr class="separator:aa1ecef407511e308e0be9fbce9d3d7bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a68336d10a4ff74c4c58925d8036d4594" id="r_a68336d10a4ff74c4c58925d8036d4594"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classZipperIterator.html#a68336d10a4ff74c4c58925d8036d4594">ZipperIterator</a> (<a class="el" href="classZipperIterator.html">ZipperIterator</a> const &amp;z)</td></tr>
 <tr class="memdesc:a68336d10a4ff74c4c58925d8036d4594"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor.  <br /></td></tr>
 <tr class="separator:a68336d10a4ff74c4c58925d8036d4594"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -187,7 +187,7 @@ Iteration stops at the size of the smallest Comp to prevent out-of-bounds access
 <div class="line">    <span class="comment">// Process val1 and val2 together</span></div>
 <div class="line">}</div>
 <div class="ttc" id="aclassSparseArray_html"><div class="ttname"><a href="classSparseArray.html">SparseArray</a></div><div class="ttdoc">A sparse array implementation that stores components in an optional vector.</div><div class="ttdef"><b>Definition</b> SparseArray.hpp:16</div></div>
-<div class="ttc" id="aclassZipper_html"><div class="ttname"><a href="classZipper.html">Zipper</a></div><div class="ttdoc">Range adapter that simultaneously iterates over multiple Comps.</div><div class="ttdef"><b>Definition</b> Zipper.hpp:291</div></div>
+<div class="ttc" id="aclassZipper_html"><div class="ttname"><a href="classZipper.html">Zipper</a></div><div class="ttdoc">Range adapter that simultaneously iterates over multiple Comps.</div><div class="ttdef"><b>Definition</b> Zipper.hpp:327</div></div>
 </div><!-- fragment --> </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a id="ada7031cc2eae4907b462e00e1838521e" name="ada7031cc2eae4907b462e00e1838521e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ada7031cc2eae4907b462e00e1838521e">&#9670;&#160;</a></span>DifferenceType</h2>
@@ -378,8 +378,8 @@ template&lt;class... Comps&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a89529f14aa0088a2afa2ad6022fb2a67" name="a89529f14aa0088a2afa2ad6022fb2a67"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a89529f14aa0088a2afa2ad6022fb2a67">&#9670;&#160;</a></span>ZipperIterator() <span class="overload">[1/2]</span></h2>
+<a id="aa1ecef407511e308e0be9fbce9d3d7bf" name="aa1ecef407511e308e0be9fbce9d3d7bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa1ecef407511e308e0be9fbce9d3d7bf">&#9670;&#160;</a></span>ZipperIterator() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -404,8 +404,14 @@ template&lt;class... Comps&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">std::vector&lt; std::string &gt; const &amp;&#160;</td>
+          <td class="paramtype">std::unordered_set&lt; std::string &gt; const &amp;&#160;</td>
           <td class="paramname"><em>active_scenes</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::unordered_map&lt; std::string, <a class="el" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19">SceneState</a> &gt; const &amp;&#160;</td>
+          <td class="paramname"><em>scene_states</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -417,7 +423,13 @@ template&lt;class... Comps&gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">std::size_t&#160;</td>
-          <td class="paramname"><em>index</em> = <code>0</code>&#160;</td>
+          <td class="paramname"><em>index</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19">SceneState</a>&#160;</td>
+          <td class="paramname"><em>min_scene_level</em> = <code><a class="el" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19a18ff74f43da410c5529f7d6fca84f115">SceneState::ACTIVE</a></code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -436,8 +448,12 @@ template&lt;class... Comps&gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">it_tuple</td><td>Tuple containing iterators for each Comp. </td></tr>
+    <tr><td class="paramname">scene_array</td><td><a class="el" href="structScene.html" title="Component that associates an entity with a specific scene.">Scene</a> component sparse array </td></tr>
+    <tr><td class="paramname">active_scenes</td><td>Set of currently active scene names </td></tr>
+    <tr><td class="paramname">scene_states</td><td>Map of scene names to their state levels </td></tr>
     <tr><td class="paramname">max</td><td>Maximum number of elements to iterate over (size of smallest Comp). </td></tr>
-    <tr><td class="paramname">index</td><td>Starting index position (default: 0).</td></tr>
+    <tr><td class="paramname">index</td><td>Starting index position (default: 0). </td></tr>
+    <tr><td class="paramname">min_scene_level</td><td>Minimum scene state level to include (default: ACTIVE)</td></tr>
   </table>
   </dd>
 </dl>

@@ -83,39 +83,82 @@ $(document).ready(function() { init_codefold(0); });
 <div class="contents">
 <a href="Weapon_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span> </div>
-<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="Registry_8hpp.html">ecs/Registry.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;<a class="code" href="APlugin_8hpp.html">plugin/APlugin.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="EntityLoader_8hpp.html">plugin/EntityLoader.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="WeaponEvent_8hpp.html">plugin/events/WeaponEvent.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;<a class="code" href="IoEvents_8hpp.html">plugin/events/IoEvents.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;<a class="code" href="EventManager_8hpp.html">ecs/EventManager.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;<a class="code" href="Registry_8hpp.html">ecs/Registry.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="APlugin_8hpp.html">plugin/APlugin.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="EntityLoader_8hpp.html">plugin/EntityLoader.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;<a class="code" href="WeaponEvent_8hpp.html">plugin/events/WeaponEvent.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span> </div>
 <div class="foldopen" id="foldopen00009" data-start="{" data-end="};">
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno"><a class="line" href="classWeapon.html">    9</a></span><span class="keyword">class </span><a class="code hl_class" href="classWeapon.html">Weapon</a> : <span class="keyword">public</span> <a class="code hl_class" href="classAPlugin.html">APlugin</a></div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span>{</div>
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>  <a class="code hl_class" href="classWeapon.html">Weapon</a>(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <a class="code hl_class" href="classEntityLoader.html">EntityLoader</a>&amp; l);</div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>  <a class="code hl_class" href="classWeapon.html">Weapon</a>(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <a class="code hl_class" href="classEventManager.html">EventManager</a>&amp; em, <a class="code hl_class" href="classEntityLoader.html">EntityLoader</a>&amp; l);</div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno"><a class="line" href="classWeapon.html#a8127901e8a05ea8d9386a2bca4455396">   14</a></span>  <a class="code hl_class" href="classEntityLoader.html">EntityLoader</a> &amp;<a class="code hl_variable" href="classWeapon.html#a8127901e8a05ea8d9386a2bca4455396">entity_loader</a>;</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno"><a class="line" href="classWeapon.html#a8127901e8a05ea8d9386a2bca4455396">   14</a></span>  <a class="code hl_class" href="classEntityLoader.html">EntityLoader</a>&amp; <a class="code hl_variable" href="classWeapon.html#a8127901e8a05ea8d9386a2bca4455396">entity_loader</a>;</div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>  <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>  <span class="keywordtype">void</span> init_basic_weapon(<a class="code hl_typedef" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a> <span class="keyword">const</span> &amp;entity, JsonObject <span class="keyword">const</span> &amp;obj);</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>  <span class="keywordtype">void</span> on_fire(<a class="code hl_class" href="classRegistry.html">Registry</a> &amp;r, <span class="keyword">const</span> <a class="code hl_struct" href="structFireBullet.html">FireBullet</a> &amp;e);</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>  <span class="keywordtype">void</span> basic_weapon_system(std::chrono::high_resolution_clock::time_point now);</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>};</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>  <span class="keywordtype">void</span> init_basic_weapon(<a class="code hl_typedef" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> <span class="keyword">const</span>&amp; entity, JsonObject <span class="keyword">const</span>&amp; obj);</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>  <span class="keywordtype">void</span> on_fire(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <span class="keyword">const</span> <a class="code hl_struct" href="structFireBullet.html">FireBullet</a>&amp; e);</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>  <span class="keywordtype">void</span> fire_basic(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <span class="keyword">const</span> <a class="code hl_struct" href="structFireBullet.html">FireBullet</a>&amp; e);</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>  <span class="keywordtype">void</span> fire_delayed(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <span class="keyword">const</span> <a class="code hl_struct" href="structFireBullet.html">FireBullet</a>&amp; e);</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> </div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>  <span class="keywordtype">void</span> basic_weapon_system(std::chrono::high_resolution_clock::time_point now);</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>  <span class="keywordtype">void</span> init_charge_weapon(<a class="code hl_typedef" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> <span class="keyword">const</span>&amp; entity, JsonObject <span class="keyword">const</span>&amp; obj);</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>  <span class="keywordtype">void</span> init_delayed_weapon(<a class="code hl_typedef" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> <span class="keyword">const</span>&amp; entity, JsonObject <span class="keyword">const</span>&amp; obj);</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>  <span class="keywordtype">void</span> on_charge_start(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <span class="keyword">const</span> <a class="code hl_struct" href="structStartChargeWeapon.html">StartChargeWeapon</a>&amp; e);</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>  <span class="keywordtype">void</span> on_charge_release(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <span class="keyword">const</span> <a class="code hl_struct" href="structReleaseChargeWeapon.html">ReleaseChargeWeapon</a>&amp; e);</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>  <span class="keywordtype">void</span> charge_weapon_system(std::chrono::high_resolution_clock::time_point now);</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>  <span class="keywordtype">void</span> delayed_weapon_system(</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>      std::chrono::high_resolution_clock::time_point now);</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>  <span class="keywordtype">void</span> apply_scale_modifiers();</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span> </div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>  <span class="comment">// Helper functions to reduce code duplication</span></div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>  <span class="keyword">template</span>&lt;<span class="keyword">typename</span> WeaponType&gt;</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>  <span class="keyword">struct </span>BaseWeaponFields</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>  {</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    std::optional&lt;std::string&gt; bullet_type;</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    std::optional&lt;int&gt; magazine_size;</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    std::optional&lt;int&gt; magazine_nb;</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    std::optional&lt;double&gt; reload_time;</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    std::optional&lt;double&gt; cooldown;</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    std::optional&lt;std::string&gt; attack_animation;</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    std::optional&lt;double&gt; offset_x;</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    std::optional&lt;double&gt; offset_y;</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <span class="keywordtype">bool</span> valid;</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>  };</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>  <span class="keyword">template</span>&lt;<span class="keyword">typename</span> WeaponType&gt;</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>  BaseWeaponFields&lt;WeaponType&gt; parse_base_weapon_fields(</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>      <a class="code hl_typedef" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> <span class="keyword">const</span>&amp; entity, JsonObject <span class="keyword">const</span>&amp; obj);</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span> </div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>  <span class="keywordtype">void</span> try_play_attack_animation(<a class="code hl_typedef" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> entity,</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>                                 <span class="keyword">const</span> std::string&amp; animation_name);</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>  <span class="keyword">template</span>&lt;<span class="keyword">typename</span> WeaponType&gt;</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>  <span class="keywordtype">void</span> handle_reload_system(std::chrono::high_resolution_clock::time_point now);</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>  <span class="keyword">template</span>&lt;<span class="keyword">typename</span> WeaponType&gt;</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>  <span class="keywordtype">void</span> emit_weapon_component_update(<a class="code hl_typedef" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> entity,</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>                                    <span class="keyword">const</span> WeaponType&amp; weapon);</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>};</div>
 </div>
 <div class="ttc" id="aAPlugin_8hpp_html"><div class="ttname"><a href="APlugin_8hpp.html">APlugin.hpp</a></div></div>
 <div class="ttc" id="aEntityLoader_8hpp_html"><div class="ttname"><a href="EntityLoader_8hpp.html">EntityLoader.hpp</a></div></div>
-<div class="ttc" id="aIoEvents_8hpp_html"><div class="ttname"><a href="IoEvents_8hpp.html">IoEvents.hpp</a></div></div>
+<div class="ttc" id="aEventManager_8hpp_html"><div class="ttname"><a href="EventManager_8hpp.html">EventManager.hpp</a></div></div>
 <div class="ttc" id="aRegistry_8hpp_html"><div class="ttname"><a href="Registry_8hpp.html">Registry.hpp</a></div><div class="ttdoc">Central hub of the ECS architecture managing entities, components, systems, and events.</div></div>
 <div class="ttc" id="aWeaponEvent_8hpp_html"><div class="ttname"><a href="WeaponEvent_8hpp.html">WeaponEvent.hpp</a></div></div>
-<div class="ttc" id="aclassAPlugin_html"><div class="ttname"><a href="classAPlugin.html">APlugin</a></div><div class="ttdef"><b>Definition</b> APlugin.hpp:42</div></div>
-<div class="ttc" id="aclassEntityLoader_html"><div class="ttname"><a href="classEntityLoader.html">EntityLoader</a></div><div class="ttdef"><b>Definition</b> EntityLoader.hpp:17</div></div>
-<div class="ttc" id="aclassRegistry_html"><div class="ttname"><a href="classRegistry.html">Registry</a></div><div class="ttdoc">The Registry class is the core of the ECS (Entity-Component-System) architecture.</div><div class="ttdef"><b>Definition</b> Registry.hpp:348</div></div>
-<div class="ttc" id="aclassRegistry_html_a0f7878e7be2d225f4f7ca38b85911110"><div class="ttname"><a href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a></div><div class="ttdeci">std::size_t Entity</div><div class="ttdoc">Type alias for an entity identifier.</div><div class="ttdef"><b>Definition</b> Registry.hpp:356</div></div>
+<div class="ttc" id="aclassAPlugin_html"><div class="ttname"><a href="classAPlugin.html">APlugin</a></div><div class="ttdef"><b>Definition</b> APlugin.hpp:69</div></div>
+<div class="ttc" id="aclassEntityLoader_html"><div class="ttname"><a href="classEntityLoader.html">EntityLoader</a></div><div class="ttdef"><b>Definition</b> EntityLoader.hpp:20</div></div>
+<div class="ttc" id="aclassEventManager_html"><div class="ttname"><a href="classEventManager.html">EventManager</a></div><div class="ttdef"><b>Definition</b> EventManager.hpp:62</div></div>
+<div class="ttc" id="aclassRegistry_html"><div class="ttname"><a href="classRegistry.html">Registry</a></div><div class="ttdoc">The Registry class is the core of the ECS (Entity-Component-System) architecture.</div><div class="ttdef"><b>Definition</b> Registry.hpp:308</div></div>
 <div class="ttc" id="aclassWeapon_html"><div class="ttname"><a href="classWeapon.html">Weapon</a></div><div class="ttdef"><b>Definition</b> Weapon.hpp:10</div></div>
 <div class="ttc" id="aclassWeapon_html_a8127901e8a05ea8d9386a2bca4455396"><div class="ttname"><a href="classWeapon.html#a8127901e8a05ea8d9386a2bca4455396">Weapon::entity_loader</a></div><div class="ttdeci">EntityLoader &amp; entity_loader</div><div class="ttdef"><b>Definition</b> Weapon.hpp:14</div></div>
-<div class="ttc" id="astructFireBullet_html"><div class="ttname"><a href="structFireBullet.html">FireBullet</a></div><div class="ttdef"><b>Definition</b> WeaponEvent.hpp:10</div></div>
+<div class="ttc" id="anamespaceEcs_html_a17fcea5750c1db2eea6f26c520f9235b"><div class="ttname"><a href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a></div><div class="ttdeci">std::size_t Entity</div><div class="ttdef"><b>Definition</b> Entity.hpp:7</div></div>
+<div class="ttc" id="astructFireBullet_html"><div class="ttname"><a href="structFireBullet.html">FireBullet</a></div><div class="ttdef"><b>Definition</b> WeaponEvent.hpp:11</div></div>
+<div class="ttc" id="astructReleaseChargeWeapon_html"><div class="ttname"><a href="structReleaseChargeWeapon.html">ReleaseChargeWeapon</a></div><div class="ttdef"><b>Definition</b> WeaponEvent.hpp:65</div></div>
+<div class="ttc" id="astructStartChargeWeapon_html"><div class="ttname"><a href="structStartChargeWeapon.html">StartChargeWeapon</a></div><div class="ttdef"><b>Definition</b> WeaponEvent.hpp:38</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

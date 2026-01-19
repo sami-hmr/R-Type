@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['ref_0',['Ref',['../classSparseArray.html#afcb68b007a0a116f234324bcc5a27ffc',1,'SparseArray']]],
-  ['reference_1',['Reference',['../classZipperIterator.html#ae1366b50479f0eefa7956825fe47e9c6',1,'ZipperIterator']]]
+  ['leftzone_0',['LeftZone',['../InteractionBordersEvents_8hpp.html#a82f96c473a31712f0c777f9ef81b81b3',1,'InteractionBordersEvents.hpp']]],
+  ['logger_1',['Logger',['../namespacehttplib.html#a0a5f5b7f3570e7959fc7568f030d1f13',1,'httplib']]]
 ];

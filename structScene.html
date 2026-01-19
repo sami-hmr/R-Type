@@ -71,7 +71,6 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="structScene-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">Scene Struct Reference</div></div>
 </div><!--header-->
@@ -86,28 +85,22 @@ $(function() {
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a93ccc41b0a2f6c24e467d5d9de76ec0d" id="r_a93ccc41b0a2f6c24e467d5d9de76ec0d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structScene.html#a93ccc41b0a2f6c24e467d5d9de76ec0d">Scene</a> ()=default</td></tr>
 <tr class="separator:a93ccc41b0a2f6c24e467d5d9de76ec0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae61492f64c1ec01c0215a2ec70f4fd8f" id="r_ae61492f64c1ec01c0215a2ec70f4fd8f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structScene.html#ae61492f64c1ec01c0215a2ec70f4fd8f">Scene</a> (std::string scene_name, <a class="el" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19">SceneState</a> <a class="el" href="structScene.html#a17e7ecac955706d3a58ffb3d5d22a434">state</a>)</td></tr>
-<tr class="memdesc:ae61492f64c1ec01c0215a2ec70f4fd8f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <a class="el" href="structScene.html" title="Component that associates an entity with a specific scene.">Scene</a> component.  <br /></td></tr>
-<tr class="separator:ae61492f64c1ec01c0215a2ec70f4fd8f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a74f5b0da415bee6bb6e851bb2e8c2078" id="r_a74f5b0da415bee6bb6e851bb2e8c2078"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structScene.html#a74f5b0da415bee6bb6e851bb2e8c2078">DEFAULT_BYTE_CONSTRUCTOR</a> (<a class="el" href="structScene.html">Scene</a>,([](std::vector&lt; char &gt; name, <a class="el" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19">SceneState</a> <a class="el" href="structScene.html#a17e7ecac955706d3a58ffb3d5d22a434">state</a>) { return <a class="el" href="structScene.html">Scene</a>(std::string(name.begin(), name.end()), <a class="el" href="structScene.html#a17e7ecac955706d3a58ffb3d5d22a434">state</a>);}), parseByteArray(parseAnyChar()), parseByte&lt; <a class="el" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19">SceneState</a> &gt;()) <a class="el" href="Byte_8hpp.html#ac2fb474e60f46281e11bf3824e6f4517">DEFAULT_SERIALIZE</a>(<a class="el" href="Byte_8hpp.html#a20d43856fdb8ef111a9b55ceeb1f96f8">string_to_byte</a>(this -&gt; scene_name), <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>((std::uint8_t) this-&gt;<a class="el" href="structScene.html#a17e7ecac955706d3a58ffb3d5d22a434">state</a>)) <a class="el" href="EventMacros_8hpp.html#a762cd3630f6f73bfa82bbc45f3563a2d">CHANGE_ENTITY_DEFAULT</a> <a class="el" href="HookMacros_8hpp.html#a8f0cb5d5dff2b9cbbd63e1e50cc30e6a">HOOKABLE</a>(<a class="el" href="structScene.html">Scene</a>, <a class="el" href="HookMacros_8hpp.html#a64db554aa76425e63b60d0fd6ccb1e26">HOOK</a>(scene_name), <a class="el" href="HookMacros_8hpp.html#a64db554aa76425e63b60d0fd6ccb1e26">HOOK</a>(<a class="el" href="structScene.html#a17e7ecac955706d3a58ffb3d5d22a434">state</a>)) std::string scene_name</td></tr>
-<tr class="memdesc:a74f5b0da415bee6bb6e851bb2e8c2078"><td class="mdescLeft">&#160;</td><td class="mdescRight">Identifier for this scene.  <br /></td></tr>
-<tr class="separator:a74f5b0da415bee6bb6e851bb2e8c2078"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
-Public Attributes</h2></td></tr>
-<tr class="memitem:a17e7ecac955706d3a58ffb3d5d22a434" id="r_a17e7ecac955706d3a58ffb3d5d22a434"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19">SceneState</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structScene.html#a17e7ecac955706d3a58ffb3d5d22a434">state</a></td></tr>
-<tr class="memdesc:a17e7ecac955706d3a58ffb3d5d22a434"><td class="mdescLeft">&#160;</td><td class="mdescRight">Current activation state.  <br /></td></tr>
-<tr class="separator:a17e7ecac955706d3a58ffb3d5d22a434"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3f6d399f769e719aec64224fe90db0e4" id="r_a3f6d399f769e719aec64224fe90db0e4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structScene.html#a3f6d399f769e719aec64224fe90db0e4">Scene</a> (std::string scene_name)</td></tr>
+<tr class="memdesc:a3f6d399f769e719aec64224fe90db0e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <a class="el" href="structScene.html" title="Component that associates an entity with a specific scene.">Scene</a> component.  <br /></td></tr>
+<tr class="separator:a3f6d399f769e719aec64224fe90db0e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Component that associates an entity with a specific scene. </p>
 <p>The <a class="el" href="structScene.html" title="Component that associates an entity with a specific scene.">Scene</a> component is used to organize entities into logical layers or contexts. Only entities in currently active scenes are processed by systems (via <a class="el" href="classZipper.html" title="Range adapter that simultaneously iterates over multiple Comps.">Zipper</a> filtering). This enables multi-scene support for menus, HUDs, gameplay layers, etc.</p>
-<dl class="section note"><dt>Note</dt><dd>This component is automatically added to entities during <a class="el" href="classEntityLoader.html#ab23eea9052153a6664b5e93a88bdef09">EntityLoader::load_entity()</a> </dd>
+<p><a class="el" href="structScene.html" title="Component that associates an entity with a specific scene.">Scene</a> state is managed by the <a class="el" href="classRegistry.html" title="The Registry class is the core of the ECS (Entity-Component-System) architecture.">Registry</a>, not the component itself. Each entity is tagged with a scene name, and the <a class="el" href="classRegistry.html" title="The Registry class is the core of the ECS (Entity-Component-System) architecture.">Registry</a> determines which scenes are currently active.</p>
+<dl class="section note"><dt>Note</dt><dd>This component is automatically added to entities during <a class="el" href="classEntityLoader.html#a617fd034c346cc4ce7156b4c75b31876">EntityLoader::load_entity()</a> </dd>
 <dd>
-Systems iterate only over entities in active scenes through the <a class="el" href="classZipper.html" title="Range adapter that simultaneously iterates over multiple Comps.">Zipper</a> pattern</dd></dl>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="classRegistry.html#a0298d7d46f1cca897273a7fd9fa2bbc2" title="Register a scene with the given name and initial state.">Registry::add_scene()</a> </dd>
+Systems iterate only over entities in active scenes through the <a class="el" href="classZipper.html" title="Range adapter that simultaneously iterates over multiple Comps.">Zipper</a> pattern </dd>
 <dd>
-<a class="el" href="classRegistry.html#ad1c9d136cf9da966ef0977d3c698a963" title="Activate a scene, making its entities visible to systems.">Registry::set_current_scene()</a> </dd>
+<a class="el" href="structScene.html" title="Component that associates an entity with a specific scene.">Scene</a> state lives in Registry::_scenes, not in this component</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classRegistry.html#adfbcd0eed55c7f0d795443ef0f34c855" title="Register a scene with the given name and initial state.">Registry::add_scene()</a> </dd>
+<dd>
+<a class="el" href="classRegistry.html#af5df0cfd429a13867b1b490b996c3e8a" title="Activate a scene.">Registry::activate_scene()</a> </dd>
 <dd>
 <a class="el" href="classZipper.html" title="Range adapter that simultaneously iterates over multiple Comps.">Zipper</a> (filters entities by active scenes) </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
@@ -136,8 +129,8 @@ Systems iterate only over entities in active scenes through the <a class="el" hr
 
 </div>
 </div>
-<a id="ae61492f64c1ec01c0215a2ec70f4fd8f" name="ae61492f64c1ec01c0215a2ec70f4fd8f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae61492f64c1ec01c0215a2ec70f4fd8f">&#9670;&#160;</a></span>Scene() <span class="overload">[2/2]</span></h2>
+<a id="a3f6d399f769e719aec64224fe90db0e4" name="a3f6d399f769e719aec64224fe90db0e4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3f6d399f769e719aec64224fe90db0e4">&#9670;&#160;</a></span>Scene() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -149,23 +142,13 @@ Systems iterate only over entities in active scenes through the <a class="el" hr
           <td class="memname">Scene::Scene </td>
           <td>(</td>
           <td class="paramtype">std::string&#160;</td>
-          <td class="paramname"><em>scene_name</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
+          <td class="paramname"><em>scene_name</em></td><td>)</td>
           <td></td>
-          <td class="paramtype"><a class="el" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19">SceneState</a>&#160;</td>
-          <td class="paramname"><em>state</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">explicit</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -174,70 +157,9 @@ Systems iterate only over entities in active scenes through the <a class="el" hr
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">scene_name</td><td>Name identifier for the scene </td></tr>
-    <tr><td class="paramname">state</td><td>Activation state of the scene </td></tr>
   </table>
   </dd>
 </dl>
-
-</div>
-</div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="a74f5b0da415bee6bb6e851bb2e8c2078" name="a74f5b0da415bee6bb6e851bb2e8c2078"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a74f5b0da415bee6bb6e851bb2e8c2078">&#9670;&#160;</a></span>DEFAULT_BYTE_CONSTRUCTOR()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">Scene::DEFAULT_BYTE_CONSTRUCTOR </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="structScene.html">Scene</a>&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">([](std::vector&lt; char &gt; name, <a class="el" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19">SceneState</a> <a class="el" href="structScene.html#a17e7ecac955706d3a58ffb3d5d22a434">state</a>) { return <a class="el" href="structScene.html">Scene</a>(std::string(name.begin(), name.end()), <a class="el" href="structScene.html#a17e7ecac955706d3a58ffb3d5d22a434">state</a>);})&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">parseByteArray(parseAnyChar())&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">parseByte&lt; <a class="el" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19">SceneState</a> &gt;&#160;</td>
-          <td class="paramname">()&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> -&gt;  scene_name), <a class="el" href="Byte_8hpp.html#acb4858ed90fd32ccbb8a43f353ad52a4">type_to_byte</a>((std::uint8_t) this-&gt;<a class="el" href="structScene.html#a17e7ecac955706d3a58ffb3d5d22a434">state</a>)) <a class="el" href="EventMacros_8hpp.html#a762cd3630f6f73bfa82bbc45f3563a2d">CHANGE_ENTITY_DEFAULT</a> <a class="el" href="HookMacros_8hpp.html#a8f0cb5d5dff2b9cbbd63e1e50cc30e6a">HOOKABLE</a>(<a class="el" href="structScene.html">Scene</a>, <a class="el" href="HookMacros_8hpp.html#a64db554aa76425e63b60d0fd6ccb1e26">HOOK</a>(scene_name), <a class="el" href="HookMacros_8hpp.html#a64db554aa76425e63b60d0fd6ccb1e26">HOOK</a>(<a class="el" href="structScene.html#a17e7ecac955706d3a58ffb3d5d22a434">state</a>)) std::string scene_name</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Identifier for this scene. </p>
-
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="a17e7ecac955706d3a58ffb3d5d22a434" name="a17e7ecac955706d3a58ffb3d5d22a434"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a17e7ecac955706d3a58ffb3d5d22a434">&#9670;&#160;</a></span>state</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="Scenes_8hpp.html#ab0d98f61608665befb0dc9afa0419e19">SceneState</a> Scene::state</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Current activation state. </p>
 
 </div>
 </div>

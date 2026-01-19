@@ -79,9 +79,11 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;array&gt;</code><br />
+<code>#include &lt;cmath&gt;</code><br />
 <code>#include &lt;cstdint&gt;</code><br />
 <code>#include &lt;functional&gt;</code><br />
 <code>#include &lt;unordered_map&gt;</code><br />
+<code>#include &lt;vector&gt;</code><br />
 <code>#include &quot;<a class="el" href="Byte_8hpp_source.html">plugin/Byte.hpp</a>&quot;</code><br />
 <code>#include &lt;sys/types.h&gt;</code><br />
 <code>#include &quot;Json/JsonParser.hpp&quot;</code><br />
@@ -108,6 +110,12 @@ Functions</h2></td></tr>
 <tr class="memitem:a51f08e914416ea5c05e36a83e11efb0d" id="r_a51f08e914416ea5c05e36a83e11efb0d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Byte_8cpp.html#a51f08e914416ea5c05e36a83e11efb0d">json_object_to_byte</a> (JsonObject const &amp;object)</td></tr>
 <tr class="memdesc:a51f08e914416ea5c05e36a83e11efb0d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Serializes a JsonObject (map of string to JsonValue)  <br /></td></tr>
 <tr class="separator:a51f08e914416ea5c05e36a83e11efb0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a353c1b2072b77deaf406ae44418b276e" id="r_a353c1b2072b77deaf406ae44418b276e"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Byte_8cpp.html#a353c1b2072b77deaf406ae44418b276e">operator/</a> (<a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> const &amp;array, std::size_t nb)</td></tr>
+<tr class="separator:a353c1b2072b77deaf406ae44418b276e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a80833d13e410e4abd97ab1c8a084bc15" id="r_a80833d13e410e4abd97ab1c8a084bc15"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Byte_8cpp.html#a80833d13e410e4abd97ab1c8a084bc15">operator^</a> (<a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> const &amp;data, std::size_t nb)</td></tr>
+<tr class="separator:a80833d13e410e4abd97ab1c8a084bc15"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a176174e2560e36a7ea0fc2ccc3fc83a1" id="r_a176174e2560e36a7ea0fc2ccc3fc83a1"><td class="memItemLeft" align="right" valign="top"><a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="Byte_8cpp.html#a176174e2560e36a7ea0fc2ccc3fc83a1">operator^=</a> (<a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> &amp;data, std::size_t nb)</td></tr>
+<tr class="separator:a176174e2560e36a7ea0fc2ccc3fc83a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Function Documentation</h2>
 <a id="a51f08e914416ea5c05e36a83e11efb0d" name="a51f08e914416ea5c05e36a83e11efb0d"></a>
@@ -237,6 +245,90 @@ Functions</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Reference to modified first array </dd></dl>
+
+</div>
+</div>
+<a id="a353c1b2072b77deaf406ae44418b276e" name="a353c1b2072b77deaf406ae44418b276e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a353c1b2072b77deaf406ae44418b276e">&#9670;&#160;</a></span>operator/()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; <a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> &gt; operator/ </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> const &amp;&#160;</td>
+          <td class="paramname"><em>array</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::size_t&#160;</td>
+          <td class="paramname"><em>nb</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a80833d13e410e4abd97ab1c8a084bc15" name="a80833d13e410e4abd97ab1c8a084bc15"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a80833d13e410e4abd97ab1c8a084bc15">&#9670;&#160;</a></span>operator^()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> operator^ </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> const &amp;&#160;</td>
+          <td class="paramname"><em>data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::size_t&#160;</td>
+          <td class="paramname"><em>nb</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a176174e2560e36a7ea0fc2ccc3fc83a1" name="a176174e2560e36a7ea0fc2ccc3fc83a1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a176174e2560e36a7ea0fc2ccc3fc83a1">&#9670;&#160;</a></span>operator^=()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> &amp; operator^= </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> &amp;&#160;</td>
+          <td class="paramname"><em>data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::size_t&#160;</td>
+          <td class="paramname"><em>nb</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>

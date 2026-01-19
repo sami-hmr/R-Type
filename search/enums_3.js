@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['loglevel_0',['LogLevel',['../LoggerEvent_8hpp.html#a4ad2f3fcf504e54f0d7835fa6a4a5cd4',1,'LoggerEvent.hpp']]]
+  ['handlerresponse_0',['HandlerResponse',['../classhttplib_1_1Server.html#a68cf8c175834bde61120ac4216ea943b',1,'httplib::Server']]]
 ];

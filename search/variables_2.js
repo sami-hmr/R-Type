@@ -1,7 +1,22 @@
 var searchData=
 [
-  ['b_0',['b',['../structColor.html#a9f00605f7024dcb79342e97fae52c1bd',1,'Color::b'],['../structCollisionEvent.html#aef0345389454abee6bab4b48ca4af3a2',1,'CollisionEvent::b']]],
-  ['bounds_1',['bounds',['../classQuadTreeNode.html#a51099e7373aa6982d0afd0f6e2a7b20b',1,'QuadTreeNode::bounds'],['../structICollisionAlgorithm_1_1CollisionEntity.html#a8cec041cb2b74f72f4bfecaa5f78f5b7',1,'ICollisionAlgorithm::CollisionEntity::bounds']]],
-  ['buffer_2',['buffer',['../structInput.html#a981f421447b1ab5faf8e16b9fcdbe8b7',1,'Input']]],
-  ['button_3',['button',['../structMousePressedEvent.html#a954cfdd5b08ec3b75c565ed7117a21e7',1,'MousePressedEvent::button'],['../structMouseReleasedEvent.html#a514249d107bfe600d84f50a093bfe5f0',1,'MouseReleasedEvent::button']]]
+  ['b_0',['b',['../structCollisionEvent.html#ad62a0134e1da78decc099bc6f65c4300',1,'CollisionEvent::b'],['../structColor.html#a9f00605f7024dcb79342e97fae52c1bd',1,'Color::b']]],
+  ['back_5fto_5fbase_5fscene_5ftemplate_1',['back_to_base_scene_template',['../structGenerateRebindingScene.html#a624fb9067543159ae7bee10bed550148',1,'GenerateRebindingScene']]],
+  ['background_5ftemplate_2',['background_template',['../structGenerateRebindingScene.html#a9d44f84149d2f742dcc85fae5232c847',1,'GenerateRebindingScene']]],
+  ['bar_5fcolor_3',['bar_color',['../structSlider.html#a76aca7bab908a942b14f83c1c000b207',1,'Slider::bar_color'],['../structSliderDrawable.html#af102db7ecb67d629781428b0ca7a5f9e',1,'SliderDrawable::bar_color']]],
+  ['base_5fscene_4',['base_scene',['../structGenerateRebindingScene.html#a37d95d0c84f88c819aa5b459c8a19229',1,'GenerateRebindingScene']]],
+  ['basic_5fauth_5fpassword_5f_5',['basic_auth_password_',['../classhttplib_1_1ClientImpl.html#a5da67860d3127963342200e6bb46b6f7',1,'httplib::ClientImpl']]],
+  ['basic_5fauth_5fusername_5f_6',['basic_auth_username_',['../classhttplib_1_1ClientImpl.html#af5a16149e2b0e9e004de9d652844d0be',1,'httplib::ClientImpl']]],
+  ['bearer_5ftoken_5fauth_5ftoken_5f_7',['bearer_token_auth_token_',['../classhttplib_1_1ClientImpl.html#a6b87babec803c7cf41a5615a83d263e0',1,'httplib::ClientImpl']]],
+  ['behavior_8',['behavior',['../structParasite.html#ad6fa45c7c9b9f7e596420d19a75d2675',1,'Parasite']]],
+  ['black_9',['BLACK',['../Color_8hpp.html#a15b9c0fd2a0dc2e344e60ac75a5a5432',1,'Color.hpp']]],
+  ['blue_10',['BLUE',['../Color_8hpp.html#ad0d121c90997db21108956625d74d185',1,'Color.hpp']]],
+  ['body_11',['body',['../structhttplib_1_1Response.html#ac77eb5c7e8758ac0c39ebb4507b7015c',1,'httplib::Response::body'],['../structhttplib_1_1Request.html#ad4502def5e057794ad17f014cf671656',1,'httplib::Request::body']]],
+  ['bounds_12',['bounds',['../classQuadTreeNode.html#a51099e7373aa6982d0afd0f6e2a7b20b',1,'QuadTreeNode::bounds'],['../structICollisionAlgorithm_1_1CollisionEntity.html#a8cec041cb2b74f72f4bfecaa5f78f5b7',1,'ICollisionAlgorithm::CollisionEntity::bounds']]],
+  ['buffer_13',['buffer',['../structInput.html#a981f421447b1ab5faf8e16b9fcdbe8b7',1,'Input']]],
+  ['bullet_5ftype_14',['bullet_type',['../structBaseWeapon.html#a97baf03c393b3ba563f5f4d2032384a1',1,'BaseWeapon']]],
+  ['button_15',['button',['../structMousePressedEvent.html#a954cfdd5b08ec3b75c565ed7117a21e7',1,'MousePressedEvent::button'],['../structMouseReleasedEvent.html#a514249d107bfe600d84f50a093bfe5f0',1,'MouseReleasedEvent::button']]],
+  ['button_5ftemplate_16',['button_template',['../structGenerateRebindingScene.html#a188fe773562b80cec21dc8a27798695d',1,'GenerateRebindingScene']]],
+  ['buttons_17',['buttons',['../structJoystickState.html#a4784f1027e15d657821e9713cfedf957',1,'JoystickState']]],
+  ['bytes_5fread_18',['bytes_read',['../structhttplib_1_1detail_1_1BodyReader.html#a2c64f8b90724c1dda7bf4d24ed135b8d',1,'httplib::detail::BodyReader']]]
 ];

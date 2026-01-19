@@ -85,6 +85,7 @@ $(function() {
 <code>#include &lt;string&gt;</code><br />
 <code>#include &lt;utility&gt;</code><br />
 <code>#include &quot;<a class="el" href="NetworkShared_8hpp_source.html">NetworkShared.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="EventManager_8hpp_source.html">ecs/EventManager.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Registry_8hpp_source.html">ecs/Registry.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="Byte_8hpp_source.html">plugin/Byte.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="LoggerEvent_8hpp_source.html">plugin/events/LoggerEvent.hpp</a>&quot;</code><br />
@@ -103,24 +104,24 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a26aba61e50c9c0a57620cf8934d09cba" id="r_a26aba61e50c9c0a57620cf8934d09cba"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="conceptcomponent.html">component</a> Component&gt; </td></tr>
-<tr class="memitem:a26aba61e50c9c0a57620cf8934d09cba"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classSparseArray.html">SparseArray</a>&lt; Component &gt;::Ref&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="InitComponent_8hpp.html#a26aba61e50c9c0a57620cf8934d09cba">init_component</a> (<a class="el" href="classRegistry.html">Registry</a> &amp;r, <a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a> to, Component comp)</td></tr>
-<tr class="memdesc:a26aba61e50c9c0a57620cf8934d09cba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes a component on an entity with network synchronization.  <br /></td></tr>
-<tr class="separator:a26aba61e50c9c0a57620cf8934d09cba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f2b9b12110e9ef5aeee847239d6d7c5" id="r_a8f2b9b12110e9ef5aeee847239d6d7c5"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="conceptcomponent.html">component</a> Component, typename... Args&gt; </td></tr>
-<tr class="memitem:a8f2b9b12110e9ef5aeee847239d6d7c5"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classSparseArray.html">SparseArray</a>&lt; Component &gt;::Ref&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="InitComponent_8hpp.html#a8f2b9b12110e9ef5aeee847239d6d7c5">init_component</a> (<a class="el" href="classRegistry.html">Registry</a> &amp;r, <a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a> to, Args... args)</td></tr>
-<tr class="memdesc:a8f2b9b12110e9ef5aeee847239d6d7c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs and initializes a component with network synchronization.  <br /></td></tr>
-<tr class="separator:a8f2b9b12110e9ef5aeee847239d6d7c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a74024dbc63a19d1e3926764c14efaebe" id="r_a74024dbc63a19d1e3926764c14efaebe"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="InitComponent_8hpp.html#a74024dbc63a19d1e3926764c14efaebe">init_component</a> (<a class="el" href="classRegistry.html">Registry</a> &amp;r, <a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a> to, std::string const &amp;id, <a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> const &amp;comp)</td></tr>
-<tr class="memdesc:a74024dbc63a19d1e3926764c14efaebe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes a component from serialized data.  <br /></td></tr>
-<tr class="separator:a74024dbc63a19d1e3926764c14efaebe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a918948c431d7877fd77cd48deffeae86" id="r_a918948c431d7877fd77cd48deffeae86"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="conceptcomponent.html">component</a> Component&gt; </td></tr>
+<tr class="memitem:a918948c431d7877fd77cd48deffeae86"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classSparseArray.html">SparseArray</a>&lt; Component &gt;::Ref&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="InitComponent_8hpp.html#a918948c431d7877fd77cd48deffeae86">init_component</a> (<a class="el" href="classRegistry.html">Registry</a> &amp;r, <a class="el" href="classEventManager.html">EventManager</a> &amp;em, <a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> to, Component comp)</td></tr>
+<tr class="memdesc:a918948c431d7877fd77cd48deffeae86"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes a component on an entity with network synchronization.  <br /></td></tr>
+<tr class="separator:a918948c431d7877fd77cd48deffeae86"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7d501332493b368d0e5dfdc74e1d5f11" id="r_a7d501332493b368d0e5dfdc74e1d5f11"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="conceptcomponent.html">component</a> Component, typename... Args&gt; </td></tr>
+<tr class="memitem:a7d501332493b368d0e5dfdc74e1d5f11"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classSparseArray.html">SparseArray</a>&lt; Component &gt;::Ref&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="InitComponent_8hpp.html#a7d501332493b368d0e5dfdc74e1d5f11">init_component</a> (<a class="el" href="classRegistry.html">Registry</a> &amp;r, <a class="el" href="classEventManager.html">EventManager</a> &amp;em, <a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> to, Args... args)</td></tr>
+<tr class="memdesc:a7d501332493b368d0e5dfdc74e1d5f11"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs and initializes a component with network synchronization.  <br /></td></tr>
+<tr class="separator:a7d501332493b368d0e5dfdc74e1d5f11"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0b266d8bf8d87f1d1b4df1be2a742ad3" id="r_a0b266d8bf8d87f1d1b4df1be2a742ad3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="InitComponent_8hpp.html#a0b266d8bf8d87f1d1b4df1be2a742ad3">init_component</a> (<a class="el" href="classRegistry.html">Registry</a> &amp;r, <a class="el" href="classEventManager.html">EventManager</a> &amp;em, <a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> to, std::string const &amp;id, <a class="el" href="Byte_8hpp.html#ae5dac5ad63f62fe37b5a8cfd8f269493">ByteArray</a> const &amp;comp)</td></tr>
+<tr class="memdesc:a0b266d8bf8d87f1d1b4df1be2a742ad3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes a component from serialized data.  <br /></td></tr>
+<tr class="separator:a0b266d8bf8d87f1d1b4df1be2a742ad3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Component initialization helpers with automatic network synchronization. </p>
 <p>These functions wrap <a class="el" href="classRegistry.html#a9990d86dfe7f90e314f8e93773b307d4" title="Adds a component to an entity by moving.">Registry::add_component()</a> and <a class="el" href="classRegistry.html#aedaff3e905a52a1945250cd16ffbb5fb" title="Constructs a component in-place on an entity.">Registry::emplace_component()</a> to automatically broadcast component additions via <a class="el" href="structComponentBuilder.html">ComponentBuilder</a> events. This ensures component state is synchronized across the network. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="a8f2b9b12110e9ef5aeee847239d6d7c5" name="a8f2b9b12110e9ef5aeee847239d6d7c5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8f2b9b12110e9ef5aeee847239d6d7c5">&#9670;&#160;</a></span>init_component() <span class="overload">[1/3]</span></h2>
+<a id="a7d501332493b368d0e5dfdc74e1d5f11" name="a7d501332493b368d0e5dfdc74e1d5f11"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7d501332493b368d0e5dfdc74e1d5f11">&#9670;&#160;</a></span>init_component() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -136,7 +137,13 @@ template&lt;<a class="el" href="conceptcomponent.html">component</a> Component, 
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="classEventManager.html">EventManager</a> &amp;&#160;</td>
+          <td class="paramname"><em>em</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a>&#160;</td>
           <td class="paramname"><em>to</em>, </td>
         </tr>
         <tr>
@@ -182,8 +189,8 @@ Logs error if component type is not registered</dd></dl>
 
 </div>
 </div>
-<a id="a26aba61e50c9c0a57620cf8934d09cba" name="a26aba61e50c9c0a57620cf8934d09cba"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a26aba61e50c9c0a57620cf8934d09cba">&#9670;&#160;</a></span>init_component() <span class="overload">[2/3]</span></h2>
+<a id="a918948c431d7877fd77cd48deffeae86" name="a918948c431d7877fd77cd48deffeae86"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a918948c431d7877fd77cd48deffeae86">&#9670;&#160;</a></span>init_component() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -199,7 +206,13 @@ template&lt;<a class="el" href="conceptcomponent.html">component</a> Component&g
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="classEventManager.html">EventManager</a> &amp;&#160;</td>
+          <td class="paramname"><em>em</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a>&#160;</td>
           <td class="paramname"><em>to</em>, </td>
         </tr>
         <tr>
@@ -242,8 +255,8 @@ If component type is not registered, logs an error via <a class="el" href="struc
 
 </div>
 </div>
-<a id="a74024dbc63a19d1e3926764c14efaebe" name="a74024dbc63a19d1e3926764c14efaebe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a74024dbc63a19d1e3926764c14efaebe">&#9670;&#160;</a></span>init_component() <span class="overload">[3/3]</span></h2>
+<a id="a0b266d8bf8d87f1d1b4df1be2a742ad3" name="a0b266d8bf8d87f1d1b4df1be2a742ad3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0b266d8bf8d87f1d1b4df1be2a742ad3">&#9670;&#160;</a></span>init_component() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -260,7 +273,13 @@ If component type is not registered, logs an error via <a class="el" href="struc
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="classEventManager.html">EventManager</a> &amp;&#160;</td>
+          <td class="paramname"><em>em</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a>&#160;</td>
           <td class="paramname"><em>to</em>, </td>
         </tr>
         <tr>

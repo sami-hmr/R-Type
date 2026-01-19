@@ -1,6 +1,19 @@
 var searchData=
 [
-  ['keypressedevent_0',['KeyPressedEvent',['../structKeyPressedEvent.html',1,'']]],
-  ['keyreleasedevent_1',['KeyReleasedEvent',['../structKeyReleasedEvent.html',1,'']]],
-  ['killentityrequestevent_2',['KillEntityRequestEvent',['../structKillEntityRequestEvent.html',1,'']]]
+  ['icollisionalgorithm_0',['ICollisionAlgorithm',['../classICollisionAlgorithm.html',1,'']]],
+  ['idstorage_1',['IdStorage',['../classIdStorage.html',1,'']]],
+  ['input_2',['Input',['../structInput.html',1,'']]],
+  ['inputfocusevent_3',['InputFocusEvent',['../structInputFocusEvent.html',1,'']]],
+  ['interactionborders_4',['InteractionBorders',['../structInteractionBorders.html',1,'']]],
+  ['interactionzone_5',['InteractionZone',['../structInteractionZone.html',1,'']]],
+  ['interactionzoneevent_6',['InteractionZoneEvent',['../structInteractionZoneEvent.html',1,'']]],
+  ['invalidpackage_7',['InvalidPackage',['../classInvalidPackage.html',1,'']]],
+  ['inventory_8',['Inventory',['../structInventory.html',1,'']]],
+  ['inventoryplugin_9',['InventoryPlugin',['../classInventoryPlugin.html',1,'']]],
+  ['ipatternstrategy_10',['IPatternStrategy',['../classIPatternStrategy.html',1,'']]],
+  ['iplugin_11',['IPlugin',['../classIPlugin.html',1,'']]],
+  ['is_5fin_5fjson_5fvariant_12',['is_in_json_variant',['../structis__in__json__variant.html',1,'']]],
+  ['item_13',['Item',['../structItem.html',1,'']]],
+  ['itemevent_14',['ItemEvent',['../structItemEvent.html',1,'']]],
+  ['itemslot_15',['ItemSlot',['../structInventory_1_1ItemSlot.html',1,'Inventory']]]
 ];

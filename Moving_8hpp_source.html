@@ -84,38 +84,48 @@ $(document).ready(function() { init_codefold(0); });
 <a href="Moving_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a id="l00001" name="l00001"></a><span class="lineno">    1</span><span class="preprocessor">#pragma once</span></div>
 <div class="line"><a id="l00002" name="l00002"></a><span class="lineno">    2</span> </div>
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span><span class="preprocessor">#include &quot;Json/JsonParser.hpp&quot;</span></div>
-<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;<a class="code" href="Registry_8hpp.html">ecs/Registry.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="SparseArray_8hpp.html">ecs/SparseArray.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;<a class="code" href="EventManager_8hpp.html">ecs/EventManager.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="Registry_8hpp.html">ecs/Registry.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="APlugin_8hpp.html">plugin/APlugin.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;<a class="code" href="EntityLoader_8hpp.html">plugin/EntityLoader.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &quot;<a class="code" href="Position_8hpp.html">plugin/components/Position.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &quot;<a class="code" href="Velocity_8hpp.html">plugin/components/Velocity.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &quot;<a class="code" href="CollisionEvent_8hpp.html">plugin/events/CollisionEvent.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
 <div class="foldopen" id="foldopen00011" data-start="{" data-end="};">
 <div class="line"><a id="l00011" name="l00011"></a><span class="lineno"><a class="line" href="classMoving.html">   11</a></span><span class="keyword">class </span><a class="code hl_class" href="classMoving.html">Moving</a> : <span class="keyword">public</span> <a class="code hl_class" href="classAPlugin.html">APlugin</a></div>
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span>{</div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>  <a class="code hl_class" href="classMoving.html">Moving</a>(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <a class="code hl_class" href="classEntityLoader.html">EntityLoader</a>&amp; l);</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span>  <a class="code hl_class" href="classMoving.html">Moving</a>(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <a class="code hl_class" href="classEventManager.html">EventManager</a>&amp; em, <a class="code hl_class" href="classEntityLoader.html">EntityLoader</a>&amp; l);</div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>  <span class="keywordtype">void</span> init_pos(<a class="code hl_typedef" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a> <span class="keyword">const</span>&amp; entity, JsonObject&amp; obj);</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>  <span class="keywordtype">void</span> init_velocity(<a class="code hl_typedef" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a> <span class="keyword">const</span>&amp; entity, JsonObject&amp; obj);</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>  <span class="keywordtype">void</span> init_facing(<a class="code hl_typedef" href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a> <span class="keyword">const</span>&amp; entity, JsonObject&amp; obj);</div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>  <span class="keywordtype">void</span> moving_system(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp;);</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>};</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>  <span class="keywordtype">void</span> init_pos(<a class="code hl_typedef" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> <span class="keyword">const</span>&amp; entity, JsonObject&amp; obj);</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>  <span class="keywordtype">void</span> init_off(<a class="code hl_typedef" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> <span class="keyword">const</span>&amp; entity, JsonObject&amp; obj);</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>  <span class="keywordtype">void</span> init_direction(<a class="code hl_typedef" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> <span class="keyword">const</span>&amp; entity, JsonObject&amp; obj);</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>  <span class="keywordtype">void</span> init_speed(<a class="code hl_typedef" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> <span class="keyword">const</span>&amp; entity, JsonObject&amp; obj);</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>  <span class="keywordtype">void</span> init_facing(<a class="code hl_typedef" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> <span class="keyword">const</span>&amp; entity, JsonObject&amp; obj);</div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> </div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>  <span class="keywordtype">void</span> init_id(<a class="code hl_typedef" href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a> <span class="keyword">const</span>&amp; entity, JsonObject&amp; obj);</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>  <span class="keywordtype">void</span> moving_system(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp;);</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span> </div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>  <span class="keywordtype">void</span> on_set_direction(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r, <span class="keyword">const</span> <a class="code hl_struct" href="structSetDirectionEvent.html">SetDirectionEvent</a>&amp; <a class="code hl_concept" href="conceptevent.html">event</a>);</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>  <span class="keywordtype">void</span> add_offset(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r);</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>  <span class="keywordtype">void</span> remove_offset(<a class="code hl_class" href="classRegistry.html">Registry</a>&amp; r);</div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>};</div>
 </div>
 <div class="ttc" id="aAPlugin_8hpp_html"><div class="ttname"><a href="APlugin_8hpp.html">APlugin.hpp</a></div></div>
+<div class="ttc" id="aCollisionEvent_8hpp_html"><div class="ttname"><a href="CollisionEvent_8hpp.html">CollisionEvent.hpp</a></div></div>
 <div class="ttc" id="aEntityLoader_8hpp_html"><div class="ttname"><a href="EntityLoader_8hpp.html">EntityLoader.hpp</a></div></div>
+<div class="ttc" id="aEventManager_8hpp_html"><div class="ttname"><a href="EventManager_8hpp.html">EventManager.hpp</a></div></div>
 <div class="ttc" id="aPosition_8hpp_html"><div class="ttname"><a href="Position_8hpp.html">Position.hpp</a></div></div>
 <div class="ttc" id="aRegistry_8hpp_html"><div class="ttname"><a href="Registry_8hpp.html">Registry.hpp</a></div><div class="ttdoc">Central hub of the ECS architecture managing entities, components, systems, and events.</div></div>
-<div class="ttc" id="aSparseArray_8hpp_html"><div class="ttname"><a href="SparseArray_8hpp.html">SparseArray.hpp</a></div></div>
-<div class="ttc" id="aVelocity_8hpp_html"><div class="ttname"><a href="Velocity_8hpp.html">Velocity.hpp</a></div></div>
-<div class="ttc" id="aclassAPlugin_html"><div class="ttname"><a href="classAPlugin.html">APlugin</a></div><div class="ttdef"><b>Definition</b> APlugin.hpp:42</div></div>
-<div class="ttc" id="aclassEntityLoader_html"><div class="ttname"><a href="classEntityLoader.html">EntityLoader</a></div><div class="ttdef"><b>Definition</b> EntityLoader.hpp:17</div></div>
+<div class="ttc" id="aclassAPlugin_html"><div class="ttname"><a href="classAPlugin.html">APlugin</a></div><div class="ttdef"><b>Definition</b> APlugin.hpp:69</div></div>
+<div class="ttc" id="aclassEntityLoader_html"><div class="ttname"><a href="classEntityLoader.html">EntityLoader</a></div><div class="ttdef"><b>Definition</b> EntityLoader.hpp:20</div></div>
+<div class="ttc" id="aclassEventManager_html"><div class="ttname"><a href="classEventManager.html">EventManager</a></div><div class="ttdef"><b>Definition</b> EventManager.hpp:62</div></div>
 <div class="ttc" id="aclassMoving_html"><div class="ttname"><a href="classMoving.html">Moving</a></div><div class="ttdef"><b>Definition</b> Moving.hpp:12</div></div>
-<div class="ttc" id="aclassRegistry_html"><div class="ttname"><a href="classRegistry.html">Registry</a></div><div class="ttdoc">The Registry class is the core of the ECS (Entity-Component-System) architecture.</div><div class="ttdef"><b>Definition</b> Registry.hpp:348</div></div>
-<div class="ttc" id="aclassRegistry_html_a0f7878e7be2d225f4f7ca38b85911110"><div class="ttname"><a href="classRegistry.html#a0f7878e7be2d225f4f7ca38b85911110">Registry::Entity</a></div><div class="ttdeci">std::size_t Entity</div><div class="ttdoc">Type alias for an entity identifier.</div><div class="ttdef"><b>Definition</b> Registry.hpp:356</div></div>
+<div class="ttc" id="aclassRegistry_html"><div class="ttname"><a href="classRegistry.html">Registry</a></div><div class="ttdoc">The Registry class is the core of the ECS (Entity-Component-System) architecture.</div><div class="ttdef"><b>Definition</b> Registry.hpp:308</div></div>
+<div class="ttc" id="aconceptevent_html"><div class="ttname"><a href="conceptevent.html">event</a></div><div class="ttdoc">Requires a type to be a valid event with serialization and JSON construction.</div><div class="ttdef"><b>Definition</b> EventManager.hpp:59</div></div>
+<div class="ttc" id="anamespaceEcs_html_a17fcea5750c1db2eea6f26c520f9235b"><div class="ttname"><a href="namespaceEcs.html#a17fcea5750c1db2eea6f26c520f9235b">Ecs::Entity</a></div><div class="ttdeci">std::size_t Entity</div><div class="ttdef"><b>Definition</b> Entity.hpp:7</div></div>
+<div class="ttc" id="astructSetDirectionEvent_html"><div class="ttname"><a href="structSetDirectionEvent.html">SetDirectionEvent</a></div><div class="ttdef"><b>Definition</b> CollisionEvent.hpp:89</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
