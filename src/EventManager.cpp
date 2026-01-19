@@ -7,6 +7,9 @@ void EventManager::emit(Registry& r,
                         JsonObject const& args,
                         std::optional<Ecs::Entity> entity)
 {
+  if (!_index_getter.contains_second(name)) {
+    return;
+  }
   std::type_index type_id = _index_getter.at_second(name);
   if (!_handlers.contains(type_id)) {
     return;

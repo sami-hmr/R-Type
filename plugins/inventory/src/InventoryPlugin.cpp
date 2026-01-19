@@ -13,6 +13,7 @@
 #include "ecs/Entity.hpp"
 #include "ecs/EventManager.hpp"
 #include "ecs/Registry.hpp"
+#include "ecs/zipper/ZipperIndex.hpp"
 #include "plugin/APlugin.hpp"
 #include "plugin/EntityLoader.hpp"
 #include "plugin/Hooks.hpp"
@@ -29,12 +30,28 @@ InventoryPlugin::InventoryPlugin(Registry& r, EventManager& em, EntityLoader& l)
               r,
               em,
               l,
-              {"moving"},
+              {"moving", "life"},
               {COMP_INIT(Inventory, Inventory, init_inventory),
                COMP_INIT(Pickable, Pickable, init_pickable)})
 {
   REGISTER_COMPONENT(Inventory);
   REGISTER_COMPONENT(Pickable);
+
+  this->_registry.get().add_system([this](Registry&)
+                                   { this->update_ath_scenes(); });
+  this->_registry.get().add_system(
+      [this](Registry&)
+      {
+        for (auto&& [e, inv] : ZipperIndex<Inventory>(this->_registry.get())) {
+          if (inv.show) {
+            this->generate_ath_scene(GenerateInventoryScene(e));
+            inv.show = false;
+          }
+          if (!this->_registry.get().has_component<Position>(e)) {
+            this->delete_ath_scene(GenerateInventoryScene(e));
+          }
+        }
+      });
 
   SUBSCRIBE_EVENT(DropItem, {
     if (!this->_registry.get().has_component<Inventory>(event.consumer)) {
@@ -45,6 +62,10 @@ InventoryPlugin::InventoryPlugin(Registry& r, EventManager& em, EntityLoader& l)
 
     this->drop_item(
         inventory, event.consumer, event.slot_item, event.nb_to_use);
+    this->_event_manager.get().emit<ComponentBuilder>(
+        event.consumer,
+        this->_registry.get().get_component_key<Inventory>(),
+        inventory.to_bytes());
   })
   SUBSCRIBE_EVENT(DeathEvent, {
     if (!this->_registry.get().has_component<Inventory>(event.entity)) {
@@ -64,6 +85,10 @@ InventoryPlugin::InventoryPlugin(Registry& r, EventManager& em, EntityLoader& l)
     auto& inventory =
         *_registry.get().get_components<Inventory>()[event.consumer];
     this->remove_item(inventory, event.slot_item, event.nb_to_use);
+    this->_event_manager.get().emit<ComponentBuilder>(
+        event.consumer,
+        this->_registry.get().get_component_key<Inventory>(),
+        inventory.to_bytes());
   })
 
   SUBSCRIBE_EVENT(UseItem, {
@@ -73,6 +98,10 @@ InventoryPlugin::InventoryPlugin(Registry& r, EventManager& em, EntityLoader& l)
     auto& inventory =
         *_registry.get().get_components<Inventory>()[event.consumer];
     this->use_item(inventory, event.consumer, event.slot_item, event.nb_to_use);
+    this->_event_manager.get().emit<ComponentBuilder>(
+        event.consumer,
+        this->_registry.get().get_component_key<Inventory>(),
+        inventory.to_bytes());
   })
 
   SUBSCRIBE_EVENT(CollisionEvent, {
@@ -96,7 +125,18 @@ InventoryPlugin::InventoryPlugin(Registry& r, EventManager& em, EntityLoader& l)
                                        .count()))
     {
       this->pick_item(inventory, pickable, event.to_pick);
+      this->_event_manager.get().emit<ComponentBuilder>(
+          event.picker,
+          this->_registry.get().get_component_key<Inventory>(),
+          inventory.to_bytes());
     }
+  })
+
+  SUBSCRIBE_EVENT(GenerateInventoryScene, {
+    if (!this->_registry.get().has_component<Inventory>(event.entity)) {
+      return false;
+    }
+    this->generate_ath_scene(event);
   })
 }
 
@@ -163,8 +203,11 @@ void InventoryPlugin::init_inventory(Ecs::Entity const& entity,
     inventory_slots.erase(inventory_slots.begin() + *max_items,
                           inventory_slots.end());
   }
+  auto const& show =
+      get_value<Inventory, bool>(this->_registry.get(), obj, entity, "show")
+          .value_or(false);
   this->_registry.get().emplace_component<Inventory>(
-      entity, inventory_slots, *max_items);
+      entity, inventory_slots, *max_items, show);
 }
 
 void InventoryPlugin::init_pickable(Ecs::Entity const& entity,

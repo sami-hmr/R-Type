@@ -106,15 +106,15 @@ jobs:
         CMAKE_C_COMPILER_LAUNCHER: ccache
         CMAKE_CXX_COMPILER_LAUNCHER: ccache
 
-    - name: Generate coverage report
-      run: cmake --build build/tests --target coverage
+    #- name: Generate coverage report
+    #  run: cmake --build build/tests --target coverage
 
-    - name: Upload coverage to codecov
-      uses: codecov/codecov-action@v4
-      with:
-        file: build/tests/coverage.info
-        token: ${{ secrets.CODECOV_TOKEN }}
-      continue-on-error: true
+    #- name: Upload coverage to codecov
+    #  uses: codecov/codecov-action@v4
+    #  with:
+    #    file: build/tests/coverage.info
+    #    token: ${{ secrets.CODECOV_TOKEN }}
+    #  continue-on-error: true
 
   build-windows:
     if: inputs.run-windows

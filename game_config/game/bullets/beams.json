@@ -3,14 +3,17 @@
     {
       "name": "beam_segment",
       "components": {
-        "ui:Drawable": {},
+        "ui:Drawable": {
+          "hook": "beam_size",
+          "stretch": true
+        },
         "ui:AnimatedSprite": {
           "animations": [
             {
               "name": "idle",
-              "texture": "assets/beam.png",
+              "texture": "assets/beam_real.png",
               "frame_size": {
-                "x": 142.0,
+                "x": 318.0,
                 "y": 142.0
               },
               "frame_pos": {
@@ -22,11 +25,11 @@
                 "y": 0.0
               },
               "sprite_size": {
-                "width": "150.0%",
-                "height": "8.0%"
+                "width": "25.0%",
+                "height": "10.0%"
               },
               "framerate": 15.0,
-              "nb_frames": 3,
+              "nb_frames": 12,
               "loop": true,
               "rollback": false
             }
@@ -39,6 +42,13 @@
             "y": 0.0
           }
         },
+        "moving:Offset": {
+          "offset": {
+            "x": 0.0,
+            "y": 0.0
+          }
+        },
+
         "moving:Speed": {
           "speed": {
             "x": 0.002,
@@ -52,23 +62,16 @@
           }
         },
         "life:Team": {
-          "name": "test1"
-        },
-        "life:Health": {
-          "current": 1.0,
-          "max": 1.0
+          "name": "player"
         },
         "life:Damage": {
-          "amount": 5
+          "amount": 4
         },
         "projectile:Temporal": {
           "lifetime": 0.9
         },
         "collision:Collidable": {
-          "size": {
-            "width": 1.5,
-            "height": 0.08
-          },
+          "size": "#self:beam_size:true_size",
           "collision_type": "trigger"
         }
       }
@@ -81,10 +84,10 @@
           "animations": [
             {
               "name": "idle",
-              "texture": "assets/beam_start.png",
+              "texture": "assets/energy.png",
               "frame_size": {
-                "x": 142.0,
-                "y": 142.0
+                "x": 300.0,
+                "y": 300.0
               },
               "frame_pos": {
                 "x": 0.0,
@@ -99,8 +102,8 @@
                 "height": "10.0%"
               },
               "framerate": 30.0,
-              "nb_frames": 12,
-              "loop": false,
+              "nb_frames": 50,
+              "loop": true,
               "rollback": false
             }
           ],
@@ -112,8 +115,11 @@
             "y": 0.0
           }
         },
-        "projectile:Temporal": {
-          "lifetime": 0.4
+        "moving:Offset": {
+          "offset": {
+            "x": 0.1,
+            "y": 0.0
+          }
         }
       }
     }

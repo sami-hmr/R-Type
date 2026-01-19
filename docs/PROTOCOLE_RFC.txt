@@ -83,13 +83,13 @@ Table of Contents
 
    This document describes the R-Type Multiplayer Co-op UDP Protocol
    (RTCP), designed for real-time multiplayer gaming communication. The
-   protocol supports up to 4 simultaneous players and uses an entity-
-   component system for game state synchronization.
+   protocol supports up to 256 simultaneous connections (practically
+   limited to 4 players) and uses an entity-component system for game
+   state synchronization.
 
-   RTCP is optimized for low-latency communication where occasional
-   packet loss is acceptable. It does not implement reliability
-   mechanisms at the protocol level, leaving such concerns to the
-   application layer.
+   RTCP implements a custom reliability layer with automatic
+   retransmission and acknowledgment. Packets are compressed using zlib
+   and encrypted using a simple XOR cipher.
 
 1.2. Requirements Language
 
@@ -114,10 +114,15 @@ Table of Contents
    connection establishment.
 
    Magic Sequence: A 4-byte identifier marking the beginning of all
-   packets (0x93 0x27 0x48 0x43).
+   packets. Actual value: 0x436482793 (defined as __VERSION_MAGIC_SEQUENCE__)
 
    EOF Marker: A 4-byte identifier marking the end of all packets
    (0x42 0x67 0xAB 0x01).
+
+   XOR Key: Encryption key value 67, used for packet encryption.
+
+   Heartbeat: Periodic packet sent at 15 Hz (66.67ms interval) for
+   connection monitoring and lost packet recovery.
 
 
 2. Protocol Overview
@@ -147,25 +152,34 @@ Table of Contents
 
    Connected Packets: Used for game state synchronization after a
    successful connection. These packets MUST only be sent after
-   receiving a CONNECTRESPONSE.
+   receiving a CONNECTRESPONSE. Connected packets are compressed with
+   zlib, encrypted with XOR cipher (key=67), and subject to the
+   reliability layer with acknowledgments and retransmission.
 
 
 3. Protocol Constants
 
    The following constants are defined for RTCP:
 
-   MAGIC_SEQUENCE: 0x93 0x27 0x48 0x43 (4 bytes)
+   MAGIC_SEQUENCE: 0x436482793
       A unique identifier that MUST appear at the beginning of every
-      packet.
+      packet. Defined as __VERSION_MAGIC_SEQUENCE__ in the implementation.
 
    PROTOCOL_EOF: 0x42 0x67 0xAB 0x01 (4 bytes)
       A unique identifier that MUST appear at the end of every packet.
+
+   XOR_KEY: 67
+      The key used for XOR encryption of all packets.
+
+   BUFFER_SIZE: 9092 bytes
+      Circular buffer size for packet reception.
 
    PROTOCOL_VERSION: 1 (1 byte)
       The current version of the protocol.
 
    MAX_PLAYERS: 4
-      The maximum number of simultaneous players supported.
+      The recommended maximum number of simultaneous players. Client ID
+      is stored as UINT8, allowing up to 256 connections.
 
    MAX_PACKET_SIZE: 2048 bytes
       The maximum size of a single packet, including all headers and
@@ -179,6 +193,31 @@ Table of Contents
 
    MAX_MAPNAME: 32 bytes
       The maximum length of a map name string (UTF-8 encoded).
+
+   HEARTBEAT_INTERVAL: 66.67 milliseconds (15 Hz)
+      The interval between heartbeat packets. Defined as
+      hearthbeat_delta = 1000000000 / 15 nanoseconds.
+
+   RAPPORT_COOLDOWN: 1000 milliseconds
+      Network status report generation interval.
+
+   DISCONNECTION_TIMEOUT: 1500 milliseconds
+      Client-side timeout before considering server disconnected.
+
+   CLIENT_DISCONNECT_TIMEOUT: 5000 milliseconds
+      Server-side timeout before disconnecting idle clients.
+
+   SENT_DELTA: 100 milliseconds
+      Retransmission cooldown for unacknowledged packets (100,000 μs).
+
+   ASK_COOLDOWN: 200 milliseconds
+      Cooldown before re-requesting lost packets (200,000 μs).
+
+   RESET_DELTA: 2000 milliseconds
+      Time between state transfer resets.
+
+   RESET_MAX_COUNT: 20
+      Maximum number of resets before client disconnection.
 
 
 4. Data Type Specifications
@@ -510,7 +549,7 @@ Table of Contents
       0                   1                   2                   3
       0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-     |                    Magic Sequence (0x93274843)                |
+     |                    Magic Sequence (0x436482793)               |
      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
      |                       Sequence Number                         |
      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -521,12 +560,13 @@ Table of Contents
      |                    Protocol EOF (0x4267AB01)                  |
      +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 
-   Magic Sequence: MUST be 0x93 0x27 0x48 0x43 (MAGIC_SEQUENCE).
+   Magic Sequence: MUST be 0x436482793 (MAGIC_SEQUENCE).
 
    Sequence Number: A UINT32 that MUST increment for each packet sent.
-                    Starts at 0.
+                    Starts at 1.
 
-   Acknowledge: A UINT32 currently unused. MUST be set to 0.
+   Acknowledge: A UINT32 containing the highest in-order sequence
+                number successfully received.
 
    End of Content: A BOOLEAN indicating whether this is the final
                    fragment (0x01) or more fragments follow (0x00).
@@ -535,19 +575,75 @@ Table of Contents
 
    Protocol EOF: MUST be 0x42 0x67 0xAB 0x01 (PROTOCOL_EOF).
 
-6.2. Packet Fragmentation
+6.1.1. Compression
 
-   If a message exceeds MAX_PACKET_SIZE (2048 bytes), it MUST be
-   fragmented:
+   Before transmission, the payload MUST be compressed using zlib
+   (DEFLATE algorithm). The implementation uses a 20,000-byte buffer
+   for compression.
 
-   1. The message is split into multiple fragments.
-   2. Each fragment uses the SAME sequence number.
+   On reception, the payload MUST be decompressed using zlib (inflate).
+
+6.1.2. Encryption
+
+   After building the complete packet (including headers and EOF), the
+   entire packet MUST be encrypted using XOR cipher with key = 67.
+
+   Encryption process:
+      for each byte b in packet:
+         encrypted_byte = b XOR 67
+
+   On reception, the same XOR operation decrypts the packet before
+   parsing.
+
+   Note: XOR encryption provides obfuscation only, not security.
+
+6.2. Reliability Layer
+
+   The implementation includes an acknowledgment system for reliable
+   delivery.
+
+6.2.1. Sequence Numbering
+
+   Both client and server maintain independent 32-bit sequence counters
+   that increment for each sent packet, starting at 1.
+
+6.2.2. Acknowledgment
+
+   The Acknowledge field contains the highest in-order sequence number
+   successfully received. This allows the sender to release buffers for
+   all packets with sequence <= acknowledge.
+
+6.2.3. Retransmission
+
+   Unacknowledged packets are buffered in a waiting map. If no
+   acknowledgment is received within SENT_DELTA (100ms), the packet is
+   retransmitted.
+
+6.2.4. Lost Packet Detection
+
+   The receiver detects sequence number gaps and includes lost sequence
+   numbers in heartbeat packets. The sender retransmits specifically
+   requested packets.
+
+6.2.5. Priority Flag
+
+   Packets marked with prioritary=true bypass the acknowledgment
+   manager and are sent/processed immediately without buffering or
+   retransmission.
+
+6.3. Packet Fragmentation
+
+   If a compressed message exceeds MAX_PACKET_SIZE (2048 bytes), it
+   MUST be fragmented:
+
+   1. The compressed payload is split into chunks.
+   2. Each fragment uses an incrementing sequence number.
    3. All fragments except the last MUST set End of Content to 0x00.
    4. The final fragment MUST set End of Content to 0x01.
-   5. The receiver MUST reassemble fragments with matching sequence
-      numbers in order.
+   5. The receiver accumulates fragments in a buffer until
+      End of Content = 0x01, then decompresses the complete payload.
 
-6.3. Server-to-Client Operations
+6.4. Server-to-Client Operations
 
    Server operations are identified by an opcode in the payload.
 
@@ -595,9 +691,45 @@ Table of Contents
       [0x00 0x00 0x00 0x08 "Position"]
       [application-specific position data]
 
-6.4. Client-to-Server Operations
+6.4.3. SRV_SENDHEARTBEAT
 
-6.4.1. CLI_SENDEVENT
+   Opcode: 0x03
+
+   Description: Heartbeat packet for connection monitoring and lost
+                packet recovery.
+
+   Payload format:
+      0x03 [Timestamp (UINT64)] [Lost_Count (UINT32)]
+      [Lost_Seq1 (UINT64)] [Lost_Seq2 (UINT64)] ...
+
+   Timestamp: Send timestamp for latency calculation.
+
+   Lost_Count: Number of lost sequence numbers in this heartbeat.
+
+   Lost_Seq: List of sequence numbers that were not received (gaps in
+             sequence). The sender MUST retransmit these packets.
+
+   Heartbeats are sent at 15 Hz (every 66.67ms).
+
+6.4.4. SRV_FFGONEXT
+
+   Opcode: 0x04
+
+   Description: Reset acknowledgment state for crash recovery.
+
+   Payload format:
+      0x04 [Next_Sequence (UINT64)]
+
+   Next_Sequence: The new sequence number to skip to. The receiver
+                  MUST reset its acknowledgment manager and expect
+                  packets starting from this sequence.
+
+   This command is used during state transfer when a client becomes
+   desynchronized. Maximum 20 resets are allowed before disconnection.
+
+6.5. Client-to-Server Operations
+
+6.5.1. CLI_SENDEVENT
 
    Opcode: 0x01
 

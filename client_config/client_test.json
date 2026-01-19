@@ -21,6 +21,10 @@
         {
           "name": "weapon",
           "config": {}
+        },
+        {
+          "name": "inventory",
+          "config": {}
         }
       ],
       "entities": [
@@ -59,34 +63,34 @@
             "global_hook": true
           },
           "controller:Controllable": {
-            "gamepad_bindings": [
-              {
-                "description": "move stick",
-                "key": "LEFT_JOYSTICK",
-                "name": "SetDirectionEvent",
-                "params": {}
-              },
-              {
-                "description": "move stick",
-                "key": "A",
-                "name": "FireBullet",
-                "params": {
-                  "entity": "@self"
-                }
-              },
-              {
-                "description" : "release charge shoot",
-                "key": "B",
-                "name": "ReleaseChargeWeapon",
-                "params": {
-                  "entity": "@self"
-                }
-              }
-            ],
+            // "gamepad_bindings": [
+            //   {
+            //     "description": "move stick",
+            //     "key": "LEFT_JOYSTICK",
+            //     "name": "SetDirectionEvent",
+            //     "params": {}
+            //   },
+            //   {
+            //     "description": "move stick",
+            //     "key": "A",
+            //     "name": "FireBullet",
+            //     "params": {
+            //       "entity": "@self"
+            //     }
+            //   },
+            //   {
+            //     "description": "release charge shoot",
+            //     "key": "B",
+            //     "name": "ReleaseChargeWeapon",
+            //     "params": {
+            //       "entity": "@self"
+            //     }
+            //   }
+            // ],
             "bindings": [
               {
                 "description": "drop slot 0",
-                "key": "I",
+                "key": "Y",
                 "pressed": {
                   "name": "DropItem",
                   "params": {
@@ -98,7 +102,7 @@
               },
               {
                 "description": "use slot 0",
-                "key": "O",
+                "key": "H",
                 "pressed": {
                   "name": "UseItem",
                   "params": {
@@ -109,18 +113,114 @@
                 }
               },
               {
-                "description": "shake cam",
-                "key": "H",
+                "description": "drop slot 1",
+                "key": "U",
                 "pressed": {
-                  "name": "CameraShakeEvent",
+                  "name": "DropItem",
                   "params": {
-                    "trauma": 0.1,
-                    "duration": 1.0,
-                    "angle": 15.0,
-                    "offset": 0.1
+                    "consumer": "@self",
+                    "slot_item": 1,
+                    "nb_to_use": 1
                   }
                 }
               },
+              {
+                "description": "use slot 1",
+                "key": "J",
+                "pressed": {
+                  "name": "UseItem",
+                  "params": {
+                    "consumer": "@self",
+                    "slot_item": 1,
+                    "nb_to_use": 1
+                  }
+                }
+              },
+              {
+                "description": "drop slot 2",
+                "key": "I",
+                "pressed": {
+                  "name": "DropItem",
+                  "params": {
+                    "consumer": "@self",
+                    "slot_item": 2,
+                    "nb_to_use": 1
+                  }
+                }
+              },
+              {
+                "description": "use slot 2",
+                "key": "K",
+                "pressed": {
+                  "name": "UseItem",
+                  "params": {
+                    "consumer": "@self",
+                    "slot_item": 2,
+                    "nb_to_use": 1
+                  }
+                }
+              },
+              {
+                "description": "drop slot 3",
+                "key": "O",
+                "pressed": {
+                  "name": "DropItem",
+                  "params": {
+                    "consumer": "@self",
+                    "slot_item": 3,
+                    "nb_to_use": 1
+                  }
+                }
+              },
+              {
+                "description": "use slot 3",
+                "key": "L",
+                "pressed": {
+                  "name": "UseItem",
+                  "params": {
+                    "consumer": "@self",
+                    "slot_item": 3,
+                    "nb_to_use": 1
+                  }
+                }
+              },
+              {
+                "description": "drop slot 4",
+                "key": "P",
+                "pressed": {
+                  "name": "DropItem",
+                  "params": {
+                    "consumer": "@self",
+                    "slot_item": 4,
+                    "nb_to_use": 1
+                  }
+                }
+              },
+              {
+                "description": "use slot 4",
+                "key": "M",
+                "pressed": {
+                  "name": "UseItem",
+                  "params": {
+                    "consumer": "@self",
+                    "slot_item": 4,
+                    "nb_to_use": 1
+                  }
+                }
+              },
+              // {
+              //   "description": "shake cam",
+              //   "key": "H",
+              //   "pressed": {
+              //     "name": "CameraShakeEvent",
+              //     "params": {
+              //       "trauma": 0.1,
+              //       "duration": 1.0,
+              //       "angle": 15.0,
+              //       "offset": 0.1
+              //     }
+              //   }
+              // },
               {
                 "description": "go up",
                 "key": "Z",
@@ -250,14 +350,6 @@
               //   }
               // }
             ]
-          }
-        },
-        {
-          "template": "text",
-          "parameters": {
-            "text_size": {},
-            "text": "#global:player_score:score_str",
-            "z": 90000
           }
         }
       ]

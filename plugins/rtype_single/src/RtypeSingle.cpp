@@ -16,6 +16,7 @@
 #include "plugin/events/LoadPluginEvent.hpp"
 #include "plugin/events/LogMacros.hpp"
 #include "plugin/events/LoggerEvent.hpp"
+#include "plugin/events/NetworkEvents.hpp"
 #include "plugin/events/SceneChangeEvent.hpp"
 #include "plugin/events/ShutdownEvent.hpp"
 
@@ -33,6 +34,11 @@ RtypeSingle::RtypeSingle(Registry& r,
            "LoadEntityTemplate: " + event.template_name);
     this->_loader.get().load_entity_template(event.template_name,
                                              event.aditionals);
+  })
+  SUBSCRIBE_EVENT(Disconnection, {
+    LOGGER("rtype_single",
+           LogLevel::INFO,
+           "GG BOZO");
   })
   SUBSCRIBE_EVENT(CreateEntity, {
     Ecs::Entity entity = this->_registry.get().spawn_entity();

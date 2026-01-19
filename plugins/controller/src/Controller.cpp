@@ -1,6 +1,7 @@
 #include <cstdint>
 #include <format>
 #include <functional>
+#include <iostream>
 #include <vector>
 
 #include "Controller.hpp"
@@ -45,7 +46,6 @@ Controller::Controller(Registry& r, EventManager& em, EntityLoader& l)
       this->_remaped_key.reset();
       return PREVENT_DEFAULT;
     }
-    std::cout << "WHTF" << std::endl;
     for (auto const& [key, active] : event.key_pressed) {
       if (active) {
         this->handle_key_change(key, true);
@@ -280,12 +280,12 @@ void Controller::init_controller(Ecs::Entity const& entity,
       (std::unordered_map<int, Controllable::Trigger>()));
   auto bindings = std::get<JsonArray>(obj.at("bindings").value);
 
-  this->init_event_map(entity, bindings, result);
   if (obj.contains("gamepad_bindings")) {
     auto gamepad_bindings =
-        std::get<JsonArray>(obj.at("gamepad_bindings").value);
+    std::get<JsonArray>(obj.at("gamepad_bindings").value);
     this->init_gamepad_event_map(entity, gamepad_bindings, result);
   }
+  this->init_event_map(entity, bindings, result);
 
   this->_registry.get().add_component<Controllable>(entity, std::move(result));
   std::cout << "CREATED COMPONENT Controllable for Entity: " << entity << "\n";
