@@ -351,31 +351,6 @@
               // }
             ]
           }
-        },
-        {
-          "actions:ActionTrigger": {
-            "trigger": {
-              "type": "KeyPressed",
-              "params": {
-                "key": "E"
-              }
-            },
-            "to_emit": [
-              {
-                "GenerateInventoryScene": {
-                  "entity": "%global:player_id_client:id"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "template": "text",
-          "parameters": {
-            "text_size": {},
-            "text": "#global:player_score:score_str",
-            "z": 90000
-          }
         }
       ]
     }
