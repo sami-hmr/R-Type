@@ -34,13 +34,12 @@ struct RaycastingCamera
 
   CHANGE_ENTITY_DEFAULT
 
-  DEFAULT_BYTE_CONSTRUCTOR(
-      RaycastingCamera,
-      ([](double angle, double fov, int nb_rays)
-       { return RaycastingCamera(angle, fov, nb_rays); }),
-      parseByte<double>(),
-      parseByte<double>(),
-      parseByte<int>())
+  DEFAULT_BYTE_CONSTRUCTOR(RaycastingCamera,
+                           ([](double angle, double fov, int nb_rays)
+                            { return RaycastingCamera(angle, fov, nb_rays); }),
+                           parseByte<double>(),
+                           parseByte<double>(),
+                           parseByte<int>())
 
   DEFAULT_SERIALIZE(type_to_byte(this->angle),
                     type_to_byte(this->fov),
